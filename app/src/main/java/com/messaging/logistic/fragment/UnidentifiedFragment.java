@@ -57,8 +57,9 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     RelativeLayout eldMenuLay, unIdentifiedTopLay;
     Map<String, String> params;
     VolleyRequest GetUnidentifiedRecords;
-    String DriverId = "", DeviceId = "", DriverName = "", VIN = "", CurrentDate = "";
+    String DriverId = "", DeviceId = "", DriverName = "", VIN = "", CurrentDate = "", Country = "";
     Globally global;
+    Constants constants;
     final int UnidentifiedRecordFlag  = 101;
     UnIdentifiedListingAdapter listingAdapter;
     ArrayList<String> recordSelectedList = new ArrayList<>();
@@ -99,6 +100,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
         sharedPref              = new SharedPref();
         global                  = new Globally();
+        constants               = new Constants();
         GetUnidentifiedRecords  = new VolleyRequest(getActivity());
         claimRejectRecordPost   = new SaveDriverLogPost(getActivity(), apiResponse );
 
@@ -175,6 +177,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         DriverId                = sharedPref.getDriverId( getActivity());
         VIN                     = sharedPref.getVINNumber(getActivity());
         DriverName              = Slidingmenufunctions.usernameTV.getText().toString();
+        Country                 = constants.getCountryName(getActivity());
 
         notifyAdapter(false, false);
 
@@ -378,6 +381,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         params.put("DeviceId", DeviceId );
         params.put("CurrentDate", CurrentDate);
         params.put("VIN", VIN);
+        params.put("Country", Country);
 
         GetUnidentifiedRecords.executeRequest(Request.Method.POST, APIs.GET_UNIDENTIFIED_RECORDS , params, flag,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

@@ -361,7 +361,6 @@
     <string name="personal_not_allowed">You have no permission for Personal Use. Please contact your company.</string>
     <string name="share_not_allowed">You have no permission for Send Log. Please contact your company.</string>
 
-
     <string name="loading">Loading</string>
     <string name="TrailerDrop">Trailer Drop</string>
     <string name="TrailerPickup">Trailer Pickup</string>

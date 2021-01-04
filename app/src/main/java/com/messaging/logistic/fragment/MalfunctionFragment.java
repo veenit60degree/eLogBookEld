@@ -154,7 +154,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         super.onResume();
 
         VIN                     = sharedPref.getVINNumber(getActivity());
-        Country                 = getCountryName();
+        Country                 = constants.getCountryName(getActivity());
         OffsetFromUTC           = DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity());
         DateTime currentDate    = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
         ToDateTime              = currentDate.toString().substring(0,10);
@@ -245,28 +245,6 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         }
     }
 
-
-
-
-
-    String getCountryName(){
-
-        String CurrentCycleId = "", countryName;
-
-        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-            CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
-        }else{
-            CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
-        }
-
-        if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2) ){
-            countryName = "CANADA";
-        }else{
-            countryName = "USA";
-        }
-
-        return  countryName;
-    }
 
 
     /*================== Get Unidentified Records ===================*/

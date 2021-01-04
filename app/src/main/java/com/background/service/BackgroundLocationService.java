@@ -347,12 +347,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     void saveExecutionTime(String type){
         if(processStartTime != -1){
-            long stopTime = System.currentTimeMillis();
-            long elapsedTime = stopTime - processStartTime;
-            String usedMemory = constants.getMemoryUsage(getApplicationContext());
-            obdUtil.writeExectnTimeLogFile(elapsedTime, usedMemory, type);
+            try {
+                long stopTime = System.currentTimeMillis();
+                long elapsedTime = stopTime - processStartTime;
+                String usedMemory = constants.getMemoryUsage(getApplicationContext());
+                obdUtil.writeExectnTimeLogFile(elapsedTime, usedMemory, type);
 
-            obdUtil.executionLogCount();
+                obdUtil.executionLogCount();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 

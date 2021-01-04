@@ -830,6 +830,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
 
+/*
 
         if ( !isSavedTimeZoneCorrect  ) {
             showTimeZoneAlert(isConnected);
@@ -840,13 +841,14 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 timeZoneDialog.dismiss();
             }
         }
+*/
 
 
 
 
 
         //---------------- temp delete last item code ---------------
-     /*    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+ /*        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               try {
                     driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                     driverLogArray.remove(driverLogArray.length()-1);
@@ -857,8 +859,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     driverLogArray = new JSONArray();
                 }
             }
-*/
 
+*/
 
         SetDataInView();
         IsLogShown = false;
@@ -1744,7 +1746,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
                 if(IsPersonalUseAllowed){
-                    personalUseBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
+                    if(DRIVER_JOB_STATUS == constants.OFF_DUTY && isPersonal.equals("true")){
+                        personalUseBtn.setTextColor(getResources().getColor(R.color.whiteee));
+                    }else {
+                        personalUseBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
+                    }
                 }else{
                     personalUseBtn.setTextColor(getResources().getColor(R.color.gray_hover));
                 }

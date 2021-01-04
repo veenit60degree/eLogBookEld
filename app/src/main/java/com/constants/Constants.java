@@ -2314,6 +2314,29 @@ public class Constants {
 
 
 
+
+    public String getCountryName(Context context){
+
+        String CurrentCycleId = "", countryName;
+
+        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+            CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+        }else{
+            CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, context);
+        }
+
+        if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2) ){
+            countryName = "CANADA";
+        }else{
+            countryName = "USA";
+        }
+
+        return  countryName;
+    }
+
+
+
+
     public static boolean isPlayStoreExist(Context context){
         boolean isPlayStoreExist = false;
         PackageManager packageManager = context.getPackageManager();
