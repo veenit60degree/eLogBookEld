@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/whiteee"
+
+    >
+
+    <LinearLayout
+        android:id="@+id/itemOdometerLay"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_60"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/margin_short_6"
+        android:paddingBottom="@dimen/margin_short_6"
+        android:background="@color/whiteee"
+
+        >
+
+
+                <TextView
+                    android:id="@+id/timeDotTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Time"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_12"
+                    android:padding="@dimen/margin_short_2"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    />
+
+
+
+                <TextView
+                    android:id="@+id/locationDotTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Location"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_12"
+                    android:padding="@dimen/margin_short_2"
+                    android:layout_weight="0.9"
+                    />
+
+
+                <TextView
+                    android:id="@+id/odoKmDotTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Odometers_Km"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_12"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/margin_short_2"
+                    android:layout_weight="1"
+                    />
+
+
+
+                <TextView
+                    android:id="@+id/odoMilesDotTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Odometers_Miles"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_12"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/margin_short_2"
+                    android:layout_weight="1"
+                    />
+
+
+
+                <TextView
+                    android:id="@+id/engineHrsDotTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/EngineHours"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_12"
+                    android:padding="@dimen/margin_short_2"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    />
+
+
+                <TextView
+                    android:id="@+id/eventTypeDotTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/EventTypeStatus"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_12"
+                    android:padding="@dimen/margin_short_2"
+                    android:layout_weight="1"
+
+
+                    />
+
+
+
+                <TextView
+                    android:id="@+id/originDotTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Origin"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_12"
+                    android:padding="@dimen/margin_short_2"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+
+                    />
+
+
+
+
+
+</LinearLayout>
+
+</LinearLayout>

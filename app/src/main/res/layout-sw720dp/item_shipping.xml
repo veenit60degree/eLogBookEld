@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/whiteee"
+
+    >
+
+
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/white_hover"
+        android:padding="@dimen/margin_20"
+
+        >
+
+        <LinearLayout
+            android:id="@+id/shipLay1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_toLeftOf="@+id/timeTv"
+            android:layout_marginRight="@dimen/margin_15"
+            >
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+
+            >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bl_or_trip_no"
+            android:textStyle="bold"
+            android:textColor="@color/color_eld_theme"
+            android:textSize="@dimen/text_size_22"
+            android:layout_marginRight="@dimen/margin_15"
+            />
+
+
+        <TextView
+            android:id="@+id/billNoDTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/bluee_login"
+            android:textSize="@dimen/text_size_22"
+            android:layout_marginRight="@dimen/margin_15"
+            />
+
+        </LinearLayout>
+
+
+
+
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/shipLay2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_toLeftOf="@+id/timeTv"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginRight="@dimen/margin_short_5"
+            android:layout_below="@+id/shipLay1"
+
+            >
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ShipperName"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginRight="@dimen/margin_15"
+                    />
+
+
+                <TextView
+                    android:id="@+id/shipperNameDTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/bluee_login"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginRight="@dimen/margin_15"
+                    />
+
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Commodity"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginRight="@dimen/margin_15"
+                    />
+
+
+                <TextView
+                    android:id="@+id/commudityTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/bluee_login"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginRight="@dimen/margin_15"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_toLeftOf="@+id/timeTv"
+            android:layout_marginRight="@dimen/margin_15"
+            android:layout_below="@+id/shipLay2"
+            android:layout_marginTop="@dimen/margin_10"
+            >
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/From"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginRight="@dimen/margin_15"
+                    />
+
+
+                <TextView
+                    android:id="@+id/fromLocDTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/bluee_login"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginRight="@dimen/margin_15"
+                    />
+
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/to"
+                    android:textStyle="bold"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginRight="@dimen/margin_15"
+                    />
+
+
+                <TextView
+                    android:id="@+id/toLocDTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/bluee_login"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginRight="@dimen/margin_15"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/timeDTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/bluee_login"
+            android:textSize="@dimen/text_size_18"
+            android:layout_alignParentRight="true"
+
+
+            />
+
+
+        <TextView
+            android:id="@+id/editInfoTxtVw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Edit"
+            android:textStyle="bold"
+            android:textColor="@color/color_eld_theme"
+            android:layout_alignParentRight="true"
+            android:textSize="@dimen/text_size_21"
+            android:padding="@dimen/margin_20"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginRight="@dimen/margin_short_6"
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>

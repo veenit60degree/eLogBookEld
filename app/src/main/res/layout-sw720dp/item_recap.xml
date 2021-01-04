@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recapTitleLay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+
+    >
+
+
+    <TextView
+        android:id="@+id/dayRecapTV"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_40"
+        android:layout_weight="1.1"
+        android:gravity="center_horizontal"
+        android:textColor="@color/black"
+        android:text="@string/Day"
+        android:textSize="@dimen/text_size_18"
+        android:paddingTop="@dimen/margin_12"
+
+        />
+
+    <TextView
+        android:id="@+id/dateRecapTV"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_40"
+        android:layout_weight="1.1"
+        android:gravity="center_horizontal"
+        android:text="@string/date_date"
+        android:textSize="@dimen/text_size_18"
+        android:textColor="@color/black"
+        android:paddingTop="@dimen/margin_12"
+
+        />
+
+
+
+    <TextView
+        android:id="@+id/hourRecapTV"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_40"
+        android:layout_weight="0.9"
+        android:text="@string/HoursWorked"
+        android:gravity="center_horizontal"
+        android:textSize="@dimen/text_size_18"
+        android:textColor="@color/black"
+        android:paddingTop="@dimen/margin_12"
+
+        />
+
+
+
+</LinearLayout>

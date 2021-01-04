@@ -1,0 +1,215 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="view_height_25">25dp</dimen>
+    <dimen name="view_height_30">30dp</dimen>
+    <dimen name="view_height_31">31dp</dimen>
+    <dimen name="view_height_32">32dp</dimen>
+    <dimen name="view_height_33">33dp</dimen>
+    <dimen name="view_height_34">34dp</dimen>
+
+    <dimen name="view_height_35">35dp</dimen>
+    <dimen name="view_height_36">36dp</dimen>
+    <dimen name="view_height_37">37dp</dimen>
+    <dimen name="view_height_38">38dp</dimen>
+    <dimen name="view_height_39">39dp</dimen>
+    <dimen name="view_height_35_g">35dp</dimen>
+    <dimen name="view_height_40">40dp</dimen>
+    <dimen name="view_height_41">41dp</dimen>
+    <dimen name="view_height_42">42dp</dimen>
+    <dimen name="view_height_43">43dp</dimen>
+    <dimen name="view_height_44">44dp</dimen>
+    <dimen name="view_height_45">45dp</dimen>
+    <dimen name="view_height_46">46dp</dimen>
+    <dimen name="view_height_47">47dp</dimen>
+    <dimen name="view_height_48">48dp</dimen>
+    <dimen name="view_height_49">49dp</dimen>
+
+    <dimen name="view_height_50">50dp</dimen>
+    <dimen name="view_height_51">51dp</dimen>
+    <dimen name="view_height_52">52dp</dimen>
+    <dimen name="view_height_53">53dp</dimen>
+    <dimen name="view_height_54">54dp</dimen>
+    <dimen name="view_height_55">55dp</dimen>
+    <dimen name="view_height_56">56dp</dimen>
+    <dimen name="view_height_57">57dp</dimen>
+    <dimen name="view_height_58">58dp</dimen>
+    <dimen name="view_height_59">59dp</dimen>
+    <dimen name="view_height_60">60dp</dimen>
+    <dimen name="view_height_61">61dp</dimen>
+    <dimen name="view_height_62">62dp</dimen>
+    <dimen name="view_height_63">63dp</dimen>
+    <dimen name="view_height_64">64dp</dimen>
+    <dimen name="view_height_65">65dp</dimen>
+    <dimen name="view_height_70">70dp</dimen>
+    <dimen name="view_height_71">71dp</dimen>
+    <dimen name="view_height_75">75dp</dimen>
+    <dimen name="view_height_80">80dp</dimen>
+    <dimen name="view_height_85">85dp</dimen>
+    <dimen name="view_height_90">90dp</dimen>
+    <dimen name="view_height_95">95dp</dimen>
+    <dimen name="view_height_100">100dp</dimen>
+    <dimen name="view_height_101">101dp</dimen>
+    <dimen name="view_height_102">102dp</dimen>
+    <dimen name="view_height_103">103dp</dimen>
+    <dimen name="view_height_104">104dp</dimen>
+    <dimen name="view_height_105">105dp</dimen>
+    <dimen name="view_height_110">110dp</dimen>
+    <dimen name="view_height_115">115dp</dimen>
+    <dimen name="view_height_120">120dp</dimen>
+    <dimen name="view_height_125">125dp</dimen>
+    <dimen name="view_height_130">130dp</dimen>
+    <dimen name="view_height_135">135dp</dimen>
+    <dimen name="view_height_140">140dp</dimen>
+    <dimen name="view_height_150">150dp</dimen>
+    <dimen name="view_height_160">160dp</dimen>
+    <dimen name="view_height_170">170dp</dimen>
+    <dimen name="view_height_180">180dp</dimen>
+    <dimen name="view_height_190">190dp</dimen>
+    <dimen name="view_height_195">195dp</dimen>
+    <dimen name="view_height_200">200dp</dimen>
+
+    <dimen name="view_height_210">210dp</dimen>
+    <dimen name="view_height_220">220dp</dimen>
+    <dimen name="view_height_230">230dp</dimen>
+    <dimen name="view_height_240">240dp</dimen>
+    <dimen name="view_height_250">250dp</dimen>
+    <dimen name="view_height_260">260dp</dimen>
+    <dimen name="view_height_270">270dp</dimen>
+    <dimen name="view_height_280">280dp</dimen>
+    <dimen name="view_height_290">290dp</dimen>
+    <dimen name="view_height_300">300dp</dimen>
+
+    <dimen name="view_height_310">310dp</dimen>
+    <dimen name="view_height_320">320dp</dimen>
+    <dimen name="view_height_330">330dp</dimen>
+    <dimen name="view_height_340">340dp</dimen>
+    <dimen name="view_height_350">350dp</dimen>
+    <dimen name="view_height_360">360dp</dimen>
+    <dimen name="view_height_370">370dp</dimen>
+    <dimen name="view_height_380">380dp</dimen>
+    <dimen name="view_height_390">390dp</dimen>
+    <dimen name="view_height_400">400dp</dimen>
+
+    <dimen name="view_height_410">410dp</dimen>
+    <dimen name="view_height_420">420dp</dimen>
+    <dimen name="view_height_430">430dp</dimen>
+    <dimen name="view_height_440">440dp</dimen>
+    <dimen name="view_height_450">450dp</dimen>
+    <dimen name="view_height_460">460dp</dimen>
+    <dimen name="view_height_470">470dp</dimen>
+    <dimen name="view_height_480">480dp</dimen>
+    <dimen name="view_height_490">490dp</dimen>
+
+    <dimen name="view_height_500">500dp</dimen>
+    <dimen name="view_height_520">520dp</dimen>
+    <dimen name="view_height_530">530dp</dimen>
+    <dimen name="view_height_550">550dp</dimen>
+    <dimen name="view_height_600">600dp</dimen>
+    <dimen name="view_height_610">610dp</dimen>
+    <dimen name="view_height_620">620dp</dimen>
+    <dimen name="view_height_630">630dp</dimen>
+    <dimen name="view_height_640">640dp</dimen>
+    <dimen name="view_height_650">650dp</dimen>
+    <dimen name="view_height_660">660dp</dimen>
+    <dimen name="view_height_670">670dp</dimen>
+    <dimen name="view_height_680">680dp</dimen>
+    <dimen name="view_height_690">690dp</dimen>
+
+    <dimen name="view_height_700">700dp</dimen>
+    <dimen name="view_height_750">750dp</dimen>
+    <dimen name="view_height_780">780dp</dimen>
+    <dimen name="view_height_800">800dp</dimen>
+    <dimen name="view_height_850">850dp</dimen>
+    <dimen name="view_height_900">900dp</dimen>
+
+
+
+    <dimen name="margin_short_0">0dp</dimen>
+    <dimen name="margin_short_half">0.5dp</dimen>
+    <dimen name="margin_short_1">1dp</dimen>
+    <dimen name="margin_short_2">2dp</dimen>
+    <dimen name="margin_short_3">3dp</dimen>
+    <dimen name="margin_short_4">4dp</dimen>
+    <dimen name="margin_short_5">5dp</dimen>
+    <dimen name="margin_short_6">6dp</dimen>
+    <dimen name="margin_short_7">7dp</dimen>
+    <dimen name="margin_short_8">8dp</dimen>
+    <dimen name="margin_short_9">9dp</dimen>
+
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_11">11dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
+    <dimen name="margin_13">13dp</dimen>
+    <dimen name="margin_14">14dp</dimen>
+    <dimen name="margin_15">15dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_17">17dp</dimen>
+    <dimen name="margin_18">18dp</dimen>
+    <dimen name="margin_19">19dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
+
+    <dimen name="margin_21">21dp</dimen>
+    <dimen name="margin_22">22dp</dimen>
+    <dimen name="margin_23">23dp</dimen>
+    <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_25">25dp</dimen>
+    <dimen name="margin_26">26dp</dimen>
+    <dimen name="margin_27">27dp</dimen>
+    <dimen name="margin_28">28dp</dimen>
+    <dimen name="margin_29">29dp</dimen>
+
+    <dimen name="text_size_1">1sp</dimen>
+    <dimen name="text_size_2">2sp</dimen>
+    <dimen name="text_size_3">3sp</dimen>
+    <dimen name="text_size_4">4sp</dimen>
+    <dimen name="text_size_5">5sp</dimen>
+    <dimen name="text_size_6">6sp</dimen>
+    <dimen name="text_size_7">7sp</dimen>
+    <dimen name="text_size_8">8sp</dimen>
+    <dimen name="text_size_9">9sp</dimen>
+
+    <dimen name="text_size_10">10sp</dimen>
+    <dimen name="text_size_11">11sp</dimen>
+    <dimen name="text_size_12">12sp</dimen>
+    <dimen name="text_size_13">13sp</dimen>
+    <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_15">15sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_17">17sp</dimen>
+    <dimen name="text_size_18">18sp</dimen>
+    <dimen name="text_size_19">19sp</dimen>
+
+    <dimen name="text_size_20">20sp</dimen>
+    <dimen name="text_size_21">21sp</dimen>
+    <dimen name="text_size_22">22sp</dimen>
+    <dimen name="text_size_23">23sp</dimen>
+    <dimen name="text_size_24">24sp</dimen>
+    <dimen name="text_size_25">25sp</dimen>
+    <dimen name="text_size_26">26sp</dimen>
+    <dimen name="text_size_27">27sp</dimen>
+    <dimen name="text_size_28">28sp</dimen>
+    <dimen name="text_size_29">29sp</dimen>
+    <dimen name="text_size_30">30sp</dimen>
+
+
+    <dimen name="scanPadding">16dp</dimen>
+    <dimen name="polygonViewCircleWidth">32dp</dimen>
+    <dimen name="polygonViewStrokeWidth">2dp</dimen>
+    <!-- ScanPadding must be half of polygonViewCircleWidth -->
+
+    <dimen name="bottom_bar_padding">15dp</dimen>
+
+    <dimen name="slv_item_height">66dip</dimen>
+    <dimen name="slv_item_height2">120dip</dimen>
+
+    <dimen name="slv_item_bg_btn_width">48dip</dimen>
+    <dimen name="slv_item_bg_btn2_width">60dip</dimen>
+    <dimen name="slv_item_bg_btn_width_img">100dip</dimen>
+
+
+
+</resources>

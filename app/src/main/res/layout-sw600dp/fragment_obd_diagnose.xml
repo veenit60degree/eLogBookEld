@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+
+    >
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/margin_10"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/margin_15"
+        >
+
+    <include
+        android:id="@+id/actionbarObdDiagnose"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/view_height_54"
+        layout="@layout/actionbar_eld"
+
+        />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/margin_15"
+            android:background="@color/gray_updated_theme_color"
+            >
+
+            <TextView
+                android:id="@+id/odometerTxtView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/odometer_details"
+                android:textColor="@color/bluee_login"
+                android:textSize="@dimen/text_size_20"
+                android:textStyle="bold"
+                android:padding="@dimen/margin_15"
+
+
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_short_1"
+                android:background="@color/gray_updated_divider_color"
+                android:layout_marginLeft="@dimen/margin_15"
+                android:layout_marginRight="@dimen/margin_15"
+                />
+
+
+            <TextView
+                android:id="@+id/gpsTxtView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/gps_details"
+                android:textColor="@color/bluee_login"
+                android:textSize="@dimen/text_size_20"
+                android:textStyle="bold"
+                android:padding="@dimen/margin_15"
+
+
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_short_1"
+                android:background="@color/gray_updated_divider_color"
+                android:layout_marginLeft="@dimen/margin_15"
+                android:layout_marginRight="@dimen/margin_15"
+                />
+
+
+
+            <TextView
+                android:id="@+id/simInfoTxtView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sim_info"
+                android:textColor="@color/bluee_login"
+                android:textSize="@dimen/text_size_20"
+                android:padding="@dimen/margin_15"
+                android:textStyle="bold"
+
+
+
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_short_1"
+                android:background="@color/gray_updated_divider_color"
+                android:layout_marginLeft="@dimen/margin_15"
+                android:layout_marginRight="@dimen/margin_15"
+                />
+
+
+
+            <TextView
+                android:id="@+id/resetObdTxtView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/reset_obd"
+                android:textColor="@color/bluee_login"
+                android:textSize="@dimen/text_size_20"
+                android:padding="@dimen/margin_15"
+                android:textStyle="bold"
+
+
+                />
+
+
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/responseRawTxtView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_short_5"
+            android:layout_marginLeft="@dimen/margin_17"
+            android:layout_marginRight="@dimen/margin_17"
+            android:padding="@dimen/margin_short_5"
+            android:textColor="@color/colorPrimary"
+            android:background="@color/blue_background_light"
+
+            />
+
+
+        <TextView
+            android:id="@+id/obdDataTxtView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_17"
+            android:padding="@dimen/margin_short_5"
+            android:textSize="@dimen/text_size_17"
+            android:textColor="@color/colorPrimary"
+            android:background="@color/blue_background_light"
+            />
+
+
+
+    </LinearLayout>
+
+
+
+    <EditText
+        android:id="@+id/field1"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/button2"
+        android:layout_marginRight="@dimen/margin_10"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:background="@drawable/edit_green_drawable"
+        android:layout_marginBottom="@dimen/margin_short_6"
+
+        />
+
+
+
+
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="button2"
+        android:layout_marginRight="@dimen/margin_10"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+
+        />
+
+
+
+    <ProgressBar
+        android:id="@+id/obdProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+
+
+</RelativeLayout>
+
+</ScrollView>

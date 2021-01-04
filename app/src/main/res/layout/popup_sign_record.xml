@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_45"
+        android:paddingLeft="@dimen/margin_10"
+
+        >
+
+
+    <TextView
+        android:id="@+id/dateSignTxtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/date"
+        android:paddingLeft="@dimen/margin_15"
+        android:textSize="@dimen/text_size_16"
+        android:textColor="@color/black"
+        android:layout_centerVertical="true"
+
+        />
+
+
+        <ImageView
+            android:id="@+id/noSignErrorImg"
+            android:layout_width="@dimen/margin_17"
+            android:layout_height="@dimen/margin_17"
+            android:src="@drawable/error"
+            android:layout_toRightOf="@+id/dateSignTxtView"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/margin_short_5"
+
+            />
+
+
+
+    <TextView
+        android:id="@+id/certifyStatusTxtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/certify"
+        android:textStyle="bold"
+        android:paddingTop="@dimen/margin_short_3"
+        android:paddingBottom="@dimen/margin_short_3"
+        android:paddingRight="@dimen/margin_20"
+        android:paddingLeft="@dimen/margin_20"
+        android:layout_marginRight="@dimen/margin_15"
+        android:textSize="@dimen/text_size_13"
+        android:textAllCaps="true"
+        android:background="@drawable/uncertify_border"
+        android:textColor="@color/colorVoilation"
+        android:layout_toLeftOf="@+id/signRecordRightImg"
+        android:layout_centerVertical="true"
+
+        />
+
+        <ImageView
+            android:id="@+id/signRecordRightImg"
+            android:layout_width="@dimen/margin_15"
+            android:layout_height="@dimen/margin_15"
+            android:src="@drawable/arrow_next_unidentfied"
+            android:layout_marginRight="@dimen/margin_20"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+
+
+            />
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

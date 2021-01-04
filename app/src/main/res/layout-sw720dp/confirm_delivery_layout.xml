@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:id="@+id/confirmDelMainLay"
+    >
+
+
+    <Button
+        android:id="@+id/confirmDeliveryBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/view_height_80"
+        android:text="Confirm Delivery"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="@dimen/view_height_35_g"
+        android:paddingLeft="@dimen/view_height_65"
+        android:paddingRight="@dimen/view_height_65"
+        android:background="@drawable/green_selector"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/bottomDeView"
+        android:layout_marginBottom="@dimen/view_height_40"
+        android:textAllCaps="false"
+
+        />
+
+    <View
+        android:id="@+id/bottomDeView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        />
+
+
+    <RelativeLayout
+        android:id="@+id/scanDocLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/red_custom"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="gone"
+
+        >
+
+
+
+        <RelativeLayout
+            android:id="@+id/deleteButton"
+            android:layout_width="@dimen/view_height_90"
+            android:layout_height="@dimen/view_height_90"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/rounder_image_border"
+            >
+
+            <ImageView
+                android:layout_width="@dimen/view_height_45"
+                android:layout_height="@dimen/view_height_45"
+                android:src="@drawable/delete_sign"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:id="@+id/cameraButton"
+            android:layout_width="@dimen/view_height_160"
+            android:layout_height="@dimen/view_height_160"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/rounder_image_border"
+            >
+
+            <ImageView
+                android:layout_width="@dimen/view_height_65"
+                android:layout_height="@dimen/view_height_65"
+                android:src="@drawable/camera"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/gallaryButton"
+            android:layout_width="@dimen/view_height_90"
+            android:layout_height="@dimen/view_height_90"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/rounder_image_border"
+            >
+
+            <ImageView
+                android:layout_width="@dimen/view_height_45"
+                android:layout_height="@dimen/view_height_45"
+                android:src="@drawable/gallery"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This Control Consist Of Custom Camera having Document Scanner With Crop Feature. Start scanning the documents from here."
+            android:textSize="@dimen/view_height_35_g"
+            android:textColor="@color/white"
+            android:layout_centerInParent="true"
+            android:padding="20dp"
+            />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/entryTimeeeeInputLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <!--android:theme="@style/TextLabel"-->
+            <com.constants.CustomEditText
+                android:id="@+id/entryTieeemeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:padding="6dp"
+                android:textSize="7sp"
+                android:editable="false"
+
+                android:singleLine="true"
+                android:nextFocusDown="@+id/entryTimeEditText"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/entryTimeInputLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        >
+        <!--android:theme="@style/TextLabel"-->
+        <com.constants.CustomEditText
+            android:id="@+id/entryTimeEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:padding="6dp"
+            android:textSize="16sp"
+            android:editable="false"
+
+            android:hint="@string/Entry_Time"
+            android:singleLine="true"
+            android:nextFocusDown="@+id/exitTimeEditText"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+<View
+    android:layout_width="match_parent"
+    android:layout_height="0.8dp"
+    android:background="@color/black"
+    android:visibility="gone"
+    />
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/exitTimeInputLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+
+            >
+            <!--android:theme="@style/TextLabel"-->
+            <com.constants.CustomEditText
+                android:id="@+id/exitTimeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:background="@color/transparent"
+                android:padding="6dp"
+                android:textSize="16sp"
+                android:hint="@string/Exit_Time"
+                android:singleLine="true"
+                android:nextFocusDown="@+id/deliveryTimeEditText"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/black"
+            android:visibility="gone"
+            />
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/deliveryTimeInputLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+
+            >
+            <!--android:theme="@style/TextLabel"-->
+            <com.constants.CustomEditText
+                android:id="@+id/deliveryTimeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:padding="6dp"
+                android:textSize="16sp"
+                android:editable="false"
+                android:hint="@string/Delivery_waiting"
+                android:singleLine="true"
+                android:nextFocusDown="@+id/reasonTimeEditText"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/black"
+            android:visibility="gone"
+            />
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/reasonTimeInputLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+            <!--android:theme="@style/TextLabel"-->
+            <com.constants.CustomEditText
+                android:id="@+id/reasonTimeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:padding="@dimen/margin_18"
+                android:textSize="@dimen/text_size_24"
+                android:hint="@string/Delivery_waiting_time_reason"
+                android:singleLine="true"
+                android:nextFocusDown="@+id/lastNameEditText"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/black"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Add_Scanned_Documents"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_23"
+            android:layout_marginTop="@dimen/margin_25"
+            />
+
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/view_height_150"
+            android:layout_marginTop="@dimen/margin_15"
+
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                >
+
+
+                <LinearLayout
+                    android:id="@+id/addMoreItemsLay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    >
+
+
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/addMoreImages"
+                    android:layout_width="@dimen/view_height_150"
+                    android:layout_height="@dimen/view_height_150"
+                    android:src="@drawable/add_pluss"
+                    />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

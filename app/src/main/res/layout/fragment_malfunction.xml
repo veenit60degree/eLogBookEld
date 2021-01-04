@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_updated_theme_color"
+    >
+
+
+    <include
+        android:id="@+id/malfunctionActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/actionbar_eld"
+        />
+
+    <ExpandableListView
+        android:id="@+id/malfunctionExpandList"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:divider="@color/transparent"
+        android:childDivider="@color/white"
+        android:groupIndicator="@null"
+        android:dividerHeight="@dimen/margin_short_0"
+        android:layout_below="@+id/malfunctionActionBar"
+        android:layout_marginLeft="@dimen/margin_12"
+        android:layout_marginTop="@dimen/margin_short_4"
+        android:layout_marginBottom="@dimen/margin_12"
+        android:layout_marginRight="@dimen/margin_12"
+
+
+        />
+
+
+    <TextView
+        android:id="@+id/noRecordTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/No_Trip_Assigned"
+        android:textColor="@color/gray_text_transparent"
+        android:textSize="@dimen/text_size_29"
+        android:layout_centerInParent="true"
+
+        />
+
+
+
+    <TextView
+        android:id="@+id/invisibleMalfnBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
+
+
+
+</RelativeLayout>

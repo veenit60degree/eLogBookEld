@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/supporttMainLay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+
+    >
+
+
+    <include
+        android:id="@+id/actionbarSupport"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/view_height_70"
+        layout="@layout/actionbar_eld"
+        />
+
+
+    <ListView
+        android:id="@+id/supportListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="@dimen/margin_10"
+        android:divider="@null"
+        android:layout_below="@+id/actionbarSupport"
+        tools:listitem="@layout/item_support"
+        android:paddingBottom="@dimen/margin_15"
+
+        />
+
+
+    <TextView
+        android:id="@+id/noDataSupportTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/No_Trip_Assigned"
+        android:textSize="@dimen/view_height_35"
+        android:visibility="gone"
+        />
+
+
+
+</RelativeLayout>

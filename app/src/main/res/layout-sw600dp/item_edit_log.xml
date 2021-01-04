@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/view_height_60"
+    android:orientation="horizontal"
+    android:background="@color/transparent"
+
+    >
+
+
+    <LinearLayout
+        android:id="@+id/editLogItemLay"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_60"
+        android:orientation="horizontal"
+        android:background="@color/white"
+
+        >
+
+
+        <RelativeLayout
+            android:id="@+id/dragLay"
+            android:layout_width="@dimen/view_height_100"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_short_5"
+            android:layout_marginBottom="@dimen/margin_short_5"
+            android:descendantFocusability="blocksDescendants"
+
+            >
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerInParent="true"
+
+                >
+
+                <ImageView
+                    android:layout_width="@dimen/margin_27"
+                    android:layout_height="@dimen/margin_27"
+                    android:src="@drawable/icon_drag_drop"
+                    android:layout_marginTop="@dimen/margin_short_1"
+                    android:layout_gravity="center_vertical"
+
+                    />
+                <TextView
+                    android:id="@+id/editLogSerialNoTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:textSize="@dimen/text_size_20"
+                    android:paddingLeft="@dimen/margin_12"
+                    android:layout_gravity="center_vertical"
+                    android:text="1"
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:layout_width="@dimen/view_height_190"
+            android:layout_height="@dimen/view_height_50"
+            android:layout_gravity="center_vertical"
+            android:descendantFocusability="blocksDescendants"
+
+            >
+
+        <Spinner
+            android:id="@+id/editLogStatusSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_50"
+            android:gravity="center_horizontal|center_vertical"
+            style="@style/spinner_style_editlog"
+
+
+            />
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/startTimeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:layout_marginRight="@dimen/margin_10"
+            android:paddingLeft="5dp"
+            android:layout_marginTop="@dimen/margin_short_5"
+            android:layout_marginBottom="@dimen/margin_short_5"
+            android:background="@drawable/edit_log_drawable"
+
+            >
+
+
+            <TextView
+                android:id="@+id/startTimeTV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/startTimeIV"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="00:00"
+                android:textSize="@dimen/text_size_19"
+                android:textColor="@color/colorBlack"
+                />
+
+            <RelativeLayout
+                android:id="@+id/startTimeIV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:padding="@dimen/margin_short_5"
+                >
+
+
+                <ImageView
+                    android:layout_width="@dimen/margin_25"
+                    android:layout_height="@dimen/margin_25"
+                    android:src="@drawable/time_clock"
+                    android:layout_centerVertical="true"
+
+                    />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:id="@+id/endTimeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/margin_short_5"
+            android:layout_marginBottom="@dimen/margin_short_5"
+            android:layout_marginRight="@dimen/margin_10"
+
+            android:paddingLeft="@dimen/margin_short_5"
+            android:background="@drawable/edit_log_drawable"
+
+            >
+
+
+            <TextView
+                android:id="@+id/endTimeTV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/endTimeIV"
+                android:layout_centerVertical="true"
+                android:gravity="center_horizontal|center_vertical"
+                android:textColor="@color/colorBlack"
+                android:text="00:00"
+                android:textSize="@dimen/text_size_19"
+                />
+
+
+            <RelativeLayout
+                android:id="@+id/endTimeIV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:padding="@dimen/margin_short_5"
+                >
+
+
+                <ImageView
+                    android:layout_width="@dimen/margin_25"
+                    android:layout_height="@dimen/margin_25"
+                    android:src="@drawable/time_clock"
+
+
+                    />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+
+
+        <RelativeLayout
+            android:layout_width="@dimen/view_height_200"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_short_5"
+            android:layout_marginBottom="@dimen/margin_short_5"
+
+            >
+
+
+            <TextView
+                android:id="@+id/editLogDurationTV"
+                android:layout_width="@dimen/view_height_200"
+                android:layout_height="match_parent"
+                android:textColor="@color/colorBlack"
+                android:layout_gravity="center_vertical"
+
+                android:textSize="@dimen/text_size_19"
+                android:padding="@dimen/margin_short_5"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:text="00:00"
+
+                />
+
+
+
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

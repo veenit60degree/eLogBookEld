@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:descendantFocusability="blocksDescendants"
+
+    >
+
+
+
+
+    <TextView
+        android:id="@+id/tripHistoryNumberTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_12"
+        android:singleLine="true"
+        android:textColor="@color/gray_text1"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:text="gfgf"
+        android:layout_marginTop="@dimen/margin_short_7"
+
+
+        />
+
+
+
+    <TextView
+        android:id="@+id/tripHisDetailTV"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_15"
+        android:paddingTop="@dimen/margin_short_3"
+        android:paddingBottom="@dimen/margin_short_4"
+        android:textColor="@color/black"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:text="gfgf"
+
+        />
+
+
+
+
+</LinearLayout>

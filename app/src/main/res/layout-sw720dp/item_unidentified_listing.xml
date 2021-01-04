@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/eld_gray_bg"
+
+    >
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_100"
+        android:background="@color/white"
+        android:paddingRight="@dimen/view_height_30"
+        android:paddingLeft="@dimen/view_height_35"
+        android:layout_marginBottom="@dimen/margin_short_5"
+
+        >
+
+        <CheckBox
+            android:id="@+id/checkboxUnIdentifiedRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/unidentified_checkbox_drawable"
+            android:layout_gravity="center_vertical"
+            android:textSize="@dimen/text_size_19"
+            android:textColor="@color/color_eld_bg"
+            android:padding="@dimen/margin_short_5"
+
+            android:layout_centerVertical="true"
+
+            />
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+          android:layout_toRightOf="@id/checkboxUnIdentifiedRecord"
+            android:layout_toLeftOf="@+id/requestedByTxtVw"
+            android:layout_marginLeft="@dimen/margin_13"
+            android:layout_marginRight="@dimen/margin_10"
+            >
+
+        <TextView
+            android:id="@+id/unIdenDistanceTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/temp_distance"
+            android:textColor="@color/color_eld_theme"
+            android:textSize="@dimen/text_size_27"
+            android:textStyle="bold"
+            android:paddingBottom="@dimen/margin_short_1"
+            />
+
+
+        <TextView
+            android:id="@+id/unIdenRecordDescTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/temp_uniden"
+            android:textColor="@color/greyText"
+            android:textSize="@dimen/text_size_22"
+            android:layout_below="@+id/unIdenDistanceTV"
+            android:paddingTop="@dimen/margin_short_1"
+
+            />
+
+        </RelativeLayout>
+
+
+
+
+        <TextView
+            android:id="@+id/requestedByTxtVw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/requested_by_admin"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_19"
+            android:layout_toLeftOf="@+id/unIdenRecorTimeTV"
+            android:layout_centerVertical="true"
+            android:paddingTop="@dimen/margin_11"
+            android:paddingBottom="@dimen/margin_11"
+            android:paddingRight="@dimen/margin_28"
+            android:paddingLeft="@dimen/margin_28"
+            android:background="@drawable/requested_by_selector"
+            android:layout_marginRight="@dimen/view_height_48"
+            android:visibility="gone"
+
+            />
+
+
+        <TextView
+            android:id="@+id/unIdenRecorTimeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/temp_time_un"
+            android:textColor="@color/splash_gray"
+            android:textSize="@dimen/text_size_22"
+            android:layout_toLeftOf="@+id/unIdenArrow"
+            android:layout_centerVertical="true"
+            android:paddingTop="@dimen/view_height_50"
+            android:layout_marginRight="@dimen/view_height_32"
+
+            />
+
+        <ImageView
+            android:id="@+id/unIdenArrow"
+            android:layout_width="@dimen/view_height_31"
+            android:layout_height="@dimen/view_height_31"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/arrow_next_unidentfied"
+            />
+
+        <RelativeLayout
+            android:id="@+id/unIdentifiedDtailView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/checkboxUnIdentifiedRecord"
+            android:layout_marginLeft="@dimen/margin_20"
+            android:background="@color/transparent"
+            >
+
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+    </RelativeLayout>

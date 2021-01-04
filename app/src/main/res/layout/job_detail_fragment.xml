@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/jobDetailLay"
+    >
+
+    
+     <RelativeLayout 
+        android:id="@+id/actionBarJobDetail"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/actionbar_bg"
+        >
+        
+     
+       
+        
+        <RelativeLayout 
+              android:id="@+id/backDetailLay"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:background="@drawable/logout_selector"
+            >
+            
+              
+        
+                <ImageView 
+                    android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:src="@drawable/back_btn"
+            />
+                
+                 <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jobs"
+        android:layout_toRightOf="@+id/backBtn"
+        android:textSize="17sp"
+        android:layout_marginLeft="5dp"
+        android:textColor="@color/white"
+            />
+        
+                 
+                 
+        </RelativeLayout>
+        
+        <TextView 
+        android:id="@+id/logoutText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Load Details" 
+        android:layout_centerInParent="true"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+            />
+        
+        
+    </RelativeLayout>
+    
+     
+    <ScrollView 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/actionBarJobDetail"
+        android:layout_above="@+id/bottomBtnLay"
+        android:paddingLeft="16dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:scrollbars="none"
+        >
+        
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            
+            
+                    <TextView 
+            android:id="@+id/pickUpTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PICKUP #"
+            android:paddingTop="1dp"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:textColor="@color/gray_text1"
+            />
+        
+    
+              <TextView 
+            android:id="@+id/pickUpView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NOT AVAILABLE"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:singleLine="true"
+                  android:inputType="textCapCharacters"
+                  android:textAllCaps="true"
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+            
+              
+              
+                                  <TextView 
+            android:id="@+id/pickUpDateTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PICKUP DATE"
+            android:paddingTop="1dp"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+            android:textColor="@color/gray_text1"
+            android:layout_marginRight="10dp"
+            />
+        
+    
+              <TextView 
+            android:id="@+id/pickUpDateView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:singleLine="true"
+                  android:inputType="textCapCharacters"
+                  android:textAllCaps="true"
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+    
+              
+               <TextView
+            android:id="@+id/shipperNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SHIPPER NAME"
+            android:paddingTop="1dp"
+            android:singleLine="true"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+            android:textColor="@color/gray_text1"
+            />
+        
+    
+              <TextView 
+            android:id="@+id/shipperNameView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:singleLine="true"
+
+                  android:inputType="textCapCharacters"
+                  android:textAllCaps="true"
+
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+    
+              
+              
+                        
+              <TextView
+            android:id="@+id/shipperAddressTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SHIPPER ADDRESS"
+            android:paddingTop="1dp"
+            android:singleLine="true"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+            android:textColor="@color/gray_text1"
+            />
+        
+    
+              <TextView 
+            android:id="@+id/shipperAddressView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+                  android:layout_marginRight="10dp"
+
+                  android:inputType="textCapCharacters"
+                  android:textAllCaps="true"
+
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+    
+         
+              
+              
+                        
+                                  <TextView 
+            android:id="@+id/consigneeNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CONSIGNEE NAME"
+            android:paddingTop="1dp"
+            android:singleLine="true"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+            android:textColor="@color/gray_text1"
+            />
+        
+    
+              <TextView 
+            android:id="@+id/consigneeNameView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:singleLine="true"
+                  android:inputType="textCapCharacters"
+                  android:textAllCaps="true"
+
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+    
+         
+              
+              
+                        
+                                  <TextView 
+            android:id="@+id/consigneeAddressTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CONSIGNEE ADDRESS"
+            android:paddingTop="1dp"
+            android:singleLine="true"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+            android:textColor="@color/gray_text1"
+                                      android:inputType="textCapCharacters"
+                                      android:textAllCaps="true"
+
+            />
+        
+    
+              <TextView 
+            android:id="@+id/consigneeAddressView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+                  android:layout_marginRight="10dp"
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+    
+              
+              
+              
+                            
+                        
+                                  <TextView 
+            android:id="@+id/typeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TYPE"
+            android:paddingTop="1dp"
+            android:singleLine="true"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+            android:textColor="@color/gray_text1"
+            />
+        
+    
+              <TextView 
+            android:id="@+id/typeView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:singleLine="true"
+                  android:inputType="textCapCharacters"
+                  android:textAllCaps="true"
+
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+    
+              
+                            
+                        
+                                  <TextView 
+            android:id="@+id/quantityTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="QUANTITY"
+            android:paddingTop="1dp"
+            android:singleLine="true"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+            android:textColor="@color/gray_text1"
+                                      android:inputType="textCapCharacters"
+                                      android:textAllCaps="true"
+
+            />
+        
+    
+              <TextView 
+            android:id="@+id/quantityView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:singleLine="true"
+                  android:inputType="textCapCharacters"
+                  android:textAllCaps="true"
+
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+    
+              
+              
+                            
+                        
+                                  <TextView 
+            android:id="@+id/lbsTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LBS"
+            android:paddingTop="1dp"
+            android:singleLine="true"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+            android:textColor="@color/gray_text1"
+                                      android:inputType="textCapCharacters"
+                                      android:textAllCaps="true"
+
+            />
+        
+    
+              <TextView 
+            android:id="@+id/lbsView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:singleLine="true"
+                  android:inputType="textCapCharacters"
+                  android:textAllCaps="true"
+
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+    
+              
+              
+                            
+                        
+                                  <TextView 
+            android:id="@+id/kgsTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="KGS"
+            android:paddingTop="1dp"
+            android:singleLine="true"
+            android:paddingBottom="3dp"
+            android:textSize="12sp"
+                                      android:inputType="textCapCharacters"
+                                      android:textAllCaps="true"
+
+            android:textColor="@color/gray_text1"
+            />
+        
+    
+              <TextView 
+            android:id="@+id/kgsView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:singleLine="true"
+                  android:inputType="textCapCharacters"
+                  android:textAllCaps="true"
+
+            />
+
+              <View 
+                  android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/grey_line_list"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="5dp"
+                  />
+    
+              
+              
+              
+         
+        </LinearLayout>
+    </ScrollView>
+   
+     
+     <LinearLayout 
+         android:id="@+id/bottomBtnLay"
+         android:layout_width="match_parent"
+         android:layout_height="37dp"
+         android:layout_above="@+id/uploadDocTRpBtn"
+         android:layout_marginBottom="7dp"
+         android:orientation="horizontal"
+         android:layout_marginLeft="22dp"
+         android:layout_marginRight="22dp"
+       android:gravity="center_horizontal"
+
+         >
+         
+         <Button 
+             android:id="@+id/confirmBtn"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:text="Confirm Delivery"
+             android:textColor="@color/white"
+             android:gravity="center"
+             android:textSize="17sp"
+             android:layout_weight="0.8"
+             android:background="@drawable/green_selector"
+             android:textAllCaps="false"
+             />
+         
+         
+            <Button 
+             android:id="@+id/cancelBtn"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:text="Cancel"
+             android:textColor="@color/white"
+             android:gravity="center"
+             android:textSize="17sp"
+             android:layout_marginLeft="14dp"
+             android:layout_weight="1.2"
+                android:background="@drawable/red_btn_selector"
+                android:textAllCaps="false"
+
+             
+             />
+            
+            
+     </LinearLayout>
+
+
+    <Button
+        android:id="@+id/uploadDocTRpBtn"
+        android:layout_width="230dp"
+        android:layout_height="37dp"
+        android:text="Upload Documents"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="17sp" android:paddingLeft="35dp"
+        android:paddingRight="35dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="7dp"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="0.8"
+        android:background="@drawable/green_selector"
+        android:textAllCaps="false"
+
+        />
+
+     
+</RelativeLayout>

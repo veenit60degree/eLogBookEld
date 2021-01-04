@@ -1,0 +1,36 @@
+def artifactVersion = properties.versionName
+
+// env variables defined in CI server
+//def artifactoryUser = System.getenv('bamboo_artifactory_publisher_user')
+//def artifactoryPassword = System.getenv('bamboo_artifactory_publisher_password')
+
+apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+android {
+    compileSdkVersion 29
+   // buildToolsVersion '28.0.3'
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 29
+    }
+
+   /* lintOptions {
+        abortOnError false
+    }*/
+
+    buildTypes {
+        release
+    }
+
+    lintOptions {
+        checkReleaseBuilds false // Add this
+        abortOnError false
+    }
+
+
+}
+
+

@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="900dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/white_full_border"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:layout_marginTop="@dimen/margin_15"
+    android:layout_marginBottom="@dimen/margin_15"
+
+    >
+
+
+
+
+    <LinearLayout
+        android:id="@+id/shareLogMainLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="@dimen/margin_20"
+        android:paddingRight="@dimen/margin_20"
+        >
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/send_driver_log"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:textSize="@dimen/view_height_33"
+            android:gravity="center"
+            android:paddingLeft="@dimen/margin_25"
+            android:layout_marginBottom="@dimen/margin_18"
+            android:layout_marginTop="@dimen/margin_17"
+
+            />
+
+        <ScrollView
+            android:id="@+id/sendLogScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/shareLogChildLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+
+                >
+
+
+                <LinearLayout
+                    android:id="@+id/sendLogTypeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_58"
+                    android:layout_marginLeft="@dimen/margin_13"
+                    android:layout_marginRight="@dimen/margin_13"
+                    android:layout_marginTop="@dimen/margin_short_8"
+                    android:orientation="horizontal"
+                    android:background="@drawable/edittext_black_hover"
+                    android:padding="@dimen/margin_short_1"
+                    >
+
+                    <RelativeLayout
+                        android:id="@+id/fmcsaLogBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/voilet_left"
+                        android:layout_weight="1"
+                        >
+
+
+
+                        <TextView
+                            android:id="@+id/fmcsaLogTxtVw"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fmcsaLogs"
+                            android:textStyle="bold"
+                            android:textColor="@color/whiteee"
+                            android:textSize="@dimen/text_size_24"
+                            android:layout_centerInParent="true"
+                            />
+
+                    </RelativeLayout>
+
+
+
+                    <RelativeLayout
+                        android:id="@+id/pdfLogBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/white_right"
+                        >
+
+
+
+
+                        <TextView
+                            android:id="@+id/pdfLogTxtVw"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pdfLogs"
+                            android:textStyle="bold"
+                            android:textColor="@color/hos_remaining"
+                            android:textSize="@dimen/text_size_24"
+                            android:layout_centerInParent="true"
+                            />
+
+
+                    </RelativeLayout>
+
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/shareServiceDialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:layout_marginTop="@dimen/margin_13"
+                    android:layout_marginBottom="@dimen/margin_24"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/DataTransmissionThrough"
+                        android:textColor="@color/color_eld_theme"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_22"
+                        android:layout_marginLeft="@dimen/margin_short_5"
+                        android:layout_marginRight="@dimen/margin_10"
+                        />
+
+
+
+                    <CheckBox
+                        android:id="@+id/checkboxService"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/eld_checkbox_mobile_drawable"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/WebService"
+                        android:textSize="@dimen/text_size_22"
+                        android:textColor="@color/color_eld_theme"
+                        android:layout_marginLeft="@dimen/margin_short_5"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:checked="true"
+
+                        />
+
+
+
+                    <CheckBox
+                        android:id="@+id/checkboxEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/eld_checkbox_mobile_drawable"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/email"
+                        android:textSize="@dimen/text_size_22"
+                        android:textColor="@color/color_eld_theme"
+                        android:layout_marginLeft="@dimen/margin_15"
+                        android:paddingLeft="@dimen/margin_short_5"
+
+                        />
+
+
+
+
+                </LinearLayout>
+
+
+                <!--android:text="@string/fmcsa_desc"-->
+                <TextView
+                    android:id="@+id/fmcsaDescTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/grey_text"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:textSize="@dimen/text_size_13"
+                    android:layout_marginLeft="@dimen/margin_short_8"
+                    android:layout_marginRight="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_12"
+                    android:visibility="gone"
+                    />
+
+
+                <LinearLayout
+                    android:id="@+id/emailLogLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingRight="@dimen/margin_10"
+                    android:visibility="gone"
+                    >
+
+                    <TextView
+                        android:layout_width="@dimen/view_height_140"
+                        android:layout_height="wrap_content"
+                        android:text="@string/to"
+                        android:textColor="@color/color_eld_theme"
+                        android:textSize="@dimen/text_size_22"
+                        />
+
+
+                    <com.constants.CustomEditText
+                        android:id="@+id/amountEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/email"
+                        android:textColor="@color/black"
+                        android:layout_centerVertical="true"
+                        android:textSize="@dimen/text_size_22"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/margin_14"
+                        android:singleLine="true"
+                        android:inputType="textEmailAddress"
+                        android:layout_marginLeft="@dimen/margin_short_5"
+                        android:background="@drawable/edittext_black_hover"
+                        android:imeOptions="actionDone"
+                        />
+                </LinearLayout>
+
+
+
+
+                <RelativeLayout
+                    android:id="@+id/sharedLocLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingRight="@dimen/margin_10"
+                    android:layout_marginTop="@dimen/margin_10"
+
+                    >
+
+                    <TextView
+                        android:id="@+id/locLogTitle"
+                        android:layout_width="@dimen/view_height_140"
+                        android:layout_height="wrap_content"
+                        android:text="@string/LocationTitle"
+                        android:textColor="@color/color_eld_theme"
+                        android:textSize="@dimen/text_size_22"
+                        android:layout_marginRight="@dimen/margin_short_5"
+                        android:layout_marginTop="@dimen/margin_short_5"
+                        />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/locLogAutoComplete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/changeLocLogBtn"
+                        android:layout_toRightOf="@+id/locLogTitle"
+                        android:padding="@dimen/margin_14"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_22"
+                        android:hint="@string/no_location"
+                        android:inputType="textEmailAddress"
+                        android:imeOptions="flagNoExtractUi"
+                        android:background="@drawable/edittext_black_hover"
+                        />
+
+
+                    <Button
+                        android:id="@+id/changeLocLogBtn"
+                        android:layout_width="@dimen/view_height_60"
+                        android:layout_height="@dimen/margin_25"
+                        android:text="@string/change"
+                        android:textColor="@color/whiteee"
+                        android:textSize="@dimen/text_size_12"
+                        android:textAllCaps="false"
+                        android:background="@drawable/green_eld_selector"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_5"
+                        android:paddingTop="@dimen/margin_short_3"
+                        android:paddingBottom="@dimen/margin_short_5"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="@dimen/margin_short_3"
+                        android:visibility="gone"
+
+                        />
+
+
+                </RelativeLayout>
+
+
+
+                <RelativeLayout
+                    android:id="@+id/AobrdSharedLocLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:visibility="gone"
+
+                    >
+
+
+                    <TextView
+                        android:id="@+id/l1"
+                        android:layout_width="@dimen/view_height_140"
+                        android:layout_height="wrap_content"
+                        android:text="@string/EnterCity"
+                        android:textColor="@color/color_eld_theme"
+                        android:layout_marginBottom="@dimen/margin_short_8"
+                        android:textSize="@dimen/text_size_22"
+                        android:layout_marginRight="@dimen/margin_short_5"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_marginTop="@dimen/margin_short_5"
+
+                        />
+
+                    <com.constants.CustomEditText
+                        android:id="@+id/cityShareEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_5"
+                        android:paddingLeft="@dimen/margin_short_8"
+                        android:paddingRight="@dimen/margin_short_8"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_22"
+                        android:hint="@string/City"
+                        android:singleLine="true"
+                        android:imeOptions="flagNoExtractUi|actionDone"
+                        android:background="@drawable/edittext_black_hover"
+                        android:layout_toRightOf="@+id/l1"
+
+                        />
+
+
+                    <TextView
+                        android:id="@+id/l2"
+                        android:layout_width="@dimen/view_height_90"
+                        android:layout_height="wrap_content"
+                        android:text="@string/SelectState"
+                        android:textColor="@color/color_eld_theme"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:textSize="@dimen/text_size_22"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_below="@+id/cityShareEditText"
+
+                        />
+
+                    <Spinner
+                        android:id="@+id/stateSharedSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:paddingTop="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_5"
+                        android:paddingLeft="@dimen/margin_short_8"
+                        android:paddingRight="@dimen/margin_short_8"
+                        android:layout_marginBottom="@dimen/margin_10"
+                        style="@style/share_dialog_spinner_style"
+                        android:layout_below="@+id/cityShareEditText"
+                        android:layout_toRightOf="@+id/l2"
+
+
+                        />
+
+
+                </RelativeLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingRight="@dimen/margin_10"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginRight="@dimen/margin_short_5"
+                        android:layout_weight="1"
+                        >
+                        <TextView
+                            android:layout_width="@dimen/view_height_140"
+                            android:layout_height="wrap_content"
+                            android:text="@string/from_date"
+                            android:textColor="@color/color_eld_theme"
+                            android:textSize="@dimen/text_size_22"
+                            />
+
+                        <TextView
+                            android:id="@+id/startDateTv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/date_format"
+                            android:textColor="@color/black"
+                            android:singleLine="true"
+                            android:padding="@dimen/margin_14"
+                            android:textSize="@dimen/text_size_22"
+                            android:layout_marginLeft="@dimen/margin_short_5"
+                            android:background="@drawable/edittext_black_hover"
+
+                            />
+
+
+                    </LinearLayout>
+
+
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/margin_15"
+                        android:layout_weight="1"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/to_date"
+                            android:textColor="@color/color_eld_theme"
+                            android:textSize="@dimen/text_size_22"
+
+                            />
+
+                        <TextView
+                            android:id="@+id/endDateTv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/date_format"
+                            android:textColor="@color/black"
+                            android:singleLine="true"
+                            android:padding="@dimen/margin_14"
+                            android:textSize="@dimen/text_size_22"
+                            android:layout_marginLeft="@dimen/margin_short_5"
+                            android:background="@drawable/edittext_black_hover"
+
+                            />
+
+
+                    </LinearLayout>
+
+
+
+
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:id="@+id/inspectorCommentLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    >
+                    <TextView
+                        android:layout_width="@dimen/view_height_140"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Comments"
+                        android:textColor="@color/color_eld_theme"
+                        android:textSize="@dimen/text_size_22"
+
+                        />
+
+                    <com.constants.CustomEditText
+                        android:id="@+id/inspCmntEditTxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/inspctr_Comments"
+                        android:textColor="@color/black"
+                        android:minLines="2"
+                        android:gravity="left|top"
+                        android:padding="@dimen/margin_14"
+                        android:textSize="@dimen/text_size_22"
+                        android:layout_marginLeft="@dimen/margin_short_5"
+                        android:background="@drawable/edittext_black_hover"
+
+                        />
+
+
+                </LinearLayout>
+
+
+
+
+                <LinearLayout
+                    android:id="@+id/logBtnLay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="@dimen/view_height_30"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:layout_marginBottom="@dimen/margin_29"
+                    >
+
+
+                    <LinearLayout
+                        android:id="@+id/cancelDriverLogBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/view_height_56"
+                        android:orientation="horizontal"
+                        android:paddingLeft="@dimen/margin_25"
+                        android:paddingRight="@dimen/margin_25"
+                        android:gravity="center"
+                        android:background="@drawable/gray_selector"
+                        android:layout_marginRight="@dimen/margin_23"
+
+                        >
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_26"
+                            android:layout_height="@dimen/margin_26"
+                            android:src="@drawable/cancel_log"
+                            android:layout_marginRight="@dimen/margin_14"
+                            />
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cancel"
+                            android:textColor="@color/whiteee"
+                            android:textSize="@dimen/text_size_23"
+                            android:gravity="center_horizontal"
+
+                            />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/shareDriverLogBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/view_height_56"
+                        android:orientation="horizontal"
+                        android:paddingLeft="@dimen/view_height_32"
+                        android:paddingRight="@dimen/view_height_32"
+                        android:gravity="center"
+                        android:background="@drawable/blue_scale_btn_selector"
+
+                        >
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_26"
+                            android:layout_height="@dimen/margin_26"
+                            android:src="@drawable/send_log_new"
+                            android:layout_marginRight="@dimen/margin_14"
+                            />
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/send"
+                            android:textColor="@color/whiteee"
+                            android:textSize="@dimen/text_size_23"
+                            android:gravity="center_horizontal"
+
+                            />
+
+                    </LinearLayout>
+
+
+
+
+
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/ShareLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:background="@drawable/white_hover"
+            android:paddingTop="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_10"
+            android:visibility="gone"
+
+            >
+
+
+            <DatePicker
+                android:id="@+id/ShareDatePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:calendarViewShown="false"
+                android:background="@drawable/white_border"
+
+
+                />
+
+            <!--style="@style/datepicker"-->
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_15"
+                >
+
+                <Button
+                    android:id="@+id/cancelDateBtn"
+                    android:layout_width="@dimen/view_height_115"
+                    android:layout_height="@dimen/view_height_32"
+                    android:text="@string/cancel"
+                    android:background="@drawable/gray_login_selector"
+                    android:textColor="@color/whiteee"
+                    android:layout_marginBottom="@dimen/margin_short_5"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:layout_marginRight="@dimen/margin_10"
+                    />
+
+
+                <Button
+                    android:id="@+id/ShareDateBtn"
+                    android:layout_width="115dp"
+                    android:layout_height="32dp"
+                    android:text="@string/SelectDate"
+                    android:background="@drawable/blue_scale_btn_selector"
+                    android:textColor="@color/whiteee"
+                    android:layout_marginBottom="@dimen/margin_short_5"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
+                    android:textAllCaps="false"
+                    android:layout_marginLeft="@dimen/margin_10"
+
+                    />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/sendLogProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+
+</RelativeLayout>

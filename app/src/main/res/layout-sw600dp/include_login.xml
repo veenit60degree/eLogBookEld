@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:layout_marginLeft="@dimen/view_height_100"
+        android:layout_marginRight="@dimen/view_height_100"
+        android:paddingBottom="@dimen/margin_20"
+
+        >
+
+
+        <TextView
+            android:id="@+id/driverTitleTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/margin_15"
+            android:layout_marginTop="@dimen/margin_25"
+            android:text="@string/MainDriver"
+            android:textSize="@dimen/text_size_23"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+
+            />
+
+
+
+        <LinearLayout
+            android:id="@+id/loginLay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_54"
+            android:orientation="horizontal"
+            android:layout_marginLeft="@dimen/margin_12"
+            android:layout_marginRight="@dimen/margin_12"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:layout_below="@+id/driverTitleTV"
+            >
+
+            <ImageView
+                android:layout_width="@dimen/view_height_35_g"
+                android:layout_height="@dimen/view_height_35_g"
+                android:src="@drawable/username_green"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:visibility="gone"
+
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <com.constants.CustomEditText
+                android:id="@+id/userNameText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/Username"
+                android:textColorHint="@color/colorAccentTextHover"
+                android:background="@color/transparent"
+                android:textColor="@color/colorPrimary"
+                android:paddingRight="@dimen/margin_10"
+                android:paddingLeft="@dimen/margin_short_8"
+                android:textSize="@dimen/text_size_20"
+                android:singleLine="true"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:imeOptions="actionNext"
+                />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--android:inputType="textCapSentences"-->
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            android:layout_below="@+id/loginLay"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            />
+
+        <!--android:background="@drawable/white_edit_bg"-->
+        <LinearLayout
+            android:id="@+id/passLay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_54"
+            android:orientation="horizontal"
+            android:layout_below="@+id/loginLay"
+
+            android:layout_marginLeft="@dimen/margin_12"
+            android:layout_marginRight="@dimen/margin_12"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:layout_marginTop="@dimen/margin_12"
+
+            >
+
+            <ImageView
+                android:layout_width="@dimen/view_height_35_g"
+                android:layout_height="@dimen/view_height_35_g"
+                android:src="@drawable/password_green"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:visibility="gone"
+
+                />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/colorAccent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <com.constants.CustomEditText
+                android:id="@+id/passwordText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Password"
+                android:textColorHint="@color/colorAccentTextHover"
+                android:background="@color/transparent"
+                android:textColor="@color/colorPrimary"
+                android:inputType="textPassword"
+                android:paddingRight="@dimen/margin_10"
+                android:paddingLeft="@dimen/margin_short_8"
+                android:textSize="@dimen/text_size_20"
+                android:singleLine="true"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:imeOptions="actionDone"
+
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            android:layout_below="@+id/passLay"
+            android:layout_marginLeft="@dimen/margin_12"
+            android:layout_marginRight="@dimen/margin_12"
+            />
+
+        <Button
+            android:id="@+id/loginBtn"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_45"
+            android:text="Login"
+            android:textColor="@color/whiteee"
+            android:layout_below="@+id/passLay"
+            android:textSize="@dimen/text_size_19"
+            android:layout_marginTop="@dimen/view_height_45"
+            android:layout_marginLeft="@dimen/view_height_140"
+            android:layout_marginRight="@dimen/view_height_140"
+            android:background="@drawable/green_selector"
+            android:textAllCaps="false"
+
+            />
+
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

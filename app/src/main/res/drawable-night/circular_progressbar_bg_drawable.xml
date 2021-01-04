@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<item>
+    <shape android:shape="oval">
+        <solid android:color="@color/hos_progress_bg"/>
+        <stroke android:color="@color/hos_progress_bg" android:width="0dp"/>
+        <!-- Set the same value for both width and height to get a circular shape -->
+        <size android:width="150dp" android:height="150dp"/>
+    </shape>
+</item>
+</selector>
+
+    <!--
+    <?xml version="1.0" encoding="utf-8"?>
+    <shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <solid
+            android:color="@color/hos_progress_bg" />
+
+        <size
+            android:width="@dimen/view_height_200"
+            android:height="@dimen/view_height_200" />
+
+        <corners
+            android:bottomLeftRadius="@dimen/view_height_100"
+            android:bottomRightRadius="@dimen/view_height_100"
+            android:topLeftRadius="@dimen/view_height_100"
+            android:topRightRadius="@dimen/view_height_100" />
+
+    </shape>
+    -->

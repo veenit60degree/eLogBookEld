@@ -1,0 +1,207 @@
+{
+  "project_info": {
+    "project_number": "461625665210",
+    "firebase_url": "https://smarttrack-156207.firebaseio.com",
+    "project_id": "smarttrack-156207",
+    "storage_bucket": "smarttrack-156207.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461625665210:android:44417d05b00d05aa284483",
+        "android_client_info": {
+          "package_name": "com.arethos.alscontainer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461625665210-e1idhv2mptojr9kkb6m50ohp59emi2bs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.arethos.alscontainer",
+            "certificate_hash": "bab849d2836bed44284a05b2c5e06f4dcb04f728"
+          }
+        },
+        {
+          "client_id": "461625665210-gc1nakf2vr7gkgeu2jjbv8ke93n341ul.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClcf4fhjE9-W_bcVJk46HOsklsQQqM8ME"
+        },
+        {
+          "current_key": "AIzaSyBPsQVPdkl5Hgxf6ycfh9x5KEUA6vrfiIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461625665210-gc1nakf2vr7gkgeu2jjbv8ke93n341ul.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "461625665210-tn58om0e8c269sm708c0hg4eb44kctnt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Arethos.Container"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461625665210:android:a0b4f418dca3e13e284483",
+        "android_client_info": {
+          "package_name": "com.messaging.logistic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461625665210-2ckajkvdsntj5qafee9408n8em7ajb6e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.messaging.logistic",
+            "certificate_hash": "8dfb3b406c58a094a350e8c8188ec604012ee9e8"
+          }
+        },
+        {
+          "client_id": "461625665210-gc1nakf2vr7gkgeu2jjbv8ke93n341ul.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClcf4fhjE9-W_bcVJk46HOsklsQQqM8ME"
+        },
+        {
+          "current_key": "AIzaSyBPsQVPdkl5Hgxf6ycfh9x5KEUA6vrfiIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461625665210-gc1nakf2vr7gkgeu2jjbv8ke93n341ul.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "461625665210-tn58om0e8c269sm708c0hg4eb44kctnt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Arethos.Container"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461625665210:android:2ccf29cb924490ee284483",
+        "android_client_info": {
+          "package_name": "com.order.meal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461625665210-gc1nakf2vr7gkgeu2jjbv8ke93n341ul.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClcf4fhjE9-W_bcVJk46HOsklsQQqM8ME"
+        },
+        {
+          "current_key": "AIzaSyBPsQVPdkl5Hgxf6ycfh9x5KEUA6vrfiIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461625665210-gc1nakf2vr7gkgeu2jjbv8ke93n341ul.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "461625665210-tn58om0e8c269sm708c0hg4eb44kctnt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Arethos.Container"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461625665210:android:31a2ca18c1e1f210",
+        "android_client_info": {
+          "package_name": "com.tracking.smarttrack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461625665210-avlt8lm4jgnvn8n51ejitq69sk3u8up3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tracking.smarttrack",
+            "certificate_hash": "1e2caca246aa27f424a7aa80e7d5a909c809b1e8"
+          }
+        },
+        {
+          "client_id": "461625665210-tpdqi8se6r1rgpcmgcefpooojhjsu5g7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tracking.smarttrack",
+            "certificate_hash": "72a4845b3d7388fc0fa9912b1f2657ed38aea36b"
+          }
+        },
+        {
+          "client_id": "461625665210-271l14j2d3fa8btmtfcout95uv38dgsa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tracking.smarttrack",
+            "certificate_hash": "3475e94407bc6acfe5d30f570fd6982515c88fb6"
+          }
+        },
+        {
+          "client_id": "461625665210-gc1nakf2vr7gkgeu2jjbv8ke93n341ul.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClcf4fhjE9-W_bcVJk46HOsklsQQqM8ME"
+        },
+        {
+          "current_key": "AIzaSyBPsQVPdkl5Hgxf6ycfh9x5KEUA6vrfiIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461625665210-gc1nakf2vr7gkgeu2jjbv8ke93n341ul.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "461625665210-tn58om0e8c269sm708c0hg4eb44kctnt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Arethos.Container"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

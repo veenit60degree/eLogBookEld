@@ -1,0 +1,3 @@
+com.simplify.ink
+attr inkFlags
+styleable InkView inkFlags

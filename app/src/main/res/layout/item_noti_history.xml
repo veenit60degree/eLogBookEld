@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/view_height_90"
+
+    >
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/margin_short_5"
+        android:layout_marginLeft="@dimen/margin_short_5"
+        android:layout_marginRight="@dimen/margin_short_5"
+        android:background="@color/white_theme"
+
+
+        >
+        <!--margin_13-->
+    <RelativeLayout
+        android:id="@+id/notiRecycleMainView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gray_eld_default"
+       android:paddingLeft="@dimen/margin_10"
+        android:paddingRight="@dimen/margin_10"
+        android:paddingTop="@dimen/margin_short_7"
+        android:paddingBottom="@dimen/margin_short_6"
+
+
+        android:layout_centerVertical="true"
+        >
+        <!--android:layout_marginRight="@dimen/margin_18"-->
+
+        <TextView
+            android:id="@+id/historyTitleTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold"
+            android:textColor="@color/color_eld_theme"
+
+            />
+
+
+        <TextView
+            android:id="@+id/historyDescTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/black"
+            android:layout_below="@+id/historyTitleTV"
+            android:layout_toLeftOf="@+id/deleteHistoryBtn"
+
+            />
+
+
+        <TextView
+            android:id="@+id/historyDurationTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/color_eld_theme"
+            android:layout_marginRight="@dimen/view_height_35"
+            android:layout_alignParentRight="true"
+
+            />
+
+        <ImageView
+            android:id="@+id/deleteHistoryBtn"
+            android:layout_width="@dimen/view_height_50"
+            android:layout_height="@dimen/view_height_40"
+            android:padding="@dimen/margin_short_5"
+            android:src="@drawable/delete_red"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+
+            />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
+
+</RelativeLayout>

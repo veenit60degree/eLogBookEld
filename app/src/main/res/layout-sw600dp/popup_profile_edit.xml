@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+    
+    <LinearLayout
+        android:id="@+id/shareFileLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingLeft="@dimen/margin_10"
+        android:paddingRight="@dimen/margin_10"
+        android:paddingTop="30dp" >
+    
+
+    
+    <Button 
+        android:id="@+id/cameraBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_45"
+        android:background="@drawable/media_white_drawable"
+        android:textColor="@color/black_hover"
+           android:text="Camera"
+        style="@style/AppTheme"
+        android:textSize="@dimen/text_size_19"
+        />
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_border"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        />
+    <Button 
+        android:id="@+id/galleryBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_45"
+        android:background="@drawable/media_white_drawable"
+        android:textColor="@color/black_hover"
+        android:text="Gallery"
+        style="@style/AppTheme"
+        android:textSize="@dimen/text_size_19"
+        />
+    
+    
+    <Button 
+        android:id="@+id/closeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_45"
+        android:text="Cancel"
+           android:background="@drawable/media_white_drawable"
+        android:textColor="@color/black_hover"
+        android:layout_marginTop="5dp"
+        android:textStyle="bold"
+        style="@style/AppTheme"
+        android:textSize="@dimen/text_size_19"
+          
+        />
+</LinearLayout>
+
+    
+    
+    
+</RelativeLayout>

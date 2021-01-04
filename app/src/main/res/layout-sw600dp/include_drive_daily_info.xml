@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+
+    >
+
+    <LinearLayout
+        android:id="@+id/LogInfoLay"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_48"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/margin_short_8"
+        android:paddingTop="@dimen/margin_short_8"
+        android:paddingLeft="@dimen/margin_short_5"
+        android:paddingRight="@dimen/margin_short_5"
+        android:gravity="center_vertical"
+        android:background="@color/color_eld_theme"
+
+        >
+
+
+    <TextView
+    android:id="@+id/certifyNoTV"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/No_"
+    android:textSize="@dimen/text_size_16"
+    android:textColor="@color/whiteee"
+    android:textStyle="bold"
+        android:gravity="center"
+        android:singleLine="true"
+    android:layout_weight="1.2"
+    />
+
+
+    <TextView
+        android:id="@+id/certifyStatusTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Status"
+        android:textSize="@dimen/text_size_16"
+        android:textColor="@color/whiteee"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:gravity="center"
+        android:layout_weight="1.1"
+        />
+
+
+    <TextView
+        android:id="@+id/certifyStartTimeTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Start_time"
+        android:textSize="@dimen/text_size_16"
+        android:textColor="@color/whiteee"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:gravity="center"
+        android:layout_weight="1.1"
+        />
+
+
+    <TextView
+        android:id="@+id/certifyDurationTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Duration"
+        android:textSize="@dimen/text_size_16"
+        android:textColor="@color/whiteee"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:gravity="center"
+        android:layout_weight="1.1"
+        />
+
+
+        <RelativeLayout
+            android:id="@+id/certifyLocationLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            >
+            <TextView
+                android:id="@+id/certifyLocationTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Location"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/whiteee"
+                android:textStyle="bold"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_toLeftOf="@+id/certifyLocationIV"
+
+
+                />
+
+            <ImageView
+                android:id="@+id/certifyLocationIV"
+                android:layout_width="@dimen/margin_24"
+                android:layout_height="@dimen/view_height_33"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/pencil"
+                android:layout_centerVertical="true"
+                android:visibility="gone"
+                />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/certifyRemarksLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            >
+
+        <TextView
+            android:id="@+id/certifyRemarksTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Remarks_simple"
+            android:textSize="@dimen/text_size_16"
+            android:textColor="@color/whiteee"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:paddingLeft="@dimen/margin_short_5"
+            android:gravity="center"
+            android:layout_toLeftOf="@+id/certifyRemarksIV"
+
+            />
+
+            <ImageView
+                android:id="@+id/certifyRemarksIV"
+                android:layout_width="@dimen/margin_24"
+                android:layout_height="@dimen/margin_27"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/pencil"
+                android:layout_centerVertical="true"
+                android:visibility="gone"
+                />
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/certifyExcptnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/exception"
+            android:textSize="@dimen/text_size_16"
+            android:textColor="@color/whiteee"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:gravity="center"
+            android:layout_weight="1.2"
+            android:visibility="gone"
+
+            />
+
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

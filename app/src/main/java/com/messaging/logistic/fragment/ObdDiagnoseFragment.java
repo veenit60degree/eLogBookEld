@@ -1,0 +1,415 @@
+package com.messaging.logistic.fragment;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import android.text.Html;
+import android.util.Log;
+import android.view.InflateException;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.constants.Constants;
+import com.constants.TcpClient;
+import com.messaging.logistic.Globally;
+import com.messaging.logistic.R;
+import com.messaging.logistic.TabAct;
+import com.wifi.settings.WiFiConfig;
+
+import org.json.JSONObject;
+
+import java.util.Vector;
+
+import dal.tables.OBDDeviceData;
+import obdDecoder.Decoder;
+
+public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListener{
+
+    View rootView;
+    TextView odometerTxtView, gpsTxtView, simInfoTxtView, resetObdTxtView, obdDataTxtView, EldTitleTV, responseRawTxtView;
+    RelativeLayout rightMenuBtn;
+    RelativeLayout eldMenuLay;
+    ImageView eldMenuBtn;
+    ProgressBar obdProgressBar;
+    AlertDialog saveJobAlertDialog;
+    private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
+
+    WiFiConfig wifiConfig;
+    TcpClient tcpClient;
+    OBDDeviceData data;
+    Decoder decoder;
+    Constants constants;
+    int clickBtnFlag = 0;
+    int SIMFlag = 101;
+    int CanFlag = 102;
+    int RestartObdFlag = 103;
+    int GpsFlag = 104;
+    int newCmd1 = 1001;
+
+    String simNumber = "";
+    String responseTxt = "<b> ############## OBD Response ############## </b> <br><br><br> ";
+    String htmlBlueFont = "<font color='blue'>";
+    String htmlRedFont = "<font color='red'>";
+    String closeFont = "</font>";
+    Button button2;
+    EditText field1;
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        if (rootView != null) {
+            ViewGroup parent = (ViewGroup) rootView.getParent();
+            if (parent != null)
+                parent.removeView(rootView);
+        }
+        try {
+            rootView = inflater.inflate(R.layout.fragment_obd_diagnose, container, false);
+            rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        } catch (InflateException e) {
+            e.printStackTrace();
+        }
+
+
+        initView(rootView);
+
+        return rootView;
+    }
+
+
+    void initView(View v) {
+
+        data            = new OBDDeviceData();
+        decoder         = new Decoder();
+        tcpClient       = new TcpClient(obdResponseHandler);
+        wifiConfig      = new WiFiConfig();
+        constants       = new Constants();
+
+        odometerTxtView = (TextView) v.findViewById(R.id.odometerTxtView);
+        gpsTxtView      = (TextView) v.findViewById(R.id.gpsTxtView);
+        simInfoTxtView  = (TextView) v.findViewById(R.id.simInfoTxtView);
+        resetObdTxtView = (TextView) v.findViewById(R.id.resetObdTxtView);
+        obdDataTxtView  = (TextView) v.findViewById(R.id.obdDataTxtView);
+        EldTitleTV      = (TextView) v.findViewById(R.id.EldTitleTV);
+        responseRawTxtView = (TextView) v.findViewById(R.id.responseRawTxtView);
+
+        obdProgressBar  = (ProgressBar)v.findViewById(R.id.obdProgressBar);
+        rightMenuBtn    = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
+        eldMenuLay      = (RelativeLayout)v.findViewById(R.id.eldMenuLay);
+        eldMenuBtn      = (ImageView)v.findViewById(R.id.eldMenuBtn);
+
+        button2         = (Button)v.findViewById(R.id.button2);
+        field1          = (EditText)v.findViewById(R.id.field1);
+
+        rightMenuBtn.setVisibility(View.INVISIBLE);
+        eldMenuBtn.setImageResource(R.drawable.back_white);
+        EldTitleTV.setText(getResources().getString(R.string.obd_diagnose));
+
+        button2.setVisibility(View.GONE);
+        field1.setVisibility(View.GONE);
+      //  responseRawTxtView.setVisibility(View.GONE);
+
+        obdDataTxtView.setOnClickListener(this);
+        odometerTxtView.setOnClickListener(this);
+        gpsTxtView.setOnClickListener(this);
+        simInfoTxtView.setOnClickListener(this);
+        resetObdTxtView.setOnClickListener(this);
+        eldMenuLay.setOnClickListener(this);
+        button2.setOnClickListener(this);
+
+    }
+
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()){
+
+            case R.id.button2:
+
+                responseRawTxtView.setText("");
+                //  if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
+                clickBtnFlag = newCmd1;
+                obdProgressBar.setVisibility(View.VISIBLE);
+                tcpClient.sendMessage(field1.getText().toString().trim());
+                obdDataTxtView.setText("");
+               /* }else{
+                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                }*/
+
+                break;
+
+
+
+
+
+
+            case R.id.obdDataTxtView:
+                if(clickBtnFlag == SIMFlag) {
+                    if(simNumber.trim().length() > 0) {
+                        constants.CopyString(getActivity(), simNumber);
+                    }
+                }
+                break;
+
+
+            case R.id.responseRawTxtView:
+
+                if(responseRawTxtView.getText().toString().trim().length() > 0) {
+                    constants.CopyString(getActivity(), responseRawTxtView.getText().toString().trim());
+                }
+                break;
+
+
+
+            case R.id.odometerTxtView:
+                responseRawTxtView.setText("");
+                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
+                    clickBtnFlag = CanFlag;
+                    obdProgressBar.setVisibility(View.VISIBLE);
+                    tcpClient.sendMessage("123456,can");
+                    obdDataTxtView.setText("");
+                }else{
+                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                }
+
+
+          /*      String aaaa = "*TS01,868323029228761,024432250219,GPS:3;N49.177366;W122.723542;0;344;0.91,STT:C242;0,MGR:490784638,ADC:0;14.49;1;24.65;2;4.11,CAN:0B00F00471AAA9E31F00F4AA0B00FEC15ECE9C00829C9C000B00FEE0B2450600B24506000B00FEEE733E232BFFFF32FF0B00FEE583310000FFFFFFFF0B00FEE85B2D3E3EFFFFB54F0B00FEE9D28A00004B8A00000B00F003D07E1CFFFF0C82FF0B00FEEFADFFFF6FFFFFFFFA0B00FEBF933B7C7D868687860B00FEF6FF1A434DFFFFFFFF0B00FEF7FFFFFFFF1D01FFFF0B00FEFCFF93FFFFFFFFFFFF#";
+               String curr = "*TS01,861107033666695,055408130620,CAN:0B00F004F1BCBD712A00FFBD0B00FEC1F6FEA812FFFFFFFF0B00FEE5DE26010009A019000B00FEBFD1557C7D8687FFFF#";
+               String bbbb = "*TS01,861107033675233,044517100620,GPS:3;N40.019955;W120.105307;96;170;0.71,STT:C242;0,MGR:357438382,ADC:0;13.73;1;51.82;2;4.06,CAN:0B00F004F2A0A0CA2800F3FF0B00FEC1389C460FFFFFFFFF0B00FEEE7AFFEB30FFFFFFFF0B00FEE85005010000FF47770B00FEE90DE202000DE202000B00F003510026FF00FFFFFF0B00FEEFFFFFFF4B15A9FFFA0B00FEF6FF2A5A55FF4C49FF0B00FEFCFF7EFFFFFFFFFFFF,EGT:20787525,EVT:1#";
+               String message = "*TS01,861641040534124,225428240120,CAN:0B00F00448E1E05A2F00F4E00B00FEC18EC65C0FFFFFFFFF0B00FEE0B60C9D00B60C9D000B00FEEE844D802FFFFF55FF0B00FEE5F7B205002E5614000B00FEE95524050074360E000B00F003DD0000FFFFFF00FF0B00FEEFC1FFFF54FFFFFFFA0B00FEF6FF305463FF8943FF0B00FEF7FFFFFFFF1D011D010B00FEFCFF77FFFFFFFFFFFF,EGT:25371098,EVT:1#";
+                  String odbText = "*TS01,861107033601593,051913170919,GPS:3;N49.177049;W122.723174;0;0;1.19,STT:C242;0,MGR:709596933,ADC:0;13.98;1;55.64;2;4.10,CAN:0B00F004407D83C31200F4830B00FEC1CAC39404FFFFFFFF0B00FEE01DE92E001DE92E000B00FEEE6C3B962AFFFF3AFF0B00FEE56AA80100FFFFFFFF0B00FEE8402E0000FFFFA94F0B00FEE9BAED0300BAED03000B00F003D1000AFFFFFF5FFF0B00FEEFA7FFFF49FFFFFFFA0B00FEF6FF004D32FFFFFFFF0B00FEF7FFFFFFFF1901FFFF0B00FEFCFFA4FFFFFFFFFFFF,EGT:19350812,EVT:1#";
+                  String dataaa = "*TS01,861107034211905,043806261119,CAN:0B00F004607D87DA15000F880B00FEC129EA9303FFFFFFFF0B00FEE097E80700F7A224000B00FEEE4EFF5027FFFFFFFF0B00FEE5693A010097C504000B00FEE8FFFFFFFFFFFF9E4D0B00FEE9CAE70000AE2604000B00F003D10015FFFF4F5E800B00FEEFFFFFFF450F7DFFFA0B00FEF6FF033AFFFFFFFFFF0B00FEF7FFFFFFFF1501FFFF0B00FEFCFFFFFFFFFFFFFFFF#";
+                  String aa = "*TS01,868323029228761,024432250219,GPS:3;N49.177366;W122.723542;0;344;0.91,STT:C242;0,MGR:490784638,ADC:0;14.49;1;24.65;2;4.11,CAN:1600FEE10303602249804D1B282D24F0371DE047EF05190B00F004407D85121900F4860B00FEF1F7FFFFCFFFFFFFFF0B00FEC19206E005FFFFFFFF0B00FEEE5F309329FFFF3AFF0B00FEF23D0000000406FFFF0B00FEFCFF89FFFFFFFFFFFF0B00FEF5FFFFFFFFFFFFFFFF0B00FEF6FF014834FFFFFFFF0B00FEE0F1303C00F1303C00#";
+                  parseObdCanData(aaaa);
+*/
+
+                break;
+
+            case R.id.gpsTxtView:
+
+                responseRawTxtView.setText("");
+                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
+                    clickBtnFlag = GpsFlag;
+                    obdProgressBar.setVisibility(View.VISIBLE);
+                    tcpClient.sendMessage("123456,gps");
+                    obdDataTxtView.setText("");
+                }else{
+                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                }
+                break;
+
+
+            case R.id.simInfoTxtView:
+                responseRawTxtView.setText("");
+                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
+                    clickBtnFlag = SIMFlag;
+                    obdProgressBar.setVisibility(View.VISIBLE);
+                    tcpClient.sendMessage("123456,cid");
+                    obdDataTxtView.setText("");
+                }else{
+                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                }
+
+                break;
+
+
+            case R.id.resetObdTxtView:
+
+                ObdDialog();
+
+                break;
+
+            case R.id.eldMenuLay:
+                getFragmentManager().popBackStack();
+                break;
+        }
+    }
+
+
+
+    public void ObdDialog(){
+
+        try {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setTitle("Reset OBD !!");
+            alertDialogBuilder.setMessage("Do you really want to reset the OBD device?");
+
+            alertDialogBuilder.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
+                                clickBtnFlag = RestartObdFlag;
+                                obdProgressBar.setVisibility(View.VISIBLE);
+                                tcpClient.sendMessage("123456,rst");
+                                obdDataTxtView.setText("");
+                            }else{
+                                Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                            }
+                        }
+                    });
+
+            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            saveJobAlertDialog = alertDialogBuilder.create();
+            vectorDialogs.add(saveJobAlertDialog);
+            saveJobAlertDialog.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+    TcpClient.OnMessageReceived obdResponseHandler = new TcpClient.OnMessageReceived() {
+        @Override
+        public void messageReceived(String message) {
+            Log.d("response", "OBD Respone: " +message);
+            responseRawTxtView.setText(message);
+
+
+            try{
+
+                String noCanData = "OBD Data not available";
+                String noObd = "obd not connected";
+                simNumber = "";
+
+                obdDataTxtView.setText(Html.fromHtml(responseTxt));
+                obdProgressBar.setVisibility(View.GONE);
+
+                if(!message.equals(noObd) && message.length() > 10){
+
+                    if(clickBtnFlag == SIMFlag) {
+
+                        try{
+                            data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
+                            JSONObject simObj = new JSONObject(data.toString());
+                            simNumber = simObj.getString("SIM");
+                            obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlBlueFont + "<b>Sim Number: </b>" +simNumber + closeFont));
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+
+                    }else if(clickBtnFlag == CanFlag){
+                        if(message.contains("CAN:UNCONNECTED")){
+                            Globally.EldScreenToast(odometerTxtView, noCanData, getResources().getColor(R.color.colorVoilation));
+                            obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlRedFont + "Odometer data not available" + closeFont) );
+
+                        }else {
+
+                            parseObdCanData(message);
+
+                        }
+
+
+                    }else if(clickBtnFlag == GpsFlag){
+                        if (message.contains("GPS")) {
+                            String[] responseArray = message.split("GPS");
+                            if (responseArray.length > 1) {
+                                String gpsData = responseArray[1];
+                                String[] gpsArray = gpsData.split(";");
+                                if (gpsArray.length > 3) {
+                                    String latitude = gpsArray[1].substring(1, gpsArray[1].length());
+                                    String longitude = gpsArray[2].substring(1, gpsArray[2].length());
+                                    String speed = gpsArray[3];
+
+                                    String obdGPS = "<b>Latitude:</b> " + latitude + "<br />" +
+                                            "<b>Longitude:</b> " + longitude + "<br />" +
+                                            "<b>Speed:</b> " + speed;
+                                    Log.d("obdGPS", "obdGPS: " + obdGPS);
+                                    obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlBlueFont +obdGPS + closeFont));
+
+
+                                }
+                            }
+                        }
+                    }else if(clickBtnFlag == RestartObdFlag){
+                        if(message.contains("RST")){
+                            Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_restarted), getResources().getColor(R.color.colorDriving));
+                            obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlBlueFont + getResources().getString(R.string.obd_restarted) + closeFont));
+                        }
+                    }else if(clickBtnFlag == newCmd1){
+                        obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlBlueFont + responseTxt + closeFont));
+                    }
+                }else{
+                    //*TS01,866758047725979,070204100120,RST#
+                    if(clickBtnFlag == RestartObdFlag){
+                        if(message.equals(noObd)){
+                            Globally.EldScreenToast(odometerTxtView, noObd, getResources().getColor(R.color.colorVoilation));
+                        }else {
+                            Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_restarted), getResources().getColor(R.color.colorDriving));
+                        }
+                    }else {
+                        Globally.EldScreenToast(odometerTxtView, noObd, getResources().getColor(R.color.colorVoilation));
+                    }
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+                obdDataTxtView.setText("" + e.toString());
+            }
+        }
+    };
+
+
+    private void parseObdCanData(String message){
+        try {
+
+            String preFix = "*TS01,861107039609723,050743230120,";
+            String postFix = "#";
+
+            if(message.length() > 5 ){
+                String first = message.substring(0, 5);
+                String last = message.substring(message.length()-1, message.length());
+                if(!first.equals("*TS01") && !last.equals("#")){
+                    message = preFix + message + postFix;
+                }
+            }
+            // have to comment "odbText" object ans pass "message" object to in decoder class
+
+            data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
+            JSONObject canObj = new JSONObject(data.toString());
+            String MileageInMeters          = wifiConfig.checkJsonParameter(canObj, "MileageInMeters", "0");
+            String TripDistanceInKM         = wifiConfig.checkJsonParameter(canObj, "TripDistanceInKM", "0");
+            String HighResolutionDistance   = wifiConfig.checkJsonParameter(canObj, "HighResolutionTotalVehicleDistanceInKM", "0");
+            String WheelBasedVehicleSpeed   = wifiConfig.checkJsonParameter(canObj, "WheelBasedVehicleSpeed", "0");
+
+            String canData =
+                    "<b>Mileage               : </b> " + MileageInMeters + " m <br />" +
+                            "<b>TripDistance          : </b> " + TripDistanceInKM + " km <br />" +
+                            "<b>Total Vehicle Distance: </b> " + HighResolutionDistance + " km <br />" +
+                            "<b>WheelBasedVehicleSpeed: </b> " + WheelBasedVehicleSpeed + " km <br />" ;
+
+            obdDataTxtView.setText( Html.fromHtml(responseTxt + htmlBlueFont + canData + closeFont));
+
+        }catch (Exception e){
+            obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlBlueFont + "------" + closeFont ) );
+            e.printStackTrace();
+        }
+
+    }
+
+
+}

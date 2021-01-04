@@ -1,0 +1,359 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/app_colorPrimaryy</item>
+        <item name="colorPrimaryDark">@color/app_colorPrimaryDark</item>
+        <item name="colorAccent">@color/voilet_bg</item>
+    </style>
+
+
+
+    <style name="Theme.ToogleTheme" parent="Theme.AppCompat.Light">
+        <!-- colorPrimary is used for the default action bar background -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- colorPrimaryDark is used for the status bar -->
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <!-- colorAccent is used as the default value for colorControlActivated,
+             which is used to tint widgets -->
+        <item name="colorAccent">@color/colorPrimary</item>
+        <!-- You can also set colorControlNormal, colorControlActivated
+             colorControlHighlight, and colorSwitchThumbNormal. -->
+    </style>
+
+    <style name="settingSwitchStyle">
+        <!--  <item name="trackTint">@color/colorAccentTextHover</item>
+          <item name="thumbTint">@color/spinner_blue</item>
+  -->
+        <item name="android:thumb">@drawable/switch_thumb</item>
+        <item name="trackTint">@color/spinner_blue</item>
+
+    </style>
+
+    <style name="Custom.Widget.SwitchCompat" parent="Widget.AppCompat.CompoundButton.Switch" >
+        <item name="android:textColorPrimary">@color/colorPrimary</item>  <!--textColor on activated state -->
+    </style>
+
+    <!-- Specific activity theme -->
+    <style name="ActivityThemeLight" parent="ActivityTheme.Primary.Base.Light">
+        <item name="android:windowBackground">@color/primaryTextColor</item>
+    </style>
+    <style name="ActivityThemeDark" parent="ActivityTheme.Primary.Base.Dark">
+        <item name="android:windowBackground">@color/primaryTextColor</item>
+    </style>
+
+
+
+
+    <!-- Light base activity theme -->
+    <style name="ActivityTheme.Primary.Base.Light" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+        <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+        <item name="android:colorBackground">@color/backgroundCardColor</item>
+        <item name="android:divider">@color/dividerColor</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionBarOverlay">false</item>
+        <item name="windowNoTitle">true</item>
+        <!--<item name="iconPlaceholder">@drawable/image_dark_placeholder</item>-->
+    </style>
+
+    <!-- Dark base activity theme -->
+    <style name="ActivityTheme.Primary.Base.Dark"    parent="Theme.AppCompat.NoActionBar">
+
+        <!-- <item name="android:textColorPrimary">@color/primaryTextColor</item>
+         <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+         <item name="android:colorBackground">@color/backgroundCardColor</item>
+         <item name="android:divider">@color/dividerColor</item>
+ -->
+
+        <item name="android:textColorPrimary">#33343B</item>
+        <item name="android:textColorSecondary">#8033343B</item>
+        <item name="android:colorBackground">#28292e</item>
+        <item name="android:divider">#F2F2F3</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionBarOverlay">false</item>
+        <item name="windowNoTitle">true</item>
+
+
+        <!-- <item name="iconPlaceholder">@drawable/image_dark_placeholder</item>-->
+    </style>
+
+
+
+
+
+    <!-- Base application theme. -->
+    <style name="AppThemeTrip" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/app_colorPrimaryy</item>
+        <item name="colorPrimaryDark">@color/app_colorPrimaryDark</item>
+        <item name="colorAccent">@color/voilet_bg</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="AppThemeELD" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_eld_theme</item>
+        <item name="colorPrimaryDark">@color/color_eld_hover_theme</item>
+        <item name="colorAccent">@color/voilet_bg</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionBarOverlay">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- Active thumb color & Active track color(30% transparency) -->
+        <item name="colorControlActivated">@color/color_eld_theme</item>
+        <!-- Inactive thumb color -->
+        <item name="colorSwitchThumbNormal">@color/edit_gray_border</item>
+        <!-- Inactive track color(30% transparency) -->
+        <item name="android:colorForeground">@color/colorAccentTextHover</item>
+
+
+
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="AppThemeLogin" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/app_color</item>
+        <item name="colorPrimaryDark">@color/app_color</item>
+        <item name="colorAccent">@color/black</item>
+    </style>
+
+
+    <style name="AppThemeSplash" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccentTextHover</item>
+        <item name="android:textColorHint">@color/colorAccentTextHover</item>
+    </style>
+
+
+
+
+    <style name="AppTheme.NoActionBar">1
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+
+    <style name="DrivingTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorDriving</item>
+        <item name="colorPrimaryDark">@color/colorDriving</item>
+        <item name="colorAccent">@color/colorWhite</item>
+
+        <item name="colorControlNormal">@color/colorGray</item>
+        <item name="colorControlActivated">@color/colorDriving</item>
+        <item name="colorControlHighlight">@color/colorDriving</item>
+        <item name="android:colorForeground">@color/colorGray</item>
+        <item name="colorButtonNormal">@color/colorGray</item>
+
+        <item name="android:textColor">#229922</item>
+        <item name="android:textSize">10sp</item>
+        <!--
+
+        colorControlNormal: The color applied to framework controls in their normal state.
+
+        colorControlActivated: The color applied to framework controls in their activated (ex. checked, switch on) state.
+
+        colorControlHighlight: The color applied to framework control highlights (ex. ripples, list selectors).
+
+        colorButtonNormal: The color applied to framework buttons in their normal state.
+
+        colorSwitchThumbNormal:
+
+    -->
+
+    </style>
+
+
+    <style name="AppTheme.EditText" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">@color/black_hover</item>
+        <item name="colorControlActivated">@color/black</item>
+        <item name="colorControlHighlight">@color/black_hover</item>
+        <item name="editTextColor">@color/black</item>
+        <item name="android:textColorHint">@color/grey_text</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:paddingBottom">@dimen/margin_short_7</item>
+
+    </style>
+
+
+    <style name="AppTheme.EditTextBlue" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">@color/colorAccentTextHover</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/colorAccentTextHover</item>
+        <item name="editTextColor">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:paddingBottom">@dimen/margin_short_7</item>
+
+    </style>
+
+
+
+
+    <style name="OnDutyTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorOnDuty</item>
+        <item name="colorPrimaryDark">@color/colorOnDuty</item>
+        <item name="colorAccent">@color/colorWhite</item>
+
+        <item name="colorControlNormal">@color/colorGray</item>
+        <item name="colorControlActivated">@color/colorOnDuty</item>
+        <item name="colorControlHighlight">@color/colorOnDuty</item>
+        <item name="colorSwitchThumbNormal">@color/colorOnDuty</item>
+        <item name="android:colorForeground">@color/colorGray</item>
+        <item name="colorButtonNormal">@color/colorGray</item>
+
+    </style>
+
+
+
+    <style name="OffDutyTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorOffDuty</item>
+        <item name="colorPrimaryDark">@color/colorOffDuty</item>
+        <item name="colorAccent">@color/colorWhite</item>
+
+        <item name="colorControlNormal">@color/colorGray</item>
+        <item name="colorControlActivated">@color/colorOffDuty</item>
+        <item name="colorControlHighlight">@color/colorOffDuty</item>
+        <item name="colorButtonNormal">@color/colorGray</item>
+        <item name="colorSwitchThumbNormal">@color/colorOffDuty</item>
+        <item name="android:colorForeground">@color/colorGray</item>
+
+    </style>
+
+
+
+    <!--    <style name="SleeperTheme" parent="Theme.AppCompat.Light">
+            &lt;!&ndash; Customize your theme here. &ndash;&gt;
+            <item name="colorPrimary">@color/colorSleeper</item>
+            <item name="colorPrimaryDark">@color/colorSleeper</item>
+            <item name="colorAccent">@color/colorSleeper</item>
+
+            <item name="colorControlNormal">@color/colorGray</item>
+            <item name="colorControlActivated">@color/colorSleeper</item>
+            <item name="colorControlHighlight">@color/colorSleeper</item>
+            <item name="colorButtonNormal">@color/colorGray</item>
+            <item name="colorSwitchThumbNormal">@color/colorSleeper</item>
+            <item name="android:colorForeground">@color/colorGray</item>
+
+
+        </style>-->
+
+
+    <style name="MyStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+
+    <style name="datepicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/pink</item>
+        <item name="android:windowBackground">@drawable/date_picker_border</item>
+
+    </style>
+
+
+    <style name="spinner_style_transparent">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/transparent</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:drawablePadding">@dimen/margin_short_5</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:popupBackground">#DFFFFFFF</item>
+    </style>
+
+    <style name="spinner_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/gradient_spinner</item>
+        <item name="android:drawablePadding">@dimen/margin_short_5</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:popupBackground">#DFFFFFFF</item>
+    </style>
+
+
+    <style name="share_dialog_spinner_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/share_gradient_spinner</item>
+        <item name="android:drawablePadding">@dimen/margin_short_5</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:popupBackground">#DFFFFFFF</item>
+    </style>
+
+
+
+
+    <style name="Theme.Transparent" parent="android:Theme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+
+    <style name="CustomRadioBtn" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/gray_hover</item>
+        <item name="colorControlActivated">@color/color_eld_theme</item>
+
+    </style>
+
+
+    <style name="unIdenRadioBtn" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/black_semi</item>
+        <item name="colorControlActivated">@color/hos_location</item>
+
+    </style>
+
+
+
+    <style name="CustomRadioBtnInspection" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/black_semi</item>
+        <item name="colorControlActivated">@color/color_eld_theme</item>
+
+    </style>
+
+
+    <style name="spinner_style_editlog" >
+        <item name="android:background">@drawable/dropdown_spinner_drawable</item>
+        <item name="android:layout_marginLeft">@dimen/margin_10</item>
+        <item name="android:layout_marginRight">@dimen/margin_10</item>
+        <item name="android:drawablePadding">@dimen/margin_short_5</item>
+        <item name="android:paddingLeft">@dimen/margin_short_8</item>
+        <item name="android:paddingRight">@dimen/margin_short_8</item>
+    </style>
+
+    <!--    <item name="android:layout_marginBottom">@dimen/margin_10</item>
+        <item name="android:paddingTop">@dimen/margin_short_5</item>
+        <item name="android:paddingBottom">@dimen/margin_short_5</item>-->
+
+</resources>

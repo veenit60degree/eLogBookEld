@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/loginCoDriverLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:layout_marginRight="@dimen/view_height_80"
+        android:layout_marginLeft="@dimen/view_height_80"
+        android:paddingBottom="@dimen/margin_18"
+
+        >
+
+
+        <LinearLayout
+            android:id="@+id/driverTitleLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/driverTitleTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/margin_short_5"
+                android:layout_marginTop="@dimen/margin_15"
+                android:text="@string/co_driver_"
+                android:textSize="@dimen/text_size_20"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                />
+
+
+            <TextView
+                android:id="@+id/driverDescTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/margin_short_5"
+                android:text="@string/confirm_password_for_this_driver"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/white"
+                android:visibility="gone"
+
+                />
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/loginLay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_49"
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/margin_12"
+            android:layout_marginRight="@dimen/margin_12"
+            android:paddingBottom="@dimen/margin_short_5"
+            android:paddingTop="@dimen/margin_short_5"
+            android:layout_below="@+id/driverTitleLay"
+            >
+
+            <ImageView
+                android:id="@+id/driverUserImg"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/username_green"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:visibility="gone"
+
+                />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <com.constants.CustomEditText
+                android:id="@+id/coDriverUserNameText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/co_driver_username"
+                android:background="@color/transparent"
+                android:textColorHint="@color/colorAccentTextHover"
+                android:textColor="@color/colorPrimary"
+                android:paddingRight="@dimen/margin_short_6"
+                android:paddingLeft="@dimen/margin_short_4"
+                android:textSize="@dimen/text_size_17"
+                android:singleLine="true"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:imeOptions="actionDone"
+
+
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--android:inputType="textCapSentences"-->
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/userUnderLineView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            android:layout_below="@+id/loginLay"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            />
+
+        <!--android:background="@drawable/white_edit_bg"-->
+        <LinearLayout
+            android:id="@+id/passLay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_49"
+            android:orientation="horizontal"
+            android:layout_below="@+id/loginLay"
+
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:layout_marginTop="@dimen/margin_10"
+
+
+            >
+
+            <ImageView
+                android:id="@+id/driverPassImg"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/password_green"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:visibility="gone"
+
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passInputLay"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/colorAccent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <com.constants.CustomEditText
+                android:id="@+id/coDriverPasswordText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/co_driver_pass"
+                android:textColorHint="@color/colorAccentTextHover"
+                android:background="@color/transparent"
+                android:textColor="@color/colorPrimary"
+                android:inputType="textPassword"
+                android:paddingRight="@dimen/margin_short_6"
+                android:paddingLeft="@dimen/margin_short_4"
+                android:textSize="@dimen/text_size_17"
+                android:singleLine="true"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:imeOptions="actionDone"
+
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/confirmPassLay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_49"
+            android:orientation="horizontal"
+            android:layout_below="@+id/loginLay"
+
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:layout_marginTop="@dimen/margin_10"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:id="@+id/driverConfirmPassImg"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/password_green"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                app:passwordToggleEnabled="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:passwordToggleTint="@color/colorAccent"
+
+                >
+
+                <com.constants.CustomEditText
+                    android:id="@+id/coDriverConfirmPassText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/co_driver_pass"
+                    android:background="@color/transparent"
+                    android:textColor="@color/white"
+                    android:inputType="textPassword"
+                    android:paddingRight="6dp"
+                    android:paddingLeft="4dp"
+                    android:textSize="17sp"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@drawable/color_cursor"
+                    android:imeOptions="actionDone"
+
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </LinearLayout>
+
+
+
+
+        <View
+            android:id="@+id/passUnderLineView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            android:layout_below="@+id/passLay"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/passLay"
+            android:layout_marginTop="@dimen/view_height_35"
+            android:layout_marginLeft="@dimen/view_height_50"
+            android:layout_marginRight="@dimen/view_height_50"
+            android:gravity="center_horizontal"
+
+            >
+
+            <Button
+                android:id="@+id/coDriverCancelBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_40"
+                android:text="@string/cancel"
+                android:textColor="@color/whiteee"
+                android:textSize="@dimen/text_size_17"
+                android:background="@drawable/gray_login_selector"
+                android:layout_marginRight="@dimen/margin_10"
+                android:textAllCaps="false"
+              android:visibility="gone"
+                android:layout_weight="1"
+                />
+
+            <Button
+                android:id="@+id/coDriverLoginBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_40"
+                android:text="@string/login"
+                android:textColor="@color/whiteee"
+                android:textSize="@dimen/text_size_17"
+                android:textAllCaps="false"
+                android:background="@drawable/green_selector"
+                android:layout_weight="1"
+
+                />
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

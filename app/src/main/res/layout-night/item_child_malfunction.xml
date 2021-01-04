@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/malfunctionChildMainLay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+
+
+    <LinearLayout
+        android:id="@+id/malfunctionChildLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/margin_15"
+        android:paddingRight="@dimen/margin_10"
+        android:paddingBottom="@dimen/margin_short_8"
+        android:paddingTop="@dimen/margin_short_8"
+
+
+        >
+
+        <!--blue_button-->
+        <TextView
+            android:id="@+id/timeMalTxtVw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/active_status_bg"
+            android:text="@string/Time"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/statusMalTxtVw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/active_status_bg"
+            android:text="@string/Status"
+            android:gravity="center_horizontal"
+            android:layout_weight="0.8"
+
+            />
+
+
+
+        <TextView
+            android:id="@+id/vehMilesMalTxtVw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/active_status_bg"
+            android:text="@string/vehMiles"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+
+            />
+
+        <TextView
+            android:id="@+id/engHoursMalTxtVw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/active_status_bg"
+            android:text="@string/EngineHr"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/seqIdMalTxtVw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/active_status_bg"
+            android:text="@string/sequenceId"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/originMalTxtVw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/active_status_bg"
+            android:text="@string/origin"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+
+            />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

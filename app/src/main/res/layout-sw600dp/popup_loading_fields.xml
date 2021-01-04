@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/margin_20"
+    android:paddingRight="@dimen/margin_20"
+    >
+
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/voilet_border"
+        android:padding="@dimen/margin_20"
+        >
+
+
+        <TextView
+            android:id="@+id/ConfirmTitleTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/driver_confirmation"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/text_size_23"
+            android:textColor="@color/color_eld_theme"
+            android:textStyle="bold"
+            android:paddingBottom="@dimen/margin_15"
+            android:paddingLeft="@dimen/view_height_70"
+            android:paddingRight="@dimen/view_height_70"
+
+            />
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/margin_20"
+            android:paddingRight="@dimen/margin_20"
+            android:layout_marginTop="@dimen/margin_20"
+            android:paddingBottom="@dimen/margin_15"
+            android:paddingTop="@dimen/margin_20"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/TRACTOR_pop"
+                android:textColor="@color/color_eld_theme"
+                android:textSize="@dimen/text_size_20"
+                android:textStyle="bold"
+                android:layout_marginRight="@dimen/margin_13"
+
+                />
+
+            <TextView
+                android:id="@+id/tractorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_20"
+                android:textColorHint="@color/white_hover"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                android:theme="@style/AppTheme.EditText"
+                android:singleLine="true"
+                android:enabled="false"
+                android:text="--"
+
+                />
+
+
+            </LinearLayout>
+
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/margin_20"
+            android:paddingRight="@dimen/margin_20"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/TRAILER_pop"
+                android:textColor="@color/color_eld_theme"
+                android:textSize="@dimen/text_size_20"
+                android:textStyle="bold"
+                android:layout_marginRight="@dimen/margin_10"
+
+                android:id="@+id/textView3" />
+
+            <TextView
+                android:id="@+id/trailorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_20"
+                android:textColorHint="@color/white_hover"
+                android:imeOptions="actionNext"
+                android:enabled="false"
+                android:theme="@style/AppTheme.EditText"
+                android:singleLine="true"
+                android:text="--"
+                />
+
+    </LinearLayout>
+
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/POInputType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.EditText"
+            android:layout_toLeftOf="@+id/uploadMediaLay"
+            android:layout_below="@+id/contnrNoInputType"
+            android:layout_marginLeft="@dimen/margin_short_5"
+            android:layout_marginRight="@dimen/margin_short_5"
+            android:visibility="gone"
+            >
+
+
+            <com.constants.CustomEditText
+                android:id="@+id/POEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_16"
+                android:textColorHint="@color/white_hover"
+                android:imeOptions="actionDone"
+                android:theme="@style/AppTheme.EditText"
+                android:singleLine="true"
+
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_50"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/view_height_70"
+            android:layout_marginRight="@dimen/view_height_130"
+            android:layout_marginLeft="@dimen/view_height_130"
+        >
+
+
+
+        <Button
+            android:id="@+id/btnCancelLoadingJob"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_50"
+            android:text="@string/cancel"
+            android:textSize="@dimen/text_size_22"
+            android:layout_marginLeft="@dimen/margin_10"
+            android:layout_marginRight="@dimen/view_height_40"
+            android:textColor="@color/white"
+            android:background="@drawable/red_btn_selector"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+
+            />
+
+
+        <Button
+            android:id="@+id/btnLoadingJob"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_50"
+            android:text="@string/ok"
+            android:textSize="@dimen/text_size_22"
+            android:layout_marginLeft="@dimen/view_height_40"
+            android:layout_marginRight="@dimen/margin_10"
+            android:textColor="@color/white"
+            android:background="@drawable/green_selector"
+
+            android:textAllCaps="false"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+</LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

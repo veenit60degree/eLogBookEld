@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/eldActionBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_44"
+        android:background="@color/color_eld_bg"
+        >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/view_height_44"
+            android:paddingRight="10dp"
+            android:paddingTop="@dimen/margin_short_6"
+            android:paddingBottom="@dimen/margin_short_6"
+            >
+
+            <RelativeLayout
+                android:id="@+id/eldMenuLay"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/margin_short_5"
+                android:paddingRight="@dimen/margin_short_8"
+                >
+
+            <ImageView
+                android:id="@+id/eldMenuBtn"
+                android:layout_width="@dimen/view_height_30"
+                android:layout_height="@dimen/view_height_30"
+                android:src="@drawable/slide_menu"
+                android:layout_centerVertical="true"
+                />
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/eldCodeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/whiteee"
+                android:textSize="@dimen/text_size_16"
+                android:text="@string/als_certificate"
+                android:layout_toRightOf="@+id/eldMenuLay"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_centerVertical="true"
+                />
+
+
+            <RelativeLayout
+                android:id="@+id/settingsMenuBtn"
+                android:layout_width="@dimen/view_height_40"
+                android:layout_height="@dimen/view_height_44"
+                android:gravity="center_horizontal"
+                android:background="@drawable/green_with_corner_drawable"
+                android:layout_toRightOf="@+id/eldCodeTV"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:visibility="gone"
+
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/settings_white"
+                    android:padding="@dimen/margin_short_5"
+                    />
+
+
+
+            </RelativeLayout>
+
+
+
+            <TextView
+                android:id="@+id/menuTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/menuImageView"
+                android:text="Back"
+                android:textSize="17sp"
+                android:paddingLeft="2dp"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:textColor="@color/whiteee"
+                />
+
+
+
+        </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/previousDate"
+        android:layout_width="@dimen/view_height_44"
+        android:layout_height="wrap_content"
+        android:src="@drawable/back_white"
+        android:layout_toLeftOf="@+id/EldTitleTV"
+        android:padding="@dimen/margin_10"
+        android:layout_marginRight="@dimen/margin_short_9"
+        android:visibility="gone"
+        />
+
+    <TextView
+            android:id="@+id/EldTitleTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ELD"
+            android:textColor="@color/whiteee"
+            android:textSize="@dimen/text_size_17"
+            android:padding="@dimen/margin_short_7"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+
+
+    <ImageView
+        android:id="@+id/nextDateBtn"
+        android:layout_width="@dimen/view_height_44"
+        android:layout_height="wrap_content"
+        android:src="@drawable/next_white"
+        android:layout_toRightOf="@+id/EldTitleTV"
+        android:padding="@dimen/margin_10"
+        android:layout_marginLeft="@dimen/margin_short_9"
+        android:visibility="gone"
+        />
+
+
+        <Button
+            android:id="@+id/availableHourBtnTV"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/whiteee"
+            android:layout_toLeftOf="@+id/rightMenuBtn"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingRight="@dimen/margin_10"
+            android:gravity="center_vertical"
+            android:layout_margin="@dimen/margin_short_5"
+            android:layout_centerVertical="true"
+            android:background="@drawable/blue_new_hover"
+            android:text="@string/check_available_hour"
+            android:textAllCaps="false"
+            android:visibility="gone"
+
+            />
+
+
+    <TextView
+        android:id="@+id/dateActionBarTV"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textSize="@dimen/text_size_15"
+        android:textColor="@color/whiteee"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="@dimen/margin_20"
+        android:paddingRight="@dimen/margin_20"
+        android:gravity="center_vertical"
+        android:layout_margin="@dimen/margin_short_5"
+        android:layout_centerVertical="true"
+        android:background="@drawable/green_inspection_drawable"
+        android:visibility="gone"
+
+        />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/dotSwitchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorWhite"
+        android:layout_centerInParent="true"
+        android:checked="false"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/dot"
+        app:thumbTextPadding="@dimen/margin_short_5"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/dayNightLay"
+        android:visibility="gone"
+
+
+        />
+
+
+
+    <RelativeLayout
+        android:id="@+id/dayNightLay"
+        android:layout_width="@dimen/view_height_40"
+        android:layout_height="@dimen/view_height_44"
+        android:background="@drawable/green_with_corner_drawable"
+        android:layout_toLeftOf="@+id/inboxLay"
+        android:padding="@dimen/margin_short_6"
+        android:visibility="gone"
+        >
+
+    <ImageView
+        android:id="@+id/dayNightButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        />
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/inboxLay"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/view_height_44"
+        android:layout_toLeftOf="@+id/rightMenuBtn"
+        android:background="@drawable/green_with_corner_drawable"
+        android:visibility="gone"
+
+        >
+
+        <ImageView
+            android:id="@+id/inboxIV"
+            android:layout_width="@dimen/view_height_32"
+            android:layout_height="@dimen/margin_22"
+            android:src="@drawable/notifications_tab"
+            android:layout_marginTop="@dimen/margin_short_5"
+            android:layout_marginBottom="@dimen/margin_short_5"
+            android:layout_marginRight="@dimen/margin_short_3"
+            android:layout_centerVertical="true"
+
+            />
+
+
+        <TextView
+            android:id="@+id/notiBadgeView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="@dimen/text_size_11"
+            android:padding="@dimen/margin_short_1"
+            android:layout_marginLeft="@dimen/margin_20"
+            android:textColor="@color/whiteee"
+            android:gravity="center"
+            android:background="@drawable/circuler_textview_phone"
+            android:layout_marginTop="@dimen/margin_short_4"
+
+            />
+
+
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/rightMenuBtn"
+        android:layout_width="@dimen/view_height_40"
+        android:layout_height="@dimen/view_height_44"
+        android:gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/green_with_corner_drawable"
+
+        >
+
+        <com.constants.LoadingSpinImgView
+            android:id="@+id/loadingSpinEldIV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/margin_short_6"
+            />
+
+        <TextView
+            android:id="@+id/refreshTitleTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/refresh"
+            android:textColor="@color/whiteee"
+            android:textSize="@dimen/text_size_8"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"
+            />
+
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/invisibleTV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"
+        android:layout_toRightOf="@+id/EldTitleTV"
+        android:visibility="gone"
+        />
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/malfunctionTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Malfunction_with_bracket"
+        android:textColor="@color/whiteee"
+        android:textSize="@dimen/text_size_14"
+        android:padding="@dimen/margin_short_5"
+        android:gravity="center"
+        android:background="@color/colorVoilation"
+        android:layout_marginTop="@dimen/view_height_44"
+        android:visibility="gone"
+
+        />
+
+
+
+</RelativeLayout>

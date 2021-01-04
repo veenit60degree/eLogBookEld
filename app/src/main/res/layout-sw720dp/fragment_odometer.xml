@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_theme"
+
+    >
+
+    <include
+        android:id="@+id/odometerActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_70"
+        layout="@layout/actionbar_eld"
+
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/margin_20"
+        android:layout_below="@+id/odometerActionBar"
+
+        >
+
+
+        <LinearLayout
+            android:id="@+id/odometerMainLay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/white_theme"
+            >
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/odometerVehicleTitleTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please enter odometer start reading"
+                    android:textColor="@color/color_eld_hover_theme"
+                    android:textSize="@dimen/view_height_35"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/margin_24"
+
+                    />
+
+
+                <Button
+                    android:id="@+id/cancelEditViewBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/view_height_44"
+                    android:background="@drawable/green_eld_drawable"
+                    android:text="@string/cancel"
+                    android:textSize="@dimen/text_size_22"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingLeft="@dimen/view_height_39"
+                    android:paddingRight="@dimen/view_height_39"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/margin_25"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:visibility="gone"
+                    />
+
+
+
+            </RelativeLayout>
+
+
+
+
+    <LinearLayout
+        android:id="@+id/vehNumberLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_25"
+
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vehicle_no"
+            android:textColor="@color/color_eld_theme"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_size_30"
+
+            />
+
+        <TextView
+            android:id="@+id/odometerTruckTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_10"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_23"
+            android:text="@string/temp_no_value"
+            android:paddingLeft="@dimen/margin_13"
+            />
+
+
+    </LinearLayout>
+
+
+
+            <RelativeLayout
+                android:id="@+id/recentReadingLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingRight="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"
+
+
+                >
+
+                <TextView
+                    android:id="@+id/recentTitleTV"
+                    android:layout_width="@dimen/view_height_250"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recent_odometer"
+                    android:textColor="@color/color_eld_theme"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_size_30"
+
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_toRightOf="@+id/recentTitleTV"
+                    android:layout_toLeftOf="@+id/editOdometerBtn"
+                    android:layout_marginTop="@dimen/margin_short_2"
+                    >
+
+
+
+                    <TextView
+                        android:id="@+id/recentStartTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_30"
+                        android:text="Start Odo: "
+                        android:paddingLeft="@dimen/margin_13"
+                        />
+
+
+                    <TextView
+                        android:layout_width="@dimen/margin_short_1"
+                        android:layout_height="wrap_content"
+                        android:background="@color/black"
+                        android:textSize="@dimen/text_size_21"
+                        android:layout_marginLeft="@dimen/margin_20"
+                        android:layout_marginRight="@dimen/margin_20"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/recentEndTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_30"
+                        android:text="End Odo: "
+                        />
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/editOdometerBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/view_height_44"
+                    android:background="@drawable/green_eld_drawable"
+                    android:text="@string/Edit"
+                    android:textSize="@dimen/text_size_22"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingLeft="@dimen/view_height_39"
+                    android:paddingRight="@dimen/view_height_39"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+
+
+            </RelativeLayout>
+
+
+
+
+            <LinearLayout
+        android:id="@+id/odometerStartLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginRight="@dimen/margin_10"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_10"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/odometerStartTitleTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/StartReading"
+            android:textColor="@color/color_eld_theme"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_size_30"
+            />
+
+
+        <TextView
+            android:id="@+id/odometerStartTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/view_height_40"
+            android:layout_toRightOf="@+id/locInspTitleTV"
+            android:layout_toLeftOf="@+id/changeLocBtn"
+            android:paddingTop="@dimen/margin_short_5"
+            android:paddingBottom="@dimen/margin_short_5"
+            android:paddingLeft="@dimen/margin_17"
+            android:paddingRight="@dimen/margin_short_8"
+            android:layout_marginRight="@dimen/margin_10"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_23"
+            android:hint="@string/reading"
+            />
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginRight="@dimen/margin_10"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_18"
+        >
+
+        <TextView
+            android:id="@+id/odometerReadingTitleTV"
+            android:layout_width="@dimen/view_height_250"
+            android:layout_height="wrap_content"
+            android:text="@string/odometerReadingTitle"
+            android:textColor="@color/color_eld_theme"
+            android:textStyle="bold"
+            android:textSize="@dimen/view_height_30"
+            />
+
+
+        <com.constants.CustomEditText
+            android:id="@+id/odometerEditTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/locInspTitleTV"
+            android:layout_toLeftOf="@+id/changeLocBtn"
+            android:paddingTop="@dimen/margin_13"
+            android:paddingBottom="@dimen/margin_13"
+            android:paddingLeft="@dimen/margin_short_8"
+            android:paddingRight="@dimen/margin_28"
+            android:layout_marginRight="@dimen/margin_10"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_30"
+            android:inputType="number"
+            android:maxLength="7"
+            android:background="@drawable/edit_green_drawable"
+            android:imeOptions="actionDone"
+            />
+
+
+    </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/endOdometerLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/margin_10"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_14"
+android:visibility="gone"
+
+                >
+
+                <TextView
+                    android:id="@+id/endOdometerTitleTV"
+                    android:layout_width="@dimen/view_height_250"
+                    android:layout_height="wrap_content"
+                    android:text="@string/end_ododmeter"
+                    android:textColor="@color/color_eld_theme"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_size_30"
+                    />
+
+
+                <com.constants.CustomEditText
+                    android:id="@+id/endOdometerEditTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/locInspTitleTV"
+                    android:layout_toLeftOf="@+id/changeLocBtn"
+                    android:paddingTop="@dimen/margin_short_8"
+                    android:paddingBottom="@dimen/margin_short_8"
+                    android:paddingLeft="@dimen/margin_12"
+                    android:paddingRight="@dimen/margin_12"
+                    android:layout_marginRight="@dimen/margin_20"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_30"
+                    android:inputType="number"
+                    android:maxLength="7"
+                    android:imeOptions="actionDone"
+                    android:background="@drawable/edit_green_drawable"
+
+
+                    />
+
+
+            </LinearLayout>
+
+
+
+
+
+            <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginRight="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_28"
+        >
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/distanceType"
+            android:textColor="@color/color_eld_theme"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_size_30"
+            android:layout_marginLeft="@dimen/margin_10"
+            />
+
+
+
+        <RadioGroup
+            android:id="@+id/odometerRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="@dimen/margin_28"
+            >
+
+            <RadioButton
+                android:id="@+id/kmRadionBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/margin_20"
+                android:layout_marginLeft="@dimen/margin_20"
+                android:text="@string/kilometer"
+                android:textColor="@color/color_eld_theme"
+                android:theme="@style/CustomRadioBtn"
+                android:checked="true"
+                android:textSize="@dimen/text_size_23"
+
+                />
+
+            <RadioButton
+                android:id="@+id/milesRadionBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Miles"
+                android:theme="@style/CustomRadioBtn"
+                android:textSize="@dimen/text_size_23"
+                android:textColor="@color/gray_hover"
+
+
+                />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_10"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/red_eld"
+                    android:textStyle="bold"
+                    android:padding="@dimen/margin_short_5"
+                    android:textSize="@dimen/text_size_30"
+                    android:text="@string/note_odo"
+                    android:paddingLeft="@dimen/margin_13"
+                    android:layout_marginLeft="@dimen/margin_10"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:padding="@dimen/margin_short_5"
+                    android:textSize="@dimen/text_size_28"
+                    android:text="@string/note_desc"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    />
+
+
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                >
+
+                <Button
+                    android:id="@+id/cancelReadingBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/view_height_55"
+                    android:background="@drawable/gray_eld_drawable"
+                    android:text="@string/cancel"
+                    android:textSize="@dimen/text_size_25"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:paddingLeft="@dimen/view_height_80"
+                    android:paddingRight="@dimen/view_height_80"
+                    android:layout_marginRight="@dimen/margin_12"
+                    android:layout_marginTop="@dimen/view_height_35"
+                    android:layout_marginBottom="@dimen/margin_20"
+                    />
+
+                <Button
+                    android:id="@+id/saveReadingBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/view_height_55"
+                    android:background="@drawable/green_eld_drawable"
+                    android:text="@string/save"
+                    android:textSize="@dimen/text_size_25"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:paddingLeft="@dimen/view_height_90"
+                    android:paddingRight="@dimen/view_height_90"
+                    android:layout_marginLeft="@dimen/margin_12"
+                    android:layout_marginTop="@dimen/view_height_35"
+                    android:layout_marginBottom="@dimen/margin_20"
+                    />
+
+
+            </LinearLayout>
+
+
+
+
+
+
+
+
+</LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/odoProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,725 @@
+<resources>
+    <string name="app_name">E-Log Book</string>
+    <string name="app_name_test">E-Log Book (Test)</string>
+    <string name="Powered_by">Powered by Arethos Logistic System</string>
+    <string name="als_certificate">(ALS E-100)</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_deleted">Deleted..</string>
+    <string name="action_Support">ALS Support</string>
+    <string name="obd_config">OBD Configuration</string>
+    <string name="obd_diagnose">OBD Diagnose</string>
+    <string name="child_text">LOAD#661\n3785 BOUL LAURIER EST,QUEBEC,CA\n\nLOAD#NISD662\n3785 BOUL LAURIER EST,QUEBEC,CA</string>
+    <string name="title_activity_maps_activityyy">Map</string>
+    <string name="obd_connection_desc">OBD not connected!! Connect your phone with OBD wifi connection. </string>
+    <string name="obd_restarted">OBD restarted. </string>
+    <string name="wired_obd_details">Wired OBD details</string>
+    <string name="obd_conn_unavailable">OBD connection unavailable.</string>
+    <string name="no_pdf_viewer">No PDF viewer found.</string>
+    <string name="no_viewer_found">No viewer found.</string>
+    <string name="reason_for_personal_use">Enter reason for personal use</string>
+    <string name="reason_for_claim_">Enter reason to claim unIdentified records</string>
+    <string name="reason_for_reject">Enter reason to reject unIdentified records</string>
+    <string name="reason_for_reject_company">Enter reason to reject company assigned unIdentified records</string>
+    <string name="reason_for_adverse_excptn">Enter reason for Adverse Exception</string>
+    <string name="reason_for_adverse_excptn_desc">Adverse driving conditions means snow, ice, sleet, fog, or other adverse weather conditions or unusual road or traffic conditions that were not known, or could not reasonably be known, to: a driver immediately prior to beginning the duty day or immediately before beginning driving after a qualifying rest break or sleeper berth period, or a motor carrier immediately prior to dispatching the driver.</string>
+    <string name="excptn_enabled">Exception Enabled</string>
+    <string name="exception">Exception</string>
+
+    <string name="preTripIns">Pre-Trip Inspection</string>
+    <string name="postTripIns">Post-Trip Inspection</string>
+    <string name="prePostTripIns">Pre/Post Trip Inspection</string>
+    <string name="TrailerInspection">Trailer Inspection</string>
+    <string name="ctPat">CT-PAT Inspection</string>
+    <string name="connection_error">Internet connection error</string>
+
+    <string name="notification_deleted">Notification has deleted from the list</string>
+    <string name="detaildCtPatIns">CT-PAT Inspection detail</string>
+    <string name="SavedCtPatIns">Saved CT-PAT Inspections</string>
+    <string name="SavedPrePostTripIns">Saved Inspection</string>
+    <string name="DefectsCorrected">Defects Corrected</string>
+    <string name="DefectsNotCorrected">Defects Not Corrected</string>
+    <string name="DefectsNeedToCorrected">Defects need not to be corrected for safe operation</string>
+
+    <string name="per_day">(as per day)</string>
+    <string name="per_shift">(as per shift)</string>
+    <string name="advrs_excptn_enabled">Adverse exception enabled</string>
+    <string name="haul_excptn_enabled">16 hour short haul exception enabled</string>
+
+
+    <string name="document_corrupted">Error, File not loaded.</string>
+    <string name="document_checking">Checking documents, Please wait for few seconds</string>
+    <string name="document_not_loaded">Error! Document not loaded</string>
+    <string name="halu_excp_not_eligible">You are not eligible for 16 Hours Haul Exception</string>
+    <string name="arrival_departure_seal_number">Enter Arrival or Departure seal number</string>
+    <string name="selectInsType">Please select Inspection type</string>
+    <string name="NoDefects">No Defects</string>
+    <string name="SupervisorMechanicsName">Supervisor/Mechanics Name: </string>
+    <string name="odometerReading">Odometer Reading</string>
+    <string name="odometerReadingTitle">Reading: </string>
+    <string name="reading">Reading</string>
+    <string name="distanceType">Distance Type: </string>
+    <string name="DataTransmissionThrough">Send data to FMCSA via: </string>
+    <string name="fmcsa_desc">By selecting one of the above options, logs will be sent to FMCSA.</string>
+    <string name="kilometer">Kilometers</string>
+    <string name="Miles">Miles</string>
+    <string name="Service">Service</string>
+    <string name="WebService">Web Service</string>
+    <string name="BorderCrossing">Border Crossing</string>
+
+    <string name="login_with">Select Login Type</string>
+    <string name="main_driver_title">Single Driver</string>
+    <string name="co_driver_title">With Co-Driver</string>
+    <string name="co_driver_">Co-Driver</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+
+    <string name="co_driver_username">Username</string>
+    <string name="co_driver_pass">Password</string>
+    <string name="Comments">Comments</string>
+    <string name="inspctr_Comments">Inspector Comments</string>
+
+    <string name="No_Trip_Assigned">No record found</string>
+    <string name="Trip_Expense">Trip Expense</string>
+    <string name="add_Expense">Add Expense</string>
+    <string name="view_Expense">View Expense</string>
+    <string name="done">Done</string>
+    <string name="Username">Username</string>
+    <string name="crop">Crop</string>
+
+    <string name="Expense_type">Expense Type</string>
+    <string name="Currency">Currency</string>
+    <string name="Amount">Amount</string>
+    <string name="Remarks_if_any">Remarks (if any)</string>
+    <string name="Add_Scanned_Documents">Add Scanned Documents</string>
+    <string name="Add_trailer_no">Add Trailer number first</string>
+    <string name="update_trailer_no">Please update your trailer number before driving</string>
+
+    <string name="Entry_Time">Entry Time</string>
+    <string name="Exit_Time">Exit Time</string>
+    <string name="Delivery_waiting">Delivery waiting</string>
+    <string name="Delivery_waiting_time_reason">Delivery waiting time reason</string>
+    <string name="confirm_password_for_this_driver">Please confirm password for this driver</string>
+    <string name="confirm_password_dot">Please confirm password to go Home Screen</string>
+    <string name="confirm_password_to_exit_dot">Please confirm password to exit DOT inspection mode</string>
+    <string name="confirm_password_title">Confirm Password</string>
+
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="last_update_time_label">Last location update time</string>
+    <string name="location_updated_message">Location updated</string>
+    <string name="no_trailer_desc">In case you don\'t have any trailer please select "No Trailer".</string>
+    <string name="continue_sign_desc">Do you want to continue with last signature ?</string>
+    <string name="continue_haul_exception">Do you want to enable 16 hour haul exception ?</string>
+    <string name="no_trailer">No Trailer</string>
+    <string name="enter_trailer_number">Enter Trailer Number</string>
+    <string name="yard_move_desc">Yard Move descriptions</string>
+    <string name="desc">Descriptions</string>
+    <string name="enter_remarks">Enter Remarks</string>
+
+    <string name="cycle">Cycle:</string>
+    <string name="time_zone">Time Zone </string>
+    <string name="take_16_hour_exc">16 Hour Short Haul Exception </string>
+    <string name="adverse_excp">Adverse Exception </string>
+    <string name="adverse_excp_enabled">Adverse Exception Enabled</string>
+    <string name="short_haul_excp_enabled">Short Haul Exception Enabled</string>
+    <string name="adverse">Adverse</string>
+    <string name="short_haul">Short Haul</string>
+    <string name="enable_excp">Enable Exception </string>
+    <string name="already_enable_excp">Already enabled other exception </string>
+    <string name="excp_reset_auto">Exception will be invalidated automatically once driver takes proper shift reset</string>
+    <string name="not_allow_to_enable_excp">You are not allow to enable this exception. </string>
+    <string name="show_recap">Show Recap</string>
+    <string name="hide_recap">Hide Recap</string>
+
+    <string name="can_cycle">CA Cycle </string>
+    <string name="us_cycle">US Cycle </string>
+    <string name="cycle_one">Cycle 1</string>
+    <string name="sixty_hour">60 Hours</string>
+    <string name="Driving">Driving</string>
+    <string name="On_Duty">On Duty</string>
+    <string name="Off_Duty">Off Duty</string>
+    <string name="Sleeper">Sleeper</string>
+    <string name="Violation">Violation</string>
+    <string name="Start_Trip">Start Trip</string>
+    <string name="vin_number">VIN Number: </string>
+    <string name="plate_number">Plate Number: </string>
+    <string name="Mid_Night">M</string>
+    <string name="is_yard">Yard</string>
+    <string name="is_private">Private</string>
+    <string name="driver_confirmation">Do you want to continue with this Truck/Trailer?</string>
+    <string name="certify_previous_days_log">Before start your duty please certify your previous days log.</string>
+    <string name="certify_previous_days_log_ask_popup">You need to certify your previous days log.</string>
+
+    <string name="certify_previous_days_log_warning">It seems you haven\'t certified your previous days logs.Please certify your logs.</string>
+    <string name="has_been_certified">Log has been successfully certified.</string>
+    <string name="sign_not_valid">Signature data not valid. Please sign again and save</string>
+    <string name="Add_signature_first">Add signature first to save log data</string>
+    <string name="edited_log_willbe_saved">Connection unavailable! Your edited log will be posted to server automatically when your device will be connected with working internet connection</string>
+    <string name="certify_log_offline_saved">Connection unavailable! Cerify log will be posted to server automatically when your device will be connected with working internet connection</string>
+    <string name="inspection_willbe_saved">Connection unavailable! Inspections will be posted to server automatically when your device will be connected with working internet connection</string>
+    <string name="ct_pat_inspection_willbe_saved">Connection unavailable! CT-PAT inspections will be posted to server automatically when your device will be connected with working internet connection</string>
+
+    <string name="ct_pat_inspection_saved_successfully">CT-PAT inspection saved successfully</string>
+    <string name="inspection_saved_successfully">Inspection saved successfully</string>
+    <string name="data_saved_successfully">Data saved successfully</string>
+    <string name="NotificationsHistory">Notifications History</string>
+    <string name="ShippingDetails">Shipping Details</string>
+    <string name="D">D</string>
+    <string name="On">On</string>
+    <string name="Off">Off</string>
+    <string name="S">SB</string>
+
+    <string name="view_certify_Log">View/Certify Log</string>
+    <string name="Certify_Log">Certify Log</string>
+    <string name="Send_Log">Send Log</string>
+    <string name="send">Send</string>
+    <string name="Personal_Use">Personal Use</string>
+    <string name="change_cycle">Change Cycle</string>
+    <string name="current_cycleee">Current Cycle</string>
+    <string name="view_history">View Log</string>
+    <string name="noti_history">Notifications History</string>
+    <string name="change">Change</string>
+
+    <string name="ELDViewLog">ELD View Log</string>
+    <string name="RecordDate">Record Date</string>
+    <string name="USDOT"> USDOT #</string>
+    <string name="DriverLicenseNo">Driver License No.</string>
+    <string name="DriverLicenseState">Driver License State</string>
+    <string name="ELDID">ELD ID</string>
+
+    <string name="hos_driver_miles">Driver Miles</string>
+    <string name="hos_break">Next Break</string>
+    <string name="hos_shift">Shift</string>
+    <string name="hos_cycle">Cycle</string>
+    <string name="Mins">Mins</string>
+    <string name="summary">HOS Summary</string>
+    <string name="hos_summary">HOURS OF SERVICE- SUMMARY</string>
+
+
+    <string name="TrailerId">Trailer Id</string>
+    <string name="TimeZone">Time Zone</string>
+    <string name="DriverName">Driver Name</string>
+    <string name="CoDriverName">Co-Driver Name</string>
+    <string name="ELDManufacturer">ELD Manufacturer</string>
+
+    <string name="ShippingID">Shipping ID</string>
+    <string name="DataDiagnosticIndicators">Data Diagnostic Indicators</string>
+    <string name="PeriodStartingTime24">24 Period Starting Time</string>
+    <string name="DriverID">Driver ID</string>
+    <string name="CoDriverID">Co-Driver ID</string>
+
+    <string name="TruckTractorID">Truck Tractor ID</string>
+    <string name="UnidentifiedDriverRecords">Unidentified Driver Records</string>
+    <string name="ELDMalfunctionIndicators">ELD Malfunction Indicators</string>
+    <string name="Carrier">Carrier</string>
+    <string name="StartEndOdometer">Start End Odometer</string>
+
+    <string name="OdometerDifference">Odometer Difference</string>
+    <string name="TruckTractorVIN">Truck Tractor VIN</string>
+    <string name="ExemptDriverStatus">Exempt Driver Status</string>
+    <string name="StartEndEngineHours">Start End Engine Hours</string>
+    <string name="CurrentLocation">Current Location</string>
+
+    <string name="FileComment">File Comment</string>
+    <string name="PrintDisplayDate">Print/Display Date</string>
+
+    <string name="Time">Time</string>
+    <string name="Odometers_Km">Odometers (Km)</string>
+    <string name="Odometers_Miles">Odometers (Miles)</string>
+    <string name="EngineHours">Engine Hours</string>
+    <string name="EngineHr">Engine Hr</string>
+    <string name="sequenceId">Sequence ID</string>
+    <string name="origin">Origin</string>
+    <string name="EventTypeStatus">Event Type/Status</string>
+    <string name="Origin">Origin</string>
+    <string name="Malfunction_with_bracket">(Malfunction)</string>
+
+
+
+    <string name="trip_no">Trip No: </string>
+    <string name="Shipper">Shipper: </string>
+    <string name="ShipperName">Shipper Name</string>
+    <string name="demo_Shipper">Demo Shipper</string>
+    <string name="Consignee">Consignee: </string>
+    <string name="demo_Consignee">Demo Consignee</string>
+    <string name="DATE">DATE: </string>
+    <string name="Date">Date: </string>
+    <string name="NAME">NAME: </string>
+    <string name="name">Name</string>
+    <string name="Id_No">ID NO: </string>
+    <string name="co_driver">CO DRIVER:  </string>
+    <string name="TRACTOR">TRACTOR: </string>
+    <string name="TRAILER">TRAILER: </string>
+    <string name="seal_no">Seal number</string>
+    <string name="person_name">Person name</string>
+    <string name="refresh">Refresh</string>
+
+    <string name="sealNoAtArrival">Seal number of container at arrival</string>
+    <string name="sealNoAtDeparture">Seal number of container at departure</string>
+
+    <string name="who_conducted_security">Person who conducted security inspection upon arrival</string>
+    <string name="who_conducted_followup">Person who conducted follow up security inspection</string>
+    <string name="who_affixed_seal">Person who affixed seals</string>
+    <string name="who_verify_physical">Person who verified physical integrity of seal</string>
+
+    <string name="date">Date </string>
+    <string name="DateAndTime">Date &amp; Time: </string>
+    <string name="today_Recap">Today Recap</string>
+    <string name="Multiday_Recap">Multiday Recap</string>
+    <string name="seventy_day_driver">70 hours 8 days drivers</string>
+    <string name="sixty_day_driver">60 hours 7 days drivers</string>
+    <string name="onduty_seven_days">Total hours onduty last 7 days (</string>
+    <string name="onduty_six_days">Total hours onduty last 6 days (---)</string>
+    <string name="onduty_seven_days_tomorrow">Total hours available tomorrow (---)</string>
+    <string name="onduty_six_days_tomorrow">Total hours available tomorrow (---)</string>
+    <string name="onduty_seven_days_last_eight">Total hours onduty last 8 days (---)</string>
+    <string name="onduty_seven_days_last_seven">Total hours onduty last 7 days (---)</string>
+
+    <string name="DOT">DOT</string>
+    <string name="inspection_date">Inspection Date : </string>
+    <string name="inspection_time">Inspection Time : </string>
+    <string name="loc_of_inspection">Location of Inspection : </string>
+    <string name="trailer_s">Trailer(s) : </string>
+    <string name="power_unit">Truck Unit : </string>
+    <string name="vehicle_no">Vehicle Number : </string>
+    <string name="truck_ododmeter_reading">Truck Odometer Reading : </string>
+    <string name="start_loc">Start Location</string>
+    <string name="end_loc">End Location</string>
+    <string name="total_km">Total Km</string>
+    <string name="total_miles">Total Miles</string>
+
+    <string name="start_ododmeter">Start Odometer : </string>
+    <string name="end_ododmeter">  End   Odometer : </string>
+    <string name="update_odometer">Update Odometer Reading </string>
+    <string name="recent_odometer">Recent Readings :  </string>
+    <string name="update">Update</string>
+    <string name="update_loc">Update Location</string>
+    <string name="save">Save</string>
+    <string name="certified">Certified</string>
+    <string name="uncertified">Uncertified</string>
+    <string name="certify">Certify</string>
+    <string name="Logout">Logout</string>
+    <string name="Confirm">Confirm</string>
+    <string name="sync_data">Sync Data</string>
+    <string name="synchronize_data">Synchronize Data</string>
+    <string name="Internet_Status">Check internet connection</string>
+    <string name="Update_Status">Check Updates</string>
+    <string name="install_updates">Install Updates</string>
+    <string name="Downloading">Downloading..</string>
+    <string name="help">Help</string>
+    <string name="documents">Documents</string>
+    <string name="eld_documents">ELD Documents</string>
+
+    <string name="temp_DATE">21 jun 2017</string>
+    <string name="temp_time">0 hr 0 m</string>
+    <string name="temp_duration">0 hr 0 m Left</string>
+    <string name="SelectDate">Select Date</string>
+    <string name="welcome_to_als_realtime">Welcome to ALS Realtime</string>
+    <string name="MainDriver">Main Driver</string>
+
+    <string name="notification">Notification</string>
+    <string name="news_updates">News &amp; Updates</string>
+    <string name="password">Password</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="or">Or</string>
+    <string name="TRACTOR_pop">Truck   : </string>
+    <string name="TRAILER_pop">Trailer : </string>
+    <string name="cancel">Cancel</string>
+    <string name="ignore">Ignore</string>
+    <string name="ShippingDocNo">BL/Trip No. </string>
+    <string name="ShipperNo">Shipper Number: </string>
+    <string name="ShippingDoc">Shipping Doc</string>
+    <string name="ShippingDocNumber">Shipping Documents</string>
+    <string name="eldDocuments">ELD Documents</string>
+    <string name="ShippingName">Shipper Name </string>
+    <string name="Commodity">Commodity </string>
+    <string name="CommodityItem">Commodity</string>
+    <string name="ShippingAddress">Shipper Address: </string>
+    <string name="ShippingCity">Shipper City: </string>
+    <string name="ShippingState">Shipper State: </string>
+    <string name="ShippingPostalCode">Postal Code: </string>
+    <string name="ShippingInformation">Shipping Information</string>
+    <string name="ShippingInfo">Shipping Info</string>
+    <string name="EditShippingInfo">Edit Shipping Info</string>
+    <string name="pdfLogs">PDF LOGS</string>
+    <string name="fmcsaLogs">FMCSA LOGS</string>
+    <string name="hos_violation_apprch">HOS violation approaching</string>
+
+
+    <string name="pre_trip_unloading">Pre-Trip + unloading</string>
+    <string name="pre_trip">Pre-Trip</string>
+    <string name="post_trip">Post Trip</string>
+    <string name="pti">Pre-Trip/Post Trip</string>
+    <string name="Unloading">Unloading</string>
+    <string name="yard_move">Yard Move</string>
+    <string name="yard_move_validation">You already saved Yard Move status.</string>
+    <string name="yard_move_not_allowed">You have no permission for Yard Move. Please contact your company.</string>
+    <string name="personal_not_allowed">You have no permission for Personal Use. Please contact your company.</string>
+    <string name="share_not_allowed">You have no permission for Send Log. Please contact your company.</string>
+
+
+    <string name="loading">Loading</string>
+    <string name="TrailerDrop">Trailer Drop</string>
+    <string name="TrailerPickup">Trailer Pickup</string>
+    <string name="TrailerSwitch">Trailer Switch</string>
+
+
+    <string name="Home">Home</string>
+    <string name="Update">Update</string>
+    <string name="update_desc">You are using old version of ALS App.\nPlease update it. </string>
+    <string name="note_odo">Note: </string>
+    <string name="note_desc">Please certify your previous day log from Certify Log screen.</string>
+
+
+    <string name="bl_no">B/L No. </string>
+    <string name="bl_or_trip_no">B/L or Trip No. </string>
+    <string name="HomeTerminal">  Home Terminal: </string>
+    <string name="OfficeAddress"> Office Address: </string>
+
+    <string name="nm">NM</string>
+    <string name="night_mode">Night Mode</string>
+    <string name="dot">DOT </string>
+    <string name="Number">Number </string>
+    <string name="Name"> Name </string>
+    <string name="Address"> Address </string>
+    <string name="City"> City </string>
+    <string name="State"> State </string>
+    <string name="PostalCode">Postal Code </string>
+    <string name="SelectState"> Select State </string>
+
+    <string name="M">M</string>
+    <string name="zero">0</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="ten">10</string>
+    <string name="eleven">11</string>
+    <string name="twelve">12</string>
+
+    <string name="select_all">Select All</string>
+    <string name="EnterCity">Enter City</string>
+    <string name="EnterReason">Enter Reason</string>
+    <string name="send_driver_log">Send Driver Log</string>
+    <string name="edit_log_preview">Edit Log Preview</string>
+    <string name="email">Email</string>
+    <string name="driver_log">Driver Log</string>
+    <string name="share">Share</string>
+    <string name="to">To: </string>
+    <string name="too">To</string>
+    <string name="Start_Date">Start Date </string>
+    <string name="end_date">End Date </string>
+    <string name="from_date">From Date: </string>
+    <string name="to_date">To Date: </string>
+    <string name="date_date">Date</string>
+    <string name="date_format">mm/dd/yyyy</string>
+    <string name="TimeRemaining">Time Remaining</string>
+
+
+    <string name="TrailorNo">Trailer Number</string>
+    <string name="reason">Reason</string>
+    <string name="SelectRemark">Select Reason</string>
+    <string name="current_version">Current Version : </string>
+
+    <string name="signature"              >Signature</string>
+    <string name="Recap"                  >Recap</string>
+    <string name="Driver_Name"            >Driver Name            :</string>
+    <string name="CO_Driver_Name"         >CO-Driver Name         :</string>
+    <string name="current_cycle"          >Current Cycle          :</string>
+    <string name="Drive_Hrs_Avail_Today"  >Drive Hrs Avail Today  :</string>
+    <string name="OnDuty_Hrs_Avail_Today" >OnDuty Hrs Avail Today :</string>
+    <string name="Cycle_Remaining_Hrs"    >Cycle Remaining Hrs    :</string>
+    <string name="Send_Message"           >Send Message</string>
+    <string name="Truck_recap"            >Truck                  :</string>
+    <string name="trailer_recap"          >Trailer                : </string>
+
+    <string name="exit_msg">Press once again for exit.</string>
+
+    <string name="ClickToCall">Click To Call</string>
+    <string name="ClickToWA">Click To WhatsApp</string>
+    <string name="Close">Close</string>
+    <string name="Clear">Clear</string>
+    <string name="ClearAll">Clear all</string>
+    <string name="DeleteAll">Delete all</string>
+
+    <string name="YardMove">Yard Move</string>
+    <string name="title">Title</string>
+    <string name="Description">Description</string>
+    <string name="Alert">Alert !</string>
+    <string name="ALS_ELD">ELD</string>
+    <string name="driver">Driver</string>
+    <string name="driverr">Driver: </string>
+    <string name="ID">ID:</string>
+    <string name="carrier">Carrier: </string>
+    <string name="Home_Terminal">Home Terminal: </string>
+    <string name="CO_Driverr">CO-Driver: </string>
+    <string name="vehicles">Vehicle: </string>
+    <string name="Trailerr">Trailer: </string>
+    <string name="vehiclesPlates">Vehicle/Plate: </string>
+    <string name="TrailerPlate">Trailer/Plate: </string>
+    <string name="Trailer">Trailer</string>
+    <string name="Main_Office">Main Office: </string>
+    <string name="From">From </string>
+    <string name="fromm">From</string>
+    <string name="Total_hrs_Since_restart">Total Cycle Hrs Used</string>
+    <string name="Left_Cycle_Hrs">Left Cycle Hrs</string>
+    <string name="Hrs_Available_Today">Hours Available</string>
+    <string name="Hrs_Worked_Today">Hours Worked</string>
+    <string name="Hrs_Worked_Tomorrow">Hrs Available Tomorrow</string>
+    <string name="Total_distance">Total Distance: </string>
+    <string name="check_available_hour">Check available hours</string>
+
+    <string name="No_">No.</string>
+    <string name="Status">Status</string>
+    <string name="Status_colon">Status:</string>
+    <string name="currentStatus">Current Status</string>
+    <string name="Start_time">Start Time</string>
+    <string name="End_time">End Time</string>
+    <string name="Duration">Duration</string>
+    <string name="Location">Location</string>
+    <string name="LocationTitle">Location: </string>
+
+    <string name="adverse_turn_off">Adverse Exception Turned Off</string>
+    <string name="disable_adverse_exception">DisableAdverseException</string>
+    <string name="disable_ShortHaul_exception">DisableShortHaulException</string>
+    <string name="enable_adverse_exception">EnableAdverseException</string>
+    <string name="enable_ShortHaul_exception">EnableShortHaulException</string>
+
+    <string name="wired_active">Wired tablet is active</string>
+    <string name="wired_inactive">Wired tablet is not working</string>
+    <string name="wifi_active">WIFI OBD is connected</string>
+    <string name="wifi_inactive">WIFI OBD is not working</string>
+    <string name="obd_data_connection_desc">Kindly connect with OBD via Wifi or Cable connection</string>
+
+    <string name="current_version_dummy">Current Version : 3.3.1</string>
+    <string name="app_version_desc_dummy">A new version (3.3.1) of this app is available for download. Please update it from Play Store.</string>
+
+    <string name="new_version">A new version (</string>
+    <string name="update_app_desc">) of this app is available for download. Please update it from </string>
+    <string name="UpdateAvailable">Update Available</string>
+    <string name="play_store">Play Store.</string>
+    <string name="app_settings">App Settings.</string>
+
+    <string name="Day">Day</string>
+    <string name="HoursWorked">Hr Worked</string>
+
+    <string name="view_inspections">View Inspections</string>
+    <string name="view_ct_pat">View CT-PAT Inspections</string>
+    <string name="Empty">Empty</string>
+    <string name="vehicle">Vehicle</string>
+    <string name="vehMiles">Vehicle Miles</string>
+    <string name="vehKm">Vehicle Km</string>
+    <!--<string name="vehicleMiles">Vehicle Miles</string>-->
+    <string name="StartReading">Start Reading: </string>
+    <string name="Start">Start</string>
+    <string name="End">End</string>
+    <string name="Edit">Edit</string>
+    <string name="Admin">Admin</string>
+    <string name="Remarks">Remarks: </string>
+    <string name="Remarks_simple">Remarks</string>
+    <string name="Distance">Distance: </string>
+    <string name="mileage">Engine Miles: </string>
+    <string name="Odometers">Odometer</string>
+    <string name="Drivers_Sign">Driver\'s Sign</string>
+    <string name="Supervisor_Sign">Supervisor\'s Sign</string>
+    <string name="I_certify_that_these_entries_old">I certify that these entries are true and correct</string>
+    <string name="I_certify_that_these_entries">I hereby certify that my data entries and my record of duty status for this 24-hour period are true and correct.</string>
+    <string name="Drivers_daily_Log">Driver\'s Daily Log</string>
+    <string name="restart_on">Restart on</string>
+    <string name="truck_tractor">Truck/Tractor</string>
+    <string name="no_location">No Location</string>
+    <string name="Distance_miles">Distance (Miles) </string>
+    <string name="Distance_km">Distance (KM) </string>
+    <string name="odometer_details">Odometer Details</string>
+    <string name="gps_details">Gps Details</string>
+    <string name="sim_info">Sim Info</string>
+    <string name="reset_obd">Reset OBD</string>
+    <string name="No_data_found">No data found</string>
+    <string name="dot_mode">DOT MODE</string>
+    <string name="data_malfunction">Data recording compliance malfunction detected</string>
+    <string name="malfunction">Data Malfunction</string>
+    <string name="want_to_logout">Do you really want to logout ?</string>
+    <string name="Confirmation">Confirmation</string>
+    <string name="found_local_data">We found some local data in your App which need to save on server. Please try after some time</string>
+    <string name="enter_reason">Edit log reason</string>
+    <string name="available_hour_summary">Available Hours Summary</string>
+    <string name="no_malfunction_diagnostc_records">You don\'t have any Malfunction/Diagnostic records to clear</string>
+    <string name="no_malfunction_diagnostc_valid">You don\'t have valid Malfunction/Diagnostic records to clear</string>
+    <string name="no_malfunction_records">You don\'t have valid Malfunction records to clear</string>
+    <string name="no_diagnostic_records">You don\'t have valid Diagnostic records to clear</string>
+    <string name="RecordClearedSuccessfully">Record cleared successfully</string>
+    <string name="no_recap_data">No data found</string>
+
+    <string name="reject_reason">Enter reason to reject unidentified records</string>
+    <string name="claim_reason">Enter reason to claim unidentified records </string>
+    <string name="clear_reason">Enter reason to clear malfunction/diagnostic records</string>
+
+    <string name="malfunction_diagnostic_records">Malfunction/Diagnostic Records</string>
+    <string name="unIdentified_records">UnIdentified Records</string>
+    <string name="unIdentified_record_details">UnIdentified record details</string>
+    <string name="claim_title">Do you want to claim this unidentified records ?</string>
+    <string name="reject_title">Do you you want to reject this unidentified records ?</string>
+    <string name="claim">Claim</string>
+    <string name="reject">Reject</string>
+    <string name="details">Details</string>
+    <string name="aobrd">AOBRD</string>
+    <string name="eld">ELD</string>
+    <string name="clear">Clear</string>
+
+    <string name="ViewInspections">View Inspections</string>
+    <string name="sign_record">Certification Records</string>
+
+
+
+    <string name="claim_successfully">Claim successfully</string>
+    <string name="reject_successfully">Reject successfully</string>
+    <string name="select_status_first">Select status first</string>
+
+
+
+    <string name="violation">Violation</string>
+    <string name="warning">Warning</string>
+    <string name="alert">Alert</string>
+    <string name="als_alert">ALS Alert: </string>
+    <string name="gps_alert">Please turn on your location services</string>
+    <string name="screen_reset">Screen Reset</string>
+    <string name="shipping_info_alert">Add shipping informations before driving</string>
+
+    <string name="time_temp">U 00:00 | R 00:00</string>
+    <string name="time_tempp">00:00</string>
+    <string name="time_default">00:00</string>
+    <string name="time_Id">TEMP101</string>
+    <string name="temp_value">--</string>
+    <string name="temp_time_ago">2 mins ago</string>
+    <string name="temp_no_value">--</string>
+    <string name="temp_zero_value">0</string>
+    <string name="temp_phone">+91-987-456-3210</string>
+
+    <string name="odometer_permission_desc">You don\'t have permission to save odometers from the application.</string>
+    <string name="copy_right">© 2015 Trucking Management System Inc. All right reserved.</string>
+    <!--AIzaSyAP6vi9Qgl_5ZLlSB429zkOBpdV9zvhuXs-->
+
+    <string name="production_map_key">AIzaSyBiACE077Br05-zVTRndfI_Y-KmWq1GPmQ</string>
+    <string name="local_map_key">AIzaSyB79_gF15_gqvW3KzTetS1l7ayKEUy5mGY</string>
+    <string name="place_api_key">AIzaSyDLtErLR9UyyIQcf3H58zCS8YWv8W7kzFI</string>
+
+
+
+    <!-- Ignition status -->
+    <string name="ignition_on">ON</string>
+    <string name="ignition_off">OFF</string>
+
+
+    <string name="_receive">receive</string>
+    <string name="_connect">connect</string>
+    <string name="_disconnect">disconnect</string>
+    <string name="_export_start">export data start</string>
+
+    <string name="dev">Dev</string>
+    <string name="_sync">Now is sync</string>
+    <string name="toast_time_sync_success">Time synchronization succeeded</string>
+    <string name="toast_time_sync_fail">Time synchronization failed</string>
+    <string name="toast_time_sync_retry">Time synchronization connection fails, try again later.</string>
+    <string name="toast_time_sync_should_connect_network">Network is not connected, can\'t sync time. Please connect network!</string>
+    <string name="toast_time_sync_should_connect_device">Please connect bluetooth device</string>
+    <string name="toast_request_some_failed">Get permission successful, some permissions were not granted normally.</string>
+    <string name="toast_request_denied">Authorization has been permanently denied. Please manually grant permission.</string>
+    <string name="toast_request_failed">Failed to get permission</string>
+    <string name="requested_by_admin">Requested by Admin</string>
+
+    <string name="temp_uniden">Dec 08 11:30am - Dec 09 01:30pm</string>
+    <string name="temp_distance">32 Miles</string>
+    <string name="temp_time_un">32s ago</string>
+
+
+
+
+    <!--AIzaSyBRp2YII01RTUmZOjVnqc29E_8hh2LLWHM-->
+
+
+    <string-array name="truck_array">
+        <item>Engine</item>
+        <item>Oil Pressure</item>
+        <item>Battery</item>
+        <item>Clutch</item>
+        <item>Generator/Alternator</item>
+        <item>Fuel System</item>
+        <item>Air Horn</item>
+        <item>Electronic Horn</item>
+        <item>Defroster &amp; Heaters</item>
+        <item>Break Air Pressure</item>
+        <item>Air Compressor</item>
+        <item>Warning signal low pressure</item>
+        <item>Low Vacuum Signal</item>
+        <item> Air Brake Adjustment &amp; Connections</item>
+        <item> Brake Accessories</item>
+        <item>Air Lines</item>
+        <item>Brakes</item>
+        <item>Brake Booster</item>
+        <item>Hydraulic Brake Fluid</item>
+        <item>Brake Failure Warning Light</item>
+        <item>Parking Break</item>
+        <item>Drive Line</item>
+        <item>Radiator</item>
+        <item>Steering Wheel</item>
+        <item>Steering</item>
+        <item>Mirrors (Adjusments &amp; Condition)</item>
+        <item>Techograph</item>
+        <item>Windshield &amp; Windows</item>
+        <item> Windshield Wiper, Washer</item>
+        <item>Transmission</item>
+        <item>Driver’s Seat Belt &amp; Security</item>
+        <item>Exhaust System</item>
+        <item>Front Axle</item>
+        <item>Suspension, Springs, Air Bag &amp; Controlling Attachments</item>
+        <item>Rear End</item>
+        <item>Tires</item>
+        <item>Wheels, Rims, Fasteners</item>
+        <item>Fifth Wheel</item>
+        <item>Towing &amp; Coupling Devices</item>
+        <item>Tire Chains</item>
+        <item>Head-Stop Lights</item>
+        <item> Tall-Bach Light</item>
+        <item>Turn Indicators</item>
+
+        <item>Clearance Lights</item>
+        <item>Reflectors</item>
+        <item>Reflective Triangles</item>
+        <item>Fire Extinguisher</item>
+        <item>Spare Seal Beam</item>
+        <item>Emergency Equipment</item>
+        <item>Load Covering</item>
+        <item>Load Security</item>
+
+    </string-array>
+
+
+
+    <string-array name="trailers_array">
+        <item>Coupling (King) Pins</item>
+        <item>Parking Brakes</item>
+        <item>Air Brakes Adjustments &amp; Connections</item>
+        <item>Tires</item>
+        <item>Wheels, Rims, Fasteners</item>
+        <item>Suspension, Spring, Air Bags</item>
+        <item>Towing &amp; Coupling Devices</item>
+        <item>Hitch/Landing Gear</item>
+        <item>All Lights &amp; Reflectors</item>
+        <item>Door/Roof</item>
+        <item>Reefer/Fuel System</item>
+        <item>Load Security</item>
+        <item>Others</item>
+
+    </string-array>
+
+
+</resources>

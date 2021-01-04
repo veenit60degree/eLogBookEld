@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="@dimen/margin_short_5"
+    android:insetTop="@dimen/margin_short_5"
+    android:insetRight="@dimen/margin_short_5"
+    android:insetBottom="@dimen/margin_short_5">
+
+    <shape android:shape="rectangle">
+        <corners
+            android:radius="@dimen/margin_10"
+            />
+            <!--android:topLeftRadius="@dimen/margin_10"
+            android:topRightRadius="@dimen/margin_10"
+            android:bottomLeftRadius="@dimen/margin_10"
+            android:bottomRightRadius="@dimen/margin_10"-->
+
+        <solid android:color="@android:color/holo_orange_dark" />
+    </shape>
+
+
+
+</inset>

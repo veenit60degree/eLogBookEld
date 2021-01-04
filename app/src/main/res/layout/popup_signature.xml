@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/white_full_border"
+    android:layout_marginLeft="@dimen/margin_10"
+    android:layout_marginRight="@dimen/margin_10"
+
+    >
+    <!--@dimen/view_height_400-->
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_11"
+                android:gravity="center"
+                android:padding="@dimen/margin_short_5"
+                android:background="@color/color_eld_theme"
+                android:layout_marginTop="@dimen/margin_10"
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/signature"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_18"
+                android:gravity="center"
+                android:padding="@dimen/margin_short_5"
+                android:background="@drawable/green_default"
+                />
+
+        </RelativeLayout>
+
+
+
+
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            >
+
+            <LinearLayout
+                android:id="@+id/inkLinLay"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+
+                >
+
+            <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+                <com.simplify.ink.InkView
+                    android:id="@+id/inkView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_170"
+                    app:inkFlags="interpolation|responsiveWeight" />
+
+
+                <RelativeLayout
+                    android:id="@+id/clearSignBtn"
+                    android:layout_width="@dimen/view_height_55"
+                    android:layout_height="@dimen/view_height_55"
+                    android:layout_alignParentRight="true"
+                    android:padding="@dimen/margin_13"
+                    android:background="@drawable/media_white_drawable"
+                    >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:layout_centerInParent="true"
+                    />
+                </RelativeLayout>
+
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_15"
+            android:layout_marginBottom="@dimen/margin_20"
+            android:paddingLeft="@dimen/margin_20"
+            android:paddingRight="@dimen/margin_20"
+            >
+
+            <Button
+                android:id="@+id/signCancelBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_35_g"
+                android:text="@string/cancel"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16"
+                android:gravity="center"
+                android:layout_marginRight="@dimen/margin_10"
+                android:background="@drawable/red_btn_selector"
+                android:textAllCaps="false"
+                android:singleLine="true"
+                android:layout_weight="1"
+                />
+
+
+            <Button
+                android:id="@+id/signOkBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_35_g"
+                android:text="@string/ok"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16"
+                android:gravity="center"
+                android:background="@drawable/gray_selector"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:textAllCaps="false"
+                android:singleLine="true"
+                android:layout_weight="1"
+
+                />
+
+        </LinearLayout>
+
+</LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

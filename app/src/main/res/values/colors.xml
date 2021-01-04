@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1A3561</color>    <!--2C2A37-->
+    <color name="colorPrimaryDark">#1A3561</color>   <!--23212B-->
+    <color name="colorAccent">#354365</color>
+    <color name="colorAccentTextHover">#CC354365</color>
+
+
+    <color name="primaryTextColor">#F4F4F6</color>
+    <color name="secondaryTextColor">#96F4F4F6</color>
+    <color name="backgroundCardColor">#FFFF</color>
+    <color name="dividerColor">#F2F2F3</color>
+    <color name="disabled_white">#FDFDFE</color>
+    <color name="spinner_blue">#9BA4B7</color>
+    <color name="spinner_divider">#E8EBEC</color>
+
+
+
+    <color name="app_colorPrimaryy">#2E2E2E</color>             <!--2C2A37-->
+    <color name="app_colorPrimaryDark">#000000</color>    <!--23212B-->
+
+    <color name="camera_transparent">#30C0C0C0</color>
+    <color name="black_transparent">#30000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="white_transparent">#80FFFFFF</color>
+    <color name="white_transparent_field">#99FFFFFF</color>
+    <color name="silver">#C0C0C0</color>
+
+    <color name="hos_summary_bg">#EFF2FC</color>
+    <color name="hos_send_log">#1A8DFF</color>
+    <color name="hos_break_time">#009DFF</color>
+    <color name="hos_shift">#39A9C4</color>
+    <color name="hos_current_status">#00BFA5</color>
+    <color name="hos_cycle">#7A2FFA</color>
+
+    <color name="hos_cardview_shadow">#3284E529</color>
+    <color name="hos_distance">#0ACDFC</color>
+    <color name="hos_status">#00BFA5</color>
+    <color name="hos_location">#0A83FC</color>
+    <color name="hos_remaining">#6F6F6F</color>
+    <color name="bluee_login_hover">#199cdd</color>
+    <color name="bluee_login">#67A7D8</color>
+    <color name="app_color">#ffffff</color>   <!--000000-->
+    <color name="white">#ffffff</color>
+    <color name="whiteee">#ffffff</color>
+    <color name="white_theme">#ffffff</color>
+    <color name="white_hover">#F0F0F0</color>
+    <color name="black">#000000</color>
+    <color name="black_hos">#090D17</color>
+    <color name="black_theme">#000000</color>
+    <color name="black_unidenfied">#464951</color>
+    <color name="gray_unidenfied">#87888D</color>
+
+
+    <color name="gray_hos">#5F6168</color>
+    <color name="hos_progress_bg">#E6E6E6</color>
+    <color name="gray_text">#a8a8a8</color>
+    <color name="gray_text_transparent">#99a8a8a8</color>
+    <color name="black_semi">#7C7C7B</color>
+    <color name="gray_text1">#555555</color>
+    <color name="gray_text2">#555555</color>
+    <color name="hos_sleeper">#ec407a</color>
+    <color name="hos_sleeper_hover">#FF4380</color>
+
+    <color name="testtt">#7C7C7B</color>
+    <color name="sign_record_bg">#F5F6FC</color>
+
+    <color name="gray_updated_theme_color">#F4F5F6</color>
+    <color name="gray_updated_divider_color">#EAEBEB</color>
+
+
+    <color name="black_download">#333232</color>
+    <color name="unselect_button">#4E4E4E</color>
+    <color name="blue_text">#5EA3E9</color>
+    <color name="color_eld_theme">#1A3561</color>           <!--539640-->
+    <color name="color_eld_theme_one">#1A3561</color>
+    <color name="color_eld_hover_theme">#F2003561</color>     <!--008000-->
+    <color name="gray_default">#EDEEEE</color>  <!--C9C8C6-->
+    <color name="gray_hover">#ABAAAB</color>
+    <color name="gray_background">#E2E2E2</color>
+    <color name="shadow">#30a8a8a8</color>
+    <color name="eld_gray_bg">#EEEEEE</color>
+    <color name="eld_gray_bg_theme">#EEEEEE</color>
+    <color name="color_eld_bg">#67A7D8</color>  <!--1A3561-->
+    <color name="red_eld">#CD2329</color>
+
+    <color name="GrayColor">#ABAAAB</color>
+
+    <color name="red_save_log">#E22848</color>
+    <color name="red_cancel_log">#E1271C</color>
+    <color name="red_bg">#FF0000</color>
+    <color name="red_hover">#ff1919</color>
+    <color name="red_truck_logo">#B4172A</color>
+    <color name="voilet_bg">#000000</color>   <!--2B2740-->
+    <color name="actionbar_bg">#000000</color>    <!--2E2E2E-->
+    <color name="pink">#FF4380</color>
+
+    <color name="greyText">#565656</color>
+    <color name="grey_line_list">#CAC8CD</color>
+    <color name="gray_edit_log">#F6F5F5</color>
+    <color name="gray_divider_edit_log">#C0C0C0</color>
+
+    <color name="violet">#82387F</color>
+    <color name="red_custom">#F44236</color>
+    <color name="white_foreground">#F1EFEF</color>
+
+    <color name="white_dark">#F6F2F2</color>
+
+    <color name="white_dark_hover">#E3D9D9</color>
+
+    <color name="gray_border">#CBCBCB</color>
+    <color name="splash_gray">#808080</color>   <!--98A0A6-->
+    <color name="splashPrimaryDark">#374756</color>
+    <color name="dim_gray">#47515B</color>
+    <color name="white_cream_hover">#E0CBCB</color>
+
+    <color name="edit_gray_bg">#F0F0F0</color>
+    <color name="edit_gray_border">#DFDFDF</color>
+    <color name="black_hover">#2E2E2E</color>
+
+    <color name="date_picker">#009688</color>
+    <color name="grey_light_line">#ADCAD9</color>
+
+    <color name="grey_text">#736767</color>
+
+    <color name="blue_light_line">#96B8C9</color>
+
+    <color name="blue_light_line_trip_detail">#D4E6EF</color>
+
+
+    <color name="blue_background_layout">#A2C8E2</color>
+
+    <color name="car_detail_layout">#B7D5EA</color>
+
+    <color name="blue_background">#c3dcee</color>
+    <color name="blue_background_light">#99c3dcee</color>
+
+    <color name="blue_transparent_background">#00284d</color>
+
+    <color name="blue_button">#256CB4</color>
+    <color name="active_status_bg">#4A88CC</color>
+    <color name="blue_button_hover">#287CD1</color>
+
+    <color name="light_blue_button_hover">#89B3C8</color>
+
+    <color name="green">#1A3561</color>
+
+
+    <color name="green_transparent_background">#991A3561</color>
+
+    <color name="text_forgot">#3F88C5</color>
+
+    <color name="slider_background">#075182</color>
+
+    <color name="fb_default">#315C94</color>
+
+    <color name="fb_hover">#2B4E7B</color>
+
+    <color name="fb_line">#2C5283</color>
+
+
+    <color name="divider_light_blue_line">#9BB7CC</color>
+
+    <color name="divider_light_grey_line">#F8F9F9</color>
+
+
+
+    <color name="blue">#ff59a9ff</color>
+    <color name="orange">#ffff900d</color>
+
+    <color name="camera_blue">#1E7FF0</color>
+
+    <color name="bottom_background_color">#ffc4c2bc</color>
+
+    <color name="polygonViewCircleStrokeColor">#ff59a9ff</color>
+    <color name="polygonViewCircleBackground">#90e5f8ff</color>
+
+
+    <color name="colorDriving">#358A0D</color>
+    <color name="colorOnDuty">#8083FF</color>
+    <color name="colorOffDuty">#848381</color>
+    <color name="colorOnDutyNew">#0F90EB</color>
+    <color name="colorSleeper">#F8851B</color>
+    <color name="colorVoilation">#C92627</color>
+    <color name="warning">#F66702</color>
+    <color name="colorStartTrip">#8B87FF</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorSlideMenu">#403E43</color>
+    <color name="colorBlackTransparent">#D9000000</color>
+    <color name="colorTransparent">#00000000</color>
+    <color name="colorBackground">#46413D</color>
+    <color name="colorGray">#EBEBEB</color>
+    <color name="divider_sign_list">#EBECF1</color>
+
+    <color name="txt_gray">#cc222222</color>
+    <color name="holo_green_light">#ff99cc00</color>
+    <color name="holo_red_light">#ffff4444</color>
+    <color name="holo_blue_dark">#ff0099cc</color>
+    <color name="holo_blue_light">#ff33b5e5</color>
+    <color name="holo_green_dark">#ff669900</color>
+    <color name="holo_red_dark">#ffcc0000</color>
+    <color name="holo_gray_light">#33999999</color>
+    <color name="holo_orange_light">#ff0099cc</color>
+    <color name="holo_orange_dark">#ff0099cc</color>
+    <color name="dot_titles_bg">#E9ECEF</color>
+
+
+
+    <color name="gray_hoverN">#6F6F6F</color>
+
+
+
+</resources>

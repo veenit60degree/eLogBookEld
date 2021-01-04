@@ -1,0 +1,819 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/hos_summary_bg"
+    >
+
+    <include
+        android:id="@+id/actionbarSummaryLay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/actionbar_eld"
+        />
+
+    <RelativeLayout
+        android:id="@+id/hosMainLay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/margin_short_1"
+
+        >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_above="@+id/summaryBottomLay"
+
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/nextBreakCardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                card_view:cardCornerRadius="@dimen/margin_10"
+                app:cardElevation="@dimen/margin_short_3"
+                app:cardUseCompatPadding="true"
+                >
+
+                <LinearLayout
+                    android:id="@+id/nextBreakLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/margin_short_2"
+                    >
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/margin_short_9"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        >
+
+                        <TextView
+                            android:layout_width="@dimen/margin_short_5"
+                            android:layout_height="@dimen/margin_short_5"
+                            android:paddingLeft="@dimen/margin_15"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/hos_status"
+                            android:textSize="@dimen/text_size_12"
+                            android:paddingLeft="@dimen/margin_short_4"
+                            />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/margin_25"
+                        android:layout_height="@dimen/margin_25"
+                        android:src="@drawable/hos_break"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        />
+
+                    <TextView
+                        android:id="@+id/nextBrkTitleTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hos_break"
+                        android:textColor="@color/black_hos"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_size_19"
+                        android:layout_gravity="center_horizontal"
+
+
+                        />
+
+
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/view_height_102"
+                        android:layout_height="@dimen/view_height_102"
+                        android:layout_gravity="center_horizontal"
+                        >
+                        <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
+
+
+                        <at.grabner.circleprogress.CircleProgressView
+                            android:id="@+id/breakCircularView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_short_3"
+                            android:layout_centerInParent="true"
+                            CircleProgressView:cpv_autoTextSize="true"
+                            CircleProgressView:cpv_barColor="@color/hos_break_time"
+                            CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                            CircleProgressView:cpv_innerContourSize="0dp"
+                            CircleProgressView:cpv_maxValue="100"
+                            CircleProgressView:cpv_outerContourSize="0dp"
+                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                            CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                            CircleProgressView:cpv_seekMode="true"
+                            CircleProgressView:cpv_showUnit="true"
+                            CircleProgressView:cpv_spinColor="@color/hos_break_time"
+                            CircleProgressView:cpv_textColor="@color/hos_break_time"
+                            CircleProgressView:cpv_textScale="0"
+                            CircleProgressView:cpv_unitColor="@color/white"
+                            CircleProgressView:cpv_unitPosition="right_top"
+                            CircleProgressView:cpv_unitScale="0"
+
+                            />
+
+
+
+                        <TextView
+                            android:id="@+id/breakUsedTimeTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/hos_break_time"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/text_size_17"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_horizontal"
+                            android:layout_centerInParent="true"
+
+                            />
+
+
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:id="@+id/breakInfoTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hos_violation_apprch"
+                        android:textColor="@color/colorVoilation"
+                        android:layout_gravity="center_horizontal"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_5"
+                        android:textSize="@dimen/text_size_11"
+                        android:textAllCaps="false"
+                        android:visibility="gone"
+                        />
+
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/disabledBreakCardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    card_view:cardCornerRadius="@dimen/margin_10"
+                    app:cardElevation="@dimen/margin_short_3"
+                    app:cardUseCompatPadding="true"
+                    card_view:cardBackgroundColor="@color/gray_text_transparent"
+                    android:visibility="gone"
+                    />
+
+
+
+
+            </RelativeLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/hosShiftCardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+
+                card_view:cardCornerRadius="@dimen/margin_10"
+                app:cardElevation="@dimen/margin_short_3"
+                app:cardUseCompatPadding="true"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/margin_short_2"
+                    >
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/margin_short_9"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        >
+
+                        <TextView
+                            android:layout_width="@dimen/margin_short_5"
+                            android:layout_height="@dimen/margin_short_5"
+                            android:paddingLeft="@dimen/margin_15"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/hos_status"
+                            android:textSize="@dimen/text_size_12"
+                            android:paddingLeft="@dimen/margin_short_4"
+                            />
+
+                    </LinearLayout>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/margin_25"
+                        android:layout_height="@dimen/margin_25"
+                        android:src="@drawable/hos_shift"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/margin_short_2"
+
+
+
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hos_shift"
+                        android:textColor="@color/black_hos"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_size_19"
+                        android:layout_gravity="center_horizontal"
+
+
+
+                        />
+
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/view_height_102"
+                        android:layout_height="@dimen/view_height_102"
+                        android:layout_gravity="center_horizontal"
+                        >
+
+
+
+                    <at.grabner.circleprogress.CircleProgressView
+                        android:id="@+id/shiftCircularView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_short_3"
+                        android:layout_centerInParent="true"
+                        CircleProgressView:cpv_autoTextSize="true"
+                        CircleProgressView:cpv_barColor="@color/hos_shift"
+                        CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                        CircleProgressView:cpv_innerContourSize="0dp"
+                        CircleProgressView:cpv_maxValue="100"
+                        CircleProgressView:cpv_outerContourSize="0dp"
+                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                        CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                        CircleProgressView:cpv_seekMode="true"
+                        CircleProgressView:cpv_showUnit="true"
+                        CircleProgressView:cpv_spinColor="@color/hos_shift"
+                        CircleProgressView:cpv_textColor="@color/hos_shift"
+                        CircleProgressView:cpv_textScale="0"
+                        CircleProgressView:cpv_unitColor="@color/white"
+                        CircleProgressView:cpv_unitPosition="right_top"
+                        CircleProgressView:cpv_unitScale="0"
+
+
+
+                        />
+
+
+
+
+                            <TextView
+                                android:id="@+id/shiftUsedTimeTV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/hos_shift"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/text_size_17"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center_horizontal"
+                                android:layout_centerInParent="true"
+
+
+                                />
+
+
+
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:id="@+id/shiftInfoTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black_semi"
+                        android:layout_gravity="center_horizontal"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_5"
+                        android:textSize="@dimen/text_size_11"
+                        android:textAllCaps="false"
+                        android:visibility="gone"
+
+                        />
+
+
+                </LinearLayout>
+
+
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/hosCycleCardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+
+                card_view:cardCornerRadius="@dimen/margin_10"
+                app:cardElevation="@dimen/margin_short_3"
+                app:cardUseCompatPadding="true"
+                >
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/margin_short_2"
+                    >
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/margin_short_9"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        >
+
+                        <TextView
+                            android:layout_width="@dimen/margin_short_5"
+                            android:layout_height="@dimen/margin_short_5"
+                            android:background="@drawable/circular_view_cycle"
+                            android:paddingLeft="@dimen/margin_15"
+                            />
+
+                        <TextView
+                            android:id="@+id/hosCurrentCycleTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/hos_cycle"
+                            android:textSize="@dimen/text_size_12"
+                            android:paddingLeft="@dimen/margin_short_4"
+                            />
+
+
+
+
+
+
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/margin_25"
+                        android:layout_height="@dimen/margin_25"
+                        android:src="@drawable/hos_cycle"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hos_cycle"
+                        android:textColor="@color/black_hos"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_size_19"
+                        android:layout_gravity="center_horizontal"
+
+
+                        />
+
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/view_height_102"
+                        android:layout_height="@dimen/view_height_102"
+                        android:layout_gravity="center_horizontal"
+
+                        >
+
+
+                        <at.grabner.circleprogress.CircleProgressView
+                            android:id="@+id/cycleCircularView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_margin="@dimen/margin_short_3"
+                            CircleProgressView:cpv_autoTextSize="true"
+                            CircleProgressView:cpv_barColor="@color/hos_cycle"
+                            CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                            CircleProgressView:cpv_innerContourSize="0dp"
+                            CircleProgressView:cpv_maxValue="100"
+                            CircleProgressView:cpv_outerContourSize="0dp"
+                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                            CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                            CircleProgressView:cpv_seekMode="true"
+                            CircleProgressView:cpv_showUnit="true"
+                            CircleProgressView:cpv_spinColor="@color/hos_cycle"
+                            CircleProgressView:cpv_textColor="@color/hos_cycle"
+                            CircleProgressView:cpv_textScale="0"
+                            CircleProgressView:cpv_unitColor="@color/white"
+                            CircleProgressView:cpv_unitPosition="right_top"
+                            CircleProgressView:cpv_unitScale="0"
+
+
+                            />
+
+
+                        <TextView
+                            android:id="@+id/cycleUsedTimeTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_horizontal"
+                            android:textColor="@color/hos_cycle"
+                            android:textSize="@dimen/text_size_17"
+                            android:textStyle="bold"
+
+
+                            />
+
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/cycleInfoTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorVoilation"
+                        android:layout_gravity="center_horizontal"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_5"
+                        android:textSize="@dimen/text_size_11"
+                        android:textAllCaps="false"
+                     android:visibility="gone"
+
+                        />
+
+
+                </LinearLayout>
+
+
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/hosStatusCardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+
+                card_view:cardCornerRadius="@dimen/margin_10"
+                app:cardElevation="@dimen/margin_short_3"
+                app:cardUseCompatPadding="true"
+                >
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/margin_short_2"
+                    >
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/margin_short_9"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        >
+
+                        <TextView
+                            android:id="@+id/hosStatusCircle"
+                            android:layout_width="@dimen/margin_short_5"
+                            android:layout_height="@dimen/margin_short_5"
+                            android:background="@drawable/circular_view_status"
+                            android:paddingLeft="@dimen/margin_15"
+                            />
+
+                        <TextView
+                            android:id="@+id/hosStatusTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/currentStatus"
+                            android:textColor="@color/hos_status"
+                            android:textSize="@dimen/text_size_12"
+                            android:paddingLeft="@dimen/margin_short_4"
+                            />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/hosStatusImgVw"
+                        android:layout_width="@dimen/margin_25"
+                        android:layout_height="@dimen/margin_25"
+                        android:src="@drawable/hos_status"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        />
+
+                    <TextView
+                        android:id="@+id/statusHosTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Status"
+                        android:textColor="@color/black_hos"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_size_19"
+                        android:layout_gravity="center_horizontal"
+
+
+                        />
+
+
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/view_height_102"
+                        android:layout_height="@dimen/view_height_102"
+                        android:layout_gravity="center_horizontal"
+
+                        >
+
+
+
+                        <at.grabner.circleprogress.CircleProgressView
+                            android:id="@+id/statusCircularView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_short_3"
+                            android:layout_centerInParent="true"
+                            CircleProgressView:cpv_autoTextSize="true"
+                            CircleProgressView:cpv_barColor="@color/hos_current_status"
+                            CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                            CircleProgressView:cpv_innerContourSize="0dp"
+                            CircleProgressView:cpv_maxValue="100"
+                            CircleProgressView:cpv_outerContourSize="0dp"
+                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                            CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                            CircleProgressView:cpv_seekMode="true"
+                            CircleProgressView:cpv_showUnit="true"
+                            CircleProgressView:cpv_spinColor="@color/hos_current_status"
+                            CircleProgressView:cpv_textColor="@color/hos_current_status"
+                            CircleProgressView:cpv_textScale="0"
+                            CircleProgressView:cpv_unitColor="@color/white"
+                            CircleProgressView:cpv_unitPosition="right_top"
+                            CircleProgressView:cpv_unitScale="0"
+
+                            />
+
+
+
+                        <TextView
+                            android:id="@+id/statusUsedTimeTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/hos_current_status"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/text_size_17"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_horizontal"
+                            android:layout_centerInParent="true"
+
+                            />
+
+
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:id="@+id/statusInfoTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black_semi"
+                        android:layout_gravity="center_horizontal"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_5"
+                        android:textAllCaps="false"
+                        android:textSize="@dimen/text_size_11"
+
+
+                        />
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/summaryBottomLay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_65"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+
+
+            >
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/hosDistanceCardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".75"
+                android:layout_marginRight="@dimen/margin_short_2"
+                card_view:cardCornerRadius="@dimen/margin_10"
+
+                app:cardElevation="@dimen/margin_short_2"
+                app:cardUseCompatPadding="true"
+                >
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/margin_short_5"
+
+                    >
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    >
+
+                    <TextView
+                        android:layout_width="@dimen/margin_short_5"
+                        android:layout_height="@dimen/margin_short_5"
+                        android:background="@drawable/circular_view_distance"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hos_driver_miles"
+                        android:textColor="@color/black_hos"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_size_16"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/hosDistanceTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/temp_value"
+                    android:textColor="@color/gray_hos"
+                    android:textSize="@dimen/text_size_13"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:paddingRight="@dimen/margin_short_5"
+                    />
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/hosLocationCardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".75"
+                card_view:cardCornerRadius="@dimen/margin_10"
+                app:cardElevation="@dimen/margin_short_2"
+                app:cardUseCompatPadding="true"
+                >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/margin_short_5"
+
+                    >
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        >
+
+                        <TextView
+                            android:layout_width="@dimen/margin_short_5"
+                            android:layout_height="@dimen/margin_short_5"
+                            android:background="@drawable/circular_view_location"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/CurrentLocation"
+                            android:textColor="@color/black_hos"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/text_size_16"
+                            android:paddingLeft="@dimen/margin_short_3"
+                            />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/hosLocationTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_value"
+                        android:textColor="@color/gray_hos"
+                        android:textSize="@dimen/text_size_13"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_short_5"
+                        />
+
+                </LinearLayout>
+
+
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/sendLogHosBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".9"
+                android:layout_marginLeft="@dimen/margin_short_2"
+                card_view:cardCornerRadius="@dimen/margin_10"
+                app:cardBackgroundColor="@color/hos_send_log"
+                app:cardElevation="@dimen/margin_short_2"
+                app:cardUseCompatPadding="true"
+
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/whiteee"
+                    android:text="@string/Send_Log"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_size_17"
+                    />
+
+            </androidx.cardview.widget.CardView>
+
+
+        </LinearLayout>
+
+
+
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,1567 @@
+package com.messaging.logistic.fragment;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
+import android.view.InflateException;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.android.volley.VolleyError;
+import com.constants.APIs;
+import com.constants.AsyncResponse;
+import com.constants.CheckConnectivity;
+import com.constants.CircularProgressBar;
+import com.constants.Constants;
+import com.constants.DownloadAppService;
+import com.constants.LoadingSpinImgView;
+import com.constants.SharedPref;
+import com.constants.SyncDataUpload;
+import com.constants.VolleyRequest;
+import com.custom.dialogs.AdverseRemarksDialog;
+import com.custom.dialogs.ConfirmationDialog;
+import com.driver.details.CycleModel;
+import com.driver.details.DriverConst;
+import com.driver.details.ParseLoginDetails;
+import com.driver.details.TimeZoneModel;
+import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
+import com.local.db.HelperMethods;
+import com.local.db.SyncingMethod;
+import com.messaging.logistic.Globally;
+import com.messaging.logistic.LoginActivity;
+import com.messaging.logistic.R;
+import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UILApplication;
+import com.shared.pref.CaCyclePrefManager;
+import com.shared.pref.CoCAPref;
+import com.shared.pref.CoDriverEldPref;
+import com.shared.pref.CoTimeZonePref;
+import com.shared.pref.CoUSPref;
+import com.shared.pref.EldCoDriverLogPref;
+import com.shared.pref.EldSingleDriverLogPref;
+import com.shared.pref.MainDriverEldPref;
+import com.shared.pref.TimeZonePrefManager;
+import com.shared.pref.USCyclePrefManager;
+import com.wifi.settings.WiFiConfig;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+
+public class SettingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener{
+
+
+    View rootView;
+    TextView actionBarTitle, caCycleTV, usCycleTV, timeZoneTV, dateActionBarTV, checkAppUpdateTV, haulExpTxtView, haulExcptnTxtVw;
+    Spinner caCycleSpinner, usCycleSpinner, timeZoneSpinner;
+    Button SettingSaveBtn;
+    ImageView updateAppDownloadIV, downloadHintImgView;
+    LoadingSpinImgView settingSpinImgVw;
+    RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn, obdDiagnoseBtn, docBtn;
+    LinearLayout settingsMainLay;
+    SwitchCompat haulExceptnSwitchButton, adverseSwitchButton;
+    List<CycleModel> CanCycleList;
+    List<CycleModel> UsaCycleList;
+    List<TimeZoneModel> TimeZoneList;
+    ScrollView settingsScrollView;
+
+    ParseLoginDetails SaveSettingDetails;
+    CaCyclePrefManager caPrefManager;
+    USCyclePrefManager usPrefmanager;
+    TimeZonePrefManager timeZonePrefManager;
+    SyncingMethod syncingMethod;
+    DBHelper dbHelper;
+    HelperMethods hMethods;
+    Constants constant;
+    Map<String, String> params;
+
+    CoCAPref coCAPrefManager;
+    CoUSPref coUSPrefmanager;
+    CoTimeZonePref coTimePrefManager;
+    ArrayAdapter<String> CanCycleAdapter;
+
+    int SyncData = 1, CheckInternetConnection = 2, CheckUpdate = 3;
+    int ExistingVersionCodeInt  = 0,  VersionCodeInt = 0, AppInstallAttemp = 0;
+    int CanListSize = 0, UsaListSize = 0, TimeZoneListSize = 0, SavedPosition = 0;
+    String SavedCanCycle = "", SavedUsaCycle = "", SavedTimeZone = "", DeviceId = "", DriverId = "", DriverName = "";
+    String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "";
+    ProgressDialog progressDialog;
+    ConfirmationDialog confirmationDialog;
+    AdverseRemarksDialog adverseRemarksDialog;
+    CheckConnectivity connectivityTask;
+    File syncingFile = new File("");
+    File DriverLogFile = new File("");
+    File cycleUpdationRecordFile = new File("");
+
+    private String url = "", ApkFilePath = "", existingApkFilePath = "";
+    String VersionCode = "", VersionName = "", ExistingApkVersionCode = "", ExistingApkVersionName = "";
+    CircularProgressBar downloadProgressBar;
+    JSONArray savedSyncedArray = new JSONArray();
+    VolleyRequest GetAppUpdateRequest, GetDriverLogPostPermission ;
+    final int GetAppUpdate  = 1, DriverLogPermission = 2;
+    int DriverType = 0;
+    long progressPercentage = 0;
+    boolean IsLogPermission = false, IsDownloading = false, IsManualAppDownload = false;
+    DriverPermissionMethod driverPermissionMethod;
+    MainDriverEldPref MainDriverPref;
+    CoDriverEldPref CoDriverPref;
+    EldSingleDriverLogPref eldSharedPref;
+    EldCoDriverLogPref coEldSharedPref;
+    // SyncDataUpload asyncTaskUpload;
+    DownloadAppService downloadAppService = new DownloadAppService();
+    Globally global;
+    Constants constants;
+    SharedPref sharedPref;
+    WiFiConfig wifiConfig;
+    Animation fadeViewAnim;
+
+    AlertDialog enableExceptionAlert;
+    private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
+
+  /*  private DatabaseReference mFirebaseDatabase;
+    private FirebaseDatabase mFirebaseInstance;
+    String TAG_Firebase = "FirebaseRealM";*/
+    // private String userId;
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        if (rootView != null) {
+            ViewGroup parent = (ViewGroup) rootView.getParent();
+            if (parent != null)
+                parent.removeView(rootView);
+        }
+        try {
+            rootView = inflater.inflate(R.layout.settings_fragment, container, false);
+            rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        } catch (InflateException e) {
+            e.printStackTrace();
+        }
+
+        // FirebaseApp.initializeApp(getActivity());
+        initView(rootView);
+
+        return rootView;
+    }
+
+
+    void initView(View v) {
+
+        constants                   = new Constants();
+        sharedPref                  = new SharedPref();
+        global                      = new Globally();
+        GetAppUpdateRequest         = new VolleyRequest(getActivity());
+        GetDriverLogPostPermission  = new VolleyRequest(getActivity());
+        connectivityTask            = new CheckConnectivity(getActivity());
+        driverPermissionMethod      = new DriverPermissionMethod();
+        SaveSettingDetails          = new ParseLoginDetails();
+        caPrefManager               = new CaCyclePrefManager();
+        usPrefmanager               = new USCyclePrefManager();
+        timeZonePrefManager         = new TimeZonePrefManager();
+        dbHelper                    = new DBHelper(getActivity());
+        hMethods                    = new HelperMethods();
+        syncingMethod               = new SyncingMethod();
+        constant                    = new Constants();
+
+        coCAPrefManager             = new CoCAPref();
+        coUSPrefmanager             = new CoUSPref();
+        coTimePrefManager           = new CoTimeZonePref();
+        wifiConfig                  = new WiFiConfig();
+        MainDriverPref              = new MainDriverEldPref();
+        CoDriverPref                = new CoDriverEldPref();
+        eldSharedPref               = new EldSingleDriverLogPref();
+        coEldSharedPref             = new EldCoDriverLogPref();
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading ...");
+
+        settingsScrollView   = (ScrollView)v.findViewById(R.id.settingsScrollView);
+        actionBarTitle       = (TextView)v.findViewById(R.id.EldTitleTV);
+        caCycleTV            = (TextView)v.findViewById(R.id.caCycleTV);
+        usCycleTV            = (TextView)v.findViewById(R.id.usCycleTV);
+        timeZoneTV           = (TextView)v.findViewById(R.id.timeZoneTV);
+        dateActionBarTV      = (TextView)v.findViewById(R.id.dateActionBarTV);
+        checkAppUpdateTV     = (TextView)v.findViewById(R.id.checkAppUpdateTV);
+        haulExcptnTxtVw      = (TextView)v.findViewById(R.id.haulExcptnTxtVw);
+        haulExpTxtView       = (TextView)v.findViewById(R.id.haulExpTxtView);
+
+        caCycleSpinner       = (Spinner)v.findViewById(R.id.caCycleSpinner);
+        usCycleSpinner       = (Spinner)v.findViewById(R.id.usCycleSpinner);
+        timeZoneSpinner      = (Spinner)v.findViewById(R.id.timeZoneSpinner);
+
+        SettingSaveBtn       = (Button) v.findViewById(R.id.settingSaveBtn);
+        updateAppDownloadIV  = (ImageView)v.findViewById(R.id.updateAppDownloadIV);
+        downloadHintImgView  = (ImageView)v.findViewById(R.id.downloadHintImgView);
+        settingSpinImgVw     = (LoadingSpinImgView)v.findViewById(R.id.settingSpinImgVw);
+
+        haulExceptionLay     = (RelativeLayout) v.findViewById(R.id.haulExceptionLay);
+        checkAppUpdateBtn    = (RelativeLayout) v.findViewById(R.id.checkAppUpdateBtn);
+        eldMenuLay           = (RelativeLayout) v.findViewById(R.id.eldMenuLay);
+        SyncDataBtn          = (RelativeLayout) v.findViewById(R.id.SyncDataBtn);
+        checkInternetBtn     = (RelativeLayout) v.findViewById(R.id.checkInternetBtn);
+        obdDiagnoseBtn       = (RelativeLayout) v.findViewById(R.id.obdDiagnoseBtn);
+        docBtn               = (RelativeLayout) v.findViewById(R.id.docBtn);
+
+        rightMenuBtn         = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
+        settingsMainLay      = (LinearLayout)v.findViewById(R.id.settingsMainLay);
+
+        downloadProgressBar  = (CircularProgressBar) v.findViewById(R.id.downloadProgressBar);
+        haulExceptnSwitchButton = (SwitchCompat)v.findViewById(R.id.haulExceptnSwitchButton);
+        adverseSwitchButton = (SwitchCompat)v.findViewById(R.id.adverseSwitchButton);
+
+        rightMenuBtn.setVisibility(View.GONE);
+        settingSpinImgVw.setImageResource(R.drawable.sync_settings);
+        dateActionBarTV.setVisibility(View.VISIBLE);
+        dateActionBarTV.setBackgroundResource(R.drawable.transparent);
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+        //  haulExceptionLay.setVisibility(View.GONE);
+        //  haulExcptnTxtVw.setVisibility(View.GONE);
+
+
+        // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            settingsMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
+        }
+
+
+        // Firebase initilization
+//        mFirebaseInstance = FirebaseDatabase.getInstance();
+
+        // get reference to 'users' node
+        //      mFirebaseDatabase = mFirebaseInstance.getReference("DataStatics");
+
+        fadeViewAnim    = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+        fadeViewAnim.setDuration(1500);
+
+        DeviceId        = sharedPref.GetSavedSystemToken(getActivity());
+
+        haulExceptnSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(buttonView.isPressed()) {
+
+                    if (isChecked) {
+                        if(!sharedPref.getAdverseExcptn(getActivity())) {
+                            if(isAllowToEnableException(DriverId)) {
+                                haulExceptionAlert();
+                            }else{
+                                buttonView.setChecked(false);
+                                global.EldScreenToast(SyncDataBtn, exceptionDesc, getResources().getColor(R.color.colorSleeper));
+                            }
+
+                        }else{
+                            buttonView.setChecked(false);
+                            global.EldScreenToast(SyncDataBtn, getString(R.string.already_enable_excp), getResources().getColor(R.color.colorSleeper));
+                        }
+                    } else {
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_reset_auto), getResources().getColor(R.color.colorSleeper));
+                        buttonView.setChecked(true);
+                    }
+                }
+            }
+        });
+
+        adverseSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(buttonView.isPressed()) {
+                    if (isChecked) {
+
+                        if(!sharedPref.get16hrHaulExcptn(getActivity())) {
+
+                            if(isAllowToEnableException(DriverId)) {
+                                try {
+                                    if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
+                                        adverseRemarksDialog.dismiss();
+
+                                    adverseRemarksDialog = new AdverseRemarksDialog(getActivity(), true, false, false, new RemarksListener());
+                                    adverseRemarksDialog.show();
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else{
+                                buttonView.setChecked(false);
+                                global.EldScreenToast(SyncDataBtn, exceptionDesc, getResources().getColor(R.color.colorSleeper));
+                            }
+
+                        }else{
+                            buttonView.setChecked(false);
+                            global.EldScreenToast(SyncDataBtn, getString(R.string.already_enable_excp), getResources().getColor(R.color.colorSleeper));
+                        }
+                    } else {
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_reset_auto), getResources().getColor(R.color.colorSleeper));
+                        buttonView.setChecked(true);
+                    }
+                }
+            }
+        });
+
+        /*
+
+
+         */
+/*
+
+        // temperory hide for testing
+        haulExceptnSwitchButton.setVisibility(View.GONE);
+        haulExpTxtView.setText("Wired OBD");
+        haulExceptionLay.setVisibility(View.VISIBLE);
+        haulExcptnTxtVw.setVisibility(View.VISIBLE);
+
+*/
+
+        fadeViewAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(IsDownloading) {
+                    checkAppUpdateTV.startAnimation(fadeViewAnim);
+                    downloadHintImgView.startAnimation(fadeViewAnim);
+                }else {
+                    fadeViewAnim.cancel();
+                    downloadHintImgView.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+
+
+        eldMenuLay.setOnClickListener(this);
+        SettingSaveBtn.setOnClickListener(this);
+        SyncDataBtn.setOnClickListener(this);
+        checkInternetBtn.setOnClickListener(this);
+        checkAppUpdateBtn.setOnClickListener(this);
+        dateActionBarTV.setOnClickListener(this);
+        obdDiagnoseBtn.setOnClickListener(this);
+        docBtn.setOnClickListener(this);
+        haulExceptionLay.setOnClickListener(this);
+
+        caCycleSpinner.setOnItemSelectedListener(this);
+        usCycleSpinner.setOnItemSelectedListener(this);
+        timeZoneSpinner.setOnItemSelectedListener(this);
+
+        SettingSaveBtn.setVisibility(View.GONE);
+        caCycleSpinner.setVisibility(View.GONE);
+        usCycleSpinner.setVisibility(View.GONE);
+        timeZoneSpinner.setVisibility(View.GONE);
+
+    }
+
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+        if(sharedPref.IsAOBRD(getActivity())){
+            dateActionBarTV.setText(Html.fromHtml("<b><u>AOBRD</u></b>"));
+        }else{
+            dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
+        }
+
+        haulExceptnSwitchButton.setChecked(sharedPref.get16hrHaulExcptn(getActivity()));
+        adverseSwitchButton.setChecked(sharedPref.getAdverseExcptn(getActivity()));
+
+       /* if(sharedPref.get16hrHaulExcptn(getActivity())){    // disable button if exception is enabled to avoid manual off
+            haulExceptnSwitchButton.setEnabled(false);
+        }else{
+            haulExceptnSwitchButton.setEnabled(true);
+        }
+
+        if(sharedPref.getAdverseExcptn(getActivity())){    // disable button if exception is enabled to avoid manual off
+            adverseSwitchButton.setEnabled(false);
+        }else{
+            adverseSwitchButton.setEnabled(true);
+        }*/
+
+        global.hideSoftKeyboard(getActivity());
+        getInstalledAppDetail();
+        existingApkFilePath = getExistingApkPath();
+        DriverId            = sharedPref.getDriverId( getActivity());
+        DriverName          =  DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
+
+        actionBarTitle.setText(getResources().getString(R.string.action_settings));
+        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
+            SavedPosition = 0;
+            SavedCanCycle = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
+            SavedUsaCycle = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
+            SavedTimeZone = DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity());
+
+            //actionBarTitle.setText("Settings (" + DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity()) + ")");
+        }else{
+            SavedPosition = 1;
+            SavedCanCycle = DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleId, getActivity());
+            SavedUsaCycle = DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleId, getActivity());
+            SavedTimeZone = DriverConst.GetCoDriverSettings(DriverConst.CoTimeZoneID, getActivity());
+
+            // actionBarTitle.setText("Settings (" + DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, getActivity()) + ")");
+        }
+
+        try{
+            JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
+
+
+            if(logPermissionObj != null) {
+                try {
+                    IsManualAppDownload = logPermissionObj.getBoolean(ConstantsKeys.IsManualAppDownload);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        DisplayCanCycles();
+        DisplayUsaCycles();
+        DisplayTimeZones();
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter("download_progress"));
+
+        if (global.isConnected(getActivity())) {
+            GetDriverLogPermission(DriverId);
+
+            if(TabAct.isUpdateDirectly){
+                TabAct.isUpdateDirectly = false;
+
+                settingsScrollView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        settingsScrollView.fullScroll(View.FOCUS_DOWN);
+                    }
+                });
+
+                checkAppUpdateBtn.performClick();
+
+            }
+        }
+
+
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        TabAct.isUpdateDirectly = false;
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(progressReceiver);
+    }
+
+
+
+
+    /* ======= Display Canada Cycle ======== */
+    private void DisplayCanCycles(){
+        CanCycleList = new ArrayList<CycleModel>();
+        ArrayList<String> CycleArray = new ArrayList<String>();
+        CanListSize = 0;
+        int SavedCyclePos = 0;
+
+        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ){
+
+            try {
+                CanListSize = caPrefManager.GetCycles(getActivity()).size();
+            } catch (Exception e) {
+                CanListSize = 0;
+            }
+            try {
+                if (CanListSize > 0) {
+                    CanCycleList = caPrefManager.GetCycles(getActivity());
+                    for (int i = 0; i < CanCycleList.size(); i++) {
+                        CycleArray.add(CanCycleList.get(i).getCycleName());
+
+                        if(CanCycleList.get(i).getCycleId().equals(SavedCanCycle))
+                            SavedCyclePos = i;
+                    }
+
+                    SetSpinnerAdapter(caCycleSpinner, SavedCyclePos, CycleArray, caCycleTV);
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                CanListSize = 0;
+            }
+        }else{
+            try {
+                CanListSize = coCAPrefManager.GetCycles(getActivity()).size();
+            } catch (Exception e) {
+                CanListSize = 0;
+            }
+            try {
+                if (CanListSize > 0) {
+                    CanCycleList = coCAPrefManager.GetCycles(getActivity());
+                    for (int i = 0; i < CanCycleList.size(); i++) {
+                        CycleArray.add(CanCycleList.get(i).getCycleName());
+
+                        if(CanCycleList.get(i).getCycleId().equals(SavedCanCycle))
+                            SavedCyclePos = i;
+                    }
+
+                    SetSpinnerAdapter(caCycleSpinner, SavedCyclePos, CycleArray, caCycleTV);
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                CanListSize = 0;
+            }
+        }
+
+    }
+
+    /* ======= Display USA Cycle ======== */
+    private void DisplayUsaCycles(){
+        UsaCycleList = new ArrayList<CycleModel>();
+        ArrayList<String> CycleArray = new ArrayList<String>();
+        UsaListSize = 0;
+        int SavedCyclePos = 0;
+
+        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ){
+            try {
+                UsaListSize = usPrefmanager.GetCycles(getActivity()).size();
+            } catch (Exception e) {
+                UsaListSize = 0;
+            }
+            try {
+                if (UsaListSize > 0) {
+                    UsaCycleList = usPrefmanager.GetCycles(getActivity());
+                    for (int i = 0; i < UsaCycleList.size(); i++) {
+                        CycleArray.add(UsaCycleList.get(i).getCycleName());
+
+                        if(UsaCycleList.get(i).getCycleId().equals(SavedUsaCycle))
+                            SavedCyclePos = i;
+
+                    }
+                    SetSpinnerAdapter(usCycleSpinner, SavedCyclePos, CycleArray, usCycleTV);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                UsaListSize = 0;
+            }
+        }else{
+            try {
+                UsaListSize = coUSPrefmanager.GetCycles(getActivity()).size();
+            } catch (Exception e) {
+                UsaListSize = 0;
+            }
+            try {
+                if (UsaListSize > 0) {
+                    UsaCycleList = coUSPrefmanager.GetCycles(getActivity());
+                    for (int i = 0; i < UsaCycleList.size(); i++) {
+                        CycleArray.add(UsaCycleList.get(i).getCycleName());
+
+                        if(UsaCycleList.get(i).getCycleId().equals(SavedUsaCycle))
+                            SavedCyclePos = i;
+                    }
+                    SetSpinnerAdapter(usCycleSpinner, SavedCyclePos, CycleArray, usCycleTV);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                UsaListSize = 0;
+            }
+        }
+    }
+
+    /* ======= Display Time Zones ======== */
+    private void DisplayTimeZones(){
+        TimeZoneList = new ArrayList<TimeZoneModel>();
+        ArrayList<String> CycleArray = new ArrayList<String>();
+        TimeZoneListSize = 0;
+        int SavedTimeZonePos = 0;
+
+        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ){
+            try {
+                TimeZoneListSize = timeZonePrefManager.GetTimeZone(getActivity()).size();
+            } catch (Exception e) {
+                TimeZoneListSize = 0;
+            }
+            try {
+                if (TimeZoneListSize > 0) {
+                    TimeZoneList = timeZonePrefManager.GetTimeZone(getActivity());
+                    for (int i = 0; i < TimeZoneList.size(); i++) {
+                        CycleArray.add(TimeZoneList.get(i).getTimeZoneName());
+
+                        if(TimeZoneList.get(i).getTimeZoneID().equals(SavedTimeZone))
+                            SavedTimeZonePos = i;
+
+                    }
+                    SetSpinnerAdapter(timeZoneSpinner, SavedTimeZonePos, CycleArray, timeZoneTV);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                TimeZoneListSize = 0;
+            }
+        }else{
+            try {
+                TimeZoneListSize = coTimePrefManager.GetTimeZone(getActivity()).size();
+            } catch (Exception e) {
+                TimeZoneListSize = 0;
+            }
+            try {
+                if (TimeZoneListSize > 0) {
+                    TimeZoneList = coTimePrefManager.GetTimeZone(getActivity());
+                    for (int i = 0; i < TimeZoneList.size(); i++) {
+                        CycleArray.add(TimeZoneList.get(i).getTimeZoneName());
+
+                        if(TimeZoneList.get(i).getTimeZoneID().equals(SavedTimeZone))
+                            SavedTimeZonePos = i;
+                    }
+                    SetSpinnerAdapter(timeZoneSpinner, SavedTimeZonePos, CycleArray, timeZoneTV);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                TimeZoneListSize = 0;
+            }
+        }
+    }
+
+
+
+    private void SetSpinnerAdapter(Spinner spinner, int indexPosition, ArrayList<String> spinnerArray, TextView view){
+        CanCycleAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
+        CanCycleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(CanCycleAdapter);
+        spinner.setSelection(indexPosition);
+        view.setText(spinnerArray.get(indexPosition));
+    }
+
+
+
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+
+
+            if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v("TAG","Permission is granted");
+                SyncData();
+
+                return true;
+            } else {
+                Log.v("TAG","Permission is revoked");
+                ActivityCompat.requestPermissions(((Activity)getContext()), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("TAG","Permission is granted");
+            SyncData();
+            return true;
+        }
+
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+
+        switch (requestCode) {
+
+            case 1:
+                if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                    Log.v("TAG","Permission: "+permissions[0]+ "was "+grantResults[0]);
+                    //resume tasks needing this permission
+
+                    SyncData();
+                }
+                break;
+
+        }
+
+    }
+
+
+    private void SyncData(){
+        //  Log.d("GetCycleDetails", "cycle Detail Array: " + sharedPref.GetCycleDetails(getActivity()));
+
+        savedSyncedArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DriverId), dbHelper);
+
+        if(savedSyncedArray.length() > 0) {
+            syncingFile = global.SaveFileInSDCard("Sync_", savedSyncedArray.toString(), false, getActivity());
+        }
+
+        if(savedSyncedArray.length() > 0 || IsLogPermission) {
+            // progressDialog.show();
+            settingSpinImgVw.startAnimation();
+            connectivityTask.ConnectivityRequest(SyncData, ConnectivityInterface);
+        }else{
+            ClearDriverUnSavedlog();
+            global.EldScreenToast(SyncDataBtn, "No data available for syncing.", getResources().getColor(R.color.colorSleeper));
+        }
+
+    }
+
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+
+
+            case R.id.eldMenuLay:
+                TabAct.sliderLay.performClick();
+                break;
+
+            case R.id.dateActionBarTV:
+                TabAct.host.setCurrentTab(0);
+                // dateActionBarTV.setVisibility(View.INVISIBLE);
+                break;
+
+
+
+            case R.id.SyncDataBtn:
+
+                // isStoragePermissionGranted();
+                SyncData();
+
+                break;
+
+            case R.id.checkInternetBtn:
+                progressDialog.show();
+                CheckConnectivity CheckConnectivity = new CheckConnectivity(getActivity());
+                CheckConnectivity.ConnectivityRequest(CheckInternetConnection, ConnectivityInterface);
+
+                break;
+
+
+            case R.id.checkAppUpdateBtn:
+
+                if(IsDownloading){
+
+                    if (confirmationDialog != null && confirmationDialog.isShowing())
+                        confirmationDialog.dismiss();
+                    confirmationDialog = new ConfirmationDialog(getActivity(), "settings", new ConfirmListener());
+                    confirmationDialog.show();
+
+                }else {
+
+                    getInstalledAppDetail();
+                    File existingFile = new File(global.getAlsApkPath(getActivity()) + "/" + getExistingApkPath());
+                    if (!existingFile.isFile()) {
+                        checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
+                    }
+
+                    if (ExistingApkVersionCode.equals(VersionCode) && ExistingApkVersionName.equals(VersionName)) {
+                        global.EldScreenToast(SyncDataBtn, "Your application is up to date", getResources().getColor(R.color.colorPrimary));
+                    } else {
+                        String updateTvText = checkAppUpdateTV.getText().toString();
+                        if (updateTvText.equals(getResources().getString(R.string.install_updates))) {
+                            if (ApkFilePath.length() > 0) {
+                                InstallApp(ApkFilePath);
+                            } else {
+                                checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
+                                global.EldScreenToast(SyncDataBtn, "File not found", getResources().getColor(R.color.colorVoilation));
+                            }
+                        } else {
+                            connectivityTask.ConnectivityRequest(CheckUpdate, ConnectivityInterface);
+                        }
+                    }
+                }
+
+
+
+                break;
+
+
+
+            case R.id.obdDiagnoseBtn:
+
+               /* ObdDiagnoseFragment obdDiagnoseFragment = new ObdDiagnoseFragment();
+                MoveFragment(obdDiagnoseFragment);
+*/
+                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
+                    ObdDiagnoseFragment obdDiagnoseFragment = new ObdDiagnoseFragment();
+                    MoveFragment(obdDiagnoseFragment);
+                }else{
+                    global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                }
+
+                break;
+
+            case R.id.haulExceptionLay:
+                //  ObdConfigFragment wiredObdFragment = new ObdConfigFragment();
+                //  MoveFragment(wiredObdFragment);
+                break;
+
+            case R.id.docBtn:
+                DocumentFragment helpFragment = new DocumentFragment();
+                MoveFragment(helpFragment);
+                break;
+
+
+
+
+        }
+    }
+
+
+
+    /**
+     * Creating new user node under 'users'
+     */
+   /* private void addUsageData() {
+        // TODO
+        // In real apps this userId should be fetched
+        // by implementing firebase auth
+
+        // Check for already existed userId
+        if (TextUtils.isEmpty(userId)) {
+            // create User data
+        } else {
+            // add User data
+
+        }
+
+
+       *//* if (TextUtils.isEmpty(userId)) {
+            userId = mFirebaseDatabase.push().getKey();
+        }*//*
+
+        DataUsageModel user = new DataUsageModel(
+                DriverId, DriverName,
+                AlsSendingData, AlsReceivedData,
+                MobileUsage, TotalUsage,
+                global.getCurrentDate());
+
+        Map<String, DataUsageModel> users = new HashMap<>();
+        users.put(DriverName, user);
+
+        mFirebaseDatabase.child(DriverId).push().setValue(user);
+
+      //  mFirebaseDatabase.setValue(users);
+
+
+    }
+
+*/
+
+
+
+    private class RemarksListener implements AdverseRemarksDialog.RemarksListener{
+
+        @Override
+        public void CancelReady() {
+            adverseSwitchButton.setChecked(false);
+            try {
+                if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
+                    adverseRemarksDialog.dismiss();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void JobBtnReady(String AdverseExceptionRemarks, boolean IsClaim, boolean IsCompanyAssign) {
+            sharedPref.setAdverseExcptn(true, getActivity());
+            // adverseSwitchButton.setEnabled(false);
+            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.advrs_excptn_enabled), getResources().getColor(R.color.colorPrimary));
+
+            try {
+                if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
+                    adverseRemarksDialog.dismiss();
+
+                hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
+                        false, DriverType, constants, sharedPref,
+                        MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                        syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
+    /*================== Confirmation Listener ====================*/
+    private class ConfirmListener implements ConfirmationDialog.ConfirmationListener {
+
+        @Override
+        public void OkBtnReady() {
+
+            sharedPref.setAsyncCancelStatus(true, getActivity());
+            IsDownloading = false;
+            fadeViewAnim.cancel();
+
+            downloadProgressBar.setVisibility(View.GONE);
+            downloadHintImgView.setVisibility(View.GONE);
+            updateAppDownloadIV.setVisibility(View.VISIBLE);
+
+            checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
+
+            confirmationDialog.dismiss();
+        }
+    }
+
+    CheckConnectivity.ConnectivityInterface ConnectivityInterface = new CheckConnectivity.ConnectivityInterface() {
+        @Override
+        public void IsConnected(boolean result, int flag) {
+            Log.d("networkUtil", "result: " +result );
+
+            if (result) {
+                if(flag == CheckInternetConnection) {
+                    if(progressDialog != null)
+                        progressDialog.dismiss();
+                    Constants.IsAlsServerResponding = true;
+                    global.EldScreenToast(SyncDataBtn, "Internet Connected.", getResources().getColor(R.color.colorPrimary));
+                }else if(flag == CheckUpdate){
+
+                    if(IsManualAppDownload){
+                        GetAppDetails(APIs.GET_MANNUAL_APK_DETAIL);
+                    }else{
+                        if(ApkFilePath.length() == 0) {
+                            GetAppDetails(APIs.GET_ANDROID_APP_DETAIL);
+                        }else{
+                            CheckAppStatus(); //downloadButtonClicked(ApkFilePath, VersionCode, VersionName, IsDownloading);
+                        }
+                    }
+
+                }else{
+
+                    if(IsLogPermission) {
+                        DriverLogFile = global.GetSavedFile(getActivity(), ConstantsKeys.ViolationTest, "txt");
+
+                        // Save Cycle record in file on local storage
+                        try {
+                            JSONArray cycleArray = new JSONArray(sharedPref.GetCycleDetails(getActivity()));
+                            if(cycleArray.length() > 0) {
+                                cycleUpdationRecordFile = global.SaveFileInSDCard("Cycle_", cycleArray.toString(), false, getActivity());
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    // Sync driver log API data to server with SAVE_LOG_TEXT_FILE (SAVE sync data service)
+                    SyncDataUpload syncDataUpload = new SyncDataUpload(getActivity(), DriverId, syncingFile, DriverLogFile, cycleUpdationRecordFile, IsLogPermission, asyncResponse );
+                    syncDataUpload.execute();
+
+                }
+            } else {
+                settingSpinImgVw.stopAnimation();
+                if(progressDialog != null){
+                    progressDialog.dismiss();
+                }
+                global.EldScreenToast(SyncDataBtn, "Internet not working.", getResources().getColor(R.color.colorVoilation) );
+            }
+        }
+    };
+
+
+
+    private BroadcastReceiver progressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            long percentage     = intent.getIntExtra("percentage", 0);
+            ApkFilePath         = intent.getStringExtra("path");
+            boolean isCompleted = intent.getBooleanExtra("isCompleted", false);
+
+            if(percentage >= progressPercentage) {
+                //  IsDownloading = true;
+                downloadProgressBar.setProgress(percentage);
+                progressPercentage = percentage;
+            }
+            if(isCompleted){
+
+                fadeViewAnim.cancel();
+
+                IsDownloading = false;
+                downloadProgressBar.setVisibility(View.GONE);
+                downloadHintImgView.setVisibility(View.GONE);
+                updateAppDownloadIV.setVisibility(View.VISIBLE);
+
+                if(ApkFilePath.equals("Downloading failed.")){
+                    global.EldScreenToast(SyncDataBtn, ApkFilePath, getResources().getColor(R.color.colorSleeper));
+                    ApkFilePath = "";
+                    ExistingApkVersionCode = "";
+                    ExistingApkVersionName = "";
+                    checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
+                }else{
+                    global.EldScreenToast(SyncDataBtn, "Downloading completed.", getResources().getColor(R.color.colorPrimary));
+                    checkAppUpdateTV.setText(getResources().getString(R.string.install_updates));
+
+                    if (ApkFilePath.length() > 0) {
+                        InstallApp(ApkFilePath);
+                    }
+                }
+            }
+
+        }
+    };
+
+
+    String getExistingApkPath(){
+        File apkFile = global.getAlsApkPath(getActivity());
+        String path = "";
+        try{
+            if(apkFile != null) {
+                for (File f : apkFile.listFiles()) {
+                    if (f.isFile()) {
+                        path = f.getName();
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return path;
+    }
+
+
+    void getInstalledAppDetail(){
+        ExistingApkVersionCode = global.GetAppVersion(getActivity(), "VersionCode");
+        ExistingApkVersionName = global.GetAppVersion(getActivity(), "VersionName");
+
+    }
+
+
+    void InstallApp(String appPath){
+        progressPercentage = 0;
+
+        File toInstall = new File(appPath);
+
+        if(toInstall.isFile()) {
+            /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){ //Build.VERSION.SDK_INT < Build.VERSION_CODES.P &&
+                global.EldScreenToast(SyncDataBtn, "Not able to install app directly. You can install it manually in (Logistic/AlsApp/) folder.", Color.parseColor("#358A0D"));
+            }else */
+
+            if(AppInstallAttemp < 2) { // It means apk file has some problem and need to delete it to download again.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                  //  Uri apkUri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", toInstall);
+                    Uri apkUri = FileProvider.getUriForFile(getActivity(), constants.packageName + ".provider", toInstall);
+                    Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                    intent.setData(apkUri);
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                    intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
+                    intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+                    intent.putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME,
+                            getActivity().getApplicationInfo().packageName);
+                    //  startActivityForResult(intent, REQUEST_INSTALL);
+
+
+                    startActivity(intent);
+                } else {
+                    Uri apkUri = Uri.fromFile(toInstall);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+                AppInstallAttemp++;
+            }else{
+                // Deleter apk file is exist
+                String folder      = global.getAlsApkPath(getActivity()).toString();
+                global.DeleteDirectory(folder);
+                AppInstallAttemp = 0;
+
+                checkAppUpdateBtn.performClick();
+
+            }
+        }
+
+    }
+
+
+
+    void downloadButtonClicked(String url, String VersionCode, String VersionName, boolean downloadStatus) {
+
+        IsDownloading = true;
+        downloadProgressBar.setProgress(0);
+        downloadProgressBar.setVisibility(View.VISIBLE);
+        downloadHintImgView.setVisibility(View.VISIBLE);
+        updateAppDownloadIV.setVisibility(View.GONE);
+
+        checkAppUpdateTV.setText(getResources().getString(R.string.Downloading));
+        ApkFilePath = "";
+        progressPercentage = 0;
+        checkAppUpdateTV.startAnimation(fadeViewAnim);
+        downloadHintImgView.startAnimation(fadeViewAnim);
+
+
+        Intent serviceIntent = new Intent(getActivity(), downloadAppService.getClass());
+        serviceIntent.putExtra("url", url);
+        serviceIntent.putExtra("VersionCode", VersionCode);
+        serviceIntent.putExtra("VersionName", VersionName);
+        serviceIntent.putExtra("isDownloading", downloadStatus);
+        getActivity().startService(serviceIntent);
+
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId()){
+
+            case R.id.caCycleSpinner:
+                SelectedCanCycle = CanCycleList.get(position).getCycleId();
+                break;
+
+            case R.id.usCycleSpinner:
+                SelectedUsaCycle = UsaCycleList.get(position).getCycleId();
+                break;
+
+            case R.id.timeZoneSpinner:
+                SelectedTimeZone = TimeZoneList.get(position).getTimeZoneID();
+                break;
+
+        }
+    }
+
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+
+
+    void ClearDriverUnSavedlog(){
+        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
+            DriverType = 0;
+            MainDriverPref.ClearLocFromList(getActivity());
+        }else{
+            DriverType = 1;
+            CoDriverPref.ClearLocFromList(getActivity());
+        }
+    }
+
+
+    /*================== Get app details ===================*/
+    void GetAppDetails(String api){  /*, final String SearchDate*/
+
+        progressDialog.show();
+
+        params = new HashMap<String, String>();
+        GetAppUpdateRequest.executeRequest(com.android.volley.Request.Method.GET, api , params, GetAppUpdate,
+                Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
+
+    }
+
+
+    /*================== Get Driver Trip Details ===================*/
+    void GetDriverLogPermission(final String DriverId){  /*, final String SearchDate*/
+
+        params = new HashMap<String, String>();
+        params.put("DriverId", DriverId);
+        GetDriverLogPostPermission.executeRequest(com.android.volley.Request.Method.POST, APIs.DRIVER_VIOLATION_PERMISSION , params, DriverLogPermission,
+                Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
+
+    }
+
+
+
+    void CheckAppStatus(){
+        if (ExistingVersionCodeInt >= VersionCodeInt) {
+
+            global.EldScreenToast(SyncDataBtn, "Your application is up to date.", getResources().getColor(R.color.colorPrimary));
+
+        }else{
+            // Check app is already saved in sd card
+            existingApkFilePath = getExistingApkPath();
+            if (existingApkFilePath.length() > 0) {
+                String[] apkPathArray = existingApkFilePath.split("_");
+                if (apkPathArray.length > 2) {
+                    ExistingApkVersionCode = apkPathArray[1];
+                    ExistingApkVersionName = apkPathArray[2];
+                    ExistingApkVersionName = ExistingApkVersionName.replaceAll(".apk", "");
+
+                    if (ExistingApkVersionCode.equals(VersionCode) && ExistingApkVersionName.equals(VersionName)) {
+                        checkAppUpdateTV.setText("Install Updates");
+                        global.EldScreenToast(SyncDataBtn, "This application is already in (Logistic/AlsApp/) folder.", getResources().getColor(R.color.colorPrimary));
+                        ApkFilePath = global.getAlsApkPath(getActivity()) + "/" + existingApkFilePath;
+                        InstallApp(ApkFilePath);
+                    } else {
+                        downloadButtonClicked(ApkFilePath, VersionCode, VersionName, IsDownloading);
+                    }
+                } else {
+                    downloadButtonClicked(ApkFilePath, VersionCode, VersionName, IsDownloading);
+                }
+            } else {
+                downloadButtonClicked(ApkFilePath, VersionCode, VersionName, IsDownloading);
+            }
+
+        }
+    }
+
+
+    VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback() {
+
+        @Override
+        public void getResponse(String response, int flag) {
+
+            JSONObject obj = null;  //, dataObj = null;
+            String status = "";
+            JSONObject dataObj = null;
+
+            try {
+                settingSpinImgVw.stopAnimation();
+                obj = new JSONObject(response);
+                status = obj.getString("Status");
+
+            } catch (JSONException e) {
+            }
+
+            if (status.equalsIgnoreCase("true")) {
+                switch (flag) {
+                    case GetAppUpdate:
+                        try {
+                            Log.d("response", "response: " + response);
+
+
+                            if(progressDialog != null)
+                                progressDialog.dismiss();
+
+                            dataObj = new JSONObject(obj.getString("Data"));
+                            VersionCode = dataObj.getString("VersionCode");
+                            VersionName = dataObj.getString("VersionName");
+                            ApkFilePath = dataObj.getString("ApkFilePath");
+
+                            try {
+                                ExistingVersionCodeInt  = Integer.valueOf(ExistingApkVersionCode);
+                                VersionCodeInt          = Integer.valueOf(VersionCode);
+                            }catch (Exception e){
+                                ExistingVersionCodeInt = 0;
+                                VersionCodeInt = 0;
+                                e.printStackTrace();
+                            }
+
+                            if(IsManualAppDownload == false && ExistingApkVersionCode.equals(VersionCode) && ExistingApkVersionName.equals(VersionName)){
+                                global.EldScreenToast(SyncDataBtn, "Your application is up to date.", getResources().getColor(R.color.colorPrimary));
+                            }else {
+                                CheckAppStatus();
+
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        break;
+
+                    case DriverLogPermission:
+                        // Log.d("response", "response: " + response);
+
+                        try {
+                            IsLogPermission = obj.getBoolean("Data"); // "Data" parameter is used as Permission parameter to upload or not Driver's 18 Days Log to server with sync file
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        break;
+
+
+                }
+            }else{
+                try {
+                    if(progressDialog != null)
+                        progressDialog.dismiss();
+                    settingSpinImgVw.stopAnimation();
+
+                    if(obj.getString("Message").equals("Device Logout") ){
+                        global.ClearAllFields(getActivity());
+                        global.StopService(getActivity());
+                        Intent i = new Intent(getActivity(), LoginActivity.class);
+                        getActivity().startActivity(i);
+                        getActivity().finish();
+                    }else{
+                        if(flag == GetAppUpdate){
+                            global.EldScreenToast(SyncDataBtn, obj.getString("Message"), getResources().getColor(R.color.colorVoilation));
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+
+    VolleyRequest.VolleyErrorCall ErrorCallBack = new VolleyRequest.VolleyErrorCall(){
+        @Override
+        public void getError(VolleyError error, int flag) {
+            switch (flag){
+
+                default:
+                    if(progressDialog != null)
+                        progressDialog.dismiss();
+                    settingSpinImgVw.stopAnimation();
+
+                    Log.d("Driver", "error" + error.toString());
+                    break;
+            }
+        }
+    };
+
+
+    AsyncResponse asyncResponse = new AsyncResponse() {
+        @Override
+        public void onAsyncResponse(String response) {
+            if(progressDialog != null){
+                progressDialog.dismiss();
+            }
+
+            Log.e("String Response", ">>>Sync Response:  " + response);
+            settingSpinImgVw.stopAnimation();
+
+            try {
+
+                JSONObject obj = new JSONObject(response);
+                String status = obj.getString("Status");
+                if (status.equalsIgnoreCase("true")) {
+                    String msgTxt = "Data syncing is completed" ;
+
+                    /* ------------ Delete posted files from local after successfully posted to server --------------- */
+                    if(syncingFile != null && syncingFile.exists()) {
+                        syncingFile.delete();
+                        syncingFile = null;
+                    }
+
+                    if(IsLogPermission) {
+                        if (DriverLogFile != null && DriverLogFile.exists()) {
+                            DriverLogFile.delete();
+                            DriverLogFile = null;
+                            msgTxt = "Data syncing is completed with violation log file";
+                        }
+
+                        if (cycleUpdationRecordFile != null && cycleUpdationRecordFile.exists()) {
+                            cycleUpdationRecordFile.delete();
+                            sharedPref.SetCycleOfflineDetails("[]", getActivity() );
+                            cycleUpdationRecordFile = null;
+                        }
+
+                    }
+                    /* -------------------------------------------------------------------------------------------------- */
+
+                    IsLogPermission = false;
+                    ClearDriverUnSavedlog();
+
+                    syncingMethod.SyncingLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+                    global.EldScreenToast(SettingSaveBtn, msgTxt , getResources().getColor(R.color.colorPrimary));
+
+                }else {
+                    if(syncingFile != null && syncingFile.exists())
+                        syncingFile.delete();
+
+                    if(DriverLogFile != null && DriverLogFile.exists())
+                        DriverLogFile.delete();
+
+                    String message = obj.getString("Message");
+                    if(message.contains("ServerError")){
+                        message = "ALS server not responding";
+                    }else if(message.contains("Network")){
+                        message = "Internet connection problem";
+                    }else if(message.contains("NoConnectionError")){
+                        message = "Connection not working.";
+                    }
+
+                    global.EldScreenToast(SettingSaveBtn, message, getResources().getColor(R.color.colorVoilation));
+
+                    if(message.equalsIgnoreCase("Device Logout") && constant.GetDriverSavedArray(getActivity()).length() == 0 ){
+                        global.ClearAllFields(getActivity());
+                        global.StopService(getActivity());
+                        Intent i = new Intent(getActivity(), LoginActivity.class);
+                        getActivity().startActivity(i);
+                        getActivity().finish();
+                    }
+                }
+
+            } catch (Exception e) {
+                if(getActivity() != null) {
+                    global.EldScreenToast(SettingSaveBtn, "Error occurred", getResources().getColor(R.color.colorVoilation));
+                }
+                e.printStackTrace();
+            }
+        }
+    };
+
+
+
+
+    private void MoveFragment(Fragment fragment){
+        FragmentManager fragManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTran = fragManager.beginTransaction();
+        fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
+                android.R.anim.fade_in,android.R.anim.fade_out);
+        fragmentTran.add(R.id.job_fragment, fragment);
+        fragmentTran.addToBackStack("obd_diagnose");
+        fragmentTran.commit();
+
+
+    }
+
+
+
+
+
+
+    public void haulExceptionAlert() {
+        if(enableExceptionAlert != null && enableExceptionAlert.isShowing()){
+            Log.d("dialog", "dialog is showing" );
+        }else {
+            closeDialogs();
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setTitle(getString(R.string.enable_excp));
+            String message = "<font color='#555555'><b>Note: </b></font>" + getString(R.string.excp_reset_auto) + "<br/> <br/>" + getString(R.string.continue_haul_exception) ;
+            alertDialogBuilder.setMessage(Html.fromHtml(message));
+            alertDialogBuilder.setCancelable(false);
+            alertDialogBuilder.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int arg1) {
+                            dialog.dismiss();
+
+                            boolean isHaulException = constant.getShortHaulExceptionDetail(getActivity(), DriverId, global, sharedPref,
+                                    hMethods, dbHelper);
+
+                            if (isHaulException) {
+                                sharedPref.set16hrHaulExcptn(true, getActivity());
+                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.haul_excptn_enabled), getResources().getColor(R.color.colorPrimary));
+
+                                hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
+                                        true, DriverType, constants, sharedPref,
+                                        MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                                        syncingMethod, global, hMethods, dbHelper, getActivity());
+
+                            } else {
+                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.halu_excp_not_eligible), getResources().getColor(R.color.colorVoilation));
+                                haulExceptnSwitchButton.setChecked(false);
+                                sharedPref.set16hrHaulExcptn(false, getActivity());
+                            }
+
+
+                        }
+                    });
+
+            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    haulExceptnSwitchButton.setChecked(false);
+                    dialog.dismiss();
+
+                }
+            });
+
+
+            enableExceptionAlert = alertDialogBuilder.create();
+            vectorDialogs.add(enableExceptionAlert);
+            enableExceptionAlert.show();
+        }
+    }
+
+
+    public void closeDialogs() {
+        for (AlertDialog dialog : vectorDialogs)
+            if (dialog.isShowing()) dialog.dismiss();
+    }
+
+
+    public boolean isAllowToEnableException(String DriverId){
+        boolean isAllow = false;
+        exceptionDesc = "";
+        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+
+        try {
+
+            if(CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
+                JSONArray logArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+                JSONObject lastObj = hMethods.GetLastJsonFromArray(logArray);
+
+                int status = lastObj.getInt(ConstantsKeys.DriverStatusId);
+                boolean yardMove = lastObj.getBoolean(ConstantsKeys.YardMove);
+
+                if(status == Constants.DRIVING || (status == Constants.ON_DUTY && yardMove == false) ){
+                    isAllow = true;
+                }else{
+                    if(status == Constants.ON_DUTY && yardMove == false){
+                        exceptionDesc = "Exception not allowled in Yard Move.";
+                    }else if(status == Constants.OFF_DUTY){
+                        boolean Personal = lastObj.getBoolean(ConstantsKeys.Personal);
+                        if(Personal){
+                            exceptionDesc = "Exception not allowled in Personal Use.";
+                        }else{
+                            exceptionDesc = "Exception not allowled in Off Duty.";
+                        }
+                    }else{
+                        exceptionDesc = "Exception not allowled in Sleeper.";
+                    }
+                }
+            }else{
+                exceptionDesc = "Exception not allowled in Canada Cycle.";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isAllow;
+
+    }
+
+
+
+
+}

@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:id="@+id/addPickLay"
+    >
+
+
+
+    <RelativeLayout
+        android:id="@+id/actionBarAddPickDetail"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/actionbar_bg"
+        >
+
+
+
+
+        <RelativeLayout
+            android:id="@+id/backDetailAddPickLay"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:background="@drawable/logout_selector"
+            >
+
+
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:src="@drawable/back_btn"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                android:layout_toRightOf="@+id/backBtn"
+                android:textSize="17sp"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/white"
+                />
+
+
+
+
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Pickup Documents"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            />
+
+
+    </RelativeLayout>
+
+
+
+<RelativeLayout
+    android:id="@+id/commercialInvoiceLay"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+android:visibility="gone"
+
+    >
+
+    <TextView
+        android:id="@+id/commercialInvoicetitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Commercial Invoice"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:layout_marginLeft="15dp"
+        android:layout_centerVertical="true"
+        android:singleLine="true"
+        android:layout_toLeftOf="@+id/commercialInvoiceTV"
+        android:layout_alignParentLeft="true"
+        />
+
+
+    <TextView
+        android:id="@+id/commercialInvoiceTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add \nDocument"
+        android:textColor="@color/blue"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_centerVertical="true"
+        />
+
+
+</RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:background="@color/gray_border"
+        android:visibility="gone"
+        />
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/exportLay"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:visibility="gone"
+
+        >
+
+        <TextView
+            android:id="@+id/exportTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Export Decleration (B13A)"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:layout_toLeftOf="@+id/exportTV"
+            android:layout_alignParentLeft="true"
+            />
+
+
+        <TextView
+            android:id="@+id/exportTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add \nDocument"
+            android:textColor="@color/blue"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            />
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:background="@color/gray_border"
+        android:visibility="gone"
+        />
+
+
+
+    <RelativeLayout
+        android:id="@+id/certificationLay"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/certificationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="certificatie of Orign"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:layout_toLeftOf="@+id/certificationTV"
+            android:layout_alignParentLeft="true"
+
+            />
+
+
+        <TextView
+            android:id="@+id/certificationTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add \nDocument"
+            android:textColor="@color/blue"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            />
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:background="@color/gray_border"
+        android:visibility="gone"
+        />
+
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/toxicLay"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:visibility="gone"
+
+        >
+
+        <TextView
+            android:id="@+id/toxicTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Toxic Substances Control Act (TSCA) Form"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:layout_toLeftOf="@+id/toxicTV"
+            android:layout_alignParentLeft="true"
+
+            />
+
+
+        <TextView
+            android:id="@+id/toxicTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add \nDocument"
+            android:textColor="@color/blue"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            />
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:background="@color/gray_border"
+        android:visibility="gone"
+        />
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/fccLay"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:visibility="gone"
+
+
+        >
+
+        <TextView
+            android:id="@+id/fccTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="U.S. FCC Form 740"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:layout_toLeftOf="@+id/fccTV"
+            android:layout_alignParentLeft="true"
+
+            />
+
+
+        <TextView
+            android:id="@+id/fccTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add \nDocument"
+            android:textColor="@color/blue"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            />
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:background="@color/gray_border"
+        android:visibility="gone"
+        />
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/billLoadLay"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:visibility="gone"
+
+        >
+
+        <TextView
+            android:id="@+id/billLoadTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BillLoadDoc"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:layout_toLeftOf="@+id/billLoadTV"
+            android:layout_alignParentLeft="true"
+
+            />
+
+
+        <TextView
+            android:id="@+id/billLoadTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add \nDocument"
+            android:textColor="@color/blue"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            />
+
+
+    </RelativeLayout>
+
+
+    <ListView
+        android:id="@+id/docListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+
+        />
+
+</LinearLayout>

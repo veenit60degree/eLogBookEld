@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+  <!--  <ImageView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/app_bg_mobile"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
+        />
+-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/margin_17"
+        >
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@+id/askLoginIV"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_short_7"
+            android:layout_marginRight="@dimen/view_height_70"
+            android:layout_marginLeft="@dimen/view_height_70"
+            >
+
+            <TextView
+                android:id="@+id/selectTypeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/view_height_40"
+                android:text="@string/login_with"
+                android:textSize="@dimen/text_size_23"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_25"
+                >
+
+                <Button
+                    android:id="@+id/mainDriverBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_48"
+                    android:text="@string/main_driver_title"
+                    android:textColor="@color/bluee_login"
+                    android:textSize="@dimen/text_size_20"
+                    android:background="@drawable/login_driver_btn_selector"
+                    android:textAllCaps="false"
+                    android:layout_marginRight="@dimen/text_size_15"
+                    android:layout_weight="1"
+                    />
+
+
+
+                <Button
+                    android:id="@+id/CoDriverBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_48"
+                    android:text="@string/co_driver_title"
+                    android:textColor="@color/whiteee"
+                    android:textSize="@dimen/text_size_20"
+                    android:background="@drawable/green_selector"
+                    android:textAllCaps="false"
+                    android:layout_marginLeft="@dimen/text_size_15"
+                    android:layout_weight="1"
+
+                    />
+
+
+
+            </LinearLayout>
+
+
+
+
+
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/askLoginIV"
+            android:layout_width="@dimen/view_height_280"
+            android:layout_height="@dimen/view_height_140"
+            android:src="@drawable/als_logo"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/view_height_60"
+
+            />
+
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

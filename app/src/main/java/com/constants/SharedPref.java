@@ -1,0 +1,1355 @@
+package com.constants;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+import com.local.db.ConstantsKeys;
+import com.messaging.logistic.Globally;
+import com.models.DriverLocationModel;
+import com.shared.pref.StatePrefManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class SharedPref {
+
+
+    static String CURRENT_DATE                        = "currentDate";
+    static String CURRENT_UTC_DATE                    = "current_utc_date";
+    static String DRIVER_TYPE                	  	  = "driver_type";
+    static String CURRENT_DRIVER_TYPE				  = "current_driver_type";
+
+
+
+    public SharedPref() {
+        super();
+    }
+
+
+
+
+
+    // Save VIN Number
+    public static void setVINNumber(String VIN, Context context){
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("VIN", VIN);
+        editor.commit();
+
+    }
+
+
+    // Get VIN Number -------------------
+    public static String getVINNumber( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("VIN", "false");
+    }
+
+
+
+    // Set UTC Time Zone -------------------
+    public static void setUTCTimeZone(String key, String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    // Get UTC Time Zone -------------------
+    public static String getUTCTimeZone(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "");
+    }
+
+
+    // SetTrailor Number -------------------
+    public static void setTrailorNumber( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("TrailorNumber", value);
+        editor.commit();
+    }
+
+    // Get Trailor Number -------------------
+    public static String getTrailorNumber(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("TrailorNumber", "");
+    }
+
+    // Set Current Saved Time -------------------
+    public static void setCurrentDate( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(CURRENT_DATE, value);
+        editor.commit();
+    }
+    // Get Current Saved Time -------------------
+    public static String getSystemSavedDate(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(CURRENT_DATE, "");
+    }
+
+
+    // Set Current Saved Time -------------------
+    public static void setUTCCurrentDate( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(CURRENT_UTC_DATE, value);
+        editor.commit();
+    }
+
+    // Get Current Saved Time -------------------
+    public static String getCurrentUTCDate(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(CURRENT_UTC_DATE, "");
+    }
+
+
+    // Set auto drive status  -------------------
+    public static void SetAutoDriveStatus( boolean isAutoDrive, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("auto_drive", isAutoDrive);
+        editor.commit();
+    }
+
+
+    // Get auto drive status -------------------
+    public static boolean isAutoDrive(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("auto_drive", false);
+    }
+
+
+    // Set auto drive status  -------------------
+    public static void SetOBDPingAllowedStatus( boolean isAutoDrive, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("IsOBDPingAllowed", isAutoDrive);
+        editor.commit();
+    }
+
+
+    // Get auto drive status -------------------
+    public static boolean isOBDPingAllowed(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("IsOBDPingAllowed", false);
+    }
+
+
+    // Set auto drive status  -------------------
+    public static void SetOBDRestartTime( String date, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("obd_restart_date", date);
+        editor.commit();
+    }
+
+
+    // Get auto drive status -------------------
+    public static String getOBDRestartTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("obd_restart_date", "");
+    }
+
+
+    // Get Obd Status -------------------
+    public static int getObdStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt("ObdStatus", Constants.NO_CONNECTION);
+    }
+
+
+
+    // Set Obd Status -------------------
+    public static void SaveObdStatus( int value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("ObdStatus", value);
+        editor.commit();
+    }
+
+
+
+
+    // Get Obd Status -------------------
+    public static boolean getLastIgnitionStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("ignitionStatus", false);
+    }
+
+
+    public static String getLastIgnitionTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ignitionTime", "");
+    }
+
+
+    public static int getLastObdSpeed( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt("obdCurrentSpeed_", -1);
+    }
+
+    // Set Obd Status -------------------
+    public static void SaveObdIgnitionStatus( boolean ignitionStatus, String time, int speed, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("ignitionStatus", ignitionStatus);
+        editor.putString("ignitionTime", time);
+        editor.putInt("obdCurrentSpeed_", speed);
+        editor.commit();
+    }
+
+
+
+    // Set Diagnostic and Malfunction Records action status -------------------
+    public static void SetDiagnosticAndMalfunctionSettings( boolean IsAllowMalfunction, boolean IsAllowDiagnostic,
+                                                    boolean IsClearMalfunction, boolean IsClearDiagnostic, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsAllowMalfunction, IsAllowMalfunction);
+        editor.putBoolean(ConstantsKeys.IsAllowDiagnostic, IsAllowDiagnostic);
+        editor.putBoolean(ConstantsKeys.IsClearMalfunction, IsClearMalfunction);
+        editor.putBoolean(ConstantsKeys.IsClearDiagnostic, IsClearDiagnostic);
+        editor.commit();
+    }
+
+    // Get Malfunction Status -------------------
+    public static boolean IsAllowMalfunction(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsAllowMalfunction, true);
+    }
+
+    // Get Diagnostic Status -------------------
+    public static boolean IsAllowDiagnostic(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsAllowDiagnostic, true);
+    }
+
+    // Get Malfunction clear Status -------------------
+    public static boolean IsClearMalfunction(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsClearMalfunction, true);
+    }
+
+    // Get Diagnostic Clear Status -------------------
+    public static boolean IsClearDiagnostic(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsClearDiagnostic, true);
+    }
+
+    // Set Re-Certification and Unidentified Records allow status -------------------
+    public static void SetCertifcnUnIdenfdSettings( boolean isReCertification, boolean IsUnidentifiedRecords,
+                                                    boolean IsPersonal, boolean IsYardMove, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsAllowLogReCertification, isReCertification);
+        editor.putBoolean(ConstantsKeys.IsShowUnidentifiedRecords, IsUnidentifiedRecords);
+        editor.putBoolean(ConstantsKeys.IsPersonal, IsPersonal);
+        editor.putBoolean(ConstantsKeys.IsYardMove, IsYardMove);
+        editor.commit();
+    }
+
+
+    // Get Re-Certification Status -------------------
+    public static boolean IsReCertification(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsAllowLogReCertification, false);
+    }
+
+
+    // Get Unidentified Records view Status -------------------
+    public static boolean IsShowUnidentifiedRecords(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords, true);
+    }
+
+
+    // Get yard move allow Status -------------------
+    public static boolean IsYardMoveAllowed(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsYardMove, true);
+    }
+
+
+    // Get is personal allow Status -------------------
+    public static boolean IsPersonalAllowed(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsPersonal, true);
+    }
+
+    // Set Current WIFI Obd Odometer -------------------
+    public static void SetWifiObdOdometer( String odometer, String savedTime, String rawData, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("current_obd", odometer);
+        editor.putString("obd_saved_time", savedTime);
+        editor.putString("raw_data", rawData);
+        editor.commit();
+    }
+
+    // Get WIFI Current Obd Odometer -------------------
+    public static String GetWifiObdOdometer(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("current_obd", "0");
+    }
+
+    // Get Current WIFI Obd Odometer -------------------
+    public static String GetWifiObdSavedTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("obd_saved_time", "");
+    }
+
+
+    // Get OBD Raw data   -------------------
+    public static String GetObdRawData(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("raw_data", "");
+    }
+
+
+    // Set Time stamp Enabled -------------------
+    public static void saveTimeStampView( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("IsTimestampEnabled", value);
+        editor.commit();
+    }
+
+
+    // Get Time stamp Enabled -------------------
+    public static boolean isTimestampEnabled( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("IsTimestampEnabled", false);
+    }
+
+
+    // Set DOT status -------------------
+    public static void SetDOTStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("dot_status", value);
+        editor.commit();
+    }
+
+
+    // Get DOT Status -------------------
+    public static boolean IsDOT( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("dot_status", false);
+    }
+
+
+
+
+    // Set Inspection Issues -------------------
+    public static void setInspectionIssues( String truckValue, String traileValue, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.TruckIssues, truckValue);
+        editor.putString(ConstantsKeys.TrailerIssues, traileValue);
+        editor.commit();
+    }
+    // Get Inspection Issues -------------------
+    public static String getInspectionIssues(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "[]");
+    }
+
+
+    // Set CT-PAT Inspection Issues -------------------
+    public static void setCtPatInspectionIssues( String truckValue, String traileValue, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.TruckCtPatIssues, truckValue);
+        editor.putString(ConstantsKeys.TrailerCtPatIssues, traileValue);
+        editor.commit();
+    }
+    // Get CT-PAT Inspection Issues -------------------
+    public static String getCtPatInspectionIssues(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "[]");
+    }
+
+
+
+
+
+
+    /* ####################################################################################################### */
+
+    /*====================== Save User Data with Shared Preferences =====================*/
+    // Set  UserName -------------------
+    public static void setUserName(String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("username", value);
+        editor.commit();
+    }
+
+    // Get  USerName -------------------
+    public static String getUserName(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("username", "");
+    }
+
+
+    // Set  Password -------------------
+    public static void setPassword(String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("password", value);
+        editor.commit();
+    }
+
+
+    // Get  Password -------------------
+    public static String getPassword(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("password", "");
+    }
+
+
+    // Set  Driver Type -------------------
+    public static void setDriverType( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(DRIVER_TYPE, value);
+        editor.commit();
+    }
+
+    // Get  Driver Type -------------------
+    public static String getDriverType( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(DRIVER_TYPE, "");
+    }
+
+
+    // Set Current Driver Type -------------------
+    public static void setCurrentDriverType( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(CURRENT_DRIVER_TYPE, value);
+        editor.commit();
+    }
+
+
+    // Get Current Driver Type -------------------
+    public static String getCurrentDriverType( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(CURRENT_DRIVER_TYPE, "");
+    }
+
+
+    // Set Re-Certify Data -------------------
+    public static void setReCertifyData( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ReCertifyData", value);
+        editor.commit();
+    }
+
+
+    // Get Re-Certify Data -------------------
+    public static String getReCertifyData( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ReCertifyData", "[]");
+    }
+
+
+
+    // Get  Driver Type -------------------
+    public static boolean IsOdometerSaved( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("odo", false);
+    }
+
+
+    // Set Current Driver Type -------------------
+    public static void OdometerSaved( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("odo", value);
+        editor.commit();
+    }
+
+
+
+    // Set Is Read Violation Status -------------------
+    public static void SetIsReadViolation( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("is_read_vln", value);
+        editor.commit();
+    }
+
+    // Get Is Read Violation Status -------------------
+    public static boolean IsReadViolation( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("is_read_vln", false);
+    }
+
+
+    // Set Violation -------------------
+    public static void SetViolation( boolean value, Context context) {
+        if(context != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("violation", value);
+            editor.commit();
+        }
+    }
+
+
+    // Get Violation -------------------
+    public static boolean IsViolation( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("violation", false);
+    }
+
+
+    // Set notification Deleted -------------------
+    public static void notificationDeleted( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("notification_deleted", value);
+        editor.commit();
+    }
+
+
+    // Get notification Deleted  -------------------
+    public static boolean isNotificationDeleted( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("notification_deleted", false);
+    }
+
+
+
+
+    // Set AOBRD status -------------------
+    public static void SetIsAOBRD( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("is_aobrd", value);
+        editor.commit();
+    }
+
+
+    // Get AOBRD Status -------------------
+    public static boolean IsAOBRD( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("is_aobrd", false);
+    }
+
+
+    // Set AOBRD Automatic Status -------------------
+    public static void SetAOBRDAutomatic( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("IsAOBRDAutomatic", value);
+        editor.commit();
+    }
+
+
+    // Get AOBRD Automatic Status -------------------
+    public static boolean IsAOBRDAutomatic( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("IsAOBRDAutomatic", false);
+    }
+
+
+    // Set Driving Shipping Allowed Status -------------------
+    public static void SetDrivingShippingAllowed( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("IsDrivingShippingAllowed", value);
+        editor.commit();
+    }
+
+
+    // Get Driving Shipping Allowed  Status -------------------
+    public static boolean IsDrivingShippingAllowed( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("IsDrivingShippingAllowed", false);
+    }
+
+
+    // Set AOBRD Automatic Status -------------------
+    public static void SetAOBRDAutoDrive( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("IsAOBRDAutoDrive", value);
+        editor.commit();
+    }
+
+
+    // Get AOBRD Automatic Status -------------------
+    public static boolean IsAOBRDAutoDrive( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("IsAOBRDAutoDrive", false);
+    }
+
+
+
+    // Set AOBRD Automatic Status -------------------
+    public static void SetCertifyMandatoryStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("CertifyMandatory", value);
+        editor.commit();
+    }
+
+
+    // Get AOBRD Automatic Status -------------------
+    public static boolean IsCertifyMandatory( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("CertifyMandatory", false);
+    }
+
+
+
+    // Set Odometer Reading From OBD Status -------------------
+    public static void SetOdometerFromOBD( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("IsOdometerFromOBD", value);
+        editor.commit();
+    }
+
+
+    // Get Odometer Reading From OBD Status -------------------
+    public static boolean IsOdometerFromOBD( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("IsOdometerFromOBD", false);
+    }
+
+
+
+    // Get Violation Reason -------------------
+    public static String GetViolationReason( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("violationReason", "");
+    }
+
+
+    // Set Violation Reason -------------------
+    public static void SetViolationReason( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("violationReason", value);
+        editor.commit();
+    }
+
+
+    // Get Violation Reason -------------------
+    public static String GetCurrentTruckPlateNo( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("plateNo", "");
+    }
+
+
+    // Set Violation Reason -------------------
+    public static void setCurrentTruckPlateNo( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("plateNo", value);
+        editor.commit();
+    }
+
+
+
+    // Set System Token -------------------
+    public static void SetSystemToken( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("systemToken", value);
+        editor.commit();
+    }
+
+    // Get System Token -------------------
+    public static String GetSavedSystemToken(Context context){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("systemToken", "");
+
+    }
+
+
+    // Save ImEi Number
+    public static void setImEiNumber(String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("imei", value);
+        editor.commit();
+    }
+
+
+    // Get  ImEi Number -------------------
+    public static String getImEiNumber(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("imei", "");
+    }
+
+    // Save Date Time
+    public static void setSavedDateTime(String value, Context context) {
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("dateTime", value);
+            editor.commit();
+        }catch (Exception e){}
+    }
+
+
+    // Get  Date Time -------------------
+    public static String getSavedDateTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("dateTime", "");
+    }
+
+
+
+    // Set  Load Id -------------------
+    public static void setLoadId( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("LoadId", value);
+        editor.commit();
+    }
+    // Get  Load Id -------------------
+    public static String getLoadsId( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("LoadId", "");
+    }
+
+
+
+
+
+    // Set  Job Type -------------------
+    public static void setDriverStatusId(String key, String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+
+    // Get Job Type -------------------
+    public static String getDriverStatusId(String key, Context context) {
+        String DriverStatusId = "";
+        try {
+            if (context != null) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                DriverStatusId = preferences.getString(key, "");
+            }
+        }catch (Exception e){}
+        return DriverStatusId;
+    }
+
+
+    // Set  Country Cycle -------------------
+    public static void setCountryCycle(String key, String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+
+    // Get  CountryCycle -------------------
+    public static String getCountryCycle(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "");
+    }
+
+
+    // Set AsyncTask Status -------------------
+    public static void setAsyncCancelStatus(boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("AsyncTaskStatus", value);
+        editor.commit();
+    }
+
+
+    // Get AsyncTask Status -------------------
+    public static boolean getAsyncCancelStatus(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("AsyncTaskStatus", false);
+    }
+
+
+    // Set Country Cycle -------------------
+    public static void setUserCountryCycle(String keyCA, String valueCA,
+                                           String keyUS, String valueUS,
+                                           Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(keyCA, valueCA);
+        editor.putString(keyUS, valueUS);
+        editor.commit();
+    }
+
+    // Get Country Cycle -------------------
+    public static String getUserCountryCycle(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "");
+    }
+
+
+
+
+    // Set Start Locations -------------------
+    public static void setStartLocation(String lat, String lon, String date,
+                                        Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.StartLat, lat);
+        editor.putString(ConstantsKeys.StartLon, lon);
+        editor.putString(ConstantsKeys.StartDate, date);
+        editor.commit();
+    }
+
+    // Get Start Locations -------------------
+    public static String getStartLocation(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "");
+    }
+
+
+    // Set End Locations -------------------
+    public static void setEndLocation(String lat, String lon, String date,
+                                      Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.EndLat, lat);
+        editor.putString(ConstantsKeys.EndLon, lon);
+        editor.putString(ConstantsKeys.EndDate, date);
+        editor.commit();
+    }
+
+    // Get End Locations -------------------
+    public static String getEndLocation(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "");
+    }
+
+
+    // Set Login Status -------------------
+    public static void SetNewLoginStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("user_type", value);
+        editor.commit();
+    }
+
+
+    // Get Login Status -------------------
+    public static boolean GetNewLoginStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("user_type", true);
+    }
+
+
+    // Set time when popup window is opened -------------------
+    public static void SetUpdateAppDialogTime( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("update_popup_time", value);
+        editor.commit();
+    }
+
+
+    // Get popup window is opened time -------------------
+    public static String GetUpdateAppDialogTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("update_popup_time", "");
+    }
+
+
+
+    // Set Truck Start or Login Status for Yard move / Personal use -------------------
+    public static void SetTruckStartLoginStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("new_truck_start_login", value);
+        editor.commit();
+    }
+
+
+    // Get Truck Start or Login Status for Yard move / Personal use -------------------
+    public static boolean GetTruckStartLoginStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("new_truck_start_login", true);
+    }
+
+    // Set Rule version -------------------
+    public static void SetRulesVersion( int value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("rulesVersion", value);
+        editor.commit();
+    }
+
+
+    // Get rule version  -------------------
+    public static int GetRulesVersion( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt("rulesVersion", 0);
+    }
+
+
+/*
+    // Set Connection Type -------------------
+    public static void SetConnectionType( int value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("ConnectionType", value);
+        editor.commit();
+    }
+
+
+    // Get Connection Type  -------------------
+    public static int GetConnectionType( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt("ConnectionType", 0);
+    }
+
+*/
+
+
+
+    // Set Vehicle Id -------------------
+    public static void setVehicleId( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("VehicleId", value);
+        editor.commit();
+    }
+
+
+    // Get Vehicle Id -------------------
+    public static String getVehicleId( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("VehicleId", "");
+    }
+
+
+    // Set Odometer Saving Status -------------------
+    public static void SetOdoSavingStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("odo_status", value);
+        editor.commit();
+    }
+
+
+    // Get Odometer Saving Status -------------------
+    public static boolean GetOdoSavingStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("odo_status", false);
+    }
+
+
+    // Set Truck Ignition Status -------------------
+    public static void SetTruckIgnitionStatus( String ignitionStatus, String ignitionSource, String lastIgnitionTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.TruckIgnitionStatus, ignitionStatus);
+        editor.putString(Constants.IgnitionSource, ignitionSource);
+        editor.putString(Constants.LastIgnitionTime, lastIgnitionTime);
+
+        editor.commit();
+    }
+
+
+    // Get Truck Ignition Status -------------------
+    public static String GetTruckIgnitionStatus( String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key , "ON");
+    }
+
+
+
+    // Set Edited Log Status -------------------
+    public static void SetEditedLogStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("is_edited", value);
+        editor.commit();
+    }
+
+
+    // Get Edited Log Status -------------------
+    public static boolean IsEditedData( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("is_edited", false);
+    }
+
+
+
+    // Set Driver Id -------------------
+    public static void setDriverId( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("DRIVER_ID", value);
+        editor.commit();
+    }
+    // Get Driver Id -------------------
+    public static String getDriverId( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("DRIVER_ID", "");
+    }
+
+
+    // Set Time Zone -------------------
+    public static void setTimeZone( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("time_zone", value);
+        editor.commit();
+    }
+    // Get Time Zone -------------------
+    public static String getTimeZone( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("time_zone", "");
+    }
+
+
+
+    // Set 16 hour haul exception -------------------
+    public static void set16hrHaulExcptn( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("haul_exception", value);
+        // editor.putString("haul_exception_start_time", time);
+        editor.commit();
+    }
+
+    // Get 16 hour haul exception -------------------
+    public static boolean get16hrHaulExcptn( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("haul_exception", false);
+    }
+
+    // Get 16 hour haul exception -------------------
+    public String get16hrHaulExcptnTime( Context context) {
+        Globally global = new Globally();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("haul_exception_start_time", global.getCurrentDate());
+    }
+
+    // Set Adverse exception -------------------
+    public static void setAdverseExcptn( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("adverse_exception", value);
+        //  editor.putString("adverse_exception_remarks", remarks);
+        editor.commit();
+    }
+
+    // Get Adverse exception -------------------
+    public static boolean getAdverseExcptn( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("adverse_exception", false);
+    }
+
+
+    // Set Current UTC Time -------------------
+    public static void setCurrentUTCTime( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("utc_current_time", value);
+        editor.commit();
+    }
+    // Get Current UTC Time -------------------
+    public static String getCurrentUTCTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("utc_current_time", "");
+    }
+
+
+    // Get background Service OnDestory method status -------------------
+    public static boolean isServiceOnDestoryCalled( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("service_on_destroy", false);
+    }
+
+    // Save background Service OnDestory Called method status -------------------
+    public static void setServiceOnDestoryStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("service_on_destroy", value);
+        editor.commit();
+    }
+
+
+    // Get driver status he is online or not-------------------
+    public static boolean isOnline( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("status_online", true);
+    }
+
+    // Save driver online/offline status -------------------
+    public static void setOnlineStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("status_online", value);
+        editor.commit();
+    }
+
+    public List<String> getStatesInList(Context context) {
+
+        int stateListSize = 0;
+        List<String> StateArrayList = new ArrayList<String>();
+        List<DriverLocationModel> StateList = new ArrayList<DriverLocationModel>();
+
+        StatePrefManager statePrefManager = new StatePrefManager();
+
+        try {
+            StateList = statePrefManager.GetState(context);
+            stateListSize = StateList.size();
+        } catch (Exception e) {
+            stateListSize = 0;
+        }
+
+        for (int i = 0; i < stateListSize; i++) {
+            StateArrayList.add(StateList.get(i).getState());
+        }
+
+        return StateArrayList;
+    }
+
+
+
+
+
+    // Set Obd Speed -------------------
+    public static void setObdSpeed( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("obd_speed", value);
+        editor.commit();
+    }
+    // Get Obd Speed -------------------
+    public static String getObdSpeed( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("obd_speed", "[]");
+    }
+
+
+    public JSONArray ReverseArray(JSONArray array){
+        JSONArray reversedArray = new JSONArray();
+
+        for(int i = array.length()-1 ; i >= 0  ; i--){
+            try {
+                JSONObject obj = (JSONObject)array.get(i);
+                reversedArray.put(obj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return reversedArray;
+    }
+
+
+    // =========================================== OBD pref method ====================================================================
+
+    // Save Engine Hours
+    public static void setEngineHours(String VIN, Context context){
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("EngineHours", VIN);
+        editor.commit();
+
+    }
+
+
+    // Get Engine Hours -------------------
+    public static String getEngineHours( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("EngineHours", "--");
+    }
+
+
+
+    // Set Ignition Status -------------------
+    public static void setIgnitionStatus(String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ignition", value);
+        editor.commit();
+    }
+
+    // Get Ignition Status -------------------
+    public static String getIgnitionStatus(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ignition", "--");
+    }
+
+
+
+
+    // Set Trip Distance -------------------
+    public static void setTripDistance( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("TripDistance", value);
+        editor.commit();
+    }
+
+    // Get Trip Distance -------------------
+    public static String getTripDistance(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("TripDistance", "0");
+    }
+
+
+
+    // Set RPM value-------------------
+    public static void setRPM( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("rpm", value);
+        editor.commit();
+    }
+
+    // Get RPM value -------------------
+    public static String getRPM(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("rpm", "--");
+    }
+
+
+
+
+    // Set VSS value -------------------
+    public static void setVss( int value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("vss", value);
+        editor.commit();
+    }
+
+    // Get VSS value -------------------
+    public static int getVss(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt("vss", -1);
+    }
+
+
+
+
+    // Set obd data Time Stamp -------------------
+    public static void setTimeStamp( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("TimeStamp", value);
+        editor.commit();
+    }
+
+    // Set obd data Time Stamp -------------------
+    public static String getTimeStamp(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("TimeStamp", "--");
+    }
+
+
+    // Set wired Obd Odometer -------------------
+    public static void SetWiredObdOdometer( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("obd_odometer", value);
+        editor.commit();
+    }
+
+    // Get wired Obd Odometer -------------------
+    public static int getWiredObdOdometer(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt("obd_odometer", 0);
+    }
+
+
+
+
+    // Set High Precision Odometer value  -------------------
+    public static void setHighPrecisionOdometer( String value, String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("highPrecisionOdometer", value);
+        editor.putString("HighPrecesionSavedTime", savedTime);
+        editor.commit();
+    }
+
+    // Get High Precision Odometer value -------------------
+    public static String getHighPrecisionOdometer(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("highPrecisionOdometer", "0");
+    }
+
+    // Get High Precision Odometer Saved time -------------------
+    public static String getHighPrecesionSavedTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("HighPrecesionSavedTime", "");
+    }
+
+
+
+    // ===========================Save Current Cycle with details ===========================
+    public void SetCycleOfflineDetails(String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("cycleDetails", value);
+        editor.commit();
+    }
+
+    // =========================== Get Offline Data Status ===========================
+    public String GetCycleDetails(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("cycleDetails", "[]");
+    }
+
+
+
+    // =========================== Save Last OBD Type with Time ===========================
+    public void SaveConnectionInfo(String type, String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.CONNECTION_TYPE, type);
+        editor.putString(Constants.LAST_SAVED_TIME, time);
+        editor.commit();
+    }
+
+    // =========================== Get OBD saved time with Type===========================
+    public String GetConnectionInfo(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "");
+    }
+
+
+    // Get Last Usage Data Saved Time -------------------
+    public static void setLastUsageDataSavedTime( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.DATA_USAGE_TIME, value);
+        editor.commit();
+    }
+
+    // Get Last Usage Data Saved Time -------------------
+    public static String getLastUsageDataSavedTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(Constants.DATA_USAGE_TIME, "");
+    }
+
+
+
+}

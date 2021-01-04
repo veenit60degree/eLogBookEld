@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    >
+
+
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/red_custom"
+
+        >
+
+
+
+
+        <RelativeLayout
+            android:id="@+id/deleteButtonScan"
+            android:layout_width="@dimen/view_height_55"
+            android:layout_height="@dimen/view_height_55"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="@dimen/view_height_40"
+            android:background="@drawable/rounder_image_border"
+            >
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/delete_sign"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:id="@+id/cameraButtonScan"
+            android:layout_width="@dimen/view_height_70"
+            android:layout_height="@dimen/view_height_70"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/rounder_image_border"
+            >
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/camera"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/gallaryButtonScan"
+            android:layout_width="@dimen/view_height_55"
+            android:layout_height="@dimen/view_height_55"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="@dimen/view_height_40"
+            android:background="@drawable/rounder_image_border"
+            >
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/gallery"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This Control Consist Of Custom Camera having Document Scanner With Crop Feature. Start scanning the documents from here."
+            android:textSize="@dimen/text_size_22"
+            android:textColor="@color/white"
+            android:layout_centerInParent="true"
+            android:paddingBottom="@dimen/margin_25"
+            android:paddingLeft="@dimen/margin_20"
+            android:paddingRight="@dimen/margin_20"
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>

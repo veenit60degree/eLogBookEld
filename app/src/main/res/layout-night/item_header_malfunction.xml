@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    >
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_short_8"
+        android:paddingRight="@dimen/margin_18"
+        android:paddingTop="@dimen/margin_14"
+        android:paddingBottom="@dimen/margin_14"
+        android:background="@drawable/malfunction_header_selector"
+        >
+
+        <TextView
+            android:id="@+id/malfHeaderTxtVw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Malfunction_with_bracket"
+            android:textColor="@color/color_eld_theme"
+            android:textSize="@dimen/text_size_17"
+            android:paddingLeft="@dimen/margin_short_8"
+            android:layout_centerVertical="true"
+
+            />
+
+
+        <TextView
+            android:id="@+id/clearEventBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Clear"
+            android:background="@drawable/blue_scale_btn_selector"
+            android:textColor="@color/white"
+            android:paddingRight="@dimen/margin_27"
+            android:paddingLeft="@dimen/margin_27"
+            android:textSize="@dimen/text_size_14"
+            android:paddingBottom="@dimen/margin_short_3"
+            android:paddingTop="@dimen/margin_short_3"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/view_height_30"
+            android:layout_toLeftOf="@+id/groupIndicatorBtn"
+
+            />
+
+
+        <ImageView
+            android:id="@+id/groupIndicatorBtn"
+            android:layout_width="@dimen/margin_18"
+            android:layout_height="@dimen/margin_18"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/arrow_bottom"
+            android:layout_centerVertical="true"
+            />
+
+
+    </RelativeLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/item_child_malfunction"
+        android:visibility="gone"
+        />
+
+</LinearLayout>

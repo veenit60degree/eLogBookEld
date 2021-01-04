@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:id="@+id/jobCancelLay"
+    >
+
+
+    <RelativeLayout
+        android:id="@+id/actionBarJobDetailCancellation"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_70"
+        android:background="@color/actionbar_bg"
+        >
+
+
+
+
+        <RelativeLayout
+            android:id="@+id/backCancelLay"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/margin_20"
+            android:paddingRight="@dimen/margin_20"
+            android:background="@drawable/logout_selector"
+            >
+
+
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/view_height_30"
+                android:src="@drawable/back_btn"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                android:layout_toRightOf="@+id/backBtn"
+                android:textSize="@dimen/text_size_24"
+                android:paddingTop="@dimen/margin_short_2"
+                android:layout_marginLeft="@dimen/margin_short_7"
+                android:textColor="@color/white"
+
+                />
+
+
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/logoutText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancellation"
+            android:layout_centerInParent="true"
+            android:textSize="@dimen/text_size_26"
+            android:textColor="@color/white"
+            />
+
+
+
+        <Button
+            android:id="@+id/doneBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/margin_25"
+            android:paddingRight="@dimen/margin_20"
+            android:text="Done"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/white"
+            android:background="@drawable/logout_selector"
+            android:layout_alignParentRight="true"
+            />
+
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please specify the reason for cancellation of this Pickup:"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_22"
+        android:paddingTop="@dimen/margin_12"
+        android:paddingBottom="@dimen/margin_12"
+        android:paddingLeft="@dimen/margin_17"
+        android:paddingRight="@dimen/margin_17"
+
+        />
+
+
+
+    <com.constants.CustomEditText
+        android:id="@+id/cancellationEditText"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_260"
+        android:background="@drawable/edtittext_border"
+        android:gravity="top|left"
+        android:hint="Reason"
+        android:textColor="@color/black"
+        android:padding="@dimen/margin_15"
+        android:textSize="@dimen/text_size_24"
+        android:layout_margin="@dimen/margin_12"
+
+        />
+</LinearLayout>

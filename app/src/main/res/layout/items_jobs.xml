@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    >
+    
+
+    <!-- 70dpheight-->
+    <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/view_height_70"
+    android:background="@color/white"
+     >
+    
+        
+        
+        <LinearLayout 
+             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/tickImageView"
+            android:layout_alignParentLeft="true"
+            >
+            
+               <TextView 
+            android:id="@+id/jobTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            
+            
+            />
+        
+        <TextView 
+            android:id="@+id/jobAddressTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            
+            />
+        
+        </LinearLayout>
+     
+        <ImageView 
+            android:id="@+id/tickImageView"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/tick_blue"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:visibility="gone"
+            />
+        
+        </RelativeLayout>
+    
+</RelativeLayout>

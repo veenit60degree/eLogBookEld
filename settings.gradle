@@ -1,0 +1,5 @@
+include ':SlidingLibrary'
+include ':CircleProgressView'
+include ':ink'
+include ':app'
+rootProject.name = "eLogBookEld"

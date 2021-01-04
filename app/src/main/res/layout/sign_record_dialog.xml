@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_15"
+        android:layout_marginTop="@dimen/margin_15"
+        android:paddingRight="@dimen/margin_10"
+        app:cardCornerRadius="@dimen/margin_10"
+        app:cardBackgroundColor="@color/sign_record_bg"
+
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+
+            <TextView
+                android:id="@+id/signRecordTitleTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_record"
+
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_19"
+                android:paddingLeft="@dimen/margin_15"
+                android:layout_marginBottom="@dimen/margin_short_2"
+                android:layout_marginTop="@dimen/margin_15"
+
+                />
+
+
+    <ListView
+        android:id="@+id/signRecordListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:dividerHeight="@dimen/margin_short_1"
+        android:layout_margin="@dimen/margin_10"
+        android:divider="@color/divider_sign_list"
+        android:layout_below="@+id/signRecordTitleTv"
+
+        />
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/margin_25"
+    android:paddingRight="@dimen/margin_25"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/voilet_border"
+        android:padding="@dimen/margin_22"
+        >
+
+
+
+            <com.constants.CustomEditText
+                android:id="@+id/sText"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_17"
+                android:textColorHint="@color/white_hover"
+                android:imeOptions="actionNext"
+                android:theme="@style/AppTheme.EditText"
+                android:singleLine="true"
+
+                android:visibility="invisible"
+                />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/TitleTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/text_size_22"
+            android:textColor="@color/black"
+            android:paddingBottom="@dimen/margin_short_8"
+            android:paddingRight="@dimen/margin_25"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/logoutTruckPopupTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/logout"
+            android:textSize="@dimen/text_size_18"
+            android:textColor="@color/black"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/margin_short_5"
+            android:paddingLeft="@dimen/margin_short_5"
+            android:paddingBottom="@dimen/margin_short_5"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            />
+
+        </RelativeLayout>
+
+
+
+        <TextView
+            android:id="@+id/recordTitleTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/SelectRemark"
+            android:textSize="@dimen/text_size_18"
+            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginBottom="@dimen/margin_10"
+            android:layout_marginLeft="@dimen/margin_10"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+
+            />
+
+        <TextView
+            android:id="@+id/desc2TxtView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_18"
+            android:textColor="@color/gray_text"
+            android:layout_marginBottom="@dimen/margin_10"
+            android:layout_marginLeft="@dimen/margin_10"
+            android:visibility="gone"
+
+            />
+
+
+        <LinearLayout
+            android:id="@+id/noTrailerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/margin_25"
+            android:layout_marginBottom="@dimen/margin_18"
+            android:visibility="gone"
+
+
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_trailer_desc"
+                android:textSize="@dimen/text_size_19"
+                android:textColor="@color/colorBlack"
+                android:layout_marginBottom="@dimen/margin_short_5"
+                android:paddingTop="@dimen/margin_short_3"
+
+                />
+
+            <RadioGroup
+                android:id="@+id/radioGroupTrailer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/margin_short_9"
+
+                android:layout_marginLeft="@dimen/margin_12"
+
+
+                >
+
+                <RadioButton
+                    android:id="@+id/radioNoTrailer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_trailer"
+                    android:checked="false"
+                    android:textSize="@dimen/text_size_19"
+                    android:textColor="@color/black_semi"
+                    android:theme="@style/CustomRadioBtnInspection"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radioEnterTrailer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_20"
+                    android:text="@string/enter_trailer_number"
+                    android:checked="false"
+                    android:textSize="@dimen/text_size_19"
+                    android:textColor="@color/black_semi"
+                    android:theme="@style/CustomRadioBtnInspection"
+
+                    />
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/trailorNoInputType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.EditText"
+        android:layout_marginTop="@dimen/margin_short_5"
+        android:layout_toLeftOf="@+id/uploadMediaLay"
+        android:layout_marginLeft="@dimen/margin_short_5"
+        android:layout_marginRight="@dimen/margin_short_5"
+
+        >
+
+
+        <com.constants.CustomEditText
+            android:id="@+id/TrailorNoEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_18"
+            android:textColorHint="@color/white_hover"
+            android:imeOptions="actionDone"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingRight="@dimen/margin_10"
+            android:theme="@style/AppTheme.EditText"
+            android:singleLine="true"
+            android:hint="@string/TrailorNo"
+
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+        <LinearLayout
+            android:id="@+id/driverStatusLay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_14"
+            android:visibility="gone"
+            >
+
+
+
+            <TextView
+                android:id="@+id/statusTVv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Status_colon"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:textColor="@color/black_unidenfied"
+                android:textSize="@dimen/text_size_19"
+                android:layout_marginTop="@dimen/margin_short_5"
+                android:textStyle="bold"
+                android:maxLength="12"
+                android:layout_below="@+id/idenLay1"
+
+                />
+
+
+            <RadioGroup
+                android:id="@+id/unIdentifyRadGroupp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/idenLay1"
+                android:paddingTop="@dimen/margin_short_4"
+                android:layout_marginBottom="@dimen/margin_short_5"
+                android:layout_marginLeft="@dimen/margin_15"
+                android:layout_toRightOf="@+id/statusTV"
+                >
+
+                <RadioButton
+                    android:id="@+id/drivingRadBtnn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Driving"
+                    android:textColor="@color/black_semi"
+                    android:textSize="@dimen/text_size_17"
+                    android:theme="@style/unIdenRadioBtn"
+
+
+                    />
+
+
+                <RadioButton
+                    android:id="@+id/onDutyRadBtnn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/On_Duty"
+                    android:textColor="@color/black_semi"
+                    android:textSize="@dimen/text_size_17"
+                    android:theme="@style/unIdenRadioBtn"
+                    android:layout_marginLeft="@dimen/margin_short_8"
+
+                    />
+
+
+                <RadioButton
+                    android:id="@+id/personalRadBtnn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Personal_Use"
+                    android:textColor="@color/black_semi"
+                    android:textSize="@dimen/text_size_17"
+                    android:theme="@style/unIdenRadioBtn"
+                    android:layout_marginLeft="@dimen/margin_short_8"
+
+                    />
+
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/SpinnerTitleTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/SelectRemark"
+            android:textSize="@dimen/text_size_19"
+            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/margin_short_5"
+            android:layout_marginLeft="@dimen/margin_10"
+            android:textStyle="bold"
+            android:visibility="gone"
+            />
+
+
+        <Spinner
+            android:id="@+id/remarkSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:paddingTop="@dimen/margin_short_5"
+            android:paddingBottom="@dimen/margin_short_5"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingRight="@dimen/margin_10"
+            android:layout_marginTop="@dimen/margin_13"
+            android:layout_marginBottom="@dimen/margin_13"
+            style="@style/spinner_style"
+            android:visibility="gone"
+            />
+
+
+      <!--  <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/reasonInputType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.EditText"
+            android:layout_toLeftOf="@+id/uploadMediaLay"
+            android:layout_below="@+id/contnrNoInputType"
+
+
+            >-->
+
+
+            <com.constants.CustomEditText
+                android:id="@+id/ReasonEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_18"
+                android:imeOptions="actionDone"
+                android:theme="@style/AppTheme.EditText"
+                android:minLines="2"
+                android:maxLines="4"
+                android:maxLength="60"
+                android:padding="@dimen/margin_10"
+                android:gravity="top|left"
+                android:hint="@string/reason"
+                android:background="@drawable/edittext_black_hover"
+                android:layout_marginLeft="@dimen/margin_short_5"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:visibility="gone"
+                />
+   <!--     </com.google.android.material.textfield.TextInputLayout>-->
+
+
+
+
+
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_48"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/view_height_35"
+            android:layout_marginRight="@dimen/view_height_140"
+            android:layout_marginLeft="@dimen/view_height_140"
+        >
+
+
+
+        <Button
+            android:id="@+id/btnCancelLoadingJob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:textSize="@dimen/text_size_22"
+            android:layout_marginLeft="@dimen/margin_15"
+            android:layout_marginRight="@dimen/margin_10"
+            android:textColor="@color/whiteee"
+            android:background="@drawable/gray_selector"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+
+            />
+
+
+        <Button
+            android:id="@+id/btnLoadingJob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ok"
+            android:textSize="@dimen/text_size_22"
+            android:layout_marginLeft="@dimen/margin_10"
+            android:layout_marginRight="@dimen/margin_15"
+            android:textColor="@color/whiteee"
+            android:background="@drawable/green_selector"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+</LinearLayout>
+    </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

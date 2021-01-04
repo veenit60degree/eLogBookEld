@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/whiteee"
+
+    >
+
+
+
+    <include
+        android:id="@+id/actionbarUnIdentifiedDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/actionbar_eld"
+        />
+
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_20"
+            >
+
+
+
+            <TextView
+                android:id="@+id/recordTimeTxtVw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_12"
+                android:textColor="@color/gray_unidenfied"
+                android:layout_marginTop="@dimen/margin_short_2"
+                android:textSize="@dimen/text_size_14"
+                android:textStyle="bold"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/view_height_30"
+
+                />
+
+
+            <LinearLayout
+                android:id="@+id/idenLay1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/margin_10"
+
+
+                >
+
+
+                <RelativeLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.1"
+                    android:gravity="center_horizontal"
+                    >
+
+                    <View
+                        android:layout_width="@dimen/margin_short_7"
+                        android:layout_height="@dimen/margin_short_7"
+                        android:background="@drawable/circular_view_location"
+                        android:layout_marginTop="@dimen/margin_short_8"
+                        />
+
+                    <TextView
+                        android:id="@+id/startOdoLabelTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/start_ododmeter"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/black_unidenfied"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold"
+                        android:maxLength="14"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/startOdoTxtVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_no_value"
+                        android:maxLines="2"
+                        android:minLines="2"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/gray_unidenfied"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_14"
+                        android:textStyle="bold"
+                        android:layout_below="@+id/startOdoLabelTV"
+                        android:layout_marginBottom="@dimen/margin_10"
+                        />
+
+
+
+
+
+                    <View
+                        android:layout_width="@dimen/margin_short_7"
+                        android:layout_height="@dimen/margin_short_7"
+                        android:background="@drawable/circular_view_location"
+                        android:layout_marginTop="@dimen/margin_short_8"
+                        android:layout_below="@+id/startOdoTxtVw"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/endOdoLabelTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/end_ododmeter"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/black_unidenfied"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold"
+                        android:maxLength="12"
+                        android:layout_below="@+id/startOdoTxtVw"
+
+                        />
+
+
+                    <TextView
+                        android:id="@+id/endOdoTxtVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_no_value"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/gray_unidenfied"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_14"
+                        android:textStyle="bold"
+                        android:layout_below="@+id/endOdoLabelTV"
+
+                        />
+
+
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="@dimen/margin_short_1"
+                    android:layout_height="match_parent"
+                    android:background="@color/gray_border"
+                    android:layout_marginTop="@dimen/margin_short_8"
+                    android:layout_marginBottom="@dimen/margin_short_8"
+
+                    />
+
+
+                <RelativeLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.1"
+                    android:gravity="center_horizontal"
+
+                    >
+
+
+                    <View
+                        android:layout_width="@dimen/margin_short_7"
+                        android:layout_height="@dimen/margin_short_7"
+                        android:background="@drawable/circular_view_sleeper"
+                        android:layout_marginTop="@dimen/margin_short_8"
+                        />
+
+                    <TextView
+                        android:id="@+id/startTimeLabelTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Start_time"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/black_unidenfied"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold"
+                        android:maxLength="14"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/startTimeTxtVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_no_value"
+                        android:maxLines="2"
+                        android:minLines="2"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/gray_unidenfied"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_14"
+                        android:textStyle="bold"
+                        android:layout_below="@+id/startTimeLabelTV"
+                        android:layout_marginBottom="@dimen/margin_10"
+
+                        />
+
+
+
+
+                    <View
+                        android:layout_width="@dimen/margin_short_7"
+                        android:layout_height="@dimen/margin_short_7"
+                        android:background="@drawable/circular_view_sleeper"
+                        android:layout_marginTop="@dimen/margin_short_8"
+                        android:layout_below="@+id/startTimeTxtVw"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/endTimeLabelTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/End_time"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/black_unidenfied"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold"
+                        android:maxLength="14"
+                        android:layout_below="@+id/startTimeTxtVw"
+
+                        />
+
+
+                    <TextView
+                        android:id="@+id/endTimeTxtVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_no_value"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/gray_unidenfied"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_14"
+                        android:textStyle="bold"
+                        android:layout_below="@+id/endTimeLabelTV"
+
+                        />
+
+
+                </RelativeLayout>
+
+
+
+                <View
+                    android:layout_width="@dimen/margin_short_1"
+                    android:layout_height="match_parent"
+                    android:background="@color/gray_border"
+                    android:layout_marginTop="@dimen/margin_short_8"
+                    android:layout_marginBottom="@dimen/margin_short_8"
+                    android:layout_marginRight="@dimen/margin_10"
+
+                    />
+
+
+                <RelativeLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+
+                    >
+
+                    <View
+                        android:layout_width="@dimen/margin_short_7"
+                        android:layout_height="@dimen/margin_short_7"
+                        android:background="@drawable/circular_view_status"
+                        android:layout_marginTop="@dimen/margin_short_8"
+                        />
+
+                    <TextView
+                        android:id="@+id/startLocLabelTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/start_loc"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/black_unidenfied"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold"
+                        android:maxLength="14"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/startLocTxtVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_no_value"
+                        android:maxLines="2"
+                        android:minLines="2"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/gray_unidenfied"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_14"
+                        android:textStyle="bold"
+                        android:layout_below="@+id/startLocLabelTV"
+                        android:layout_marginBottom="@dimen/margin_10"
+
+                        />
+
+
+
+                    <View
+                        android:layout_width="@dimen/margin_short_7"
+                        android:layout_height="@dimen/margin_short_7"
+                        android:background="@drawable/circular_view_status"
+                        android:layout_marginTop="@dimen/margin_short_8"
+                       android:layout_below="@+id/startLocTxtVw"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/endLocLabelTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/end_loc"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/black_unidenfied"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold"
+                        android:maxLength="14"
+                        android:layout_below="@+id/startLocTxtVw"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/endLocTxtVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_no_value"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/gray_unidenfied"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_14"
+                        android:textStyle="bold"
+                        android:layout_below="@+id/endLocLabelTV"
+
+                        />
+
+
+                </RelativeLayout>
+
+
+
+                <View
+                    android:layout_width="@dimen/margin_short_1"
+                    android:layout_height="match_parent"
+                    android:background="@color/gray_border"
+                    android:layout_marginTop="@dimen/margin_short_8"
+                    android:layout_marginBottom="@dimen/margin_short_8"
+
+                    />
+
+
+                <RelativeLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.2"
+                    android:gravity="center_vertical|center_horizontal"
+
+                    >
+                    <View
+                        android:layout_width="@dimen/margin_short_7"
+                        android:layout_height="@dimen/margin_short_7"
+                        android:background="@drawable/circular_view_status"
+                        android:layout_marginTop="@dimen/margin_short_8"
+                        />
+
+                    <TextView
+                        android:id="@+id/totalKmLabelTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_miles"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/black_unidenfied"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold"
+                        android:maxLength="14"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/totalKmTxtVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_no_value"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/gray_unidenfied"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_14"
+                        android:textStyle="bold"
+                        android:layout_below="@+id/totalKmLabelTV"
+
+                        />
+                </RelativeLayout>
+
+
+
+            </LinearLayout>
+
+
+
+            <TextView
+                android:id="@+id/statusTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Status_colon"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:textColor="@color/black_unidenfied"
+                android:textSize="@dimen/text_size_16"
+                android:layout_marginTop="@dimen/margin_short_5"
+                android:textStyle="bold"
+                android:maxLength="12"
+                android:layout_below="@+id/idenLay1"
+
+                />
+
+
+            <RadioGroup
+                android:id="@+id/unIdentifyRadGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/idenLay1"
+                android:layout_marginBottom="@dimen/margin_short_5"
+                android:layout_marginLeft="@dimen/margin_short_8"
+                android:layout_toRightOf="@+id/statusTV"
+                >
+
+                <RadioButton
+                    android:id="@+id/drivingRadBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Driving"
+                    android:textColor="@color/black_semi"
+                    android:textSize="@dimen/text_size_14"
+                    android:theme="@style/unIdenRadioBtn"
+
+
+                    />
+
+
+                <RadioButton
+                    android:id="@+id/onDutyRadBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/On_Duty"
+                    android:textColor="@color/black_semi"
+                    android:textSize="@dimen/text_size_14"
+                    android:theme="@style/unIdenRadioBtn"
+                    android:layout_marginLeft="@dimen/margin_short_8"
+
+                    />
+
+
+                <RadioButton
+                    android:id="@+id/personalRadBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Personal_Use"
+                    android:textColor="@color/black_semi"
+                    android:textSize="@dimen/text_size_14"
+                    android:theme="@style/unIdenRadioBtn"
+                    android:layout_marginLeft="@dimen/margin_short_8"
+
+                    />
+
+
+            </RadioGroup>
+
+
+
+
+            <Button
+                android:id="@+id/rejectRecordBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/view_height_36"
+                android:text="@string/reject"
+                android:textSize="@dimen/text_size_14"
+                android:background="@drawable/reject_selector"
+                android:layout_below="@+id/unIdentifyRadGroup"
+                android:textColor="@color/white"
+                android:paddingRight="@dimen/margin_15"
+                android:paddingLeft="@dimen/margin_15"
+                android:layout_toLeftOf="@+id/claimRecordBtn"
+                android:layout_marginRight="@dimen/margin_15"
+                android:layout_marginBottom="@dimen/margin_10"
+                />
+
+            <Button
+                android:id="@+id/claimRecordBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/view_height_36"
+                android:text="@string/claim"
+                android:background="@drawable/blue_scale_btn_selector"
+                android:layout_below="@+id/unIdentifyRadGroup"
+                android:textColor="@color/white"
+                android:paddingRight="@dimen/margin_20"
+                android:paddingLeft="@dimen/margin_20"
+                android:textSize="@dimen/text_size_14"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_15"
+                />
+
+
+        </RelativeLayout>
+
+</ScrollView>
+
+
+
+
+
+
+
+</LinearLayout>

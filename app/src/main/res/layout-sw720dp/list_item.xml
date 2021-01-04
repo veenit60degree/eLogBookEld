@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/itemLoadTV"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_23"
+        android:paddingTop="@dimen/margin_17"
+        android:paddingBottom="@dimen/margin_short_8"
+        android:textColor="@color/black"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:textStyle="bold"
+
+        />
+
+
+    <TextView
+        android:id="@+id/consigneeNameTxtView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_23"
+        android:paddingTop="@dimen/margin_short_6"
+        android:paddingBottom="@dimen/margin_short_6"
+        android:textColor="@color/black"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:visibility="gone"
+
+        />
+
+    <TextView
+        android:id="@+id/itemDetailTV"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_23"
+        android:paddingTop="@dimen/margin_17"
+        android:paddingBottom="@dimen/margin_18"
+        android:textColor="@color/black"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+
+        />
+
+
+
+</LinearLayout>

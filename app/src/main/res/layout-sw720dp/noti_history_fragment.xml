@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/shippingMainLay"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whiteee"
+
+    >
+
+    <include
+        android:id="@+id/eldActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_70"
+        layout="@layout/actionbar_eld"
+        />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/eldActionBar"
+        android:background="@color/eld_gray_bg"
+        >
+
+
+    <RelativeLayout
+        android:id="@+id/unIdentifiedTopLay"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_70"
+        android:paddingBottom="@dimen/margin_short_5"
+        android:visibility="gone"
+
+        >
+
+        <CheckBox
+            android:id="@+id/checkboxUnIdentifiedRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/unidentified_checkbox_drawable"
+            android:textSize="@dimen/text_size_27"
+            android:layout_marginLeft="@dimen/view_height_55"
+            android:textColor="@color/gray_text1"
+            android:padding="@dimen/margin_short_7"
+            android:layout_alignParentBottom="true"
+            android:text="@string/select_all"
+
+            />
+
+        <TextView
+            android:id="@+id/totalRecordsTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:textSize="@dimen/text_size_19"
+            android:textColor="@color/gray_text1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/rejectRecordUnBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reject"
+            android:textSize="@dimen/text_size_20"
+            android:background="@drawable/reject_selector"
+            android:textColor="@color/white"
+            android:paddingRight="@dimen/view_height_33"
+            android:paddingLeft="@dimen/view_height_33"
+            android:paddingBottom="@dimen/margin_short_8"
+            android:paddingTop="@dimen/margin_short_8"
+            android:layout_toLeftOf="@+id/claimRecordUnBtn"
+            android:layout_marginRight="@dimen/margin_20"
+            android:layout_marginBottom="@dimen/margin_short_7"
+            android:layout_alignParentBottom="true"
+            />
+
+        <TextView
+            android:id="@+id/claimRecordUnBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/claim"
+            android:background="@drawable/blue_scale_btn_selector"
+            android:textColor="@color/white"
+            android:paddingRight="@dimen/view_height_39"
+            android:paddingLeft="@dimen/view_height_39"
+            android:textSize="@dimen/text_size_20"
+            android:paddingBottom="@dimen/margin_short_8"
+            android:paddingTop="@dimen/margin_short_8"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/view_height_45"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/margin_short_7"
+
+
+            />
+
+
+    </RelativeLayout>
+
+
+
+    <ListView
+        android:id="@+id/notiHistoryListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="@dimen/margin_short_0"
+        android:divider="@null"
+        android:layout_marginBottom="@dimen/margin_20"
+        android:visibility="gone"
+
+        />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notiHistoryRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:dividerHeight="@dimen/margin_short_0"
+        android:paddingBottom="@dimen/margin_20"
+
+        />
+
+
+    <ListView
+        android:id="@+id/shippingListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="@dimen/margin_10"
+        android:paddingBottom="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_20"
+        android:layout_marginLeft="@dimen/margin_20"
+        android:layout_marginRight="@dimen/margin_20"
+        android:layout_marginBottom="@dimen/margin_short_5"
+        android:divider="@null"
+        android:visibility="gone"
+        />
+
+
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/noDataEldTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/No_Trip_Assigned"
+        android:textColor="@color/gray_text_transparent"
+        android:textSize="@dimen/view_height_50"
+        android:layout_centerInParent="true"
+
+        />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/deleteNotificationBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/margin_short_6"
+        android:clickable="true"
+        android:src="@drawable/delete_log"
+        app:backgroundTint="@color/color_eld_bg"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/margin_15"
+        android:visibility="gone"
+
+        />
+
+
+
+
+    <ProgressBar
+        android:id="@+id/notiProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+
+
+
+</RelativeLayout>

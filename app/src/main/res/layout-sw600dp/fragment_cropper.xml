@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cropLay"
+     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    >
+
+
+    <com.theartofdev.edmodo.cropper.CropImageView
+        android:id="@+id/cropImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+
+    </com.theartofdev.edmodo.cropper.CropImageView>
+
+
+
+    <Button
+        android:id="@+id/cropButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:text="@string/crop"
+        android:textSize="@dimen/text_size_22"
+        android:textColor="@color/white"
+        android:background="@drawable/green_selector"
+        android:textAllCaps="false"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:paddingTop="@dimen/margin_short_5"
+        android:paddingBottom="@dimen/margin_short_5"
+
+        />
+
+
+
+    <RelativeLayout
+        android:id="@+id/filterlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:visibility="gone"
+
+        >
+
+
+        <!-- <HorizontalScrollView
+
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:layout_alignParentTop="true"
+
+             android:fillViewport="false">-->
+
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/camera_blue"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_10"
+            >
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                >
+
+
+
+
+                <Button
+                    android:id="@+id/original"
+                    android:layout_width="27dp"
+                    android:layout_height="27dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/default_white"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+
+                    />
+
+                <TextView
+                    android:id="@+id/originalTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Original"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_16"
+                    />
+                <!--
+                android:text=""
+                android:background="@drawable/green_selector"-->
+            </LinearLayout>
+
+
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                >
+
+
+                <Button
+                    android:id="@+id/magicColor"
+                    android:layout_width="27dp"
+                    android:layout_height="27dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/paint_new"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    />
+
+                <TextView
+                    android:id="@+id/magicColorTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Magic color"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_16"
+                    />
+                <!--android:text=""-->
+            </LinearLayout>
+
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+
+                >
+
+
+
+                <Button
+                    android:id="@+id/grayMode"
+                    android:layout_width="27dp"
+                    android:layout_height="27dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_gravity="center_horizontal"
+
+                    android:background="@drawable/pencil_white"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    />
+
+                <TextView
+                    android:id="@+id/grayModeTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gray Mode"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_16"
+                    />
+            </LinearLayout>
+
+            <!--android:text="Gray Mode"-->
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                >
+                <Button
+                    android:id="@+id/BlackWhiteMode"
+                    android:layout_width="27dp"
+                    android:layout_height="27dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_gravity="center_horizontal"
+
+
+                    android:background="@drawable/a_white"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+
+                    />
+
+                <TextView
+                    android:id="@+id/BlackWhiteModeTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Black &amp; White"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_16"
+                    />
+                <!--android:text="B and W"-->
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <!--</HorizontalScrollView>-->
+        <RelativeLayout
+            android:id="@+id/bottomLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/camera_blue"
+            android:paddingBottom="@dimen/margin_18"
+            android:paddingTop="@dimen/margin_18"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+
+            >
+
+
+            <Button
+                android:id="@+id/cropDoneBtn"
+                android:layout_width="@dimen/view_height_38"
+                android:layout_height="@dimen/view_height_38"
+
+                android:padding="@dimen/bottom_bar_padding"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_20"
+                android:background="@drawable/tick_white"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                />
+
+
+
+            <Button
+                android:id="@+id/rotateLeftButton"
+                android:layout_width="@dimen/view_height_38"
+                android:layout_height="@dimen/view_height_38"
+
+                android:padding="@dimen/bottom_bar_padding"
+                android:layout_marginLeft="@dimen/view_height_60"
+                android:background="@drawable/rotate_left"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+
+                android:layout_toRightOf="@+id/cancelButton"
+                />
+
+
+
+
+            <Button
+                android:id="@+id/rotateRightButton"
+                android:layout_width="@dimen/view_height_38"
+                android:layout_height="@dimen/view_height_38"
+
+                android:padding="@dimen/bottom_bar_padding"
+                android:layout_toLeftOf="@+id/cropDoneBtn"
+                android:layout_marginRight="@dimen/view_height_60"
+                android:background="@drawable/rotate_right"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                />
+
+
+
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="@dimen/view_height_35_g"
+                android:layout_height="@dimen/view_height_35_g"
+
+                android:padding="@dimen/bottom_bar_padding"
+                android:layout_marginLeft="@dimen/margin_20"
+                android:background="@drawable/cancel_new"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+
+                />
+
+
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/bottomLay"
+            android:layout_below="@id/topBar"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:layout_margin="@dimen/scanPadding"
+
+            >
+
+            <ImageView
+                android:id="@+id/scannedImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:scaleType="centerInside"
+                />
+        </FrameLayout>
+
+
+    </RelativeLayout>
+
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+
+
+</RelativeLayout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/inspectionItemLay"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_50"
+        android:orientation="horizontal"
+
+        >
+
+    <CheckBox
+        android:id="@+id/checkboxInspection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/eld_checkbox_drawable"
+        android:layout_gravity="center_vertical"
+        android:padding="@dimen/margin_short_8"
+        android:layout_marginLeft="@dimen/margin_10"
+        />
+
+
+    <TextView
+        android:id="@+id/inspectionTruckTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_20"
+        android:paddingRight="@dimen/margin_short_5"
+        android:paddingTop="@dimen/margin_short_1"
+        android:paddingBottom="@dimen/margin_short_1"
+
+        />
+
+
+        <TextView
+            android:id="@+id/inspectionTimeTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:gravity="right"
+            android:textColor="@color/color_eld_bg"
+            android:textSize="@dimen/text_size_18"
+            android:paddingRight="@dimen/margin_20"
+            android:paddingBottom="@dimen/margin_short_1"
+            android:layout_weight="1"
+            android:visibility="gone"
+            />
+
+
+
+    </LinearLayout>
+</LinearLayout>

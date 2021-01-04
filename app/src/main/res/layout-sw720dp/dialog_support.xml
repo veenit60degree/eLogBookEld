@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/white_full_border"
+    android:layout_marginLeft="@dimen/margin_10"
+    android:layout_marginRight="@dimen/margin_10"
+    >
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/margin_16"
+        >
+
+        <RelativeLayout
+            android:id="@+id/supportTopLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_15"
+                android:gravity="center"
+                android:padding="@dimen/margin_short_5"
+                android:background="@color/color_eld_theme"
+                android:layout_marginTop="@dimen/margin_18"
+
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_Support"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_22"
+                android:gravity="center"
+                android:padding="@dimen/margin_short_8"
+                android:background="@drawable/green_default"
+                />
+
+        </RelativeLayout>
+
+
+
+
+        <ListView
+            android:id="@+id/supportListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:dividerHeight="@dimen/margin_short_1"
+            android:divider="@color/black_hover"
+            android:layout_below="@+id/supportTopLay"
+            android:paddingBottom="@dimen/view_height_75"
+            />
+
+
+
+        <Button
+            android:id="@+id/supportDismissBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/view_height_40"
+            android:text="@string/Close"
+            android:textColor="@color/white"
+            android:layout_alignParentBottom="true"
+            android:textSize="@dimen/text_size_20"
+            android:layout_marginTop="@dimen/margin_26"
+            android:paddingRight="@dimen/view_height_50"
+            android:paddingLeft="@dimen/view_height_50"
+            android:layout_centerHorizontal="true"
+            android:textAllCaps="false"
+            android:background="@drawable/support_black_selector"
+
+            />
+
+
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

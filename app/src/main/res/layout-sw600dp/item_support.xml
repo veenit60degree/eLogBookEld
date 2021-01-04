@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/margin_10"
+
+        >
+
+
+        <TextView
+            android:id="@+id/supportTypeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:text="Email"
+            android:textSize="@dimen/text_size_20"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:paddingLeft="@dimen/margin_15"
+            android:textStyle="bold"
+
+            />
+
+
+        <RelativeLayout
+            android:id="@+id/supportLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_50"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/gray_eld_selector"
+            android:layout_marginLeft="@dimen/margin_15"
+            android:layout_marginRight="@dimen/margin_15"
+            android:layout_marginTop="@dimen/margin_short_9"
+
+            >
+
+
+            <TextView
+                android:id="@+id/supportTypeValueTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:paddingRight="@dimen/margin_10"
+                android:textColor="@color/bluee_login"
+                android:textSize="@dimen/text_size_19"
+                android:layout_centerVertical="true"
+
+                />
+
+            <ImageView
+                android:id="@+id/supportTypeIV"
+                android:layout_width="@dimen/view_height_30"
+                android:layout_height="@dimen/view_height_30"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_15"
+
+                />
+
+
+        </RelativeLayout>
+
+
+
+</LinearLayout>

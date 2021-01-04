@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/editlogSpinTV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/margin_short_3"
+        android:paddingBottom="@dimen/margin_short_3"
+        android:textSize="@dimen/text_size_16"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/black"
+        android:singleLine="true"
+        android:gravity="center_horizontal|center_vertical" >
+
+
+</TextView>

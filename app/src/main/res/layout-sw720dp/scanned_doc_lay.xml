@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/scanDocLay"
+    >
+
+
+
+    <RelativeLayout
+        android:id="@+id/actionBarDocDetail"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_70"
+        android:background="@color/actionbar_bg"
+        >
+
+
+
+
+        <RelativeLayout
+            android:id="@+id/backDetailDocLay"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/margin_15"
+            android:paddingRight="@dimen/margin_15"
+            android:background="@drawable/logout_selector"
+            >
+
+
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/view_height_35_g"
+                android:src="@drawable/back_btn"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                android:layout_toRightOf="@+id/backBtn"
+                android:textSize="@dimen/text_size_24"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_short_4"
+                android:textColor="@color/white"
+                />
+
+
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/scannedLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/actionBarDocDetail"
+
+        >
+
+
+    <TextView
+        android:id="@+id/ddiidd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Add_Scanned_Documents"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_22"
+        android:layout_marginTop="13dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+
+
+        />
+
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/view_height_160"
+        android:layout_marginTop="@dimen/margin_15"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_below="@+id/ddiidd"
+
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+
+
+            <LinearLayout
+                android:id="@+id/addMoreDocLay"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                >
+
+
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/addMoreImageDoc"
+                android:layout_width="@dimen/view_height_160"
+                android:layout_height="@dimen/view_height_160"
+                android:src="@drawable/add_pluss"
+                />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+
+
+
+    <Button
+        android:id="@+id/createUploadDocBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/view_height_65"
+        android:text="Create &amp; Upload Document"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="@dimen/text_size_25"
+        android:paddingLeft="@dimen/view_height_50"
+        android:paddingRight="@dimen/view_height_50"
+        android:background="@drawable/green_selector"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/bottomDeeeView"
+        android:layout_marginBottom="50dp"
+        android:textAllCaps="false"
+
+        />
+
+    <View
+        android:id="@+id/bottomDeeeView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        />
+</RelativeLayout>
+
+
+
+
+
+    <include
+        android:id="@+id/scanDocccLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/add_scan_doc_view"
+        android:visibility="gone"
+        />
+
+
+</RelativeLayout>

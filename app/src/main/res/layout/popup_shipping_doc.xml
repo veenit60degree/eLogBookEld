@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="@dimen/view_height_450"
+    android:layout_height="match_parent"
+    android:background="@drawable/white_full_border"
+    android:padding="@dimen/margin_short_5"
+
+    >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/white_full_border"
+        android:paddingLeft="@dimen/margin_short_3"
+        android:paddingRight="@dimen/margin_short_3"
+        android:paddingTop="@dimen/margin_short_7"
+        android:paddingBottom="@dimen/margin_10"
+
+        >
+
+
+
+        <TextView
+            android:id="@+id/shippingInfoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ShippingDocNumber"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_size_18"
+            android:gravity="center"
+            android:padding="@dimen/margin_short_5"
+
+            />
+
+
+
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/shipperNoTextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/bl_or_trip_no"
+            android:layout_marginTop="@dimen/margin_short_9"
+
+            >
+
+        <com.constants.CustomEditText
+            android:id="@+id/shipperNoEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_centerVertical="true"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/margin_short_8"
+            android:theme="@style/AppTheme.EditTextBlue"
+            android:paddingRight="@dimen/margin_short_8"
+            android:paddingTop="@dimen/margin_short_7"
+            android:singleLine="true"
+            android:inputType="text"
+            android:layout_marginLeft="@dimen/margin_short_5"
+            android:imeOptions="actionNext|flagNoExtractUi"
+
+            />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_short_6"
+            android:paddingLeft="@dimen/margin_short_5"
+
+            >
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/shipperNameTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/ShippingName"
+                android:layout_weight="1"
+                >
+
+            <com.constants.CustomEditText
+                android:id="@+id/shipperNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/text_size_16"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/margin_short_8"
+                android:paddingRight="@dimen/margin_short_8"
+                android:paddingTop="@dimen/margin_short_7"
+                android:paddingBottom="@dimen/margin_short_7"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:singleLine="true"
+                android:inputType="text"
+                style="@style/AppTheme.EditTextBlue"
+                android:imeOptions="actionNext|flagNoExtractUi"
+
+                />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/commodityTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/Commodity"
+                android:layout_weight="1"
+                >
+
+            <com.constants.CustomEditText
+                android:id="@+id/commodityEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/text_size_16"
+                style="@style/AppTheme.EditTextBlue"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/margin_short_8"
+                android:paddingRight="@dimen/margin_short_8"
+                android:paddingTop="@dimen/margin_short_7"
+                android:paddingBottom="@dimen/margin_short_7"
+                android:singleLine="true"
+                android:inputType="text"
+                android:layout_marginLeft="@dimen/margin_short_5"
+                android:imeOptions="actionNext|flagNoExtractUi"
+                android:layout_weight="1"
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_short_6"
+            android:paddingLeft="@dimen/margin_short_5"
+
+            >
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/shipperStateTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/From"
+                android:layout_weight="1"
+                >
+
+            <com.constants.CustomEditText
+                android:id="@+id/shipperStateEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/text_size_16"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/margin_short_8"
+                android:paddingRight="@dimen/margin_short_8"
+                android:paddingTop="@dimen/margin_short_7"
+                android:paddingBottom="@dimen/margin_short_7"
+                android:singleLine="true"
+                android:inputType="text"
+                style="@style/AppTheme.EditTextBlue"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:imeOptions="actionNext|flagNoExtractUi"
+
+                />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/shipperPostalTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/too"
+                android:layout_weight="1"
+                >
+
+            <com.constants.CustomEditText
+                android:id="@+id/shipperPostalEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/text_size_16"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/margin_short_8"
+                android:paddingRight="@dimen/margin_short_8"
+                android:paddingTop="@dimen/margin_short_7"
+                android:paddingBottom="@dimen/margin_short_7"
+                android:singleLine="true"
+                android:inputType="text"
+                style="@style/AppTheme.EditTextBlue"
+                android:layout_marginLeft="@dimen/margin_short_5"
+                android:imeOptions="actionDone|flagNoExtractUi"
+
+                />
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:id="@+id/terminalAddLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/margin_15"
+            android:paddingRight="@dimen/margin_15"
+            android:layout_marginTop="@dimen/margin_10"
+
+            >
+
+            <TextView
+                android:layout_width="@dimen/view_height_130"
+                android:layout_height="wrap_content"
+                android:text="@string/HomeTerminal"
+                android:textStyle="bold"
+                android:textColor="@color/bluee_login"
+                android:textSize="@dimen/text_size_16"
+                android:layout_marginRight="@dimen/margin_10"
+                />
+
+
+            <com.constants.CustomEditText
+                android:id="@+id/shipperAddressEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_hover"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/text_size_15"
+                android:gravity="center_vertical"
+                android:paddingRight="@dimen/margin_short_8"
+                android:paddingTop="@dimen/margin_short_5"
+                android:paddingBottom="@dimen/margin_short_7"
+                android:singleLine="true"
+                android:inputType="text"
+                android:enabled="false"
+                android:layout_marginLeft="@dimen/margin_short_5"
+                android:background="@drawable/transparent"
+                android:imeOptions="actionNext|flagNoExtractUi"
+
+                />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/officeAddLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/margin_15"
+            android:paddingRight="@dimen/margin_15"
+
+            >
+
+            <TextView
+                android:layout_width="@dimen/view_height_130"
+                android:layout_height="wrap_content"
+                android:text="@string/OfficeAddress"
+                android:textStyle="bold"
+                android:textColor="@color/bluee_login"
+                android:textSize="@dimen/text_size_16"
+                android:layout_marginRight="@dimen/margin_10"
+                />
+
+
+            <com.constants.CustomEditText
+                android:id="@+id/shipperCityEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_hover"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/text_size_15"
+                android:gravity="center_vertical"
+                android:paddingRight="@dimen/margin_short_8"
+                android:paddingTop="@dimen/margin_short_5"
+                android:paddingBottom="@dimen/margin_short_7"
+                android:singleLine="true"
+                android:enabled="false"
+                android:inputType="text"
+                android:background="@drawable/transparent"
+                android:layout_marginLeft="@dimen/margin_short_5"
+                android:imeOptions="actionDone|flagNoExtractUi"
+                />
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="right"
+            android:layout_marginTop="@dimen/margin_short_1"
+            >
+
+
+            <Button
+                android:id="@+id/shippingDocCancelBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textColor="@color/bluee_login"
+                android:textSize="@dimen/text_size_17"
+                android:padding="@dimen/margin_10"
+                android:gravity="center"
+                android:background="@color/transparent"
+                android:layout_gravity="center_horizontal"
+                android:textAllCaps="false"
+                android:layout_marginRight="@dimen/margin_10"
+
+                />
+
+
+            <Button
+                android:id="@+id/shippingDocSaveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_17"
+                android:gravity="center"
+                android:padding="@dimen/margin_10"
+                android:background="@color/transparent"
+                android:layout_gravity="center_horizontal"
+                android:textAllCaps="false"
+
+                />
+
+
+        </LinearLayout>
+
+
+
+
+</LinearLayout>
+
+
+
+</ScrollView>

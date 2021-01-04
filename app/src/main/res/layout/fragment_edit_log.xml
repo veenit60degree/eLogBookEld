@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:id="@+id/editGraphManLay"
+
+    >
+
+    <include
+        android:id="@+id/editLogActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/actionbar_eld"
+        />
+
+
+
+    <!--android:layout_marginTop="@dimen/margin_10"
+    android:layout_marginRight="@dimen/margin_10"
+    android:layout_marginLeft="@dimen/margin_10"
+    android:padding="@dimen/margin_short_5"
+
+    -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/whiteee"
+
+
+        android:layout_below="@+id/editLogActionBar"
+
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_40"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical"
+            android:background="@color/gray_edit_log"
+
+            >
+
+
+            <TextView
+                android:layout_width="@dimen/view_height_70"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_eld_bg"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/text_size_17"
+                android:textStyle="bold"
+                android:padding="5dp"
+                android:text="@string/No_"
+
+                />
+
+
+            <TextView
+                android:layout_width="@dimen/view_height_150"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:text="@string/Status"
+                android:textColor="@color/color_eld_bg"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/text_size_17"
+                />
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:text="@string/Start_time"
+                android:textColor="@color/color_eld_bg"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/text_size_17"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:text="@string/end_date"
+                android:textColor="@color/color_eld_bg"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/text_size_17"
+                />
+
+
+
+
+
+            <TextView
+                android:id="@+id/editLogDurationTV"
+                android:layout_width="@dimen/view_height_115"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="5dp"
+                android:layout_marginRight="5dp"
+                android:text="@string/Duration"
+                android:textColor="@color/color_eld_bg"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/text_size_17"
+                android:textStyle="bold"
+
+                />
+
+
+        </LinearLayout>
+
+
+
+
+        <com.drag.slide.listview.SlideAndDragListView
+            android:id="@+id/editLogListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/black"
+            android:dividerHeight="@dimen/margin_short_half"
+            android:layout_marginTop="@dimen/view_height_40"
+            android:visibility="gone"
+
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/driverLogRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_marginTop="@dimen/view_height_40"
+            android:paddingBottom="@dimen/view_height_60"
+            android:scrollbars="vertical"
+         />
+
+
+
+
+
+
+    </RelativeLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/margin_10"
+
+        >
+
+
+       <!-- <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/cancelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_short_6"
+            android:clickable="true"
+            android:src="@drawable/cancel_log"
+            app:backgroundTint="@color/red_cancel_log"
+            app:layout_anchorGravity="bottom|right|end"
+
+            />-->
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_short_6"
+            android:clickable="true"
+            android:src="@drawable/add_log"
+            app:backgroundTint="@color/color_eld_bg"
+            app:layout_anchorGravity="bottom|right|end"
+
+            />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/saveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@drawable/preview_log"
+            app:backgroundTint="@color/red_save_log"
+            app:layout_anchorGravity="bottom|right|end"
+
+            />
+
+
+    </LinearLayout>
+
+
+
+    <ProgressBar
+        android:id="@+id/editLogProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        style="?android:attr/progressBarStyle"
+        android:visibility="gone"
+        />
+
+
+
+</RelativeLayout>

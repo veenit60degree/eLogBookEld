@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/white_full_border"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:layout_margin="@dimen/margin_15"
+
+    >
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_10"
+            >
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/driver_log"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_13"
+                android:gravity="center"
+                android:padding="@dimen/margin_short_8"
+
+                android:background="@color/color_eld_theme"
+                android:layout_marginTop="@dimen/margin_12"
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_log_preview"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_20"
+                android:gravity="center"
+                android:padding="@dimen/margin_short_8"
+                android:background="@drawable/green_default"
+                android:id="@+id/textView7" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <WebView
+            android:id="@+id/previewGraphWebView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="@dimen/view_height_700"
+            android:minHeight="@dimen/view_height_140"
+            android:layout_marginTop="@dimen/margin_short_4"
+            android:layout_marginLeft="@dimen/margin_short_8"
+            android:layout_marginRight="@dimen/margin_short_8"
+            android:fillViewport="true"
+
+            />
+
+        </RelativeLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_40"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/view_height_35"
+            android:layout_marginRight="@dimen/view_height_40"
+            android:layout_marginLeft="@dimen/view_height_40"
+            android:layout_marginBottom="@dimen/margin_20"
+            >
+
+
+
+            <Button
+                android:id="@+id/btnCancelPreviewLog"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_40"
+                android:text="@string/cancel"
+                android:textSize="@dimen/text_size_18"
+                android:layout_marginLeft="@dimen/view_height_45"
+                android:layout_marginRight="@dimen/view_height_50"
+                android:textColor="@color/whiteee"
+                android:background="@drawable/red_btn_selector"
+                android:textAllCaps="false"
+                android:layout_weight="1"
+
+                />
+
+
+            <Button
+                android:id="@+id/btnSavePreviewLog"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_40"
+                android:text="@string/save"
+                android:textSize="@dimen/text_size_18"
+                android:layout_marginLeft="@dimen/view_height_50"
+                android:layout_marginRight="@dimen/view_height_45"
+                android:textColor="@color/whiteee"
+                android:background="@drawable/green_selector"
+
+                android:textAllCaps="false"
+                android:layout_weight="1"
+
+                />
+
+
+
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+
+
+
+</RelativeLayout>
