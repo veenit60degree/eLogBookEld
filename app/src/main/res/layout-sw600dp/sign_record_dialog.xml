@@ -26,28 +26,100 @@
 
             <TextView
                 android:id="@+id/signRecordTitleTv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sign_record"
-
-                android:textColor="@color/colorPrimary"
+                android:background="@drawable/blue_top_corner_drawable"
+                android:paddingTop="@dimen/margin_11"
+                android:paddingBottom="@dimen/margin_11"
+                android:textColor="@color/whiteee"
                 android:textStyle="bold"
-                android:textSize="@dimen/text_size_22"
+                android:textSize="@dimen/text_size_25"
                 android:paddingLeft="@dimen/margin_20"
-                android:layout_marginBottom="@dimen/margin_11"
-                android:layout_marginTop="@dimen/margin_15"
 
                 />
 
 
-    <ListView
+
+            <RelativeLayout
+                android:id="@+id/actionLabelLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_50"
+                android:layout_below="@+id/signRecordTitleTv"
+                android:background="@color/gray_updated_divider_color"
+                android:paddingTop="@dimen/margin_short_2"
+                android:paddingBottom="@dimen/margin_short_2"
+                android:gravity="center_vertical"
+                >
+
+                <CheckBox
+                    android:id="@+id/selectAllRecordsCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_all"
+                    android:layout_marginLeft="@dimen/margin_15"
+                    android:textSize="@dimen/text_size_18"
+                    android:textColor="@color/color_eld_bg"
+                    android:button="@drawable/unidentified_checkbox_drawable"
+                    android:paddingTop="@dimen/margin_short_1"
+                    android:paddingLeft="@dimen/margin_short_4"
+                    android:layout_centerVertical="true"
+
+                    />
+
+
+                <TextView
+                    android:id="@+id/fromToDateTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black_hover"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_size_18"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    />
+
+
+                <TextView
+                    android:id="@+id/certifyRecordTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/blue_button"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_size_18"
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="@dimen/margin_25"
+                    android:paddingLeft="@dimen/margin_15"
+                    android:paddingTop="@dimen/margin_short_8"
+                    android:paddingBottom="@dimen/margin_short_8"
+                    android:text="@string/certify"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"
+
+                    />
+
+            </RelativeLayout>
+
+
+
+            <TextView
+                android:id="@+id/recapRecordInvisibleTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                />
+
+
+            <ListView
         android:id="@+id/signRecordListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:dividerHeight="@dimen/margin_short_1"
-        android:layout_margin="@dimen/margin_14"
+        android:layout_marginLeft="@dimen/margin_14"
+                android:layout_marginBottom="@dimen/margin_14"
+                android:paddingRight="@dimen/margin_short_5"
         android:divider="@color/divider_sign_list"
-        android:layout_below="@+id/signRecordTitleTv"
+        android:layout_below="@+id/actionLabelLayout"
 
 
         />

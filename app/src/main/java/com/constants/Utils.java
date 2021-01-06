@@ -22,17 +22,23 @@ public class Utils
 {
 
     Context context;
+    public String LogFilePath            = "";
+    public String AppUsageLogFilePath    = "";
+    public String AppExectnTimeLogPath   = "";
+
 
     public Utils(Context context){
        // super();
         this.context = context;
+
+        LogFilePath            = getAlsLogFilePath(context, ConstantsKeys.ALS_OBD_LOG).toString();
+        AppUsageLogFilePath    = getAlsLogFilePath(context, ConstantsKeys.APP_USAGE_LOG).toString();
+        AppExectnTimeLogPath   = getAlsLogFilePath(context, ConstantsKeys.EXECUTION_TIME_LOG).toString();
+
     }
 
 
 
-    public String LogFilePath            = getAlsLogFilePath(context, ConstantsKeys.ALS_OBD_LOG).toString();
-    public String AppUsageLogFilePath    = getAlsLogFilePath(context, ConstantsKeys.APP_USAGE_LOG).toString();
-    public String AppExectnTimeLogPath    = getAlsLogFilePath(context, ConstantsKeys.EXECUTION_TIME_LOG).toString();
 
 
     public String createLogFile()
@@ -88,6 +94,10 @@ public class Utils
 
     public void writeToLogFile(String value)
     {
+        if(LogFilePath.length() == 0){
+            LogFilePath            = getAlsLogFilePath(context, ConstantsKeys.ALS_OBD_LOG).toString();
+        }
+
         File LogFile = new File(LogFilePath);
         if (!LogFile.exists())
         { //Create if it isn't exist
@@ -119,6 +129,10 @@ public class Utils
 
     public void writeAppUsageLogFile(String value)
     {
+        if(AppUsageLogFilePath.length() == 0) {
+            AppUsageLogFilePath = getAlsLogFilePath(context, ConstantsKeys.APP_USAGE_LOG).toString();
+        }
+
         File LogFile = new File(AppUsageLogFilePath);
         if (!LogFile.exists())
         { //Create if it isn't exist
@@ -148,6 +162,10 @@ public class Utils
 
     public void writeExectnTimeLogFile(long ExecutionTime, String usedMemory, String type)
     {
+        if(AppExectnTimeLogPath.length() == 0) {
+            AppExectnTimeLogPath = getAlsLogFilePath(context, ConstantsKeys.EXECUTION_TIME_LOG).toString();
+        }
+
         File LogFile = new File(AppExectnTimeLogPath);
         if (!LogFile.exists())
         { //Create if it isn't exist

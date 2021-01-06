@@ -84,6 +84,18 @@
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:background="@drawable/green_eld_drawable"
+
+                />
+
+
+            <ImageView
+                android:id="@+id/certifyRecordImgView"
+                android:layout_width="@dimen/view_height_35"
+                android:layout_height="@dimen/view_height_35"
+                android:src="@drawable/certify_record_list"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/margin_10"
+                android:visibility="gone"
                 />
 
 

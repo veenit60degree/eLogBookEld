@@ -97,6 +97,16 @@
                 />
 
 
+            <ImageView
+                android:id="@+id/certifyRecordImgView"
+                android:layout_width="@dimen/view_height_48"
+                android:layout_height="@dimen/view_height_48"
+                android:src="@drawable/certify_record_list"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/margin_18"
+                android:visibility="gone"
+                />
+
 
 
         </RelativeLayout>

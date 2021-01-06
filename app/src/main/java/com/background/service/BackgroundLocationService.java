@@ -2521,6 +2521,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     sharedPref.SetDrivingShippingAllowed(dataObj.getBoolean("IsDrivingShippingAllowed"), getApplicationContext());
                                     sharedPref.saveTimeStampView(dataObj.getBoolean("IsTimestampEnabled"), getApplicationContext());
                                     sharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
+                                    sharedPref.setPersonalUse75Km(dataObj.getBoolean(ConstantsKeys.PersonalUse75Km), getApplicationContext());
 
                                     boolean connectionStatus = sharedPref.isOnline(getApplicationContext());
                                     if(!connectionStatus){  // if last status was not online then save online status

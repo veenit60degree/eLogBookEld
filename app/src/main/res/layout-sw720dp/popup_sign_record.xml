@@ -7,9 +7,10 @@
 
 
     <RelativeLayout
+        android:id="@+id/recapRecordItemLay"
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_65"
-        android:paddingLeft="@dimen/margin_20"
+        android:paddingLeft="@dimen/margin_15"
         android:paddingRight="@dimen/margin_10"
 
         >

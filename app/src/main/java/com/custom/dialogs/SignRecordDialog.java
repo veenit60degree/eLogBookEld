@@ -4,13 +4,19 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.adapter.logistic.RecapRecordSignAdapter;
+import com.adapter.logistic.UnIdentifiedListingAdapter;
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -19,6 +25,7 @@ import com.simplify.ink.InkView;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SignRecordDialog extends Dialog {
@@ -30,9 +37,16 @@ public class SignRecordDialog extends Dialog {
     private DateSelectListener readyListener;
     ListView signRecordListView;
     List<RecapSignModel> recapRecordsList;
+    TextView fromToDateTv;
+    public static TextView certifyRecordBtn, recapRecordInvisibleTv;
+    public static CheckBox selectAllRecordsCheckBox;
+
     private RecapRecordSignAdapter recapSignAdapter;
     Context context;
     Constants constants;
+    public static int recapSelectedPosition = 0;
+    public  static boolean isSignItemClicked = false;
+    ArrayList<String> recordSelectedList = new ArrayList<>();
 
     public SignRecordDialog(Context context, List<RecapSignModel> recapList, DateSelectListener readyListener) {
         super(context);
@@ -55,36 +69,116 @@ public class SignRecordDialog extends Dialog {
         if(Globally.isTablet(context)){
             getWindow().setLayout(constants.intToPixel(context, 730), ViewGroup.LayoutParams.WRAP_CONTENT);
         }else{
-            getWindow().setLayout(constants.intToPixel(context, 530), ViewGroup.LayoutParams.WRAP_CONTENT);
+            getWindow().setLayout(constants.intToPixel(context, 550), ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
-        signRecordListView         = (ListView) findViewById(R.id.signRecordListView);
+        signRecordListView      = (ListView) findViewById(R.id.signRecordListView);
+        selectAllRecordsCheckBox= (CheckBox) findViewById(R.id.selectAllRecordsCheckBox);
+        fromToDateTv            = (TextView)findViewById(R.id.fromToDateTv);
 
-        recapSignAdapter = new RecapRecordSignAdapter(context, recapRecordsList);
+        certifyRecordBtn        = (TextView)findViewById(R.id.certifyRecordTv);
+        recapRecordInvisibleTv  = (TextView)findViewById(R.id.recapRecordInvisibleTv);
+
+        if(recapRecordsList.size() > 0) {
+            String fromDate = Globally.dateConversionMonthNameWithDay(recapRecordsList.get(0).getDate().toString());
+            String toDate   = Globally.dateConversionMonthNameWithDay(recapRecordsList.get(recapRecordsList.size()-1).getDate().toString());
+
+            fromToDateTv.setText(fromDate + " - " + toDate);
+        }
+
+        setListSelectionRecord(false);
+        recapSignAdapter = new RecapRecordSignAdapter(context, recapRecordsList, recordSelectedList,false, false);
         signRecordListView.setAdapter(recapSignAdapter);
 
-        signRecordListView.setOnItemClickListener(new SignOkListener());
+        selectAllRecordsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
+                if(!isSignItemClicked) {
+                    boolean isAllSelected = compoundButton.isChecked();
+                    setListSelectionRecord(isAllSelected);
+                    Parcelable state = signRecordListView.onSaveInstanceState();
+                    signRecordListView.onRestoreInstanceState(state);
+                   // notifyAdapter(isAllSelected, true);
+
+                    try{
+                        recapSignAdapter = new RecapRecordSignAdapter(context, recapRecordsList, recordSelectedList, isAllSelected, true);
+                        signRecordListView.setAdapter(recapSignAdapter);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                isSignItemClicked = false;
+            }
+        });
+
+
+        recapRecordInvisibleTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                readyListener.SignOkBtn(
+                        recapRecordsList.get(recapSelectedPosition).getDate(),
+                        recapRecordsList.get(recapSelectedPosition).isCertified());
+
+            }
+        });
+
+        certifyRecordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ArrayList<String> selectedDateList = getSelectedItemDate();
+
+            }
+        });
     }
 
 
 
 
+    private void setListSelectionRecord(boolean isSelected){
+        Log.d("recordSelectedList", "recordSelectedList: " + recordSelectedList);
 
+        if(recordSelectedList.size() > 0) {
+            boolean isItemChecked = false;
+            for (int i = 0; i < recapRecordsList.size(); i++) {
+                if (isSelected) {
+                    recordSelectedList.set(i, "selected");
+                    isItemChecked = true;
+                } else {
+                    recordSelectedList.set(i, "");
+                }
+            }
 
-    private class SignOkListener implements AdapterView.OnItemClickListener {
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            readyListener.SignOkBtn(
-                    recapRecordsList.get(position).getDate(),
-                    recapRecordsList.get(position).isCertified());
-
+            if(isItemChecked){
+                certifyRecordBtn.setVisibility(View.VISIBLE);
+            }else{
+                certifyRecordBtn.setVisibility(View.GONE);
+            }
+        }else{
+            for (int i = 0; i < recapRecordsList.size(); i++) {
+                 recordSelectedList.add("");
+            }
         }
     }
 
+    private ArrayList<String> getSelectedItemDate(){
+        ArrayList<String> selectedDateList = new ArrayList<>();
 
+        if(recordSelectedList.size() > 0) {
+            boolean isItemChecked = false;
+            for (int i = 0; i < recordSelectedList.size(); i++) {
+                if (recordSelectedList.get(i).equals("selected")) {
+                    selectedDateList.add(recapRecordsList.get(i).getDate().toString());
+                }
+            }
 
+        }
+
+        return selectedDateList;
+    }
 
 
 }

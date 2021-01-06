@@ -3519,9 +3519,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 SetDataInView();
 
 
-                                if (Global.isConnected(getActivity())) {
+                          /*      if (Global.isConnected(getActivity())) {
                                     saveInfo(Global.ON_DUTY, true, true, false);
-                                } else {
+                                } else {*/
 
                                     SaveDriversJob(Global.ON_DUTY);
                                     EnableJobViews();
@@ -3532,8 +3532,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                     initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
                                             usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
                                     SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
+                                    CalculateTimeInOffLine(false, false);
 
-                                }
+
+                                //  }
 
                                 if (constants.IS_TRAILER_INSPECT) {
                                     if (TrailorNumber.length() > 0) {
@@ -5835,7 +5837,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                                     }
                                 } else {
-                                    // DRIVER_JOB_STATUS = ON_DUTY;
+
                                     trailerDialog = new TrailorDialog(getActivity(), constants.Personal, false,
                                             TrailorNumber, 0, false, Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
                                     trailerDialog.show();

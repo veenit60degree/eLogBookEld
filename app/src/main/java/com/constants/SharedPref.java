@@ -1076,6 +1076,7 @@ public class SharedPref {
     }
 
 
+
     // Get background Service OnDestory method status -------------------
     public static boolean isServiceOnDestoryCalled( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1087,6 +1088,21 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("service_on_destroy", value);
+        editor.commit();
+    }
+
+
+    // Get personal use status for 75 km crossing -------------------
+    public static boolean isPersonalUse75KmCrossed( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.PersonalUse75Km, true);
+    }
+
+    // Save personal use status for 75 km crossing -------------------
+    public static void setPersonalUse75Km( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.PersonalUse75Km, value);
         editor.commit();
     }
 

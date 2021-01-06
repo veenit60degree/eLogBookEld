@@ -135,7 +135,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     ShippingViewDetailAdapter shippingAdapter;
 
     public static Button saveSignatureBtn, editLogBtn, showHideRecapBtn;
-    ImageView eldMenuBtn, signImageView, previousDateBtn, nextDateBtn;
+    ImageView eldMenuBtn, signImageView, previousDateBtn, nextDateBtn, loadingSpinEldIV, certifyRecordImgView;
     TextView EldTitleTV, certifyDateTV, certifyCycleTV;
     TextView certifyDriverNameTV, certifyCoDriverNameTV, certifyDriverIDTV, certifyCoDriverIDTV;
     TextView certifyDistanceTV, certifyCarrierTV, certifyVehicleTV, certifyTrailerTV, certifyMainOfficeTV,
@@ -317,6 +317,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         signImageView               = (ImageView)view.findViewById(R.id.signImageView);
         previousDateBtn             = (ImageView)view.findViewById(R.id.previousDate);
         nextDateBtn                 = (ImageView)view.findViewById(R.id.nextDateBtn);
+        loadingSpinEldIV            = (ImageView)view.findViewById(R.id.loadingSpinEldIV);
+        certifyRecordImgView        = (ImageView)view.findViewById(R.id.certifyRecordImgView);
 
         rightMenuBtn                = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         certifyLogLay               = (LinearLayout)view.findViewById(R.id.certifyLogLay);
@@ -429,6 +431,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading...");
 
+        loadingSpinEldIV.setImageResource(R.drawable.certify_calendar);
         // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
         if(UILApplication.getInstance().isNightModeEnabled()){
             viewDetailMaiLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
@@ -457,6 +460,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
 
         }else{
+            certifyRecordImgView.setVisibility(View.VISIBLE);
+            certifyDateTV.setVisibility(View.GONE);
             certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length() ));
 
             if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
@@ -521,7 +526,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         graphWebView.addJavascriptInterface( new WebAppInterface(), "Android");
 
         eldMenuBtn.setImageResource(R.drawable.back_btn);
-        rightMenuBtn.setVisibility(View.GONE);
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.sign_here)
@@ -619,7 +623,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         dateActionBarTV.setOnClickListener(this);
         previousDateBtn.setOnClickListener(this);
         nextDateBtn.setOnClickListener(this);
-
+        rightMenuBtn.setOnClickListener(this);
+        certifyRecordImgView.setOnClickListener(this);
 
     }
 
@@ -989,12 +994,12 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }
 
 
-        dateActionBarTV.setVisibility(View.VISIBLE);
         if(isDOT){    // DOT mode Enabled
             dailyLogTV.setText("DOT Mode");
             dateActionBarTV.setText(getString(R.string.ViewInspections));
+            dateActionBarTV.setVisibility(View.VISIBLE);
         }else{
-            dateActionBarTV.setText(getString(R.string.sign_record));
+           // dateActionBarTV.setText(getString(R.string.sign_record));
             if(isCertifyLog){
                 dailyLogTV.setText("Daily Certify Log");
             }
@@ -1187,8 +1192,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                 if(isDOT){
                     shareDriverLogDialog();
-                }else {
-                    EldTitleTV.performClick();
                 }
 
                 break;
@@ -1197,20 +1200,22 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                 if(isDOT) {
                     MoveFragment(LogDate);
-                }else{
-                    if(signRecordDialog != null && signRecordDialog.isShowing())
-                        signRecordDialog.dismiss();
-
-                    List<RecapSignModel> signList = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
-
-                    if(signList.size() > 0) {
-                        signRecordDialog = new SignRecordDialog(getActivity(), signList, new SignRecapListener());
-                        signRecordDialog.show();
-                    }else{
-                        global.EldScreenToast(eldMenuBtn, getString(R.string.no_recap_data), Color.parseColor(colorVoilation));
-                    }
                 }
 
+                break;
+
+            case R.id.certifyRecordImgView:
+                if (signRecordDialog != null && signRecordDialog.isShowing())
+                    signRecordDialog.dismiss();
+
+                List<RecapSignModel> signList = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
+
+                if (signList.size() > 0) {
+                    signRecordDialog = new SignRecordDialog(getActivity(), signList, new SignRecapListener());
+                    signRecordDialog.show();
+                } else {
+                    global.EldScreenToast(eldMenuBtn, getString(R.string.no_recap_data), Color.parseColor(colorVoilation));
+                }
                 break;
 
 
@@ -1225,6 +1230,12 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 ChangeViewWithDate(true);
                 break;
 
+
+            case R.id.rightMenuBtn:
+
+                EldTitleTV.performClick();
+
+                break;
 
         }
     }
@@ -2349,7 +2360,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                 GetLogWithDate(SelectedDate, dayOfTheWeek, monthFullName, monthShortName);
             }
-            //December, Dec, Friday
+
 
         }
     }

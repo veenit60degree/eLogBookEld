@@ -557,6 +557,7 @@
     <string name="no_diagnostic_records">You don\'t have valid Diagnostic records to clear</string>
     <string name="RecordClearedSuccessfully">Record cleared successfully</string>
     <string name="no_recap_data">No data found</string>
+    <string name="already_certify_for_this_date">Record is already certified for this date</string>
 
     <string name="reject_reason">Enter reason to reject unidentified records</string>
     <string name="claim_reason">Enter reason to claim unidentified records </string>

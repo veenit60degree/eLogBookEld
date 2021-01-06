@@ -161,6 +161,7 @@ public class ConstantsKeys {
     public static String Carrier                        = "Carrier";
     public static String CarrierName                    = "CarrierName";
     public static String DecesionSource                 = "DecesionSource";
+    public static String PersonalUse75Km                = "PersonalUse75Km";
 
 
     public static String ShippingDocNumberId            = "ShippingDocNumberId";

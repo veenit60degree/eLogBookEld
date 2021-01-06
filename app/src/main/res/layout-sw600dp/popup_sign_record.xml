@@ -7,35 +7,49 @@
 
 
     <RelativeLayout
+        android:id="@+id/recapRecordItemLay"
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_55"
-        android:paddingLeft="@dimen/margin_15"
+        android:paddingLeft="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
-
         >
 
+
+
+        <CheckBox
+            android:id="@+id/signRecordCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_18"
+            android:textColor="@color/color_eld_bg"
+            android:button="@drawable/unidentified_checkbox_drawable"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:layout_centerVertical="true"
+
+            />
 
         <TextView
             android:id="@+id/dateSignTxtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/date"
-            android:paddingLeft="@dimen/margin_21"
+            android:paddingLeft="@dimen/margin_short_9"
             android:textSize="@dimen/text_size_18"
             android:textColor="@color/black"
             android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/signRecordCheckBox"
 
             />
 
 
         <ImageView
             android:id="@+id/noSignErrorImg"
-            android:layout_width="@dimen/margin_20"
-            android:layout_height="@dimen/margin_20"
+            android:layout_width="@dimen/margin_17"
+            android:layout_height="@dimen/margin_17"
             android:src="@drawable/error"
             android:layout_toRightOf="@+id/dateSignTxtView"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/margin_short_7"
+            android:layout_marginLeft="@dimen/margin_short_5"
 
             />
 
@@ -47,26 +61,25 @@
             android:layout_height="wrap_content"
             android:text="@string/certify"
             android:textStyle="bold"
-            android:paddingTop="@dimen/margin_short_5"
-            android:paddingBottom="@dimen/margin_short_5"
+            android:paddingTop="@dimen/margin_short_3"
+            android:paddingBottom="@dimen/margin_short_3"
             android:paddingRight="@dimen/margin_20"
             android:paddingLeft="@dimen/margin_20"
-            android:layout_marginRight="@dimen/margin_20"
-            android:textSize="@dimen/text_size_14"
+            android:layout_marginRight="@dimen/margin_10"
+            android:textSize="@dimen/text_size_13"
+            android:textAllCaps="true"
             android:background="@drawable/uncertify_border"
-            android:textColor="@color/blue_button"
+            android:textColor="@color/colorVoilation"
             android:layout_toLeftOf="@+id/signRecordRightImg"
             android:layout_centerVertical="true"
-            android:textAllCaps="true"
 
             />
 
         <ImageView
             android:id="@+id/signRecordRightImg"
-            android:layout_width="@dimen/margin_18"
-            android:layout_height="@dimen/margin_18"
+            android:layout_width="@dimen/margin_15"
+            android:layout_height="@dimen/margin_15"
             android:src="@drawable/arrow_next_unidentfied"
-            android:layout_marginRight="@dimen/margin_25"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
 
