@@ -147,6 +147,7 @@ public class Constants {
     public static int ConnectionBluetooth = 3;
     public static int ConnectionApi = 4;
     public static int ConnectionOffline = 5;
+    public static int CertifyLog = 101010;      // set this value to differentiate where we go on certify screen
 
     public static final int WIRED_ACTIVE     = 1001;
     public static final int WIRED_INACTIVE   = 1002;
@@ -1039,6 +1040,8 @@ public class Constants {
 
 
     */
+
+
     public JSONArray AddNewStatusInList(String DriverName, String DriverStatusId, String violaotionReason, String address,
                                         String DRIVER_ID, String City, String State, String Country, String AddressLine,
                                         String CurrentCycleId, String Reason, String isPersonal, boolean isViolation,

@@ -780,10 +780,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(!global.isConnected(getActivity())){
-                            loadingSpinEldIV.stopAnimation();
-                            global.EldScreenToast(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
-                                    getResources().getColor(R.color.colorSleeper));
+                        if(getActivity() != null){
+                            if(!global.isConnected(getActivity())) {
+                                loadingSpinEldIV.stopAnimation();
+                                global.EldScreenToast(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
+                                        getResources().getColor(R.color.colorSleeper));
+                            }
                         }
 
                     }

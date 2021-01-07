@@ -441,7 +441,7 @@
                 android:text="0"
                 android:textSize="@dimen/text_size_11"
                 android:padding="@dimen/margin_short_1"
-                android:textColor="@color/white"
+                android:textColor="@color/whiteee"
                 android:gravity="center"
                 android:background="@drawable/circuler_textview_phone"
                android:layout_alignParentRight="true"
@@ -556,6 +556,20 @@
 
 
 
+
+            <ImageView
+                android:id="@+id/unidentifiedErrorImgVw"
+                android:layout_width="@dimen/margin_20"
+                android:layout_height="@dimen/margin_20"
+                android:src="@drawable/error"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/view_height_30"
+                android:visibility="gone"
+
+                />
+
+
         </RelativeLayout>
 
 
@@ -591,6 +605,17 @@
                 android:textSize="@dimen/text_size_16" />
 
 
+            <ImageView
+                android:id="@+id/malfunctionErrorImgVw"
+                android:layout_width="@dimen/margin_20"
+                android:layout_height="@dimen/margin_20"
+                android:src="@drawable/error"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/view_height_30"
+                android:visibility="gone"
+
+                />
 
         </RelativeLayout>
 

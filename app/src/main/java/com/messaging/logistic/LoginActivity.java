@@ -417,7 +417,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 		switch (requestCode) {
 
 			case 1:
-				if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
 					//resume tasks needing this permission
 					requestLocationPermission();
@@ -425,7 +425,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 				break;
 
 			case 111:
-				if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
 					try{
 						obdUtil = new Utils(LoginActivity.this);
@@ -461,7 +461,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 
 
 			case 4:
-				if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					ImeiNumber = Constants.getIMEIDeviceId(StrSingleUserame, getApplicationContext());
 					sharedPref.setImEiNumber(ImeiNumber, LoginActivity.this);
 				}

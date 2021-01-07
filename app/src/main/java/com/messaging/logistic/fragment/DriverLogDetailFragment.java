@@ -431,6 +431,10 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading...");
 
+        int viewPadding = constants.intToPixel(getActivity(), 3);
+        int viewRightPadding = constants.intToPixel(getActivity(), 5);
+
+        loadingSpinEldIV.setPadding(viewPadding, viewPadding, viewRightPadding, viewPadding);
         loadingSpinEldIV.setImageResource(R.drawable.certify_calendar);
         // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
         if(UILApplication.getInstance().isNightModeEnabled()){
@@ -448,6 +452,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }
         signImageView.setBackgroundDrawable(null);
         signImageView.setImageResource(R.drawable.transparent);
+
+        if(CurrentCycleId.equalsIgnoreCase("null"))
+            CurrentCycleId = Globally.CANADA_CYCLE_1;
 
         if(isDOT) {
             certifyDateTV.setText(getResources().getString(R.string.Send_Log));
@@ -504,13 +511,14 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             }else{
                 MaxDays = DriverPermitMaxDays;
             }
+
+            if(SelectedDayOfMonth == constants.CertifyLog){
+                openSignRecordDialog(false);
+            }
         }
 
         getPermissionWithView();
 
-
-        if(CurrentCycleId.equalsIgnoreCase("null"))
-            CurrentCycleId = Globally.CANADA_CYCLE_1;
 
         SavedData = ConstantHtml.GraphHtml;
         WebSettings webSettings = graphWebView.getSettings();
@@ -1205,17 +1213,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 break;
 
             case R.id.certifyRecordImgView:
-                if (signRecordDialog != null && signRecordDialog.isShowing())
-                    signRecordDialog.dismiss();
-
-                List<RecapSignModel> signList = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
-
-                if (signList.size() > 0) {
-                    signRecordDialog = new SignRecordDialog(getActivity(), signList, new SignRecapListener());
-                    signRecordDialog.show();
-                } else {
-                    global.EldScreenToast(eldMenuBtn, getString(R.string.no_recap_data), Color.parseColor(colorVoilation));
-                }
+                openSignRecordDialog(true);
                 break;
 
 
@@ -1240,6 +1238,21 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }
     }
 
+
+    private void openSignRecordDialog(boolean isToastShowing){
+        if (signRecordDialog != null && signRecordDialog.isShowing())
+            signRecordDialog.dismiss();
+
+        List<RecapSignModel> signList = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
+
+        if (signList.size() > 0) {
+            signRecordDialog = new SignRecordDialog(getActivity(), signList, new SignRecapListener());
+            signRecordDialog.show();
+        } else {
+            if(isToastShowing)
+                global.EldScreenToast(eldMenuBtn, getString(R.string.no_recap_data), Color.parseColor(colorVoilation));
+        }
+    }
 
     public  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {

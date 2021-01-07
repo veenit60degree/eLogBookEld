@@ -570,7 +570,17 @@
 
 
 
+            <ImageView
+                android:id="@+id/unidentifiedErrorImgVw"
+                android:layout_width="@dimen/view_height_35"
+                android:layout_height="@dimen/view_height_35"
+                android:src="@drawable/error"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/view_height_40"
+                android:visibility="gone"
 
+                />
 
 
         </RelativeLayout>
@@ -607,7 +617,17 @@
                 android:textSize="@dimen/text_size_23" />
 
 
+            <ImageView
+                android:id="@+id/malfunctionErrorImgVw"
+                android:layout_width="@dimen/view_height_35"
+                android:layout_height="@dimen/view_height_35"
+                android:src="@drawable/error"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/view_height_40"
+                android:visibility="gone"
 
+                />
 
 
 

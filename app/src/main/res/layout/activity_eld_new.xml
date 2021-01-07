@@ -996,24 +996,48 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/view_height_45"
             android:orientation="horizontal"
             android:layout_weight="1"
             >
 
-        <Button
-            android:id="@+id/certifyLogBtn"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:text="@string/view_certify_Log"
-            android:textColor="@color/color_eld_theme"
-            android:textSize="@dimen/text_size_14"
-            android:background="@drawable/gray_eld_selector"
-            android:layout_marginRight="@dimen/margin_short_5"
-            android:textAllCaps="false"
-            android:layout_weight="1"
-            />
+            <RelativeLayout
+                android:id="@+id/certifyLogBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:background="@drawable/gray_eld_selector"
+                android:layout_weight="1"
+                >
 
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_certify_Log"
+                    android:textColor="@color/color_eld_theme"
+                    android:textStyle="bold"
+                    android:background="@color/transparent"
+                    android:textSize="@dimen/text_size_14"
+                    android:textAllCaps="false"
+                    android:layout_centerInParent="true"
+
+                    />
+
+                <ImageView
+                    android:id="@+id/certifyLogErrorImgVw"
+                    android:layout_width="@dimen/margin_15"
+                    android:layout_height="@dimen/margin_15"
+                    android:src="@drawable/error"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/margin_12"
+                    android:layout_marginTop="@dimen/margin_short_5"
+                    android:visibility="gone"
+
+                    />
+
+
+            </RelativeLayout>
 
 
         <Button

@@ -133,11 +133,12 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     RelativeLayout StatusMainView, refreshPageBtn;
     LinearLayout DriverLay, trailorLayout, truckLay, remainingLay, usedHourLay, shippingLay, odometerLay,  eldNewBottomLay, eldChildSubLay;
-    ImageView editTrailorIV, editTruckIV, eldMenuBtn, inboxImageView;
+    ImageView editTrailorIV, editTruckIV, eldMenuBtn, inboxImageView, eldMenuErrorImgVw, certifyLogErrorImgVw;
     LoadingSpinImgView loadingSpinEldIV;
     RelativeLayout OnDutyBtn, DrivingBtn, OffDutyBtn, SleeperBtn, eldMenuLay, dayNightLay, inboxLay, eldHomeDriverUiLay, settingsMenuBtn;
     ImageView calendarBtn, coDriverImgView, connectionStatusImgView;
-    Button sendReportBtn, certifyLogBtn, yardMoveBtn, personalUseBtn;
+    Button sendReportBtn, yardMoveBtn, personalUseBtn;
+    RelativeLayout certifyLogBtn;
     public static Button resetTimerBtn;
     int DRIVER_JOB_STATUS = 1, SWITCH_VIEW = 1, oldStatusView = 0, DriverType = 0;
     TextView dateTv, nameTv, jobTypeTxtVw, perDayTxtVw, jobTimeTxtVw, jobTimeRemngTxtVw, EldTitleTV,
@@ -323,7 +324,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     ProgressDialog progressD;
     GPSRequest gpsRequest;
     DriverPermissionMethod driverPermissionMethod;
-    AlertDialog saveJobAlertDialog, yardMovePersonalUseAlert;
+    AlertDialog saveJobAlertDialog, yardMovePersonalUseAlert, certifyLogAlert;
     private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
     SwitchCompat dotSwitchButton;
     ImageView dayNightButton;
@@ -461,10 +462,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         eldMenuBtn = (ImageView) view.findViewById(R.id.eldMenuBtn);
         inboxImageView = (ImageView) view.findViewById(R.id.inboxIV);
         connectionStatusImgView = (ImageView)view.findViewById(R.id.connectionStatusImgView);
+        eldMenuErrorImgVw = (ImageView) view.findViewById(R.id.eldMenuErrorImgVw);
+        certifyLogErrorImgVw= (ImageView) view.findViewById(R.id.certifyLogErrorImgVw);
 
+        certifyLogBtn = (RelativeLayout) view.findViewById(R.id.certifyLogBtn);
         sendReportBtn = (Button) view.findViewById(R.id.sendReportBtn);
         yardMoveBtn   = (Button)view.findViewById(R.id.yardMoveBtn);
-        certifyLogBtn = (Button) view.findViewById(R.id.certifyLogBtn);
+
         personalUseBtn = (Button) view.findViewById(R.id.personalUseBtn);
         resetTimerBtn = (Button) view.findViewById(R.id.resetTimerBtn);
 
@@ -1761,6 +1765,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     sendReportBtn.setTextColor(getResources().getColor(R.color.gray_hover));
                 }
 
+                JSONObject logPermissionObj       = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
+                if(constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, SelectedDate, CurrentCycleId, logPermissionObj)){
+                    certifyLogErrorImgVw.setVisibility(View.VISIBLE);
+                }else{
+                    certifyLogErrorImgVw.setVisibility(View.GONE);
+                }
+
             }
         }, 500);
 
@@ -1904,7 +1915,16 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
             case R.id.personalUseBtn:
                 if(sharedPref.IsPersonalAllowed(getActivity())) {
-                    PersonalBtnClick();
+                    DateTime lastSaveUtcDate = Global.getDateTimeObj(sharedPref.getCurrentUTCTime(getActivity()), false);
+                    DateTime currentUTCTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), true);
+                    int dayDiff = hMethods.DayDiff(currentUTCTime, lastSaveUtcDate);
+
+                    if ( (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2) ) &&
+                            sharedPref.isPersonalUse75KmCrossed(getActivity()) && dayDiff == 0) {
+                        Global.EldToastWithDuration4Sec(personalUseBtn, getResources().getString(R.string.personal_use_limit_75), getResources().getColor(R.color.colorVoilation) );
+                    }else{
+                        PersonalBtnClick();
+                    }
                 }else{
                     Global.EldToastWithDuration4Sec(personalUseBtn, getResources().getString(R.string.personal_not_allowed), getResources().getColor(R.color.colorVoilation) );
                 }
@@ -2041,7 +2061,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             if (sharedPref.IsOdometerSaved(getActivity())) {
                                 if (DRIVER_JOB_STATUS == DRIVING) {
                                     if (!IsPopupDismissed) {
-                                        Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING_AFTER + "after Driving.", false, OFF_DUTY, OffDutyBtn, alertDialog);
+                                        Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING_AFTER + " after Driving.", false, OFF_DUTY, OffDutyBtn, alertDialog);
                                     } else {
                                         JobStatusInt = OFF_DUTY;
                                         GetAddFromLatLng();
@@ -2149,7 +2169,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             } else {
                                 if (DRIVER_JOB_STATUS == DRIVING) {
                                     if (!IsPopupDismissed) {
-                                        Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING_AFTER + "after Driving.", false, SLEEPER, SleeperBtn, alertDialog);
+                                        Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING_AFTER + " after Driving.", false, SLEEPER, SleeperBtn, alertDialog);
                                     } else {
                                         JobStatusInt = SLEEPER;
                                         GetAddFromLatLng();
@@ -2608,7 +2628,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             } else {
                 if (DRIVER_JOB_STATUS == DRIVING) {
                     if (!IsPopupDismissed)
-                        Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING_AFTER + "after Driving.", false, ON_DUTY, view, alertDialog);
+                        Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING_AFTER + " after Driving.", false, ON_DUTY, view, alertDialog);
                     else {
                         JobStatusInt = ON_DUTY;
                         GetAddFromLatLng();
@@ -3314,12 +3334,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         String titleMsg                   = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.certify_previous_days_log_warning) + " </html></font>";
         String dismissText                = "<font color='" +colorCode+ "'><b>" + getResources().getString(R.string.dismiss) + "</b></font>";
 
+
+        //isSignPending = true; // for test. need to delete --------------------------------------
+
+
         if( IsCertifyMandatory ){
             if(isSignPending) {
                 isCertifySignaturePending = true;
 
                 if (isOnCreate) {
-                    Global.DriverSwitchAlert(getActivity(), title, titleMsg, dismissText);
+                    certifyLogAlert(title, titleMsg);
+                   // Global.DriverSwitchAlert(getActivity(), title, titleMsg, dismissText);
                 }
             }
         }else{
@@ -3334,6 +3359,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     titleDesc    = titleMsg;
                     okText       = dismissText;
 
+                }
+            }else{
+                if(isSignPending && isOnCreate){
+                    certifyLogAlert(title, titleMsg);
                 }
             }
         }
@@ -5402,7 +5431,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 if (!IsAddressUpdate) {
                                     if (JobStatusInt != 101) {
                                         if (driverLocationDialog.updateViewTV != null) {
-                                            driverLocationDialog.updateViewTV.performLongClick();
+                                            driverLocationDialog.updateViewTV.performClick();
                                         }
                                     } else {
                                         SaveJobStatusAlert(LocationJobTYpe);
@@ -5414,7 +5443,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                                 }
 
-                            } catch (JSONException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
@@ -5863,6 +5892,67 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             }
         }catch (Exception e){}
         isDrivingCalled = false;
+    }
+
+
+    private void certifyLogAlert(String title, String message){
+        if(certifyLogAlert != null && certifyLogAlert.isShowing()){
+            Log.d("dialog", "dialog is showing" );
+        }else{
+
+            closeDialogs();
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setTitle(Html.fromHtml(title));
+            alertDialogBuilder.setMessage(Html.fromHtml(message));
+            alertDialogBuilder.setCancelable(false);
+            alertDialogBuilder.setPositiveButton("Agree",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int arg1) {
+                            dialog.dismiss();
+
+                            try {
+                                FragmentManager fragManager = getActivity().getSupportFragmentManager();
+
+                                String dayOfTheWeek = "", MonthFullName = "", MonthShortName = "";
+
+                                DateTime currentDate = Global.getDateTimeObj(Global.getCurrentDate(), false);
+                                String[] dateMonth = Global.dateConversionMMMM_ddd_dd(currentDate.toString()).split(",");
+
+                                if(dateMonth.length > 1) {
+                                    MonthFullName = dateMonth[0];
+                                    MonthShortName = dateMonth[1];
+                                    dayOfTheWeek = dateMonth[2];
+
+                                }
+
+                                initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, constants.CertifyLog, isCertifyLog,
+                                        VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
+                                        Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, fragManager);
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+
+            alertDialogBuilder.setNegativeButton("Not Ready", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    // call Not ready API
+
+                }
+            });
+
+
+            certifyLogAlert = alertDialogBuilder.create();
+            vectorDialogs.add(certifyLogAlert);
+            certifyLogAlert.show();
+
+        }
     }
 
 

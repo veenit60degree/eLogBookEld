@@ -127,10 +127,12 @@
     <string name="short_haul">Short Haul</string>
     <string name="enable_excp">Enable Exception </string>
     <string name="already_enable_excp">Already enabled other exception </string>
-    <string name="excp_reset_auto">Exception will be invalidated automatically once driver takes proper shift reset</string>
     <string name="not_allow_to_enable_excp">You are not allow to enable this exception. </string>
     <string name="show_recap">Show Recap</string>
     <string name="hide_recap">Hide Recap</string>
+
+    <!--Exception will be invalidated automatically once driver takes proper shift reset-->
+    <string name="excp_reset_auto">Exception will be auto disabled after 10 hours of rest period. (Shift reset)</string>
 
     <string name="can_cycle">CA Cycle </string>
     <string name="us_cycle">US Cycle </string>
@@ -360,6 +362,7 @@
     <string name="yard_move_not_allowed">You have no permission for Yard Move. Please contact your company.</string>
     <string name="personal_not_allowed">You have no permission for Personal Use. Please contact your company.</string>
     <string name="share_not_allowed">You have no permission for Send Log. Please contact your company.</string>
+    <string name="personal_use_limit_75">Your Personal Use limit (75 km) is exceeded for the day in Canada cycle.</string>
 
     <string name="loading">Loading</string>
     <string name="TrailerDrop">Trailer Drop</string>

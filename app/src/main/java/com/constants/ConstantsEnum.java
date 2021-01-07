@@ -8,9 +8,9 @@ import com.messaging.logistic.TabAct;
 
 public class ConstantsEnum {
 
-    public static String SAVE_END_READING     = "Please save your End Odometer Reading after personal use";
-    public static String SAVE_READING         = "Please save your Odometer Reading after personal use";
-    public static String SAVE_READING_AFTER   = "Please save your Odometer Reading";
+    public static String SAVE_END_READING     = "Please save your End odometer Reading after personal use";
+    public static String SAVE_READING         = "Please save your odometer reading after personal use";
+    public static String SAVE_READING_AFTER   = "Please save your odometer reading";
     public static String DUPLICATE_JOB_ALERT  = "You can't change same status at the same time. Please change after 1 minute";
     public static String NO_TRAILER_ALERT     = "You can not select (Trailer Drop) reason when there is no trailer attached";
     public static String PICK_TRAILER_ALERT   = "Trailer Number to pickup trailer";

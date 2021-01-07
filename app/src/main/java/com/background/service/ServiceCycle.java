@@ -577,9 +577,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                     if (dayDiff == 0) {    // if current day
 
                                         if (BackgroundLocationService.IsAutoChange) {
-                                            message = "Your Personal Use limit (75 km) is crossed for the day in Canada cycle. Now your status is going to be changed to Driving.";
+                                            message = "Your Personal Use limit (75 km) is exceeded for the day in Canada cycle. Now your status is going to be changed to Driving.";
                                         } else {
-                                            message = "Your Personal Use limit (75 km) is crossed for the day in Canada cycle. Please change your status to Driving.";
+                                            message = "Your Personal Use limit (75 km) is exceeded for the day in Canada cycle. Please change your status to Driving.";
                                         }
 
                                         if (VehicleSpeed >= DrivingSpeedLimit) {

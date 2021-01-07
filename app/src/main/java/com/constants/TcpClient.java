@@ -116,7 +116,11 @@ public class TcpClient {
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
             if(response != null) {
-                mMessageListener.messageReceived(response);
+                try {
+                    mMessageListener.messageReceived(response);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
     }

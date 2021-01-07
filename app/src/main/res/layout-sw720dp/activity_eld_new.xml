@@ -1002,24 +1002,50 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/view_height_90"
             android:orientation="horizontal"
             android:layout_weight="1"
             >
 
 
-            <Button
+
+
+            <RelativeLayout
                 android:id="@+id/certifyLogBtn"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/view_height_90"
-                android:text="@string/view_certify_Log"
-                android:textColor="@color/color_eld_theme"
-                android:textSize="@dimen/text_size_25"
-                android:background="@drawable/gray_eld_selector"
+                android:layout_height="match_parent"
                 android:layout_marginRight="@dimen/margin_10"
-                android:textAllCaps="false"
+                android:background="@drawable/gray_eld_selector"
                 android:layout_weight="1"
-                />
+                >
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_certify_Log"
+                    android:textColor="@color/color_eld_theme"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_size_25"
+                    android:textAllCaps="false"
+                    android:layout_centerInParent="true"
+
+                    />
+
+                <ImageView
+                    android:id="@+id/certifyLogErrorImgVw"
+                    android:layout_width="@dimen/view_height_35"
+                    android:layout_height="@dimen/view_height_35"
+                    android:src="@drawable/error"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/view_height_34"
+                    android:layout_marginTop="@dimen/margin_20"
+                   android:visibility="gone"
+                    />
+
+
+            </RelativeLayout>
+
 
             <Button
                 android:id="@+id/yardMoveBtn"

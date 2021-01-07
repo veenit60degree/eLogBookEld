@@ -37,6 +37,17 @@
                 android:layout_centerInParent="true"
                 />
 
+
+                <ImageView
+                    android:id="@+id/eldMenuErrorImgVw"
+                    android:layout_width="@dimen/margin_21"
+                    android:layout_height="@dimen/margin_21"
+                    android:src="@drawable/error"
+                    android:layout_marginLeft="@dimen/view_height_43"
+                    android:layout_marginTop="@dimen/margin_short_6"
+                    android:visibility="gone"
+                    />
+
             </RelativeLayout>
 
 

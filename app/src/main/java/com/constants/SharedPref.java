@@ -274,8 +274,12 @@ public class SharedPref {
 
     // Get yard move allow Status -------------------
     public static boolean IsYardMoveAllowed(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsYardMove, true);
+        boolean isYard = true;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isYard = preferences.getBoolean(ConstantsKeys.IsYardMove, true);
+        }
+        return isYard;
     }
 
 
@@ -459,8 +463,12 @@ public class SharedPref {
 
     // Get Re-Certify Data -------------------
     public static String getReCertifyData( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("ReCertifyData", "[]");
+        String array = "[]";
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            array = preferences.getString("ReCertifyData", "[]");
+        }
+        return array;
     }
 
 
@@ -1048,11 +1056,13 @@ public class SharedPref {
 
     // Set Adverse exception -------------------
     public static void setAdverseExcptn( boolean value, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("adverse_exception", value);
-        //  editor.putString("adverse_exception_remarks", remarks);
-        editor.commit();
+        if(context  != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("adverse_exception", value);
+            //  editor.putString("adverse_exception_remarks", remarks);
+            editor.commit();
+        }
     }
 
     // Get Adverse exception -------------------
