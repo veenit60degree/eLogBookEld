@@ -4801,8 +4801,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     JSONObject obj;
 
                     try {
-                        String responseee = "{\"Status\":true,\"Message\":\"Record Successfully Saved\",\"Data\":null}";
-                        obj = new JSONObject(responseee);
+                       // String responseee = "{\"Status\":true,\"Message\":\"Record Successfully Saved\",\"Data\":null}";
+                        obj = new JSONObject(response);
                         String Message = obj.getString("Message");
 
                         if (!isFirst && obj.getString("Status").equals("true")) {

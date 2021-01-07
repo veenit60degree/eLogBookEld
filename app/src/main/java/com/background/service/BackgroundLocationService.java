@@ -3005,8 +3005,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             // SaveDriverLog
             String status = "", Message = "";
             try {
-                String responseee = "{\"Status\":true,\"Message\":\"Record Successfully Saved\",\"Data\":null}";
-                JSONObject obj = new JSONObject(responseee);
+                //String responseee = "{\"Status\":true,\"Message\":\"Record Successfully Saved\",\"Data\":null}";
+                JSONObject obj = new JSONObject(response);
                 status = obj.getString("Status");
                 Message = obj.getString("Message");
             }catch (Exception e){
