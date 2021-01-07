@@ -145,6 +145,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     int recapApiAttempts                    = 0;
     int updateOfflineApiRejectionCount      = 0;
     int updateOfflineNoResponseCount        = 0;
+    int RePostDataCountMain                 = 0;
+    int RePostDataCountCo                   = 0;
 
     int SpeedCounter                        = 60;      // initially it is 60 so that ELD rule is called instantly
     int MaxSpeedCounter                     = 60;
@@ -3003,7 +3005,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             // SaveDriverLog
             String status = "", Message = "";
             try {
-                JSONObject obj = new JSONObject(response);
+                String responseee = "{\"Status\":true,\"Message\":\"Record Successfully Saved\",\"Data\":null}";
+                JSONObject obj = new JSONObject(responseee);
                 status = obj.getString("Status");
                 Message = obj.getString("Message");
             }catch (Exception e){
@@ -3022,7 +3025,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             // save Co Driver Data is login with co driver
                             SaveCoDriverData();
                         }else{
-                            saveActiveDriverData();
+
+                            if(RePostDataCountMain > 1){
+                                RePostDataCountMain = 0;
+                                ClearLogAfterSuccess(driver_id);
+                            }else {
+                                saveActiveDriverData();
+                                RePostDataCountMain ++;
+                            }
+
                         }
 
 
@@ -3031,7 +3042,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         break;
 
                     case SaveCoDriverLogData:
-                        SaveCoDriverData();
+
+                        if(RePostDataCountCo > 1){
+                            RePostDataCountCo = 0;
+                            ClearLogAfterSuccess(driver_id);
+                        }else {
+                            SaveCoDriverData();
+                            RePostDataCountCo ++;
+                        }
+
+
                         break;
 
                     case SaveDriverLog:

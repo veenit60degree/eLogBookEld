@@ -4801,9 +4801,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     JSONObject obj;
 
                     try {
-                        obj = new JSONObject(response);
+                        String responseee = "{\"Status\":true,\"Message\":\"Record Successfully Saved\",\"Data\":null}";
+                        obj = new JSONObject(responseee);
                         String Message = obj.getString("Message");
-                        //    Global.EldScreenToast(OnDutyBtn, Message, getResources().getColor(R.color.colorPrimary));
 
                         if (!isFirst && obj.getString("Status").equals("true")) {
                             BackgroundLocationService.IsAutoChange = false;
@@ -5709,9 +5709,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                 JSONObject obj = new JSONObject(response);
                 String status = obj.getString("Status");
-                if (status.equalsIgnoreCase("true")) {
+              //  if (status.equalsIgnoreCase("true")) {
                     LogoutUser();
-                }
+              //  }
 
             }catch (Exception e){
                 e.printStackTrace();

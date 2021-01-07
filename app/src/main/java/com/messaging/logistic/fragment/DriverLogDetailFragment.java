@@ -266,6 +266,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     SignRecordDialog signRecordDialog;
     String MainDriverPass = "", CoDriverPass = "";
     int  eldWarningColor;
+
     final private int REQUEST_CODE_ASK_PERMISSIONS = 101;
 
 
