@@ -674,6 +674,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 									sharedPref.setLastUsageDataSavedTime("", getApplicationContext());
 									sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
 									sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
+									sharedPref.setRefreshDataTime("", getApplicationContext());
 
 									new ParseLoginJsonData().execute();
 

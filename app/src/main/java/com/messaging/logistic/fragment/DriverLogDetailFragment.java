@@ -829,7 +829,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             if(recap18DaysArray == null || recap18DaysArray.length() == 0) {
                 GetRecapView18DaysData(DRIVER_ID, DeviceId, StartDate, EndDate );
             }else{
-                if(recapViewMethod.GetSelectedRecapData(recap18DaysArray, EndDate) == null){
+                if(recapViewMethod.GetSelectedRecapData(recap18DaysArray, EndDate) == null && !BackgroundLocationService.IsRecapApiACalled){
                     StartDate = recapViewMethod.GetLastItemDate(recap18DaysArray);
 
                     startDateTime   = new DateTime(Globally.ConvertDateFormat(StartDate));
@@ -837,6 +837,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                     StartDate       = Globally.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime) );
 
                     UpdateRecap = true;
+
                     GetRecapView18DaysData(DRIVER_ID, DeviceId, StartDate, EndDate );
 
                 }

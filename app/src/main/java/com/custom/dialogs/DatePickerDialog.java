@@ -102,12 +102,8 @@ public class DatePickerDialog extends Dialog {
         DriverPermitMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, IsDot);
 
         if(!IsDot) {
-            JSONArray recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(DRIVER_ID, dbHelper);
-            /*if (DriverPermitMaxDays > recap18DaysArray.length()) {
-                DriverPermitMaxDays = recap18DaysArray.length() - 1;
-            }*/
-
-            DriverPermitMaxDays = constants.getPermitMaxDays( recap18DaysArray, DriverPermitMaxDays, hMethods, global);
+           // JSONArray recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(DRIVER_ID, dbHelper);
+           // DriverPermitMaxDays = constants.getPermitMaxDays( recap18DaysArray, DriverPermitMaxDays, hMethods, global);
         }
         if(DriverPermitMaxDays < 0 ){
             DriverPermitMaxDays = 0;

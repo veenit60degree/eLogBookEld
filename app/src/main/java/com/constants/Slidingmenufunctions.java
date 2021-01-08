@@ -3,6 +3,7 @@ package com.constants;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
@@ -29,7 +30,9 @@ import com.driver.details.ParseLoginDetails;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
+import com.local.db.SyncingMethod;
 import com.messaging.logistic.Globally;
+import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.fragment.EldFragment;
@@ -40,6 +43,7 @@ import com.shared.pref.MainDriverEldPref;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +76,9 @@ public class Slidingmenufunctions implements OnClickListener {
 	int eldGreenColor, eldWarningColor;
 	Globally global;
 	SharedPref sharedPref;
+	SyncingMethod syncingMethod;
+	File syncingFile;
+
 
 	public Slidingmenufunctions() {
 		super();
@@ -83,6 +90,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		this.context = context;
 
 		sharedPref		 = new SharedPref();
+		syncingMethod	  = new SyncingMethod();
 		global			 = new Globally();
 		hMethod			 = new HelperMethods();
 		dbHelper 		 = new DBHelper(context);
@@ -315,16 +323,20 @@ public class Slidingmenufunctions implements OnClickListener {
 					picker.dismiss();
 
 					if(Globally.isWifiOrMobileDataEnabled(context) ) {
+
+						DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
+						dialog.show();
+
 						JSONArray driverLogArray = GetDriversSavedArray();
 						if(driverLogArray.length() == 0){
-							dialog.show();
 							LogoutUser(SharedPref.getDriverId(context));
 						}else{
-							Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.found_local_data) ,
-									context.getResources().getColor(R.color.colorSleeper));
+							SyncData();
+
+						//	Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.found_local_data) ,
+							//		context.getResources().getColor(R.color.colorSleeper));
 						}
 					}else{
-						dialog.dismiss();
 						Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
 					}
 				}
@@ -344,6 +356,58 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	}
 
+
+
+
+	private void SyncData(){
+
+		JSONArray savedSyncedArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DriverId), dbHelper);
+		if(savedSyncedArray.length() > 0) {
+
+			syncingFile = global.SaveFileInSDCard("Sync_", savedSyncedArray.toString(), false, context);
+
+			// Sync driver log API data to server with SAVE_LOG_TEXT_FILE
+			SyncDataUpload syncDataUpload = new SyncDataUpload(context, String.valueOf(DriverId), syncingFile, null, null, false, asyncResponse );
+			syncDataUpload.execute();
+		}else{
+			LogoutUser(SharedPref.getDriverId(context));
+		}
+
+
+
+	}
+
+
+
+	AsyncResponse asyncResponse = new AsyncResponse() {
+		@Override
+		public void onAsyncResponse(String response) {
+
+			try {
+
+				JSONObject obj = new JSONObject(response);
+				String status = obj.getString("Status");
+				if (status.equalsIgnoreCase("true")) {
+					deleteLogWithLogoutUser();
+				}else {
+					deleteLogWithLogoutUser();
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	};
+
+
+
+	void deleteLogWithLogoutUser(){
+		if(syncingFile != null && syncingFile.exists())
+			syncingFile.delete();
+		syncingMethod.SyncingLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+
+		LogoutUser(SharedPref.getDriverId(context));
+	}
 
 
 	public JSONArray GetDriversSavedArray(){
@@ -518,7 +582,8 @@ public class Slidingmenufunctions implements OnClickListener {
 				if(dialog != null && dialog.isShowing()) {
 					dialog.dismiss();
 				}
-				Log.d("response", " logout response: " + response);
+
+					Log.d("response", " logout response: " + response);
 				String status = "";
 
 				try {

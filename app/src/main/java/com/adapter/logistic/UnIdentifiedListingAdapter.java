@@ -208,7 +208,7 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
         fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
                 android.R.anim.fade_in,android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, detailFragment);
-        fragmentTran.addToBackStack("inspection");
+        fragmentTran.addToBackStack("unidentified");
         fragmentTran.commit();
 
 

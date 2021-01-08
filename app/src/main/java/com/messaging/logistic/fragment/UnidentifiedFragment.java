@@ -48,7 +48,6 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     View rootView;
     SharedPref sharedPref;
     ListView unIdentifiedListView;
-    List<UnIdentifiedRecordModel>  unIdentifiedRecordList = new ArrayList<>();
     TextView EldTitleTV, noDataEldTV, dateActionBarTV;
     TextView claimRecordUnBtn, rejectRecordUnBtn, totalRecordsTV;
     public static CheckBox checkboxUnIdentifiedRecord;
@@ -63,6 +62,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     final int UnidentifiedRecordFlag  = 101;
     UnIdentifiedListingAdapter listingAdapter;
     ArrayList<String> recordSelectedList = new ArrayList<>();
+    List<UnIdentifiedRecordModel>  unIdentifiedRecordList = new ArrayList<>();
 
     SaveDriverLogPost claimRejectRecordPost;
     final int ClaimRecords          = 101;
@@ -103,8 +103,6 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         constants               = new Constants();
         GetUnidentifiedRecords  = new VolleyRequest(getActivity());
         claimRejectRecordPost   = new SaveDriverLogPost(getActivity(), apiResponse );
-
-        unIdentifiedRecordList  = new ArrayList<>();
 
         unIdentifiedListView    = (ListView) view.findViewById(R.id.shippingListView);
         noDataEldTV             = (TextView)view.findViewById(R.id.noDataEldTV);
@@ -513,7 +511,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
     void notifyAdapter(boolean isAllSelected, boolean isChecked){
         try{
-           // unIdentifiedAdapter = new UnIdentifiedAdapter(getActivity(), DriverId, DeviceId, unIdentifiedRecordList);
+
             listingAdapter = new UnIdentifiedListingAdapter(getActivity(), DriverId, DriverName, isAllSelected, isChecked, recordSelectedList, unIdentifiedRecordList, this);
             unIdentifiedListView.setAdapter(listingAdapter);
 

@@ -191,6 +191,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     List<String> StateArrayList;
     List<DriverLocationModel> StateList;
+    List<String> onDutyRemarkList = new ArrayList<String>();
 
     public static JSONArray DriverJsonArray = new JSONArray();
     int listSize = 0;
@@ -776,7 +777,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     public void onResume() {
         super.onResume();
 
-        // GetNewsNotification();
+
 
         if(constants == null) {
             try {
@@ -834,7 +835,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
 
-/*
+
 
         if ( !isSavedTimeZoneCorrect  ) {
             showTimeZoneAlert(isConnected);
@@ -845,7 +846,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 timeZoneDialog.dismiss();
             }
         }
-*/
+
 
 
 
@@ -1123,8 +1124,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         try {
             // --------- Call API-------------
             if (isConnected) {
-
-                GetOBDAssignedVehicles(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId, DriverCompanyId, VIN_NUMBER);
+                if (vehicleList.size() == 0) {
+                    GetOBDAssignedVehicles(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId, DriverCompanyId, VIN_NUMBER);
+                }
                 GetOnDutyRemarks();
             }
             DateTime lastDataSavedDate;
@@ -1222,7 +1224,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         if (Global.isConnected(getActivity())) {
                             if (DriverJsonArray.length() > 0 && !IsSaveOperationInProgress) {
                                 IsPrePost = false;
-                                if (SaveRequestCount < 3) {
+                                if (SaveRequestCount < 2) {
                                     saveInfo("", false, false, false);
                                 }
                             } else {
@@ -1981,16 +1983,25 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 IsVehicleDialogShown = false;
                 loadingSpinEldIV.startAnimation();
                 GetSavePreferences();
-                onResumeDataSet(Global.isConnected(getActivity()));
+                boolean isConnected = Global.isConnected(getActivity());
 
-                if (Global.isConnected(getActivity())) {
-                    IsRefreshedClick = true;
-                    GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
+                if (isConnected) {
+                    GetDriversSavedData(false, DriverType);
+                    if (DriverJsonArray.length() > 0) {
+                        if(IsSaveOperationInProgress){
+                            refreshDataEvent(isConnected);
+                        }else{
+                            IsRefreshedClick = true;
+                            saveInfo("", false, false, false);
+                        }
+                    } else {
+                        // Global.EldScreenToast(OnDutyBtn, getString(R.string.already_uploading), getResources().getColor(R.color.color_eld_theme));
+                        refreshDataEvent(isConnected);
+                    }
                 }else{
                     loadingSpinEldIV.stopAnimation();
                     Global.EldScreenToast(OnDutyBtn, Global.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                 }
-
 
 
                 break;
@@ -2028,6 +2039,52 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
         }
     }
+
+
+    void pushStatusToServerAfterSave() {
+         if (Global.isConnected(getActivity())){
+             new Handler().postDelayed(new Runnable() {
+                 @Override
+                 public void run() {
+                     GetDriversSavedData(false, DriverType);
+                     if (DriverJsonArray.length() > 0 && !IsSaveOperationInProgress) {
+                         saveInfo("", false, false, false);
+                     }
+                 }
+             }, 500);
+        }
+    }
+
+
+    void refreshDataEvent(boolean isConnected){
+        String lastRefreshTime = sharedPref.getRefreshDataTime(getActivity());
+
+        if (lastRefreshTime.length() > 0) {
+            DateTime lastSavedRefreshTime = Global.getDateTimeObj(lastRefreshTime, false);
+            DateTime currentTime = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), false);
+
+            int minDiff = currentTime.getMinuteOfDay() - lastSavedRefreshTime.getMinuteOfDay();
+            if (minDiff > 30) {
+                onResumeDataSet(isConnected);
+                sharedPref.setRefreshDataTime(Global.GetCurrentUTCTimeFormat(), getActivity());
+                IsRefreshedClick = true;
+                GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
+            } else {
+                if (minDiff < 0) {
+                    sharedPref.setRefreshDataTime(Global.GetCurrentUTCTimeFormat(), getActivity());
+                }
+                loadingSpinEldIV.stopAnimation();
+                Global.EldScreenToast(OnDutyBtn, getString(R.string.already_refreshed), getResources().getColor(R.color.color_eld_theme));
+            }
+
+        } else {
+            onResumeDataSet(isConnected);
+            sharedPref.setRefreshDataTime(Global.GetCurrentUTCTimeFormat(), getActivity());
+            IsRefreshedClick = true;
+            GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
+        }
+    }
+
 
     private void resetCertifyLogDialogTitles(){
         certifyTitle = "<font color='#1A3561'><b>Alert !!</b></font>";
@@ -2597,6 +2654,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
             CalculateTimeInOffLine(false, false);
 
+            // After save locally push data to server
+            pushStatusToServerAfterSave();
+
         } else {
             Global.EldScreenToast(OnDutyBtn, "Please add Truck before start Driving.", getResources().getColor(R.color.colorPrimary));
         }
@@ -2744,6 +2804,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         GetDriverLogData();
         CalculateTimeInOffLine(false, false);
 
+        // After save locally push data to server
+        pushStatusToServerAfterSave();
+
+
     }
 
     void SaveSleeperStatus() {
@@ -2800,6 +2864,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
                 CalculateTimeInOffLine(false, false);
 
+                // After save locally push data to server
+                pushStatusToServerAfterSave();
 
             } else {
                 Global.EldScreenToast(OnDutyBtn, "Please add Truck before start Sleeper.", getResources().getColor(R.color.colorPrimary));
@@ -2851,6 +2917,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         GetDriverLogData();
         CalculateTimeInOffLine(false, false);
 
+        // After save locally push data to server
+        pushStatusToServerAfterSave();
 
     }
 
@@ -2990,6 +3058,18 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             SaveVehicleNumber(position, DRIVER_ID, "0", DriverCompanyId, LoginTruckChange, true);
         }
 
+    }
+
+
+    void clearOfflineData(){
+        try {
+            DriverJsonArray = new JSONArray();
+            if (DriverType == 0) // Single Driver Type and Position is 0
+                MainDriverPref.ClearLocFromList(getActivity());
+            else
+                CoDriverPref.ClearLocFromList(getActivity());
+        }catch (Exception e){
+        }
     }
 
 
@@ -3419,6 +3499,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
             EnableJobViews();
             progressBar.setVisibility(View.GONE);
+            Globally.hideSoftKeyboard(getActivity());
 
         }
 
@@ -3563,6 +3644,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                     SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
                                     CalculateTimeInOffLine(false, false);
 
+                                // After save locally push data to server
+                                pushStatusToServerAfterSave();
 
                                 //  }
 
@@ -3634,6 +3717,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         e.printStackTrace();
                     }
 
+                    HideKeyboard(ReasonEditText);
                     // call lat long API
                     IsAddressUpdate = true;
                     GetAddFromLatLng();
@@ -3656,9 +3740,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     }
 
                 } else {
+                    HideKeyboard(TrailorNoEditText);
 
                     if (Global.isConnected(getActivity())) {
-                        HideKeyboard(TrailorNoEditText);
                         TrailorNumber = TrailorNo.trim();
 
                         if (TrailorNumber.equalsIgnoreCase("null"))
@@ -4516,9 +4600,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     /*================== Get Driver Trip Details ===================*/
     void GetOnDutyRemarks() {
 
-        params = new HashMap<String, String>();
-        GetOnDutyRequest.executeRequest(Request.Method.POST, APIs.GET_ONDUTY_REMARKS, params, GetOndutyRemarks,
-                Constants.SocketTimeout15Sec, ResponseCallBack, ErrorCallBack);
+        if(onDutyRemarkList.size() == 0) {
+            params = new HashMap<String, String>();
+            GetOnDutyRequest.executeRequest(Request.Method.POST, APIs.GET_ONDUTY_REMARKS, params, GetOndutyRemarks,
+                    Constants.SocketTimeout15Sec, ResponseCallBack, ErrorCallBack);
+        }
     }
 
 
@@ -4655,7 +4741,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     //*================== Get Driver Log last 18 days ===================*//*
     void GetDriverLog18Days(final String DriverId, final String DeviceId, final String UtcDate, int GetDriverLog18Days) {
 
-        if (Driver18DaysApiCount < 3) {
+        if (Driver18DaysApiCount < 2) {
             params = new HashMap<String, String>();
             params.put("DriverId", DriverId);
             params.put("DeviceId", DeviceId);
@@ -4808,65 +4894,72 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         if (!isFirst && obj.getString("Status").equals("true")) {
                             BackgroundLocationService.IsAutoChange = false;
 
-                            if (DriverJsonArray.length() == 1) {
-                                ClearLogAfterSuccess(isLoad, IsRecap);
-                            } else {
-                                try {
-                                    int LastStatus = 0, SecLastStatus = 0;
-                                    JSONObject lastObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 1);
-                                    JSONObject secLastObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 2);
-                                    LastStatus = lastObj.getInt("DriverStatusId");
-                                    SecLastStatus = secLastObj.getInt("DriverStatusId");
-
-                                    if (LastStatus == SecLastStatus) {
-                                        ClearLogAfterSuccess(isLoad, IsRecap);
-
-                                    } else {
-                                        if (SaveRequestCount < 4) {
-                                            saveInfo("", false, false, false);
-                                        }else{
-                                            ClearLogAfterSuccess(isLoad, IsRecap);
-                                        }
-                                    }
-
-                                    SaveCoDriverData(isLoad, IsRecap);
-                                } catch (Exception e) {
+                            if(IsRefreshedClick){
+                                clearOfflineData();
+                                IsRefreshedClick = false;
+                                refreshPageBtn.performClick();
+                            }else {
+                                if (DriverJsonArray.length() == 1) {
                                     ClearLogAfterSuccess(isLoad, IsRecap);
+                                } else {
+                                    try {
+                                        int LastStatus = 0, SecLastStatus = 0;
+                                        JSONObject lastObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 1);
+                                        JSONObject secLastObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 2);
+                                        LastStatus = lastObj.getInt("DriverStatusId");
+                                        SecLastStatus = secLastObj.getInt("DriverStatusId");
+
+                                        if (LastStatus == SecLastStatus) {
+                                            ClearLogAfterSuccess(isLoad, IsRecap);
+
+                                        } else {
+                                            if (SaveRequestCount < 3) {
+                                                saveInfo("", false, false, false);
+                                            } else {
+                                                ClearLogAfterSuccess(isLoad, IsRecap);
+                                            }
+                                        }
+
+                                        SaveCoDriverData(isLoad, IsRecap);
+                                    } catch (Exception e) {
+                                        ClearLogAfterSuccess(isLoad, IsRecap);
+                                    }
                                 }
                             }
                         } else {
-                            if (Message.equalsIgnoreCase("Duplicate Records")) {
-                                DriverJsonArray = new JSONArray();
-                                if (DriverType == 0) // Single Driver Type and Position is 0
-                                    MainDriverPref.ClearLocFromList(getActivity());
-                                else
-                                    CoDriverPref.ClearLocFromList(getActivity());
+                             if(IsRefreshedClick){
+                                 clearOfflineData();
+                                IsRefreshedClick = false;
+                                refreshPageBtn.performClick();
+                            }else {
+                                 if (Message.equalsIgnoreCase("Duplicate Records")) {
+                                     clearOfflineData();
+                                     SAVE_LOG_RESPONSE_PROCESS(isLoad, IsRecap);
 
-                                SAVE_LOG_RESPONSE_PROCESS(isLoad, IsRecap);
-
-                                IsTrailorUpdate = false;
-
-
-                                SaveCoDriverData(isLoad, IsRecap);
-                            } else {
-                                if (isLoad) {
-                                    Global.EldScreenToast(OnDutyBtn, obj.getString("Message"), getResources().getColor(R.color.colorVoilation));
-                                }
-
-                                try {
-                                    if (Message.equals("Device Logout") ) { //&& DriverJsonArray.length() <= 1
-                                        if(DriverJsonArray.length() > 0){
-                                            SyncUserData();
-                                        }else{
-                                            LogoutUser();
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                                     IsTrailorUpdate = false;
 
 
-                            }
+                                     SaveCoDriverData(isLoad, IsRecap);
+                                 } else {
+                                     if (isLoad) {
+                                         Global.EldScreenToast(OnDutyBtn, Message, getResources().getColor(R.color.colorVoilation));
+                                     }
+
+                                     try {
+                                         if (Message.equals("Device Logout")) { //&& DriverJsonArray.length() <= 1
+                                             if (DriverJsonArray.length() > 0) {
+                                                 SyncUserData();
+                                             } else {
+                                                 LogoutUser();
+                                             }
+                                         }
+                                     } catch (Exception e) {
+                                         e.printStackTrace();
+                                     }
+
+
+                                 }
+                             }
                         }
 
                     } catch (Exception e) {
@@ -4918,11 +5011,25 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
             Log.d("errorrr ", ">>>error dialog: ");
 
+            if(IsRefreshedClick){
+
+                IsRefreshedClick = false;
+                boolean isConnected = Global.isConnected(getActivity());
+                if(isConnected){
+                    refreshDataEvent(isConnected);
+                 }else{
+                    loadingSpinEldIV.stopAnimation();
+                    Global.EldScreenToast(OnDutyBtn, Global.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                }
+
+            }
+
             IsSaveOperationInProgress = false;
             progressD.dismiss();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 SAVE_LOG_RESPONSE_PROCESS(isLoad, IsRecap);
             }
+
 
         }
     };
@@ -5028,8 +5135,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 Global.EldScreenToast(OnDutyBtn, "Data refreshed successfully", getResources().getColor(R.color.colorPrimary));
                                 IsRefreshedClick = false;
 
-                                GetShipment18Days(DRIVER_ID, DeviceId, SelectedDate, GetShipment18Days);
-                                GetOdometer18Days(DRIVER_ID, DeviceId, DriverCompanyId, SelectedDate);
+                             //   GetShipment18Days(DRIVER_ID, DeviceId, SelectedDate, GetShipment18Days);
+                            //    GetOdometer18Days(DRIVER_ID, DeviceId, DriverCompanyId, SelectedDate);
 
                                 IsAOBRD = sharedPref.IsAOBRD(getActivity());
                                 Log.d("IsAOBRD", "IsAOBRD 3: " + IsAOBRD);
@@ -5080,6 +5187,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             for (int i = 0; i < remarkArray.length(); i++) {
                                 JSONObject resultJson = (JSONObject) remarkArray.get(i);
                                 Global.onDutyRemarks.add(resultJson.getString("OnDutyRemarks"));
+                                onDutyRemarkList.add(resultJson.getString("OnDutyRemarks"));
                             }
 
                         } catch (Exception e) {
@@ -5365,15 +5473,15 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                     GetDriverLog18Days(MainDriverId, DeviceId, Global.GetCurrentUTCDate(), GetDriverLog18Days);
                                     GetDriverLog18Days(CoDriverId, DeviceId, Global.GetCurrentUTCDate(), GetCoDriverLog18Days);
 
-                                    GetInspection18Days( DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId,  SelectedDate,GetInspection18Days );
-                                    GetInspection18Days( DriverConst.GetDriverDetails(DriverConst.CoDriverID, getActivity()), DeviceId,  SelectedDate,GetInspection18DaysCo );
+                                   // GetInspection18Days( DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId,  SelectedDate,GetInspection18Days );
+                                  //  GetInspection18Days( DriverConst.GetDriverDetails(DriverConst.CoDriverID, getActivity()), DeviceId,  SelectedDate,GetInspection18DaysCo );
 
                                     GetRecapView18DaysData(MainDriverId, DeviceId, GetRecapViewFlagMain);
                                     GetRecapView18DaysData(CoDriverId, DeviceId, GetRecapViewFlagCo);
 
                                 } else {
                                     GetDriverLog18Days(DRIVER_ID, DeviceId, Global.GetCurrentUTCDate(), GetDriverLog18Days);
-                                    GetInspection18Days( DRIVER_ID, DeviceId,  SelectedDate, GetInspection18Days );
+                                  //  GetInspection18Days( DRIVER_ID, DeviceId,  SelectedDate, GetInspection18Days );
                                     GetRecapView18DaysData(DRIVER_ID, DeviceId, GetRecapViewFlagMain);
                                 }
 
@@ -5381,7 +5489,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 GetReCertifyRecords();
 
                                 // clear CT PAT info to update it again in service class. because if array size is 0 API will be called
-                                ctPatInspectionMethod.DriverCtPatInsp18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, new JSONArray());
+                               // ctPatInspectionMethod.DriverCtPatInsp18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, new JSONArray());
                                // recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, new JSONArray());
 
 
@@ -5564,12 +5672,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 SyncUserData();
                             }
 
-                            if (flag == UpdateObdVeh && sharedPref.GetNewLoginStatus(getActivity())) {
-
-                                Global.EldScreenToast(loginDialogView, Message, getResources().getColor(R.color.colorVoilation));
-                            } else {
-                                if(!Message.contains("failure")) {
-                                    Global.EldScreenToast(OnDutyBtn, Message, getResources().getColor(R.color.colorVoilation));
+                            if(Message.length() > 0) {
+                                if (flag == UpdateObdVeh && sharedPref.GetNewLoginStatus(getActivity())) {
+                                    Global.EldScreenToast(loginDialogView, Message, getResources().getColor(R.color.colorVoilation));
+                                } else {
+                                    if (!Message.contains("failure")) {
+                                        Global.EldScreenToast(OnDutyBtn, Message, getResources().getColor(R.color.colorVoilation));
+                                    }
                                 }
                             }
 
@@ -5599,7 +5708,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                     progressDialog.dismiss();
                             } catch (Exception e) {
                             }
-                            //  Global.EldScreenToast(OnDutyBtn, Message, getResources().getColor(R.color.colorPrimary));
                         }
 
                     }

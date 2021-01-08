@@ -9,6 +9,7 @@ import com.messaging.logistic.Globally;
 import com.models.DriverLocationModel;
 import com.shared.pref.StatePrefManager;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1168,6 +1169,20 @@ public class SharedPref {
     public static String getObdSpeed( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("obd_speed", "[]");
+    }
+
+    // Set Refresh Data Time -------------------
+    public static void setRefreshDataTime(String dateTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("data_refresh_time", dateTime);
+        editor.commit();
+    }
+
+    // Get Refresh Data Time -------------------
+    public static String getRefreshDataTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("data_refresh_time", "");
     }
 
 

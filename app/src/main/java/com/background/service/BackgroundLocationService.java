@@ -1473,22 +1473,26 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     //*================== Get Driver's 18 Days Recap View Log Data ===================*//*
     void GetRecapView18DaysData(final String DriverId, final String DeviceId , int GetRecapViewFlag){
-        IsRecapApiACalled = true;
 
-        DateTime currentDateTime      = new DateTime(global.GetCurrentDateTime());
-        DateTime startDateTime        = global.GetStartDate(currentDateTime, 14);
-        String   StartDate            = global.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
-        String   EndDate              = global.GetCurrentDeviceDate();  // current Date
+        if(recapApiAttempts < 2) {
+            IsRecapApiACalled = true;
 
-        params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ProjectId", global.PROJECT_ID);
-        params.put("DrivingStartTime", StartDate);
-        params.put("DriverLogDate", EndDate );
+            DateTime currentDateTime = new DateTime(global.GetCurrentDateTime());
+            DateTime startDateTime = global.GetStartDate(currentDateTime, 14);
+            String StartDate = global.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
+            String EndDate = global.GetCurrentDeviceDate();  // current Date
 
-        GetRecapView18DaysData.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS_DETAILS , params, GetRecapViewFlag,
-                Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
+            params = new HashMap<String, String>();
+            params.put("DriverId", DriverId);
+            params.put("DeviceId", DeviceId);
+            params.put("ProjectId", global.PROJECT_ID);
+            params.put("DrivingStartTime", StartDate);
+            params.put("DriverLogDate", EndDate);
+
+            GetRecapView18DaysData.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS_DETAILS, params, GetRecapViewFlag,
+                    Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
+        }
+        recapApiAttempts++;
     }
 
 
@@ -2775,13 +2779,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     IsRecapApiACalled = false;
 
-                    if(recapApiAttempts < 4) {
-                        if (recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DriverId), dbHelper).length() == 0) {
-                            Recap18DaysLog();
+                     /*   if (recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DriverId), dbHelper).length() == 0) {
+                           Recap18DaysLog();
                         }
-                    }
+                    */
 
-                    recapApiAttempts++;
 
                     break;
 
@@ -3005,7 +3007,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             // SaveDriverLog
             String status = "", Message = "";
             try {
-                //String responseee = "{\"Status\":true,\"Message\":\"Record Successfully Saved\",\"Data\":null}";
+               // String responseee = "{\"Status\":true,\"Message\":\"Record Successfully Saved\",\"Data\":null}";
                 JSONObject obj = new JSONObject(response);
                 status = obj.getString("Status");
                 Message = obj.getString("Message");
@@ -3027,8 +3029,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         }else{
 
                             if(RePostDataCountMain > 1){
-                                RePostDataCountMain = 0;
                                 ClearLogAfterSuccess(driver_id);
+                                RePostDataCountMain = 0;
                             }else {
                                 saveActiveDriverData();
                                 RePostDataCountMain ++;
@@ -3036,16 +3038,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         }
 
-
-
-
                         break;
+
 
                     case SaveCoDriverLogData:
 
                         if(RePostDataCountCo > 1){
-                            RePostDataCountCo = 0;
                             ClearLogAfterSuccess(driver_id);
+                            RePostDataCountCo = 0;
                         }else {
                             SaveCoDriverData();
                             RePostDataCountCo ++;
@@ -3053,6 +3053,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                         break;
+
 
                     case SaveDriverLog:
 

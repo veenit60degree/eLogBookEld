@@ -496,6 +496,8 @@
     <string name="enable_adverse_exception">EnableAdverseException</string>
     <string name="enable_ShortHaul_exception">EnableShortHaulException</string>
 
+    <string name="already_uploading">Please wait! Data saving in progress</string>
+    <string name="already_refreshed">Data already refreshed. Please try after some time</string>
     <string name="wired_active">Wired tablet is active</string>
     <string name="wired_inactive">Wired tablet is not working</string>
     <string name="wifi_active">WIFI OBD is connected</string>
