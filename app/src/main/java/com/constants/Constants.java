@@ -212,6 +212,7 @@ public class Constants {
     public static int SocketTimeout15Sec = 15000;   // 15 seconds
     public static int SocketTimeout20Sec = 20000;   // 20 seconds
     public static int SocketTimeout30Sec = 30000;   // 30 seconds
+    public static int SocketTimeout40Sec = 40000;   // 30 seconds
     public static int SocketTimeout50Sec = 50000;   // 50 seconds
     public static int SocketTimeout60Sec = 60000;   // 60 seconds
 

@@ -90,6 +90,10 @@ public class SignRecordDialog extends Dialog {
         recapSignAdapter = new RecapRecordSignAdapter(context, recapRecordsList, recordSelectedList,false, false);
         signRecordListView.setAdapter(recapSignAdapter);
 
+        // temp hide label
+        selectAllRecordsCheckBox.setVisibility(View.GONE);
+        certifyRecordBtn.setVisibility(View.GONE);
+
         selectAllRecordsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

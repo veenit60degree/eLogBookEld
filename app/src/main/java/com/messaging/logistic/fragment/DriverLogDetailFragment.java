@@ -193,7 +193,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     int EditDaysCount       = 1;
     int DriverPermitMaxDays = 0;
     int SelectedDayOfMonth  = 0;
-    int UsaMaxDays          = 7;
+    int UsaMaxDays          = 8;
     int CanMaxDays          = 14;
     int MaxDays;
 
@@ -642,7 +642,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     public void onResume() {
         super.onResume();
 
-        isCertifySignExist  = constants.isCertifySignExist(recapViewMethod, DRIVER_ID, dbHelper);
+       // isCertifySignExist  = constants.isCertifySignExist(recapViewMethod, DRIVER_ID, LogDate, dbHelper);
         CertifyLogArray     = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
 
         if(Globally.isConnected(getActivity()) && CertifyLogArray.length() > 0){
@@ -2534,8 +2534,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }
 
         if(!isCertifyLog) {
-            signLay.setEnabled(false);
-            saveSignatureBtn.setVisibility(View.GONE);
+           // signLay.setEnabled(false);
+           // saveSignatureBtn.setVisibility(View.GONE);
 
         }
     }

@@ -1163,6 +1163,8 @@
                 android:background="@drawable/black_without_border"
                 android:layout_marginLeft="@dimen/margin_short_3"
                 android:layout_weight="1.5"
+                android:visibility="gone"
+
                 >
 
                 <TextView

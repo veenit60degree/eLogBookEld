@@ -356,13 +356,12 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         CheckTrailerStatus();
 
-
+        changeLocBtn.setVisibility(View.GONE);
         if(IsAOBRD && !IsAOBRDAutomatic){
             Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
             locInspTitleTV.setText("Enter City");
             AobrdLocLay.setVisibility(View.VISIBLE);
             locInspectionTV.setVisibility(View.GONE);
-            changeLocBtn.setVisibility(View.GONE);
 
             cityEditText.setText(EldFragment.City);
             cityEditText.setSelection(EldFragment.City.length());
@@ -376,7 +375,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             locInspTitleTV.setText(getResources().getString(R.string.loc_of_inspection));
             AobrdLocLay.setVisibility(View.GONE);
             locInspectionTV.setVisibility(View.VISIBLE);
-            changeLocBtn.setVisibility(View.VISIBLE);
 
             getLocation();
             locInspectionTV.setText(Location);

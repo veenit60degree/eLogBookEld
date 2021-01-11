@@ -1054,12 +1054,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         int socketTimeout;
         int logArrayCount = driverLogArray.length();
-        if (logArrayCount <= 3) {
-            socketTimeout = 5000;  //5 seconds
-        } else if (logArrayCount < 10) {
-            socketTimeout = 10000;  //10 seconds
-        } else {
-            socketTimeout = 25000;  //25 seconds
+        if(logArrayCount < 3 ){
+            socketTimeout = constants.SocketTimeout10Sec;  //10 seconds
+        }else if(logArrayCount < 10){
+            socketTimeout = constants.SocketTimeout20Sec;  //20 seconds
+        }else{
+            socketTimeout = constants.SocketTimeout40Sec;  //40 seconds
         }
 
         saveDriverLogPost.PostDriverLogData(driverLogArray, SavedLogApi, socketTimeout, false, false, DriverType, SaveMainDriverLogData);
@@ -1478,7 +1478,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             IsRecapApiACalled = true;
 
             DateTime currentDateTime = new DateTime(global.GetCurrentDateTime());
-            DateTime startDateTime = global.GetStartDate(currentDateTime, 14);
+            DateTime startDateTime = global.GetStartDate(currentDateTime, 15);
             String StartDate = global.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
             String EndDate = global.GetCurrentDeviceDate();  // current Date
 
@@ -3149,12 +3149,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     LogArray = constants.GetDriverOffLineSavedLog(getApplicationContext(), SecondDriverType, MainDriverPref, CoDriverPref);
                     logArrayCount = LogArray.length();
-                    if(logArrayCount <= 3 ){
-                        socketTimeout = 20000;  //20 seconds
+                    if(logArrayCount < 3 ){
+                        socketTimeout = constants.SocketTimeout10Sec;  //10 seconds
                     }else if(logArrayCount < 10){
-                        socketTimeout = 30000;  //30 seconds
+                        socketTimeout = constants.SocketTimeout20Sec;  //20 seconds
                     }else{
-                        socketTimeout = 50000;  //50 seconds
+                        socketTimeout = constants.SocketTimeout40Sec;  //40 seconds
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

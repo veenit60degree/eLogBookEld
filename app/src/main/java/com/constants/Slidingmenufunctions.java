@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,6 +27,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.background.service.BackgroundLocationService;
 import com.custom.dialogs.LoginDialog;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
@@ -76,8 +80,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	int eldGreenColor, eldWarningColor;
 	Globally global;
 	SharedPref sharedPref;
-	SyncingMethod syncingMethod;
-	File syncingFile;
+	SaveDriverLogPost saveDriverLogPost;
 
 
 	public Slidingmenufunctions() {
@@ -90,11 +93,12 @@ public class Slidingmenufunctions implements OnClickListener {
 		this.context = context;
 
 		sharedPref		 = new SharedPref();
-		syncingMethod	  = new SyncingMethod();
 		global			 = new Globally();
 		hMethod			 = new HelperMethods();
 		dbHelper 		 = new DBHelper(context);
+		saveDriverLogPost = new SaveDriverLogPost(context, saveLogRequestResponse);
 		dialog			 = new ProgressDialog(context);
+
 		appVersionHome	 = (TextView)       menu.findViewById(R.id.appVersionHome);
 		homeTxtView		 = (TextView)       menu.findViewById(R.id.homeTxtView);
 		usernameTV 		 = (TextView)       menu.findViewById(R.id.usernameTV);
@@ -327,11 +331,11 @@ public class Slidingmenufunctions implements OnClickListener {
 						DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
 						dialog.show();
 
-						JSONArray driverLogArray = GetDriversSavedArray();
+						JSONArray driverLogArray = GetDriversSavedData();
 						if(driverLogArray.length() == 0){
 							LogoutUser(SharedPref.getDriverId(context));
 						}else{
-							SyncData();
+							SaveDataToServer(driverLogArray);
 
 						//	Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.found_local_data) ,
 							//		context.getResources().getColor(R.color.colorSleeper));
@@ -359,16 +363,23 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 
-	private void SyncData(){
+	private void SaveDataToServer(JSONArray DriverLogArray){
 
-		JSONArray savedSyncedArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DriverId), dbHelper);
-		if(savedSyncedArray.length() > 0) {
+		if(DriverLogArray.length() > 0) {
 
-			syncingFile = global.SaveFileInSDCard("Sync_", savedSyncedArray.toString(), false, context);
+			String SavedLogApi = "";
+			if(sharedPref.IsEditedData(context)){
+				SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG;
+			}else{
+				SavedLogApi = APIs.SAVE_DRIVER_STATUS;
+			}
 
-			// Sync driver log API data to server with SAVE_LOG_TEXT_FILE
-			SyncDataUpload syncDataUpload = new SyncDataUpload(context, String.valueOf(DriverId), syncingFile, null, null, false, asyncResponse );
-			syncDataUpload.execute();
+			int socketTimeout = constants.SocketTimeout10Sec;	//10 seconds
+			if(DriverLogArray.length() > 10 ){
+				socketTimeout = constants.SocketTimeout20Sec;  //20 seconds
+			}
+			saveDriverLogPost.PostDriverLogData(DriverLogArray, SavedLogApi, socketTimeout, false, false, 0, 101);
+
 		}else{
 			LogoutUser(SharedPref.getDriverId(context));
 		}
@@ -379,38 +390,8 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 
-	AsyncResponse asyncResponse = new AsyncResponse() {
-		@Override
-		public void onAsyncResponse(String response) {
-
-			try {
-
-				JSONObject obj = new JSONObject(response);
-				String status = obj.getString("Status");
-				if (status.equalsIgnoreCase("true")) {
-					deleteLogWithLogoutUser();
-				}else {
-					deleteLogWithLogoutUser();
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	};
-
-
-
-	void deleteLogWithLogoutUser(){
-		if(syncingFile != null && syncingFile.exists())
-			syncingFile.delete();
-		syncingMethod.SyncingLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
-
-		LogoutUser(SharedPref.getDriverId(context));
-	}
-
-
-	public JSONArray GetDriversSavedArray(){
+	/*===== Get Driver Jobs in Array List======= */
+	private JSONArray GetDriversSavedData() {
 		int listSize = 0;
 		JSONArray DriverJsonArray = new JSONArray();
 		List<EldDataModelNew> tempList = new ArrayList<EldDataModelNew>();
@@ -422,7 +403,7 @@ public class Slidingmenufunctions implements OnClickListener {
 			} catch (Exception e) {
 				listSize = 0;
 			}
-		}else{
+		} else {
 			try {
 				listSize = CoDriverPref.LoadSavedLoc(context).size();
 				tempList = CoDriverPref.LoadSavedLoc(context);
@@ -434,15 +415,11 @@ public class Slidingmenufunctions implements OnClickListener {
 		try {
 			if (listSize > 0) {
 				for (int i = 0; i < tempList.size(); i++) {
-
 					EldDataModelNew listModel = tempList.get(i);
-					if(listModel != null) {
-						constants.SaveEldJsonToList(          /* Put data as JSON to List */
-								listModel,
-								DriverJsonArray
-						);
-					}
 
+					if (listModel != null) {
+						constants.SaveEldJsonToList(listModel, DriverJsonArray);  /* Put data as JSON to List */
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -450,8 +427,32 @@ public class Slidingmenufunctions implements OnClickListener {
 		}
 
 		return DriverJsonArray;
-		// Log.d("Arraay", "Arraay: " + DriverJsonArray.toString());
 	}
+
+
+
+
+	/* ---------------------- Save Log Request Response ---------------- */
+	DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
+		@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+		@Override
+		public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+
+			LogoutUser(SharedPref.getDriverId(context));
+		}
+
+		@Override
+		public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+			Log.d("errorrr ", ">>>error dialog: ");
+			if(dialog != null && dialog.isShowing()) {
+				dialog.dismiss();
+			}
+			if(error.contains("TimeoutError")){
+				error = "Connection time out. Please try again.";
+			}
+			Globally.EldScreenToast(usernameTV, error, context.getResources().getColor(R.color.colorSleeper));
+		}
+	};
 
 
 
