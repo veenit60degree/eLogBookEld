@@ -675,6 +675,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 									sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
 									sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
 									sharedPref.setRefreshDataTime("", getApplicationContext());
+									sharedPref.setCertifyAlertViewTime("", getApplicationContext());
 
 									new ParseLoginJsonData().execute();
 
@@ -1174,11 +1175,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 				loginBtn.setText("Login");
 				driverTitleTV.setVisibility(View.INVISIBLE);
 				backImgView.setVisibility(View.VISIBLE);
-
-				//userTypeLayout.setVisibility(View.GONE);
 				OutToLeftAnim(userTypeLayout);
-			//	loginLayout.setVisibility(View.VISIBLE);
 				InFromRightAnim(loginLayout);
+
+				/*Intent i = new Intent(getApplicationContext(), EditedLogActivity.class);
+				startActivity(i);
+*/
 				break;
 
 

@@ -252,7 +252,18 @@ public class TrailorDialog extends Dialog {
             trailorNoInputType.setVisibility(View.GONE);
             recordTitleTV.setVisibility(View.GONE);
 
-            if(jobStatus != Constants.ON_DUTY){
+            if(jobStatus == Constants.ON_DUTY){ // && isYardMove == false
+
+                for(int i = 0 ; i<remarkList.size() ; i++){
+                    if(Trailor.equalsIgnoreCase(remarkList.get(i))){
+                        remarkSpinner.setSelection(i);
+                        break;
+                    }
+                }
+
+
+
+            }else{
                 TitleTV.setText("Edit Remarks");
                 ReasonEditText.setVisibility(View.VISIBLE);
                 SpinnerTitleTV.setVisibility(View.GONE);
@@ -264,14 +275,6 @@ public class TrailorDialog extends Dialog {
                 noTrailerView.setVisibility(View.GONE);
                 remarkSpinner.setVisibility(View.GONE);
 
-
-            }else{
-                for(int i = 0 ; i<remarkList.size() ; i++){
-                    if(Trailor.equalsIgnoreCase(remarkList.get(i))){
-                        remarkSpinner.setSelection(i);
-                        break;
-                    }
-                }
 
             }
 

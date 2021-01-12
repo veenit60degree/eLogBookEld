@@ -215,7 +215,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                         }
                         RecordType = Constants.Remarks;
                         selectedDate = LogItem.getStartDateTime();
-                        OpenRemarksDialog(remarks, position, JobStatus);
+                        OpenRemarksDialog(remarks, position, JobStatus, LogItem.isPersonal());  // isPersonal is used for yard move here
                     }
                 });
           //  }
@@ -318,7 +318,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         }
     }
 
-    void OpenRemarksDialog(String remarks,  int ItemPosition, int jobStatus) {
+    void OpenRemarksDialog(String remarks,  int ItemPosition, int jobStatus, boolean isYardMove) {
 
         try {
             if (StateArrayList.size() > 0) {
@@ -327,7 +327,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     remarksDialog.dismiss();
                 }
 
-                remarksDialog = new TrailorDialog(context, Constants.Remarks, false, remarks, ItemPosition, true, Global.onDutyRemarks, jobStatus, dbHelper, new RemarksListener());
+                remarksDialog = new TrailorDialog(context, Constants.Remarks, isYardMove, remarks, ItemPosition, true, Global.onDutyRemarks, jobStatus, dbHelper, new RemarksListener());
                 remarksDialog.show();
             }
         } catch (final IllegalArgumentException e) {

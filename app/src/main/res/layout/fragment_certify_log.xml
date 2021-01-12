@@ -95,10 +95,20 @@
                 android:src="@drawable/certify_record_list"
                 android:layout_alignParentRight="true"
                 android:paddingLeft="@dimen/margin_10"
+                android:layout_marginRight="@dimen/margin_short_5"
                 android:visibility="gone"
+
                 />
 
+            <ImageView
+                android:id="@+id/certifyErrorImgView"
+                android:layout_width="@dimen/margin_15"
+                android:layout_height="@dimen/margin_15"
+                android:src="@drawable/error"
+                android:layout_alignParentRight="true"
+                android:visibility="gone"
 
+                />
 
 
         </RelativeLayout>

@@ -88,7 +88,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         RadioGroup.OnCheckedChangeListener {
 
     View rootView;
-    boolean isChecked, IsClicked, IsAOBRD = false, IsAOBRDAutomatic = false, isOnCreate = true;
+    boolean isChecked, IsClicked, IsAOBRD = false, IsAOBRDAutomatic = false, isOnCreate = true, isLocationChange;
     CheckBox checkboxTrailer, checkboxTruck;
     GridView truckGridView, trailerGridView;
     GridAdapter truckAdapter, trailerAdapter;
@@ -123,13 +123,9 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     String City = "", State = "", Country = "", CurrentCycleId = "", CurrentJobStatus = "";
     String DriverId = "", CoDriverId = "", tempTruck = "", tempTrailer = "", CreatedDate = "";
     String ByteDriverSign = "", ByteSupervisorSign = "", SelectedDatee = "";
-    String TAG = "Google Client ";
     SignDialog signDialog;
     ScrollView inspectionScrollView;
     TextView inspectionTypeTV;
-/*    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
-            new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));*/
-  //  private static final int GOOGLE_API_CLIENT_ID = 0;
     List<String> StateArrayList;
     List<DriverLocationModel> StateList;
     StatePrefManager statePrefManager;
@@ -356,12 +352,13 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         CheckTrailerStatus();
 
-        changeLocBtn.setVisibility(View.GONE);
+
         if(IsAOBRD && !IsAOBRDAutomatic){
             Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
             locInspTitleTV.setText("Enter City");
             AobrdLocLay.setVisibility(View.VISIBLE);
             locInspectionTV.setVisibility(View.GONE);
+            changeLocBtn.setVisibility(View.GONE);
 
             cityEditText.setText(EldFragment.City);
             cityEditText.setSelection(EldFragment.City.length());
@@ -683,6 +680,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 break;
 
             case R.id.changeLocBtn:
+                isLocationChange = true;
                 locInspectionTV.setEnabled(true);
                 locInspectionTV.requestFocus();
                 locInspectionTV.setFocusableInTouchMode(true);
@@ -1258,7 +1256,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             ByteSupervisorSign = Globally.ConvertImageToByteAsString(SupervisorSignImage);
         }
 
+        if(isLocationChange){
+            Location = locInspectionTV.getText().toString().trim();
+        }
 
+        isLocationChange = false;
         JSONObject inspectionData = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
                 Globally.TRUCK_NUMBER, Globally.TRAILOR_NUMBER, CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected, AboveDefectsNotCorrected,
                 Remarks, Globally.LATITUDE, Globally.LONGITUDE, DriverTimeZone, SupervisorMechanicsName, TruckIssueType, TraiorIssueType, InspectionTypeId,

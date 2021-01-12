@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
@@ -22,6 +24,7 @@ import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -2340,6 +2343,22 @@ public class Constants {
 
 
 
+    /*================== Get Signature Bitmap ====================*/
+    public String GetSignatureBitmap(View targetView, ImageView canvasView, Context context){
+        Bitmap signatureBitmap = Bitmap.createBitmap(targetView.getWidth(),
+                targetView.getHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(signatureBitmap);
+        targetView.draw(c);
+        BitmapDrawable d = new BitmapDrawable(context.getResources(), signatureBitmap);
+        canvasView.setBackgroundDrawable(d);
+
+        return Globally.SaveBitmapToFile(signatureBitmap, "sign", 100, context);
+    }
+
+
+
+
 
     public static boolean isPlayStoreExist(Context context){
         boolean isPlayStoreExist = false;
@@ -2370,6 +2389,16 @@ public class Constants {
 
         return false;
     }
+
+
+    public boolean isTimeAutomatic(Context c) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.Global.getInt(c.getContentResolver(), Settings.Global.AUTO_TIME, 0) == 1;
+        } else {
+            return android.provider.Settings.System.getInt(c.getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1;
+        }
+    }
+
 
 
 }

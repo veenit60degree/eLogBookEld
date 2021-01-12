@@ -876,62 +876,61 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    void setObdStatus(boolean isToastShowing){
+    void setObdStatus(final boolean isToastShowing){
 
         try {
             if(getActivity() != null) {
 
-            switch (sharedPref.getObdStatus(getActivity())) {
+                getActivity().runOnUiThread(new Runnable() {
 
-                    case Constants.WIRED_ACTIVE:
-                        connectionStatusImgView.setImageResource(R.drawable.obd_active);
-                        //  connectionStatusImgView.startAnimation(connectionStatusAnimation);
-                        if (isToastShowing) {
-                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_active), getResources().getColor(R.color.color_eld_theme) );
-                           // Toast.makeText(getActivity(), getString(R.string.wired_active), Toast.LENGTH_SHORT).show();
-                        }
-                        break;
+                    @Override
+                    public void run() {
 
-                    case Constants.WIRED_INACTIVE:
-                        connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
-                        connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                        switch (sharedPref.getObdStatus(getActivity())) {
 
-                        if (isToastShowing) {
-                             Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_inactive), getResources().getColor(R.color.colorSleeper) );
-                           // Toast.makeText(getActivity(), getString(R.string.wired_inactive), Toast.LENGTH_SHORT).show();
-                        }
-                        break;
+                                case Constants.WIRED_ACTIVE:
+                                    connectionStatusImgView.setImageResource(R.drawable.obd_active);
+                                    if (isToastShowing) {
+                                        Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_active), getResources().getColor(R.color.color_eld_theme) );
+                                    }
+                                    break;
 
-                    case Constants.WIFI_ACTIVE:
-                        connectionStatusImgView.setImageResource(R.drawable.obd_active);
-                        //    connectionStatusImgView.startAnimation(connectionStatusAnimation);
-                        if (isToastShowing) {
-                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_active), getResources().getColor(R.color.color_eld_theme) );
-                           // Toast.makeText(getActivity(), getString(R.string.wifi_active), Toast.LENGTH_SHORT).show();
-                        }
-                        break;
+                                case Constants.WIRED_INACTIVE:
+                                    connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
+                                    connectionStatusImgView.startAnimation(connectionStatusAnimation);
 
-                    case Constants.WIFI_INACTIVE:
-                        connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
-                        connectionStatusImgView.startAnimation(connectionStatusAnimation);
-                        if (isToastShowing) {
-                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_inactive), getResources().getColor(R.color.colorSleeper) );
-                           // Toast.makeText(getActivity(), getString(R.string.wifi_inactive), Toast.LENGTH_SHORT).show();
-                        }
-                        break;
+                                    if (isToastShowing) {
+                                         Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_inactive), getResources().getColor(R.color.colorSleeper) );
+                                    }
+                                    break;
 
-                    default:
-                        // connectionStatusImgView.setImageResource(R.drawable.transparent);
-                        connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
-                        connectionStatusImgView.startAnimation(connectionStatusAnimation);
-                        if (isToastShowing) {
-                           // Toast.makeText(getActivity(), getString(R.string.obd_data_connection_desc), Toast.LENGTH_SHORT).show();
-                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.obd_data_connection_desc), getResources().getColor(R.color.colorSleeper) );
-                        }
+                                case Constants.WIFI_ACTIVE:
+                                    connectionStatusImgView.setImageResource(R.drawable.obd_active);
+                                    if (isToastShowing) {
+                                        Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_active), getResources().getColor(R.color.color_eld_theme) );
+                                    }
+                                    break;
 
-                        break;
-                }
+                                case Constants.WIFI_INACTIVE:
+                                    connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
+                                    connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                                    if (isToastShowing) {
+                                        Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_inactive), getResources().getColor(R.color.colorSleeper) );
+                                    }
+                                    break;
 
+                                default:
+                                    connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
+                                    connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                                    if (isToastShowing) {
+                                        Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.obd_data_connection_desc), getResources().getColor(R.color.colorSleeper) );
+                                    }
+
+                                    break;
+                            }
+
+                    }
+                });
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -3422,6 +3421,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 isCertifySignaturePending = true;
 
                 if (isOnCreate) {
+
                     certifyLogAlert(title, titleMsg);
                    // Global.DriverSwitchAlert(getActivity(), title, titleMsg, dismissText);
                 }
@@ -3466,10 +3466,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             }
 
             try {
+
                 FragmentManager fragManager = getActivity().getSupportFragmentManager();
                 initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, dayOfMonth, isCertifyLog,
                         VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
-                        Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, fragManager);
+                        Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), fragManager);
             } catch (final Exception e) {
                 e.printStackTrace();
             }
@@ -4132,16 +4133,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             boolean isPopupShown = sharedPref.GetTruckStartLoginStatus(getActivity());
                             boolean isYardMove = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
 
-                           /* if( sharedPref.GetTruckIgnitionStatus(constants.TruckIgnitionStatus, getActivity()).equals("OFF")  ) {
-                                popupStatus = true;
-                            }*/
+                            if (isPopupShown && ( isPersonal.equals("true") || (DRIVER_JOB_STATUS == ON_DUTY && isYardMove) ) ) {
 
-                            if (Global.isConnected(getActivity())) {
-                                if (isPopupShown && (isPersonal.equals("true") ||
-                                        (DRIVER_JOB_STATUS == ON_DUTY && isYardMove)) ) {
-
-                                    YardMovePersonalStatusAlert(isYardMove);
-                                }
+                                YardMovePersonalStatusAlert(isYardMove);
                             }
 
                             callEldRuleMethod(currentDayArray, currentDateTime, currentUTCTime, onResume);
@@ -6005,62 +5999,81 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
     private void certifyLogAlert(String title, String message){
-        if(certifyLogAlert != null && certifyLogAlert.isShowing()){
-            Log.d("dialog", "dialog is showing" );
-        }else{
 
-            closeDialogs();
+        String certifyAlertTime = sharedPref.getCertifyAlertViewTime(getActivity());
+        boolean isAlertAllowed = true;
 
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle(Html.fromHtml(title));
-            alertDialogBuilder.setMessage(Html.fromHtml(message));
-            alertDialogBuilder.setCancelable(false);
-            alertDialogBuilder.setPositiveButton("Agree",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int arg1) {
-                            dialog.dismiss();
+        if(certifyAlertTime.length() > 0){
+            DateTime savedDate = Global.getDateTimeObj(certifyAlertTime, false);
+            DateTime currentDate = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), false);
+            int dayDiff = Days.daysBetween(savedDate.toLocalDate(), currentDate.toLocalDate()).getDays();
+            if(dayDiff == 0){
+                int hourDiff = currentDate.getHourOfDay() - savedDate.getHourOfDay();
+                if(hourDiff < 4){
+                    isAlertAllowed = false;
+                }
+            }
+        }
 
-                            try {
-                                FragmentManager fragManager = getActivity().getSupportFragmentManager();
+        if(isAlertAllowed) {
+            if (certifyLogAlert != null && certifyLogAlert.isShowing()) {
+                Log.d("dialog", "dialog is showing");
+            } else {
 
-                                String dayOfTheWeek = "", MonthFullName = "", MonthShortName = "";
+                closeDialogs();
 
-                                DateTime currentDate = Global.getDateTimeObj(Global.getCurrentDate(), false);
-                                String[] dateMonth = Global.dateConversionMMMM_ddd_dd(currentDate.toString()).split(",");
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                alertDialogBuilder.setTitle(Html.fromHtml(title));
+                alertDialogBuilder.setMessage(Html.fromHtml(message));
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setPositiveButton("Agree",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int arg1) {
+                                dialog.dismiss();
 
-                                if(dateMonth.length > 1) {
-                                    MonthFullName = dateMonth[0];
-                                    MonthShortName = dateMonth[1];
-                                    dayOfTheWeek = dateMonth[2];
+                                try {
+                                    FragmentManager fragManager = getActivity().getSupportFragmentManager();
 
+                                    String dayOfTheWeek = "", MonthFullName = "", MonthShortName = "";
+
+                                    DateTime currentDate = Global.getDateTimeObj(Global.getCurrentDate(), false);
+                                    String[] dateMonth = Global.dateConversionMMMM_ddd_dd(currentDate.toString()).split(",");
+
+                                    if (dateMonth.length > 1) {
+                                        MonthFullName = dateMonth[0];
+                                        MonthShortName = dateMonth[1];
+                                        dayOfTheWeek = dateMonth[2];
+
+                                    }
+
+                                    initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, constants.CertifyLog, isCertifyLog,
+                                            VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
+                                            Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), fragManager);
+                                } catch (final Exception e) {
+                                    e.printStackTrace();
                                 }
 
-                                initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, constants.CertifyLog, isCertifyLog,
-                                        VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
-                                        Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, fragManager);
-                            } catch (final Exception e) {
-                                e.printStackTrace();
                             }
+                        });
 
-                        }
-                    });
+                alertDialogBuilder.setNegativeButton("Not Ready", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
 
-            alertDialogBuilder.setNegativeButton("Not Ready", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+                        // call Not ready API
 
-                    // call Not ready API
-
-                }
-            });
+                    }
+                });
 
 
-            certifyLogAlert = alertDialogBuilder.create();
-            vectorDialogs.add(certifyLogAlert);
-            certifyLogAlert.show();
+                certifyLogAlert = alertDialogBuilder.create();
+                vectorDialogs.add(certifyLogAlert);
+                certifyLogAlert.show();
 
+                sharedPref.setCertifyAlertViewTime(Global.GetCurrentUTCTimeFormat(), getActivity());
+            }
         }
     }
 

@@ -122,7 +122,7 @@ public class InitilizeEldView {
     public void MoveFragment(String date, String dayName, String dayFullName, String dayShortName, int dayOfMonth,
                               boolean isCertifyLog, String VIN_NUMBER, int offsetFromUTC,
                              String LeftWeekOnDutyHoursInt, String LeftDayOnDutyHoursInt,
-                             String LeftDayDrivingHoursInt, String cycle, String VehicleId, FragmentManager fragManager){
+                             String LeftDayDrivingHoursInt, String cycle, String VehicleId, boolean isSignPending, FragmentManager fragManager){
 
         Constants.IS_ACTIVE_ELD = false;
 
@@ -142,6 +142,7 @@ public class InitilizeEldView {
             Globally.bundle.putString("LeftDayDriving", LeftDayDrivingHoursInt);
             Globally.bundle.putString("cycle", cycle);
             Globally.bundle.putString("VehicleId", VehicleId);
+            Globally.bundle.putBoolean("signStatus", isSignPending);
 
             detailFragment.setArguments(Globally.bundle);
 

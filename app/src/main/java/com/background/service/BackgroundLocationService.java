@@ -91,8 +91,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -744,7 +746,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             isGpsUpdate = true;
 
-            //   Log.d("Location", "---GPS Location: " + global.LATITUDE + "," + global.LONGITUDE );
+
+/*            final Date date = new Date(location.getTime());
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sDate = sdf.format(date);
+
+            Log.d("Location", "---time: " + sDate );*/
             //   global.ShowLocalNotification(getApplicationContext(), "onLocationChanged", "Speed is: " + GpsVehicleSpeed, 2003);
         }
 
@@ -1709,6 +1716,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
 
+
+
+
+       /* final Date date = new Date(location.getTime());
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sDate = sdf.format(date);
+
+        Log.d("Location", "---time: " + sDate );*/
         //  Log.d("Location speed", "Current speed: " + GpsVehicleSpeed );
         //   global.ShowLocalNotification(getApplicationContext(), "onLocationChanged", "Speed is: " + GpsVehicleSpeed, 2003);
 
@@ -2387,13 +2402,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 boolean isYard = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
                 boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
 
-                if( (currentJobStatus == constants.OFF_DUTY && isPersonal) ||
+              /*  if( (currentJobStatus == constants.OFF_DUTY && isPersonal) ||
                         (currentJobStatus == constants.ON_DUTY && isYard) ){
                     if(sharedPref.GetTruckIgnitionStatus(constants.TruckIgnitionStatus, getApplicationContext()).equals("OFF")
                             && ignition.equals("ON")) {
                         sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
                     }
-                }
+                }*/
             }
 
             sharedPref.SetTruckIgnitionStatus(ignition, type, time, getApplicationContext());

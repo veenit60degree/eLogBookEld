@@ -65,11 +65,11 @@ public class CertifyLogMethod {
             jsonObj.put(ConstantsKeys.DeviceId,     DeviceId);
             jsonObj.put(ConstantsKeys.ProjectId,    ProjectId);
             jsonObj.put(ConstantsKeys.LogDate,      LogDate);
-            if(!IsContinueWithSign) {
+
+            if(IsContinueWithSign == false) {
                 jsonObj.put(ConstantsKeys.StringImage, SignImage);
-            }/*else{
-                jsonObj.put(ConstantsKeys.StringImage, "");
-            }*/
+            }
+
             jsonObj.put(ConstantsKeys.IsSignCopy,   IsContinueWithSign);
 
         } catch (Exception e) {

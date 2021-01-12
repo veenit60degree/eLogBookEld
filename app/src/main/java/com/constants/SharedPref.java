@@ -724,6 +724,24 @@ public class SharedPref {
 
 
 
+    // Save Certify Alert View Time
+    public static void setCertifyAlertViewTime(String value, Context context) {
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("CertifyAlertViewTime", value);
+            editor.commit();
+        }catch (Exception e){}
+    }
+
+
+    // Get Certify Alert View Time -------------------
+    public static String getCertifyAlertViewTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("CertifyAlertViewTime", "");
+    }
+
+
     // Set  Load Id -------------------
     public static void setLoadId( String value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

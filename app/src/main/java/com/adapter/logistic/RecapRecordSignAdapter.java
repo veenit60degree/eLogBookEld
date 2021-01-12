@@ -78,7 +78,7 @@ public class RecapRecordSignAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.signRecordCheckBox.setVisibility(View.GONE);
+       // holder.signRecordCheckBox.setVisibility(View.GONE);
 
         if(IsAllSelectedClicked) {
             if (isChecked && !eventItem.isCertified()) {

@@ -74,22 +74,23 @@
 
                 />
 
+
             <TextView
                 android:id="@+id/certifyDateTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_20"
-                android:text="@string/temp_DATE"
                 android:layout_alignParentRight="true"
-                android:paddingLeft="@dimen/margin_18"
-                android:paddingRight="@dimen/margin_18"
-                android:textColor="@color/white"
-                android:paddingTop="@dimen/margin_10"
-                android:paddingBottom="@dimen/margin_10"
+                android:layout_marginRight="-2dp"
                 android:background="@drawable/green_eld_drawable"
+                android:paddingLeft="@dimen/margin_18"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingRight="@dimen/margin_18"
+                android:paddingBottom="@dimen/margin_10"
+                android:text="@string/temp_DATE"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_20"
+
                 />
-
-
 
             <ImageView
                 android:id="@+id/certifyRecordImgView"
@@ -98,9 +99,22 @@
                 android:src="@drawable/certify_record_list"
                 android:layout_alignParentRight="true"
                 android:paddingLeft="@dimen/margin_14"
+                android:layout_marginRight="@dimen/margin_short_5"
                 android:visibility="gone"
                 />
 
+
+
+
+            <ImageView
+                android:id="@+id/certifyErrorImgView"
+                android:layout_width="@dimen/margin_18"
+                android:layout_height="@dimen/margin_18"
+                android:src="@drawable/error"
+                android:layout_alignParentRight="true"
+                android:visibility="gone"
+
+                />
 
 
         </RelativeLayout>

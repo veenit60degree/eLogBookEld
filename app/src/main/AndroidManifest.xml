@@ -188,6 +188,13 @@
             android:configChanges="orientation"
             android:windowSoftInputMode="stateHidden|adjustPan">    </activity>
 
+        <activity android:name=".EditedLogActivity"
+            android:theme="@style/AppThemeELD"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation"
+            android:windowSoftInputMode="stateHidden|adjustPan">    </activity>
+
+
 
         <activity android:name=".EldDocumentActivity"
             android:theme="@style/AppThemeELD"

@@ -135,7 +135,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     ShippingViewDetailAdapter shippingAdapter;
 
     public static Button saveSignatureBtn, editLogBtn, showHideRecapBtn;
-    ImageView eldMenuBtn, signImageView, previousDateBtn, nextDateBtn, loadingSpinEldIV, certifyRecordImgView;
+    public static ImageView previousDateBtn;
+    ImageView eldMenuBtn, signImageView, nextDateBtn, loadingSpinEldIV, certifyRecordImgView, certifyErrorImgView;
     TextView EldTitleTV, certifyDateTV, certifyCycleTV;
     TextView certifyDriverNameTV, certifyCoDriverNameTV, certifyDriverIDTV, certifyCoDriverIDTV;
     TextView certifyDistanceTV, certifyCarrierTV, certifyVehicleTV, certifyTrailerTV, certifyMainOfficeTV,
@@ -161,7 +162,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     String TotalOffDutyHours        = "00:00";
     String TotalSleeperBerthHours   = "00:00";
 
-    Bitmap signatureBitmap;
     int DRIVER_JOB_STATUS = 1, OldStatus = -1;
     final int GetDriverLog          = 1;
     final int GetOdometer           = 2;
@@ -205,6 +205,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
     boolean isViolation     = false;
     boolean isCertifyLog    = false;
+    boolean isSignPending   = false;
     boolean IsAOBRD         = false;
     boolean UpdateRecap     = false;
     boolean isOldRecord     = false;
@@ -320,6 +321,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         nextDateBtn                 = (ImageView)view.findViewById(R.id.nextDateBtn);
         loadingSpinEldIV            = (ImageView)view.findViewById(R.id.loadingSpinEldIV);
         certifyRecordImgView        = (ImageView)view.findViewById(R.id.certifyRecordImgView);
+        certifyErrorImgView         = (ImageView)view.findViewById(R.id.certifyErrorImgView);
 
         rightMenuBtn                = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         certifyLogLay               = (LinearLayout)view.findViewById(R.id.certifyLogLay);
@@ -405,6 +407,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         MonthShortName          = getBundle.getString("month_short_name");
         SelectedDayOfMonth      = getBundle.getInt("day_of_month");
         isCertifyLog            = getBundle.getBoolean("is_certify");
+        isSignPending           = getBundle.getBoolean("signStatus");
         VIN_NUMBER              = getBundle.getString("vin");
         offsetFromUTC           = getBundle.getInt("offset");
 
@@ -468,6 +471,11 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
 
         }else{
+
+            if(isSignPending){
+                certifyErrorImgView.setVisibility(View.VISIBLE);
+            }
+
             certifyRecordImgView.setVisibility(View.VISIBLE);
             certifyDateTV.setVisibility(View.GONE);
             certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length() ));
@@ -1248,7 +1256,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         List<RecapSignModel> signList = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
 
         if (signList.size() > 0) {
-            signRecordDialog = new SignRecordDialog(getActivity(), signList, new SignRecapListener());
+            signRecordDialog = new SignRecordDialog(getActivity(), DriverType, isCertifySignExist, recap18DaysArray, signList, new SignRecapListener(),
+                                                        constants,  recapViewMethod,  certifyLogMethod, sharedPref,  dbHelper
+            );
             signRecordDialog.show();
         } else {
             if(isToastShowing)
@@ -2291,18 +2301,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
 
 
-    /*================== Get Signature Bitmap ====================*/
-    void GetSignatureBitmap(View targetView, ImageView canvasView){
-        signatureBitmap = Bitmap.createBitmap(targetView.getWidth(),
-                targetView.getHeight(),
-                Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(signatureBitmap);
-        targetView.draw(c);
-        BitmapDrawable d = new BitmapDrawable(getResources(), signatureBitmap);
-        canvasView.setBackgroundDrawable(d);
-
-        imagePath = global.SaveBitmapToFile(signatureBitmap, "sign", 100, getActivity());
-    }
 
     @Override
     public void onScrollChanged(ScrollViewExt scrollView, int x, int y, int oldx, int oldy) {
@@ -2394,7 +2392,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                         signLogTitle2.setVisibility(View.GONE);
                         signImageView.setBackgroundDrawable(null);
                         signImageView.setImageResource(R.drawable.transparent);
-                        GetSignatureBitmap(inkView, signImageView);
+                        imagePath = constants.GetSignatureBitmap(inkView, signImageView, getActivity());
                         saveSignatureBtn.setText(getString(R.string.save));
 
                         driverLogScrollView.post(new Runnable() {
@@ -2797,6 +2795,12 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
 
 
+        boolean isSignPending             = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
+        if(isSignPending) {
+            certifyErrorImgView.setVisibility(View.VISIBLE);
+        }else{
+            certifyErrorImgView.setVisibility(View.GONE);
+        }
     }
 
 
