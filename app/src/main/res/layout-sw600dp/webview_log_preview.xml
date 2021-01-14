@@ -1,18 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
 
 
         <WebView
             android:id="@+id/previewLogWebView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minWidth="@dimen/view_height_500"
+            android:minWidth="@dimen/view_height_800"
             android:minHeight="@dimen/view_height_115"
             android:fillViewport="true"
 
             />
 
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/item_edited_log"
+            />
+
+        <ListView
+            android:id="@+id/editLogListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_short_7"
+            android:scrollbars="none"
+            android:paddingBottom="@dimen/view_height_70"
+            android:clipToPadding="false"
+            />
 
 
-</RelativeLayout>
+
+
+</LinearLayout>

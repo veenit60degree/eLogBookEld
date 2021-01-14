@@ -210,7 +210,7 @@ public class EldActivity extends FragmentActivity  {
                         finish();
                     } else {
                         ExitStrategy.startExitDelay(2000);
-                        Globally.EldScreenToast(EldFragment.resetTimerBtn/**/, getString(R.string.exit_msg), getResources().getColor(R.color.colorPrimary));
+                        Globally.EldScreenToast(EldFragment.refreshLogBtn/**/, getString(R.string.exit_msg), getResources().getColor(R.color.colorPrimary));
                     }
 
 

@@ -2078,6 +2078,7 @@ public class HelperMethods {
                 }
 
             }
+            driverLogModel.setCreatedDate(endDateTime);
 
             driverLogModel.setStartLatitude(json.getString(ConstantsKeys.StartLatitude));
             driverLogModel.setStartLongitude(json.getString(ConstantsKeys.StartLongitude));
@@ -2088,6 +2089,7 @@ public class HelperMethods {
             driverLogModel.setPersonal(json.getBoolean(ConstantsKeys.Personal));
 
             driverLogModel.setCurrentCyleId(CurrentCycleId);
+
 
             if(!json.isNull(ConstantsKeys.IsViolation))
                 driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
@@ -2115,7 +2117,7 @@ public class HelperMethods {
 
 
 
-            driverLogModel.setCreatedDate(endDateTime);
+
 
 
         }catch (Exception e){

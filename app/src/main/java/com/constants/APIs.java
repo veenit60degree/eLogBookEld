@@ -46,8 +46,8 @@ public class APIs {
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_DEV ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_DEV ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
 
@@ -72,6 +72,7 @@ public class APIs {
     public static String REJECT_UNIDENTIFIED_RECORD	  	    = DOMAIN_URL_ALS + "RejectUnidentifiedRecord";
     public static String REJECT_COMPANY_ASSIGNED_RECORD	  	= DOMAIN_URL_ALS + "RejectCompanyAssignedRecord";
     public static String CLEAR_MALFNCN_DIAGSTC_EVENT	  	= DOMAIN_URL_ALS + "ClearMalfunctionAndDiagnosticEvent";
+    public static String CHANGE_STATUS_SUGGESTED_EDIT       = DOMAIN_URL_ALS + "ChangeStatusSuggestedEdit";
 
     /*-------- ELD API ----------*/
     public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";  //SaveDriverStatusAndLocation
@@ -120,6 +121,8 @@ public class APIs {
     public static String UPDATE_DRIVER_VERSION_IGNORE_COUNT = DOMAIN_URL_ELD + "UpdateDriverVersionIgnoreCount";
     public static String GET_NOTIFICATIONS                  = DOMAIN_URL_ELD + "GetNotifications";
     public static String GET_RECERTIFY_PENDING_RECORDS      = DOMAIN_URL_ELD + "GetRecertifyPendingRecords";
+    public static String GET_SUGGESTED_RECORDS              = DOMAIN_URL_ELD + "GetSuggestedRecords";
+
 
 }
 

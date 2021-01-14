@@ -25,6 +25,9 @@
     <string name="reason_for_adverse_excptn_desc">Adverse driving conditions means snow, ice, sleet, fog, or other adverse weather conditions or unusual road or traffic conditions that were not known, or could not reasonably be known, to: a driver immediately prior to beginning the duty day or immediately before beginning driving after a qualifying rest break or sleeper berth period, or a motor carrier immediately prior to dispatching the driver.</string>
     <string name="excptn_enabled">Exception Enabled</string>
     <string name="exception">Exception</string>
+    <string name="cancel_edit_record">Reject records !!</string>
+    <string name="cancel_edit_record_desc">Do you want to reject edited records ?</string>
+    <string name="edit_log_request">Edit Log Request</string>
 
     <string name="preTripIns">Pre-Trip Inspection</string>
     <string name="postTripIns">Post-Trip Inspection</string>
@@ -133,6 +136,7 @@
 
     <!--Exception will be invalidated automatically once driver takes proper shift reset-->
     <string name="excp_reset_auto">Exception will be auto disabled after 10 hours of rest period. (Shift reset)</string>
+    <string name="haul_excp_reset_auto">Exception will be auto disabled after 34 hours of rest period. (Shift reset)</string>
 
     <string name="can_cycle">CA Cycle </string>
     <string name="us_cycle">US Cycle </string>
@@ -171,9 +175,13 @@
     <string name="On">On</string>
     <string name="Off">Off</string>
     <string name="S">SB</string>
+    <string name="edited_log">Edited Log</string>
+    <string name="original_log">Original Log</string>
+    <string name="review_carrier_edits">Review Carrier Edits</string>
 
     <string name="view_certify_Log">View/Certify Log</string>
     <string name="Certify_Log">Certify Log</string>
+    <string name="Certify_submit">Certify &amp; Submit</string>
     <string name="Send_Log">Send Log</string>
     <string name="send">Send</string>
     <string name="Personal_Use">Personal Use</string>

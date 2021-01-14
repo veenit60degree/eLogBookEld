@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-
     >
+
 
     <include
         android:id="@+id/actionBarEditLog"
@@ -16,33 +17,156 @@
 
 
 
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/actionBarEditLog"
         >
 
+
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+
+            >
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/whiteee"
+                app:tabSelectedTextColor="@color/blue_button"
+                app:tabIndicatorColor="@color/blue_button"
+                app:tabMaxWidth="0dp"
                 app:tabGravity="fill"
-                app:tabMode="fixed" />
+                app:tabMode="fixed"
+
+                app:tabIndicatorHeight="4dp"
+                app:tabBackground="@color/whiteee"
+
+
+                />
 
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/editedLogPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
+            />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+
+
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cancelCertifyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_short_2"
+        card_view:cardCornerRadius="@dimen/margin_short_5"
+        app:cardBackgroundColor="@color/black_unidenfied"
+        app:cardElevation="@dimen/margin_short_2"
+        app:cardUseCompatPadding="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/margin_20"
+        android:layout_marginRight="@dimen/margin_10"
+        android:layout_toLeftOf="@+id/confirmCertifyBtn"
+
+
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+
+            <ImageView
+                android:src="@drawable/cancel_log"
+                android:layout_width="@dimen/margin_19"
+                android:layout_height="@dimen/margin_19"
+                android:layout_marginLeft="@dimen/margin_21"
+                android:layout_marginTop="@dimen/margin_short_2"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/whiteee"
+                android:text="@string/reject"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_21"
+                android:paddingRight="@dimen/margin_21"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"
+
+                />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/confirmCertifyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_short_2"
+        card_view:cardCornerRadius="@dimen/margin_short_5"
+        app:cardBackgroundColor="@color/hos_send_log"
+        app:cardElevation="@dimen/margin_short_2"
+        app:cardUseCompatPadding="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/margin_20"
+        android:layout_marginRight="@dimen/margin_20"
+
+
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+
+            <ImageView
+                android:layout_width="@dimen/margin_22"
+                android:layout_height="@dimen/margin_22"
+                android:src="@drawable/certify_confirm_icon"
+                android:layout_marginLeft="@dimen/margin_21"
+                android:layout_marginTop="@dimen/margin_short_2"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/whiteee"
+                android:text="@string/certify"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_21"
+                android:paddingRight="@dimen/margin_21"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"
+
+                />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 
 

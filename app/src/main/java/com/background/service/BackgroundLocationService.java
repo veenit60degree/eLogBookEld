@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
@@ -34,6 +35,7 @@ import com.constants.AsyncResponse;
 import com.constants.CheckConnectivity;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
+import com.constants.DownloadAppService;
 import com.constants.DriverLogResponse;
 import com.constants.RequestResponse;
 import com.constants.SaveDriverLogPost;
@@ -2535,15 +2537,31 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     }
 
 
-                                    // Save Truck information for manual/auto mode
-                                    sharedPref.SetIsAOBRD(IsAOBRD, getApplicationContext());
-                                    sharedPref.SetAOBRDAutomatic(dataObj.getBoolean("IsAOBRDAutomatic"), getApplicationContext());
-                                    sharedPref.SetAOBRDAutoDrive(dataObj.getBoolean("IsAutoDriving"), getApplicationContext());
-                                    sharedPref.SetDrivingShippingAllowed(dataObj.getBoolean("IsDrivingShippingAllowed"), getApplicationContext());
-                                    sharedPref.saveTimeStampView(dataObj.getBoolean("IsTimestampEnabled"), getApplicationContext());
-                                    sharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
-                                    sharedPref.setPersonalUse75Km(dataObj.getBoolean(ConstantsKeys.PersonalUse75Km), getApplicationContext());
+                                    try {
+                                        // Save Truck information for manual/auto mode
+                                        sharedPref.SetIsAOBRD(IsAOBRD, getApplicationContext());
+                                        sharedPref.SetAOBRDAutomatic(dataObj.getBoolean(ConstantsKeys.IsAOBRDAutomatic), getApplicationContext());
+                                        sharedPref.SetAOBRDAutoDrive(dataObj.getBoolean(ConstantsKeys.IsAutoDriving), getApplicationContext());
+                                        sharedPref.SetDrivingShippingAllowed(dataObj.getBoolean(ConstantsKeys.IsDrivingShippingAllowed), getApplicationContext());
+                                        sharedPref.saveTimeStampView(dataObj.getBoolean(ConstantsKeys.IsTimestampEnabled), getApplicationContext());
+                                        sharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
+                                        sharedPref.setPersonalUse75Km(dataObj.getBoolean(ConstantsKeys.PersonalUse75Km), getApplicationContext());
 
+                                        boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
+                                        sharedPref.setSuggestedEditStatus(isSuggestedEdit, getApplicationContext());
+
+                                        if(isSuggestedEdit && UILApplication.isActivityVisible()){
+                                            try {
+                                                Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                                                intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
+                                                LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+                                            }catch (Exception e){
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
                                     boolean connectionStatus = sharedPref.isOnline(getApplicationContext());
                                     if(!connectionStatus){  // if last status was not online then save online status
                                         constants.saveAppUsageLog(ConstantsEnum.StatusOnline,  false, false, obdUtil);

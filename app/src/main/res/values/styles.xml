@@ -9,6 +9,22 @@
     </style>
 
 
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/hos_distance</item>
+        <item name="colorPrimary">@color/hos_sleeper</item>
+        <item name="colorPrimaryDark">@color/violet</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">@color/black_hover</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/white</item>
+
+        <item name="titleTextColor">@color/color_eld_theme</item>
+        <item name="itemTextColor">@color/colorVoilation</item>
+
+    </style>
+
+
 
     <style name="Theme.ToogleTheme" parent="Theme.AppCompat.Light">
         <!-- colorPrimary is used for the default action bar background -->
@@ -133,6 +149,52 @@
     </style>
 
 
+    <style name="MyMaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/active_status_bg</item>
+        <item name="colorPrimaryDark">@color/blue_button</item>
+        <item name="colorAccent">@color/active_status_bg</item>
+        <item name="colorControlHighlight">@color/active_status_bg</item>
+        <item name="editTextColor">@color/whiteee</item>
+
+        <item name="windowActionBarOverlay">false</item>
+
+        <!-- Active thumb color & Active track color(30% transparency) -->
+        <item name="colorControlActivated">@color/blue_button</item>
+        <!-- Inactive thumb color -->
+        <item name="colorSwitchThumbNormal">@color/edit_gray_border</item>
+        <!-- Inactive track color(30% transparency) -->
+        <item name="android:colorForeground">@color/colorAccentTextHover</item>
+
+    </style>
+
+    <!--<item name="colorPrimaryVariant">@color/active_status_bg</item>
+  <item name="colorSecondary">@color/active_status_bg</item>
+        <item name="colorSecondaryVariant">@color/active_status_bg</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <item name="tabIndicatorColor">@color/blue_button</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabBackground">@color/whiteee</item>
+        <item name="tabSelectedTextColor">@color/blue_button</item>
+
+
+    -->
+
+
+    <style name="TabLayoutTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/active_status_bg</item>
+        <item name="colorOnPrimary">@color/whiteee</item>
+        <!-- Secondary brand color. -->
+
+    </style>
+
+
+    <style name="edit_text_style_bold">
+        <item name="android:textStyle">bold</item>
+    </style>
 
 
     <style name="AppTheme.NoActionBar">1

@@ -301,7 +301,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             global.EldScreenToast(SyncDataBtn, getString(R.string.already_enable_excp), getResources().getColor(R.color.colorSleeper));
                         }
                     } else {
-                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_reset_auto), getResources().getColor(R.color.colorSleeper));
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.haul_excp_reset_auto), getResources().getColor(R.color.colorSleeper));
                         buttonView.setChecked(true);
                     }
                 }
@@ -420,18 +420,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         haulExceptnSwitchButton.setChecked(sharedPref.get16hrHaulExcptn(getActivity()));
         adverseSwitchButton.setChecked(sharedPref.getAdverseExcptn(getActivity()));
 
-       /* if(sharedPref.get16hrHaulExcptn(getActivity())){    // disable button if exception is enabled to avoid manual off
-            haulExceptnSwitchButton.setEnabled(false);
-        }else{
-            haulExceptnSwitchButton.setEnabled(true);
-        }
-
-        if(sharedPref.getAdverseExcptn(getActivity())){    // disable button if exception is enabled to avoid manual off
-            adverseSwitchButton.setEnabled(false);
-        }else{
-            adverseSwitchButton.setEnabled(true);
-        }*/
-
         global.hideSoftKeyboard(getActivity());
         getInstalledAppDetail();
         existingApkFilePath = getExistingApkPath();
@@ -444,15 +432,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             SavedCanCycle = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
             SavedUsaCycle = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
             SavedTimeZone = DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity());
-
-            //actionBarTitle.setText("Settings (" + DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity()) + ")");
         }else{
             SavedPosition = 1;
             SavedCanCycle = DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleId, getActivity());
             SavedUsaCycle = DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleId, getActivity());
             SavedTimeZone = DriverConst.GetCoDriverSettings(DriverConst.CoTimeZoneID, getActivity());
-
-            // actionBarTitle.setText("Settings (" + DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, getActivity()) + ")");
         }
 
         try{
@@ -1466,7 +1450,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             closeDialogs();
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
             alertDialogBuilder.setTitle(getString(R.string.enable_excp));
-            String message = "<font color='#555555'><b>Note: </b></font>" + getString(R.string.excp_reset_auto) + "<br/> <br/>" + getString(R.string.continue_haul_exception) ;
+            String message = "<font color='#555555'><b>Note: </b></font>" + getString(R.string.haul_excp_reset_auto) + "<br/> <br/>" + getString(R.string.continue_haul_exception) ;
             alertDialogBuilder.setMessage(Html.fromHtml(message));
             alertDialogBuilder.setCancelable(false);
             alertDialogBuilder.setPositiveButton("Yes",

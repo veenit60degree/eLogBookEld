@@ -12,6 +12,8 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,8 +42,10 @@ import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
+import com.messaging.logistic.EditedLogActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
 import com.models.DriverLocationModel;
 import com.shared.pref.StatePrefManager;
@@ -70,7 +74,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     Button availableHourBtnTV;
     TextView EldTitleTV, hosDistanceTV, hosLocationTV, nextBrkTitleTV;
     TextView breakUsedTimeTV, shiftUsedTimeTV, statusUsedTimeTV, cycleUsedTimeTV, hosCurrentCycleTV;
-    TextView statusHosTV, breakInfoTV, shiftInfoTV, statusInfoTV, cycleInfoTV, hosStatusCircle, hosStatusTV ;
+    TextView statusHosTV, breakInfoTV, shiftInfoTV, statusInfoTV, cycleInfoTV, hosStatusCircle, hosStatusTV, malfunctionTV ;
     ImageView eldMenuBtn, hosStatusImgVw;
     LoadingSpinImgView loadingSpinEldIV;
     RelativeLayout rightMenuBtn, eldMenuLay, hosMainLay;
@@ -137,6 +141,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     RulesResponseObject usedAndRemainingTimeSB;
     RulesResponseObject RulesObj = new RulesResponseObject();
     DriverPermissionMethod driverPermissionMethod;
+    Animation editLogAnimation;
 
 
     @Override
@@ -193,6 +198,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         hosStatusCircle         = (TextView)v.findViewById(R.id.hosStatusCircle);
         hosStatusTV             = (TextView)v.findViewById(R.id.hosStatusTV);
         nextBrkTitleTV          = (TextView)v.findViewById(R.id.nextBrkTitleTV);
+        malfunctionTV           = (TextView)v.findViewById(R.id.malfunctionTV);
+
         availableHourBtnTV      = (Button)v.findViewById(R.id.availableHourBtnTV);
 
         sendLogHosBtn           = (CardView)v.findViewById(R.id.sendLogHosBtn);
@@ -228,6 +235,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         setMarqueText(hosLocationTV);
         setMarqueText(hosDistanceTV);
 
+        editLogAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+        editLogAnimation.setDuration(1500);
 
         Bundle bundle          = this.getArguments();
         DRIVER_JOB_STATUS      = bundle.getInt("current_status");
@@ -309,11 +318,33 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         }
 
+        editLogAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(sharedPref.isSuggestedEdit(getActivity()))
+                    malfunctionTV.startAnimation(editLogAnimation);
+                else {
+                    editLogAnimation.cancel();
+                    malfunctionTV.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+
 
         eldMenuLay.setOnClickListener(this);
         sendLogHosBtn.setOnClickListener(this);
         rightMenuBtn.setOnClickListener(this);
         availableHourBtnTV.setOnClickListener(this);
+        malfunctionTV.setOnClickListener(this);
     }
 
 
@@ -323,6 +354,15 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         RestartTimer();
 
+        if(sharedPref.isSuggestedEdit(getActivity())){
+            malfunctionTV.setText(getString(R.string.edit_log_request));
+            malfunctionTV.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
+            malfunctionTV.setVisibility(View.VISIBLE);
+            malfunctionTV.startAnimation(editLogAnimation);
+        }else{
+            editLogAnimation.cancel();
+            malfunctionTV.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -759,6 +799,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
             case R.id.eldMenuLay:
                 getFragmentManager().popBackStack();
+               /* Intent i = new Intent(getActivity(), EditedLogActivity.class);
+                getActivity().startActivity(i);*/
+
                 break;
 
             case R.id.sendLogHosBtn:
@@ -814,6 +857,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 Log.d("DrivingRemainingMinutes", "DrivingRemainingMinutes: " + RemainingTimeObj.getDrivingRemainingMinutes());
                 break;
 
+
+            case R.id.malfunctionTV:
+                Intent editIntent = new Intent(getActivity(), EditedLogActivity.class);
+                startActivity(editIntent);
+                break;
 
         }
     }

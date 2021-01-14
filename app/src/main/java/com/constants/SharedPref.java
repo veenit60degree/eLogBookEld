@@ -1136,6 +1136,20 @@ public class SharedPref {
     }
 
 
+    // Get Suggested Edit status  -------------------
+    public static boolean isSuggestedEdit( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.SuggestedEdit, false);
+    }
+
+    // Save Suggested Edit status to confirm edit log -------------------
+    public static void setSuggestedEditStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.SuggestedEdit, value);
+        editor.commit();
+    }
+
     // Get driver status he is online or not-------------------
     public static boolean isOnline( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

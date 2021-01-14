@@ -139,7 +139,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     ImageView calendarBtn, coDriverImgView, connectionStatusImgView;
     Button sendReportBtn, yardMoveBtn, personalUseBtn;
     RelativeLayout certifyLogBtn;
-    public static Button resetTimerBtn;
+    public static Button refreshLogBtn; //resetTimerBtn
     int DRIVER_JOB_STATUS = 1, SWITCH_VIEW = 1, oldStatusView = 0, DriverType = 0;
     TextView dateTv, nameTv, jobTypeTxtVw, perDayTxtVw, jobTimeTxtVw, jobTimeRemngTxtVw, EldTitleTV,
             timeRemainingTxtVw, invisibleTxtVw, viewHistoryBtn, summaryBtn;
@@ -153,8 +153,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     boolean IsRefreshedClick = false, IsAOBRDAutomatic = false, IsAOBRD = false, isNewDateStart = true, isYardBtnClick = false;
     boolean isFirst = true, isViolation = false, isCertifyLog = false, IsSaveOperationInProgress = false, isDrivingCalled = false, IsDOT = false;
     boolean IsAddressUpdate = false;
-    //public static Animation outAnim;
-    //Animation fadeInAnim, fadeOutAnim;
     public static boolean IsOdometerReading = false, IsPopupDismissed = false;
     Animation emptyTrailerNoAnim, OdometerFaceView, exceptionFaceView, connectionStatusAnimation;
     String strCurrentDate = "", DRIVER_ID = "0", DeviceId = "", LoginTruckChange = "true";
@@ -471,7 +469,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         yardMoveBtn   = (Button)view.findViewById(R.id.yardMoveBtn);
 
         personalUseBtn = (Button) view.findViewById(R.id.personalUseBtn);
-        resetTimerBtn = (Button) view.findViewById(R.id.resetTimerBtn);
+      //  resetTimerBtn = (Button) view.findViewById(R.id.resetTimerBtn);
+        refreshLogBtn = (Button) view.findViewById(R.id.refreshLogBtn);
 
         summaryBtn = (TextView) view.findViewById(R.id.summaryBtn);
         truckLay = (LinearLayout) view.findViewById(R.id.truckLay);
@@ -515,7 +514,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         OffDutyBtn.setOnClickListener(this);
         SleeperBtn.setOnClickListener(this);
         personalUseBtn.setOnClickListener(this);
-        resetTimerBtn.setOnClickListener(this);
+       // resetTimerBtn.setOnClickListener(this);
+        refreshLogBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
         inboxLay.setOnClickListener(this);
         shippingLay.setOnClickListener(this);
@@ -837,6 +837,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
 
+
         if ( !isSavedTimeZoneCorrect  ) {
             showTimeZoneAlert(isConnected);
         }else if(!IsValidTime){
@@ -852,20 +853,21 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
 
+
         //---------------- temp delete last item code ---------------
- /*        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               try {
                     driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                     driverLogArray.remove(driverLogArray.length()-1);
-                   // driverLogArray.remove(driverLogArray.length()-1);
+                    driverLogArray.remove(driverLogArray.length()-1);
                     hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray); // saving in db after updating the array
                 } catch (Exception e) {
                     e.printStackTrace();
                     driverLogArray = new JSONArray();
                 }
             }
-
 */
+
 
         SetDataInView();
         IsLogShown = false;
@@ -2029,8 +2031,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
 
-            case R.id.resetTimerBtn:
+            case R.id.refreshLogBtn:
                 //  RestartTimer();
+                IsRefreshedClick = false;
+                GetDriverLog18Days(DRIVER_ID, DeviceId, Global.GetCurrentUTCDate(), GetDriverLog18Days);
                 break;
 
 
@@ -2061,7 +2065,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             DateTime currentTime = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), false);
 
             int minDiff = currentTime.getMinuteOfDay() - lastSavedRefreshTime.getMinuteOfDay();
-            if (minDiff > 1) {  // 2 min diff
+            if (minDiff > 0) {  // 1 min diff
                 onResumeDataSet(isConnected);
                 sharedPref.setRefreshDataTime(Global.GetCurrentUTCTimeFormat(), getActivity());
                 IsRefreshedClick = true;

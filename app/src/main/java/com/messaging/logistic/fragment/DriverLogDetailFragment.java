@@ -135,8 +135,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     ShippingViewDetailAdapter shippingAdapter;
 
     public static Button saveSignatureBtn, editLogBtn, showHideRecapBtn;
-    public static ImageView previousDateBtn;
-    ImageView eldMenuBtn, signImageView, nextDateBtn, loadingSpinEldIV, certifyRecordImgView, certifyErrorImgView;
+    public static TextView invisibleRfreshBtn ;
+    ImageView eldMenuBtn, signImageView, nextDateBtn, previousDateBtn, loadingSpinEldIV, certifyRecordImgView, certifyErrorImgView;
     TextView EldTitleTV, certifyDateTV, certifyCycleTV;
     TextView certifyDriverNameTV, certifyCoDriverNameTV, certifyDriverIDTV, certifyCoDriverIDTV;
     TextView certifyDistanceTV, certifyCarrierTV, certifyVehicleTV, certifyTrailerTV, certifyMainOfficeTV,
@@ -239,8 +239,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     WebView graphWebView;
     ProgressBar progressBarDriverLog;
     ProgressDialog progressDialog;
-
-    String SavedData = "";
 
     MainDriverEldPref MainDriverPref;
     CoDriverEldPref CoDriverPref;
@@ -351,6 +349,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         certifyDriverIDTV           = (TextView)view.findViewById(R.id.certifyDriverIDTV);
         certifyCoDriverNameTV       = (TextView)view.findViewById(R.id.certifyCoDriverNameTV);
         certifyCoDriverIDTV         = (TextView)view.findViewById(R.id.certifyCoDriverIDTV);
+        invisibleRfreshBtn          = (TextView)view.findViewById(R.id.invisibleRfreshBtn);
 
         certifyDistanceTV           = (TextView)view.findViewById(R.id.certifyDistanceTV);
         certifyCarrierTV            = (TextView)view.findViewById(R.id.certifyCarrierTV);
@@ -529,7 +528,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         getPermissionWithView();
 
 
-        SavedData = ConstantHtml.GraphHtml;
         WebSettings webSettings = graphWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setPluginState(WebSettings.PluginState.ON);
@@ -642,7 +640,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         nextDateBtn.setOnClickListener(this);
         rightMenuBtn.setOnClickListener(this);
         certifyRecordImgView.setOnClickListener(this);
-
+        invisibleRfreshBtn.setOnClickListener(this);
     }
 
 
@@ -1236,6 +1234,14 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             case R.id.nextDateBtn:
                 nextPrevBtnClicked = true;
                 ChangeViewWithDate(true);
+                break;
+
+
+            case R.id.invisibleRfreshBtn:
+
+                refreshPendingSignView();
+                CheckSignatureVisibilityStatus(selectedArray);
+
                 break;
 
 
@@ -2266,42 +2272,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     }
 
 
-/*
-
-    void DrawGraph(int hLineX1, int hLineX2, int vLineY1, int vLineY2, boolean isViolation, boolean isDottedLine){
-        if(isViolation && !isDOT){
-            if (isDottedLine) {
-                htmlAppendedText = htmlAppendedText + ViolationLine +
-                        constants.AddHorizontalDottedLine(hLineX1, hLineX2, vLineY2) +
-                        constants.AddVerticalLineViolation(hLineX1, vLineY1, vLineY2) +
-                        "                  </g>\n";
-            }else{
-                htmlAppendedText = htmlAppendedText + ViolationLine +
-                        constants.AddHorizontalLine(hLineX1, hLineX2, vLineY2) +
-                        constants.AddVerticalLineViolation(hLineX1, vLineY1, vLineY2) +
-                        "                  </g>\n";
-            }
-        }else {
-            if (isDottedLine) {
-                htmlAppendedText = htmlAppendedText + DefaultLine +
-                        constants.AddHorizontalDottedLine(hLineX1, hLineX2, vLineY2) +
-                        constants.AddVerticalLine(hLineX1, vLineY1, vLineY2) +
-                        "                  </g>\n";
-            } else {
-                htmlAppendedText = htmlAppendedText + DefaultLine +
-                        constants.AddHorizontalLine(hLineX1, hLineX2, vLineY2) +
-                        constants.AddVerticalLine(hLineX1, vLineY1, vLineY2) +
-                        "                  </g>\n";
-            }
-        }
-    }
-
-*/
-
-
-
-
-
     @Override
     public void onScrollChanged(ScrollViewExt scrollView, int x, int y, int oldx, int oldy) {
         // We take the last son in the scrollview
@@ -2794,7 +2764,12 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }
 
 
+        refreshPendingSignView();
 
+    }
+
+
+    void refreshPendingSignView(){
         boolean isSignPending             = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
         if(isSignPending) {
             certifyErrorImgView.setVisibility(View.VISIBLE);
@@ -2802,8 +2777,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             certifyErrorImgView.setVisibility(View.GONE);
         }
     }
-
-
 
     private class LoginListener implements LoginDialog.LoginListener{
 
@@ -3190,14 +3163,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                             if(obj.has("Message")){
                                 String message = obj.getString("Message");
-                                if(!obj.isNull("Data")) {
-                            /*dataObj = new JSONObject(obj.getString("Data"));
-                            ParseLogData(dataObj, true);      // Parse Log Data
-                            ParseRecapData(dataObj);
-*/
-                                }else {
-                                    //   ReloadWebView(HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
-                                }
+
                                 if(!message.equals("null"))
                                     global.EldScreenToast(eldMenuBtn, message, Color.parseColor(colorVoilation));
                                 else if(message.contains("ServerError")){
@@ -3368,7 +3334,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                String data = SavedData + htmlAppendedText + closeTag;
+                String data = ConstantHtml.GraphHtml + htmlAppendedText + closeTag;
                 graphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
             }
         }, 500);

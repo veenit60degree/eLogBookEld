@@ -472,14 +472,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 
 
 	private void CheckDeviceIDsStatus() {
-		/*try {
-			if (global.registrationId == null) {
-				GetDeviceTokenForNotification();
-			}
-			Log.d("token", "token: " + global.registrationId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
 
 		ImeiNumber = Constants.getIMEIDeviceId(StrSingleUserame, getApplicationContext());
 		ImeiNumber = checkNullStatus(ImeiNumber);
@@ -504,18 +496,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 
 		IsLoginSuccess = false;
 		loginBtn.setEnabled(true);
-		// register GCM registration complete receiver
-	/*	LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-				new IntentFilter(Config.REGISTRATION_COMPLETE));
-
-		// register new push message receiver
-		// by doing this, the activity will be notified each time a new message arrives
-		LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-				new IntentFilter(Config.PUSH_NOTIFICATION));
-
-		// clear the notification area when the app is opened
-		NotificationManagerSmart.clearNotifications(getApplicationContext());
-		*/
 
 	}
 
@@ -523,7 +503,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 
 	@Override
 	protected void onPause() {
-		//LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
 		super.onPause();
 	}
 
@@ -557,7 +536,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 							/*========== LOGIN API =========== */
 							LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername,StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
 
-						//	ViewOnlyLogin(StrSingleUserame, StrSinglePass);
 						}
 					} else {
 						global.EldScreenToast(mainLoginLayout, "Please enter your Password", getResources().getColor(R.color.colorVoilation));
@@ -676,6 +654,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 									sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
 									sharedPref.setRefreshDataTime("", getApplicationContext());
 									sharedPref.setCertifyAlertViewTime("", getApplicationContext());
+									sharedPref.setSuggestedEditStatus(false, getApplicationContext());
 
 									new ParseLoginJsonData().execute();
 
@@ -1171,6 +1150,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 				break;
 
 			case R.id.mainDriverBtn:
+
 				LoginUserType = DriverConst.SingleDriver;
 				loginBtn.setText("Login");
 				driverTitleTV.setVisibility(View.INVISIBLE);
@@ -1178,9 +1158,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 				OutToLeftAnim(userTypeLayout);
 				InFromRightAnim(loginLayout);
 
-				/*Intent i = new Intent(getApplicationContext(), EditedLogActivity.class);
-				startActivity(i);
-*/
 				break;
 
 

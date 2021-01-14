@@ -27,6 +27,7 @@ public class ConstantsKeys {
 
     public static String YardMove           = "YardMove";
     public static String Personal           = "Personal";
+    public static String IsEdited           = "IsEdited";
 
     public static String CycleChangeType    = "CycleChangeType";
     public static String CurrentCycleId     = "CurrentCycleId";
@@ -129,6 +130,7 @@ public class ConstantsKeys {
     public static String VehicleNumber          = "VehicleNumber";
     public static String DriverStatusID         = "DriverStatusID";
     public static String UTCStartDateTime       = "UTCStartDateTime";
+    public static String UTCEndDateTime         = "UTCEndDateTime";
 
 
     // --------------------- Inspection params -------------------------
@@ -162,7 +164,11 @@ public class ConstantsKeys {
     public static String CarrierName                    = "CarrierName";
     public static String DecesionSource                 = "DecesionSource";
     public static String PersonalUse75Km                = "PersonalUse75Km";
-
+    public static String SuggestedEdit                  = "SuggestedEdit";
+    public static String IsAOBRDAutomatic               = "IsAOBRDAutomatic";
+    public static String IsAutoDriving                  = "IsAutoDriving";
+    public static String IsDrivingShippingAllowed       = "IsDrivingShippingAllowed";
+    public static String IsTimestampEnabled             = "IsTimestampEnabled";
 
     public static String ShippingDocNumberId            = "ShippingDocNumberId";
     public static String ShipperCity                    = "ShipperCity";
@@ -271,6 +277,8 @@ public class ConstantsKeys {
     public static String SendDate                       = "SendDate";
     public static String Status                         = "Status";
     public static String Data                           = "Data";
+    public static String DriverLogDate                  = "DriverLogDate";
+    public static String SuggestedEditModel             = "SuggestedEditModel";
 
 
     // ELD Rule Inputs

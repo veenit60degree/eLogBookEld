@@ -36,6 +36,7 @@ import com.custom.dialogs.AppUpdateDialog;
 import com.driver.details.DriverConst;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.shared.pref.CoNotificationPref;
@@ -122,11 +123,14 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                // Do something
-                //  Log.d("received", "received from service");
-                animCount = 0;
-                noObdConnTV.setVisibility(View.VISIBLE);
-                noObdConnTV.startAnimation(fadeInAnim);
+                  Log.d("received", "received from service");
+                boolean isSuggestedEdit = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
+
+                if(isSuggestedEdit){
+                    Intent i = new Intent(TabAct.this, EditedLogActivity.class);
+                    startActivity(i);
+
+                }
 
             }
         };
@@ -410,7 +414,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             Slidingmenufunctions.odometerLay.setVisibility(View.VISIBLE);
         }
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("EVENT_SNACKBAR"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(ConstantsKeys.SuggestedEdit));
 
     }
 
@@ -419,7 +423,10 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     protected void onPause() {
         super.onPause();
         UILApplication.activityPaused();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+
     }
+
 
     protected void onStop() {
         super.onStop();

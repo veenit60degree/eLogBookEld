@@ -319,7 +319,7 @@ public class SignRecordDialog extends Dialog {
                 Globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
 
                 // refresh view with button click
-                DriverLogDetailFragment.previousDateBtn.performClick();
+                DriverLogDetailFragment.invisibleRfreshBtn.performClick();
 
                 dismiss();
 
@@ -340,7 +340,7 @@ public class SignRecordDialog extends Dialog {
                     Globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
 
                     // refresh view with button click
-                    DriverLogDetailFragment.previousDateBtn.performClick();
+                    DriverLogDetailFragment.invisibleRfreshBtn.performClick();
 
                     dismiss();
 
@@ -444,7 +444,7 @@ public class SignRecordDialog extends Dialog {
                             context.getResources().getColor(R.color.colorPrimary));
 
                     // refresh view with button click
-                    DriverLogDetailFragment.previousDateBtn.performClick();
+                    DriverLogDetailFragment.invisibleRfreshBtn.performClick();
 
                     dismiss();
 
@@ -453,7 +453,7 @@ public class SignRecordDialog extends Dialog {
                             context.getResources().getColor(R.color.colorSleeper) );
 
                     // refresh view with button click
-                    DriverLogDetailFragment.previousDateBtn.performClick();
+                    DriverLogDetailFragment.invisibleRfreshBtn.performClick();
 
                     dismiss();
 
