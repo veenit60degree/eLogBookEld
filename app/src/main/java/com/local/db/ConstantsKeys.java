@@ -164,11 +164,15 @@ public class ConstantsKeys {
     public static String CarrierName                    = "CarrierName";
     public static String DecesionSource                 = "DecesionSource";
     public static String PersonalUse75Km                = "PersonalUse75Km";
-    public static String SuggestedEdit                  = "SuggestedEdit";
     public static String IsAOBRDAutomatic               = "IsAOBRDAutomatic";
     public static String IsAutoDriving                  = "IsAutoDriving";
     public static String IsDrivingShippingAllowed       = "IsDrivingShippingAllowed";
     public static String IsTimestampEnabled             = "IsTimestampEnabled";
+
+    public static String IsUnidentified                 = "IsUnidentified";
+    public static String IsMalfunction                  = "IsMalfunction";
+    public static String IsDiagnostic                   = "IsDiagnostic";
+    public static String SuggestedEdit                  = "SuggestedEdit";
 
     public static String ShippingDocNumberId            = "ShippingDocNumberId";
     public static String ShipperCity                    = "ShipperCity";
@@ -176,6 +180,7 @@ public class ConstantsKeys {
     public static String IsUnloading                    = "IsUnloading";
     public static String ShipperAddress                 = "ShipperAddress";
 
+    public static String suggested_data                 = "suggested_data";
 
     public static String EventDateTime                  = "EventDateTime";
     public static String EngineHours                    = "EngineHours";

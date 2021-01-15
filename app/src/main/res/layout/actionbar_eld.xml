@@ -151,7 +151,7 @@
             android:layout_height="match_parent"
             android:textSize="@dimen/text_size_15"
             android:textColor="@color/whiteee"
-            android:layout_toLeftOf="@+id/rightMenuBtn"
+            android:layout_toLeftOf="@+id/rightCornerLay"
             android:paddingLeft="@dimen/margin_10"
             android:paddingRight="@dimen/margin_10"
             android:gravity="center_vertical"
@@ -206,7 +206,7 @@
         android:layout_width="@dimen/view_height_40"
         android:layout_height="@dimen/view_height_44"
         android:background="@drawable/green_with_corner_drawable"
-        android:layout_toLeftOf="@+id/inboxLay"
+        android:layout_toLeftOf="@+id/rightCornerLay"
         android:padding="@dimen/margin_short_6"
         android:visibility="gone"
         >
@@ -222,84 +222,92 @@
 
 
 
-    <RelativeLayout
-        android:id="@+id/inboxLay"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/view_height_44"
-        android:layout_toLeftOf="@+id/rightMenuBtn"
-        android:background="@drawable/green_with_corner_drawable"
-        android:visibility="gone"
 
-        >
-
-        <ImageView
-            android:id="@+id/inboxIV"
-            android:layout_width="@dimen/view_height_32"
-            android:layout_height="@dimen/margin_22"
-            android:src="@drawable/notifications_tab"
-            android:layout_marginTop="@dimen/margin_short_5"
-            android:layout_marginBottom="@dimen/margin_short_5"
-            android:layout_marginRight="@dimen/margin_short_3"
-            android:layout_centerVertical="true"
-
-            />
-
-
-        <TextView
-            android:id="@+id/notiBadgeView"
+        <LinearLayout
+            android:id="@+id/rightCornerLay"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="@dimen/text_size_11"
-            android:padding="@dimen/margin_short_1"
-            android:layout_marginLeft="@dimen/margin_20"
-            android:textColor="@color/whiteee"
-            android:gravity="center"
-            android:background="@drawable/circuler_textview_phone"
-            android:layout_marginTop="@dimen/margin_short_4"
-
-            />
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            >
 
 
+            <RelativeLayout
+                android:id="@+id/rightMenuBtn"
+                android:layout_width="@dimen/view_height_40"
+                android:layout_height="@dimen/view_height_44"
+                android:gravity="center_horizontal"
+                android:background="@drawable/green_with_corner_drawable"
+
+                >
+
+                <com.constants.LoadingSpinImgView
+                    android:id="@+id/loadingSpinEldIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:padding="@dimen/margin_short_6"
+                    />
+
+                <TextView
+                    android:id="@+id/refreshTitleTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/refresh"
+                    android:textColor="@color/whiteee"
+                    android:textSize="@dimen/text_size_8"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="gone"
+                    />
 
 
-    </RelativeLayout>
+            </RelativeLayout>
 
 
-    <RelativeLayout
-        android:id="@+id/rightMenuBtn"
-        android:layout_width="@dimen/view_height_40"
-        android:layout_height="@dimen/view_height_44"
-        android:gravity="center_horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/green_with_corner_drawable"
+            <RelativeLayout
+                android:id="@+id/otherOptionBtn"
+                android:layout_width="@dimen/view_height_40"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/green_with_corner_drawable"
+                android:visibility="gone"
+                >
 
-        >
-
-        <com.constants.LoadingSpinImgView
-            android:id="@+id/loadingSpinEldIV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:padding="@dimen/margin_short_6"
-            />
-
-        <TextView
-            android:id="@+id/refreshTitleTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/refresh"
-            android:textColor="@color/whiteee"
-            android:textSize="@dimen/text_size_8"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:visibility="gone"
-            />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/three_dot"
+                    android:padding="@dimen/margin_13"
+                    />
 
 
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/otherOptionBadgeView"
+                    android:layout_width="@dimen/margin_short_9"
+                    android:layout_height="@dimen/margin_short_9"
+                    android:layout_marginLeft="@dimen/margin_20"
+                    android:textColor="@color/whiteee"
+                    android:background="@drawable/error"
+                    android:layout_marginTop="@dimen/margin_short_8"
+                    android:visibility="gone"
+                    />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+
+
+
 
 
     <TextView

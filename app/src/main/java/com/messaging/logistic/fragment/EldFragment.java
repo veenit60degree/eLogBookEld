@@ -62,6 +62,7 @@ import com.constants.VolleyRequestWithoutRetry;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.DriverLocationDialog;
 import com.custom.dialogs.NotificationNewsDialog;
+import com.custom.dialogs.OtherOptionsDialog;
 import com.custom.dialogs.RemainingTimeDialog;
 import com.custom.dialogs.ShareDriverLogDialog;
 import com.custom.dialogs.ShippingDocDialog;
@@ -133,9 +134,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     RelativeLayout StatusMainView, refreshPageBtn;
     LinearLayout DriverLay, trailorLayout, truckLay, remainingLay, usedHourLay, shippingLay, odometerLay,  eldNewBottomLay, eldChildSubLay;
-    ImageView editTrailorIV, editTruckIV, eldMenuBtn, inboxImageView, eldMenuErrorImgVw, certifyLogErrorImgVw;
+    ImageView editTrailorIV, editTruckIV, eldMenuBtn, eldMenuErrorImgVw, certifyLogErrorImgVw;
     LoadingSpinImgView loadingSpinEldIV;
-    RelativeLayout OnDutyBtn, DrivingBtn, OffDutyBtn, SleeperBtn, eldMenuLay, dayNightLay, inboxLay, eldHomeDriverUiLay, settingsMenuBtn;
+    RelativeLayout OnDutyBtn, DrivingBtn, OffDutyBtn, SleeperBtn, eldMenuLay, dayNightLay, eldHomeDriverUiLay, settingsMenuBtn, otherOptionBtn;
     ImageView calendarBtn, coDriverImgView, connectionStatusImgView;
     Button sendReportBtn, yardMoveBtn, personalUseBtn;
     RelativeLayout certifyLogBtn;
@@ -143,18 +144,18 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     int DRIVER_JOB_STATUS = 1, SWITCH_VIEW = 1, oldStatusView = 0, DriverType = 0;
     TextView dateTv, nameTv, jobTypeTxtVw, perDayTxtVw, jobTimeTxtVw, jobTimeRemngTxtVw, EldTitleTV,
             timeRemainingTxtVw, invisibleTxtVw, viewHistoryBtn, summaryBtn;
-    TextView tractorTv, trailorTv, coDriverTv, notiBadgeView;
+    TextView tractorTv, trailorTv, coDriverTv, otherOptionBadgeView;
     TextView onDutyViolationTV, drivingViolationTV, sleeperViolationTV, offDutyViolationTV;
     TextView onDutyTimeTxtVw, drivingTimeTxtVw, sleeperTimeTxtVw, offDutyTimeTxtVw;
     TextView onDutyTxtVw, drivingTxtVw, sleeperTxtVw, offDutyTxtVw, excpnEnabledTxtVw;
     TextView DriverComNameTV, coDriverComNameTV, remainingTimeTopTV, refreshTitleTV;
-    TextView asPerShiftOnDutyTV, asPerShiftDrivingTV, asPerDateSleepTV, asPerDateOffDutyTV;
+    TextView asPerShiftOnDutyTV, asPerShiftDrivingTV, asPerDateSleepTV, asPerDateOffDutyTV, malfunctionTV;
 
     boolean IsRefreshedClick = false, IsAOBRDAutomatic = false, IsAOBRD = false, isNewDateStart = true, isYardBtnClick = false;
     boolean isFirst = true, isViolation = false, isCertifyLog = false, IsSaveOperationInProgress = false, isDrivingCalled = false, IsDOT = false;
     boolean IsAddressUpdate = false;
     public static boolean IsOdometerReading = false, IsPopupDismissed = false;
-    Animation emptyTrailerNoAnim, OdometerFaceView, exceptionFaceView, connectionStatusAnimation;
+    Animation emptyTrailerNoAnim, OdometerFaceView, exceptionFaceView, connectionStatusAnimation, editLogAnimation;
     String strCurrentDate = "", DRIVER_ID = "0", DeviceId = "", LoginTruckChange = "true";
     String SelectedDate = "", CompanytimeZone = "", UtcTimeZone = "", CountryCycle = "", VIN_NUMBER = "";
     String isPersonalOld = "false", Reason = "", TrailorNumber = "", MainDriverName = "", CoDriverName = "";
@@ -181,6 +182,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     DriverLocationDialog driverLocationDialog;
     TimeZoneDialog timeZoneDialog;
     RemainingTimeDialog remainingDialog;
+    OtherOptionsDialog otherOptionsDialog;
 
     Slidingmenufunctions slideMenu;
     MainDriverEldPref MainDriverPref;
@@ -444,10 +446,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         SleeperBtn = (RelativeLayout) view.findViewById(R.id.sleeperDutyLay);
 
         eldMenuLay = (RelativeLayout) view.findViewById(R.id.eldMenuLay);
-        inboxLay = (RelativeLayout) view.findViewById(R.id.inboxLay);
         eldHomeDriverUiLay = (RelativeLayout) view.findViewById(R.id.eldHomeDriverUiLay);
         dayNightLay = (RelativeLayout) view.findViewById(R.id.dayNightLay);
         settingsMenuBtn = (RelativeLayout)view.findViewById(R.id.settingsMenuBtn);
+        otherOptionBtn = (RelativeLayout)view.findViewById(R.id.otherOptionBtn);
 
         shippingLay = (LinearLayout) view.findViewById(R.id.shippingLay);
         odometerLay = (LinearLayout) view.findViewById(R.id.odometerLay);
@@ -459,7 +461,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         editTrailorIV = (ImageView) view.findViewById(R.id.editTrailorIV);
         editTruckIV = (ImageView) view.findViewById(R.id.editTruckIV);
         eldMenuBtn = (ImageView) view.findViewById(R.id.eldMenuBtn);
-        inboxImageView = (ImageView) view.findViewById(R.id.inboxIV);
         connectionStatusImgView = (ImageView)view.findViewById(R.id.connectionStatusImgView);
         eldMenuErrorImgVw = (ImageView) view.findViewById(R.id.eldMenuErrorImgVw);
         certifyLogErrorImgVw= (ImageView) view.findViewById(R.id.certifyLogErrorImgVw);
@@ -492,6 +493,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         OdometerFaceView = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
         exceptionFaceView = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
         connectionStatusAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+        editLogAnimation          = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
 
         InitilizeTextView(view);
         constants.IS_ELD_ON_CREATE = true;
@@ -499,6 +501,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         OdometerFaceView.setDuration(1500);
         exceptionFaceView.setDuration(1500);
         connectionStatusAnimation.setDuration(1500);
+        editLogAnimation.setDuration(1500);
 
         truckLay.setOnClickListener(this);
         trailorLayout.setOnClickListener(this);
@@ -517,7 +520,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
        // resetTimerBtn.setOnClickListener(this);
         refreshLogBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
-        inboxLay.setOnClickListener(this);
         shippingLay.setOnClickListener(this);
         odometerLay.setOnClickListener(this);
         summaryBtn.setOnClickListener(this);
@@ -525,11 +527,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         dayNightLay.setOnClickListener(this);
         settingsMenuBtn.setOnClickListener(this);
         connectionStatusImgView.setOnClickListener(this);
+        otherOptionBtn.setOnClickListener(this);
+        malfunctionTV.setOnClickListener(this);
 
         dotSwitchButton.setChecked(false);
         dotSwitchButton.setVisibility(View.VISIBLE);
         dayNightLay.setVisibility(View.GONE);
-        inboxLay.setVisibility(View.VISIBLE);
+        otherOptionBtn.setVisibility(View.VISIBLE);
 
         dotSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -561,6 +565,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             eldHomeDriverUiLay.setBackgroundColor(getResources().getColor(R.color.shadow));
         }*/
 
+        malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
         settingsMenuBtn.setVisibility(View.VISIBLE);
         titleDesc = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.certify_previous_days_log) + " </html></font>";
         okText = "<font color='#1A3561'><b>" + getResources().getString(R.string.ok) + "</b></font>";
@@ -717,6 +722,25 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             }
         });
 
+        editLogAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(sharedPref.isMalfunction(getActivity()) || sharedPref.isDiagnostic(getActivity())) {
+                    malfunctionTV.startAnimation(editLogAnimation);
+                }else {
+                    editLogAnimation.cancel();
+                    malfunctionTV.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
 
     }
 
@@ -756,7 +780,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         tractorTv               = (TextView) view.findViewById(R.id.tractorTv);
         trailorTv               = (TextView) view.findViewById(R.id.trailorTv);
         coDriverTv              = (TextView) view.findViewById(R.id.coDriverTv);
-        notiBadgeView           = (TextView) view.findViewById(R.id.notiBadgeView);
+        otherOptionBadgeView           = (TextView) view.findViewById(R.id.otherOptionBadgeView);
         invisibleTxtVw          = (TextView) view.findViewById(R.id.invisibleTxtVw);
 
         DriverComNameTV         = (TextView) view.findViewById(R.id.DriverComNameTV);
@@ -766,6 +790,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         asPerShiftDrivingTV       = (TextView) view.findViewById(R.id.asPerShiftDrivingTV);
         asPerDateSleepTV         = (TextView) view.findViewById(R.id.asPerDateSleepTV);
         asPerDateOffDutyTV       = (TextView) view.findViewById(R.id.asPerDateOffDutyTV);
+        malfunctionTV            = (TextView) view.findViewById(R.id.malfunctionTV);
 
         refreshTitleTV.setVisibility(View.VISIBLE);
     }
@@ -1318,33 +1343,38 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    void CheckPendingNotifications(int JobStatus){
+    boolean isPendingNotifications(int JobStatus){
         int pendingNotifications = constants.getPendingNotifications(DriverType, notificationPref, coNotificationPref, getActivity());
-
-        if(pendingNotifications > 0){
-
-            switch (JobStatus){
-
-                case DRIVING :
-                case ON_DUTY:
-                    notiBadgeView.setText("" + pendingNotifications);
-                    notiBadgeView.setVisibility(View.VISIBLE);
-                    break;
-
-
-                default:
-                    notiBadgeView.setVisibility(View.GONE);
-                    break;
-
-
-            }
-
-        }else {
-            notiBadgeView.setVisibility(View.GONE);
+        boolean isPending = false;
+        if(pendingNotifications > 0 && (JobStatus == DRIVING || JobStatus == ON_DUTY)){
+            isPending = true;
         }
-
+        return isPending;
     }
 
+
+    void checkNotificationAlert(){
+        if(isPendingNotifications(DRIVER_JOB_STATUS)             ||
+                sharedPref.isSuggestedEdit(getActivity())        ||
+                sharedPref.isUnidentified(getActivity())         ||
+                sharedPref.isMalfunction(getActivity())          ||
+                sharedPref.isDiagnostic(getActivity())           ||
+                constants.CheckGpsStatus(getActivity()) == false ||
+                (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_ACTIVE && sharedPref.getObdStatus(getActivity()) != Constants.WIRED_ACTIVE )
+                ){
+            otherOptionBadgeView.setVisibility(View.VISIBLE);
+        }else{
+            otherOptionBadgeView.setVisibility(View.GONE);
+        }
+
+        if(sharedPref.isMalfunction(getActivity()) || sharedPref.isDiagnostic(getActivity())){
+            malfunctionTV.setVisibility(View.VISIBLE);
+            malfunctionTV.startAnimation(editLogAnimation);
+        }else{
+            editLogAnimation.cancel();
+            malfunctionTV.setVisibility(View.GONE);
+        }
+    }
 
     private void GetSavePreferences() {
 
@@ -1732,6 +1762,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     void EnableJobViews(){
 
+        try{
+            if (otherOptionsDialog != null && otherOptionsDialog.isShowing())
+                 otherOptionsDialog.dismiss();
+        }catch (Exception e){}
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1817,11 +1852,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                 break;
 
-
-            case R.id.inboxLay:
-                IsMsgClick = true;
-                TabAct.host.setCurrentTab(3);
-                break;
 
             case R.id.eldMenuLay:
                 TabAct.sliderLay.performClick();
@@ -1969,6 +1999,24 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 TabAct.host.setCurrentTab(1);
                 break;
 
+
+            case R.id.otherOptionBtn:
+                try {
+                    if (otherOptionsDialog != null && otherOptionsDialog.isShowing()) {
+                        otherOptionsDialog.dismiss();
+                    }
+                    otherOptionsDialog = new OtherOptionsDialog(getActivity(), isPendingNotifications(DRIVER_JOB_STATUS), constants.CheckGpsStatus(getActivity()));
+                    otherOptionsDialog.show();
+                } catch (final IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            case R.id.malfunctionTV:
+                TabAct.host.setCurrentTab(12);
+                break;
 
             case R.id.connectionStatusImgView:
                 setObdStatus(true);
@@ -4164,7 +4212,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
             }
             // Show Pending Notifications badge count on view
-            CheckPendingNotifications(DRIVER_JOB_STATUS);
+            checkNotificationAlert();
 
         }
     }
@@ -5086,42 +5134,43 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             if (savedDate != null)
                                 sharedPref.setSavedDateTime(savedDate, getActivity());
 
-                            JSONArray resultArray = new JSONArray(obj.getString("Data"));
+                            if (!obj.isNull("Data")) {
+                                JSONArray resultArray = new JSONArray(obj.getString("Data"));
 
-                            if (resultArray.length() > 0) {
+                                if (resultArray.length() > 0) {
 
-                                if(isSingleDriver) {
-                                    hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, resultArray);
-                                }else{
-                                    hMethods.DriverLogHelper(Integer.valueOf(MainDriverId), dbHelper, resultArray);
+                                    if (isSingleDriver) {
+                                        hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, resultArray);
+                                    } else {
+                                        hMethods.DriverLogHelper(Integer.valueOf(MainDriverId), dbHelper, resultArray);
+                                    }
+
+                                    JSONObject lastObj = hMethods.GetLastJsonFromArray(resultArray);
+                                    if (!lastObj.isNull(ConstantsKeys.IsAdverseException)) {
+                                        sharedPref.setAdverseExcptn(lastObj.getBoolean(ConstantsKeys.IsAdverseException), getActivity());
+                                    }
+
+
+                                    if (!lastObj.isNull(ConstantsKeys.IsShortHaulException)) {
+                                        sharedPref.set16hrHaulExcptn(lastObj.getBoolean(ConstantsKeys.IsShortHaulException), getActivity());
+                                    }
+
+                                    if (DRIVER_ID.equals(MainDriverId)) {
+                                        CalculateTimeInOffLine(false, false);
+                                    }
+
+
+                                } else {
+
+                                    DRIVER_JOB_STATUS = 1;
+                                    isPersonal = "false";
+                                    clearCalculationsView();
+
+                                    initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
+                                            usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
+                                    SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
                                 }
-
-                                JSONObject lastObj = hMethods.GetLastJsonFromArray(resultArray);
-                                if(!lastObj.isNull(ConstantsKeys.IsAdverseException)){
-                                    sharedPref.setAdverseExcptn(lastObj.getBoolean(ConstantsKeys.IsAdverseException), getActivity());
-                                }
-
-
-                                if(!lastObj.isNull(ConstantsKeys.IsShortHaulException)){
-                                    sharedPref.set16hrHaulExcptn(lastObj.getBoolean(ConstantsKeys.IsShortHaulException), getActivity());
-                                }
-
-                                if(DRIVER_ID.equals(MainDriverId)) {
-                                    CalculateTimeInOffLine(false, false);
-                                }
-
-
-                            } else {
-
-                                DRIVER_JOB_STATUS = 1;
-                                isPersonal = "false";
-                                clearCalculationsView();
-
-                                initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
-                                        usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
-                                SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
                             }
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

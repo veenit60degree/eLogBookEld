@@ -95,6 +95,7 @@
     <color name="actionbar_bg">#000000</color>    <!--2E2E2E-->
     <color name="pink">#FF4380</color>
 
+    <color name="gray_other_feature">#A09E9F</color>
     <color name="greyText">#565656</color>
     <color name="grey_line_list">#CAC8CD</color>
     <color name="gray_edit_log">#F6F5F5</color>

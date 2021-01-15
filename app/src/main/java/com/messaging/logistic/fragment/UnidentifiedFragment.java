@@ -521,20 +521,23 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         }
 
         try{
-            //totalRecordsTV.setText("Total Records - " + );
-            if(unIdentifiedRecordList.size() > 0) {
-                EldTitleTV.setText(getResources().getString(R.string.unIdentified_records) + " (" + unIdentifiedRecordList.size() + ")");
-            }else{
-                EldTitleTV.setText(getResources().getString(R.string.unIdentified_records) + " (" + unIdentifiedRecordList.size() + ")");
-            }
 
             if(unIdentifiedRecordList.size() > 0) {
                 noDataEldTV.setVisibility(View.GONE);
                 unIdentifiedTopLay.setVisibility(View.VISIBLE);
+
             }else {
                 noDataEldTV.setVisibility(View.VISIBLE);
                 unIdentifiedTopLay.setVisibility(View.GONE);
+
+                sharedPref.setAlertSettings(false,
+                        sharedPref.isMalfunction(getActivity()),
+                        sharedPref.isDiagnostic(getActivity()),
+                        sharedPref.isSuggestedEdit(getActivity()), getActivity());
+
             }
+            EldTitleTV.setText(getResources().getString(R.string.unIdentified_records) + " (" + unIdentifiedRecordList.size() + ")");
+
         }catch (Exception e){
             e.printStackTrace();
         }

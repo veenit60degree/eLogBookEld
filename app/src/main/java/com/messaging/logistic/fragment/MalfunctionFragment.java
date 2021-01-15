@@ -421,6 +421,10 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
             noDataEldTV.setVisibility(View.GONE);
         }else{
             noDataEldTV.setVisibility(View.VISIBLE);
+            sharedPref.setAlertSettings(sharedPref.isUnidentified(getActivity()),
+                    false,
+                    false,
+                    sharedPref.isSuggestedEdit(getActivity()), getActivity());
         }
 
         try {

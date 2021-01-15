@@ -128,6 +128,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
                 if(isSuggestedEdit){
                     Intent i = new Intent(TabAct.this, EditedLogActivity.class);
+                    i.putExtra(ConstantsKeys.suggested_data, "");
                     startActivity(i);
 
                 }

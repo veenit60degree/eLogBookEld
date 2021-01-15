@@ -42,6 +42,7 @@ import com.models.EldDataModelNew;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
 import com.models.NotificationHistoryModel;
+import com.models.OtherOptionsModel;
 import com.models.PrePostModel;
 import com.models.RecapSignModel;
 import com.models.UnIdentifiedRecordModel;
@@ -157,6 +158,13 @@ public class Constants {
     public static final int WIFI_ACTIVE      = 1003;
     public static final int WIFI_INACTIVE    = 1004;
     public static final int NO_CONNECTION    = 1005;
+
+    public static final int NOTIFICATION      = 0;
+    public static final int GPS               = 1;
+    public static final int MALFUNCTION       = 2;
+    public static final int UNIDENTIFIED      = 3;
+    public static final int SUGGESTED_LOGS    = 4;
+    public static final int WIFI              = 5;
 
 
     public static String TruckIgnitionStatus = "TruckIgnitionStatus";
@@ -2357,7 +2365,18 @@ public class Constants {
     }
 
 
+    public List<OtherOptionsModel> getOtherOptionsList(Context context){
+        List<OtherOptionsModel> optionsList = new ArrayList<>();
+        int status = 1;
+        optionsList.add(new OtherOptionsModel(R.drawable.notifications_other, status, context.getResources().getString(R.string.notification)));
+        optionsList.add(new OtherOptionsModel(R.drawable.gps_other, status, context.getResources().getString(R.string.gps)));
+        optionsList.add(new OtherOptionsModel(R.drawable.malfunction_other, status, context.getResources().getString(R.string.malfunction)));
+        optionsList.add(new OtherOptionsModel(R.drawable.unidentified_other, status, context.getResources().getString(R.string.unIdentified_records)));
+        optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, status, context.getResources().getString(R.string.suggested_logs)));
+        optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, status, context.getResources().getString(R.string.obd_wifi)));
 
+        return optionsList;
+    }
 
 
     public static boolean isPlayStoreExist(Context context){

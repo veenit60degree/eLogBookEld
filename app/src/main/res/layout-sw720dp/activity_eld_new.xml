@@ -1042,13 +1042,14 @@
 
                 <ImageView
                     android:id="@+id/certifyLogErrorImgVw"
-                    android:layout_width="@dimen/view_height_35"
-                    android:layout_height="@dimen/view_height_35"
+                    android:layout_width="@dimen/view_height_30"
+                    android:layout_height="@dimen/view_height_30"
                     android:src="@drawable/error"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="@dimen/view_height_34"
                     android:layout_marginTop="@dimen/margin_20"
-                   android:visibility="gone"
+                    android:visibility="gone"
+
                     />
 
 

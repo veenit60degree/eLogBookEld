@@ -6,6 +6,20 @@
     >
 
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+
+                <LinearLayout
+                    android:id="@+id/editedLogMainLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+
+                    >
+
         <WebView
             android:id="@+id/previewLogWebView"
             android:layout_width="match_parent"
@@ -13,13 +27,16 @@
             android:minWidth="@dimen/view_height_800"
             android:minHeight="@dimen/view_height_115"
             android:fillViewport="true"
-
+            android:layout_marginLeft="@dimen/margin_10"
+            android:layout_marginRight="@dimen/margin_10"
             />
 
         <include
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/item_edited_log"
+            android:layout_marginLeft="@dimen/margin_20"
+            android:layout_marginRight="@dimen/margin_20"
             />
 
         <ListView
@@ -27,12 +44,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/margin_short_9"
+            android:layout_marginLeft="@dimen/margin_20"
+            android:layout_marginRight="@dimen/margin_20"
             android:scrollbars="none"
             android:paddingBottom="@dimen/view_height_75"
             android:clipToPadding="false"
             />
 
-
+                </LinearLayout>
+        </ScrollView>
 
 
 </LinearLayout>

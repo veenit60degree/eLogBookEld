@@ -1136,17 +1136,41 @@ public class SharedPref {
     }
 
 
+    // Get Unidentified occure status  -------------------
+    public static boolean isUnidentified( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsUnidentified, false);
+    }
+
+    // Get Malfunction occur status -------------------
+    public static boolean isMalfunction( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsMalfunction, false);
+    }
+
+    // Get Diagnostic occur status -------------------
+    public static boolean isDiagnostic( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsDiagnostic, false);
+    }
+
     // Get Suggested Edit status  -------------------
     public static boolean isSuggestedEdit( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getBoolean(ConstantsKeys.SuggestedEdit, false);
     }
 
-    // Save Suggested Edit status to confirm edit log -------------------
-    public static void setSuggestedEditStatus( boolean value, Context context) {
+
+    // Save alert status settings -------------------
+    public static void setAlertSettings( boolean IsUnidentified, boolean IsMalfunction, boolean IsDiagnostic,
+                                            boolean SuggestedEdit, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(ConstantsKeys.SuggestedEdit, value);
+        editor.putBoolean(ConstantsKeys.IsUnidentified, IsUnidentified);
+        editor.putBoolean(ConstantsKeys.IsMalfunction, IsMalfunction);
+        editor.putBoolean(ConstantsKeys.IsDiagnostic, IsDiagnostic);
+        editor.putBoolean(ConstantsKeys.SuggestedEdit, SuggestedEdit);
+
         editor.commit();
     }
 

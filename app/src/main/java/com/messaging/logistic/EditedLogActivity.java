@@ -2,6 +2,7 @@ package com.messaging.logistic;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -107,7 +108,7 @@ public class EditedLogActivity extends AppCompatActivity implements View.OnClick
 
     String AcceptedSuggestedRecord      = "1";
     String RejectSuggestedRecord        = "4";
-
+    String editedData                   = "";
 
     ProgressDialog progressDialog;
 
@@ -149,6 +150,8 @@ public class EditedLogActivity extends AppCompatActivity implements View.OnClick
         progressDialog              = new ProgressDialog(this);
         progressDialog.setMessage("Loading ...");
 
+        Intent i = getIntent();
+        editedData = i.getStringExtra(ConstantsKeys.suggested_data);
 
         rightMenuBtn        = (RelativeLayout) findViewById(R.id.rightMenuBtn);
         eldMenuLay          = (RelativeLayout)findViewById(R.id.eldMenuLay);
@@ -187,13 +190,16 @@ public class EditedLogActivity extends AppCompatActivity implements View.OnClick
         CheckSelectedDateTime(currentDateTime, LogDate);
 
 
-        if(globally.isConnected(this)){
-            GetSuggestedRecords(DriverId, DeviceId);
-        }else{
-            setPagetAdapter();
-            globally.EldScreenToast(confirmCertifyBtn, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+        if(editedData.length() > 0){
+            parseEditedData(editedData);
+        }else {
+            if (globally.isConnected(this)) {
+                GetSuggestedRecords(DriverId, DeviceId);
+            } else {
+                setPagetAdapter();
+                globally.EldScreenToast(confirmCertifyBtn, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            }
         }
-
         editedLogViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -509,10 +515,11 @@ public class EditedLogActivity extends AppCompatActivity implements View.OnClick
         if(progressDialog.isShowing() == false)
             progressDialog.show();
 
+        String selectedDate= selectedDateTime.toString().split("T")[0];
         params = new HashMap<String, String>();
         params.put("DriverId", DriverId);
         params.put("DeviceId", DeviceId );
-        params.put("CurrentDate", globally.GetCurrentDeviceDateDefault());
+        params.put("CurrentDate", selectedDate);
         params.put("StatusId", StatusId );
 
         claimLogRequest.executeRequest(Request.Method.POST, APIs.CHANGE_STATUS_SUGGESTED_EDIT , params, flag,
@@ -548,56 +555,8 @@ public class EditedLogActivity extends AppCompatActivity implements View.OnClick
                     case GetRecordFlag:
 
                         try {
-                            editedLogList = new ArrayList<>();
-                            editDataArray = new JSONArray(obj.getString(ConstantsKeys.Data));
-                            for(int dataCount = editDataArray.length()-1 ; dataCount >= 0 ; dataCount--){
-                                JSONObject dataObj = (JSONObject)editDataArray.get(dataCount);
-
-                                String selectedDate = dataObj.getString(ConstantsKeys.DriverLogDate);
-                                editedLogArray = new JSONArray(dataObj.getString(ConstantsKeys.SuggestedEditModel));
-                                LogDate = globally.ConvertDateFormatMMddyyyy(selectedDate);
-
-
-                                for(int i = 0 ; i < editedLogArray.length() ; i++){
-                                    JSONObject editedObj = (JSONObject)editedLogArray.get(i);
-                                    EldDriverLogModel editModel = new EldDriverLogModel(
-
-                                            editedObj.getInt(ConstantsKeys.DriverStatusId),
-
-                                            editedObj.getString(ConstantsKeys.StartDateTime),
-                                            editedObj.getString(ConstantsKeys.EndDateTime),
-                                            editedObj.getString(ConstantsKeys.TotalHours),
-                                            editedObj.getString(ConstantsKeys.CurrentCycleId),
-
-                                            editedObj.getBoolean(ConstantsKeys.IsViolation),
-
-                                            editedObj.getString(ConstantsKeys.UTCStartDateTime),
-                                            editedObj.getString(ConstantsKeys.UTCEndDateTime),
-                                            "",
-                                            "",
-                                            "",
-
-                                            editedObj.getBoolean(ConstantsKeys.Personal),
-                                            editedObj.getBoolean(ConstantsKeys.IsEdited),
-                                            false
-
-                                            );
-
-                                    editedLogList.add(editModel);
-
-                                }
-
-                                CheckSelectedDateTime(globally.getDateTimeObj(selectedDate, false), LogDate);
-                                setPagetAdapter();
-
-                                break;
-                            }
-
-
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        setPagetAdapter();
+                            parseEditedData(obj.getString(ConstantsKeys.Data));
+                        }catch (Exception e){e.printStackTrace();}
 
                         break;
 
@@ -606,28 +565,18 @@ public class EditedLogActivity extends AppCompatActivity implements View.OnClick
                         globally.EldScreenToast(EldFragment.refreshLogBtn, message, getResources().getColor(R.color.color_eld_theme));
                         EldFragment.refreshLogBtn.performClick();
 
-                        if(editDataArray.length() == 1){
-                           sharedPref.setSuggestedEditStatus(false, EditedLogActivity.this);
-                        }
-
-                        try {
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(getApplicationContext() != null)
-                                        finish();
-
-                                }
-                            }, 1000);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
+                        finishActivityWithViewUpdate();
 
                         break;
 
                     case RejectRecordFlag:
+                        if(message.equals("Record updated successfully")){
+                            message = "Record rejected successfully";
+                        }
                         globally.EldScreenToast(confirmCertifyBtn, message, getResources().getColor(R.color.color_eld_theme));
+
+                        finishActivityWithViewUpdate();
+
                         break;
 
                 }
@@ -680,7 +629,7 @@ public class EditedLogActivity extends AppCompatActivity implements View.OnClick
     AlertDialogEld.PositiveButtonCallback positiveCallBack = new AlertDialogEld.PositiveButtonCallback() {
         @Override
         public void getPositiveClick(int flag) {
-            ClaimSuggestedRecords(DriverId, DeviceId, RejectSuggestedRecord, CertifyRecordFlag);
+            ClaimSuggestedRecords(DriverId, DeviceId, RejectSuggestedRecord, RejectRecordFlag);
         }
     };
 
@@ -690,6 +639,91 @@ public class EditedLogActivity extends AppCompatActivity implements View.OnClick
             Log.d("negativeCallBack", "negativeCallBack: " + flag);
         }
     };
+
+
+    void parseEditedData(String editData){
+        try {
+            editedLogList = new ArrayList<>();
+            editDataArray = new JSONArray(editData);
+
+            for(int dataCount = editDataArray.length()-1 ; dataCount >= 0 ; dataCount--){
+                JSONObject dataObj = (JSONObject)editDataArray.get(dataCount);
+
+                String selectedDate = dataObj.getString(ConstantsKeys.DriverLogDate);
+                editedLogArray = new JSONArray(dataObj.getString(ConstantsKeys.SuggestedEditModel));
+                LogDate = globally.ConvertDateFormatMMddyyyy(selectedDate);
+
+
+                for(int i = 0 ; i < editedLogArray.length() ; i++){
+                    JSONObject editedObj = (JSONObject)editedLogArray.get(i);
+
+                    EldDriverLogModel editModel = new EldDriverLogModel(
+
+                            editedObj.getInt(ConstantsKeys.DriverStatusId),
+
+                            editedObj.getString(ConstantsKeys.StartDateTime),
+                            editedObj.getString(ConstantsKeys.EndDateTime),
+                            editedObj.getString(ConstantsKeys.TotalHours),
+                            editedObj.getString(ConstantsKeys.CurrentCycleId),
+
+                            editedObj.getBoolean(ConstantsKeys.IsViolation),
+
+                            editedObj.getString(ConstantsKeys.UTCStartDateTime),
+                            editedObj.getString(ConstantsKeys.UTCEndDateTime),
+                            "",
+                            "",
+                            "",
+
+                            editedObj.getBoolean(ConstantsKeys.Personal),
+                            editedObj.getBoolean(ConstantsKeys.IsEdited),
+                            false
+
+                    );
+
+                    editedLogList.add(editModel);
+
+                }
+
+                CheckSelectedDateTime(globally.getDateTimeObj(selectedDate, false), LogDate);
+                setPagetAdapter();
+
+                break;
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        setPagetAdapter();
+
+    }
+
+
+    void finishActivityWithViewUpdate(){
+
+        if(editDataArray.length() == 1){
+           // make is suggested value false if edit logs for single day
+            sharedPref.setAlertSettings(sharedPref.isUnidentified(getApplicationContext()),
+                    sharedPref.isMalfunction(getApplicationContext()),
+                    sharedPref.isDiagnostic(getApplicationContext()),
+                    false, getApplicationContext());
+
+
+        }
+
+        try {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(getApplicationContext() != null)
+                        finish();
+
+                }
+            }, 1000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
     void dateDescOnView(String date){

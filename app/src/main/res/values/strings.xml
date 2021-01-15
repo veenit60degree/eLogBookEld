@@ -504,10 +504,13 @@
     <string name="enable_adverse_exception">EnableAdverseException</string>
     <string name="enable_ShortHaul_exception">EnableShortHaulException</string>
 
+
     <string name="already_uploading">Please wait! Data saving in progress</string>
     <string name="already_refreshed">Data already refreshed. Please try after some time</string>
     <string name="wired_active">Wired tablet is active</string>
     <string name="wired_inactive">Wired tablet is not working</string>
+    <string name="wifi">WiFi</string>
+    <string name="obd_wifi">OBD WiFi</string>
     <string name="wifi_active">WIFI OBD is connected</string>
     <string name="wifi_inactive">WIFI OBD is not working</string>
     <string name="obd_data_connection_desc">Kindly connect with OBD via Wifi or Cable connection</string>
@@ -520,6 +523,10 @@
     <string name="UpdateAvailable">Update Available</string>
     <string name="play_store">Play Store.</string>
     <string name="app_settings">App Settings.</string>
+    <string name="suggested_logs">Suggested Logs</string>
+    <string name="no_suggested_logs">No suggested records</string>
+    <string name="gps_already_enabled">GPS already enabled</string>
+
 
     <string name="Day">Day</string>
     <string name="HoursWorked">Hr Worked</string>
@@ -559,6 +566,7 @@
     <string name="dot_mode">DOT MODE</string>
     <string name="data_malfunction">Data recording compliance malfunction detected</string>
     <string name="malfunction">Data Malfunction</string>
+    <string name="malfunction_diag_occur">Malfunction/Diagnostic occur</string>
     <string name="want_to_logout">Do you really want to logout ?</string>
     <string name="Confirmation">Confirmation</string>
     <string name="found_local_data">We found some local data in your App which need to save on server. Please try after some time</string>
@@ -606,6 +614,7 @@
     <string name="alert">Alert</string>
     <string name="als_alert">ALS Alert: </string>
     <string name="gps_alert">Please turn on your location services</string>
+    <string name="gps">GPS</string>
     <string name="screen_reset">Screen Reset</string>
     <string name="shipping_info_alert">Add shipping informations before driving</string>
 

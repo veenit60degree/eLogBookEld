@@ -161,7 +161,7 @@ public class SplashActivity extends Activity implements
                 return true;
             } else {
                // Log.v("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 4);
                 return false;
             }
         }else { //permission is automatically granted on sdk<23 upon installation
@@ -230,7 +230,7 @@ public class SplashActivity extends Activity implements
 
             } else {
               //  Log.v("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 4);
             }
         }else { //permission is automatically granted on sdk<23 upon installation
           //  Log.v("TAG","Permission is granted");
@@ -475,7 +475,7 @@ public class SplashActivity extends Activity implements
                 return true;
             } else {
                 Log.v("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 2);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 2);
                 return false;
             }
         }

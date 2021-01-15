@@ -2547,16 +2547,22 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         sharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
                                         sharedPref.setPersonalUse75Km(dataObj.getBoolean(ConstantsKeys.PersonalUse75Km), getApplicationContext());
 
-                                        boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
-                                        sharedPref.setSuggestedEditStatus(isSuggestedEdit, getApplicationContext());
+                                        if(dataObj.has(ConstantsKeys.SuggestedEdit)) {
+                                            boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
 
-                                        if(isSuggestedEdit && UILApplication.isActivityVisible()){
-                                            try {
-                                                Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
-                                                intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
-                                                LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
-                                            }catch (Exception e){
-                                                e.printStackTrace();
+                                            sharedPref.setAlertSettings(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
+                                                    dataObj.getBoolean(ConstantsKeys.IsMalfunction),
+                                                    dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
+                                                    isSuggestedEdit, getApplicationContext());
+
+                                            if (isSuggestedEdit && UILApplication.isActivityVisible()) {
+                                                try {
+                                                    Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                                                    intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
+                                                    LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
                                         }
                                     }catch (Exception e){

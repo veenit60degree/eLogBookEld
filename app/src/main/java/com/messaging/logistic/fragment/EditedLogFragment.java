@@ -92,14 +92,14 @@ public class EditedLogFragment extends Fragment {
                     int DividerHeigh = editedLogActivity.constants.intToPixel( getActivity(), editLogListView.getDividerHeight() );
                     int itemLayoutHeight = editedItemMainLay.getHeight();
                     int listSize     = EditedLogActivity.editedLogList.size() ;
-                    int DriverLogListHeight      = itemLayoutHeight + ((itemLayoutHeight + DividerHeigh ) * listSize);
+                    int DriverLogListHeight      = itemLayoutHeight + ((itemLayoutHeight + DividerHeigh ) * listSize) + 50;
                     editLogListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DriverLogListHeight ));
 
                     Log.d("ViewHeight", "DriverLogListHeight: " + DriverLogListHeight);
                 }catch (Exception e){}
 
             }
-        }, 500);
+        }, 200);
 
     }
 

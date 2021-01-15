@@ -799,8 +799,6 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
             case R.id.eldMenuLay:
                 getFragmentManager().popBackStack();
-               /* Intent i = new Intent(getActivity(), EditedLogActivity.class);
-                getActivity().startActivity(i);*/
 
                 break;
 
@@ -860,6 +858,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
             case R.id.malfunctionTV:
                 Intent editIntent = new Intent(getActivity(), EditedLogActivity.class);
+                editIntent.putExtra(ConstantsKeys.suggested_data, "");
                 startActivity(editIntent);
                 break;
 

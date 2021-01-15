@@ -398,7 +398,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 				return true;
 			} else {
 				Log.v("TAG", "Permission is revoked");
-				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 2);
+				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 2);
 				return false;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
@@ -654,7 +654,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 									sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
 									sharedPref.setRefreshDataTime("", getApplicationContext());
 									sharedPref.setCertifyAlertViewTime("", getApplicationContext());
-									sharedPref.setSuggestedEditStatus(false, getApplicationContext());
+									sharedPref.setAlertSettings(false, false, false, false, getApplicationContext());
 
 									new ParseLoginJsonData().execute();
 
