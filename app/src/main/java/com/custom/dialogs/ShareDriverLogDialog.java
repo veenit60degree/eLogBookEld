@@ -57,6 +57,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -300,6 +301,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             email = email.replaceAll(" ", ",");
             email = email.replaceAll(",,", ",");
             String[] EmailArray = email.split(",");
+            List<String> validEmailList = new ArrayList<>();
             boolean IsValidEmail = false;
             String EmailData = "";
             String MailCheck    = String.valueOf(checkboxEmail.isChecked());
@@ -308,12 +310,20 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             //
             for(int i = 0 ; i < EmailArray.length ; i++){
                 if(EmailArray[i].matches(emailPattern) || EmailArray[i].matches(emailPattern2)){
-                    IsValidEmail = true;
+                    //IsValidEmail = true;
+                    validEmailList.add("true");
                     EmailData = EmailData + "<u><font color='blue'>" + EmailArray[i].trim() +"</font></u> " ;
                 }else{
-                    IsValidEmail = false;
+                    //IsValidEmail = false;
+                    validEmailList.add("false");
                     EmailData = EmailData + "<font color='red'>" + EmailArray[i].trim() +"</font> " ;
                 }
+            }
+
+            if(validEmailList.toString().contains("false")){
+                IsValidEmail = false;
+            }else{
+                IsValidEmail = true;
             }
             amountEditText.setText(Html.fromHtml(EmailData));
             //Log.d("Date", "StartDate: " +StartDate + "   ---EndDate: " +EndDate );

@@ -48,14 +48,14 @@ public class TimeZoneDialog extends Dialog {
     Map<String, String> params;
     final int LogoutUser = 1;
     final int CheckConnection = 2;
-    boolean isTimeZoneValid,  isCurrentTimeBigger;
+    boolean isTimeZoneValid,  isCurrentTimeBigger, isTimeValid;
 
 
-    public TimeZoneDialog(Context context, boolean isvalidTimeZone) {
+    public TimeZoneDialog(Context context, boolean isvalidTimeZone, boolean isTimeValid) {
         super(context);
         this.mContext = context;
         isTimeZoneValid = isvalidTimeZone;
-
+        this.isTimeValid = isTimeValid;
     }
 
 
@@ -84,10 +84,18 @@ public class TimeZoneDialog extends Dialog {
         btnUpdateApp = (Button) findViewById(R.id.btnUpdateApp);
 
         isCurrentTimeBigger = global.isCurrentTimeBigger(getContext());
-        logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));    //"<html>  <u>Logout</u> </html>"
-        btnUpdateApp.setText("Adjust Time");
-        recordTitleTV.setText("Your mobile CURRENT TIME or TIME ZONE is inaccurate. Please correct it to use ALS app."); // or change it with your company time zone and try again
-        TitleTV.setText("Incorrect Time or Time Zone !");
+        logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
+        btnUpdateApp.setText(mContext.getResources().getString(R.string.AdjustTime));
+
+        if(isTimeZoneValid){
+            // if time zone is valid, means time is invalid
+            TitleTV.setText(mContext.getResources().getString(R.string.incorrect_time));
+            recordTitleTV.setText(mContext.getResources().getString(R.string.incorrect_time_desc));
+
+        }else {
+            TitleTV.setText(mContext.getResources().getString(R.string.incorrect_timezone));
+            recordTitleTV.setText(mContext.getResources().getString(R.string.incorrect_timezone_desc));
+        }
 
         btnUpdateApp.setOnClickListener(new ChangeTimeZoneListener());
 
@@ -158,6 +166,7 @@ public class TimeZoneDialog extends Dialog {
 
     //*================== Get Server Current Utc Time request ===================*//*
     void GetServerCurrentUtcTime(){
+        progressD.show();
         VolleyRequestWithoutRetry GetServerTimeRequest = new VolleyRequestWithoutRetry(mContext);
         Map<String, String> params = new HashMap<String, String>();
         GetServerTimeRequest.executeRequest(Request.Method.GET, APIs.CONNECTION_UTC_DATE, params, CheckConnection,

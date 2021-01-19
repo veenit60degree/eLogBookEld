@@ -67,8 +67,6 @@ public class RecapAdapter extends BaseAdapter {
     }
 
 
-
-
     @Override
     public int getItemViewType(int position) {
         return position;

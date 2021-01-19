@@ -84,6 +84,7 @@ import com.local.db.OdometerHelperMethod;
 import com.local.db.RecapViewMethod;
 import com.local.db.ShipmentHelperMethod;
 import com.local.db.SyncingMethod;
+import com.messaging.logistic.EditedLogActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
@@ -846,27 +847,24 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
         IsValidTime = Global.isCorrectTime(getActivity() );
+
         boolean isSavedTimeZoneCorrect = false;
         if(DeviceTimeZone.equalsIgnoreCase(DriverTimeZone) || offsetFromUTC == offSetFromServer){
             isSavedTimeZoneCorrect = true;
 
-            if(!isConnected){
+          /*  if(!isConnected){
                 boolean isCurrentTimeBigger = Global.isCurrentTimeBigger(getActivity());
                 if(isCurrentTimeBigger) {
                     IsValidTime = true;
                 }
-            }
+            }*/
         }
 
 
 
 
-
-
-        if ( !isSavedTimeZoneCorrect  ) {
-            showTimeZoneAlert(isConnected);
-        }else if(!IsValidTime){
-            showTimeZoneAlert(isConnected);
+        if ( !isSavedTimeZoneCorrect || !IsValidTime ) {
+            showTimeZoneAlert(isConnected, isSavedTimeZoneCorrect, IsValidTime);
         } else {
             if (timeZoneDialog != null && timeZoneDialog.isShowing()) {
                 timeZoneDialog.dismiss();
@@ -901,6 +899,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         loadOnCreateView(isConnected);
 
     }
+
 
 
     void setObdStatus(final boolean isToastShowing){
@@ -983,7 +982,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    void showTimeZoneAlert(boolean isConnected){
+    void showTimeZoneAlert(boolean isConnected, boolean isTimeZoneValid, boolean isTimeValid){
         if (DRIVER_ID.length() > 0) {
 
             if (sharedPref.GetNewLoginStatus(getActivity())) {
@@ -995,12 +994,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     timeZoneDialog.dismiss();
                 }
 
-                boolean isTimeZoneValid = false;
-                if ( DeviceTimeZone.equalsIgnoreCase(DriverTimeZone) || offsetFromUTC == offSetFromServer) {
-                    isTimeZoneValid = true;
-                }
-
-                timeZoneDialog = new TimeZoneDialog(getActivity(), isTimeZoneValid);
+                timeZoneDialog = new TimeZoneDialog(getActivity(), isTimeZoneValid, isTimeValid);
                 timeZoneDialog.show();
             } catch (final IllegalArgumentException e) {
                 e.printStackTrace();
@@ -1921,23 +1915,29 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             case R.id.yardMoveBtn:
 
                 if(sharedPref.IsYardMoveAllowed(getActivity())) {
-                    JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
-                    JSONObject lastItemJson = hMethods.GetLastJsonFromArray(driverLogArray);
 
-                    try {
-                        Log.d("IsYardMove", "IsYardMove: " + lastItemJson.getString(ConstantsKeys.YardMove));
-                        if (DRIVER_JOB_STATUS == ON_DUTY && lastItemJson.getString(ConstantsKeys.YardMove).equals("true")) {
-                            Global.EldScreenToast(OnDutyBtn, getResources().getString(R.string.yard_move_validation), getResources().getColor(R.color.colorVoilation));
-                        } else {
-                            isYardBtnClick = true;
-                            OnDutyBtnClick();
+                    if(constants.isDriverAllowedToChange(getActivity(), sharedPref.getObdStatus(getActivity()), obdUtil, Global)) {
+                        JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
+                        JSONObject lastItemJson = hMethods.GetLastJsonFromArray(driverLogArray);
+
+                        try {
+                            Log.d("IsYardMove", "IsYardMove: " + lastItemJson.getString(ConstantsKeys.YardMove));
+                            if (DRIVER_JOB_STATUS == ON_DUTY && lastItemJson.getString(ConstantsKeys.YardMove).equals("true")) {
+                                Global.EldScreenToast(OnDutyBtn, getResources().getString(R.string.yard_move_validation), getResources().getColor(R.color.colorVoilation));
+                            } else {
+                                isYardBtnClick = true;
+                                OnDutyBtnClick();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    }else{
+                        Global.EldScreenToast(OnDutyBtn, getString(R.string.statusNotChangedFromDriving), getResources().getColor(R.color.colorVoilation));
                     }
+
+
                 }else{
                     Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.yard_move_not_allowed), getResources().getColor(R.color.colorVoilation) );
-                   // Global.EldScreenToast(OnDutyBtn, getResources().getString(R.string.yard_move_not_allowed), getResources().getColor(R.color.colorVoilation));
                 }
 
 
@@ -1945,6 +1945,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
             case R.id.personalUseBtn:
+
                 if(sharedPref.IsPersonalAllowed(getActivity())) {
                     DateTime lastSaveUtcDate = Global.getDateTimeObj(sharedPref.getCurrentUTCTime(getActivity()), false);
                     DateTime currentUTCTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), true);
@@ -2055,8 +2056,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
             case R.id.onDutyLay:
-                isYardBtnClick = false;
-                OnDutyBtnClick();
+
+                if(constants.isDriverAllowedToChange(getActivity(), sharedPref.getObdStatus(getActivity()), obdUtil, Global)) {
+                    isYardBtnClick = false;
+                    OnDutyBtnClick();
+                }else{
+                    Global.EldScreenToast(OnDutyBtn, getString(R.string.statusNotChangedFromDriving), getResources().getColor(R.color.colorVoilation));
+                }
 
                 break;
 
@@ -2067,22 +2073,37 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
             case R.id.sleeperDutyLay:
-                SleeperBtnClick();
 
+                if(constants.isDriverAllowedToChange(getActivity(), sharedPref.getObdStatus(getActivity()), obdUtil, Global)) {
+                    SleeperBtnClick();
+                }else{
+                    Global.EldScreenToast(OnDutyBtn, getString(R.string.statusNotChangedFromDriving), getResources().getColor(R.color.colorVoilation));
+                }
                 break;
 
 
             case R.id.offDutyLay:
-                OffDutyBtnClick();
 
+                if(constants.isDriverAllowedToChange(getActivity(), sharedPref.getObdStatus(getActivity()), obdUtil, Global)) {
+                    OffDutyBtnClick();
+                }else{
+                    Global.EldScreenToast(OnDutyBtn, getString(R.string.statusNotChangedFromDriving), getResources().getColor(R.color.colorVoilation));
+                }
                 break;
 
 
 
             case R.id.refreshLogBtn:
-                //  RestartTimer();
-                IsRefreshedClick = false;
-                GetDriverLog18Days(DRIVER_ID, DeviceId, Global.GetCurrentUTCDate(), GetDriverLog18Days);
+                if(sharedPref.isSuggestedEdit(getActivity())){
+                    Toast.makeText(getActivity(), getString(R.string.other_suggested_log), Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(getActivity(), EditedLogActivity.class);
+                    i.putExtra(ConstantsKeys.suggested_data, "");
+                    startActivity(i);
+                }else {
+                    IsRefreshedClick = false;
+                    GetDriverLog18Days(DRIVER_ID, DeviceId, Global.GetCurrentUTCDate(), GetDriverLog18Days);
+                }
+
                 break;
 
 
@@ -4693,6 +4714,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     /*================== Get OBD Assigned Vehicles ===================*/
     void GetOBDAssignedVehicles(final String DriverId, final String DeviceId, final String CompanyId, final String VIN) {
 
+        if (sharedPref.GetNewLoginStatus(getActivity())) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         params = new HashMap<String, String>();
         params.put("DriverId", DriverId);
         params.put("DeviceId", DeviceId);
@@ -5705,6 +5729,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                 }
             } else {
+
+                progressBar.setVisibility(View.GONE);
                 EnableJobViews();
                 IsRefreshedClick = false;
                 loadingSpinEldIV.stopAnimation();

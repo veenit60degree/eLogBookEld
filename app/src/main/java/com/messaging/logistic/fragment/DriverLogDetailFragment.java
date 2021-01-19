@@ -136,7 +136,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
     public static Button saveSignatureBtn, editLogBtn, showHideRecapBtn;
     public static TextView invisibleRfreshBtn ;
-    ImageView eldMenuBtn, signImageView, nextDateBtn, previousDateBtn, loadingSpinEldIV, certifyRecordImgView, certifyErrorImgView;
+    ImageView eldMenuBtn, signImageView, nextDateBtn, previousDateBtn, loadingSpinEldIV, certifyErrorImgView;
     TextView EldTitleTV, certifyDateTV, certifyCycleTV;
     TextView certifyDriverNameTV, certifyCoDriverNameTV, certifyDriverIDTV, certifyCoDriverIDTV;
     TextView certifyDistanceTV, certifyCarrierTV, certifyVehicleTV, certifyTrailerTV, certifyMainOfficeTV,
@@ -148,7 +148,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
     LinearLayout certifyLogLay, logHistorylay, recapLayout, LogInfoLay, certifyLogItemLay,
             itemOdometerLay, itemShippingLay, certifyLocLay;
-    RelativeLayout rightMenuBtn, signLay, SignatureMainLay, eldMenuLay, recapItemLay, viewDetailMaiLay;
+    RelativeLayout rightMenuBtn, signLay, SignatureMainLay, eldMenuLay, recapItemLay, viewDetailMaiLay, certifyRecordsListLay;
 
     String LogDate = "", CurrentDate = "", CurrentDateDefault = "", DayName = "", MonthFullName = "", MonthShortName = "", DRIVER_ID = "";
     String CountryCycle = "",  CompanyId = "";
@@ -318,9 +318,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         previousDateBtn             = (ImageView)view.findViewById(R.id.previousDate);
         nextDateBtn                 = (ImageView)view.findViewById(R.id.nextDateBtn);
         loadingSpinEldIV            = (ImageView)view.findViewById(R.id.loadingSpinEldIV);
-        certifyRecordImgView        = (ImageView)view.findViewById(R.id.certifyRecordImgView);
         certifyErrorImgView         = (ImageView)view.findViewById(R.id.certifyErrorImgView);
 
+        certifyRecordsListLay       = (RelativeLayout)view.findViewById(R.id.certifyRecordsListLay);
         rightMenuBtn                = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         certifyLogLay               = (LinearLayout)view.findViewById(R.id.certifyLogLay);
         logHistorylay               = (LinearLayout)view.findViewById(R.id.logHistorylay);
@@ -475,7 +475,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 certifyErrorImgView.setVisibility(View.VISIBLE);
             }
 
-            certifyRecordImgView.setVisibility(View.VISIBLE);
+            certifyRecordsListLay.setVisibility(View.VISIBLE);
             certifyDateTV.setVisibility(View.GONE);
             certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length() ));
 
@@ -639,7 +639,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         previousDateBtn.setOnClickListener(this);
         nextDateBtn.setOnClickListener(this);
         rightMenuBtn.setOnClickListener(this);
-        certifyRecordImgView.setOnClickListener(this);
+        certifyRecordsListLay.setOnClickListener(this);
         invisibleRfreshBtn.setOnClickListener(this);
     }
 
@@ -1220,7 +1220,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                 break;
 
-            case R.id.certifyRecordImgView:
+            case R.id.certifyRecordsListLay:
                 openSignRecordDialog(true);
                 break;
 

@@ -59,6 +59,7 @@ public class OtherOptionsDialog extends Dialog {
     ProgressDialog progressDialog;
     String DriverId, DeviceId;
 
+
     public OtherOptionsDialog(@NonNull Context context, boolean isPendingNotification, boolean isGps) {
         super(context);
         this.isPendingNotification = isPendingNotification;
@@ -126,10 +127,10 @@ public class OtherOptionsDialog extends Dialog {
 
 
                     case 4:
-                        if (SharedPref.isSuggestedEdit(getContext())) {
+                        if (Globally.isConnected(getContext())) {
                             GetSuggestedRecords();
                         } else {
-                            Globally.EldScreenToast(EldFragment.refreshLogBtn, getContext().getResources().getString(R.string.no_suggested_logs),
+                            Globally.EldScreenToast(EldFragment.refreshLogBtn, Globally.INTERNET_MSG,
                                     getContext().getResources().getColor(R.color.colorVoilation));
                         }
 

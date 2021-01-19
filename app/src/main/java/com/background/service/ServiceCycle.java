@@ -62,8 +62,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     Globally Global;
     String DRIVER_LOG_18DAYS    = "driver_log_18_days";
     String SET_DATA_ON_VIEW     = "set_data_on_view";
+    String LastStatus           = "";
     String DeviceId             = "";
-    String connectionSource = "";
+    String connectionSource     = "";
 
     boolean IsAppForground   = true;
     boolean isViolation      = false;
@@ -373,6 +374,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                     }
                                                     /* =================================================================================== */
 
+                                                    LastStatus = "_aobrd_From_" + DRIVER_JOB_STATUS;
                                                     CHANGED_STATUS = DRIVING;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                             driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, false, IsAOBRDAutomatic);
@@ -395,6 +397,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 message = "Your current status is " + JobStatusStr + " but your vehicle is running. Please change your status to Driving.";
                                             }
 
+                                            LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
                                             CHANGED_STATUS = DRIVING;
                                             ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                     driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, IsAOBRDAutomatic);
@@ -411,12 +414,17 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                     if (minutesDiff > OnDutyInterval) {   // && IsAlertTimeValid
 
                                         boolean isApplicable = false;
+
                                         if (connectionType == constants.API) {
-                                            if (OBDVehicleSpeed <= OnDutySpeedLimit && GPSVehicleSpeed <= OnDutySpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
+                                            if (VehicleSpeed <= OnDutySpeedLimit && GPSVehicleSpeed <= OnDutySpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
                                                 isApplicable = true;
                                             }
-                                        } else {
-                                            if (VehicleSpeed <= OnDutySpeedLimit) {
+                                        } else if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
+                                            if (OBDVehicleSpeed <=  OnDutySpeedLimit && GPSVehicleSpeed < OnDutySpeedLimit) {
+                                                isApplicable = true;
+                                            }
+                                        }else {
+                                            if (GPSVehicleSpeed <= OnDutySpeedLimit) {
                                                 isApplicable = true;
                                             }
                                         }
@@ -441,6 +449,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 }
 
                                                 if (ContinueSpeedCounter >= OnDutyInterval) {
+                                                    LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                             driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, isEldToast, IsAOBRDAutoDrive);
                                                 }
@@ -491,6 +500,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                         }
                                                         /* =================================================================================== */
 
+                                                        LastStatus = "_aobrd_From_" + DRIVER_JOB_STATUS;
                                                         CHANGED_STATUS = DRIVING;
                                                         ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                                 driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, false, IsAOBRDAutomatic);
@@ -520,6 +530,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             }
 
                                             if (isApplicable && minutesDiff >= DrivingInterval) {
+                                                LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
                                                 CHANGED_STATUS = DRIVING;
                                                 ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                         driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
@@ -551,6 +562,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             }
 
                                             if (isApplicable && minutesDiff >= DrivingInterval) {
+                                                LastStatus = "_YM_From_" + DRIVER_JOB_STATUS;
                                                 CHANGED_STATUS = DRIVING;
                                                 ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                         driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
@@ -583,6 +595,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                         }
 
                                         if (VehicleSpeed >= DrivingSpeedLimit) {
+                                            LastStatus = "_P_From_" + DRIVER_JOB_STATUS;
                                             CHANGED_STATUS = DRIVING;
                                             ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                     driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
@@ -791,8 +804,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 JSONArray logArray = constants.AddNewStatusInList("", String.valueOf(ChangedDriverStatus), "", "no_address",
                         String.valueOf(DriverId), "" , "" ,  "",  "",
                         CurrentCycleId,  "",  "false",  isViolation,
-                        "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                        String.valueOf(BackgroundLocationService.GpsVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), connectionSource,false,
+                        "false", String.valueOf(OBDVehicleSpeed),
+                        String.valueOf(GPSVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus,false,
                         Global, sharedPref.get16hrHaulExcptn(context), false,
                         ""+sharedPref.getAdverseExcptn(context),
                         "", hMethods,  dbHelper);
@@ -1094,7 +1107,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         plateNo,
                         String.valueOf(isHaulException),
                         "false",
-                        connectionSource,
+                        connectionSource + LastStatus,
                         String.valueOf(sharedPref.getAdverseExcptn(context)),
                         ""
 
@@ -1230,7 +1243,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 plateNo,
                 isHaulException,
                 false,
-                connectionSource,
+                connectionSource + LastStatus,
                 ""+sharedPref.getAdverseExcptn(context),
                 ""
 
@@ -1277,7 +1290,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         plateNo,
                         isHaulException,
                         false,
-                        connectionSource,
+                        connectionSource + LastStatus,
                         ""+sharedPref.getAdverseExcptn(context),
                        ""
 
@@ -1298,7 +1311,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
         /* ---------------- DB Helper operations (Insert/Update) --------------- */
         hMethods.DriverLogHelper(DriverId, dbHelper, driverLogArray);
-       // BackgroundLocationService.IsAutoLogSaved = true;
 
         //ClearCounter
             BackgroundLocationService.IsAutoChange = false;

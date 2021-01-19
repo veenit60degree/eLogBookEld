@@ -125,8 +125,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             public void onReceive(Context context, Intent intent) {
                   Log.d("received", "received from service");
                 boolean isSuggestedEdit = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
-
-                if(isSuggestedEdit){
+                boolean isFreshLogin    = sharedPref.GetNewLoginStatus(TabAct.this);
+                if(isSuggestedEdit && isFreshLogin == false){
                     Intent i = new Intent(TabAct.this, EditedLogActivity.class);
                     i.putExtra(ConstantsKeys.suggested_data, "");
                     startActivity(i);

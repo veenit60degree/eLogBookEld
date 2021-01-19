@@ -151,10 +151,11 @@
                 />
 
             <TextView
+                android:id="@+id/confirmCertifyTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/whiteee"
-                android:text="@string/Confirm"
+                android:text="@string/ConfirmCertify"
                 android:layout_gravity="center"
                 android:textStyle="bold"
                 android:textSize="@dimen/text_size_16"
@@ -168,7 +169,12 @@
 
     </androidx.cardview.widget.CardView>
 
-
+<ImageView
+    android:id="@+id/suggestInvisibleView"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:visibility="gone"
+    />
 
 </RelativeLayout>
 

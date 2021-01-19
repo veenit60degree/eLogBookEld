@@ -80,7 +80,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     boolean IsEditView, isExceptionEnabled = false;
     ProgressDialog progressDialog;
     SaveDriverLogPost saveDriverLogPost;
-    TextView certifyNoTV;
+    //TextView certifyNoTV;
     DBHelper dbHelper;
     HelperMethods hMethods;
     UpdateLogRecordMethod logRecordMethod;
@@ -130,7 +130,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int arg0) {
-        return 0;
+        return arg0;
     }
 
 
@@ -144,7 +144,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = mInflater.inflate(R.layout.include_drive_daily_info, null);
 
-            certifyNoTV                 = (TextView)convertView.findViewById(R.id.certifyNoTV);
+            holder.certifyNoTV                 = (TextView)convertView.findViewById(R.id.certifyNoTV);
             holder.certifyStatusTV      = (TextView)convertView.findViewById(R.id.certifyStatusTV);
             holder.certifyStartTimeTV   = (TextView)convertView.findViewById(R.id.certifyStartTimeTV);
             holder.certifyDurationTV    = (TextView)convertView.findViewById(R.id.certifyDurationTV);
@@ -239,7 +239,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
 
     public class ViewHolder {
-        TextView certifyStatusTV, certifyStartTimeTV, certifyDurationTV, certifyLocationTV, certifyRemarksTV, certifyExcptnTV;
+        TextView certifyNoTV, certifyStatusTV, certifyStartTimeTV, certifyDurationTV, certifyLocationTV, certifyRemarksTV, certifyExcptnTV;
         ImageView certifyLocationIV, certifyRemarksIV;
         LinearLayout LogInfoLay;
         RelativeLayout certifyLocationLay, certifyRemarksLay;
@@ -256,7 +256,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     }
 
     private void SetViewFontColor(ViewHolder holder){
-        certifyNoTV.setTypeface(null, Typeface.NORMAL);
+        holder.certifyNoTV.setTypeface(null, Typeface.NORMAL);
         holder.certifyStatusTV.setTypeface(null, Typeface.NORMAL);
         holder.certifyStartTimeTV.setTypeface(null, Typeface.NORMAL);
         holder.certifyDurationTV.setTypeface(null, Typeface.NORMAL);
@@ -264,7 +264,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         holder.certifyRemarksTV.setTypeface(null, Typeface.NORMAL);
         holder.certifyExcptnTV.setTypeface(null, Typeface.NORMAL);
 
-        certifyNoTV.setTextColor(context.getResources().getColor(R.color.black));
+        holder.certifyNoTV.setTextColor(context.getResources().getColor(R.color.black));
         holder.certifyStatusTV.setTextColor(context.getResources().getColor(R.color.black));
         holder.certifyStartTimeTV.setTextColor(context.getResources().getColor(R.color.black) );
         holder.certifyDurationTV.setTextColor(context.getResources().getColor(R.color.black));
@@ -280,8 +280,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         String StartTime = "00:00";
         StartTime = Globally.ConvertToTimeFormat(LogItem.getStartDateTime(), Globally.DateFormatWithMillSec);
-
-        certifyNoTV.setText(position);
+        Log.d("position", "position: "+ position);
+        holder.certifyNoTV.setText(position);
         holder.certifyStatusTV.setText(status);
         holder.certifyStartTimeTV.setText(StartTime);
         holder.certifyDurationTV.setText(LogItem.getDuration());
@@ -530,7 +530,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         if(Global.isConnected(context)) {
             SAVE_DRIVER_RECORD_LOG(finalUpdatedArray, false, false, socketTimeout);
         }else{
-            Global.EldToastWithDuration(certifyNoTV, "Connection unavailable! Your edited " + RecordType + " will be posted to server automatically when your device will be connected with working internet connection.", context.getResources().getColor(R.color.colorVoilation));
+            Global.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, "Connection unavailable! Your edited " + RecordType + " will be posted to server automatically when your device will be connected with working internet connection.", context.getResources().getColor(R.color.colorVoilation));
         }
     }
 

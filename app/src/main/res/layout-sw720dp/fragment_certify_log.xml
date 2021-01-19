@@ -107,28 +107,45 @@
                 />
 
 
-            <ImageView
-                android:id="@+id/certifyRecordImgView"
-                android:layout_width="@dimen/view_height_48"
-                android:layout_height="@dimen/view_height_48"
-                android:src="@drawable/certify_record_list"
+            <RelativeLayout
+                android:id="@+id/certifyRecordsListLay"
+                android:layout_width="@dimen/view_height_60"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin_short_6"
                 android:layout_alignParentRight="true"
-                android:paddingLeft="@dimen/margin_18"
-                android:layout_marginRight="@dimen/margin_short_6"
+                android:background="@drawable/media_white_drawable"
                 android:visibility="gone"
 
-                />
+                >
+
+                <ImageView
+                    android:layout_width="@dimen/view_height_39"
+                    android:layout_height="@dimen/view_height_39"
+                    android:src="@drawable/certify_record_list"
+                    android:paddingLeft="@dimen/margin_short_5"
+                    android:paddingTop="@dimen/margin_short_4"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:layout_alignParentRight="true"
+
+                    />
 
 
-            <ImageView
-                android:id="@+id/certifyErrorImgView"
-                android:layout_width="@dimen/margin_19"
-                android:layout_height="@dimen/margin_19"
-                android:src="@drawable/error"
-                android:layout_alignParentRight="true"
-                android:visibility="gone"
 
-                />
+
+                <ImageView
+                    android:id="@+id/certifyErrorImgView"
+                    android:layout_width="@dimen/margin_20"
+                    android:layout_height="@dimen/margin_20"
+                    android:src="@drawable/error"
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"
+
+                    />
+
+            </RelativeLayout>
+
+
+
 
 
         </RelativeLayout>

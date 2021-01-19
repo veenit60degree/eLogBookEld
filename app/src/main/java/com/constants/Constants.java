@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.driver.details.DriverConst;
+import com.local.db.CertifyLogMethod;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
@@ -1052,6 +1053,88 @@ public class Constants {
 
 
     */
+
+    public boolean isDriverAllowedToChange(Context context, int obdStatus, Utils obdUtils, Globally global){
+
+            boolean isAllowedToChange = true;
+
+            try {
+
+                if(obdStatus == Constants.WIRED_ACTIVE || obdStatus == WIFI_ACTIVE){
+
+                    StringBuilder obdData = obdUtils.getObdLogData(context);
+                    String[] fileArray = obdData.toString().split("\n\n");
+                    Log.d("obdLog", "fileArray: " + fileArray);
+
+                    if(fileArray.length > 0) {
+                        JSONObject data = new JSONObject(fileArray[fileArray.length - 1]);
+
+                        String lastDate = data.getString(Constants.CurrentLogDate);
+                        DateTime lastSavedTime = global.getDateTimeObj(lastDate, false);
+                        DateTime currentDate = global.getDateTimeObj(global.GetCurrentDateTime(), false);
+                        int secDiff = currentDate.getSecondOfDay() - lastSavedTime.getSecondOfDay();
+
+                        if(secDiff <= 60) {   // 1 min diff
+                            if (obdStatus == WIFI_ACTIVE) {
+                                int wheelSpeed      = Integer.valueOf(data.getString(Constants.WheelBasedVehicleSpeed));
+                                int calculatedSpeed = Integer.valueOf(data.getString(Constants.obdCalculatedSpeed));
+
+                                if(wheelSpeed > 10 || calculatedSpeed > 10){
+                                    isAllowedToChange = false;
+                                }
+                            } else {
+                                int wheelSpeed      = Integer.valueOf(data.getString(Constants.obdSpeed));
+                                int calculatedSpeed = Integer.valueOf(data.getString(Constants.calculatedSpeed));
+                                if(wheelSpeed > 10 || calculatedSpeed > 10){
+                                    isAllowedToChange = false;
+                                }
+                            }
+                        }
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return isAllowedToChange;
+    }
+
+
+    // calculate speed from wired truck odometers data (in meters) with time difference (in sec)
+    public double calculateSpeedFromWiredTabOdometer(String savedTime, String currentDate,
+                                                      String previousHighPrecisionOdometer, String currentHighPrecisionOdometer,
+                                                      Globally global, SharedPref sharedPref, Context context){
+
+        double speedInKm = -1;
+        double odometerDistance = Double.parseDouble(currentHighPrecisionOdometer) - Double.parseDouble(previousHighPrecisionOdometer);
+
+        if(savedTime.length() > 10) {
+            try{
+                String timeStampStr = savedTime.replace(" ", "T");
+                DateTime savedDateTime = global.getDateTimeObj(timeStampStr, false);
+                DateTime currentDateTime = global.getDateTimeObj(currentDate, false);
+
+                int timeInSecnd = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();    //Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
+                speedInKm = ( odometerDistance/1000.0f ) / ( timeInSecnd/3600.0f );
+                // speedInKm = odometerDistance / timeInSecnd;
+
+            }catch (Exception e){
+                e.printStackTrace();
+
+                // save current HighPrecisionOdometer locally
+                sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
+
+            }
+
+        }else{
+            // save current HighPrecisionOdometer locally
+            sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
+
+        }
+        return speedInKm;
+
+    }
 
 
     public JSONArray AddNewStatusInList(String DriverName, String DriverStatusId, String violaotionReason, String address,

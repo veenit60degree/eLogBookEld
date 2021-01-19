@@ -230,6 +230,35 @@ public class Utils
     }
 
 
+    public StringBuilder getObdLogData(Context context){
+
+        File wiredObdLog = Globally.GetWiredLogFile(context, ConstantsKeys.ALS_OBD_LOG, "txt");
+        StringBuilder text = new StringBuilder();
+
+        if(wiredObdLog != null && wiredObdLog.isFile() ) {
+            //Read text from file
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(wiredObdLog));
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    text.append(line);
+                    text.append('\n');
+                }
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+             Log.d("wiredObdLog", "wiredObdLog: " + text);
+        }
+
+        return text;
+
+    }
+
+
+
 
     public void syncObdLogData(Context context, String DriverId, String DriverName){
 

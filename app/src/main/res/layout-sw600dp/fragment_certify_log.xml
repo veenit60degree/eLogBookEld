@@ -101,15 +101,27 @@
 
                 />
 
-            <ImageView
-                android:id="@+id/certifyRecordImgView"
-                android:layout_width="@dimen/view_height_43"
-                android:layout_height="@dimen/view_height_43"
-                android:src="@drawable/certify_record_list"
+              <RelativeLayout
+                android:id="@+id/certifyRecordsListLay"
+                android:layout_width="@dimen/view_height_53"
+                android:layout_height="wrap_content"
+                  android:padding="@dimen/margin_short_5"
                 android:layout_alignParentRight="true"
-                android:paddingLeft="@dimen/margin_14"
-                android:layout_marginRight="@dimen/margin_short_5"
+                  android:background="@drawable/media_white_drawable"
                 android:visibility="gone"
+
+
+                >
+
+            <ImageView
+                android:layout_width="@dimen/view_height_35"
+                android:layout_height="@dimen/view_height_35"
+                android:src="@drawable/certify_record_list"
+                android:paddingLeft="@dimen/margin_short_5"
+                android:paddingTop="@dimen/margin_short_2"
+                android:layout_marginRight="@dimen/margin_short_6"
+                android:layout_alignParentRight="true"
+
                 />
 
 
@@ -124,6 +136,9 @@
                 android:visibility="gone"
 
                 />
+
+              </RelativeLayout>
+
 
 
         </RelativeLayout>

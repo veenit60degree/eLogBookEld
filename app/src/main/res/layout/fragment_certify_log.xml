@@ -8,14 +8,6 @@
 
 
 
-    <TextView
-        android:id="@+id/invisibleRfreshBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-
-        />
-
 
    <include
         android:id="@+id/eldActionBar"
@@ -107,15 +99,21 @@
                 />
 
 
+            <RelativeLayout
+                android:id="@+id/certifyRecordsListLay"
+                android:layout_width="@dimen/view_height_45"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:background="@drawable/media_white_drawable"
+                android:visibility="gone"
+                >
+
             <ImageView
-                android:id="@+id/certifyRecordImgView"
                 android:layout_width="@dimen/view_height_35"
                 android:layout_height="@dimen/view_height_35"
                 android:src="@drawable/certify_record_list"
-                android:layout_alignParentRight="true"
                 android:paddingLeft="@dimen/margin_10"
-                android:layout_marginRight="@dimen/margin_short_5"
-                android:visibility="gone"
 
                 />
 
@@ -128,7 +126,7 @@
                 android:visibility="gone"
 
                 />
-
+            </RelativeLayout>
 
         </RelativeLayout>
 

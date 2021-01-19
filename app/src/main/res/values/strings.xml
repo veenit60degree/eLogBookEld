@@ -49,6 +49,13 @@
     <string name="advrs_excptn_enabled">Adverse exception enabled</string>
     <string name="haul_excptn_enabled">16 hour short haul exception enabled</string>
 
+    <string name="AdjustTime">Adjust Time</string>
+    <string name="incorrect_time">Incorrect Time !</string>
+    <string name="incorrect_timezone">Incorrect Time Zone !</string>
+
+    <string name="incorrect_time_desc">Device CURRENT TIME is inaccurate. Please correct it to use ALS app.</string>
+    <string name="incorrect_timezone_desc">Device TIME ZONE is inaccurate. Please correct it to use ALS app.</string>
+
 
     <string name="document_corrupted">Error, File not loaded.</string>
     <string name="document_checking">Checking documents, Please wait for few seconds</string>
@@ -311,6 +318,7 @@
     <string name="certify">Certify</string>
     <string name="Logout">Logout</string>
     <string name="Confirm">Confirm</string>
+    <string name="ConfirmCertify">Confirm &amp; Certify</string>
     <string name="sync_data">Sync Data</string>
     <string name="synchronize_data">Synchronize Data</string>
     <string name="Internet_Status">Check internet connection</string>
@@ -320,6 +328,9 @@
     <string name="help">Help</string>
     <string name="documents">Documents</string>
     <string name="eld_documents">ELD Documents</string>
+    <string name="statusNotChangedFromDriving">You can\'t change the status from Driving while vehicle is moving.</string>
+    <string name="other_suggested_log">You have suggested review log for other date also.</string>
+    <string name="view_other_suggested_log">View other logs</string>
 
     <string name="temp_DATE">21 jun 2017</string>
     <string name="temp_time">0 hr 0 m</string>

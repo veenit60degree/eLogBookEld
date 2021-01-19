@@ -2418,7 +2418,7 @@ public class HelperMethods {
                 return CallDriverRule.calculateLeftCycleMinutes(oDriverDetail);
             }
         }else{
-            return CallDriverRule.calculateLeftCycleMinutes(oDriverDetail);
+                return CallDriverRule.calculateLeftCycleMinutes(oDriverDetail);
         }
     }
 

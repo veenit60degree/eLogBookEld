@@ -329,7 +329,7 @@
         android:text="@string/Malfunction_with_bracket"
         android:textColor="@color/whiteee"
         android:textSize="@dimen/text_size_14"
-        android:padding="@dimen/margin_short_5"
+        android:padding="@dimen/margin_short_8"
         android:gravity="center"
         android:background="@color/colorVoilation"
         android:layout_marginTop="@dimen/view_height_44"

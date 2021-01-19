@@ -446,8 +446,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
 
                     // calculating speed to comparing last saved odometer and current odometer (in meter) with time differencein seconds
-                    double calculatedSpeedFromOdo = calculateSpeedFromWiredTabOdometer(savedDate, currentLogDate,
-                            previousHighPrecisionOdometer, currentHighPrecisionOdometer);
+                    double calculatedSpeedFromOdo = constants.calculateSpeedFromWiredTabOdometer(savedDate, currentLogDate,
+                            previousHighPrecisionOdometer, currentHighPrecisionOdometer, global, sharedPref, getApplicationContext());
 
                     // write wired OBD details in a text file and save into the SD card.
                     saveObdData(constants.WiredOBD, vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
@@ -542,39 +542,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
-    // calculate speed from wired truck odometers data (in meters) with time difference (in sec)
-    private double calculateSpeedFromWiredTabOdometer(String savedTime, String currentDate,
-                                                      String previousHighPrecisionOdometer, String currentHighPrecisionOdometer ){
-
-        double speedInKm = -1;
-        double odometerDistance = Double.parseDouble(currentHighPrecisionOdometer) - Double.parseDouble(previousHighPrecisionOdometer);
-
-        if(savedTime.length() > 10) {
-            try{
-                String timeStampStr = savedTime.replace(" ", "T");
-                DateTime savedDateTime = global.getDateTimeObj(timeStampStr, false);
-                DateTime currentDateTime = global.getDateTimeObj(currentDate, false);
-
-                int timeInSecnd = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();    //Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
-                speedInKm = ( odometerDistance/1000.0f ) / ( timeInSecnd/3600.0f );
-                // speedInKm = odometerDistance / timeInSecnd;
-
-            }catch (Exception e){
-                e.printStackTrace();
-
-                // save current HighPrecisionOdometer locally
-                sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
-
-            }
-
-        }else{
-            // save current HighPrecisionOdometer locally
-            sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
-
-        }
-        return speedInKm;
-
-    }
 
 
     // calculate speed from wifi OBD odometers (in meters) with time difference (in sec)
@@ -1009,15 +976,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     tcpClient.sendMessage("123456,can");
                     sharedPref.SaveConnectionInfo(constants.WifiOBD, Globally.GetCurrentDeviceDate(), getApplicationContext());
-                    //  sharedPref.SetConnectionType(constants.ConnectionWired, getApplicationContext());
 
-                       /* if(ignitionStatus.equals("false") && SpeedCounter == 0){
-                            ignitionStatus = "--";
-                            callCycleRulesWithPriority(isWiredObdConnected, false);
-                        }*/
+
                 }else{
                     sharedPref.SaveConnectionInfo(constants.DataMalfunction, "", getApplicationContext());
-                   // sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
                 }
 
 
@@ -1095,7 +1057,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     Thread.sleep(3000);
 
-                    VehicleSpeed = GpsVehicleSpeed;
                     if (global.isWifiOrMobileDataEnabled(getApplicationContext()) && constants.IsAlsServerResponding) {
 
                         if (SpeedCounter != 40) {
@@ -1120,6 +1081,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         }
 
                     } else {
+                        VehicleSpeed = GpsVehicleSpeed;
 
                         sharedPref.SaveConnectionInfo(constants.OfflineData, currentDateStr, getApplicationContext());
 
@@ -1856,7 +1818,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 HighResolutionDistance = "0";
                                 ignitionStatus = "--";
                                 obdTripDistance = "--";
-                                tcpClient.sendMessage("123456,gps");
+                              //  tcpClient.sendMessage("123456,gps");
 
                             }
 
@@ -1988,6 +1950,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     private void saveWifiObdData(String vin, String HighPrecisionOdometer, String ignition, int speed, String tripDistance,
                                  String rawResponse, String correctedData,  boolean isSave){
 
+        int DrivingSpeedLimit   = DriverConst.getDriverConfiguredTime(DriverConst.DrivingSpeed, getApplicationContext());
         double speedCalculated = -1;
         String savedTime = sharedPref.GetWifiObdSavedTime(getApplicationContext());
         String currentLogDate = global.GetCurrentDateTime();
@@ -2038,7 +2001,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             if (jobType.equals(global.DRIVING)) {
 
-                if (speed >= 10 || speedCalculated >= 10 ) {
+                if (speed >= DrivingSpeedLimit || speedCalculated >= DrivingSpeedLimit ) {
 
                     if(speed == 0){
                         obdVehicleSpeed      = (int)speedCalculated;
@@ -2066,7 +2029,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             } else if (jobType.equals(global.ON_DUTY)) {
 
-                if (speed >= 10 || speedCalculated >= 10 ) {
+                if (speed >= DrivingSpeedLimit || speedCalculated >= DrivingSpeedLimit ) {
                     if(speed == 0){
                         obdVehicleSpeed      = (int)speedCalculated;
                         VehicleSpeed         = obdVehicleSpeed;
@@ -2093,7 +2056,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 sharedPref.setHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                if (speedCalculated >= 10 && speed == 0 ) {
+                if (speedCalculated >= DrivingSpeedLimit && speed == 0 ) {
                     obdVehicleSpeed = (int) speedCalculated;
                     VehicleSpeed = obdVehicleSpeed;
                     global.VEHICLE_SPEED = obdVehicleSpeed;
@@ -2101,7 +2064,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 }
 
 
-                if (speed < 10 || (speedCalculated < 10 )) {
+                if (speed < DrivingSpeedLimit || (speedCalculated < DrivingSpeedLimit )) {
                     Log.d("ELD Rule", "Rule is correct.");
                     ServiceCycle.ContinueSpeedCounter = 0;
                 } else {
@@ -2109,7 +2072,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
                             odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed);
                 }
-
 
             }
         }else{
@@ -2398,20 +2360,20 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     private void saveObdStatus(String ignition, String type, String time){
 
         try {
-            if(UILApplication.isActivityVisible() && EldFragment.driverLogArray.length() > 0) {
+          /*  if(UILApplication.isActivityVisible() && EldFragment.driverLogArray.length() > 0) {
                 JSONObject lastJsonItem = (JSONObject) EldFragment.driverLogArray.get(EldFragment.driverLogArray.length() - 1);
                 int currentJobStatus = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
                 boolean isYard = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
                 boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
 
-              /*  if( (currentJobStatus == constants.OFF_DUTY && isPersonal) ||
+                if( (currentJobStatus == constants.OFF_DUTY && isPersonal) ||
                         (currentJobStatus == constants.ON_DUTY && isYard) ){
                     if(sharedPref.GetTruckIgnitionStatus(constants.TruckIgnitionStatus, getApplicationContext()).equals("OFF")
                             && ignition.equals("ON")) {
                         sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
                     }
-                }*/
-            }
+                }
+            }*/
 
             sharedPref.SetTruckIgnitionStatus(ignition, type, time, getApplicationContext());
 

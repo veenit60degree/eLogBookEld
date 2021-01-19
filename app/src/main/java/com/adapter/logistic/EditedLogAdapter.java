@@ -73,7 +73,7 @@ public class EditedLogAdapter extends BaseAdapter {
         String StartTime    = Globally.ConvertToTimeFormat(LogItem.getStartDateTime(), Globally.DateFormatWithMillSec);
         String EndTime      = Globally.ConvertToTimeFormat(LogItem.getEndDateTime(), Globally.DateFormatWithMillSec);
 
-        setStatusWiseView(LogItem.getDriverStatusId(), holder.statusEditedTxtView);
+        setStatusWiseView(LogItem.getDriverStatusId(), holder.statusEditedTxtView, LogItem.isPersonal(), LogItem.isShortHaulException());   // isShortHaulException is used for isYardMove
         holder.startTimeEditedTxtView.setText(StartTime);
         holder.endTimeEditedTxtView.setText(EndTime);
         holder.durationEditedTxtView.setText(LogItem.getDuration());
@@ -113,11 +113,15 @@ public class EditedLogAdapter extends BaseAdapter {
 
     }
 
-    void setStatusWiseView(int status, TextView view){
+    void setStatusWiseView(int status, TextView view, boolean isPersonal, boolean isYardMove){
         switch (status){
 
             case 1: // OffDuty
-                view.setText("OFF");
+                if(isPersonal) {
+                    view.setText("PU");
+                }else{
+                    view.setText("OFF");
+                }
                 view.setBackgroundResource(R.drawable.off_drawable);
                 break;
 
@@ -133,7 +137,11 @@ public class EditedLogAdapter extends BaseAdapter {
                 break;
 
             case 4: // OnDuty
-                view.setText("ON");
+                if(isYardMove){
+                    view.setText("YM");
+                }else {
+                    view.setText("ON");
+                }
                 view.setBackgroundResource(R.drawable.on_drawable);
                 break;
 

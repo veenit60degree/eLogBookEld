@@ -355,8 +355,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         RestartTimer();
 
         if(sharedPref.isSuggestedEdit(getActivity())){
-            malfunctionTV.setText(getString(R.string.edit_log_request));
-            malfunctionTV.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
+            malfunctionTV.setText(getString(R.string.review_carrier_edits));
+          //  malfunctionTV.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
             malfunctionTV.setVisibility(View.VISIBLE);
             malfunctionTV.startAnimation(editLogAnimation);
         }else{

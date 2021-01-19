@@ -442,7 +442,8 @@ public class Globally {
 		DateTime savedUtcDateTime = getDateTimeObj(utcDate, false);
 		DateTime currentUtcDateTime = GetCurrentUTCDateTime();
 
-		if(currentUtcDateTime.isAfter(savedUtcDateTime) || currentUtcDateTime.equals(savedUtcDateTime)){
+		int minDiff = currentUtcDateTime.getMinuteOfDay() - savedUtcDateTime.getMinuteOfDay();
+		if(currentUtcDateTime.isAfter(savedUtcDateTime) || currentUtcDateTime.equals(savedUtcDateTime) || minDiff >= -5){
 			return true;
 		}else{
 			return false;
@@ -460,14 +461,17 @@ public class Globally {
 		if(savedUtcDateTime != null && savedUtcDateTime.toString().length() > 16 && currentUtcDateTime.toString().length() > 16) {
 			if (savedUtcDateTime.toString().substring(0, 10).equals(currentUtcDateTime.toString().substring(0, 10))) {
 				int minDiff = currentUtcDateTime.getMinuteOfDay() - savedUtcDateTime.getMinuteOfDay();
-				if (Math.max(-7, minDiff) == Math.min(minDiff, 7)) {
+				if (minDiff >= -5) {	//Math.max(-7, minDiff) == Math.min(minDiff, 7)
 					isTimeCorrect = true;
 				} else {
 					isTimeCorrect = false;
 				}
-			} else {
+			}
+
+			/*else {
 				if (currentUtcDateTime.toString().substring(11, 13).equals("00")) {
 					int min = Integer.valueOf(currentUtcDateTime.toString().substring(14, 16));
+
 					if (min <= 7) {
 						isTimeCorrect = true;
 					} else {
@@ -476,7 +480,8 @@ public class Globally {
 				} else {
 					isTimeCorrect = true;
 				}
-			}
+				isTimeCorrect = true;
+			}*/
 		}
 
 		if(!isTimeCorrect && SharedPref.isServiceOnDestoryCalled(context)){
