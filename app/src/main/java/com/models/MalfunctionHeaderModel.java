@@ -4,10 +4,12 @@ public class MalfunctionHeaderModel {
 
     String EventName;
     String EventCode;
+    String EventDesc;
 
-    public MalfunctionHeaderModel(String eventName, String eventCode) {
+    public MalfunctionHeaderModel(String eventName, String eventCode, String eventDesc) {
         EventName = eventName;
         EventCode = eventCode;
+        EventDesc = eventDesc;
     }
 
     public String getEventName() {
@@ -17,4 +19,9 @@ public class MalfunctionHeaderModel {
     public String getEventCode() {
         return EventCode;
     }
+
+    public String getEventDesc() {
+        return EventDesc;
+    }
+
 }

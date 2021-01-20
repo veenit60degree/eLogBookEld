@@ -84,10 +84,10 @@ import com.local.db.OdometerHelperMethod;
 import com.local.db.RecapViewMethod;
 import com.local.db.ShipmentHelperMethod;
 import com.local.db.SyncingMethod;
-import com.messaging.logistic.EditedLogActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
+import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
 import com.models.DriverLocationModel;
@@ -236,7 +236,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     int LATEST_JOB_STATUS       = 1;
     int Driver18DaysApiCount    = 0;
     int JobStatusInt            = 1;
-
+    int pendingNotificationCount= 0;
     /*-------- After PERSONAL JOB ----------*/
     final int PERSONAL_OFF_DUTY = 11;
     final int PERSONAL_SLEEPER = 12;
@@ -730,7 +730,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if(sharedPref.isMalfunction(getActivity()) || sharedPref.isDiagnostic(getActivity())) {
+                if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity())) {
                     malfunctionTV.startAnimation(editLogAnimation);
                 }else {
                     editLogAnimation.cancel();
@@ -878,7 +878,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
         //---------------- temp delete last item code ---------------
-         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               try {
                     driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                     driverLogArray.remove(driverLogArray.length()-1);
@@ -1338,9 +1338,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
     boolean isPendingNotifications(int JobStatus){
-        int pendingNotifications = constants.getPendingNotifications(DriverType, notificationPref, coNotificationPref, getActivity());
+        pendingNotificationCount = constants.getPendingNotifications(DriverType, notificationPref, coNotificationPref, getActivity());
         boolean isPending = false;
-        if(pendingNotifications > 0 && (JobStatus == DRIVING || JobStatus == ON_DUTY)){
+        if(pendingNotificationCount > 0 && (JobStatus == DRIVING || JobStatus == ON_DUTY)){
             isPending = true;
         }
         return isPending;
@@ -1348,25 +1348,31 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
     void checkNotificationAlert(){
-        if(isPendingNotifications(DRIVER_JOB_STATUS)             ||
-                sharedPref.isSuggestedEdit(getActivity())        ||
-                sharedPref.isUnidentified(getActivity())         ||
-                sharedPref.isMalfunction(getActivity())          ||
-                sharedPref.isDiagnostic(getActivity())           ||
-                constants.CheckGpsStatus(getActivity()) == false ||
-                (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_ACTIVE && sharedPref.getObdStatus(getActivity()) != Constants.WIRED_ACTIVE )
-                ){
-            otherOptionBadgeView.setVisibility(View.VISIBLE);
-        }else{
-            otherOptionBadgeView.setVisibility(View.GONE);
-        }
+        try {
+            if (getActivity() != null) {
+                if (isPendingNotifications(DRIVER_JOB_STATUS) ||
+                        sharedPref.isSuggestedEditOccur(getActivity()) ||
+                        sharedPref.isUnidentifiedOccur(getActivity()) ||
+                        sharedPref.isMalfunctionOccur(getActivity()) ||
+                        sharedPref.isDiagnosticOccur(getActivity()) ||
+                        constants.CheckGpsStatus(getActivity()) == false ||
+                        (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_ACTIVE && sharedPref.getObdStatus(getActivity()) != Constants.WIRED_ACTIVE)
+                ) {
+                    otherOptionBadgeView.setVisibility(View.VISIBLE);
+                } else {
+                    otherOptionBadgeView.setVisibility(View.GONE);
+                }
 
-        if(sharedPref.isMalfunction(getActivity()) || sharedPref.isDiagnostic(getActivity())){
-            malfunctionTV.setVisibility(View.VISIBLE);
-            malfunctionTV.startAnimation(editLogAnimation);
-        }else{
-            editLogAnimation.cancel();
-            malfunctionTV.setVisibility(View.GONE);
+                if (sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity())) {
+                    malfunctionTV.setVisibility(View.VISIBLE);
+                    malfunctionTV.startAnimation(editLogAnimation);
+                } else {
+                    editLogAnimation.cancel();
+                    malfunctionTV.setVisibility(View.GONE);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -2006,7 +2012,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     if (otherOptionsDialog != null && otherOptionsDialog.isShowing()) {
                         otherOptionsDialog.dismiss();
                     }
-                    otherOptionsDialog = new OtherOptionsDialog(getActivity(), isPendingNotifications(DRIVER_JOB_STATUS), constants.CheckGpsStatus(getActivity()));
+                    boolean isPendingNotifications = isPendingNotifications(DRIVER_JOB_STATUS);
+                    otherOptionsDialog = new OtherOptionsDialog(getActivity(), isPendingNotifications, pendingNotificationCount, constants.CheckGpsStatus(getActivity()));
                     otherOptionsDialog.show();
                 } catch (final IllegalArgumentException e) {
                     e.printStackTrace();
@@ -2094,10 +2101,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
             case R.id.refreshLogBtn:
-                if(sharedPref.isSuggestedEdit(getActivity())){
+                if(sharedPref.isSuggestedEditOccur(getActivity())){
                     Toast.makeText(getActivity(), getString(R.string.other_suggested_log), Toast.LENGTH_LONG).show();
-                    Intent i = new Intent(getActivity(), EditedLogActivity.class);
+                    Intent i = new Intent(getActivity(), SuggestedFragmentActivity.class);
                     i.putExtra(ConstantsKeys.suggested_data, "");
+                    i.putExtra(ConstantsKeys.Date, "");
                     startActivity(i);
                 }else {
                     IsRefreshedClick = false;

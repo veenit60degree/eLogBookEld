@@ -2,7 +2,6 @@ package com.messaging.logistic.fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,22 +14,14 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.adapter.logistic.EditedLogAdapter;
-import com.constants.SharedPref;
-import com.driver.details.EldDriverLogModel;
-import com.local.db.DBHelper;
-import com.local.db.HelperMethods;
-import com.messaging.logistic.EditedLogActivity;
-import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
 import org.json.JSONArray;
 
-import java.util.List;
-
 public class OriginalLogFragment extends Fragment {
 
     View rootView;
-    EditedLogActivity editedLogActivity;
+    SuggestedLogFragment suggestedLogFragment;
     JSONArray selectedArray;
     String DriverId, DeviceId;
     int offsetFromUTC;
@@ -66,18 +57,18 @@ public class OriginalLogFragment extends Fragment {
         editedItemMainLay        = (LinearLayout)rootView.findViewById(R.id.editedItemMainLay);
         editedLogMainLay         = (LinearLayout)rootView.findViewById(R.id.editedLogMainLay);
 
-        editedLogActivity   = new EditedLogActivity();
-        DeviceId            = editedLogActivity.sharedPref.GetSavedSystemToken(getActivity());
-        DriverId            = editedLogActivity.sharedPref.getDriverId( getActivity());
-        offsetFromUTC       = (int) editedLogActivity.globally.GetTimeZoneOffSet();
+        suggestedLogFragment = new SuggestedLogFragment();
+        DeviceId            = suggestedLogFragment.sharedPref.GetSavedSystemToken(getActivity());
+        DriverId            = suggestedLogFragment.sharedPref.getDriverId( getActivity());
+        offsetFromUTC       = (int) suggestedLogFragment.globally.GetTimeZoneOffSet();
 
-        selectedArray       = editedLogActivity.hMethods.GetSingleDateArray( EditedLogActivity.driverLogArray, editedLogActivity.selectedDateTime, editedLogActivity.currentDateTime,
-                                        editedLogActivity.selectedUtcTime, false, offsetFromUTC );
+        selectedArray       = suggestedLogFragment.hMethods.GetSingleDateArray( SuggestedLogFragment.driverLogArray, suggestedLogFragment.selectedDateTime, suggestedLogFragment.currentDateTime,
+                                        suggestedLogFragment.selectedUtcTime, false, offsetFromUTC );
 
-        editedLogActivity.LoadDataOnWebView(editLogWebView, selectedArray, EditedLogActivity.LogDate, false);
+        suggestedLogFragment.LoadDataOnWebView(editLogWebView, selectedArray, SuggestedLogFragment.LogDate, false);
 
-        if(EditedLogActivity.originalLogList.size() > 0) {
-            EditedLogAdapter adapter = new EditedLogAdapter(getActivity(), EditedLogActivity.originalLogList);
+        if(SuggestedLogFragment.originalLogList.size() > 0) {
+            EditedLogAdapter adapter = new EditedLogAdapter(getActivity(), SuggestedLogFragment.originalLogList);
             editLogListView.setAdapter(adapter);
 
             SetCertifyListViewHeight();
@@ -92,9 +83,9 @@ public class OriginalLogFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    int DividerHeigh = editedLogActivity.constants.intToPixel( getActivity(), editLogListView.getDividerHeight() );
+                    int DividerHeigh = suggestedLogFragment.constants.intToPixel( getActivity(), editLogListView.getDividerHeight() );
                     int itemLayoutHeight = editedItemMainLay.getHeight();
-                    int listSize     = EditedLogActivity.originalLogList.size() ;
+                    int listSize     = SuggestedLogFragment.originalLogList.size() ;
                     int DriverLogListHeight      = itemLayoutHeight + ((itemLayoutHeight + DividerHeigh ) * listSize) + 50;
                     editLogListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DriverLogListHeight ));
                 }catch (Exception e){}

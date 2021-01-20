@@ -18,16 +18,19 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/view_height_44"
             android:paddingRight="10dp"
-            android:paddingTop="@dimen/margin_short_6"
-            android:paddingBottom="@dimen/margin_short_6"
+
             >
 
             <RelativeLayout
                 android:id="@+id/eldMenuLay"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingLeft="@dimen/margin_short_5"
-                android:paddingRight="@dimen/margin_short_8"
+                android:paddingLeft="@dimen/margin_short_6"
+                android:paddingRight="@dimen/margin_short_6"
+                android:paddingTop="@dimen/margin_short_8"
+                android:paddingBottom="@dimen/margin_short_8"
+                android:background="@drawable/green_with_corner_drawable"
+
                 >
 
             <ImageView
@@ -82,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/settings_white"
-                    android:padding="@dimen/margin_short_5"
+                    android:padding="@dimen/margin_10"
                     />
 
 

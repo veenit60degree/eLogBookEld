@@ -3,6 +3,7 @@ package com.background.service;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -434,12 +435,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     String jobType = sharedPref.getDriverStatusId("jobType", getApplicationContext());
                     double intHighPrecisionOdometerInKm = (Double.parseDouble(currentHighPrecisionOdometer) * 0.001);
+                    double obdOdometerDouble  = Double.parseDouble(currentHighPrecisionOdometer);
                     String previousHighPrecisionOdometer = sharedPref.getHighPrecisionOdometer(getApplicationContext());
 
                     String savedDate = sharedPref.getHighPrecesionSavedTime(getApplicationContext());
                     String currentLogDate = global.GetCurrentDateTime();
 
-                    if (savedDate.length() == 0) {
+                    if (savedDate.length() == 0 && obdOdometerDouble > 0) {
                         // save current HighPrecisionOdometer locally
                         savedDate = currentLogDate;
                         sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
@@ -454,81 +456,85 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                             String.valueOf((int)calculatedSpeedFromOdo), obdTripDistance, timeStamp, savedDate);
 
-                    if(calculatedSpeedFromOdo < 5 && speed < 5){
-                        if(sharedPref.getLastIgnitionStatus(getApplicationContext()) == true && sharedPref.getLastObdSpeed(getApplicationContext()) < 5)  {
-                            // ignore it
-                        }else{
-                            sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
-                        }
-                    }
-
-                    if (jobType.equals(global.DRIVING)) {
-
-                        if (SpeedCounter == 10) {
-
-                            // save current HighPrecisionOdometer in DB
-                            sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-
-                            if (speed >= 10 && calculatedSpeedFromOdo >= 10) {
-
-                                callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-
-                            } else if (speed < 10 && calculatedSpeedFromOdo < 10) {
-
-                                callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-
+                    double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
+                    if(obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
+                        if (calculatedSpeedFromOdo < 5 && speed < 5) {
+                            if (sharedPref.getLastIgnitionStatus(getApplicationContext()) == true && sharedPref.getLastObdSpeed(getApplicationContext()) < 5) {
+                                // ignore it
+                            } else {
+                                sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
                             }
                         }
 
+                        if (jobType.equals(global.DRIVING)) {
 
-                    } else if (jobType.equals(global.ON_DUTY)) {
+                            if (SpeedCounter == 10) {
+
+                                // save current HighPrecisionOdometer in DB
+                                sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+
+                                if (speed >= 10 && calculatedSpeedFromOdo >= 10) {
+
+                                    callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+
+                                } else if (speed < 10 && calculatedSpeedFromOdo < 10) {
+
+                                    callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+
+                                }
+                            }
 
 
-                        // if speed is coming >10 then ELD rule is called after 10 sec to change the status to Driving as soon as.
-                        if (speed > 10 && calculatedSpeedFromOdo > 10) {
+                        } else if (jobType.equals(global.ON_DUTY)) {
 
-                            // save current HighPrecisionOdometer locally
-                            sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                            callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-
-                        } else {
-                            // call ELD rule after 1 minute to improve performance
-                            if (minDiff(savedDate) > 0) {
+                            // if speed is coming >10 then ELD rule is called after 10 sec to change the status to Driving as soon as.
+                            if (speed > 10 && calculatedSpeedFromOdo > 10) {
 
                                 // save current HighPrecisionOdometer locally
                                 sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
 
                                 callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+
+                            } else {
+                                // call ELD rule after 1 minute to improve performance
+                                if (minDiff(savedDate) > 0) {
+
+                                    // save current HighPrecisionOdometer locally
+                                    sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+
+                                    callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                }
                             }
-                        }
 
-                    } else {
-
-                        // =================== For OFF Duty & Sleeper case =====================
-
-
-                        // save current HighPrecisionOdometer in DB
-                        sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-
-
-                        if (speed <= 0 && calculatedSpeedFromOdo <= 0) {
-                            Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
                         } else {
-                            if (speed > 10 && calculatedSpeedFromOdo > 10) {    //if speed is coming >10 then ELD rule is called after 10 sec to change the status to Driving as soon as.
-                                callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+
+                            // =================== For OFF Duty & Sleeper case =====================
+
+
+                            // save current HighPrecisionOdometer in DB
+                            sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+
+
+                            if (speed <= 0 && calculatedSpeedFromOdo <= 0) {
+                                Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
+                            } else {
+                                if (speed > 10 && calculatedSpeedFromOdo > 10) {    //if speed is coming >10 then ELD rule is called after 10 sec to change the status to Driving as soon as.
+                                    callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                }
                             }
                         }
+
+                        if (SpeedCounter == 0 || SpeedCounter == HalfSpeedCounter) {
+                            resetDataAfterCycleCall(true);
+                        } else {
+                            resetDataAfterCycleCall(false);
+                        }
+
+                        global.VEHICLE_SPEED = speed;
+
                     }
 
-
-                    if (SpeedCounter == 0 || SpeedCounter == HalfSpeedCounter) {
-                        resetDataAfterCycleCall(true);
-                    } else {
-                        resetDataAfterCycleCall(false);
-                    }
-
-                    global.VEHICLE_SPEED = speed;
 
                 } else {
                     global.VEHICLE_SPEED = -1;
@@ -2357,9 +2363,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
+
     private void saveObdStatus(String ignition, String type, String time){
 
         try {
+
+
           /*  if(UILApplication.isActivityVisible() && EldFragment.driverLogArray.length() > 0) {
                 JSONObject lastJsonItem = (JSONObject) EldFragment.driverLogArray.get(EldFragment.driverLogArray.length() - 1);
                 int currentJobStatus = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
@@ -2512,16 +2521,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         if(dataObj.has(ConstantsKeys.SuggestedEdit)) {
                                             boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
 
-                                            sharedPref.setAlertSettings(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
+                                            sharedPref.setEldOccurences(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
                                                     dataObj.getBoolean(ConstantsKeys.IsMalfunction),
                                                     dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
                                                     isSuggestedEdit, getApplicationContext());
 
-                                            if (isSuggestedEdit && UILApplication.isActivityVisible()) {
+                                            if (isSuggestedEdit && sharedPref.isSuggestedRecall(getApplicationContext()) ) {
                                                 try {
-                                                    Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
-                                                    intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
-                                                    LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+                                                    if(UILApplication.isActivityVisible()) {
+                                                        Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                                                        intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
+                                                        LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+                                                    }
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }

@@ -4,23 +4,18 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.adapter.logistic.OtherOptionsAdapter;
 import com.android.volley.Request;
@@ -30,7 +25,8 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.EditedLogActivity;
+import com.messaging.logistic.SuggestedFragmentActivity;
+import com.messaging.logistic.fragment.SuggestedLogFragment;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
@@ -58,11 +54,13 @@ public class OtherOptionsDialog extends Dialog {
     Map<String, String> params;
     ProgressDialog progressDialog;
     String DriverId, DeviceId;
+    int pendingNotificationCount;
 
 
-    public OtherOptionsDialog(@NonNull Context context, boolean isPendingNotification, boolean isGps) {
+    public OtherOptionsDialog(@NonNull Context context, boolean isPendingNotification, int pendingNotificationCount, boolean isGps) {
         super(context);
         this.isPendingNotification = isPendingNotification;
+        this.pendingNotificationCount = pendingNotificationCount;
         this.isGps = isGps;
 
     }
@@ -90,7 +88,7 @@ public class OtherOptionsDialog extends Dialog {
 
         otherOptionList = constants.getOtherOptionsList(getContext());
 
-        OtherOptionsAdapter adapter = new OtherOptionsAdapter(getContext(), isPendingNotification, isGps, otherOptionList);
+        OtherOptionsAdapter adapter = new OtherOptionsAdapter(getContext(), isPendingNotification, pendingNotificationCount, isGps, otherOptionList);
         otherFeatureListView.setAdapter(adapter);
 
         otherFeatureListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -98,7 +96,7 @@ public class OtherOptionsDialog extends Dialog {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Log.d("itemClick", "itemClick: " + position);
 
-                switch (position) {
+                switch (otherOptionList.get(position).getStatus()) {
                     case 0:
                         TabAct.host.setCurrentTab(3);
                         dismiss();
@@ -195,8 +193,9 @@ public class OtherOptionsDialog extends Dialog {
                 if (status.equalsIgnoreCase("true")) {
                     JSONArray editDataArray = new JSONArray(obj.getString(ConstantsKeys.Data));
                     if(editDataArray.length() > 0) {
-                        Intent i = new Intent(getContext(), EditedLogActivity.class);
+                        Intent i = new Intent(getContext(), SuggestedFragmentActivity.class);
                         i.putExtra(ConstantsKeys.suggested_data, editDataArray.toString());
+                        i.putExtra(ConstantsKeys.Date, "");
                         getContext().startActivity(i);
                     }else{
                         Globally.EldScreenToast(EldFragment.refreshLogBtn, getContext().getResources().getString(R.string.no_suggested_logs),

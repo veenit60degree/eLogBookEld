@@ -4,29 +4,15 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.telephony.TelephonyManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,7 +25,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -51,7 +40,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.background.service.AfterLogoutService;
-import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Anim;
 import com.constants.Constants;
@@ -63,21 +51,16 @@ import com.driver.details.ParseLoginDetails;
 import com.local.db.ConstantsKeys;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
-import com.wifi.settings.WiFiConfig;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class LoginActivity extends FragmentActivity implements OnClickListener {
 
@@ -654,7 +637,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 									sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
 									sharedPref.setRefreshDataTime("", getApplicationContext());
 									sharedPref.setCertifyAlertViewTime("", getApplicationContext());
-									sharedPref.setAlertSettings(false, false, false, false, getApplicationContext());
+									sharedPref.setEldOccurences(false, false, false, false, getApplicationContext());
 
 									new ParseLoginJsonData().execute();
 
@@ -1070,7 +1053,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 			String BrandName = Build.BRAND;
 			String Model = Build.MODEL;
 			String Version = Build.VERSION.RELEASE;
-			String operatorSIM = info.getNETWORK_OPERATOR_NAME(0);
+			String operatorSIM = info.getNETWORK_OPERATOR_NAME(1);
 			String MobileNo = "";
 
 			try {
@@ -1086,6 +1069,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 								count = 1;
 								Sim1 = subscriptionInfo.getNumber();
 								Sim1SerialNumber = subscriptionInfo.getIccId();
+
 							} else {
 								Sim2 = subscriptionInfo.getNumber();
 								Sim2SerialNumber = subscriptionInfo.getIccId();
@@ -1123,7 +1107,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 		}
 
 	}
-
 
 
 

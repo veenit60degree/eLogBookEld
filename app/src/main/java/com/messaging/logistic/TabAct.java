@@ -39,6 +39,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
+import com.messaging.logistic.fragment.SuggestedLogFragment;
 import com.shared.pref.CoNotificationPref;
 import com.shared.pref.NotificationPref;
 
@@ -127,8 +128,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 boolean isSuggestedEdit = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
                 boolean isFreshLogin    = sharedPref.GetNewLoginStatus(TabAct.this);
                 if(isSuggestedEdit && isFreshLogin == false){
-                    Intent i = new Intent(TabAct.this, EditedLogActivity.class);
+                    Intent i = new Intent(TabAct.this, SuggestedFragmentActivity.class);
                     i.putExtra(ConstantsKeys.suggested_data, "");
+                    i.putExtra(ConstantsKeys.Date, "");
                     startActivity(i);
 
                 }

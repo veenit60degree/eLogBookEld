@@ -17,6 +17,18 @@
         android:background="@drawable/malfunction_header_selector"
         >
 
+
+        <ImageView
+            android:id="@+id/malfncnInfoImgView"
+            android:layout_width="@dimen/view_height_46"
+            android:layout_height="@dimen/view_height_46"
+            android:padding="@dimen/margin_short_6"
+            android:layout_marginLeft="@dimen/margin_short_7"
+            android:src="@drawable/info"
+
+            />
+
+
         <TextView
             android:id="@+id/malfHeaderTxtVw"
             android:layout_width="wrap_content"
@@ -24,8 +36,9 @@
             android:text="@string/Malfunction_with_bracket"
             android:textColor="@color/color_eld_theme"
             android:textSize="@dimen/text_size_19"
-            android:paddingLeft="@dimen/margin_14"
+            android:paddingLeft="@dimen/margin_short_9"
             android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/malfncnInfoImgView"
 
             />
 
