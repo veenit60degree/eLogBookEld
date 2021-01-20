@@ -24,11 +24,13 @@ public class OtherOptionsAdapter extends BaseAdapter {
     LayoutInflater mInflater;
     List<OtherOptionsModel> LogList;
     boolean isPendingNotification, isGps;
+    int pendingNotificationCount;
 
-    public OtherOptionsAdapter(Context context, boolean isPendingNotification, boolean isGps, List<OtherOptionsModel> logList) {
+    public OtherOptionsAdapter(Context context, boolean isPendingNotification, int pendingNotificationCount, boolean isGps, List<OtherOptionsModel> logList) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.isPendingNotification = isPendingNotification;
+        this.pendingNotificationCount = pendingNotificationCount;
         this.isGps = isGps;
         LogList = logList;
         sharedPref = new SharedPref();
@@ -64,6 +66,7 @@ public class OtherOptionsAdapter extends BaseAdapter {
 
             holder.otherFeatureImgView = (ImageView) convertView.findViewById(R.id.otherFeatureImgView);
             holder.otherFeatureTxtView = (TextView) convertView.findViewById(R.id.otherFeatureTxtView);
+            holder.notiBadgeView       = (TextView) convertView.findViewById(R.id.notiBadgeView);
             holder.errorOtherView      = (TextView) convertView.findViewById(R.id.errorOtherView);
 
             convertView.setTag(holder);
@@ -74,7 +77,7 @@ public class OtherOptionsAdapter extends BaseAdapter {
         holder.otherFeatureImgView.setImageResource(LogItem.getDrawable());
         holder.otherFeatureTxtView.setText(LogItem.getTitle());
 
-        updateView(position, holder.otherFeatureImgView, holder.otherFeatureTxtView, holder.errorOtherView);
+        updateView(LogItem.getStatus(), holder.otherFeatureImgView, holder.otherFeatureTxtView, holder.errorOtherView, holder.notiBadgeView);
 
         return convertView;
     }
@@ -96,13 +99,15 @@ public class OtherOptionsAdapter extends BaseAdapter {
         errorOtherView.setVisibility(View.VISIBLE);
     }
 
-    void updateView(int position, ImageView imgView, TextView titleView, TextView errorView){
-        switch (position){
+    void updateView(int status, ImageView imgView, TextView titleView, TextView errorView, TextView notiBadgeView){
+        switch (status){
 
             case Constants.NOTIFICATION:
                 if(isPendingNotification){
                     imgView.setColorFilter(ContextCompat.getColor(context, R.color.red_custom), android.graphics.PorterDuff.Mode.SRC_IN);
                     titleView.setTextColor(context.getResources().getColor(R.color.red_custom));
+                    notiBadgeView.setVisibility(View.VISIBLE);
+                    notiBadgeView.setText(""+pendingNotificationCount);
                 }
 
                 break;
@@ -114,19 +119,19 @@ public class OtherOptionsAdapter extends BaseAdapter {
                 break;
 
             case Constants.MALFUNCTION:
-                if(sharedPref.isMalfunction(context) || sharedPref.isDiagnostic(context)){
+                if(sharedPref.isMalfunctionOccur(context) || sharedPref.isDiagnosticOccur(context)){
                     makeViewHighlighed(imgView, titleView, errorView);
                 }
                 break;
 
             case Constants.UNIDENTIFIED:
-                if(sharedPref.isUnidentified(context)){
+                if(sharedPref.isUnidentifiedOccur(context)){
                     makeViewHighlighed(imgView, titleView, errorView);
                 }
                 break;
 
             case Constants.SUGGESTED_LOGS:
-                if(sharedPref.isSuggestedEdit(context)){
+                if(sharedPref.isSuggestedEditOccur(context)){
                     makeViewHighlighed(imgView, titleView, errorView);
                 }else{
                     imgView.setColorFilter(ContextCompat.getColor(context, R.color.gray_other_feature), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -143,7 +148,7 @@ public class OtherOptionsAdapter extends BaseAdapter {
     }
 
     public class ViewHolder {
-        TextView otherFeatureTxtView, errorOtherView;
+        TextView otherFeatureTxtView, notiBadgeView, errorOtherView;
         ImageView otherFeatureImgView;
 
     }

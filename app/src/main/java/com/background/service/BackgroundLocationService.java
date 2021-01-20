@@ -3,6 +3,7 @@ package com.background.service;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -2357,9 +2358,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
+
     private void saveObdStatus(String ignition, String type, String time){
 
         try {
+
+
           /*  if(UILApplication.isActivityVisible() && EldFragment.driverLogArray.length() > 0) {
                 JSONObject lastJsonItem = (JSONObject) EldFragment.driverLogArray.get(EldFragment.driverLogArray.length() - 1);
                 int currentJobStatus = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
@@ -2512,7 +2516,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         if(dataObj.has(ConstantsKeys.SuggestedEdit)) {
                                             boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
 
-                                            sharedPref.setAlertSettings(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
+                                            sharedPref.setEldOccurences(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
                                                     dataObj.getBoolean(ConstantsKeys.IsMalfunction),
                                                     dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
                                                     isSuggestedEdit, getApplicationContext());

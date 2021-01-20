@@ -189,6 +189,7 @@ public class ConstantsKeys {
     public static String MasterDetectionDataEventId     = "MasterDetectionDataEventId";
     public static String EventCode                      = "EventCode";
     public static String EventName                      = "EventName";
+    public static String Definition                     = "Definition";
     public static String array                          = "array";
     public static String list                           = "list";
     public static String Reason                         = "Reason";
@@ -229,6 +230,7 @@ public class ConstantsKeys {
     public static String LogSignImage                   = "LogSignImage";
     public static String LogSignImageInByte             = "LogSignImageInByte";
     public static String CoDriverName                   = "CoDriverName";
+    public static String CoDriverKey                    = "CoDriverKey";
     public static String EngineMileage                  = "EngineMileage";
     public static String Date                           = "Date";
     public static String IsRecertifyRequied             = "IsRecertifyRequied";

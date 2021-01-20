@@ -161,12 +161,13 @@ public class Slidingmenufunctions implements OnClickListener {
 		unIdentifyLay.setOnClickListener(this);
 		malfunctionLay.setOnClickListener(this);
 
+
 		if(sharedPref.IsShowUnidentifiedRecords(context) == false){
 			unIdentifyLay.setVisibility(View.GONE);
 		}
 
 
-		malfunctionLay.setVisibility(View.GONE);
+	//	malfunctionLay.setVisibility(View.GONE);
 		if(sharedPref.IsAllowMalfunction(context) == false && sharedPref.IsAllowDiagnostic(context) == false) {
 			malfunctionLay.setVisibility(View.GONE);
 		}

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 
 import com.constants.APIs;
+import com.constants.AlertDialogEld;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
 import com.constants.SaveLogJsonObj;
@@ -53,6 +54,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
     ProgressDialog progressDialog;
     MalfunctionDialog malfunctionDialog;
     int selectedPos = 0;
+    AlertDialogEld confirmationDialog;
 
 
     public MalfunctionAdapter(Context context, String driverId, List<MalfunctionHeaderModel> listDataHeader,
@@ -66,6 +68,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         CurrentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, _context);
 
         clearRecordPost   = new SaveLogJsonObj(_context, apiResponse );
+        confirmationDialog  = new AlertDialogEld(_context);
         progressDialog    = new ProgressDialog(_context);
         progressDialog.setMessage("Loading ...");
 
@@ -158,7 +161,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
     public class GroupViewHolder {
         TextView timeMalTxtVw, statusMalTxtVw, vehMilesMalTxtVw, engHoursMalTxtVw, seqIdMalTxtVw, originMalTxtVw;
         TextView malfHeaderTxtVw, clearEventBtn;
-        ImageView groupIndicatorBtn;
+        ImageView groupIndicatorBtn, malfncnInfoImgView;
         RelativeLayout malfunctionChildMainLay;
         LinearLayout malfunctionChildLay;
 
@@ -190,6 +193,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             holder.malfunctionChildMainLay = (RelativeLayout)convertView.findViewById(R.id.malfunctionChildMainLay);
             holder.malfunctionChildLay = (LinearLayout)convertView.findViewById(R.id.malfunctionChildLay);
             holder.groupIndicatorBtn = (ImageView)convertView.findViewById(R.id.groupIndicatorBtn);
+            holder.malfncnInfoImgView   = (ImageView)convertView.findViewById(R.id.malfncnInfoImgView);
 
             convertView.setTag(holder);
 
@@ -273,6 +277,15 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             }
         });
 
+        holder.malfncnInfoImgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmationDialog.ShowAlertDialog(_listDataHeader.get(groupPosition).getEventName(), _listDataHeader.get(groupPosition).getEventDesc(),
+                        _context.getResources().getString(R.string.dismiss), "",
+                        101, positiveCallBack, negativeCallBack);
+            }
+        });
+
         return convertView;
     }
 
@@ -347,6 +360,19 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
     }
 
 
+
+    AlertDialogEld.PositiveButtonCallback positiveCallBack = new AlertDialogEld.PositiveButtonCallback() {
+        @Override
+        public void getPositiveClick(int flag) {
+        }
+    };
+
+    AlertDialogEld.NegativeButtonCallBack negativeCallBack = new AlertDialogEld.NegativeButtonCallBack() {
+        @Override
+        public void getNegativeClick(int flag) {
+            Log.d("negativeCallBack", "negativeCallBack: " + flag);
+        }
+    };
 
 
     /* ---------------------- Save Log Request Response ---------------- */

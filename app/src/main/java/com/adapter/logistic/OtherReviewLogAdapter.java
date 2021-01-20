@@ -66,6 +66,7 @@ public class OtherReviewLogAdapter extends BaseAdapter {
 
         holder.otherFeatureImgView.setVisibility(View.GONE);
         holder.otherFeatureTxtView.setText(LogItem.getDay());
+        holder.otherFeatureTxtView.setTextColor(context.getResources().getColor(R.color.blue_button));
 
         return convertView;
     }

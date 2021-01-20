@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,15 +15,12 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.adapter.logistic.EditedLogAdapter;
-import com.messaging.logistic.EditedLogActivity;
 import com.messaging.logistic.R;
-
-import org.json.JSONArray;
 
 public class EditedLogFragment extends Fragment {
 
     View rootView;
-    EditedLogActivity editedLogActivity;
+    SuggestedLogFragment suggestedLogFragment;
     String DriverId, DeviceId;
     int offsetFromUTC;
     TextView statusEditedTxtView , startTimeEditedTxtView, endTimeEditedTxtView, durationEditedTxtView;
@@ -64,16 +60,16 @@ public class EditedLogFragment extends Fragment {
         endTimeEditedTxtView.setTextAppearance(getActivity(), R.style.edit_text_style_bold);
         durationEditedTxtView.setTextAppearance(getActivity(), R.style.edit_text_style_bold);
 
-        editedLogActivity   = new EditedLogActivity();
-        DeviceId            = editedLogActivity.sharedPref.GetSavedSystemToken(getActivity());
-        DriverId            = editedLogActivity.sharedPref.getDriverId( getActivity());
-        offsetFromUTC       = (int) editedLogActivity.globally.GetTimeZoneOffSet();
+        suggestedLogFragment = new SuggestedLogFragment();
+        DeviceId            = suggestedLogFragment.sharedPref.GetSavedSystemToken(getActivity());
+        DriverId            = suggestedLogFragment.sharedPref.getDriverId( getActivity());
+        offsetFromUTC       = (int) suggestedLogFragment.globally.GetTimeZoneOffSet();
 
 
-        editedLogActivity.LoadDataOnWebView(editLogWebView, EditedLogActivity.editedLogArray, EditedLogActivity.LogDate, true);
+        suggestedLogFragment.LoadDataOnWebView(editLogWebView, SuggestedLogFragment.editedLogArray, SuggestedLogFragment.LogDate, true);
 
-        if(EditedLogActivity.editedLogList.size() > 0) {
-            EditedLogAdapter adapter = new EditedLogAdapter(getActivity(), EditedLogActivity.editedLogList);
+        if(SuggestedLogFragment.editedLogList.size() > 0) {
+            EditedLogAdapter adapter = new EditedLogAdapter(getActivity(), SuggestedLogFragment.editedLogList);
             editLogListView.setAdapter(adapter);
 
             SetCertifyListViewHeight();
@@ -89,9 +85,9 @@ public class EditedLogFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    int DividerHeigh = editedLogActivity.constants.intToPixel( getActivity(), editLogListView.getDividerHeight() );
+                    int DividerHeigh = suggestedLogFragment.constants.intToPixel( getActivity(), editLogListView.getDividerHeight() );
                     int itemLayoutHeight = editedItemMainLay.getHeight();
-                    int listSize     = EditedLogActivity.editedLogList.size() ;
+                    int listSize     = SuggestedLogFragment.editedLogList.size() ;
                     int DriverLogListHeight      = itemLayoutHeight + ((itemLayoutHeight + DividerHeigh ) * listSize) + 50;
                     editLogListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DriverLogListHeight ));
 

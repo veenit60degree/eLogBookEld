@@ -42,10 +42,9 @@ import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
-import com.messaging.logistic.EditedLogActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.TabAct;
+import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.UILApplication;
 import com.models.DriverLocationModel;
 import com.shared.pref.StatePrefManager;
@@ -325,7 +324,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if(sharedPref.isSuggestedEdit(getActivity()))
+                if(sharedPref.isSuggestedEditOccur(getActivity()))
                     malfunctionTV.startAnimation(editLogAnimation);
                 else {
                     editLogAnimation.cancel();
@@ -354,7 +353,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         RestartTimer();
 
-        if(sharedPref.isSuggestedEdit(getActivity())){
+        if(sharedPref.isSuggestedEditOccur(getActivity())){
             malfunctionTV.setText(getString(R.string.review_carrier_edits));
           //  malfunctionTV.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
             malfunctionTV.setVisibility(View.VISIBLE);
@@ -857,8 +856,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
             case R.id.malfunctionTV:
-                Intent editIntent = new Intent(getActivity(), EditedLogActivity.class);
+                Intent editIntent = new Intent(getActivity(), SuggestedFragmentActivity.class);
                 editIntent.putExtra(ConstantsKeys.suggested_data, "");
+                editIntent.putExtra(ConstantsKeys.Date, "");
                 startActivity(editIntent);
                 break;
 

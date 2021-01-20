@@ -167,7 +167,6 @@ public class Constants {
     public static final int SUGGESTED_LOGS    = 4;
     public static final int WIFI              = 5;
 
-
     public static String TruckIgnitionStatus = "TruckIgnitionStatus";
     public static String IgnitionSource = "IgnitionSource";
     public static String LastIgnitionTime = "LastIgnitionTime";
@@ -2450,13 +2449,16 @@ public class Constants {
 
     public List<OtherOptionsModel> getOtherOptionsList(Context context){
         List<OtherOptionsModel> optionsList = new ArrayList<>();
-        int status = 1;
-        optionsList.add(new OtherOptionsModel(R.drawable.notifications_other, status, context.getResources().getString(R.string.notification)));
-        optionsList.add(new OtherOptionsModel(R.drawable.gps_other, status, context.getResources().getString(R.string.gps)));
-        optionsList.add(new OtherOptionsModel(R.drawable.malfunction_other, status, context.getResources().getString(R.string.malfunction)));
-        optionsList.add(new OtherOptionsModel(R.drawable.unidentified_other, status, context.getResources().getString(R.string.unIdentified_records)));
-        optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, status, context.getResources().getString(R.string.suggested_logs)));
-        optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, status, context.getResources().getString(R.string.obd_wifi)));
+        optionsList.add(new OtherOptionsModel(R.drawable.notifications_other, NOTIFICATION, context.getResources().getString(R.string.notification)));
+        optionsList.add(new OtherOptionsModel(R.drawable.gps_other, GPS, context.getResources().getString(R.string.gps)));
+        if(SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context)) {
+            optionsList.add(new OtherOptionsModel(R.drawable.malfunction_other, MALFUNCTION, context.getResources().getString(R.string.malfunction)));
+        }
+        if(SharedPref.IsShowUnidentifiedRecords(context)) {
+            optionsList.add(new OtherOptionsModel(R.drawable.unidentified_other, UNIDENTIFIED, context.getResources().getString(R.string.unIdentified_records)));
+        }
+        optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, SUGGESTED_LOGS, context.getResources().getString(R.string.suggested_logs)));
+        optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, WIFI, context.getResources().getString(R.string.obd_wifi)));
 
         return optionsList;
     }
@@ -2499,6 +2501,20 @@ public class Constants {
         } else {
             return android.provider.Settings.System.getInt(c.getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1;
         }
+    }
+
+
+    public static String parseDateWithName(String date){
+        String dateDesc = "";
+        String[] dateMonth = Globally.dateConversionMMMM_ddd_dd(date).split(",");
+
+        if(dateMonth.length > 1) {
+            dateDesc = dateMonth[1] + " " + date.substring(8, 10) + ", "+ date.substring(0, 4) ;
+        }
+
+        return dateDesc;
+
+
     }
 
 

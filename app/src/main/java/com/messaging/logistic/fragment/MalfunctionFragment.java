@@ -291,7 +291,8 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                         JSONObject mainObj = (JSONObject)malfunctionArray.get(i);
                         MalfunctionHeaderModel headerModel = new MalfunctionHeaderModel(
                                 mainObj.getString(ConstantsKeys.EventName),
-                                mainObj.getString(ConstantsKeys.EventCode)
+                                mainObj.getString(ConstantsKeys.EventCode),
+                                mainObj.getString(ConstantsKeys.Definition)
                         );
                         // add data in header list
                         malfunctionHeaderList.add(headerModel);
@@ -421,10 +422,10 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
             noDataEldTV.setVisibility(View.GONE);
         }else{
             noDataEldTV.setVisibility(View.VISIBLE);
-            sharedPref.setAlertSettings(sharedPref.isUnidentified(getActivity()),
+            sharedPref.setEldOccurences(sharedPref.isUnidentifiedOccur(getActivity()),
                     false,
                     false,
-                    sharedPref.isSuggestedEdit(getActivity()), getActivity());
+                    sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
         }
 
         try {

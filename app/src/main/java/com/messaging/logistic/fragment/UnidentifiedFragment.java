@@ -530,10 +530,10 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 noDataEldTV.setVisibility(View.VISIBLE);
                 unIdentifiedTopLay.setVisibility(View.GONE);
 
-                sharedPref.setAlertSettings(false,
-                        sharedPref.isMalfunction(getActivity()),
-                        sharedPref.isDiagnostic(getActivity()),
-                        sharedPref.isSuggestedEdit(getActivity()), getActivity());
+                sharedPref.setEldOccurences(false,
+                        sharedPref.isMalfunctionOccur(getActivity()),
+                        sharedPref.isDiagnosticOccur(getActivity()),
+                        sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
 
             }
             EldTitleTV.setText(getResources().getString(R.string.unIdentified_records) + " (" + unIdentifiedRecordList.size() + ")");
