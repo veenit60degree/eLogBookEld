@@ -225,6 +225,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     boolean isCertifySignExist      = false;
     boolean isExceptionEnabledForDay= false;
     boolean isLoadImageCalled       = false;
+    boolean isReCertifyRequired     = false;
 
     int startHour = 0,startMin = 0, endHour = 0, endMin = 0;
     SignDialog signDialog;
@@ -556,6 +557,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         setMarqueonView(certifyTrailerTV);
 
         CheckSignatureVisibilityStatus(selectedArray);
+        refreshPendingSignView();
         CallAPIs();
 
         recapHistoryListView.setOnTouchListener(new View.OnTouchListener() {
@@ -1937,7 +1939,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                             if(OfflineByteImg.length() == 0 && dataObj.getString(ConstantsKeys.LogSignImageInByte).length() > 0) {
                                 // Update recap array with byte image
-                                if(!isReCertifyRequired(dataObj)) {
+                                isReCertifyRequired = !constants.isReCertifyRequired(getActivity(), dataObj, "");
+                                if(isReCertifyRequired) {
                                     recap18DaysArray = recapViewMethod.UpdateSelectedDateRecapArray(recap18DaysArray, LogDate, dataObj.getString(ConstantsKeys.LogSignImageInByte));
                                     recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, recap18DaysArray);
 
@@ -1948,8 +1951,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                                     GetRecapViewOffLineData();
                                 }
                             }
-
-
 
                         }
                     }
@@ -2026,29 +2027,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     }
 
 
-    private boolean isReCertifyRequired(JSONObject dataObj){
 
-        boolean IsRecertifyRequied = false;
-        try {
-            DateTime dateTime = Globally.getDateTimeObj(dataObj.getString(ConstantsKeys.ChkDateTime), false);
-            JSONArray reCertifyArray = new JSONArray(sharedPref.getReCertifyData(getActivity()));
-
-            for (int i = reCertifyArray.length() - 1; i >= 0; i--) {
-                JSONObject obj = (JSONObject) reCertifyArray.get(i);
-
-                DateTime selectedDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.LogDate), false);
-                if (dateTime.equals(selectedDateTime)) {
-                    IsRecertifyRequied = obj.getBoolean(ConstantsKeys.IsRecertifyRequied);
-                    break;
-                }
-
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return IsRecertifyRequied;
-    }
 /*
 
     private void setTruckOnView(){
@@ -2689,7 +2668,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     private void saveByteSignLocally(String SignImageInBytes){
         // Add signed parameters with values into the json object and put into the json Array.
         JSONObject CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DRIVER_ID, DeviceId, global.PROJECT_ID, LogDate,
-                SignImageInBytes, IsContinueWithSign );
+                SignImageInBytes, IsContinueWithSign, isReCertifyRequired  );
         CertifyLogArray.put(CertifyLogObj);
 
         // Insert/Update Certify Log table
@@ -3146,6 +3125,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                                         constants.UpdateCertifyLogArray(recapViewMethod, DRIVER_ID, 7,
                                                 dbHelper, sharedPref, getActivity());
 
+                                        refreshPendingSignView();
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();

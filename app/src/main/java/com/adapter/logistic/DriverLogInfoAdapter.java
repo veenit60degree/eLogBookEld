@@ -280,7 +280,6 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         String StartTime = "00:00";
         StartTime = Globally.ConvertToTimeFormat(LogItem.getStartDateTime(), Globally.DateFormatWithMillSec);
-        Log.d("position", "position: "+ position);
         holder.certifyNoTV.setText(position);
         holder.certifyStatusTV.setText(status);
         holder.certifyStartTimeTV.setText(StartTime);

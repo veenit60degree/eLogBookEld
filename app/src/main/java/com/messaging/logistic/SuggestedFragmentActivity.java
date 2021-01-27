@@ -74,31 +74,14 @@ public class SuggestedFragmentActivity extends FragmentActivity {
         if(editedData.length() > 0){
             try {
                 editDataArray = new JSONArray(editedData);
-<<<<<<< HEAD
-=======
                 dataArray = new JSONArray(editedData);
                 editDataArray = new JSONArray(dataArray.toString());
 
->>>>>>> origin/master
             }catch (Exception e){
                 e.printStackTrace();
             }
 
-<<<<<<< HEAD
-            parseData();
-
-            if(editDataArray.length() > 1){
-                // for multiple days record
-                SuggestedLogListFragment logFragment = new SuggestedLogListFragment();
-                moveFragment(logFragment);
-            }else{
-                // for single day record
-                SuggestedLogFragment logFragment = new SuggestedLogFragment();
-                moveFragment(logFragment);
-            }
-=======
             parseDataWithFragmentCall();
->>>>>>> origin/master
 
         }else{
             if (Globally.isConnected(this)) {
@@ -115,12 +98,6 @@ public class SuggestedFragmentActivity extends FragmentActivity {
     }
 
 
-<<<<<<< HEAD
-    void moveFragment(Fragment fragment){
-        Bundle bundle = new Bundle();
-        bundle.putString(ConstantsKeys.suggested_data, editedData);
-        bundle.putString(ConstantsKeys.Date, "");
-=======
     void callFragmentWithDataSize(){
         if(editDataArray.length() > 1){
             // for multiple days record
@@ -148,7 +125,6 @@ public class SuggestedFragmentActivity extends FragmentActivity {
         Bundle bundle = new Bundle();
         bundle.putString(ConstantsKeys.suggested_data, editedData);
         bundle.putString(ConstantsKeys.Date, date);
->>>>>>> origin/master
         fragment.setArguments(bundle);
 
         fragManager = getSupportFragmentManager();
@@ -161,11 +137,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
 
     }
 
-<<<<<<< HEAD
-    void parseData(){
-=======
     void parseDataWithFragmentCall(){
->>>>>>> origin/master
 
         try{
               for(int dataCount = editDataArray.length()-1 ; dataCount >= 0 ; dataCount--){
@@ -177,11 +149,8 @@ public class SuggestedFragmentActivity extends FragmentActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
-<<<<<<< HEAD
-=======
 
         callFragmentWithDataSize();
->>>>>>> origin/master
     }
 
     /*================== Get suggested records edited from web ===================*/
@@ -227,21 +196,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
                     dataArray = new JSONArray(obj.getString(ConstantsKeys.Data));
                     editDataArray = new JSONArray(dataArray.toString());
 
-<<<<<<< HEAD
-                    parseData();
-
-                    if(editDataArray.length() > 1){
-                        // for multiple days record
-                        SuggestedLogListFragment logFragment = new SuggestedLogListFragment();
-                        moveFragment(logFragment);
-                    }else{
-                        // for single day record
-                        SuggestedLogFragment logFragment = new SuggestedLogFragment();
-                        moveFragment(logFragment);
-                    }
-=======
                     parseDataWithFragmentCall();
->>>>>>> origin/master
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -267,33 +222,21 @@ public class SuggestedFragmentActivity extends FragmentActivity {
     };
 
 
-<<<<<<< HEAD
-
-
-        @Override
-=======
     @Override
->>>>>>> origin/master
     public void onBackPressed() {
             fragManager = getSupportFragmentManager();
             if (fragManager.getBackStackEntryCount() > 1) {
                 getSupportFragmentManager().popBackStack();
             } else {
-<<<<<<< HEAD
-=======
                 if(dataArray.length() > 0 && sharedPref.isSuggestedEditOccur(SuggestedFragmentActivity.this)){
                     sharedPref.setSuggestedRecallStatus(false, getApplicationContext());
                 }else{
                     sharedPref.setSuggestedRecallStatus(true, getApplicationContext());
                 }
 
->>>>>>> origin/master
                 finish();
             }
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/master
 }

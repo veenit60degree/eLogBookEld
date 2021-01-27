@@ -1353,7 +1353,7 @@ public class Constants {
                     daysValidationValue = 0;
                 }
 
-                if (initilizeValue > DriverPermittedDays) {
+                if (initilizeValue >= DriverPermittedDays) {
                     daysValidationValue = initilizeValue - DriverPermittedDays;
                 } else {
                     daysValidationValue = initilizeValue;
@@ -2444,6 +2444,36 @@ public class Constants {
         canvasView.setBackgroundDrawable(d);
 
         return Globally.SaveBitmapToFile(signatureBitmap, "sign", 100, context);
+    }
+
+
+    public boolean isReCertifyRequired(Context context, JSONObject dataObj, String CertifyDateTime){
+
+        boolean IsRecertifyRequied = false;
+        try {
+            DateTime dateTime;
+            if(CertifyDateTime.length() == 0) {
+                dateTime = Globally.getDateTimeObj(dataObj.getString(ConstantsKeys.ChkDateTime), false);
+            }else {
+                dateTime = Globally.getDateTimeObj(CertifyDateTime, false);
+            }
+            JSONArray reCertifyArray = new JSONArray(SharedPref.getReCertifyData(context));
+
+            for (int i = reCertifyArray.length() - 1; i >= 0; i--) {
+                JSONObject obj = (JSONObject) reCertifyArray.get(i);
+
+                DateTime selectedDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.LogDate), false);
+                if (dateTime.equals(selectedDateTime)) {
+                    IsRecertifyRequied = obj.getBoolean(ConstantsKeys.IsRecertifyRequied);
+                    break;
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return IsRecertifyRequied;
     }
 
 

@@ -124,8 +124,6 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         ((ViewHolderItem) viewHolder).startTimeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("position", "start position: " + viewHolder.getAdapterPosition());
-
                 parentPosition = viewHolder.getAdapterPosition();  //getParentViewPosition(((ViewHolderItem) viewHolder).editLogSerialNoTV);
                 String time = ((ViewHolderItem) viewHolder).startTimeTV.getText().toString() ;
                 int Hour = Integer.valueOf(time.split(":")[0] );
@@ -141,7 +139,6 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         ((ViewHolderItem) viewHolder).endTimeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("position", "end position: " + viewHolder.getAdapterPosition());
 
                 parentPosition = viewHolder.getAdapterPosition();  //getParentViewPosition(((ViewHolderItem) viewHolder).editLogSerialNoTV);
                 String time = ((ViewHolderItem) viewHolder).endTimeTV.getText().toString() ;
@@ -161,7 +158,6 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int pos, long id) {
 
                 if(isTouch) {
-                    Log.d("position", "spin position: " + position);
 
                     parentPosition = viewHolder.getAdapterPosition();  //getParentViewPosition(((ViewHolderItem) viewHolder).editLogSerialNoTV);
 
@@ -213,7 +209,6 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int touchPos = viewHolder.getAdapterPosition();
-                Log.d("position", "start position: " + touchPos);
                 if(position < EditGraphFragment.oDriverLogDetail.size()-1){
                     DriverLogModel logModelNextPos = EditGraphFragment.oDriverLogDetail.get(position );
                     int Status = logModelNextPos.getDriverStatusId();

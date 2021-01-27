@@ -224,7 +224,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     final int GetReCertifyRecords   = 22;
     final int GetRecapViewFlagMain  = 23;
     final int GetRecapViewFlagCo    = 24;
-
+    final int NotReady              = 25;
 
     /*-------- DRIVER STATUS ----------*/
     public static final int OFF_DUTY = 1;
@@ -290,7 +290,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     SaveDriverLogPost saveDriverLogPost;
     VolleyRequest GetLogRequest, GetOdometerRequest, GetOdo18DaysRequest, GetLog18DaysRequest, GetOnDutyRequest, GetOBDVehRequest, GetShippingRequest, GetPermissions;
     VolleyRequest SaveOBDVehRequest, SaveTrailerNumber, Inspection18DaysRequest, GetInspectionRequest, GetNotificationRequest;
-    VolleyRequest GetNewsNotificationReq, GetReCertifyRequest, GetRecapView18DaysData ;
+    VolleyRequest GetNewsNotificationReq, GetReCertifyRequest, GetRecapView18DaysData, notReadyRequest ;
     VolleyRequestWithoutRetry GetAddFromLatLngRequest;
     // RequestQueue    SaveLogRequest;
     Map<String, String> params;
@@ -423,6 +423,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         GetReCertifyRequest = new VolleyRequest(getActivity());
         GetAddFromLatLngRequest = new VolleyRequestWithoutRetry(getActivity());
         GetRecapView18DaysData  = new VolleyRequest(getActivity());
+        notReadyRequest         = new VolleyRequest(getActivity());
 
         updateReceiver = new ServiceBroadcastReceiver();
         //  SaveLogRequest      = Volley.newRequestQueue(getActivity());
@@ -5735,6 +5736,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         }
                         break;
 
+
+                    case NotReady:
+                        Log.d("NotReady","NotReady: " + response);
+                        break;
+
                 }
             } else {
 
@@ -6149,7 +6155,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
 
-                        // call Not ready API
+                        // call NotReady API
+
+                        if (Global.isConnected(getActivity())) {
+                            params = new HashMap<String, String>();
+                            params.put("DriverId", DRIVER_ID);
+                            params.put("DeviceId", DeviceId );
+                            params.put("", "" );
+
+                            notReadyRequest.executeRequest(Request.Method.POST, "" , params, NotReady,
+                                    Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
+                        }
 
                     }
                 });

@@ -27,9 +27,7 @@ public class AlertDialogEld {
             closeDialogs();
             AlertDialog alertDialog;
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);  //, R.style.AlertDialogStyle
-            if(title.length() > 0) {
-                alertDialogBuilder.setTitle(title);
-            }
+            alertDialogBuilder.setTitle(title);
             alertDialogBuilder.setMessage(message);
             alertDialogBuilder.setCancelable(false);
             alertDialogBuilder.setPositiveButton(PositiveButtonText,
@@ -42,15 +40,14 @@ public class AlertDialogEld {
                         }
                     });
 
-            if(NegativeButtonText.length() > 0) {
-                alertDialogBuilder.setNegativeButton(NegativeButtonText, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        negativeCallback.getNegativeClick(flag);
-                        dialog.dismiss();
-                    }
-                });
-            }
+            alertDialogBuilder.setNegativeButton(NegativeButtonText, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    negativeCallback.getNegativeClick(flag);
+                    dialog.dismiss();
+                }
+            });
+
 
             alertDialog = alertDialogBuilder.create();
             vectorDialogs.add(alertDialog);
