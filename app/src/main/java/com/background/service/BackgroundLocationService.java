@@ -110,7 +110,7 @@ import dal.tables.OBDDeviceData;
 import models.RulesResponseObject;
 import obdDecoder.Decoder;
 
-// 27 jan 2021
+// 27 jan 2021   --
 public class BackgroundLocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, TextToSpeech.OnInitListener, LocationListener {
 
