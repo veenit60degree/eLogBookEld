@@ -31,6 +31,8 @@
                 android:layout_height="match_parent"
                 android:paddingLeft="@dimen/margin_10"
                 android:paddingRight="@dimen/margin_18"
+                android:background="@drawable/green_with_corner_drawable"
+
                 >
 
             <ImageView

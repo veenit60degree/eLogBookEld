@@ -18,11 +18,19 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.adapter.logistic.OtherReviewLogAdapter;
 import com.constants.Constants;
+<<<<<<< HEAD
+=======
+import com.constants.SharedPref;
+>>>>>>> origin/master
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
 
 import org.json.JSONException;
+<<<<<<< HEAD
+=======
+import org.json.JSONObject;
+>>>>>>> origin/master
 
 public class SuggestedLogListFragment extends Fragment implements View.OnClickListener {
 
@@ -108,6 +116,7 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Log.d("itemClick", "itemClick: " + position);
 
+<<<<<<< HEAD
                 SuggestedLogFragment logFragment = new SuggestedLogFragment();
                 Bundle bundle = new Bundle();
                 try {
@@ -116,6 +125,31 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+=======
+                String suggestedData = "";
+                String date = SuggestedFragmentActivity.otherLogList.get(position).getDate();
+                try {
+                    for (int i = 0; i < SuggestedFragmentActivity.dataArray.length(); i++) {
+
+                        JSONObject obj = (JSONObject)SuggestedFragmentActivity.dataArray.get(i);
+                        String selectedDate = obj.getString(ConstantsKeys.DriverLogDate);
+
+                        if (selectedDate.equals(date)) {
+                            suggestedData = SuggestedFragmentActivity.dataArray.get(i).toString();
+
+                            break;
+
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                SuggestedLogFragment logFragment = new SuggestedLogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(ConstantsKeys.suggested_data, suggestedData);
+                bundle.putString(ConstantsKeys.Date,  date);
+>>>>>>> origin/master
                 logFragment.setArguments(bundle);
 
                 fragManager = getFragmentManager();
@@ -136,6 +170,15 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.eldMenuLay:
+<<<<<<< HEAD
+=======
+                if(SuggestedFragmentActivity.dataArray.length() > 0 && SharedPref.isSuggestedEditOccur(getActivity())){
+                    SharedPref.setSuggestedRecallStatus(false, getActivity());
+                }else{
+                    SharedPref.setSuggestedRecallStatus(true, getActivity());
+                }
+
+>>>>>>> origin/master
                 getActivity().finish();
                 break;
         }

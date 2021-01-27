@@ -1174,6 +1174,20 @@ public class SharedPref {
         editor.commit();
     }
 
+    //  Get suggested recall status-------------------
+    public static boolean isSuggestedRecall( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("suggested_log_recall", true);
+    }
+
+    // Save suggested recall status -------------------
+    public static void setSuggestedRecallStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("suggested_log_recall", value);
+        editor.commit();
+    }
+
     // Get driver status he is online or not-------------------
     public static boolean isOnline( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

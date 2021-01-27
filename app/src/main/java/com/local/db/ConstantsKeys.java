@@ -7,6 +7,7 @@ public class ConstantsKeys {
     public static String DriverLogId        = "DriverLogId";
     public static String DriverId           = "DriverId";
     public static String DriverID           = "DriverID";
+    public static String CoDriverKey        = "CoDriverKey";
 
     public static String ProjectId          = "ProjectId";
     public static String DriverStatusId     = "DriverStatusId";
@@ -199,6 +200,7 @@ public class ConstantsKeys {
     public static String DriverZoneEventDate            = "DriverZoneEventDate";
     public static String SEQUENCE_NO                    = "SEQUENCE_NO";
     public static String Id                             = "Id";
+    public static String Definition                     = "Definition";
 
     public static String ArrivalSealNumber              = "ArrivalSealNumber";
     public static String DepartureSealNumber            = "DepartureSealNumber";

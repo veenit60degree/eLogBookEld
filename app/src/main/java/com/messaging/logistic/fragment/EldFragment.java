@@ -878,7 +878,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
         //---------------- temp delete last item code ---------------
-         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               try {
                     driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                     driverLogArray.remove(driverLogArray.length()-1);

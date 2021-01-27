@@ -28,6 +28,9 @@
                 android:layout_height="match_parent"
                 android:paddingLeft="@dimen/margin_short_8"
                 android:paddingRight="@dimen/margin_15"
+                android:background="@drawable/green_with_corner_drawable"
+
+
                 >
             <ImageView
                 android:id="@+id/eldMenuBtn"
