@@ -46,6 +46,7 @@ import com.models.NotificationHistoryModel;
 import com.models.OtherOptionsModel;
 import com.models.PrePostModel;
 import com.models.RecapSignModel;
+import com.models.SlideMenuModel;
 import com.models.UnIdentifiedRecordModel;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.CoNotificationPref;
@@ -271,6 +272,49 @@ public class Constants {
 
     public Constants() {
         super();
+    }
+
+    public static final int ELD_HOS               = 0;
+    public static final int PTI_INSPECTION        = 4;
+    public static final int CT_PAT_INSPECTION     = 8;
+    public static final int ODOMETER_READING      = 5;
+    public static final int NOTIFICATION_HISTORY  = 3;
+    public static final int SHIPPING_DOC          = 7;
+    public static final int ELD_DOC               = 10;
+    public static final int UNIDENTIFIED_RECORD   = 11;
+    public static final int DATA_MALFUNCTION      = 12;
+    public static final int SETTINGS              = 1;
+    public static final int ALS_SUPPORT           = 6;
+    public static final int LOGOUT                = 2;
+
+
+    public List<SlideMenuModel> getSlideMenuList(Context context, boolean isOdometer, boolean isunIdentified, boolean isMalfunction){
+        List<SlideMenuModel> list = new ArrayList<>();
+        if(SharedPref.IsAOBRD(context)){
+            list.add(new SlideMenuModel(ELD_HOS, R.drawable.eld_hos, context.getResources().getString(R.string.aobrd_hos)));
+        }else {
+            list.add(new SlideMenuModel(ELD_HOS, R.drawable.eld_hos, context.getResources().getString(R.string.eld_hos)));
+        }
+        list.add(new SlideMenuModel(PTI_INSPECTION, R.drawable.pre_post_inspection, context.getResources().getString(R.string.prePostTripIns)));
+        list.add(new SlideMenuModel(CT_PAT_INSPECTION, R.drawable.ct_pat_inspection, context.getResources().getString(R.string.ctPat)));
+        if(isOdometer) {
+            list.add(new SlideMenuModel(ODOMETER_READING, R.drawable.odometer, context.getResources().getString(R.string.odometerReading)));
+        }
+        list.add(new SlideMenuModel(NOTIFICATION_HISTORY, R.drawable.notification_history, context.getResources().getString(R.string.noti_history)));
+        list.add(new SlideMenuModel(SHIPPING_DOC, R.drawable.shipping_docs, context.getResources().getString(R.string.ShippingDocNumber)));
+        list.add(new SlideMenuModel(ELD_DOC, R.drawable.eld_docs, context.getResources().getString(R.string.eld_documents)));
+        if(isunIdentified) {
+            list.add(new SlideMenuModel(UNIDENTIFIED_RECORD, R.drawable.unidentified_menu, context.getResources().getString(R.string.unIdentified_records)));
+        }
+        if(isMalfunction) {
+            list.add(new SlideMenuModel(DATA_MALFUNCTION, R.drawable.eld_hos, context.getResources().getString(R.string.data_malfunction)));
+        }
+        list.add(new SlideMenuModel(SETTINGS, R.drawable.settings, context.getResources().getString(R.string.action_settings)));
+        list.add(new SlideMenuModel(ALS_SUPPORT, R.drawable.als_support, context.getResources().getString(R.string.action_Support)));
+        list.add(new SlideMenuModel(LOGOUT, R.drawable.logout, context.getResources().getString(R.string.logout)));
+
+
+        return list;
     }
 
 

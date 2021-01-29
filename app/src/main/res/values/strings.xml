@@ -667,6 +667,10 @@
     <string name="ignition_on">ON</string>
     <string name="ignition_off">OFF</string>
 
+    <!-- Slide Menu options -->
+    <string name="eld_hos">ELD - HOS</string>
+    <string name="aobrd_hos">AOBRD - HOS</string>
+
 
     <string name="_receive">receive</string>
     <string name="_connect">connect</string>

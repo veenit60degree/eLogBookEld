@@ -25,7 +25,6 @@ import android.widget.TextView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.constants.CheckIsUpdateReady;
-import com.constants.CommonUtils;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
 import com.constants.SharedPref;
@@ -39,9 +38,6 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
-import com.messaging.logistic.fragment.SuggestedLogFragment;
-import com.shared.pref.CoNotificationPref;
-import com.shared.pref.NotificationPref;
 
 public class TabAct extends TabActivity implements View.OnClickListener {
 
@@ -67,8 +63,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     DBHelper dbHelper;
     HelperMethods hMethods;
     SharedPref sharedPref;
-    NotificationPref notificationPref;
-    CoNotificationPref coNotificationPref;
 
     private BroadcastReceiver mMessageReceiver = null;
     Animation fadeInAnim, fadeOutAnim;
@@ -95,8 +89,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         dbHelper      = new DBHelper(this);
         hMethods      = new HelperMethods();
         constants     = new Constants();
-        notificationPref        = new NotificationPref();
-        coNotificationPref      = new CoNotificationPref();
 
         IsTablet = Globally.isTablet(this);
 
@@ -174,10 +166,16 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         }
 
 
+        if(sharedPref.getCurrentDriverType(TabAct.this).equals(DriverConst.StatusSingleDriver)){
+            DriverType = 0;
+        }else{
+            DriverType = 1;
+        }
+
 
         /*==================== Left Slide Menu  =====================*/
         setSlidingMenu();
-        slideMenu = new Slidingmenufunctions(smenu, TabAct.this);
+        slideMenu = new Slidingmenufunctions(smenu, TabAct.this, DriverType);
 
         smenu.addIgnoredView(tabcontent);
 
@@ -186,8 +184,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             MainDriverName  = DriverConst.GetDriverDetails( DriverConst.DriverName, TabAct.this);
             CoDriverName    = DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, TabAct.this);
 
-            if(sharedPref.getCurrentDriverType(TabAct.this).equals(DriverConst.StatusSingleDriver)){
-                DriverType = 0;
+            if(DriverType == 0){
                 slideMenu.MainDriverView(TabAct.this);      //MainDriverBtn.performClick();
                 slideMenu.usernameTV.setText(MainDriverName);
             }else{
@@ -197,7 +194,12 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             }
             if(sharedPref.getDriverType(TabAct.this).equals(DriverConst.SingleDriver)){
                 slideMenu.driversLayout.setVisibility(View.GONE);
+                slideMenu.usernameTV.setVisibility(View.VISIBLE);
+            }else{
+                slideMenu.driversLayout.setVisibility(View.VISIBLE);
+                slideMenu.usernameTV.setVisibility(View.GONE);
             }
+
             slideMenu.MainDriverBtn.setText(MainDriverName);
             slideMenu.CoDriverBtn.setText(CoDriverName);
 
@@ -228,44 +230,21 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     }
 
 
-
-
-
-
-    void showHideBadgeCount(){
-        int badgeCount = constants.getPendingNotifications(DriverType, notificationPref , coNotificationPref, TabAct.this);
-
-        if(badgeCount > 0) {
-            slideMenu.notiBadgeView.setText(""+badgeCount);
-            slideMenu.notiBadgeView.setVisibility(View.VISIBLE);
-        }else{
-            slideMenu.notiBadgeView.setVisibility(View.GONE);
-        }
-    }
-
-
     private void setSlidingMenu() {
         if(getApplicationContext() != null) {
             try {
 
                 smenu = new SlidingMenu(getApplicationContext());
-             /*   smenu.setMode(SlidingMenu.LEFT);
                 smenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-                smenu.setFadeEnabled(true);
-                smenu.setFadeDegree(0.35f);
                 smenu.setShadowWidthRes(R.dimen.shadow_width);
                 smenu.setShadowDrawable(R.drawable.shadow);
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
-                smenu.setBehindWidth(CommonUtils.setWidth(TabAct.this));
-                smenu.attachToActivity(TabAct.this, SlidingMenu.SLIDING_CONTENT);
-                smenu.setMenu(R.layout.slide_menu);
-
-*/
-
-                smenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-                smenu.setShadowWidthRes(R.dimen.shadow_width);
-              //  smenu.setShadowDrawable(R.drawable.shadow);
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
+                if(Globally.isTablet(getApplicationContext())) {
+                    smenu.setBehindWidth(850);
+                }else{
+                    smenu.setBehindWidth(280);
+                }
                 smenu.setFadeDegree(0.35f);
                 smenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
                 smenu.setMenu(R.layout.slide_menu);
@@ -415,12 +394,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         // save app display status log
         constants.saveAppUsageLog(ConstantsEnum.StatusForeground, false, false, util);
 
-        if(sharedPref.IsOdometerFromOBD(getApplicationContext())){
-            Slidingmenufunctions.odometerLay.setVisibility(View.GONE);
-        }else {
-            Slidingmenufunctions.odometerLay.setVisibility(View.VISIBLE);
-        }
-
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(ConstantsKeys.SuggestedEdit));
 
     }
@@ -466,7 +439,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 Globally.hideSoftKeyboard(TabAct.this);
                 smenu.showMenu();
                 smenu.addIgnoredView(tabcontent);
-                showHideBadgeCount();
+
+                slideMenu.menuAdapter.notifyDataSetInvalidated();
+
                 break;
 
             case R.id.dayNightBtn:

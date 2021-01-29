@@ -137,7 +137,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     LinearLayout DriverLay, trailorLayout, truckLay, remainingLay, usedHourLay, shippingLay, odometerLay,  eldNewBottomLay, eldChildSubLay;
     ImageView editTrailorIV, editTruckIV, eldMenuBtn, eldMenuErrorImgVw, certifyLogErrorImgVw;
     LoadingSpinImgView loadingSpinEldIV;
-    RelativeLayout OnDutyBtn, DrivingBtn, OffDutyBtn, SleeperBtn, eldMenuLay, dayNightLay, eldHomeDriverUiLay, settingsMenuBtn, otherOptionBtn;
+    RelativeLayout OnDutyBtn, DrivingBtn, OffDutyBtn, SleeperBtn, eldMenuLay, dayNightLay, eldHomeDriverUiLay, settingsMenuBtn, otherOptionBtn, malfunctionLay;
     ImageView calendarBtn, coDriverImgView, connectionStatusImgView;
     Button sendReportBtn, yardMoveBtn, personalUseBtn;
     RelativeLayout certifyLogBtn;
@@ -452,6 +452,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         dayNightLay = (RelativeLayout) view.findViewById(R.id.dayNightLay);
         settingsMenuBtn = (RelativeLayout)view.findViewById(R.id.settingsMenuBtn);
         otherOptionBtn = (RelativeLayout)view.findViewById(R.id.otherOptionBtn);
+        malfunctionLay = (RelativeLayout)view.findViewById(R.id.malfunctionLay);
 
         shippingLay = (LinearLayout) view.findViewById(R.id.shippingLay);
         odometerLay = (LinearLayout) view.findViewById(R.id.odometerLay);
@@ -530,7 +531,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         settingsMenuBtn.setOnClickListener(this);
         connectionStatusImgView.setOnClickListener(this);
         otherOptionBtn.setOnClickListener(this);
-        malfunctionTV.setOnClickListener(this);
+        malfunctionLay.setOnClickListener(this);
 
         dotSwitchButton.setChecked(false);
         dotSwitchButton.setVisibility(View.VISIBLE);
@@ -732,10 +733,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onAnimationEnd(Animation animation) {
                 if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity())) {
-                    malfunctionTV.startAnimation(editLogAnimation);
+                    malfunctionLay.startAnimation(editLogAnimation);
                 }else {
                     editLogAnimation.cancel();
-                    malfunctionTV.setVisibility(View.GONE);
+                    malfunctionLay.setVisibility(View.GONE);
                 }
             }
 
@@ -820,7 +821,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             gpsRequest.EnableGPSAutoMatically();
 
         if(sharedPref.IsOdometerFromOBD(getActivity())) {
-            slideMenu.odometerLay.setVisibility(View.GONE);
             odometerLay.setVisibility(View.INVISIBLE);
         }
 
@@ -1267,10 +1267,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         }
 
                         if(sharedPref.IsOdometerFromOBD(getActivity())){
-                            slideMenu.odometerLay.setVisibility(View.GONE);
                             odometerLay.setVisibility(View.INVISIBLE);
                         }else{
-                            slideMenu.odometerLay.setVisibility(View.VISIBLE);
                             odometerLay.setVisibility(View.VISIBLE);
                         }
 
@@ -1367,11 +1365,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 }
 
                 if (sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity())) {
-                    malfunctionTV.setVisibility(View.VISIBLE);
-                    malfunctionTV.startAnimation(editLogAnimation);
+                    malfunctionLay.setVisibility(View.VISIBLE);
+                    malfunctionLay.startAnimation(editLogAnimation);
                 } else {
                     editLogAnimation.cancel();
-                    malfunctionTV.setVisibility(View.GONE);
+                    malfunctionLay.setVisibility(View.GONE);
                 }
             }
         }catch (Exception e){
@@ -1564,11 +1562,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         try {
             if (IsAOBRD) {
                 EldTitleTV.setText("HOURS OF SERVICE - AOBRD");
-                slideMenu.homeTxtView.setText("AOBRD - HOS");
+               // slideMenu.homeTxtView.setText("AOBRD - HOS");
                 dotSwitchButton.setVisibility(View.GONE);
             } else {
                 EldTitleTV.setText("HOURS OF SERVICE - ELD");
-                slideMenu.homeTxtView.setText("ELD - HOS");
+                //slideMenu.homeTxtView.setText("ELD - HOS");
                 dotSwitchButton.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
@@ -2025,7 +2023,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 }
                 break;
 
-            case R.id.malfunctionTV:
+            case R.id.malfunctionLay:
                 TabAct.host.setCurrentTab(12);
                 break;
 
@@ -5225,11 +5223,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 try {
                                     if (IsAOBRD) {
                                         EldTitleTV.setText("HOURS OF SERVICE - AOBRD");
-                                        slideMenu.homeTxtView.setText("AOBRD - HOS");
+                                        //slideMenu.homeTxtView.setText("AOBRD - HOS");
                                         dotSwitchButton.setVisibility(View.GONE);
                                     } else {
                                         EldTitleTV.setText("HOURS OF SERVICE - ELD");
-                                        slideMenu.homeTxtView.setText("ELD - HOS");
+                                        //slideMenu.homeTxtView.setText("ELD - HOS");
                                         dotSwitchButton.setVisibility(View.VISIBLE);
                                     }
                                 } catch (Exception e) {
@@ -5415,20 +5413,18 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             try {
                                 if (IsAOBRD) {
                                     EldTitleTV.setText("HOURS OF SERVICE - AOBRD");
-                                    slideMenu.homeTxtView.setText("AOBRD - HOS");
+                                   // slideMenu.homeTxtView.setText("AOBRD - HOS");
                                     dotSwitchButton.setVisibility(View.GONE);
                                 } else {
                                     EldTitleTV.setText("HOURS OF SERVICE - ELD");
-                                    slideMenu.homeTxtView.setText("ELD - HOS");
+                                    //slideMenu.homeTxtView.setText("ELD - HOS");
                                     dotSwitchButton.setVisibility(View.VISIBLE);
                                 }
 
                                 if(isOdometerFromOBD){
-                                    slideMenu.odometerLay.setVisibility(View.GONE);
                                     odometerLay.setVisibility(View.INVISIBLE);
 
                                 }else{
-                                    slideMenu.odometerLay.setVisibility(View.VISIBLE);
                                     odometerLay.setVisibility(View.VISIBLE);
                                 }
                             } catch (Exception e) {

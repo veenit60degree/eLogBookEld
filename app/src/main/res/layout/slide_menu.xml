@@ -2,53 +2,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
->
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/whiteee"
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/app_bg_mobile"
-        android:scaleType="centerCrop"
-        />
-
-   <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        >
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-       >
-
+    >
 
 
         <ImageView
        android:id="@+id/slideLogoIV"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-        android:src="@drawable/als_logo_white"
-       android:layout_centerHorizontal="true"
-       android:layout_marginTop="@dimen/margin_short_6"
-       android:layout_marginBottom="@dimen/margin_short_1"
-       android:layout_marginLeft="@dimen/view_height_35"
-       android:layout_marginRight="@dimen/view_height_35"
+       android:layout_width="@dimen/view_height_270"
+       android:layout_height="@dimen/view_height_90"
+       android:src="@drawable/als_logo_white"
+       android:tint="@color/color_eld_theme"
+       android:layout_marginLeft="@dimen/view_height_25"
+       android:layout_marginTop="@dimen/margin_short_5"
+       android:layout_marginBottom="@dimen/margin_short_5"
 
        />
 
 
     <LinearLayout
-        android:id="@+id/rl1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_below="@+id/slideLogoIV"
-        android:layout_marginTop="@dimen/margin_10"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:paddingLeft="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_10"
+
         >
 
         <!-- profile layout -->
@@ -58,13 +41,12 @@
             android:id="@+id/usernameTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/margin_10"
             android:text="@string/Username"
-            android:textColor="@color/whiteee"
+            android:textColor="@color/color_eld_theme"
             android:textSize="@dimen/text_size_21"
-            android:paddingTop="@dimen/margin_10"
-            android:layout_marginBottom="@dimen/margin_20"
+            android:textStyle="bold"
+
             />
 
         <LinearLayout
@@ -72,11 +54,10 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_32"
             android:orientation="horizontal"
-            android:layout_marginBottom="@dimen/margin_20"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:layout_marginLeft="@dimen/margin_short_5"
-            android:layout_marginRight="@dimen/margin_short_5"
+            android:visibility="gone"
+
             >
 
             <Button
@@ -88,9 +69,10 @@
                 android:paddingLeft="@dimen/margin_short_5"
                 android:paddingRight="@dimen/margin_short_5"
                 android:textAllCaps="false"
-                android:background="@color/color_eld_theme"
-                android:textColor="@color/whiteee"
+                android:background="@drawable/selected_driver_border"
+                android:textColor="@color/color_eld_theme"
                 android:singleLine="true"
+                android:layout_marginRight="@dimen/margin_short_3"
                 android:layout_weight="1"
                 />
 
@@ -104,683 +86,13 @@
                 android:textColor="@color/gray_text1"
                 android:textSize="@dimen/text_size_14"
                 android:textAllCaps="false"
-                android:background="@color/whiteee"
+                android:background="@drawable/unselected_driver_border"
                 android:singleLine="true"
-
+                android:layout_marginLeft="@dimen/margin_short_3"
                 android:layout_weight="1"
+
                 />
         </LinearLayout>
-
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/red_eld"
-            android:textSize="@dimen/text_size_20"
-            android:textStyle="bold"
-            android:text="@string/als_certificate"
-            android:layout_marginLeft="@dimen/margin_short_5"
-            android:paddingBottom="@dimen/margin_short_5"
-            android:layout_marginBottom="@dimen/margin_short_5"
-            android:visibility="gone"
-
-            />
-
-
-
-        <View
-            android:id="@+id/view22"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-            android:visibility="gone"
-            />
-
-        <LinearLayout
-            android:id="@+id/slideMenuAlsView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-         >
-
-
-        <RelativeLayout
-            android:id="@+id/jobLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-            >
-
-
-<!-- menu_balance_icon -->
-            <TextView
-                android:id="@+id/slide_account"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_15"
-                android:text="Local Collections"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-        </RelativeLayout>
-
-
-
-        <View
-            android:id="@+id/view2"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white" />
-
-        <!-- Map Layout -->
-
-
-        <RelativeLayout
-            android:id="@+id/tripLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-             >
-
-
-            <TextView
-                android:id="@+id/currentbooking_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_15"
-                android:text="Trip"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-        </RelativeLayout>
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white" />
-
-
-        <RelativeLayout
-            android:id="@+id/tripHistoryLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-             >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_15"
-                android:text="Trip History"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-
-
-        </RelativeLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white" />
-
-
-        <RelativeLayout
-            android:id="@+id/tripExpenseLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_15"
-                android:text="Trip Expense"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-
-
-        </RelativeLayout>
-
-
-
-        <View
-            android:id="@+id/view9"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white" />
-
-
-
-        </LinearLayout>
-
-
-
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/eldLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-            >
-
-
-            <TextView
-                android:id="@+id/homeTxtView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/Home"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-
-
-        </RelativeLayout>
-
-
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-
-
-            />
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/InspectionLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/prePostTripIns"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_16" />
-
-
-
-        </RelativeLayout>
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white" />
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/ctPatLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/ctPat"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_16" />
-
-
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/odometerLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_46"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/margin_short_1"
-                android:background="@android:color/white" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/odometerReading"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_16" />
-
-
-
-        </RelativeLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-
-            />
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/historyLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/noti_history"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_16" />
-
-
-
-            <TextView
-                android:id="@+id/notiBadgeSlideView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="@dimen/text_size_11"
-                android:padding="@dimen/margin_short_1"
-                android:textColor="@color/whiteee"
-                android:gravity="center"
-                android:background="@drawable/circuler_textview_phone"
-               android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/view_height_30"
-                android:visibility="gone"
-
-                />
-
-
-
-        </RelativeLayout>
-
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-
-            />
-
-
-        <RelativeLayout
-            android:id="@+id/shippingLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/ShippingDocNumber"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_16" />
-
-
-
-        </RelativeLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-
-            />
-
-
-        <RelativeLayout
-            android:id="@+id/eldDocumentLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/eldDocuments"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_16" />
-
-
-
-        </RelativeLayout>
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-
-            />
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/unIdentifyLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/unIdentified_records"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_16" />
-
-
-
-
-            <ImageView
-                android:id="@+id/unidentifiedErrorImgVw"
-                android:layout_width="@dimen/margin_20"
-                android:layout_height="@dimen/margin_20"
-                android:src="@drawable/error"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/view_height_30"
-                android:visibility="gone"
-
-                />
-
-
-        </RelativeLayout>
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-
-            />
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/malfunctionLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/malfunction"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_16" />
-
-
-            <ImageView
-                android:id="@+id/malfunctionErrorImgVw"
-                android:layout_width="@dimen/margin_20"
-                android:layout_height="@dimen/margin_20"
-                android:src="@drawable/error"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/view_height_30"
-                android:visibility="gone"
-
-                />
-
-        </RelativeLayout>
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-
-            />
-
-
-        <RelativeLayout
-            android:id="@+id/settingLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/action_settings"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-
-
-        </RelativeLayout>
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-
-            />
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/obdLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/obd_config"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-
-
-        </RelativeLayout>
-
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white"
-
-            />
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/supportLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-
-            >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/action_Support"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-
-
-        </RelativeLayout>
-
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white" />
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/logoutLay"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_45"
-            android:background="@drawable/slider_list_selector"
-
-
-            >
-
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textStyle="bold"
-                android:text="@string/Logout"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-
-        </RelativeLayout>
-
-
-          <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white" />
 
 
 
@@ -789,35 +101,11 @@
             android:id="@+id/menuListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:layout_below="@+id/driversLayout"
+            android:paddingTop="@dimen/margin_10"
+            tools:listitem="@layout/item_slide_menu"
+            android:paddingBottom="@dimen/view_height_42"
             />
-
-
-        <TextView
-            android:id="@+id/appVersionHome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/whiteee"
-            android:textSize="@dimen/text_size_16"
-            android:text="V - 12.32.65"
-            android:layout_marginTop="@dimen/view_height_32"
-            />
-
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/whiteee"
-                android:textSize="@dimen/text_size_13"
-                android:text="@string/Powered_by"
-                android:layout_marginTop="@dimen/margin_short_1"
-                android:paddingBottom="@dimen/margin_short_5"
-                />
 
 
 
@@ -830,8 +118,39 @@
 
     </LinearLayout>
 
+
+
+    <TextView
+        android:id="@+id/appVersionHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/gray_text1"
+        android:textSize="@dimen/text_size_16"
+        android:text="V - 12.32.65"
+        android:layout_marginTop="@dimen/view_height_32"
+        android:layout_marginBottom="@dimen/margin_25"
+        android:layout_centerHorizontal="true"
+
+        />
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/gray_text1"
+        android:textSize="@dimen/text_size_13"
+        android:text="@string/Powered_by"
+        android:layout_marginTop="@dimen/margin_short_1"
+        android:paddingBottom="@dimen/margin_short_5"
+        android:layout_centerHorizontal="true"
+
+        />
+
+
+
+
 </RelativeLayout>
-
-
-</ScrollView>
-    </RelativeLayout>

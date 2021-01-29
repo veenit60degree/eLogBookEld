@@ -348,19 +348,47 @@
 
 </RelativeLayout>
 
-    <TextView
-        android:id="@+id/malfunctionTV"
+
+    <RelativeLayout
+        android:id="@+id/malfunctionLay"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Malfunction_with_bracket"
-        android:textColor="@color/whiteee"
-        android:textSize="@dimen/text_size_16"
-        android:padding="@dimen/margin_short_7"
-        android:gravity="center"
+        android:layout_height="@dimen/view_height_43"
         android:background="@color/colorVoilation"
-        android:layout_marginTop="@dimen/view_height_55"
+        android:layout_marginTop="@dimen/view_height_54"
         android:visibility="gone"
-        />
+
+        >
+
+        <ImageView
+            android:id="@+id/malfunctionImgView"
+            android:layout_width="@dimen/view_height_33"
+            android:layout_height="@dimen/view_height_33"
+            android:layout_toLeftOf="@+id/malfunctionTV"
+            android:layout_centerVertical="true"
+            android:src="@drawable/email"
+            android:tint="@color/white"
+            android:paddingRight="@dimen/margin_short_8"
+            android:visibility="gone"
+
+            />
+
+        <TextView
+            android:id="@+id/malfunctionTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Malfunction_with_bracket"
+            android:textColor="@color/whiteee"
+            android:textSize="@dimen/text_size_16"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+
+
+            />
+    </RelativeLayout>
+
+
+
+
 
 
 </RelativeLayout>

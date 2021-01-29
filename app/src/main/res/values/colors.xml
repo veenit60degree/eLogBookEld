@@ -50,7 +50,7 @@
     <color name="black_theme">#000000</color>
     <color name="black_unidenfied">#464951</color>
     <color name="gray_unidenfied">#87888D</color>
-
+    <color name="slide_menu_default">#A1A0A0</color>
 
     <color name="gray_hos">#5F6168</color>
     <color name="hos_progress_bg">#E6E6E6</color>

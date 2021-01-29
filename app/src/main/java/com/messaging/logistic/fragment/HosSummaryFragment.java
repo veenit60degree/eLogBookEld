@@ -74,9 +74,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     TextView EldTitleTV, hosDistanceTV, hosLocationTV, nextBrkTitleTV;
     TextView breakUsedTimeTV, shiftUsedTimeTV, statusUsedTimeTV, cycleUsedTimeTV, hosCurrentCycleTV;
     TextView statusHosTV, breakInfoTV, shiftInfoTV, statusInfoTV, cycleInfoTV, hosStatusCircle, hosStatusTV, malfunctionTV ;
-    ImageView eldMenuBtn, hosStatusImgVw;
+    ImageView eldMenuBtn, hosStatusImgVw, malfunctionImgView;
     LoadingSpinImgView loadingSpinEldIV;
-    RelativeLayout rightMenuBtn, eldMenuLay, hosMainLay;
+    RelativeLayout rightMenuBtn, eldMenuLay, hosMainLay, malfunctionLay;
     LinearLayout nextBreakLay;
     CircleProgressView breakCircularView, shiftCircularView, currentStatusCircularView, cycleCircularView;
     CardView sendLogHosBtn, nextBreakCardView, disabledBreakCardView;
@@ -211,13 +211,14 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         hosDistanceCardView     = (CardView)v.findViewById(R.id.hosDistanceCardView);
         hosLocationCardView     = (CardView)v.findViewById(R.id.hosLocationCardView);
 
-
+        malfunctionLay          = (RelativeLayout) v.findViewById(R.id.malfunctionLay);
         rightMenuBtn            = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
         nextBreakLay            = (LinearLayout)v.findViewById(R.id.nextBreakLay);
 
         eldMenuLay              = (RelativeLayout)v.findViewById(R.id.eldMenuLay);
         hosMainLay              = (RelativeLayout)v.findViewById(R.id.hosMainLay);
 
+        malfunctionImgView      = (ImageView)v.findViewById(R.id.malfunctionImgView);
         eldMenuBtn              = (ImageView)v.findViewById(R.id.eldMenuBtn);
         hosStatusImgVw          = (ImageView)v.findViewById(R.id.hosStatusImgVw);
         loadingSpinEldIV        = (LoadingSpinImgView)v.findViewById(R.id.loadingSpinEldIV);
@@ -281,6 +282,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             availableHourBtnTV.setVisibility(View.VISIBLE);
         }
 
+        malfunctionImgView.setVisibility(View.VISIBLE);
         String status = initilizeEldView.getCurrentStatus(DRIVER_JOB_STATUS, isPersonal);
         statusHosTV.setText(status);
 
@@ -325,10 +327,10 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             @Override
             public void onAnimationEnd(Animation animation) {
                 if(sharedPref.isSuggestedEditOccur(getActivity()))
-                    malfunctionTV.startAnimation(editLogAnimation);
+                    malfunctionLay.startAnimation(editLogAnimation);
                 else {
                     editLogAnimation.cancel();
-                    malfunctionTV.setVisibility(View.GONE);
+                    malfunctionLay.setVisibility(View.GONE);
                 }
             }
 
@@ -343,7 +345,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         sendLogHosBtn.setOnClickListener(this);
         rightMenuBtn.setOnClickListener(this);
         availableHourBtnTV.setOnClickListener(this);
-        malfunctionTV.setOnClickListener(this);
+        malfunctionLay.setOnClickListener(this);
     }
 
 
@@ -356,11 +358,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         if(sharedPref.isSuggestedEditOccur(getActivity())){
             malfunctionTV.setText(getString(R.string.review_carrier_edits));
           //  malfunctionTV.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
-            malfunctionTV.setVisibility(View.VISIBLE);
-            malfunctionTV.startAnimation(editLogAnimation);
+            malfunctionLay.setVisibility(View.VISIBLE);
+            malfunctionLay.startAnimation(editLogAnimation);
         }else{
             editLogAnimation.cancel();
-            malfunctionTV.setVisibility(View.GONE);
+            malfunctionLay.setVisibility(View.GONE);
         }
     }
 
@@ -855,7 +857,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 break;
 
 
-            case R.id.malfunctionTV:
+            case R.id.malfunctionLay:
                 Intent editIntent = new Intent(getActivity(), SuggestedFragmentActivity.class);
                 editIntent.putExtra(ConstantsKeys.suggested_data, "");
                 editIntent.putExtra(ConstantsKeys.Date, "");

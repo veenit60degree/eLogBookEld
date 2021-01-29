@@ -6,17 +6,6 @@
 
     >
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/app_bg_mobile"
-        android:layout_centerInParent="true"
-        android:scaleType="centerCrop"
-        android:visibility="gone"
-
-        />
-
-
 
 
 

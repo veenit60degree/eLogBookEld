@@ -354,7 +354,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
         if(IsAOBRD && !IsAOBRDAutomatic){
-            Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
+           // Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
             locInspTitleTV.setText("Enter City");
             AobrdLocLay.setVisibility(View.VISIBLE);
             locInspectionTV.setVisibility(View.GONE);
@@ -379,11 +379,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         }
         inspectionDateTv.setText(CreatedDate.substring(0, 11));
 
-        if(IsAOBRD ) {
+       /* if(IsAOBRD ) {
             Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
         }else{
             Slidingmenufunctions.homeTxtView.setText("ELD - HOS");
-        }
+        }*/
 
 
         if (!isOnCreate && Globally.isConnected(getActivity())) {

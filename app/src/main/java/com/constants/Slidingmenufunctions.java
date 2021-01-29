@@ -48,6 +48,7 @@ import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.EldDataModelNew;
+import com.models.SlideMenuModel;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
 
@@ -64,13 +65,10 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	SlidingMenu menu;
 	Context context;
-	public static TextView usernameTV, homeTxtView, notiBadgeView;
+	public static TextView usernameTV;
 	private TextView appVersionHome;
-	RelativeLayout jobLayout, tripLayout, tripHistoryLay, tripExpenseLay, logoutLay, eldLay,
-			historyLay, settingLay, supportLay, InspectionLay, shippingLay, ctPatLay, obdLay,eldDocumentLay ;
-	RelativeLayout unIdentifyLay, malfunctionLay;
-	public static RelativeLayout odometerLay;
-	public static LinearLayout driversLayout, slideMenuAlsView;
+
+	public static LinearLayout driversLayout;
 	public static Button MainDriverBtn, CoDriverBtn;
 	LoginDialog loginDialog;
 	String MainDriverName = "", MainDriverPass = "", CoDriverName = "", CoDriverPass = "";
@@ -88,16 +86,18 @@ public class Slidingmenufunctions implements OnClickListener {
 	Globally global;
 	SharedPref sharedPref;
 	SaveDriverLogPost saveDriverLogPost;
-
+	public SlideMenuAdapter menuAdapter;
+	int DriverType;
 
 	public Slidingmenufunctions() {
 		super();
 	}
 
-	public Slidingmenufunctions(final SlidingMenu menu, Context context) {
+	public Slidingmenufunctions(final SlidingMenu menu, Context context, int DriverType) {
 
 		this.menu = menu;
 		this.context = context;
+		this.DriverType	= DriverType;
 
 		sharedPref		 = new SharedPref();
 		global			 = new Globally();
@@ -107,29 +107,9 @@ public class Slidingmenufunctions implements OnClickListener {
 		dialog			 = new ProgressDialog(context);
 
 		appVersionHome	 = (TextView)       menu.findViewById(R.id.appVersionHome);
-		homeTxtView		 = (TextView)       menu.findViewById(R.id.homeTxtView);
 		usernameTV 		 = (TextView)       menu.findViewById(R.id.usernameTV);
-		notiBadgeView	 = (TextView)       menu.findViewById(R.id.notiBadgeSlideView);
 
-		jobLayout 		 = (RelativeLayout) menu.findViewById(R.id.jobLayout);
-		tripLayout 		 = (RelativeLayout) menu.findViewById(R.id.tripLayout);
-		tripHistoryLay 	 = (RelativeLayout) menu.findViewById(R.id.tripHistoryLay);
-		tripExpenseLay 	 = (RelativeLayout) menu.findViewById(R.id.tripExpenseLay);
-		eldLay 			 = (RelativeLayout) menu.findViewById(R.id.eldLay);
-		settingLay		 = (RelativeLayout) menu.findViewById(R.id.settingLay);
-		supportLay		 = (RelativeLayout) menu.findViewById(R.id.supportLay);
-		historyLay		 = (RelativeLayout) menu.findViewById(R.id.historyLay);
-		InspectionLay	 = (RelativeLayout) menu.findViewById(R.id.InspectionLay);
-		odometerLay		 = (RelativeLayout) menu.findViewById(R.id.odometerLay);
-		logoutLay 		 = (RelativeLayout) menu.findViewById(R.id.logoutLay);
-		shippingLay		 = (RelativeLayout) menu.findViewById(R.id.shippingLay);
-		ctPatLay		 = (RelativeLayout) menu.findViewById(R.id.ctPatLay);
-		obdLay			 = (RelativeLayout) menu.findViewById(R.id.obdLay);
-		eldDocumentLay	 = (RelativeLayout) menu.findViewById(R.id.eldDocumentLay);
-		unIdentifyLay	 = (RelativeLayout) menu.findViewById(R.id.unIdentifyLay);
-		malfunctionLay	 = (RelativeLayout) menu.findViewById(R.id.malfunctionLay);
 
-		slideMenuAlsView = (LinearLayout)   menu.findViewById(R.id.slideMenuAlsView);
 		driversLayout	 = (LinearLayout)   menu.findViewById(R.id.driversLayout);
 
 		MainDriverBtn	 = (Button)         menu.findViewById(R.id.MainDriverBtn);
@@ -142,62 +122,96 @@ public class Slidingmenufunctions implements OnClickListener {
 		eldWarningColor = context.getResources().getColor(R.color.colorVoilation);
 
 		appVersionHome.setText( "Version " +  Globally.GetAppVersion(context, "VersionName"));
-
 		dialog.setMessage("Loading..");
 
-		obdLay.setVisibility(View.GONE);
 
-	/*	ListView menuListView = (ListView)menu.findViewById(R.id.menuListView);
-		List<String> menuList = new ArrayList<>();
-		menuList.add("ELD Home");
-		menuList.add("Inspection");
-		menuList.add("Notification");
-		menuList.add("Document");
+		boolean isMalfunction = false;
+		if(sharedPref.IsAllowMalfunction(context) && sharedPref.IsAllowDiagnostic(context)) {
+			isMalfunction = true;
+		}
 
-		SlideMenuAdapter adapter = new SlideMenuAdapter(context, menuList );
-		menuListView.setAdapter(adapter);
+		ListView menuListView = (ListView)menu.findViewById(R.id.menuListView);
+		final List<SlideMenuModel> menuList = constants.getSlideMenuList(context, sharedPref.IsOdometerFromOBD(context),
+				sharedPref.IsShowUnidentifiedRecords(context), isMalfunction);
+
+		menuAdapter = new SlideMenuAdapter(context, menuList, DriverType );
+		menuListView.setAdapter(menuAdapter);
 
 		menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 				menu.showContent();
-				TabAct.host.setCurrentTab(position);
+				listItemClick(menuList.get(position).getStatus());
 			}
-		});*/
+		});
 
-		jobLayout.setOnClickListener(this);
-		tripLayout.setOnClickListener(this);
-		tripHistoryLay.setOnClickListener(this);
-		tripExpenseLay.setOnClickListener(this);
-		eldLay.setOnClickListener(this);
-		settingLay.setOnClickListener(this);
-		supportLay.setOnClickListener(this);
-		InspectionLay.setOnClickListener(this);
-		odometerLay.setOnClickListener(this);
-		shippingLay.setOnClickListener(this);
-		historyLay.setOnClickListener(this);
-		logoutLay.setOnClickListener(this);
+
+
 		MainDriverBtn.setOnClickListener(this);
 		CoDriverBtn.setOnClickListener(this);
 		driversLayout.setOnClickListener(this);
-		ctPatLay.setOnClickListener(this);
-		obdLay.setOnClickListener(this);
-		eldDocumentLay.setOnClickListener(this);
-		unIdentifyLay.setOnClickListener(this);
-		malfunctionLay.setOnClickListener(this);
 
-
-		if(sharedPref.IsShowUnidentifiedRecords(context) == false){
-			unIdentifyLay.setVisibility(View.GONE);
-		}
-
-
-	//	malfunctionLay.setVisibility(View.GONE);
-		if(sharedPref.IsAllowMalfunction(context) == false && sharedPref.IsAllowDiagnostic(context) == false) {
-			malfunctionLay.setVisibility(View.GONE);
-		}
 	}
 
+	void listItemClick(int status){
+		switch (status){
+
+			case Constants.ELD_HOS:
+				Constants.ELDActivityLaunchCount = 0;
+				TabAct.host.setCurrentTab(0);
+				break;
+
+			case Constants.PTI_INSPECTION:
+				TabAct.host.setCurrentTab(4);
+				break;
+
+			case Constants.CT_PAT_INSPECTION:
+				TabAct.host.setCurrentTab(8);
+				break;
+
+			case Constants.ODOMETER_READING:
+				if(!SharedPref.IsOdometerFromOBD(context)) {
+					EldFragment.IsMsgClick = false;
+					TabAct.host.setCurrentTab(5);
+				}else{
+					Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.odometer_permission_desc), context.getResources().getColor(R.color.colorSleeper));
+				}
+				break;
+
+			case Constants.NOTIFICATION_HISTORY:
+				TabAct.host.setCurrentTab(3);
+				break;
+
+			case Constants.SHIPPING_DOC:
+				TabAct.host.setCurrentTab(7);
+				break;
+
+			case Constants.ELD_DOC:
+				TabAct.host.setCurrentTab(10);
+				break;
+
+			case Constants.UNIDENTIFIED_RECORD:
+				TabAct.host.setCurrentTab(11);
+				break;
+
+			case Constants.DATA_MALFUNCTION:
+				TabAct.host.setCurrentTab(12);
+				break;
+
+			case Constants.SETTINGS:
+				TabAct.host.setCurrentTab(1);
+				break;
+
+			case Constants.ALS_SUPPORT:
+				TabAct.host.setCurrentTab(6);
+				break;
+
+			case Constants.LOGOUT:
+				logoutDialog();
+				break;
+
+		}
+	}
 	@Override
 	public void onClick(View v) {
 		
@@ -212,7 +226,6 @@ public class Slidingmenufunctions implements OnClickListener {
 					DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
 					DriverStatus	= hMethod.GetDriverStatus(DriverId, dbHelper);
 
-					//ShowLoginDialog(DriverConst.StatusSingleDriver);
 					if(DriverStatus == DRIVING){
 						Globally.DriverSwitchAlert(context, title, titleDesc, okText);
 					}else{
@@ -242,95 +255,6 @@ public class Slidingmenufunctions implements OnClickListener {
 
 				break;
 
-
-
-			case R.id.eldLay:
-				Constants.ELDActivityLaunchCount = 0;
-				TabAct.host.setCurrentTab(0);
-				break;
-
-
-
-
-			case R.id.historyLay:
-				/*EldFragment.IsMsgClick = false;
-				if(TabAct.host.getCurrentTab() == 3){
-					RefreshActivity();
-				}else {*/
-					TabAct.host.setCurrentTab(3);
-				//}
-				break;
-
-
-			case R.id.tripExpenseLay:
-				EldFragment.IsMsgClick = false;
-				TabAct.host.setCurrentTab(3);
-
-
-			break;
-
-
-			case R.id.settingLay:
-				TabAct.host.setCurrentTab(1);
-				break;
-
-
-
-			case R.id.InspectionLay:
-				TabAct.host.setCurrentTab(4);
-				break;
-
-
-			case R.id.odometerLay:
-			if(!SharedPref.IsOdometerFromOBD(context)) {
-				EldFragment.IsMsgClick = false;
-				TabAct.host.setCurrentTab(5);
-			}else{
-				Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.odometer_permission_desc), context.getResources().getColor(R.color.colorSleeper));
-			}
-				break;
-
-			case R.id.shippingLay:
-				TabAct.host.setCurrentTab(7);
-				break;
-
-			case R.id.supportLay:
-				TabAct.host.setCurrentTab(6);
-				break;
-
-
-			case R.id.ctPatLay:
-				TabAct.host.setCurrentTab(8);
-				break;
-
-
-			case R.id.obdLay:
-				TabAct.host.setCurrentTab(9);
-				break;
-
-			case R.id.eldDocumentLay:
-				TabAct.host.setCurrentTab(10);
-				break;
-
-			case R.id.unIdentifyLay:
-				TabAct.host.setCurrentTab(11);
-				break;
-
-			case R.id.malfunctionLay:
-				TabAct.host.setCurrentTab(12);
-				break;
-
-
-			case R.id.logoutLay:
-
-				logoutDialog();
-
-			break;
-
-
-
-		default:
-			break;
 		}
 
 	}
@@ -344,12 +268,13 @@ public class Slidingmenufunctions implements OnClickListener {
 		picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		picker.setContentView(R.layout.popup_edit_delete_lay);
 
-		if(Globally.isTablet(context)){
-			picker.getWindow().setLayout(constants.intToPixel(context, 700), ViewGroup.LayoutParams.WRAP_CONTENT);
-		}else{
-			picker.getWindow().setLayout(constants.intToPixel(context, 500), ViewGroup.LayoutParams.WRAP_CONTENT);
+		if(sharedPref.isSuggestedEditOccur(context)) {
+			if (Globally.isTablet(context)) {
+				picker.getWindow().setLayout(constants.intToPixel(context, 700), ViewGroup.LayoutParams.WRAP_CONTENT);
+			} else {
+				picker.getWindow().setLayout(constants.intToPixel(context, 500), ViewGroup.LayoutParams.WRAP_CONTENT);
+			}
 		}
-
 
 		final TextView changeTitleView, titleDescView;
 		changeTitleView = (TextView) picker.findViewById(R.id.changeTitleView);
@@ -365,7 +290,7 @@ public class Slidingmenufunctions implements OnClickListener {
 			cancelPopupButton.setText(context.getResources().getString(R.string.review_carrier_edits));
 
 			titleDescView.setTextColor(context.getResources().getColor(R.color.gray_text1));
-			cancelPopupButton.setTextColor(context.getResources().getColor(R.color.black_unidenfied));
+			cancelPopupButton.setTextColor(context.getResources().getColor(R.color.black_hos));
 
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 			params.setMargins(0, 0, 30, 0);
@@ -512,12 +437,17 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 	public void MainDriverView(Context context){
-			MainDriverBtn.setBackgroundColor(menu.getResources().getColor(R.color.color_eld_theme_one));
-			MainDriverBtn.setTextColor(menu.getResources().getColor(R.color.whiteee));
+		try {
+			if(context != null) {
+				MainDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.selected_driver_border));
+				MainDriverBtn.setTextColor(context.getResources().getColor(R.color.color_eld_theme_one));
 
-			CoDriverBtn.setBackgroundColor(menu.getResources().getColor(R.color.whiteee));
-			CoDriverBtn.setTextColor(menu.getResources().getColor(R.color.gray_text2));
-
+				CoDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.unselected_driver_border));
+				CoDriverBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 
@@ -525,11 +455,11 @@ public class Slidingmenufunctions implements OnClickListener {
 		try {
 			if(context != null) {
 				if (SharedPref.getDriverType(context).equals(DriverConst.TeamDriver)) {
-					CoDriverBtn.setBackgroundColor(context.getResources().getColor(R.color.color_eld_theme_one));
-					CoDriverBtn.setTextColor(context.getResources().getColor(R.color.whiteee));
+					CoDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.selected_driver_border));
+					CoDriverBtn.setTextColor(context.getResources().getColor(R.color.color_eld_theme_one));
 
-					MainDriverBtn.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
-					MainDriverBtn.setTextColor(context.getResources().getColor(R.color.gray_text2));
+					MainDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.unselected_driver_border));
+					MainDriverBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
 				} else {
 					if (isShown)
 						Globally.EldScreenToast(CoDriverBtn, "Co Driver information not available", eldWarningColor);

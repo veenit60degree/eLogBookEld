@@ -361,19 +361,45 @@
 
 
 
-    <TextView
-        android:id="@+id/malfunctionTV"
+    <RelativeLayout
+        android:id="@+id/malfunctionLay"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Malfunction_with_bracket"
-        android:textColor="@color/whiteee"
-        android:textSize="@dimen/text_size_19"
-        android:padding="@dimen/margin_short_7"
-        android:gravity="center"
+        android:layout_height="@dimen/view_height_52"
         android:background="@color/colorVoilation"
         android:layout_marginTop="@dimen/view_height_70"
         android:visibility="gone"
-        />
+
+        >
+
+
+        <ImageView
+            android:id="@+id/malfunctionImgView"
+            android:layout_width="@dimen/view_height_40"
+            android:layout_height="@dimen/view_height_40"
+            android:layout_toLeftOf="@+id/malfunctionTV"
+            android:layout_centerVertical="true"
+            android:src="@drawable/email"
+            android:tint="@color/white"
+            android:paddingRight="@dimen/margin_short_8"
+            android:visibility="gone"
+
+            />
+
+        <TextView
+            android:id="@+id/malfunctionTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/malfunction_diag_occur"
+            android:textColor="@color/whiteee"
+            android:textSize="@dimen/text_size_19"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+
+
+            />
+    </RelativeLayout>
+
+
 
 
 
