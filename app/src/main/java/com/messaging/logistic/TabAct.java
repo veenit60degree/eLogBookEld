@@ -241,9 +241,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
                 if(Globally.isTablet(getApplicationContext())) {
-                    smenu.setBehindWidth(850);
+                    smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), 560));
                 }else{
-                    smenu.setBehindWidth(280);
+                    smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), 320));
                 }
                 smenu.setFadeDegree(0.35f);
                 smenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
