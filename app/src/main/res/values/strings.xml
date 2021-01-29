@@ -69,7 +69,7 @@
     <string name="odometerReadingTitle">Reading: </string>
     <string name="reading">Reading</string>
     <string name="distanceType">Distance Type: </string>
-    <string name="DataTransmissionThrough">Send data to FMCSA via: </string>
+    <string name="DataTransmissionThrough">Send data to FMCSA via </string>
     <string name="fmcsa_desc">By selecting one of the above options, logs will be sent to FMCSA.</string>
     <string name="kilometer">Kilometers</string>
     <string name="Miles">Miles</string>
@@ -83,6 +83,8 @@
     <string name="co_driver_">Co-Driver</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
+    <string name="agree_submit">Agree</string>
+    <string name="not_ready">Not Ready</string>
 
     <string name="co_driver_username">Username</string>
     <string name="co_driver_pass">Password</string>
@@ -271,6 +273,12 @@
     <string name="seal_no">Seal number</string>
     <string name="person_name">Person name</string>
     <string name="refresh">Refresh</string>
+    <string name="country">Country</string>
+    <string name="CAN">CAN</string>
+    <string name="US">US</string>
+    <string name="eld_govt_logs">ELD GOVT LOGS</string>
+    <string name="Data_transmission">Data Transmission</string>
+
 
     <string name="sealNoAtArrival">Seal number of container at arrival</string>
     <string name="sealNoAtDeparture">Seal number of container at departure</string>
@@ -316,9 +324,10 @@
     <string name="certified">Certified</string>
     <string name="uncertified">Uncertified</string>
     <string name="certify">Certify</string>
+    <string name="Logout_confirmation">Logout</string>
     <string name="Logout">Logout</string>
     <string name="Confirm">Confirm</string>
-    <string name="ConfirmCertify">Confirm &amp; Certify</string>
+    <string name="ConfirmCertify">Certify &amp; Submit</string>
     <string name="sync_data">Sync Data</string>
     <string name="synchronize_data">Synchronize Data</string>
     <string name="Internet_Status">Check internet connection</string>
@@ -439,8 +448,8 @@
     <string name="too">To</string>
     <string name="Start_Date">Start Date </string>
     <string name="end_date">End Date </string>
-    <string name="from_date">From Date: </string>
-    <string name="to_date">To Date: </string>
+    <string name="from_date">From Date </string>
+    <string name="to_date">To Date </string>
     <string name="date_date">Date</string>
     <string name="date_format">mm/dd/yyyy</string>
     <string name="TimeRemaining">Time Remaining</string>
@@ -563,6 +572,9 @@
     <string name="Supervisor_Sign">Supervisor\'s Sign</string>
     <string name="I_certify_that_these_entries_old">I certify that these entries are true and correct</string>
     <string name="I_certify_that_these_entries">I hereby certify that my data entries and my record of duty status for this 24-hour period are true and correct.</string>
+    <string name="I_certify_that_suggested">I hereby certify that my data entries and my record of duty status for these periods are true and correct.</string>
+    <string name="will_finalize_log">This will finalize your log for the day and cannot be undone.</string>
+
     <string name="Drivers_daily_Log">Driver\'s Daily Log</string>
     <string name="restart_on">Restart on</string>
     <string name="truck_tractor">Truck/Tractor</string>
@@ -579,7 +591,9 @@
     <string name="malfunction">Data Malfunction</string>
     <string name="malfunction_diag_occur">Malfunction/Diagnostic occur</string>
     <string name="want_to_logout">Do you really want to logout ?</string>
+    <string name="pending_carrier_edit">You have pending carrier edits that need your approval.</string>
     <string name="Confirmation">Confirmation</string>
+    <string name="Confirmation_suggested">Confirmation !!</string>
     <string name="found_local_data">We found some local data in your App which need to save on server. Please try after some time</string>
     <string name="enter_reason">Edit log reason</string>
     <string name="available_hour_summary">Available Hours Summary</string>
@@ -753,6 +767,14 @@
         <item>Reefer/Fuel System</item>
         <item>Load Security</item>
         <item>Others</item>
+
+    </string-array>
+
+
+    <string-array name="country_array">
+        <item>   Select   </item>
+        <item>    CAN     </item>
+        <item>    USA     </item>
 
     </string-array>
 

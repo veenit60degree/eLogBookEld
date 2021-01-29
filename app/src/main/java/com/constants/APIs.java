@@ -122,7 +122,7 @@ public class APIs {
     public static String GET_NOTIFICATIONS                  = DOMAIN_URL_ELD + "GetNotifications";
     public static String GET_RECERTIFY_PENDING_RECORDS      = DOMAIN_URL_ELD + "GetRecertifyPendingRecords";
     public static String GET_SUGGESTED_RECORDS              = DOMAIN_URL_ELD + "GetSuggestedRecords";
-
+    public static String SAVE_CERTIFY_SIGN_REJECTED_AUDIT   = DOMAIN_URL_ELD + "SaveCertifySignRejectedAudit";
 
 }
 

@@ -1937,20 +1937,22 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                             LogSignImage = dataObj.getString("LogSignImage");
 
-                            if(OfflineByteImg.length() == 0 && dataObj.getString(ConstantsKeys.LogSignImageInByte).length() > 0) {
+                            if (OfflineByteImg.length() == 0 && dataObj.getString(ConstantsKeys.LogSignImageInByte).length() > 0) {
                                 // Update recap array with byte image
-                                isReCertifyRequired = !constants.isReCertifyRequired(getActivity(), dataObj, "");
-                                if(isReCertifyRequired) {
+                                isReCertifyRequired = constants.isReCertifyRequired(getActivity(), dataObj, "");
+                                if (isReCertifyRequired == false) {
                                     recap18DaysArray = recapViewMethod.UpdateSelectedDateRecapArray(recap18DaysArray, LogDate, dataObj.getString(ConstantsKeys.LogSignImageInByte));
                                     recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, recap18DaysArray);
 
-                                    ImageLoader.getInstance().displayImage( LogSignImage, signImageView , options);
+                                    ImageLoader.getInstance().displayImage(LogSignImage, signImageView, options);
                                     CheckSignatureVisibilityStatus(selectedArray);
 
-                                }else{
+                                } else {
                                     GetRecapViewOffLineData();
                                 }
                             }
+
+
 
                         }
                     }
@@ -2266,7 +2268,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 try {
                     if (LogSignImageInByte.length() > 0) {
                         saveSignatureBtn.setVisibility(View.GONE);
-                        //  loadByteImage(LogSignImageInByte);
+
 
                         if(isLoadImageCalled){
                             loadByteImageWithHandler();

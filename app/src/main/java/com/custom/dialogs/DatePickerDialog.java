@@ -99,19 +99,24 @@ public class DatePickerDialog extends Dialog {
         long maxDate = Maxdate.getTime();
          datePicker.setMaxDate(maxDate);             // Till current date
 
-        DriverPermitMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, IsDot);
+        String[] cycleArray = CurrentCycleId.split(",");
+        if(cycleArray.length > 1){
+            CurrentCycleId = cycleArray[0];
 
-       /* if(!IsDot) {
-           // JSONArray recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(DRIVER_ID, dbHelper);
-           // DriverPermitMaxDays = constants.getPermitMaxDays( recap18DaysArray, DriverPermitMaxDays, hMethods, global);
-        }*/
+            if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)){
+                DriverPermitMaxDays = 14;
+            }else{
+                DriverPermitMaxDays = 7;
+            }
+
+        }else{
+            DriverPermitMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, IsDot);
+        }
+
         if(DriverPermitMaxDays < 0 ){
             DriverPermitMaxDays = 0;
-        }else{
-           /* if(DriverPermitMaxDays == 14 ){
-                DriverPermitMaxDays = 13;
-            }*/
         }
+
 
 
         calendar.add(Calendar.DAY_OF_MONTH, -DriverPermitMaxDays);

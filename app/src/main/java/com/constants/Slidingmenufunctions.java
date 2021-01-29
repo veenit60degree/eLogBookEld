@@ -7,18 +7,23 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
+import com.adapter.logistic.SlideMenuAdapter;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,12 +37,14 @@ import com.custom.dialogs.LoginDialog;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.local.db.SyncingMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
+import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.EldDataModelNew;
@@ -67,9 +74,9 @@ public class Slidingmenufunctions implements OnClickListener {
 	public static Button MainDriverBtn, CoDriverBtn;
 	LoginDialog loginDialog;
 	String MainDriverName = "", MainDriverPass = "", CoDriverName = "", CoDriverPass = "";
-	String title                      = "<font color='black'><b>Alert !!</b></font>";
-	String titleDesc = "<html>You can't switch while <font color='#228B22'><b>DRIVING</b></font>. Please change your status first to switch with your co-driver.</html>";
-	String okText = "<font color='#228B22' ><b>Ok</b></font>";
+	String title                      = "<font color='#1A3561'><b>Alert !!</b></font>";
+	String titleDesc = "<html>You can't switch while <font color='#1A3561'><b>DRIVING</b></font>. Please change your status first to switch with your co-driver.</html>";
+	String okText = "<font color='#1A3561' ><b>Ok</b></font>";
 	ProgressDialog dialog;
 	DBHelper dbHelper;
 	HelperMethods hMethod;
@@ -87,7 +94,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		super();
 	}
 
-	public Slidingmenufunctions(SlidingMenu menu, Context context) {
+	public Slidingmenufunctions(final SlidingMenu menu, Context context) {
 
 		this.menu = menu;
 		this.context = context;
@@ -139,6 +146,24 @@ public class Slidingmenufunctions implements OnClickListener {
 		dialog.setMessage("Loading..");
 
 		obdLay.setVisibility(View.GONE);
+
+	/*	ListView menuListView = (ListView)menu.findViewById(R.id.menuListView);
+		List<String> menuList = new ArrayList<>();
+		menuList.add("ELD Home");
+		menuList.add("Inspection");
+		menuList.add("Notification");
+		menuList.add("Document");
+
+		SlideMenuAdapter adapter = new SlideMenuAdapter(context, menuList );
+		menuListView.setAdapter(adapter);
+
+		menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+				menu.showContent();
+				TabAct.host.setCurrentTab(position);
+			}
+		});*/
 
 		jobLayout.setOnClickListener(this);
 		tripLayout.setOnClickListener(this);
@@ -298,58 +323,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 			case R.id.logoutLay:
 
-			final Dialog picker = new Dialog(context);
-			picker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-			picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			picker.setContentView(R.layout.popup_edit_delete_lay);
-			//picker.setTitle("Select Date and Time");
-
-
-			final TextView changeTitleView, titleDescView;
-			changeTitleView = (TextView) picker.findViewById(R.id.changeTitleView);
-			titleDescView=(TextView)picker.findViewById(R.id.titleDescView);
-			final Button confirmPopupButton = (Button)picker.findViewById(R.id.confirmPopupButton);
-			Button cancelPopupButton = (Button)picker.findViewById(R.id.cancelPopupButton);
-
-			changeTitleView.setText(context.getResources().getString(R.string.Confirmation));
-			titleDescView.setText(context.getResources().getString(R.string.want_to_logout));
-			confirmPopupButton.setText(context.getResources().getString(R.string.logout));
-
-			cancelPopupButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					picker.dismiss();
-				}
-			});
-
-			confirmPopupButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					picker.dismiss();
-
-					if(Globally.isWifiOrMobileDataEnabled(context) ) {
-
-						DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
-						dialog.show();
-
-						JSONArray driverLogArray = GetDriversSavedData();
-						if(driverLogArray.length() == 0){
-							LogoutUser(SharedPref.getDriverId(context));
-						}else{
-							SaveDataToServer(driverLogArray);
-
-						//	Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.found_local_data) ,
-							//		context.getResources().getColor(R.color.colorSleeper));
-						}
-					}else{
-						Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
-					}
-				}
-			});
-
-				picker.show();
-
-
+				logoutDialog();
 
 			break;
 
@@ -361,6 +335,86 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	}
 
+
+
+	private void logoutDialog(){
+
+		final Dialog picker = new Dialog(context);
+		picker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+		picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		picker.setContentView(R.layout.popup_edit_delete_lay);
+
+		if(Globally.isTablet(context)){
+			picker.getWindow().setLayout(constants.intToPixel(context, 700), ViewGroup.LayoutParams.WRAP_CONTENT);
+		}else{
+			picker.getWindow().setLayout(constants.intToPixel(context, 500), ViewGroup.LayoutParams.WRAP_CONTENT);
+		}
+
+
+		final TextView changeTitleView, titleDescView;
+		changeTitleView = (TextView) picker.findViewById(R.id.changeTitleView);
+		titleDescView=(TextView)picker.findViewById(R.id.titleDescView);
+		final Button confirmPopupButton = (Button)picker.findViewById(R.id.confirmPopupButton);
+		Button cancelPopupButton = (Button)picker.findViewById(R.id.cancelPopupButton);
+
+		confirmPopupButton.setText(context.getResources().getString(R.string.logout));
+		changeTitleView.setText(context.getResources().getString(R.string.Confirmation));
+
+		if(sharedPref.isSuggestedEditOccur(context)){
+			titleDescView.setText(context.getResources().getString(R.string.pending_carrier_edit));
+			cancelPopupButton.setText(context.getResources().getString(R.string.review_carrier_edits));
+
+			titleDescView.setTextColor(context.getResources().getColor(R.color.gray_text1));
+			cancelPopupButton.setTextColor(context.getResources().getColor(R.color.black_unidenfied));
+
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+			params.setMargins(0, 0, 30, 0);
+			cancelPopupButton.setLayoutParams(params);
+
+		}else {
+			titleDescView.setText(context.getResources().getString(R.string.want_to_logout));
+		}
+
+		cancelPopupButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				picker.dismiss();
+				if(sharedPref.isSuggestedEditOccur(context)){
+					Intent i = new Intent(context, SuggestedFragmentActivity.class);
+					i.putExtra(ConstantsKeys.suggested_data, "");
+					i.putExtra(ConstantsKeys.Date, "");
+					context.startActivity(i);
+				}
+			}
+		});
+
+		confirmPopupButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				picker.dismiss();
+
+				if(Globally.isWifiOrMobileDataEnabled(context) ) {
+
+					DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
+					dialog.show();
+
+					JSONArray driverLogArray = GetDriversSavedData();
+					if(driverLogArray.length() == 0){
+						LogoutUser(SharedPref.getDriverId(context));
+					}else{
+						SaveDataToServer(driverLogArray);
+
+					}
+				}else{
+					Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
+				}
+			}
+		});
+
+		picker.show();
+
+
+	}
 
 
 
@@ -489,9 +543,15 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void RefreshActivity(){
 		try {
-			int currentTab = TabAct.host.getCurrentTab();
+			final int currentTab = TabAct.host.getCurrentTab();
 			TabAct.host.setCurrentTab(2);
-			TabAct.host.setCurrentTab(currentTab);
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					TabAct.host.setCurrentTab(currentTab);
+				}
+			}, 100);
+
 		}catch (Exception e){
 			e.printStackTrace();
 		}

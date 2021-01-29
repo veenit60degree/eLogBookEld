@@ -195,7 +195,8 @@
     <dimen name="text_size_29">29sp</dimen>
     <dimen name="text_size_30">30sp</dimen>
 
-
+    <dimen name="shadow_width">15dp</dimen>
+    <dimen name="sliding_offset">60dp</dimen>
     <dimen name="scanPadding">16dp</dimen>
     <dimen name="polygonViewCircleWidth">32dp</dimen>
     <dimen name="polygonViewStrokeWidth">2dp</dimen>
@@ -209,7 +210,6 @@
     <dimen name="slv_item_bg_btn_width">48dip</dimen>
     <dimen name="slv_item_bg_btn2_width">60dip</dimen>
     <dimen name="slv_item_bg_btn_width_img">100dip</dimen>
-
 
 
 </resources>

@@ -11,7 +11,7 @@
         android:scaleType="centerCrop"
         />
 
-    <ScrollView
+   <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
@@ -126,6 +126,7 @@
             android:paddingBottom="@dimen/margin_short_5"
             android:layout_marginBottom="@dimen/margin_short_5"
             android:visibility="gone"
+
             />
 
 
@@ -309,7 +310,10 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/margin_short_1"
-            android:background="@android:color/white" />
+            android:background="@android:color/white"
+
+
+            />
 
 
 
@@ -319,6 +323,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_45"
             android:background="@drawable/slider_list_selector"
+
 
 
             >
@@ -355,6 +360,7 @@
             android:background="@drawable/slider_list_selector"
 
 
+
             >
 
 
@@ -378,6 +384,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_46"
             android:background="@drawable/slider_list_selector"
+
 
 
             >
@@ -419,6 +426,7 @@
             android:background="@drawable/slider_list_selector"
 
 
+
             >
 
 
@@ -448,6 +456,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/view_height_30"
                 android:visibility="gone"
+
                 />
 
 
@@ -470,6 +479,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_45"
             android:background="@drawable/slider_list_selector"
+
 
 
             >
@@ -503,6 +513,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_45"
             android:background="@drawable/slider_list_selector"
+
 
 
             >
@@ -539,6 +550,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_45"
             android:background="@drawable/slider_list_selector"
+
 
 
             >
@@ -591,6 +603,7 @@
             android:background="@drawable/slider_list_selector"
 
 
+
             >
 
 
@@ -636,6 +649,7 @@
             android:background="@drawable/slider_list_selector"
 
 
+
             >
 
 
@@ -670,6 +684,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_45"
             android:background="@drawable/slider_list_selector"
+
 
 
             >
@@ -709,6 +724,7 @@
             android:background="@drawable/slider_list_selector"
 
 
+
             >
 
 
@@ -741,7 +757,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_45"
             android:background="@drawable/slider_list_selector"
-             >
+
+
+            >
 
 
 
@@ -766,6 +784,13 @@
 
 
 
+
+        <ListView
+            android:id="@+id/menuListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
 
 
         <TextView

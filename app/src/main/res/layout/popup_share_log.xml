@@ -7,13 +7,15 @@
     android:focusableInTouchMode="true"
     android:layout_marginTop="@dimen/margin_15"
     android:layout_marginBottom="@dimen/margin_15"
+    android:layout_marginRight="@dimen/view_height_70"
+    android:layout_marginLeft="@dimen/view_height_70"
 
     >
 
 
 
 
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/shareLogMainLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,7 +61,7 @@
                 android:layout_height="@dimen/view_height_40"
                 android:layout_marginLeft="@dimen/margin_short_8"
                 android:layout_marginRight="@dimen/margin_short_8"
-                android:layout_marginTop="@dimen/margin_short_8"
+                android:layout_marginBottom="@dimen/margin_10"
                 android:orientation="horizontal"
                 android:background="@drawable/edittext_black_hover"
                 android:padding="@dimen/margin_short_1"
@@ -129,17 +131,92 @@
             </LinearLayout>
 
 
+              <LinearLayout
+                android:id="@+id/countryLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_37"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/margin_10"
+
+                >
+
+                <TextView
+                    android:layout_width="@dimen/view_height_95"
+                    android:layout_height="wrap_content"
+                    android:text="@string/country"
+                    android:textColor="@color/color_eld_theme"
+                    android:paddingLeft="@dimen/margin_short_5"
+                    android:paddingRight="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_2"
+                    android:textSize="@dimen/text_size_17"
+                    android:layout_marginLeft="@dimen/margin_short_5"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:layout_gravity="center_vertical"
+                    />
+
+
+                  <RelativeLayout
+                      android:layout_width="@dimen/view_height_140"
+                      android:layout_height="match_parent"
+                      android:orientation="horizontal"
+                      android:background="@drawable/edittext_black_hover"
+                      android:paddingLeft="@dimen/margin_10"
+                      android:paddingRight="@dimen/margin_11"
+                      >
+
+                      <ImageView
+                          android:id="@+id/countryFlagImgView"
+                          android:layout_width="@dimen/margin_27"
+                          android:layout_height="@dimen/margin_27"
+                          android:layout_centerVertical="true"
+                          android:padding="@dimen/margin_short_2"
+                          android:src="@drawable/no_flag"
+
+                          />
+
+
+
+                      <ImageView
+                          android:layout_width="@dimen/margin_15"
+                          android:layout_height="@dimen/margin_15"
+                          android:src="@drawable/arrow_down_black"
+                          android:layout_gravity="center_vertical"
+                          android:layout_alignParentRight="true"
+                          android:layout_centerVertical="true"
+                          />
+
+
+                      <Spinner
+                          android:id="@+id/countrySpinner"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:gravity="center"
+                          android:layout_centerVertical="true"
+                          style="@style/spinner_style_country"
+
+                          />
+
+                  </RelativeLayout>
+
+
+
+
+              </LinearLayout>
+
+
             <LinearLayout
                 android:id="@+id/shareServiceDialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginRight="@dimen/margin_10"
+
                 android:layout_marginTop="@dimen/margin_10"
-                android:layout_marginBottom="@dimen/margin_20"
+
                 >
 
                 <TextView
+                    android:id="@+id/dataTransTxtView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/DataTransmissionThrough"
@@ -163,6 +240,7 @@
                     android:text="@string/WebService"
                     android:textSize="@dimen/text_size_17"
                     android:layout_marginLeft="@dimen/margin_short_5"
+                    android:layout_marginRight="@dimen/margin_short_5"
                     android:textColor="@color/color_eld_theme"
                     android:paddingLeft="@dimen/margin_short_5"
                     android:checked="true"
@@ -181,10 +259,33 @@
                     android:text="@string/email"
                     android:textSize="@dimen/text_size_17"
                     android:textColor="@color/color_eld_theme"
-                    android:layout_marginLeft="@dimen/margin_15"
+                    android:layout_marginLeft="@dimen/margin_10"
                     android:paddingLeft="@dimen/margin_short_5"
 
                     />
+
+
+                <EditText
+                    android:id="@+id/canEmailEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/changeLocLogBtn"
+                    android:layout_toRightOf="@+id/locLogTitle"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:paddingRight="@dimen/margin_short_5"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:hint="@string/email"
+                    android:inputType="textEmailAddress"
+                    android:imeOptions="flagNoExtractUi"
+                    android:background="@drawable/edittext_black_hover"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:visibility="gone"
+
+                    />
+
 
             </LinearLayout>
 
@@ -196,10 +297,12 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/grey_text"
                 android:paddingLeft="@dimen/margin_10"
+                android:text="@string/fmcsa_desc"
                 android:textSize="@dimen/text_size_13"
-                android:layout_marginLeft="@dimen/margin_short_8"
+                android:layout_marginLeft="@dimen/margin_short_5"
                 android:layout_marginRight="@dimen/margin_short_5"
                 android:paddingBottom="@dimen/margin_short_7"
+                android:layout_marginTop="@dimen/margin_10"
                 android:visibility="gone"
                 />
 
@@ -211,7 +314,8 @@
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/margin_10"
                 android:paddingRight="@dimen/margin_10"
-           android:visibility="gone"
+                android:layout_marginTop="@dimen/margin_11"
+                android:visibility="gone"
                 >
 
                 <TextView
@@ -255,7 +359,6 @@
                 android:paddingLeft="@dimen/margin_10"
                 android:paddingRight="@dimen/margin_10"
                 android:layout_marginTop="@dimen/margin_10"
-
                 >
 
                 <TextView
@@ -621,82 +724,6 @@
 
 
 
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:id="@+id/ShareLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:background="@drawable/white_hover"
-        android:paddingTop="@dimen/margin_10"
-        android:paddingBottom="@dimen/margin_10"
-        android:visibility="gone"
-
-        >
-
-
-        <DatePicker
-            android:id="@+id/ShareDatePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:calendarViewShown="false"
-            android:background="@drawable/white_border"
-
-
-            />
-
-        <!--style="@style/datepicker"-->
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/margin_15"
-            >
-
-        <Button
-            android:id="@+id/cancelDateBtn"
-            android:layout_width="@dimen/view_height_115"
-            android:layout_height="@dimen/view_height_32"
-            android:text="@string/cancel"
-            android:background="@drawable/gray_login_selector"
-            android:textColor="@color/whiteee"
-            android:layout_marginBottom="@dimen/margin_short_5"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:layout_marginRight="@dimen/margin_10"
-            />
-
-
-        <Button
-            android:id="@+id/ShareDateBtn"
-            android:layout_width="115dp"
-            android:layout_height="32dp"
-            android:text="@string/SelectDate"
-            android:background="@drawable/green_selector"
-            android:textColor="@color/whiteee"
-            android:layout_marginBottom="@dimen/margin_short_5"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:layout_marginLeft="@dimen/margin_10"
-
-            />
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-</ScrollView>
 
     <ProgressBar
         android:id="@+id/sendLogProgressBar"

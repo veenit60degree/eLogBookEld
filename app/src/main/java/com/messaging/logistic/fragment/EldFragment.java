@@ -899,6 +899,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
         loadOnCreateView(isConnected);
 
+        CalculateTimeInOffLine(false, false);
+
     }
 
 
@@ -6156,15 +6158,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         dialog.dismiss();
 
                         // call NotReady API
-
                         if (Global.isConnected(getActivity())) {
                             params = new HashMap<String, String>();
                             params.put("DriverId", DRIVER_ID);
                             params.put("DeviceId", DeviceId );
-                            params.put("", "" );
+                            params.put("DriverName", nameTv.getText().toString() );
+                            params.put("CompanyId", DriverCompanyId );
+                            params.put("DriverTimeZoneName", DriverTimeZone );
+                            params.put("LogDateTime", Global.getCurrentDate() );
 
-                            notReadyRequest.executeRequest(Request.Method.POST, "" , params, NotReady,
-                                    Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
+                            notReadyRequest.executeRequest(Request.Method.POST, APIs.SAVE_CERTIFY_SIGN_REJECTED_AUDIT , params, NotReady,
+                                    Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
                         }
 
                     }

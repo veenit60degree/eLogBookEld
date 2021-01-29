@@ -638,6 +638,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 									sharedPref.setRefreshDataTime("", getApplicationContext());
 									sharedPref.setCertifyAlertViewTime("", getApplicationContext());
 									sharedPref.setEldOccurences(false, false, false, false, getApplicationContext());
+									sharedPref.setSuggestedRecallStatus(true, getApplicationContext());
 
 									new ParseLoginJsonData().execute();
 

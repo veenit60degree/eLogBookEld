@@ -249,22 +249,26 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             try {
 
                 smenu = new SlidingMenu(getApplicationContext());
-                smenu.setMode(SlidingMenu.LEFT);
+             /*   smenu.setMode(SlidingMenu.LEFT);
                 smenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
                 smenu.setFadeEnabled(true);
                 smenu.setFadeDegree(0.35f);
-                smenu.setBehindOffsetRes(R.dimen.view_height_30);
-                smenu.setShadowDrawable(R.drawable.transparent_hover);
-                smenu.setBehindScrollScale(0.333f);// Drag effect
+                smenu.setShadowWidthRes(R.dimen.shadow_width);
+                smenu.setShadowDrawable(R.drawable.shadow);
+                smenu.setBehindOffsetRes(R.dimen.sliding_offset);
                 smenu.setBehindWidth(CommonUtils.setWidth(TabAct.this));
                 smenu.attachToActivity(TabAct.this, SlidingMenu.SLIDING_CONTENT);
                 smenu.setMenu(R.layout.slide_menu);
 
+*/
 
-
-
-
-
+                smenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+                smenu.setShadowWidthRes(R.dimen.shadow_width);
+              //  smenu.setShadowDrawable(R.drawable.shadow);
+                smenu.setBehindOffsetRes(R.dimen.sliding_offset);
+                smenu.setFadeDegree(0.35f);
+                smenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+                smenu.setMenu(R.layout.slide_menu);
 
 
             }catch (Exception e){

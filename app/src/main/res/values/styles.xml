@@ -328,6 +328,21 @@
     </style>
 
 
+    <style name="spinner_style_country">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/transparent</item>
+        <item name="android:layout_marginTop">@dimen/margin_short_1</item>
+        <item name="android:layout_marginBottom">@dimen/margin_short_1</item>
+        <item name="android:paddingLeft">@dimen/margin_short_8</item>
+        <item name="android:drawablePadding">@dimen/margin_short_5</item>
+        <item name="android:paddingRight">@dimen/margin_10</item>
+        <item name="android:textColor">@color/gray_text1</item>
+        <item name="android:popupBackground">@color/white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+
     <style name="spinner_style_transparent">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

@@ -1,9 +1,12 @@
 package com.messaging.logistic.fragment;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,8 +16,12 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +46,7 @@ import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.OtherReviewLogDialog;
 import com.custom.dialogs.SignDialog;
+import com.driver.details.DriverConst;
 import com.driver.details.EldDriverLogModel;
 import com.google.android.material.tabs.TabLayout;
 import com.local.db.CertifyLogMethod;
@@ -116,12 +124,13 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     CardView confirmCertifyBtn, cancelCertifyBtn;
 
     //SaveDriverLogPost saveCertifyLogPost;
-    VolleyRequest GetEditedRecordRequest, claimLogRequest, GetReCertifyRequest;
+    VolleyRequest GetEditedRecordRequest, claimLogRequest, GetReCertifyRequest, notReadyRequest;
     Map<String, String> params;
     final int GetRecordFlag             = 101;
     final int CertifyRecordFlag         = 102;
     final int RejectRecordFlag          = 103;
     final int GetReCertifyRecords       = 104;
+    final int NotReady                  = 105;
 
     String AcceptedSuggestedRecord      = "1";
     String RejectSuggestedRecord        = "4";
@@ -201,6 +210,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         GetEditedRecordRequest      = new VolleyRequest(getActivity());
         claimLogRequest             = new VolleyRequest(getActivity());
         GetReCertifyRequest         = new VolleyRequest(getActivity());
+        notReadyRequest             = new VolleyRequest(getActivity());
 
         progressDialog              = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading ...");
@@ -358,26 +368,15 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
             case R.id.confirmCertifyBtn:
 
-                if(globally.isConnected(getActivity())){
-                    if(isCurrentDate) {
-                        ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord, CertifyRecordFlag);
-                    }else{
-                        if(isCertifySignExist){
-                            ContinueWithoutSignDialog();
-                        }else {
-                            openSignDialog();
-                        }
-                    }
-                }else{
-                    globally.EldScreenToast(confirmCertifyBtn, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
-                }
+                    confirmLogDialog();
+
                 break;
 
             case R.id.cancelCertifyBtn:
                 if(globally.isConnected(getActivity())){
                     confirmationDialog.ShowAlertDialog(getString(R.string.cancel_edit_record), getString(R.string.cancel_edit_record_desc),
                             getString(R.string.yes), getString(R.string.no),
-                    101, positiveCallBack, negativeCallBack);
+                            101, positiveCallBack, negativeCallBack);
 
 
                 }else{
@@ -390,7 +389,75 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
 
 
+    void confirmLogDialog(){
+        final Dialog picker = new Dialog(getActivity());
+        picker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        picker.setContentView(R.layout.popup_edit_delete_lay);
 
+        if(Globally.isTablet(getActivity())){
+            picker.getWindow().setLayout(constants.intToPixel(getActivity(), 730), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }else{
+            picker.getWindow().setLayout(constants.intToPixel(getActivity(), 550), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+
+        final TextView changeTitleView, titleDescView;
+        changeTitleView = (TextView) picker.findViewById(R.id.changeTitleView);
+        titleDescView=(TextView)picker.findViewById(R.id.titleDescView);
+        final Button confirmPopupButton = (Button)picker.findViewById(R.id.confirmPopupButton);
+        Button cancelPopupButton = (Button)picker.findViewById(R.id.cancelPopupButton);
+
+        changeTitleView.setText(getString(R.string.Confirmation_suggested));
+        titleDescView.setText(getString(R.string.I_certify_that_suggested) + "\n\n" + getString(R.string.will_finalize_log));
+        confirmPopupButton.setText(getString(R.string.agree_submit));
+        cancelPopupButton.setText(getString(R.string.not_ready));
+        titleDescView.setTextColor(getResources().getColor(R.color.gray_text1));
+        cancelPopupButton.setTextColor(getResources().getColor(R.color.black_unidenfied));
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 20, 0);
+        cancelPopupButton.setLayoutParams(params);
+
+        cancelPopupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                picker.dismiss();
+
+                NotReadyApi();
+
+            }
+        });
+
+        confirmPopupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                picker.dismiss();
+
+                if(globally.isConnected(getActivity())){
+
+                    if(isCurrentDate) {
+                        ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord, CertifyRecordFlag);
+                    }else{
+                        if(isCertifySignExist){
+                            ContinueWithoutSignDialog();
+                        }else {
+                            openSignDialog();
+                        }
+                    }
+
+                }else{
+                    globally.EldScreenToast(confirmCertifyBtn, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                }
+
+
+
+            }
+        });
+
+        picker.show();
+
+    }
 
 
     public void ContinueWithoutSignDialog(){
@@ -720,7 +787,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 }
                 OldStatus   =   DRIVER_JOB_STATUS;
 
-                if(!logObj.isNull(ConstantsKeys.CoDriverName)) {
+                if(!logObj.isNull(ConstantsKeys.CoDriverKey)) {
                     CoDriverId = logObj.getString(ConstantsKeys.CoDriverKey);
                 }
 
@@ -742,6 +809,32 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
     }
 
+
+    /*================== call not ready api for count ===================*/
+    private void NotReadyApi() {
+
+        if(progressDialog.isShowing() == false)
+            progressDialog.show();
+
+        String driverName = "";
+        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            driverName = DriverConst.GetDriverDetails(DriverConst.DriverName, getActivity());
+        } else {
+            driverName = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, getActivity());
+        }
+        String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+
+        Map<String, String> mapParams = new HashMap<String, String>();
+        mapParams.put("DriverId", DriverId);
+        mapParams.put("DeviceId", DeviceId);
+        mapParams.put("DriverName", driverName);
+        mapParams.put("CompanyId", DriverCompanyId);
+        mapParams.put("DriverTimeZoneName", sharedPref.getTimeZone(getActivity()));
+        mapParams.put("LogDateTime", globally.getCurrentDate());
+
+        notReadyRequest.executeRequest(Request.Method.POST, APIs.SAVE_CERTIFY_SIGN_REJECTED_AUDIT, mapParams, NotReady,
+                Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
+    }
 
 
     /*================== Get suggested records edited from web ===================*/
@@ -904,12 +997,16 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         }
                         break;
 
+                    case NotReady:
+                        dismissDialog();
+                        getActivity().finish();
+                        break;
+
                 }
 
             } else {
                 dismissDialog();
 
-                // {"Status":false,"Message":"Record Status updated successfully","Data":null}
                 if(Message.equals("Record Status updated successfully")){
                     if(isCurrentDate){
 
@@ -927,8 +1024,12 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
                     }
                 }else {
-                    setPagetAdapter();
-                    globally.EldScreenToast(confirmCertifyBtn, Message, getResources().getColor(R.color.colorVoilation));
+                    if(flag == NotReady) {
+                        getActivity().finish();
+                    }else {
+                        setPagetAdapter();
+                        globally.EldScreenToast(confirmCertifyBtn, Message, getResources().getColor(R.color.colorVoilation));
+                    }
                 }
             }
         }
@@ -958,6 +1059,9 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                     globally.EldScreenToast(confirmCertifyBtn, error.toString(), getResources().getColor(R.color.colorVoilation));
                     break;
 
+                case NotReady:
+                    getActivity().finish();
+                    break;
 
                 default:
                     globally.EldScreenToast(confirmCertifyBtn, error.toString(), getResources().getColor(R.color.colorVoilation));

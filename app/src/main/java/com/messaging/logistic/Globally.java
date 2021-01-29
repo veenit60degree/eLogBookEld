@@ -337,7 +337,7 @@ public class Globally {
 
 				}
 			});
-			mSnackBar.setActionTextColor(Color.parseColor("#fff68f"));
+			mSnackBar.setActionTextColor(Color.WHITE);
 			mSnackBar.show();
 
 
@@ -1787,7 +1787,7 @@ public class Globally {
 			alertDialog.setMessage(Html.fromHtml(title));
 
 			// Setting OK Button
-			alertDialog.setButton(Html.fromHtml("<font color='#228B22'><b>Ok</b></font>"), new DialogInterface.OnClickListener() {
+			alertDialog.setButton(Html.fromHtml("<font color='#1A3561'><b>Ok</b></font>"), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					SharedPref.SetIsReadViolation(true, context);
 					dialog.dismiss();

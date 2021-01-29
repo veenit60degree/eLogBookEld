@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -23,6 +24,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -32,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -48,6 +51,7 @@ import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.fragment.EldFragment;
 import com.models.DriverLocationModel;
 
 import org.joda.time.DateTime;
@@ -74,24 +78,30 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     String DeviceId;
     String CurrentCycleId   = "";
     String LATITUDE  = "", LONGITUDE = "";
-    DatePicker datePicker;
     Date StartDate, EndDate;
     DateFormat format;
-    Button selectButton , cancelDateBtn, changeLocLogBtn;
+    ImageView countryFlagImgView;
+    Button changeLocLogBtn;
     LinearLayout cancelDriverLogBtn, shareDriverLogBtn;
     RelativeLayout fmcsaLogBtn, pdfLogBtn;
-    EditText amountEditText, inspCmntEditTxt, cityShareEditText;
+    EditText amountEditText, inspCmntEditTxt, cityShareEditText, canEmailEditText;
     CheckBox checkboxEmail, checkboxService;
+    Spinner countrySpinner;
     AutoCompleteTextView locLogAutoComplete;
-    TextView startDateTv ,endDateTv, fmcsaDescTV, fmcsaLogTxtVw, pdfLogTxtVw;
-    LinearLayout ShareLayout, emailLogLay, logBtnLay, shareLogMainLay, shareLogChildLay, shareServiceDialog;
+    TextView startDateTv ,endDateTv, fmcsaDescTV, fmcsaLogTxtVw, pdfLogTxtVw, dataTransTxtView;
+    LinearLayout emailLogLay, logBtnLay, shareLogMainLay, shareLogChildLay, shareServiceDialog;
     RelativeLayout sharedLocLay, AobrdSharedLocLay;
     String selectedDateView = "", email = "";
     FragmentActivity activity;
     ProgressBar sendLogProgressBar;
+    DatePickerDialog dateDialog;
+
+    int CountryNoSelection  = 0;
+    int CountryCan          = 1;
+    int CountryUsa          = 2;
     int UsaMaxDays          = 7;    // 1 + 7  = 8 days
     int CanMaxDays          = 13;   // 1 = 13  = 14 days
-    int MaxDays;
+    int MaxDays, SelectedCountry = 0;
     boolean IsAOBRD;
     private String City = "", State = "", Country = "";
     List<DriverLocationModel> StateList;
@@ -123,40 +133,29 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.popup_share_log);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN );
-        getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE );
+        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         setCancelable(false);
 
-        datePicker=(DatePicker)findViewById(R.id.ShareDatePicker);
-        Calendar calendar = Calendar.getInstance();
-        //  calendar.add(Calendar.YEAR, -18);
         format = new SimpleDateFormat("MM/dd/yyyy");
         EndDate = new Date();
         StartDate = new Date();
-        Date dateee = calendar.getTime();
-        long mills = dateee.getTime();
-        datePicker.setMaxDate(mills);
+
         GetAddFromLatLngRequest = new VolleyRequest(getContext());
 
 
         LATITUDE    = Globally.LATITUDE;
         LONGITUDE   = Globally.LONGITUDE;
 
-        if(CurrentCycleId.equals("1") || CurrentCycleId.equals("2") || CurrentCycleId.equals("null")){
-            calendar.add(Calendar.DAY_OF_MONTH, -13);   // Last 14 Days
-        }else{
-            calendar.add(Calendar.DAY_OF_MONTH, -7);   // Last 7 Days
-        }
-        Date mindate = calendar.getTime();
-        datePicker.setMinDate(mindate.getTime());
-
         checkboxEmail       = (CheckBox)findViewById(R.id.checkboxEmail);
         checkboxService     = (CheckBox)findViewById(R.id.checkboxService);
         sendLogProgressBar  = (ProgressBar)findViewById(R.id.sendLogProgressBar);
 
-        cancelDateBtn       = (Button)findViewById(R.id.cancelDateBtn);
-        selectButton        = (Button)findViewById(R.id.ShareDateBtn);
         changeLocLogBtn     = (Button)findViewById(R.id.changeLocLogBtn);
+
+        countryFlagImgView  = (ImageView)findViewById(R.id.countryFlagImgView);
+        countrySpinner      = (Spinner)findViewById(R.id.countrySpinner);
 
         cancelDriverLogBtn  = (LinearLayout)findViewById(R.id.cancelDriverLogBtn);
         shareDriverLogBtn   = (LinearLayout) findViewById(R.id.shareDriverLogBtn);
@@ -165,14 +164,15 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         amountEditText      = (EditText)findViewById(R.id.amountEditText);
         inspCmntEditTxt     = (EditText)findViewById(R.id.inspCmntEditTxt);
         cityShareEditText   = (EditText)findViewById(R.id.cityShareEditText);
+        canEmailEditText    = (EditText)findViewById(R.id.canEmailEditText);
 
         startDateTv         = (TextView) findViewById(R.id.startDateTv);
         endDateTv           = (TextView) findViewById(R.id.endDateTv);
         fmcsaDescTV         = (TextView) findViewById(R.id.fmcsaDescTV);
         fmcsaLogTxtVw       = (TextView) findViewById(R.id.fmcsaLogTxtVw);
         pdfLogTxtVw         = (TextView) findViewById(R.id.pdfLogTxtVw);
+        dataTransTxtView    = (TextView) findViewById(R.id.dataTransTxtView);
 
-        ShareLayout         = (LinearLayout)findViewById(R.id.ShareLayout);
         emailLogLay         = (LinearLayout)findViewById(R.id.emailLogLay);
         logBtnLay           = (LinearLayout)findViewById(R.id.logBtnLay);
         shareLogMainLay     = (LinearLayout)findViewById(R.id.shareLogMainLay);
@@ -197,21 +197,41 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             MaxDays = CanMaxDays;
         }
 
-        String currentDate = Globally.GetCurrentDeviceDate();
-        String currentDateStr = Globally.ConvertDateFormat(currentDate);
-        DateTime selectedDateTime = new DateTime(Globally.getDateTimeObj(currentDateStr, false) );
-        selectedDateTime = selectedDateTime.minusDays(MaxDays);
-        String fromDate = Globally.ConvertDateFormatMMddyyyy(selectedDateTime.toString());
+        ArrayAdapter countryAdapter = new ArrayAdapter(getContext(), R.layout.item_editlog_spinner, R.id.editlogSpinTV,
+                getContext().getResources().getStringArray(R.array.country_array));
+        countrySpinner.setAdapter(countryAdapter);
 
-        startDateTv.setText(fromDate);
-        endDateTv.setText(currentDate);
 
-        try {
-            StartDate = format.parse(fromDate);
-            EndDate = format.parse(currentDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                SelectedCountry = position;
+                    switch (position){
+                        case 0:
+                            countryFlagImgView.setImageResource(R.drawable.no_flag);
+                            usaView();
+                            break;
+
+                        case 1:
+                            countryFlagImgView.setImageResource(R.drawable.can_flag);
+                            canView();
+                            break;
+
+                        case 2:
+                            countryFlagImgView.setImageResource(R.drawable.usa_flag);
+                            usaView();
+                            break;
+
+                    }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        setMinMaxDateOnView(MaxDays, true);
 
 
 
@@ -253,9 +273,6 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         }
 
 
-        selectButton.setOnClickListener(this);
-        cancelDateBtn.setOnClickListener(this);
-        ShareLayout.setOnClickListener(this);
         shareLogMainLay.setOnClickListener(this);
         shareLogChildLay.setOnClickListener(this);
         shareDriverLogBtn.setOnClickListener(new ShareBtnClick());
@@ -268,6 +285,58 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         pdfLogBtn.setOnClickListener(this);
 
 
+    }
+
+
+    void setMinMaxDateOnView(int MaxDays, boolean isOnCreate){
+        String currentDate = Globally.GetCurrentDeviceDate();
+        String currentDateStr = Globally.ConvertDateFormat(currentDate);
+        DateTime selectedDateTime = new DateTime(Globally.getDateTimeObj(currentDateStr, false) );
+        selectedDateTime = selectedDateTime.minusDays(MaxDays);
+        String fromDate = Globally.ConvertDateFormatMMddyyyy(selectedDateTime.toString());
+
+        try {
+            startDateTv.setText(fromDate);
+            StartDate = format.parse(fromDate);
+
+            if(isOnCreate) {
+                endDateTv.setText(currentDate);
+                EndDate = format.parse(currentDate);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void canView(){
+        fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.eld_govt_logs));
+        dataTransTxtView.setText(getContext().getResources().getString(R.string.Data_transmission));
+        canEmailEditText.setVisibility(View.VISIBLE);
+        checkboxService.setVisibility(View.GONE);
+        checkboxService.setChecked(false);
+        checkboxEmail.setChecked(true);
+        fmcsaDescTV.setVisibility(View.GONE);
+
+        setMinMaxDateOnView(CanMaxDays, false);
+
+
+    }
+
+    void usaView(){
+        fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.fmcsaLogs));
+        dataTransTxtView.setText(getContext().getResources().getString(R.string.DataTransmissionThrough));
+        canEmailEditText.setVisibility(View.GONE);
+        checkboxService.setVisibility(View.VISIBLE);
+        checkboxService.setChecked(true);
+        canEmailEditText.setText("");
+        checkboxEmail.setChecked(false);
+        if(emailLogLay.getVisibility() == View.VISIBLE) {
+            fmcsaDescTV.setVisibility(View.GONE);
+        }else{
+            fmcsaDescTV.setVisibility(View.VISIBLE);
+        }
+
+        setMinMaxDateOnView(UsaMaxDays, false);
     }
 
 
@@ -326,7 +395,6 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 IsValidEmail = true;
             }
             amountEditText.setText(Html.fromHtml(EmailData));
-            //Log.d("Date", "StartDate: " +StartDate + "   ---EndDate: " +EndDate );
             amountEditText.setSelection(amountEditText.getText().toString().length());
 
             if(Globally.isConnected(getContext()) ) {
@@ -397,71 +465,34 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             case R.id.startDateTv:
                 HideKeyboard();
                 selectedDateView = "start";
-                logBtnLay.setVisibility(View.GONE);
-                ShareLayout.setVisibility(View.VISIBLE);
+               // logBtnLay.setVisibility(View.GONE);
+               // ShareLayout.setVisibility(View.VISIBLE);
+
+               // setCalendarView();
+                ShowDateDialog();
+
                 break;
 
             case R.id.endDateTv:
                 HideKeyboard();
                 selectedDateView = "end";
-                logBtnLay.setVisibility(View.GONE);
-                ShareLayout.setVisibility(View.VISIBLE);
+              // logBtnLay.setVisibility(View.GONE);
+                //ShareLayout.setVisibility(View.VISIBLE);
+
+               // setCalendarView();
+                ShowDateDialog();
+
                 break;
 
 
-            case R.id.cancelDateBtn:
-                logBtnLay.setVisibility(View.VISIBLE);
-                ShareLayout.setVisibility(View.GONE);
-                break;
-
-            case R.id.ShareLayout:
-            case R.id.shareLogMainLay:
             case R.id.shareLogChildLay:
 
                 HideKeyboard();
 
             break;
 
-
-
-            case R.id.ShareDateBtn:
-                int day=datePicker.getDayOfMonth();
-                int year=datePicker.getYear();
-                int mnth=datePicker.getMonth()+1;
-                String month = "", dayyy = "";
-
-                if(String.valueOf(mnth).length() == 1)
-                    month = "0"+String.valueOf(mnth);
-                else
-                    month = String.valueOf(mnth);
-
-
-                if(String.valueOf(day).length() == 1)
-                    dayyy = "0"+String.valueOf(day);
-                else
-                    dayyy = String.valueOf(day);
-
-                if(month.length() == 1)
-                    month = "0"+month;
-
-                String Date = month +"/"+ dayyy  +"/"+ year;
-                //  Log.d("SelectedDate", "---SelectedDate" +Date);
-
-                try {
-                    //Log.d("SelectedDate", "---Format Date" +format.parse(Date));
-                    if(selectedDateView.equals("start")) {
-                        startDateTv.setText(Date);
-                        StartDate = format.parse(Date);
-                    }else{
-                        endDateTv.setText(Date);
-                        EndDate = format.parse(Date);
-                    }
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                logBtnLay.setVisibility(View.VISIBLE);
-                ShareLayout.setVisibility(View.GONE);
+            case R.id.shareLogMainLay:
+                HideKeyboard();
                 break;
 
 
@@ -472,9 +503,14 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 emailLogLay.setVisibility(View.GONE);
                 amountEditText.setText("");
                 shareServiceDialog.setVisibility(View.VISIBLE);
-                fmcsaDescTV.setVisibility(View.GONE);
                 fmcsaLogTxtVw.setTextColor(getContext().getResources().getColor(R.color.whiteee));
                 pdfLogTxtVw.setTextColor(getContext().getResources().getColor(R.color.hos_remaining));
+
+                if(SelectedCountry == CountryCan){
+                    fmcsaDescTV.setVisibility(View.GONE);
+                }else{
+                    fmcsaDescTV.setVisibility(View.VISIBLE);
+                }
 
                 break;
 
@@ -486,11 +522,66 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 checkboxService.setChecked(false);
                 emailLogLay.setVisibility(View.VISIBLE);
                 shareServiceDialog.setVisibility(View.GONE);
-                fmcsaDescTV.setVisibility(View.VISIBLE);
+                fmcsaDescTV.setVisibility(View.GONE);
                 fmcsaLogTxtVw.setTextColor(getContext().getResources().getColor(R.color.hos_remaining));
                 pdfLogTxtVw.setTextColor(getContext().getResources().getColor(R.color.whiteee));
 
                 break;
+
+        }
+    }
+
+
+
+
+    void ShowDateDialog() {
+        try {
+            if (dateDialog != null && dateDialog.isShowing())
+                dateDialog.dismiss();
+
+            String cycleId = "";
+            if(SelectedCountry == CountryCan){
+                cycleId = "1";
+            }else{
+                cycleId = "3";
+            }
+
+            dateDialog = new DatePickerDialog(getContext(), cycleId + ",sendLog", Globally.GetCurrentDeviceDate(), new DateListener());
+            dateDialog.show();
+        } catch (final IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private class DateListener implements DatePickerDialog.DatePickerListener {
+        @Override
+        public void JobBtnReady(String SelectedDate, String dayOfTheWeek, String MonthFullName, String MonthShortName, int dayOfMonth) {
+
+            try {   //01/27/2021
+                if (dateDialog != null && dateDialog.isShowing())
+                    dateDialog.dismiss();
+            } catch (final IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+
+
+            try {
+                if(selectedDateView.equals("start")) {
+                    startDateTv.setText(SelectedDate);
+                    StartDate = format.parse(SelectedDate);
+                }else{
+                    endDateTv.setText(SelectedDate);
+                    EndDate = format.parse(SelectedDate);
+                }
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
         }
     }
