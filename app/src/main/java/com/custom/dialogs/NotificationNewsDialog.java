@@ -45,11 +45,11 @@ public class NotificationNewsDialog extends Dialog {
 
         layout_dot = (LinearLayout) findViewById(R.id.layout_dot);
 
-        newsList.add(new NotificationNewsModel("News", "Adverse driving conditions means snow, ice, sleet, fog, or other adverse weather conditions or unusual road or traffic conditions that were not known, or could not reasonably be known, to: a driver immediately prior to beginning the duty day or immediately before beginning driving after a qualifying rest break or sleeper berth period, or a motor carrier immediately prior to dispatching the driver."));
+       /* newsList.add(new NotificationNewsModel("News", "Adverse driving conditions means snow, ice, sleet, fog, or other adverse weather conditions or unusual road or traffic conditions that were not known, or could not reasonably be known, to: a driver immediately prior to beginning the duty day or immediately before beginning driving after a qualifying rest break or sleeper berth period, or a motor carrier immediately prior to dispatching the driver."));
         newsList.add(new NotificationNewsModel("Sports", "Adverse driving conditions means snow, ice, sleet, fog, or other adverse weather conditions or unusual road or traffic conditions that were not known, or could not reasonably be known, to: a driver immediately prior to beginning the duty day or immediately before beginning driving after a qualifying rest break or sleeper berth period, or a motor carrier immediately prior to dispatching the driver."));
         newsList.add(new NotificationNewsModel("Movies", "By selecting one of the above options, logs will be sent to FMCSA."));
         newsList.add(new NotificationNewsModel("Songs", "Connection unavailable! Your edited log will be posted to server automatically when your device will be connected with working internet connection"));
-
+*/
         NotificationPagerAdapter pagerAdapter = new NotificationPagerAdapter(getContext(), newsList);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setPageMargin(20);

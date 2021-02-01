@@ -128,6 +128,8 @@
 
     <color name="blue_light_line_trip_detail">#D4E6EF</color>
 
+    <color name="blue_bg_slide_menu">#99D4E6EF</color>
+    <color name="gray_bg_slide_menu">#99F0F0F0</color>
 
     <color name="blue_background_layout">#A2C8E2</color>
 

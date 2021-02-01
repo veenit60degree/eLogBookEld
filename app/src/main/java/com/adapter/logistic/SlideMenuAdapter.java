@@ -58,8 +58,9 @@ public class SlideMenuAdapter extends BaseAdapter {
     }
 
     @Override
-    public long getItemId(int arg0) {
-        return arg0;
+    public long getItemId(int position) {
+        //return arg0;
+        return getItem(position).hashCode();
     }
 
     @Override
@@ -73,6 +74,8 @@ public class SlideMenuAdapter extends BaseAdapter {
 
             holder.menuTitleTxtView = (TextView) convertView.findViewById(R.id.menuTitleTxtView);
             holder.menuBadgeTxtView = (TextView) convertView.findViewById(R.id.menuBadgeTxtView);
+            holder.appVerTxtView    = (TextView) convertView.findViewById(R.id.appVerTxtView);
+
             holder.menuImgView      = (ImageView) convertView.findViewById(R.id.menuImgView);
             holder.menuItemLay      = (LinearLayout)convertView.findViewById(R.id.menuItemLay);
 
@@ -98,7 +101,15 @@ public class SlideMenuAdapter extends BaseAdapter {
             holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
             holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.slide_menu_default), android.graphics.PorterDuff.Mode.MULTIPLY);
             holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.gray_unidenfied));
+
+            if(menuList.get(position).getStatus() == Constants.VERSION){
+                holder.menuItemLay.setVisibility(View.GONE);
+                holder.appVerTxtView.setVisibility(View.VISIBLE);
+                String[] versionArray = menuList.get(position).getTitle().split(",");
+                holder.appVerTxtView.setText(versionArray[0] + "\n" + versionArray[1]);
+            }
         }
+
 
 
         if(badgeCount > 0){
@@ -124,8 +135,16 @@ public class SlideMenuAdapter extends BaseAdapter {
         return getCount();
     }
 
+    @Override
+    public boolean hasStableIds()
+    {
+        return false;
+    }
+
+
+
     public class ViewHolder {
-        TextView menuTitleTxtView, menuBadgeTxtView;
+        TextView menuTitleTxtView, menuBadgeTxtView, appVerTxtView;
         ImageView menuImgView;
         LinearLayout menuItemLay;
     }

@@ -19,8 +19,20 @@ public class CommonUtils {
 		int screenWidth = displaymetrics.widthPixels;
 		//int screenHeight = displaymetrics.heightPixels;
 
+		int width = 500;	//((screenWidth / 3) + 130);
 
-		int width = ((screenWidth / 3) + 130);	//((screenWidth / 3) + 130);
+		if(Globally.isTablet(mContext)){
+			width = ((screenWidth / 3) - 450);
+			if(width < 500){
+				width = 500;
+			}
+		}else{
+			width = ((screenWidth / 3) - 300);
+			if(width < 400){
+				width = 400;
+			}
+		}
+
 
 		return width;
 

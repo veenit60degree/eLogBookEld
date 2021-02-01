@@ -1,5 +1,6 @@
 package com.constants;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -67,6 +69,8 @@ public class Slidingmenufunctions implements OnClickListener {
 	Context context;
 	public static TextView usernameTV;
 	private TextView appVersionHome;
+	//public TextView invisibleViewEvent;
+	ListView menuListView;
 
 	public static LinearLayout driversLayout;
 	public static Button MainDriverBtn, CoDriverBtn;
@@ -89,6 +93,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	public SlideMenuAdapter menuAdapter;
 	int DriverType;
 
+
 	public Slidingmenufunctions() {
 		super();
 	}
@@ -108,9 +113,10 @@ public class Slidingmenufunctions implements OnClickListener {
 
 		appVersionHome	 = (TextView)       menu.findViewById(R.id.appVersionHome);
 		usernameTV 		 = (TextView)       menu.findViewById(R.id.usernameTV);
-
+	//	invisibleViewEvent= (TextView)       menu.findViewById(R.id.invisibleViewEvent);
 
 		driversLayout	 = (LinearLayout)   menu.findViewById(R.id.driversLayout);
+		menuListView 	 = (ListView)		menu.findViewById(R.id.menuListView);
 
 		MainDriverBtn	 = (Button)         menu.findViewById(R.id.MainDriverBtn);
 		CoDriverBtn		 = (Button)		    menu.findViewById(R.id.CoDriverBtn);
@@ -121,27 +127,23 @@ public class Slidingmenufunctions implements OnClickListener {
 		eldGreenColor = context.getResources().getColor(R.color.color_eld_theme);
 		eldWarningColor = context.getResources().getColor(R.color.colorVoilation);
 
-		appVersionHome.setText( "Version " +  Globally.GetAppVersion(context, "VersionName"));
+		//appVersionHome.setText(context.getResources().getString(R.string.Powered_by) +" (V - " +  Globally.GetAppVersion(context, "VersionName") + ")");
+		appVersionHome.setVisibility(View.GONE);
 		dialog.setMessage("Loading..");
 
 
-		boolean isMalfunction = false;
-		if(sharedPref.IsAllowMalfunction(context) && sharedPref.IsAllowDiagnostic(context)) {
-			isMalfunction = true;
-		}
 
-		ListView menuListView = (ListView)menu.findViewById(R.id.menuListView);
-		final List<SlideMenuModel> menuList = constants.getSlideMenuList(context, sharedPref.IsOdometerFromOBD(context),
-				sharedPref.IsShowUnidentifiedRecords(context), isMalfunction);
 
-		menuAdapter = new SlideMenuAdapter(context, menuList, DriverType );
-		menuListView.setAdapter(menuAdapter);
+		setMenuAdapter();
 
 		menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-				menu.showContent();
-				listItemClick(menuList.get(position).getStatus());
+				int status = TabAct.menuList.get(position).getStatus();
+				if(status != Constants.VERSION) {
+					menu.showContent();
+				}
+				listItemClick(status);
 			}
 		});
 
@@ -149,7 +151,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 		MainDriverBtn.setOnClickListener(this);
 		CoDriverBtn.setOnClickListener(this);
-		driversLayout.setOnClickListener(this);
+		//invisibleViewEvent.setOnClickListener(this);
 
 	}
 
@@ -212,6 +214,8 @@ public class Slidingmenufunctions implements OnClickListener {
 
 		}
 	}
+
+
 	@Override
 	public void onClick(View v) {
 		
@@ -255,10 +259,26 @@ public class Slidingmenufunctions implements OnClickListener {
 
 				break;
 
+
+			/*case R.id.invisibleViewEvent:
+				setMenuAdapter();
+				break;
+*/
+
 		}
 
 	}
 
+
+	void setMenuAdapter(){
+		try {
+
+			menuAdapter = new SlideMenuAdapter(context, TabAct.menuList, DriverType);
+			menuListView.setAdapter(menuAdapter);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 
 
 	private void logoutDialog(){
@@ -440,7 +460,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		try {
 			if(context != null) {
 				MainDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.selected_driver_border));
-				MainDriverBtn.setTextColor(context.getResources().getColor(R.color.color_eld_theme_one));
+				MainDriverBtn.setTextColor(context.getResources().getColor(R.color.blue_button_hover));
 
 				CoDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.unselected_driver_border));
 				CoDriverBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
@@ -456,7 +476,7 @@ public class Slidingmenufunctions implements OnClickListener {
 			if(context != null) {
 				if (SharedPref.getDriverType(context).equals(DriverConst.TeamDriver)) {
 					CoDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.selected_driver_border));
-					CoDriverBtn.setTextColor(context.getResources().getColor(R.color.color_eld_theme_one));
+					CoDriverBtn.setTextColor(context.getResources().getColor(R.color.blue_button_hover));
 
 					MainDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.unselected_driver_border));
 					MainDriverBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));

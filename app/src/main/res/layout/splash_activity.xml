@@ -7,9 +7,6 @@
     >
 
 
-
-
-
     <RelativeLayout
         android:id="@+id/splashLay"
         android:layout_width="match_parent"
@@ -19,13 +16,12 @@
         >
 
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/als_logo"
-        android:layout_centerInParent="true"
-        android:layout_margin="@dimen/view_height_120"
-        />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/view_height_80"
+            android:src="@drawable/als_logo" />
 
 
         <TextView
@@ -34,24 +30,21 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/black_hover"
-            android:textSize="@dimen/text_size_15"
             android:layout_marginBottom="@dimen/margin_18"
-            />
+            android:textColor="@color/splash_gray"
+            android:textSize="@dimen/text_size_15" />
 
-    <TextView
-        android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-        android:textColor="@color/black_hover"
-        android:textSize="@dimen/text_size_12"
-        android:text="@string/Powered_by"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/margin_short_5"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/margin_short_5"
+            android:text="@string/Powered_by"
+            android:textColor="@color/splash_gray"
+            android:textSize="@dimen/text_size_12" />
 
     </RelativeLayout>
-
 
 
 </RelativeLayout>

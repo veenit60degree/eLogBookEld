@@ -13,13 +13,13 @@
 
         <ImageView
             android:id="@+id/slideLogoIV"
-            android:layout_width="@dimen/view_height_450"
-            android:layout_height="@dimen/view_height_140"
-            android:src="@drawable/als_logo_white"
+            android:layout_width="@dimen/view_height_180"
+            android:layout_height="@dimen/view_height_85"
+            android:src="@drawable/als_blue"
             android:tint="@color/color_eld_theme"
-            android:layout_marginLeft="@dimen/view_height_30"
-            android:layout_marginTop="@dimen/margin_15"
-            android:layout_marginBottom="@dimen/margin_short_3"
+            android:layout_marginLeft="@dimen/view_height_80"
+            android:layout_marginTop="@dimen/margin_23"
+            android:layout_marginBottom="@dimen/margin_18"
 
             />
 
@@ -33,7 +33,6 @@
             android:layout_alignParentStart="true"
             android:paddingLeft="@dimen/margin_15"
             android:paddingRight="@dimen/margin_15"
-            android:layout_marginTop="@dimen/margin_10"
 
             >
 
@@ -45,7 +44,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/margin_10"
                 android:text="@string/Username"
-                android:textColor="@color/color_eld_theme"
+                android:textColor="@color/blue_driver_name"
                 android:textSize="@dimen/text_size_30"
                 android:textStyle="bold"
 
@@ -108,9 +107,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/driversLayout"
-                android:paddingTop="@dimen/margin_15"
+                android:paddingTop="@dimen/margin_11"
                 tools:listitem="@layout/item_slide_menu"
-                android:paddingBottom="@dimen/view_height_53"
+
                 />
 
 
@@ -118,37 +117,29 @@
         </LinearLayout>
 
 
+
     <TextView
         android:id="@+id/appVersionHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="center_horizontal"
         android:textColor="@color/splash_gray"
-        android:textSize="@dimen/text_size_22"
-        android:text="V - 12.32.65"
-        android:layout_marginTop="@dimen/view_height_32"
-        android:layout_marginBottom="@dimen/margin_25"
-        android:layout_centerHorizontal="true"
-
-        />
-
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:textColor="@color/splash_gray"
+        android:text="@string/versionNumber"
         android:textSize="@dimen/text_size_19"
-        android:text="@string/Powered_by"
         android:layout_marginTop="@dimen/margin_short_1"
         android:paddingBottom="@dimen/margin_short_5"
         android:layout_centerHorizontal="true"
+        android:visibility="gone"
 
         />
 
 
+    <TextView
+        android:id="@+id/invisibleViewEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
 
+        />
 
 </RelativeLayout>

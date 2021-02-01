@@ -34,7 +34,7 @@
            android:layout_height="wrap_content"
            android:layout_alignParentBottom="true"
            android:layout_centerHorizontal="true"
-           android:textColor="@color/black_hover"
+           android:textColor="@color/splash_gray"
            android:textSize="@dimen/text_size_19"
            android:layout_marginBottom="@dimen/margin_22"
            />
@@ -43,7 +43,7 @@
        <TextView
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:textColor="@color/black_hover"
+           android:textColor="@color/splash_gray"
            android:textSize="@dimen/text_size_14"
            android:text="@string/Powered_by"
            android:layout_alignParentBottom="true"

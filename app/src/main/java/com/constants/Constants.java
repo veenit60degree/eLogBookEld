@@ -5,8 +5,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,8 +12,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
@@ -26,11 +22,9 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.driver.details.DriverConst;
-import com.local.db.CertifyLogMethod;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
@@ -67,15 +61,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import models.DriverDetail;
 import models.DriverLog;
-import models.RulesResponseObject;
 import webapi.LocalCalls;
 
 public class Constants {
@@ -286,14 +277,15 @@ public class Constants {
     public static final int SETTINGS              = 1;
     public static final int ALS_SUPPORT           = 6;
     public static final int LOGOUT                = 2;
+    public static final int VERSION               = 13;
 
 
-    public List<SlideMenuModel> getSlideMenuList(Context context, boolean isOdometerFromObd, boolean isunIdentified, boolean isMalfunction){
+    public List<SlideMenuModel> getSlideMenuList(Context context, boolean isOdometerFromObd, boolean isunIdentified, boolean isMalfunction, String version){
         List<SlideMenuModel> list = new ArrayList<>();
         if(SharedPref.IsAOBRD(context)){
-            list.add(new SlideMenuModel(ELD_HOS, R.drawable.eld_hos, context.getResources().getString(R.string.aobrd_hos)));
+            list.add(new SlideMenuModel(ELD_HOS, R.drawable.eld_home, context.getResources().getString(R.string.aobrd_hos)));
         }else {
-            list.add(new SlideMenuModel(ELD_HOS, R.drawable.eld_hos, context.getResources().getString(R.string.eld_hos)));
+            list.add(new SlideMenuModel(ELD_HOS, R.drawable.eld_home, context.getResources().getString(R.string.eld_hos)));
         }
         list.add(new SlideMenuModel(PTI_INSPECTION, R.drawable.pre_post_inspection, context.getResources().getString(R.string.prePostTripIns)));
         list.add(new SlideMenuModel(CT_PAT_INSPECTION, R.drawable.ct_pat_inspection, context.getResources().getString(R.string.ctPat)));
@@ -307,12 +299,12 @@ public class Constants {
             list.add(new SlideMenuModel(UNIDENTIFIED_RECORD, R.drawable.unidentified_menu, context.getResources().getString(R.string.unIdentified_records)));
         }
         if(isMalfunction) {
-            list.add(new SlideMenuModel(DATA_MALFUNCTION, R.drawable.eld_hos, context.getResources().getString(R.string.data_malfunction)));
+            list.add(new SlideMenuModel(DATA_MALFUNCTION, R.drawable.eld_malfunction, context.getResources().getString(R.string.data_malfunction)));
         }
         list.add(new SlideMenuModel(SETTINGS, R.drawable.settings, context.getResources().getString(R.string.action_settings)));
         list.add(new SlideMenuModel(ALS_SUPPORT, R.drawable.als_support, context.getResources().getString(R.string.action_Support)));
         list.add(new SlideMenuModel(LOGOUT, R.drawable.logout, context.getResources().getString(R.string.logout)));
-
+        list.add(new SlideMenuModel(VERSION, R.drawable.transparent, version));
 
         return list;
     }

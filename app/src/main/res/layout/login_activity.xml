@@ -124,7 +124,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/black_hover"
+        android:textColor="@color/splash_gray"
         android:textSize="@dimen/text_size_12"
         android:layout_marginBottom="@dimen/margin_12"
 
@@ -137,7 +137,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="@string/Powered_by"
-        android:textColor="@color/black_hover"
+        android:textColor="@color/splash_gray"
         android:textSize="8sp"
         android:paddingBottom="4dp"
 

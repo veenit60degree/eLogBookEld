@@ -2,6 +2,7 @@
     <string name="app_name">E-Log Book</string>
     <string name="app_name_test">E-Log Book (Test)</string>
     <string name="Powered_by">Powered by Arethos Logistic System</string>
+    <string name="versionNumber">Powered by Arethos Logistic System (V - 3.5.1)</string>
     <string name="als_certificate">(ALS E-100)</string>
     <string name="action_settings">Settings</string>
     <string name="action_delete">Delete</string>

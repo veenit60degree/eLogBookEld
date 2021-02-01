@@ -1,6 +1,7 @@
 package com.messaging.logistic;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
@@ -10,8 +11,10 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -25,6 +28,7 @@ import android.widget.TextView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.constants.CheckIsUpdateReady;
+import com.constants.CommonUtils;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
 import com.constants.SharedPref;
@@ -38,6 +42,10 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
+import com.models.SlideMenuModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TabAct extends TabActivity implements View.OnClickListener {
 
@@ -46,6 +54,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     public static TabHost host;
     FrameLayout tabcontent;
     Constants constants;
+    public static List<SlideMenuModel> menuList = new ArrayList<>();
     public static SlidingMenu smenu;
     public static RelativeLayout sliderLay;
     public static Button wiredObdDataBtn, dayNightBtn, openUpdateDialogBtn;
@@ -69,7 +78,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     AppUpdateDialog appUpdateDialog;
     Utils util;
     private FirebaseAnalytics mFirebaseAnalytics;
-
+    String existingAppVersionStr = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +100,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         constants     = new Constants();
 
         IsTablet = Globally.isTablet(this);
+        existingAppVersionStr = "Version - " + Globally.GetAppVersion(this, "VersionName") + "," + getResources().getString(R.string.Powered_by);
 
         tabcontent = (FrameLayout)findViewById(android.R.id.tabcontent);
         wiredObdDataBtn = (Button)findViewById(R.id.wiredObdDataBtn);
@@ -104,6 +114,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         fadeOutAnim = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         fadeInAnim.setDuration(2000);
         fadeOutAnim.setDuration(2000);
+
+        getMenuList(false);
 
         TabDeclaration();
 
@@ -240,6 +252,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 smenu.setShadowDrawable(R.drawable.shadow);
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
+
+
                 if(Globally.isTablet(getApplicationContext())) {
                     if(sharedPref.getDriverType(TabAct.this).equals(DriverConst.SingleDriver)){
                         smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), 370));
@@ -253,6 +267,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                         smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), 350));
                     }
                 }
+
+              //  smenu.setBehindWidth(CommonUtils.setWidth(TabAct.this));
                 smenu.setFadeDegree(0.35f);
                 smenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
                 smenu.setMenu(R.layout.slide_menu);
@@ -445,10 +461,14 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
             case R.id.sliderLay:
                 Globally.hideSoftKeyboard(TabAct.this);
+
+                getMenuList(true);
+                slideMenu.menuAdapter.notifyDataSetChanged();
+
                 smenu.showMenu();
                 smenu.addIgnoredView(tabcontent);
 
-                slideMenu.menuAdapter.notifyDataSetInvalidated();
+               // slideMenu.invisibleViewEvent.performClick();
 
                 break;
 
@@ -472,6 +492,24 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         }
     }
 
+
+    void getMenuList(boolean isNotify){
+        boolean isMalfunction = false;
+        if(sharedPref.IsAllowMalfunction(getApplicationContext()) && sharedPref.IsAllowDiagnostic(getApplicationContext())) {
+            isMalfunction = true;
+        }
+
+        if(isNotify){
+            menuList.clear();
+            menuList.addAll(constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
+                    sharedPref.IsShowUnidentifiedRecords(getApplicationContext()), isMalfunction, existingAppVersionStr));
+            slideMenu.menuAdapter.notifyDataSetChanged();
+        }else{
+            menuList = constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
+                    sharedPref.IsShowUnidentifiedRecords(getApplicationContext()), isMalfunction, existingAppVersionStr);
+        }
+
+    }
 
 
 

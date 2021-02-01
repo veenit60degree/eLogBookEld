@@ -127,6 +127,8 @@
     <color name="blue_button">#a8a8a8</color>
     <color name="active_status_bg">#46413D</color>
     <color name="blue_button_hover">#ffc4c2bc</color>
+    <color name="blue_driver_name">#287CD1</color>
+
 
     <color name="light_blue_button_hover">#4E4E4E</color>
 

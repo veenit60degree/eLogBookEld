@@ -7,7 +7,7 @@
     <LinearLayout
         android:id="@+id/menuItemLay"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/view_height_41"
+        android:layout_height="@dimen/view_height_43"
         android:background="@drawable/slider_list_selector"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_15"
@@ -19,7 +19,8 @@
             android:id="@+id/menuImgView"
             android:layout_width="@dimen/view_height_25"
             android:layout_height="@dimen/view_height_25"
-            android:src="@drawable/eld_hos"
+            android:src="@drawable/eld_malfunction"
+
             android:layout_gravity="center_vertical"
             android:tint="@color/slide_menu_default"
             />
@@ -30,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin_10"
+            android:layout_marginLeft="@dimen/margin_15"
             android:text="@string/noti_history"
             android:textColor="@color/gray_unidenfied"
             android:textSize="@dimen/text_size_16" />
@@ -55,9 +56,27 @@
 
 
 
+
+
+
     </LinearLayout>
 
 
 
+    <TextView
+        android:id="@+id/appVerTxtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/margin_15"
+        android:text="@string/Powered_by"
+        android:textColor="@color/gray_unidenfied"
+        android:textSize="@dimen/text_size_13"
+        android:layout_marginTop="@dimen/view_height_30"
+        android:paddingBottom="@dimen/margin_10"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
 
+        />
 </RelativeLayout>
