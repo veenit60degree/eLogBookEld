@@ -4745,11 +4745,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                   final String LoginTruckChange) {
 
         try {
-         /*   constants.saveUpdateVehDetails(DriverId, PreviousDeviceMappingId, DeviceMappingId,  VehicleId,
+            constants.saveUpdateVehDetails(DriverId, PreviousDeviceMappingId, DeviceMappingId,  VehicleId,
                     EquipmentNumber, PlateNumber, VIN, CompanyId, IMEINumber, obdUtil);
-*/
 
-            // obdUtil.syncObdSingleLog(getActivity(), DriverId, MainDriverName, 1);
+
+             obdUtil.syncObdSingleLog(getActivity(), DriverId, MainDriverName, 1);
 
         }catch (Exception e){
             e.printStackTrace();

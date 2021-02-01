@@ -288,7 +288,7 @@ public class Constants {
     public static final int LOGOUT                = 2;
 
 
-    public List<SlideMenuModel> getSlideMenuList(Context context, boolean isOdometer, boolean isunIdentified, boolean isMalfunction){
+    public List<SlideMenuModel> getSlideMenuList(Context context, boolean isOdometerFromObd, boolean isunIdentified, boolean isMalfunction){
         List<SlideMenuModel> list = new ArrayList<>();
         if(SharedPref.IsAOBRD(context)){
             list.add(new SlideMenuModel(ELD_HOS, R.drawable.eld_hos, context.getResources().getString(R.string.aobrd_hos)));
@@ -297,8 +297,8 @@ public class Constants {
         }
         list.add(new SlideMenuModel(PTI_INSPECTION, R.drawable.pre_post_inspection, context.getResources().getString(R.string.prePostTripIns)));
         list.add(new SlideMenuModel(CT_PAT_INSPECTION, R.drawable.ct_pat_inspection, context.getResources().getString(R.string.ctPat)));
-        if(isOdometer) {
-            list.add(new SlideMenuModel(ODOMETER_READING, R.drawable.odometer, context.getResources().getString(R.string.odometerReading)));
+        if(isOdometerFromObd == false) {
+            list.add(new SlideMenuModel(ODOMETER_READING, R.drawable.odometer_menu, context.getResources().getString(R.string.odometerReading)));
         }
         list.add(new SlideMenuModel(NOTIFICATION_HISTORY, R.drawable.notification_history, context.getResources().getString(R.string.noti_history)));
         list.add(new SlideMenuModel(SHIPPING_DOC, R.drawable.shipping_docs, context.getResources().getString(R.string.ShippingDocNumber)));

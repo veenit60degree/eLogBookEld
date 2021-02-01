@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -73,6 +74,7 @@ public class SlideMenuAdapter extends BaseAdapter {
             holder.menuTitleTxtView = (TextView) convertView.findViewById(R.id.menuTitleTxtView);
             holder.menuBadgeTxtView = (TextView) convertView.findViewById(R.id.menuBadgeTxtView);
             holder.menuImgView      = (ImageView) convertView.findViewById(R.id.menuImgView);
+            holder.menuItemLay      = (LinearLayout)convertView.findViewById(R.id.menuItemLay);
 
             convertView.setTag(holder);
         } else {
@@ -89,10 +91,11 @@ public class SlideMenuAdapter extends BaseAdapter {
 
         int currentTab = TabAct.host.getCurrentTab();
         if(currentTab == menuList.get(position).getStatus()){
-
+            holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.white_hover));
             holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.color_eld_theme), android.graphics.PorterDuff.Mode.MULTIPLY);
             holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
         }else{
+            holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
             holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.slide_menu_default), android.graphics.PorterDuff.Mode.MULTIPLY);
             holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.gray_unidenfied));
         }
@@ -124,6 +127,7 @@ public class SlideMenuAdapter extends BaseAdapter {
     public class ViewHolder {
         TextView menuTitleTxtView, menuBadgeTxtView;
         ImageView menuImgView;
+        LinearLayout menuItemLay;
     }
 
     /*        host.addTab(eld_spec);        0
@@ -142,58 +146,4 @@ public class SlideMenuAdapter extends BaseAdapter {
 
         */
 
-    void highlightedCurrentView( ImageView imgView, TextView txtView){
-        int currentTab = TabAct.host.getCurrentTab();
-        switch (currentTab){
-            case Constants.ELD_HOS:
-                imgView.setColorFilter(ContextCompat.getColor(context, R.color.color_eld_theme), android.graphics.PorterDuff.Mode.MULTIPLY);
-                txtView.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
-                break;
-
-            case Constants.PTI_INSPECTION:
-
-                break;
-
-            case Constants.CT_PAT_INSPECTION:
-
-                break;
-
-            case Constants.ODOMETER_READING:
-
-                break;
-
-            case Constants.NOTIFICATION_HISTORY:
-
-                break;
-
-            case Constants.SHIPPING_DOC:
-
-                break;
-
-            case Constants.ELD_DOC:
-
-                break;
-
-            case Constants.UNIDENTIFIED_RECORD:
-
-                break;
-
-            case Constants.DATA_MALFUNCTION:
-
-                break;
-
-            case Constants.SETTINGS:
-                imgView.setColorFilter(ContextCompat.getColor(context, R.color.color_eld_theme), android.graphics.PorterDuff.Mode.MULTIPLY);
-                txtView.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
-                break;
-
-            case Constants.ALS_SUPPORT:
-
-                break;
-
-            case Constants.LOGOUT:
-
-                break;
-        }
-    }
 }

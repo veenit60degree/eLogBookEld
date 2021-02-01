@@ -7,7 +7,7 @@
     <LinearLayout
         android:id="@+id/menuItemLay"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/view_height_45"
+        android:layout_height="@dimen/view_height_41"
         android:background="@drawable/slider_list_selector"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_15"

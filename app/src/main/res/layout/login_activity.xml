@@ -108,14 +108,11 @@
         />
 
 
-
-
-    <include
-        android:id="@+id/userTypeLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        layout="@layout/include_ask_login"
-       />
+            <include
+                android:id="@+id/userTypeLayout"
+                layout="@layout/include_ask_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
 
         </RelativeLayout>
