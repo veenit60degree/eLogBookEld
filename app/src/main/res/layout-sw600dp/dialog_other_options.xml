@@ -14,7 +14,7 @@
         android:background="@drawable/polygon"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/margin_16"
-        android:layout_marginTop="@dimen/view_height_54"
+
         />
 
 

@@ -16,6 +16,8 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Window;
 import android.widget.RelativeLayout;
@@ -128,6 +130,10 @@ public class SplashActivity extends Activity implements
             splashLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
         }
 
+        /*DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int densityDpi = (int)(metrics.density * 160f);
+        Log.d("densityDpi","densityDpi: " +densityDpi);
+        */
 
     }
 

@@ -30,6 +30,7 @@ import com.constants.SharedPref;
 import com.constants.Slidingmenufunctions;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.UnidentifiedDialog;
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -529,11 +530,17 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
             }else {
                 noDataEldTV.setVisibility(View.VISIBLE);
                 unIdentifiedTopLay.setVisibility(View.GONE);
-
-                sharedPref.setEldOccurences(false,
-                        sharedPref.isMalfunctionOccur(getActivity()),
-                        sharedPref.isDiagnosticOccur(getActivity()),
-                        sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+                if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                    sharedPref.setEldOccurences(false,
+                            sharedPref.isMalfunctionOccur(getActivity()),
+                            sharedPref.isDiagnosticOccur(getActivity()),
+                            sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+                }else{
+                    sharedPref.setEldOccurencesCo(false,
+                            sharedPref.isMalfunctionOccurCo(getActivity()),
+                            sharedPref.isDiagnosticOccurCo(getActivity()),
+                            sharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
+                }
 
             }
             EldTitleTV.setText(getResources().getString(R.string.unIdentified_records) + " (" + unIdentifiedRecordList.size() + ")");

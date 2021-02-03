@@ -54,14 +54,16 @@ public class OtherOptionsDialog extends Dialog {
     Map<String, String> params;
     ProgressDialog progressDialog;
     String DriverId, DeviceId;
-    int pendingNotificationCount;
+    int pendingNotificationCount, DriverType = 0;
 
 
-    public OtherOptionsDialog(@NonNull Context context, boolean isPendingNotification, int pendingNotificationCount, boolean isGps) {
+    public OtherOptionsDialog(@NonNull Context context, boolean isPendingNotification, int pendingNotificationCount,
+                              boolean isGps, int DriverType) {
         super(context);
         this.isPendingNotification = isPendingNotification;
         this.pendingNotificationCount = pendingNotificationCount;
         this.isGps = isGps;
+        this.DriverType = DriverType;
 
     }
 
@@ -86,8 +88,27 @@ public class OtherOptionsDialog extends Dialog {
         otherFeatureListView = (ListView) findViewById(R.id.otherFeatureListView);
         otherOptionMainLay = (RelativeLayout) findViewById(R.id.otherOptionMainLay);
 
-        otherOptionList = constants.getOtherOptionsList(getContext());
+        boolean isAllowMalfunction = false;
+        boolean isAllowUnIdentified = false;
+        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+            if(SharedPref.IsAllowMalfunction(getContext()) || SharedPref.IsAllowDiagnostic(getContext())){
+                isAllowMalfunction = true;
+            }
+            if(SharedPref.IsShowUnidentifiedRecords(getContext()) ){
+                isAllowUnIdentified = true;
+            }
 
+        }else{
+
+            if(SharedPref.IsAllowMalfunctionCo(getContext()) || SharedPref.IsAllowDiagnosticCo(getContext())){
+                isAllowMalfunction = true;
+            }
+            if(SharedPref.IsShowUnidentifiedRecordsCo(getContext()) ){
+                isAllowUnIdentified = true;
+            }
+        }
+
+        otherOptionList = constants.getOtherOptionsList(getContext(), isAllowMalfunction, isAllowUnIdentified);
         OtherOptionsAdapter adapter = new OtherOptionsAdapter(getContext(), isPendingNotification, pendingNotificationCount, isGps, otherOptionList);
         otherFeatureListView.setAdapter(adapter);
 

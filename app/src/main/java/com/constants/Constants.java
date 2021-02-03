@@ -138,6 +138,9 @@ public class Constants {
     public static String OfflineData = "offline_data";
     public static String DataMalfunction = "Data_Malfunction";
 
+    public static final int MAIN_DRIVER_TYPE    = 0;
+    public static final int CO_DRIVER_TYPE      = 1;
+
     public static int ConnectionMalfunction = 0;
     public static int ConnectionWired = 1;
     public static int ConnectionWifi = 2;
@@ -299,7 +302,7 @@ public class Constants {
             list.add(new SlideMenuModel(UNIDENTIFIED_RECORD, R.drawable.unidentified_menu, context.getResources().getString(R.string.unIdentified_records)));
         }
         if(isMalfunction) {
-            list.add(new SlideMenuModel(DATA_MALFUNCTION, R.drawable.eld_malfunction, context.getResources().getString(R.string.data_malfunction)));
+            list.add(new SlideMenuModel(DATA_MALFUNCTION, R.drawable.eld_malfunction, context.getResources().getString(R.string.malfunction)));
         }
         list.add(new SlideMenuModel(SETTINGS, R.drawable.settings, context.getResources().getString(R.string.action_settings)));
         list.add(new SlideMenuModel(ALS_SUPPORT, R.drawable.als_support, context.getResources().getString(R.string.action_Support)));
@@ -308,6 +311,28 @@ public class Constants {
 
         return list;
     }
+
+
+
+    public List<OtherOptionsModel> getOtherOptionsList(Context context, boolean isAllowMalfunction, boolean isAllowUnIdentified){
+        List<OtherOptionsModel> optionsList = new ArrayList<>();
+        optionsList.add(new OtherOptionsModel(R.drawable.notifications_other, NOTIFICATION, context.getResources().getString(R.string.notification)));
+        optionsList.add(new OtherOptionsModel(R.drawable.gps_other, GPS, context.getResources().getString(R.string.gps)));
+
+        if(isAllowMalfunction)
+            optionsList.add(new OtherOptionsModel(R.drawable.malfunction_other, MALFUNCTION, context.getResources().getString(R.string.malfunction)));
+        //if(SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context))
+
+        if(isAllowUnIdentified)
+            optionsList.add(new OtherOptionsModel(R.drawable.unidentified_other, UNIDENTIFIED, context.getResources().getString(R.string.unIdentified_records)));
+        //if(SharedPref.IsShowUnidentifiedRecords(context))
+
+        optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, SUGGESTED_LOGS, context.getResources().getString(R.string.suggested_logs)));
+        optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, WIFI, context.getResources().getString(R.string.obd_wifi)));
+
+        return optionsList;
+    }
+
 
 
     public void SaveEldJsonToList(EldDataModelNew ListModel, JSONArray jsonArray) throws JSONException {
@@ -832,7 +857,7 @@ public class Constants {
         JSONArray DriverJsonArray = new JSONArray();
         List<EldDataModelNew> tempList = new ArrayList<EldDataModelNew>();
 
-        if (DriverType == 0) {
+        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
             try {
                 //  MainDriverEldPref MainDriverPref = new MainDriverEldPref();
 
@@ -957,7 +982,7 @@ public class Constants {
                                  NotificationPref notificationPref, CoNotificationPref coNotificationPref, Context context) {
         NotificationHistoryModel notificationsModel;
         int id;
-        if (DriverType == 0) {
+        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
 
             List<NotificationHistoryModel> notificationsList = notificationPref.GetNotificationsList(context);
 
@@ -1012,7 +1037,7 @@ public class Constants {
         int pendingNotifications = 0;
 
         try {
-            if (DriverType == 0) {
+            if (DriverType == MAIN_DRIVER_TYPE) {
                 notificationsList = notificationPref.GetNotificationsList(context);
             } else {
                 notificationsList = coNotificationPref.GetNotificationsList(context);
@@ -1042,7 +1067,7 @@ public class Constants {
         int listSize = 0;
 
         try {
-            if (DriverType == 0) {
+            if (DriverType == MAIN_DRIVER_TYPE) {
                 notificationsList = notificationPref.GetNotificationsList(context);
             } else {
                 notificationsList = coNotificationPref.GetNotificationsList(context);
@@ -1065,7 +1090,7 @@ public class Constants {
             }
         }
 
-        if (DriverType == 0) { // Main Driver
+        if (DriverType == MAIN_DRIVER_TYPE) { // Main Driver
             notificationPref.SaveNotifications(context, notificationsList);
         } else { // Co Driver
             coNotificationPref.SaveNotifications(context, notificationsList);
@@ -1842,6 +1867,7 @@ public class Constants {
 
 
     public boolean getShortHaulExceptionDetail(Context context, String DriverId, Globally global, SharedPref sharedPref,
+                                               boolean isShortHaul, boolean isAdverseExcptn,
                                                HelperMethods hMethods, DBHelper dbHelper){
 
         boolean isHaulException = false;
@@ -1860,10 +1886,8 @@ public class Constants {
             List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
             DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DriverId),
                     offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, false,
-                    SharedPref.get16hrHaulExcptn(context),  sharedPref.getAdverseExcptn(context),
+                    isShortHaul,  isAdverseExcptn,
                     rulesVersion, oDriverLogDetail);
-            // RulesResponseObject RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
-            // isHaulException = RulesObj.isEligibleFor16HrsException();
 
             LocalCalls CallDriverRule = new LocalCalls();
             isHaulException = CallDriverRule.checkShortHaulExceptionEligibility(oDriverDetail).isEligibleShortHaulException();
@@ -2513,21 +2537,6 @@ public class Constants {
     }
 
 
-    public List<OtherOptionsModel> getOtherOptionsList(Context context){
-        List<OtherOptionsModel> optionsList = new ArrayList<>();
-        optionsList.add(new OtherOptionsModel(R.drawable.notifications_other, NOTIFICATION, context.getResources().getString(R.string.notification)));
-        optionsList.add(new OtherOptionsModel(R.drawable.gps_other, GPS, context.getResources().getString(R.string.gps)));
-        if(SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context)) {
-            optionsList.add(new OtherOptionsModel(R.drawable.malfunction_other, MALFUNCTION, context.getResources().getString(R.string.malfunction)));
-        }
-        if(SharedPref.IsShowUnidentifiedRecords(context)) {
-            optionsList.add(new OtherOptionsModel(R.drawable.unidentified_other, UNIDENTIFIED, context.getResources().getString(R.string.unIdentified_records)));
-        }
-        optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, SUGGESTED_LOGS, context.getResources().getString(R.string.suggested_logs)));
-        optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, WIFI, context.getResources().getString(R.string.obd_wifi)));
-
-        return optionsList;
-    }
 
 
     public static boolean isPlayStoreExist(Context context){

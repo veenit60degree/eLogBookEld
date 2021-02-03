@@ -149,6 +149,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     boolean isCertifySignExist = false;
     boolean IsContinueWithSign = false;
     String LogSignImageInByte = "";
+    int DriverType;
 
     public static String LogDate = "";
     public static DateTime currentDateTime, selectedUtcTime, selectedDateTime;
@@ -171,7 +172,8 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         sharedPref      = new SharedPref();
         constants       = new Constants();
 
-    }
+
+        }
 
 
     @Override
@@ -232,6 +234,12 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
         DeviceId               = sharedPref.GetSavedSystemToken(getActivity());
         DriverId               = sharedPref.getDriverId( getActivity());
+
+        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+            DriverType = Constants.MAIN_DRIVER_TYPE;
+        }else {
+            DriverType = Constants.CO_DRIVER_TYPE;
+        }
 
         offsetFromUTC = (int) globally.GetTimeZoneOffSet();
         currentDateTime = globally.getDateTimeObj(globally.GetCurrentDateTime(), false);
@@ -358,7 +366,12 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
             case R.id.eldMenuLay:
                 if(SuggestedFragmentActivity.editDataArray.length() <= 1){
-                    SharedPref.setSuggestedRecallStatus(false, getActivity());
+                    if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                        SharedPref.setSuggestedRecallStatus(false, getActivity());
+                    }else{
+                        SharedPref.setSuggestedRecallStatusCo(false, getActivity());
+                    }
+
                     getActivity().finish();
                 }else {
                     getFragmentManager().popBackStack();
@@ -696,6 +709,11 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 String endDateTime = logObj.getString(ConstantsKeys.endDateTime);
                 String totalHours = logObj.getString(ConstantsKeys.TotalHours);
 
+                if(isEdited == false && endDateTime.contains("23:59:59")){
+                    int hour = Integer.valueOf(totalHours) + 1;
+                    totalHours = "" + hour;
+                }
+
                 if(DRIVER_JOB_STATUS == Constants.DRIVING || DRIVER_JOB_STATUS == Constants.ON_DUTY) {
                     if (!logObj.isNull(ConstantsKeys.IsViolation)) {
                         isViolation = logObj.getBoolean(ConstantsKeys.IsViolation);
@@ -878,6 +896,9 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         params.put("CurrentDate", selectedDate);
         params.put("StatusId", StatusId );
         params.put("CoDriverKey", CoDriverId);
+
+        params.put("ActionDateTime", globally.getCurrentDate() );
+        params.put("ActionTimeZone", sharedPref.getTimeZone(getActivity()) );
 
         if(!isCurrentDate) {
             params.put("ProjectId", Globally.PROJECT_ID);
@@ -1282,10 +1303,17 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
       //  if(SuggestedFragmentActivity.editDataArray.length() == 1){
            // make is suggested value false if edit logs for single day
+        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             sharedPref.setEldOccurences(sharedPref.isUnidentifiedOccur(getActivity()),
                     sharedPref.isMalfunctionOccur(getActivity()),
                     sharedPref.isDiagnosticOccur(getActivity()),
                     false, getActivity());
+        }else{
+            sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccurCo(getActivity()),
+                    sharedPref.isMalfunctionOccurCo(getActivity()),
+                    sharedPref.isDiagnosticOccurCo(getActivity()),
+                    false, getActivity());
+        }
 
             try {   // delay 1 sec to  update log
                 new Handler().postDelayed(new Runnable() {

@@ -141,6 +141,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     RulesResponseObject RulesObj = new RulesResponseObject();
     DriverPermissionMethod driverPermissionMethod;
     Animation editLogAnimation;
+    boolean isHaulExcptn;
+    boolean isAdverseExcptn;
 
 
     @Override
@@ -234,6 +236,14 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         setMarqueText(hosLocationTV);
         setMarqueText(hosDistanceTV);
+
+        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
+            isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+        }else{
+            isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
+            isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+        }
 
         editLogAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
         editLogAnimation.setDuration(1500);
@@ -670,7 +680,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
             DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DriverId),
                     offsetFromUTC, Integer.valueOf(CycleId), isSingleDriver, DRIVER_JOB_STATUS, false,
-                    sharedPref.get16hrHaulExcptn(getActivity()), sharedPref.getAdverseExcptn(getActivity()),
+                    isHaulExcptn, isAdverseExcptn,
                     rulesVersion, oDriverLogDetail);
 
             RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
@@ -680,8 +690,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     // Calculate 2 days data to get remaining Driving/Onduty hours
                     RulesResponseObject remainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                             Integer.valueOf(CycleId), isSingleDriver, Integer.valueOf(DriverId), DRIVER_JOB_STATUS,
-                            false, sharedPref.get16hrHaulExcptn(getActivity()),
-                            sharedPref.getAdverseExcptn(getActivity()), rulesVersion, dbHelper);
+                            false, isHaulExcptn,
+                            isAdverseExcptn, rulesVersion, dbHelper);
 
                     LeftNextBreak = (int) localCalls.usaBreakRemainingHours(oDriverDetail).getBreakRemainingMinutes();
 
@@ -842,7 +852,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
                RulesResponseObject RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                         Integer.valueOf(CycleId), isSingleDriver, Integer.valueOf(DriverId), Constants.DRIVING, false,
-                        sharedPref.get16hrHaulExcptn(getActivity()), sharedPref.getAdverseExcptn(getActivity()),
+                       isHaulExcptn, isAdverseExcptn,
                         rulesVersion, dbHelper);
 
                 HosInfoDialog dialog = new HosInfoDialog(getActivity(), RemainingTimeObj, RulesObj);

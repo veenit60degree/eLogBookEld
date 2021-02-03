@@ -234,6 +234,7 @@ public class SignRecordDialog extends Dialog {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int arg1) {
+
                             SaveDriverSignArray(true);
                             dialog.dismiss();
                         }
@@ -308,6 +309,7 @@ public class SignRecordDialog extends Dialog {
         if(IsCarryForward){
 
             String lastSignature = constants.getLastSignature(recapViewMethod, DriverId, dbHelper);
+            //boolean isReCertifyRequired = constants.isReCertifyRequired(getActivity(), dataObj, "");
             saveByteSignLocally(lastSignature, true);
             LogSignImageInByte = lastSignature;
 
@@ -360,7 +362,7 @@ public class SignRecordDialog extends Dialog {
         for(int i = 0 ; i < selectedDateList.size() ; i++){
             JSONObject CertifyLogObj;
             String dateStr = selectedDateList.get(i);
-            boolean isReCertifyRequired = !constants.isReCertifyRequired(getContext(), null, Globally.ConvertDateFormat(dateStr));
+            boolean isReCertifyRequired = constants.isReCertifyRequired(getContext(), null, Globally.ConvertDateFormat(dateStr));
             if(i == 0) {
                 CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, Globally.PROJECT_ID, dateStr,
                         SignImageInBytes, IsContinueWithSign, isReCertifyRequired);

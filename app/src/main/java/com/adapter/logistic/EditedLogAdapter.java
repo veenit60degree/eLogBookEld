@@ -72,11 +72,17 @@ public class EditedLogAdapter extends BaseAdapter {
 
         String StartTime    = Globally.ConvertToTimeFormat(LogItem.getStartDateTime(), Globally.DateFormatWithMillSec);
         String EndTime      = Globally.ConvertToTimeFormat(LogItem.getEndDateTime(), Globally.DateFormatWithMillSec);
+        String Duration     = LogItem.getDuration();
+
+        if(EndTime.equals("23:59")){
+            EndTime = "24:00";
+           // Duration    = String.valueOf(Integer.valueOf(Duration) + 1);
+        }
 
         setStatusWiseView(LogItem.getDriverStatusId(), holder.statusEditedTxtView, LogItem.isPersonal(), LogItem.isShortHaulException());   // isShortHaulException is used for isYardMove
         holder.startTimeEditedTxtView.setText(StartTime);
         holder.endTimeEditedTxtView.setText(EndTime);
-        holder.durationEditedTxtView.setText(LogItem.getDuration());
+        holder.durationEditedTxtView.setText(Duration);
 
         boolean isEdited = LogItem.isAdverseException();    // isAdverseException is used here as isEdited value
         if(isEdited){
@@ -118,7 +124,7 @@ public class EditedLogAdapter extends BaseAdapter {
 
             case 1: // OffDuty
                 if(isPersonal) {
-                    view.setText("PU");
+                    view.setText("PC");
                 }else{
                     view.setText("OFF");
                 }

@@ -46,7 +46,7 @@ public class EldActivity extends FragmentActivity  {
 
      //   UILApplication.getInstance().setTheme();
 
-        setContentView(R.layout.frame_layout_xml);
+        setContentView(R.layout.frame_layout);
 
         sharedPref = new SharedPref();
 

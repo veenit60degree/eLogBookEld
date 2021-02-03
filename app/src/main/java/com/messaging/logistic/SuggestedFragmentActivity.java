@@ -19,6 +19,7 @@ import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.fragment.SuggestedLogFragment;
 import com.messaging.logistic.fragment.SuggestedLogListFragment;
@@ -33,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import interfaces.DriverStatus;
+
 public class SuggestedFragmentActivity extends FragmentActivity {
 
     ImageView menuImageView;
@@ -45,6 +48,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
     ProgressDialog progressDialog;
     VolleyRequest GetEditedRecordRequest;
     Map<String, String> params;
+    int DriverType = 0;
 
 
     @Override
@@ -52,7 +56,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        setContentView(R.layout.frame_layout_xml);
+        setContentView(R.layout.frame_layout);
 
         GetEditedRecordRequest      = new VolleyRequest(this);
 
@@ -70,6 +74,12 @@ public class SuggestedFragmentActivity extends FragmentActivity {
 
         DeviceId        = sharedPref.GetSavedSystemToken(this);
         DriverId        = sharedPref.getDriverId(this);
+
+        if (sharedPref.getCurrentDriverType(this).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            DriverType = Constants.MAIN_DRIVER_TYPE;
+        }else{
+            DriverType = Constants.CO_DRIVER_TYPE;
+        }
 
         if(editedData.length() > 0){
             try {
@@ -228,10 +238,18 @@ public class SuggestedFragmentActivity extends FragmentActivity {
             if (fragManager.getBackStackEntryCount() > 1) {
                 getSupportFragmentManager().popBackStack();
             } else {
-                if(dataArray.length() > 0 && sharedPref.isSuggestedEditOccur(SuggestedFragmentActivity.this)){
-                    sharedPref.setSuggestedRecallStatus(false, getApplicationContext());
+                if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                    if (dataArray.length() > 0 && sharedPref.isSuggestedEditOccur(SuggestedFragmentActivity.this)) {
+                        sharedPref.setSuggestedRecallStatus(false, getApplicationContext());
+                    } else {
+                        sharedPref.setSuggestedRecallStatus(true, getApplicationContext());
+                    }
                 }else{
-                    sharedPref.setSuggestedRecallStatus(true, getApplicationContext());
+                    if (dataArray.length() > 0 && sharedPref.isSuggestedEditOccurCo(SuggestedFragmentActivity.this)) {
+                        sharedPref.setSuggestedRecallStatusCo(false, getApplicationContext());
+                    } else {
+                        sharedPref.setSuggestedRecallStatusCo(true, getApplicationContext());
+                    }
                 }
 
                 finish();

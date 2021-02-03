@@ -49,7 +49,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     final int RejectRecordFlag                  = 102;
     final int RejectCompanyAssignedRecordFlag   = 103;
 
-    String DriverId = "", DriverStatusId = "", AssignedRecordsId = "", StatusId = "", unAssignedVehicleMilesId = "",  DriverName = "";
+    String DriverId = "", DriverStatusId = "", AssignedRecordsId = "", unAssignedVehicleMilesId = "",  DriverName = "";
     boolean isCompanyAssigned = false;
     ProgressDialog progressDialog;
 
@@ -206,7 +206,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
 
                 try {
-                    StatusId = "";
+
                     if (remarksDialog != null && remarksDialog.isShowing())
                         remarksDialog.dismiss();
 
@@ -229,7 +229,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                 View radioButton    = unIdentifyRadGroup.findViewById(radioButtonID);
                 int idx             = unIdentifyRadGroup.indexOfChild(radioButton);
 
-                StatusId = Constants.getDriverStatus(idx);
+                DriverStatusId = Constants.getDriverStatus(idx);
 
                 try {
 

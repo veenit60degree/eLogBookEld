@@ -13,7 +13,8 @@
         android:background="@drawable/polygon"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/margin_25"
-        android:layout_marginTop="@dimen/view_height_70"
+        android:layout_marginTop="@dimen/margin_10"
+
         />
 
     <LinearLayout

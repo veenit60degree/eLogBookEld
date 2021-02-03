@@ -3030,9 +3030,19 @@ public class HelperMethods {
         String TrailorNumber = sharedPref.getTrailorNumber(context);
         RulesResponseObject RulesObj;
 
+        boolean isHaulExcptn;
+        boolean isAdverseExcptn;
+        if (sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            isHaulExcptn    = sharedPref.get16hrHaulExcptn(context);
+            isAdverseExcptn = sharedPref.getAdverseExcptn(context);
+        }else{
+            isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(context);
+            isAdverseExcptn = sharedPref.getAdverseExcptnCo(context);
+        }
+
         String DriverName = "";
         CurrentCycleId = CheckStringNull(CurrentCycleId);
-        if (DriverType == 0) {
+        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
             DriverName = MainDriverName;
         } else {
             DriverName = CoDriverName;
@@ -3082,8 +3092,8 @@ public class HelperMethods {
                         CurrentCycleId, Remarks, isPersonal, isViolation,
                         "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
                         String.valueOf(BackgroundLocationService.GpsVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
-                        Global, sharedPref.get16hrHaulExcptn(context), isShortHaulUpdate,
-                        ""+sharedPref.getAdverseExcptn(context),
+                        Global, isHaulExcptn, isShortHaulUpdate,
+                        ""+isAdverseExcptn,
                         AdverseExceptionRemarks,
                         hMethods, dbHelper);
 
@@ -3095,8 +3105,8 @@ public class HelperMethods {
                 List<DriverLog> oDriverLog = GetLogAsList(logArray);
                 DriverDetail oDriverDetail1 = getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
                         Integer.valueOf(DRIVER_ID), offsetFromUTC, Integer.valueOf(CurrentCycleId), Global.isSingleDriver(context),
-                        DRIVER_JOB_STATUS, false, sharedPref.get16hrHaulExcptn(context),
-                        sharedPref.getAdverseExcptn(context), rulesVersion, oDriverLog);
+                        DRIVER_JOB_STATUS, false, isHaulExcptn,
+                        isAdverseExcptn, rulesVersion, oDriverLog);
                 RulesObj = CheckDriverRule(Integer.valueOf(CurrentCycleId), DRIVER_JOB_STATUS,
                         oDriverDetail1);
 
@@ -3139,10 +3149,10 @@ public class HelperMethods {
                     String.valueOf(BackgroundLocationService.obdVehicleSpeed),
                     String.valueOf(BackgroundLocationService.GpsVehicleSpeed),
                     sharedPref.GetCurrentTruckPlateNo(context),
-                    String.valueOf(sharedPref.get16hrHaulExcptn(context)),
+                    String.valueOf(isHaulExcptn),
                     String.valueOf( isShortHaulUpdate),
                     decesionSource,
-                    String.valueOf(sharedPref.getAdverseExcptn(context)),
+                    String.valueOf(isAdverseExcptn),
                     AdverseExceptionRemarks
 
             );
@@ -3150,14 +3160,14 @@ public class HelperMethods {
 
 
             // Save Model in offline Array
-            if (DriverType == 0) {
+            if (DriverType == Constants.MAIN_DRIVER_TYPE) {
                 MainDriverPref.AddDriverLoc(context, locationModel);
 
                 /* ==== Add data in list to show in offline mode ============ */
                 EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                         "", "", "", Boolean.parseBoolean(isPersonal),
-                        sharedPref.getAdverseExcptn(context), sharedPref.get16hrHaulExcptn(context));
+                        isAdverseExcptn, isHaulExcptn);
                 eldSharedPref.AddDriverLoc(context, logModel);
             } else {
                 CoDriverPref.AddDriverLoc(context, locationModel);
@@ -3166,7 +3176,7 @@ public class HelperMethods {
                 EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                         "", "", "", Boolean.parseBoolean(isPersonal),
-                        sharedPref.getAdverseExcptn(context), sharedPref.get16hrHaulExcptn(context));
+                        isAdverseExcptn, isHaulExcptn);
                 coEldSharedPref.AddDriverLoc(context, logModel);
             }
 
@@ -3192,8 +3202,8 @@ public class HelperMethods {
                     "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
                     String.valueOf(BackgroundLocationService.GpsVehicleSpeed),
                     sharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
-                    Global, sharedPref.get16hrHaulExcptn(context), isShortHaulUpdate,
-                    ""+sharedPref.getAdverseExcptn(context),
+                    Global, isHaulExcptn, isShortHaulUpdate,
+                    ""+isAdverseExcptn,
                     AdverseExceptionRemarks, hMethods, dbHelper);
 
 
@@ -3217,7 +3227,7 @@ public class HelperMethods {
         JSONArray DriverJsonArray = new JSONArray();
         List<EldDataModelNew> tempList = new ArrayList<EldDataModelNew>();
 
-        if (DriverType == 0) {
+        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
             try {
                 listSize = MainDriverPref.LoadSavedLoc(context).size();
                 tempList = MainDriverPref.LoadSavedLoc(context);

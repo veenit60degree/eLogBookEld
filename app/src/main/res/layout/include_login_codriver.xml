@@ -73,7 +73,6 @@
                 android:id="@+id/driverUserImg"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/username_green"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
                 android:visibility="gone"

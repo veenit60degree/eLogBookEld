@@ -118,34 +118,72 @@ public class ParseLoginDetails {
                     }
 
                     try{
-                        if(DriverSetting.has(ConstantsKeys.IsAllowLogReCertification)) {
-                            SharedPref.SetCertifcnUnIdenfdSettings(
-                                    DriverSetting.getBoolean(ConstantsKeys.IsAllowLogReCertification),
-                                    DriverSetting.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords),
-                                    DriverSetting.getBoolean(ConstantsKeys.IsPersonal),
-                                    DriverSetting.getBoolean(ConstantsKeys.IsYardMove), context);
-                        }else{
-                            SharedPref.SetCertifcnUnIdenfdSettings(
-                                    false,
-                                    false,
-                                    false,
-                                    false, context);
-                        }
 
-                        if(DriverSetting.has(ConstantsKeys.IsAllowMalfunction)){
-                            SharedPref.SetDiagnosticAndMalfunctionSettings(
-                                    DriverSetting.getBoolean(ConstantsKeys.IsAllowMalfunction),
-                                    DriverSetting.getBoolean(ConstantsKeys.IsAllowDiagnostic),
-                                    DriverSetting.getBoolean(ConstantsKeys.IsClearMalfunction),
-                                    DriverSetting.getBoolean(ConstantsKeys.IsClearDiagnostic), context);
-                        }else{
-                            SharedPref.SetDiagnosticAndMalfunctionSettings(
-                                    false,
-                                    false,
-                                    false,
-                                    false, context);
-                        }
 
+                        if(resultCount == 0) {
+
+                            if(DriverSetting.has(ConstantsKeys.IsAllowLogReCertification)) {
+                                SharedPref.SetCertifcnUnIdenfdSettings(
+                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowLogReCertification),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsPersonal),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsYardMove), context);
+                            }else{
+                                SharedPref.SetCertifcnUnIdenfdSettings(
+                                        false,
+                                        false,
+                                        false,
+                                        false, context);
+                            }
+
+                            if (DriverSetting.has(ConstantsKeys.IsAllowMalfunction)) {
+                                SharedPref.SetDiagnosticAndMalfunctionSettingsMain(
+                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowMalfunction),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowDiagnostic),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsClearMalfunction),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsClearDiagnostic),
+                                         context);
+                            } else {
+                                SharedPref.SetDiagnosticAndMalfunctionSettingsMain(
+                                        false,
+                                        false,
+                                        false,
+                                        false,
+                                         context);
+                            }
+                        }else{
+
+                            if(DriverSetting.has(ConstantsKeys.IsAllowLogReCertification)) {
+                                SharedPref.SetCertifcnUnIdenfdSettingsCo(
+                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowLogReCertificationCo),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsShowUnidentifiedRecordsCo),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsPersonalCo),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsYardMoveCo), context);
+                            }else{
+                                SharedPref.SetCertifcnUnIdenfdSettingsCo(
+                                        false,
+                                        false,
+                                        false,
+                                        false, context);
+                            }
+
+
+                            if (DriverSetting.has(ConstantsKeys.IsAllowMalfunction)) {
+                                SharedPref.SetDiagnosticAndMalfunctionSettingsCo(
+                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowMalfunction),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowDiagnostic),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsClearMalfunction),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsClearDiagnostic),
+                                         context);
+                            } else {
+                                SharedPref.SetDiagnosticAndMalfunctionSettingsCo(
+                                        false,
+                                        false,
+                                        false,
+                                        false,
+                                         context);
+                            }
+                        }
                     }catch (Exception e){
                         e.printStackTrace();
                     }

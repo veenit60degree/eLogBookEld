@@ -89,7 +89,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     Spinner countrySpinner;
     AutoCompleteTextView locLogAutoComplete;
     TextView startDateTv ,endDateTv, fmcsaDescTV, fmcsaLogTxtVw, pdfLogTxtVw, dataTransTxtView;
-    LinearLayout emailLogLay, logBtnLay, shareLogMainLay, shareLogChildLay, shareServiceDialog;
+    LinearLayout emailLogLay, logBtnLay, shareLogMainLay, shareLogChildLay, shareServiceDialog, countryLayout;
     RelativeLayout sharedLocLay, AobrdSharedLocLay;
     String selectedDateView = "", email = "";
     FragmentActivity activity;
@@ -178,6 +178,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         shareLogMainLay     = (LinearLayout)findViewById(R.id.shareLogMainLay);
         shareLogChildLay    = (LinearLayout)findViewById(R.id.shareLogChildLay);
         shareServiceDialog  = (LinearLayout)findViewById(R.id.shareServiceDialog);
+        countryLayout       = (LinearLayout)findViewById(R.id.countryLayout);
 
         fmcsaLogBtn         = (RelativeLayout) findViewById(R.id.fmcsaLogBtn);
         pdfLogBtn           = (RelativeLayout)findViewById(R.id.pdfLogBtn);
@@ -188,7 +189,6 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         sendLogScrollView   = (ScrollView)findViewById(R.id.sendLogScrollView);
 
         locLogAutoComplete.setThreshold(3);
-
 
 
         if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {

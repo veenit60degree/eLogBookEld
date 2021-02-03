@@ -1756,6 +1756,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="@dimen/margin_20"
                 android:scaleType="centerCrop"
+                android:src="@drawable/sign_here"
 
                 />
 

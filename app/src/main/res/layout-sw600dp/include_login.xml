@@ -48,7 +48,6 @@
             <ImageView
                 android:layout_width="@dimen/view_height_35_g"
                 android:layout_height="@dimen/view_height_35_g"
-                android:src="@drawable/username_green"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
                 android:visibility="gone"

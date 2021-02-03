@@ -51,7 +51,6 @@
             android:id="@+id/tickImageView"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:src="@drawable/tick_blue"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="16dp"

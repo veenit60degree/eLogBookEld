@@ -102,7 +102,7 @@ public class OdometerAdapter extends BaseAdapter {
 
         if(odometerM.getDriverStatusID().equals(Globally.PERSONAL) ||
               (odometerM.getDriverStatusID().equals(Globally.OFF_DUTY) && odometerM.isPersonal())) { // Personal
-            holder.personalTV.setText("(PU)");
+            holder.personalTV.setText("(PC)");
             holder.personalTV.setVisibility(View.VISIBLE);
         }
 

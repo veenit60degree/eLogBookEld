@@ -1770,7 +1770,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="@dimen/view_height_35"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ssss"
+                android:src="@drawable/sign_here"
                 />
 
 

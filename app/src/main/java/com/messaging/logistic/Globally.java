@@ -1998,6 +1998,7 @@ public class Globally {
 			sharedPref.SetDOTStatus(false, c);
 			sharedPref.SetOdometerFromOBD(false, c);
 			sharedPref.set16hrHaulExcptn(false, c);
+			sharedPref.set16hrHaulExcptnCo(false, c);
 			sharedPref.notificationDeleted(false, c);
 			sharedPref.SetOBDPingAllowedStatus(false, c);
 			sharedPref.SetAutoDriveStatus(false, c);

@@ -161,10 +161,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     AlertDialog enableExceptionAlert;
     private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
 
-  /*  private DatabaseReference mFirebaseDatabase;
-    private FirebaseDatabase mFirebaseInstance;
-    String TAG_Firebase = "FirebaseRealM";*/
-    // private String userId;
+    boolean isHaulExcptn = false;
+    boolean isAdverseExcptn = false;
 
 
     @Override
@@ -288,7 +286,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 if(buttonView.isPressed()) {
 
                     if (isChecked) {
-                        if(!sharedPref.getAdverseExcptn(getActivity())) {
+                        getExceptionStatus();
+
+                        if(!isAdverseExcptn) {
                             if(isAllowToEnableException(DriverId)) {
                                 haulExceptionAlert();
                             }else{
@@ -315,7 +315,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 if(buttonView.isPressed()) {
                     if (isChecked) {
 
-                        if(!sharedPref.get16hrHaulExcptn(getActivity())) {
+                        getExceptionStatus();
+                        if(!isHaulExcptn) {
 
                             if(isAllowToEnableException(DriverId)) {
                                 try {
@@ -405,7 +406,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -417,8 +417,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
         }
 
-        haulExceptnSwitchButton.setChecked(sharedPref.get16hrHaulExcptn(getActivity()));
-        adverseSwitchButton.setChecked(sharedPref.getAdverseExcptn(getActivity()));
 
         global.hideSoftKeyboard(getActivity());
         getInstalledAppDetail();
@@ -428,16 +426,22 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
         actionBarTitle.setText(getResources().getString(R.string.action_settings));
         if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
+            DriverType = Constants.MAIN_DRIVER_TYPE;
             SavedPosition = 0;
             SavedCanCycle = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
             SavedUsaCycle = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
             SavedTimeZone = DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity());
         }else{
+            DriverType = Constants.CO_DRIVER_TYPE;
             SavedPosition = 1;
             SavedCanCycle = DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleId, getActivity());
             SavedUsaCycle = DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleId, getActivity());
             SavedTimeZone = DriverConst.GetCoDriverSettings(DriverConst.CoTimeZoneID, getActivity());
         }
+
+        getExceptionStatus();
+        haulExceptnSwitchButton.setChecked(isHaulExcptn);
+        adverseSwitchButton.setChecked(isAdverseExcptn);
 
         try{
             JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
@@ -481,6 +485,17 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         }
 
 
+    }
+
+
+    void getExceptionStatus(){
+        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+            isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
+            isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+        }else{
+            isHaulExcptn = sharedPref.get16hrHaulExcptnCo(getActivity());
+            isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+        }
     }
 
 
@@ -899,8 +914,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
         @Override
         public void JobBtnReady(String AdverseExceptionRemarks, boolean IsClaim, boolean IsCompanyAssign) {
-            sharedPref.setAdverseExcptn(true, getActivity());
-            // adverseSwitchButton.setEnabled(false);
+            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                sharedPref.setAdverseExcptn(true, getActivity());
+            }else{
+                sharedPref.setAdverseExcptnCo(true, getActivity());
+            }
+
+            getExceptionStatus();
+
             global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.advrs_excptn_enabled), getResources().getColor(R.color.colorPrimary));
 
             try {
@@ -1166,10 +1187,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     void ClearDriverUnSavedlog(){
         if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
-            DriverType = 0;
+            DriverType = Constants.MAIN_DRIVER_TYPE;
             MainDriverPref.ClearLocFromList(getActivity());
         }else{
-            DriverType = 1;
+            DriverType = Constants.CO_DRIVER_TYPE;
             CoDriverPref.ClearLocFromList(getActivity());
         }
     }
@@ -1460,10 +1481,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             dialog.dismiss();
 
                             boolean isHaulException = constant.getShortHaulExceptionDetail(getActivity(), DriverId, global, sharedPref,
-                                    hMethods, dbHelper);
+                                                        isHaulExcptn, isAdverseExcptn, hMethods, dbHelper);
 
                             if (isHaulException) {
-                                sharedPref.set16hrHaulExcptn(true, getActivity());
+                                if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                                    sharedPref.set16hrHaulExcptn(true, getActivity());
+                                }else{
+                                    sharedPref.set16hrHaulExcptnCo(true, getActivity());
+                                }
+
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.haul_excptn_enabled), getResources().getColor(R.color.colorPrimary));
 
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
@@ -1474,10 +1500,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             } else {
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.halu_excp_not_eligible), getResources().getColor(R.color.colorVoilation));
                                 haulExceptnSwitchButton.setChecked(false);
-                                sharedPref.set16hrHaulExcptn(false, getActivity());
+
+                                if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                                    sharedPref.set16hrHaulExcptn(false, getActivity());
+                                }else{
+                                    sharedPref.set16hrHaulExcptnCo(false, getActivity());
+                                }
+
                             }
 
-
+                            getExceptionStatus();
                         }
                     });
 
@@ -1521,21 +1553,21 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 if(status == Constants.DRIVING || (status == Constants.ON_DUTY && yardMove == false) ){
                     isAllow = true;
                 }else{
-                    if(status == Constants.ON_DUTY && yardMove == false){
-                        exceptionDesc = "Exception not allowled in Yard Move.";
+                    if(status == Constants.ON_DUTY && yardMove){
+                        exceptionDesc = "Exception not allowed in Yard Move.";
                     }else if(status == Constants.OFF_DUTY){
                         boolean Personal = lastObj.getBoolean(ConstantsKeys.Personal);
                         if(Personal){
-                            exceptionDesc = "Exception not allowled in Personal Use.";
+                            exceptionDesc = "Exception not allowed in Personal Use.";
                         }else{
-                            exceptionDesc = "Exception not allowled in Off Duty.";
+                            exceptionDesc = "Exception not allowed in Off Duty.";
                         }
                     }else{
-                        exceptionDesc = "Exception not allowled in Sleeper.";
+                        exceptionDesc = "Exception not allowed in Sleeper.";
                     }
                 }
             }else{
-                exceptionDesc = "Exception not allowled in Canada Cycle.";
+                exceptionDesc = "Exception not allowed in Canada Cycle.";
             }
         }catch (Exception e){
             e.printStackTrace();

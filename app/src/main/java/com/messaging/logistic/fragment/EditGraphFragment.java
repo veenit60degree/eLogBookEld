@@ -129,6 +129,9 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
     JSONArray previousDateJobs = new JSONArray();
     Globally global;
     SharedPref sharedPref;
+    boolean isHaulExcptn;
+    boolean isAdverseExcptn;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -235,11 +238,17 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
                 GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
             }
 
-            if(DriverType == 0){
+            if(DriverType == Constants.MAIN_DRIVER_TYPE){
                 IsSingleDriver = true;
+                isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
+                isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
             }else{
                 IsSingleDriver = false;
+                isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
+                isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
             }
+
+
 
             JSONObject knownLocObj  = (JSONObject)logArrayBeforeSelectedDate.get(logArrayBeforeSelectedDate.length()-1);
             lastDaySavedLocation    = knownLocObj.getString(ConstantsKeys.EndLocation);
@@ -620,7 +629,7 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
 
         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
-                sharedPref.get16hrHaulExcptn(getActivity()),  sharedPref.getAdverseExcptn(getActivity()),
+                isHaulExcptn, isAdverseExcptn,
                 rulesVersion, oDriverLogList);
         RulesResponseObject RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
@@ -846,7 +855,7 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
 
                         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
-                                sharedPref.get16hrHaulExcptn(getActivity()),  sharedPref.getAdverseExcptn(getActivity()),
+                                isHaulExcptn, isAdverseExcptn,
                                 rulesVersion, oDriverLogList);
                         RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
@@ -1380,7 +1389,7 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
         JSONArray driverJsonArray = new JSONArray();
         List<EldDataModelNew> tempList = new ArrayList<EldDataModelNew>();
 
-        if (DriverType == 0) {
+        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
             try {
                 listSize = MainDriverPref.LoadSavedLoc(getActivity()).size();
                 tempList = MainDriverPref.LoadSavedLoc(getActivity());

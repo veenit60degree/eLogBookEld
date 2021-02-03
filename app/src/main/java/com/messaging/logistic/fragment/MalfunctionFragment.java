@@ -422,10 +422,18 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
             noDataEldTV.setVisibility(View.GONE);
         }else{
             noDataEldTV.setVisibility(View.VISIBLE);
-            sharedPref.setEldOccurences(sharedPref.isUnidentifiedOccur(getActivity()),
-                    false,
-                    false,
-                    sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+            if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                sharedPref.setEldOccurences(sharedPref.isUnidentifiedOccur(getActivity()),
+                        false,
+                        false,
+                        sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+            }else{
+                sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccur(getActivity()),
+                        false,
+                        false,
+                        sharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
+            }
+
         }
 
         try {

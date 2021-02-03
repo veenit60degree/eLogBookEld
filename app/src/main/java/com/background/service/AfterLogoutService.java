@@ -303,9 +303,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             intent.setClassName(ServerPackage, ServerService);
             this.bindService(intent, this.connection, Context.BIND_AUTO_CREATE);
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        }catch (Exception e){  }
 
     }
 
@@ -370,7 +368,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 this.connection = new RemoteServiceConnection();
                 BindConnection();
             }catch (Exception e){
-                e.printStackTrace();
+               // e.printStackTrace();
             }
         }
     }

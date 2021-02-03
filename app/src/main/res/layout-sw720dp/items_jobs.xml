@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
-    <!-- 110dp height-->
-    
+
+    <!-- 90dp height-->
     <RelativeLayout 
     android:layout_width="match_parent"
-    android:layout_height="@dimen/view_height_110"
+    android:layout_height="@dimen/view_height_90"
     android:background="@color/white"
      >
     
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:textSize="@dimen/text_size_26"
+            android:textSize="@dimen/text_size_22"
             android:textColor="@color/black"
             
             
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_short_6"
-            android:textSize="@dimen/text_size_23"
+            android:textSize="@dimen/text_size_20"
             android:textColor="@color/black"
             
             />
@@ -49,7 +49,6 @@
             android:id="@+id/tickImageView"
             android:layout_width="@dimen/view_height_30"
             android:layout_height="@dimen/view_height_30"
-            android:src="@drawable/tick_blue"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/margin_20"

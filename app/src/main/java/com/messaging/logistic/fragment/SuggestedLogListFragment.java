@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.adapter.logistic.OtherReviewLogAdapter;
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
@@ -36,6 +37,8 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
     TextView noDataEldTV, EldTitleTV;
     FragmentManager fragManager;
     Constants constants;
+    int DriverType;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,7 +82,11 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
         rightMenuBtn.setVisibility(View.GONE);
         suggestedLogListView.setVisibility(View.VISIBLE);
 
-
+        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            DriverType = Constants.MAIN_DRIVER_TYPE;
+        }else{
+            DriverType = Constants.CO_DRIVER_TYPE;
+        }
 
         eldMenuLay.setOnClickListener(this);
 
@@ -153,10 +160,18 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.eldMenuLay:
-                if(SuggestedFragmentActivity.dataArray.length() > 0 && SharedPref.isSuggestedEditOccur(getActivity())){
-                    SharedPref.setSuggestedRecallStatus(false, getActivity());
+                if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                    if (SuggestedFragmentActivity.dataArray.length() > 0 && SharedPref.isSuggestedEditOccur(getActivity())) {
+                        SharedPref.setSuggestedRecallStatus(false, getActivity());
+                    } else {
+                        SharedPref.setSuggestedRecallStatus(true, getActivity());
+                    }
                 }else{
-                    SharedPref.setSuggestedRecallStatus(true, getActivity());
+                    if (SuggestedFragmentActivity.dataArray.length() > 0 && SharedPref.isSuggestedEditOccurCo(getActivity())) {
+                        SharedPref.setSuggestedRecallStatusCo(false, getActivity());
+                    } else {
+                        SharedPref.setSuggestedRecallStatusCo(true, getActivity());
+                    }
                 }
 
                 getActivity().finish();

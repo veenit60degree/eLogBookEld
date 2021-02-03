@@ -125,8 +125,8 @@ public class LoginDialog extends Dialog {
             coDriverLoginBtn.setText(getContext().getResources().getString(R.string.Confirm));
         }else{
             coDriverLoginBtn.setBackgroundResource(R.drawable.green_selector);
-            driverUserImg.setImageResource(R.drawable.username_green);
-            driverPassImg.setImageResource(R.drawable.password_green);
+            //driverUserImg.setImageResource(R.drawable.username_green);
+           // driverPassImg.setImageResource(R.drawable.password_green);
         }
 
 

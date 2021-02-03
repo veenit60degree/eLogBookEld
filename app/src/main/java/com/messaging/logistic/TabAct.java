@@ -43,6 +43,7 @@ import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.models.SlideMenuModel;
+import com.models.VehicleModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     public static SlidingMenu smenu;
     public static RelativeLayout sliderLay;
     public static Button wiredObdDataBtn, dayNightBtn, openUpdateDialogBtn;
+    public static boolean isTabActOnCreate = true;
+    public static List<VehicleModel> vehicleList = new ArrayList<>();
+
     TextView noObdConnTV;
     String WiredOBD     = "wired_obd";
     String WifiOBD      = "wifi_obd";
@@ -99,6 +103,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         hMethods      = new HelperMethods();
         constants     = new Constants();
 
+        isTabActOnCreate = true;
         IsTablet = Globally.isTablet(this);
         existingAppVersionStr = "Version - " + Globally.GetAppVersion(this, "VersionName") + "," + getResources().getString(R.string.Powered_by);
 
@@ -179,9 +184,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
         if(sharedPref.getCurrentDriverType(TabAct.this).equals(DriverConst.StatusSingleDriver)){
-            DriverType = 0;
+            DriverType = Constants.MAIN_DRIVER_TYPE;
         }else{
-            DriverType = 1;
+            DriverType = Constants.CO_DRIVER_TYPE;
         }
 
 
@@ -196,11 +201,11 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             MainDriverName  = DriverConst.GetDriverDetails( DriverConst.DriverName, TabAct.this);
             CoDriverName    = DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, TabAct.this);
 
-            if(DriverType == 0){
+            if(DriverType == Constants.MAIN_DRIVER_TYPE){
                 slideMenu.MainDriverView(TabAct.this);      //MainDriverBtn.performClick();
                 slideMenu.usernameTV.setText(MainDriverName);
             }else{
-                DriverType = 1;
+                DriverType = Constants.CO_DRIVER_TYPE;
                 slideMenu.CoDriverView(TabAct.this, false);      //CoDriverView(TabAct.this, false);
                 slideMenu.usernameTV.setText(CoDriverName);
             }
@@ -254,17 +259,36 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
 
 
+                DisplayMetrics metrics = getResources().getDisplayMetrics();
+                int densityDpi = (int)(metrics.density * 160f);
+                Log.d("densityDpi","densityDpi: " +densityDpi);
+
+                int SingleDriverMenuWidth = 385;
+                int DualDriverMenuWidth   = 500;
                 if(Globally.isTablet(getApplicationContext())) {
+
+                    if(densityDpi <= 220){
+                        SingleDriverMenuWidth = 355;
+                        DualDriverMenuWidth   = 460;
+                    }
+
                     if(sharedPref.getDriverType(TabAct.this).equals(DriverConst.SingleDriver)){
-                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), 370));
+                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), SingleDriverMenuWidth));
                     }else {
-                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), 480));
+                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), DualDriverMenuWidth));
                     }
                 }else{
-                    if(sharedPref.getDriverType(TabAct.this).equals(DriverConst.SingleDriver)) {
-                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), 320));
+                    if(densityDpi <= 420){
+                        SingleDriverMenuWidth = 275;
+                        DualDriverMenuWidth   = 295;
                     }else{
-                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), 350));
+                        SingleDriverMenuWidth = 310;
+                        DualDriverMenuWidth   = 335;
+                    }
+                    if(sharedPref.getDriverType(TabAct.this).equals(DriverConst.SingleDriver)) {
+                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), SingleDriverMenuWidth));
+                    }else{
+                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), DualDriverMenuWidth));
                     }
                 }
 
@@ -420,6 +444,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(ConstantsKeys.SuggestedEdit));
 
+
     }
 
 
@@ -494,19 +519,35 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
     void getMenuList(boolean isNotify){
-        boolean isMalfunction = false;
-        if(sharedPref.IsAllowMalfunction(getApplicationContext()) && sharedPref.IsAllowDiagnostic(getApplicationContext())) {
-            isMalfunction = true;
+        boolean isMalfunction  = false;
+        boolean isUnidentified = false;
+
+        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+            if (sharedPref.IsAllowMalfunction(getApplicationContext()) && sharedPref.IsAllowDiagnostic(getApplicationContext())) {
+                isMalfunction = true;
+            }
+
+            if(sharedPref.IsShowUnidentifiedRecords(getApplicationContext()))
+                isUnidentified = true;
+
+        }else{
+            if (sharedPref.IsAllowMalfunctionCo(getApplicationContext()) && sharedPref.IsAllowDiagnosticCo(getApplicationContext())) {
+                isMalfunction = true;
+            }
+
+            if(sharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext()))
+                isUnidentified = true;
+
         }
 
         if(isNotify){
             menuList.clear();
             menuList.addAll(constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
-                    sharedPref.IsShowUnidentifiedRecords(getApplicationContext()), isMalfunction, existingAppVersionStr));
+                    isUnidentified, isMalfunction, existingAppVersionStr));
             slideMenu.menuAdapter.notifyDataSetChanged();
         }else{
             menuList = constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
-                    sharedPref.IsShowUnidentifiedRecords(getApplicationContext()), isMalfunction, existingAppVersionStr);
+                    isUnidentified, isMalfunction, existingAppVersionStr);
         }
 
     }

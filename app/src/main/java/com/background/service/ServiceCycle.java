@@ -101,6 +101,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     int GPSVehicleSpeed ;
     int connectionType;
 
+    boolean isHaulExcptn;
+    boolean isAdverseExcptn;
+
     boolean isOldRecord      = false;
     boolean IsAlertTimeValid = false;
     boolean isSingleDriver   = true;
@@ -204,11 +207,15 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             }
 
             if(sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-                DriverType = 0;     // Single Driver Type and Position is 0
+                DriverType = Constants.MAIN_DRIVER_TYPE;     // Single Driver Type and Position is 0
                 CurrentCycleId  = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+                isHaulExcptn    = sharedPref.get16hrHaulExcptn(context);
+                isAdverseExcptn = sharedPref.getAdverseExcptn(context);
             } else {                // If Current driver is Co Driver
-                DriverType = 1;
+                DriverType = Constants.CO_DRIVER_TYPE;
                 CurrentCycleId  = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, context);
+                isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(context);
+                isAdverseExcptn = sharedPref.getAdverseExcptnCo(context);
             }
 
             if(CurrentCycleId.equalsIgnoreCase("null") || CurrentCycleId.equalsIgnoreCase("-1")
@@ -662,7 +669,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
     void getConfiguredTime(){
 
-        if (DriverType == 0) {
+        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
             OffDutyInterval     = DriverConst.getDriverConfiguredTime(DriverConst.OffDutyMinute, context);
             OffDutySpeedLimit   = DriverConst.getDriverConfiguredTime(DriverConst.OffDutySpeed, context);
 
@@ -806,8 +813,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         CurrentCycleId,  "",  "false",  isViolation,
                         "false", String.valueOf(OBDVehicleSpeed),
                         String.valueOf(GPSVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus,false,
-                        Global, sharedPref.get16hrHaulExcptn(context), false,
-                        ""+sharedPref.getAdverseExcptn(context),
+                        Global, isHaulExcptn, false,
+                        ""+ isAdverseExcptn,
                         "", hMethods,  dbHelper);
 
                     String CurrentDate = Global.GetCurrentDateTime();
@@ -817,8 +824,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
                 DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
                         DriverId,offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
-                        DRIVER_JOB_STATUS, isOldRecord, sharedPref.get16hrHaulExcptn(context),
-                        sharedPref.getAdverseExcptn(context), rulesVersion, oDriverLog);
+                        DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, rulesVersion, oDriverLog);
                 RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), ChangedDriverStatus, oDriverDetail1);
 
 
@@ -844,14 +850,14 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, DriverId,
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
-                sharedPref.get16hrHaulExcptn(context),  sharedPref.getAdverseExcptn(context),
+                isHaulExcptn, isAdverseExcptn,
                 rulesVersion, oDriverLogDetail);
         RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), DRIVER_JOB_STATUS, oDriverDetail);
 
         // Calculate 2 days data to get remaining Driving/Onduty hours
         RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                 Integer.valueOf(CurrentCycleId), isSingleDriver, DriverId, DRIVER_JOB_STATUS, isOldRecord,
-                sharedPref.get16hrHaulExcptn(context),  sharedPref.getAdverseExcptn(context),
+                isHaulExcptn, isAdverseExcptn,
                 rulesVersion, dbHelper);
 
 
@@ -874,7 +880,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                 if(!constants.IsAlreadyViolation && IsWarningNotificationAllowed) {
                                     constants.writeViolationFile(currentDateTime, currentUTCTime, DriverId, CurrentCycleId, offsetFromUTC, isSingleDriver,
-                                            DRIVER_JOB_STATUS, isOldRecord, sharedPref.get16hrHaulExcptn(context), violationReason, hMethods, dbHelper, context);
+                                            DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, violationReason, hMethods, dbHelper, context);
                                 }
 
 
@@ -968,7 +974,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                 }
                             }
                  /*           List<NotificationHistoryModel> notificationsList = new ArrayList<NotificationHistoryModel>();
-                            if (DriverType == 0) {
+                            if (DriverType == Constants.MAIN_DRIVER_TYPE) {
                                 notificationsList = notificationPref.GetNotificationsList(context);
                             }else {
                                 notificationsList = coNotificationPref.GetNotificationsList(context);
@@ -1000,7 +1006,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
     private void getDriverDetails(){
 
-        if(DriverType == 0) {
+        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
             DriverName      = DriverConst.GetDriverDetails( DriverConst.DriverName, context);
             DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
             TruckNo         = DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
@@ -1025,7 +1031,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         String currentUTCTime = Global.GetCurrentUTCTime();
         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
         String DriverStatusId = "", isPersonal = "", isYardMove = "", trailorNumber = "", isAutomatic = "";
-        boolean isHaulException =  sharedPref.get16hrHaulExcptn(context);
 
         CurrentCycleId = hMethods.CheckStringNull(CurrentCycleId);
         trailorNumber = sharedPref.getTrailorNumber( context);
@@ -1105,10 +1110,10 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         String.valueOf(OBDVehicleSpeed),
                         String.valueOf(GPSVehicleSpeed),
                         plateNo,
-                        String.valueOf(isHaulException),
+                        String.valueOf(isHaulExcptn),
                         "false",
                         connectionSource + LastStatus,
-                        String.valueOf(sharedPref.getAdverseExcptn(context)),
+                        String.valueOf(isAdverseExcptn),
                         ""
 
 
@@ -1119,14 +1124,14 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             e.printStackTrace();
         }
 
-        if(DriverType == 0){
+        if(DriverType == Constants.MAIN_DRIVER_TYPE){
             MainDriverPref.AddDriverLoc(context, locationModel);
 
             /* ==== Add data in list to show in offline mode ============ */
             EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
                     "currentCycleId", false , currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                     "", City + ", " + State + ", " + Country, "", Boolean.parseBoolean(isPersonal),
-                    sharedPref.getAdverseExcptn(context), sharedPref.get16hrHaulExcptn(context) );
+                    isAdverseExcptn, isHaulExcptn );
             eldSharedPref.AddDriverLoc(context, logModel);
         }else{
             CoDriverPref.AddDriverLoc(context, locationModel);
@@ -1135,7 +1140,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
                     "currentCycleId", false , currentUtcTimeDiffFormat, currentUtcTimeDiffFormat, "", City + ", " + State + ", " + Country,
                     "", Boolean.parseBoolean(isPersonal),
-                    sharedPref.getAdverseExcptn(context), sharedPref.get16hrHaulExcptn(context) );
+                    isAdverseExcptn, isHaulExcptn  );
             coEldSharedPref.AddDriverLoc(context, logModel);
         }
 
@@ -1241,10 +1246,10 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 String.valueOf(OBDVehicleSpeed),
                 String.valueOf(GPSVehicleSpeed),
                 plateNo,
-                isHaulException,
+                isHaulExcptn,
                 false,
                 connectionSource + LastStatus,
-                ""+sharedPref.getAdverseExcptn(context),
+                ""+isAdverseExcptn,
                 ""
 
         );
@@ -1288,10 +1293,10 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         String.valueOf(OBDVehicleSpeed),
                         String.valueOf(GPSVehicleSpeed),
                         plateNo,
-                        isHaulException,
+                        isHaulExcptn,
                         false,
                         connectionSource + LastStatus,
-                        ""+sharedPref.getAdverseExcptn(context),
+                        ""+isAdverseExcptn,
                        ""
 
                 );

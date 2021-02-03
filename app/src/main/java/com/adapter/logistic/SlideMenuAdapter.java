@@ -77,6 +77,8 @@ public class SlideMenuAdapter extends BaseAdapter {
             holder.appVerTxtView    = (TextView) convertView.findViewById(R.id.appVerTxtView);
 
             holder.menuImgView      = (ImageView) convertView.findViewById(R.id.menuImgView);
+            holder.menuErrorImgView = (ImageView) convertView.findViewById(R.id.mwnuErrorImgView);
+
             holder.menuItemLay      = (LinearLayout)convertView.findViewById(R.id.menuItemLay);
 
             convertView.setTag(holder);
@@ -111,13 +113,29 @@ public class SlideMenuAdapter extends BaseAdapter {
         }
 
 
-
-        if(badgeCount > 0){
-            if(menuList.get(position).getStatus() == Constants.NOTIFICATION_HISTORY){
+        if(menuList.get(position).getStatus() == Constants.NOTIFICATION_HISTORY){
+            if(badgeCount > 0){
                 holder.menuBadgeTxtView.setVisibility(View.VISIBLE);
                 holder.menuBadgeTxtView.setText(""+badgeCount);
             }else{
                 holder.menuBadgeTxtView.setVisibility(View.GONE);
+            }
+        }
+
+
+        if(menuList.get(position).getStatus() == Constants.DATA_MALFUNCTION){
+            if(SharedPref.isMalfunctionOccur(context) || SharedPref.isDiagnosticOccur(context)){
+                  holder.menuErrorImgView.setVisibility(View.VISIBLE);
+            }else{
+                holder.menuErrorImgView.setVisibility(View.GONE);
+            }
+        }
+
+        if(menuList.get(position).getStatus() == Constants.UNIDENTIFIED_RECORD){
+            if(SharedPref.isUnidentifiedOccur(context)){
+                holder.menuErrorImgView.setVisibility(View.VISIBLE);
+            }else{
+                holder.menuErrorImgView.setVisibility(View.GONE);
             }
         }
 
@@ -145,7 +163,7 @@ public class SlideMenuAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView menuTitleTxtView, menuBadgeTxtView, appVerTxtView;
-        ImageView menuImgView;
+        ImageView menuImgView, menuErrorImgView;
         LinearLayout menuItemLay;
     }
 

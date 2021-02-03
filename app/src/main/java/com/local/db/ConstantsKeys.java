@@ -74,6 +74,8 @@ public class ConstantsKeys {
     public static String TruckNumber            = "TruckNumber";
     public static String IsYardMove             = "IsYardMove";
     public static String IsPersonal             = "IsPersonal";
+    public static String IsYardMoveCo           = "IsYardMoveCo";
+    public static String IsPersonalCo           = "IsPersonalCo";
 
     public static String SendLog                = "SendLog";
     public static String ViewCertifyDays        = "ViewCertifyDays";
@@ -173,6 +175,11 @@ public class ConstantsKeys {
     public static String IsMalfunction                  = "IsMalfunction";
     public static String IsDiagnostic                   = "IsDiagnostic";
     public static String SuggestedEdit                  = "SuggestedEdit";
+
+    public static String IsUnidentifiedCo               = "IsUnidentifiedCo";
+    public static String IsMalfunctionCo                = "IsMalfunctionCo";
+    public static String IsDiagnosticCo                 = "IsDiagnosticCo";
+    public static String SuggestedEditCo                = "SuggestedEditCo";
 
     public static String ShippingDocNumberId            = "ShippingDocNumberId";
     public static String ShipperCity                    = "ShipperCity";
@@ -346,6 +353,14 @@ public class ConstantsKeys {
     public static String IsAllowDiagnostic              = "IsAllowDiagnostic";
     public static String IsClearMalfunction             = "IsClearMalfunction";
     public static String IsClearDiagnostic              = "IsClearDiagnostic";
+    public static String DriverIdDiaMalMain             = "DriverIdDiaMalMain";
 
+    public static String IsAllowLogReCertificationCo    = "IsAllowLogReCertificationCo";
+    public static String IsShowUnidentifiedRecordsCo    = "IsShowUnidentifiedRecordsCo";
+    public static String IsAllowMalfunctionCo           = "IsAllowMalfunctionCo";
+    public static String IsAllowDiagnosticCo            = "IsAllowDiagnosticCo";
+    public static String IsClearMalfunctionCo           = "IsClearMalfunctionCo";
+    public static String IsClearDiagnosticCo            = "IsClearDiagnosticCo";
+    public static String DriverIdDiaMalCo               = "DriverIdDiaMalCo";
 
 }

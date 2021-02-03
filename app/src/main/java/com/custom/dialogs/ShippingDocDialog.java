@@ -121,7 +121,7 @@ public class ShippingDocDialog extends Dialog {
         MainDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, getContext());
         CoDriverId     = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getContext());
 
-        if(DriverType == 0) {
+        if(DriverType ==  Constants.MAIN_DRIVER_TYPE) {
             OfficeAddress = DriverConst.GetDriverDetails(DriverConst.CarrierAddress, getContext());
             HomeTerminal = DriverConst.GetDriverDetails(DriverConst.HomeTerminal, getContext());
         }else{
@@ -150,7 +150,7 @@ public class ShippingDocDialog extends Dialog {
                 MainDriver18DaysJsonArray = shipmentHelper.getShipment18DaysArray(Integer.valueOf(MainDriverId), dbHelper);
                 CoDriver18DaysJsonArray = shipmentHelper.getShipment18DaysArray(Integer.valueOf(CoDriverId), dbHelper);
 
-                if(DriverType == 0){
+                if(DriverType == Constants.MAIN_DRIVER_TYPE){
                     shipment18DaysJsonArray = MainDriver18DaysJsonArray;
                 }else{
                     shipment18DaysJsonArray = CoDriver18DaysJsonArray;
@@ -190,7 +190,7 @@ public class ShippingDocDialog extends Dialog {
                     GetShipment18Days(MainDriverId, DeviceId, SelectedDate, Get18DaysListMain);
                 }
             }else{
-                if(!IsShippingCleared && DriverType == 0) {   // DriverType = 0 means Main driver
+                if(!IsShippingCleared && DriverType == Constants.MAIN_DRIVER_TYPE) {   // DriverType = 0 means Main driver
                     lastSavedJson = shipmentHelper.GetLastJsonObject(MainDriver18DaysJsonArray, 0);
 
                     ParseShippingData(lastSavedJson);
@@ -203,7 +203,7 @@ public class ShippingDocDialog extends Dialog {
                     GetShipment18Days(CoDriverId, DeviceId, SelectedDate, Get18DaysListCo);
                 }
             }else{
-                if(!IsShippingCleared && DriverType == 1) {   // DriverType = 1 means Co driver
+                if(!IsShippingCleared && DriverType == Constants.CO_DRIVER_TYPE) {   // DriverType = 1 means Co driver
                     lastSavedJson = shipmentHelper.GetLastJsonObject(CoDriver18DaysJsonArray, 0);
                     ParseShippingData(lastSavedJson);
                 }

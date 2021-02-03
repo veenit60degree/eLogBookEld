@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.constants.APIs;
+import com.constants.Constants;
 import com.constants.RequestResponse;
 import com.constants.SharedPref;
 import com.constants.ShippingPost;
@@ -215,7 +216,7 @@ public class ShippingAdapter extends BaseAdapter {
                     shipment18DaysJsonArray = shipmentHelper.getShipment18DaysArray(Integer.valueOf(DriverId), dbHelper);
 
                     if (!IsSingleDriver.equals(DriverConst.SingleDriver)) {
-                        if (DriverType == 0) {
+                        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
                             MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, mContext);
                             CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, mContext);
                         } else {

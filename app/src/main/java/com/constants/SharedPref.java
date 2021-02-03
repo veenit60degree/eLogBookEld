@@ -210,8 +210,8 @@ public class SharedPref {
 
 
 
-    // Set Diagnostic and Malfunction Records action status -------------------
-    public static void SetDiagnosticAndMalfunctionSettings( boolean IsAllowMalfunction, boolean IsAllowDiagnostic,
+    // Set Diagnostic and Malfunction Records action status for main driver-------------------
+    public static void SetDiagnosticAndMalfunctionSettingsMain( boolean IsAllowMalfunction, boolean IsAllowDiagnostic,
                                                     boolean IsClearMalfunction, boolean IsClearDiagnostic, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -219,6 +219,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.IsAllowDiagnostic, IsAllowDiagnostic);
         editor.putBoolean(ConstantsKeys.IsClearMalfunction, IsClearMalfunction);
         editor.putBoolean(ConstantsKeys.IsClearDiagnostic, IsClearDiagnostic);
+
         editor.commit();
     }
 
@@ -246,6 +247,50 @@ public class SharedPref {
         return preferences.getBoolean(ConstantsKeys.IsClearDiagnostic, true);
     }
 
+
+
+
+    // Set Diagnostic and Malfunction Records action status for co driver-------------------
+    public static void SetDiagnosticAndMalfunctionSettingsCo( boolean IsAllowMalfunction, boolean IsAllowDiagnostic,
+                                                                boolean IsClearMalfunction, boolean IsClearDiagnostic, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsAllowMalfunctionCo, IsAllowMalfunction);
+        editor.putBoolean(ConstantsKeys.IsAllowDiagnosticCo, IsAllowDiagnostic);
+        editor.putBoolean(ConstantsKeys.IsClearMalfunctionCo, IsClearMalfunction);
+        editor.putBoolean(ConstantsKeys.IsClearDiagnosticCo, IsClearDiagnostic);
+
+        editor.commit();
+    }
+
+
+    // Get Malfunction Status -------------------
+    public static boolean IsAllowMalfunctionCo(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsAllowMalfunctionCo, true);
+    }
+
+    // Get Diagnostic Status -------------------
+    public static boolean IsAllowDiagnosticCo(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsAllowDiagnosticCo, true);
+    }
+
+    // Get Malfunction clear Status -------------------
+    public static boolean IsClearMalfunctionCo(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsClearMalfunctionCo, true);
+    }
+
+    // Get Diagnostic Clear Status -------------------
+    public static boolean IsClearDiagnosticCo(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsClearDiagnosticCo, true);
+    }
+
+
+
+
     // Set Re-Certification and Unidentified Records allow status -------------------
     public static void SetCertifcnUnIdenfdSettings( boolean isReCertification, boolean IsUnidentifiedRecords,
                                                     boolean IsPersonal, boolean IsYardMove, Context context) {
@@ -271,6 +316,37 @@ public class SharedPref {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords, true);
     }
+
+
+
+
+    // Set Re-Certification and Unidentified Records allow status for co driver-------------------
+    public static void SetCertifcnUnIdenfdSettingsCo( boolean isReCertification, boolean IsUnidentifiedRecords,
+                                                    boolean IsPersonal, boolean IsYardMove, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsAllowLogReCertificationCo, isReCertification);
+        editor.putBoolean(ConstantsKeys.IsShowUnidentifiedRecordsCo, IsUnidentifiedRecords);
+        editor.putBoolean(ConstantsKeys.IsPersonalCo, IsPersonal);
+        editor.putBoolean(ConstantsKeys.IsYardMoveCo, IsYardMove);
+        editor.commit();
+    }
+
+
+    // Get Re-Certification Status for co driver -------------------
+    public static boolean IsReCertificationCo(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsAllowLogReCertificationCo, false);
+    }
+
+
+    // Get Unidentified Records view Status for co driver -------------------
+    public static boolean IsShowUnidentifiedRecordsCo(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecordsCo, true);
+    }
+
+
 
 
     // Get yard move allow Status -------------------
@@ -1056,22 +1132,34 @@ public class SharedPref {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("haul_exception", value);
-        // editor.putString("haul_exception_start_time", time);
         editor.commit();
     }
 
     // Get 16 hour haul exception -------------------
     public static boolean get16hrHaulExcptn( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("haul_exception", false);
+        boolean isHaul = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            preferences.getBoolean("haul_exception", false);
+        }
+        return isHaul;
     }
 
-    // Get 16 hour haul exception -------------------
-    public String get16hrHaulExcptnTime( Context context) {
-        Globally global = new Globally();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("haul_exception_start_time", global.getCurrentDate());
+
+    // Set 16 hour haul exception for co driver  -------------------
+    public static void set16hrHaulExcptnCo( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("haul_exception_co", value);
+        editor.commit();
     }
+
+    // Get 16 hour haul exception for co driver  -------------------
+    public static boolean get16hrHaulExcptnCo( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("haul_exception_co", false);
+    }
+
 
     // Set Adverse exception -------------------
     public static void setAdverseExcptn( boolean value, Context context) {
@@ -1079,7 +1167,6 @@ public class SharedPref {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("adverse_exception", value);
-            //  editor.putString("adverse_exception_remarks", remarks);
             editor.commit();
         }
     }
@@ -1088,6 +1175,24 @@ public class SharedPref {
     public static boolean getAdverseExcptn( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getBoolean("adverse_exception", false);
+    }
+
+
+
+    // Set Adverse exception for co driver -------------------
+    public static void setAdverseExcptnCo( boolean value, Context context) {
+        if(context  != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("adverse_exception_co", value);
+            editor.commit();
+        }
+    }
+
+    // Get Adverse exception for co driver -------------------
+    public static boolean getAdverseExcptnCo( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("adverse_exception_co", false);
     }
 
 
@@ -1187,6 +1292,62 @@ public class SharedPref {
         editor.putBoolean("suggested_log_recall", value);
         editor.commit();
     }
+
+
+    // Save alert status settings for co driver -------------------
+    public static void setEldOccurencesCo( boolean IsUnidentified, boolean IsMalfunction, boolean IsDiagnostic,
+                                         boolean SuggestedEdit, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsUnidentifiedCo, IsUnidentified);
+        editor.putBoolean(ConstantsKeys.IsMalfunctionCo, IsMalfunction);
+        editor.putBoolean(ConstantsKeys.IsDiagnosticCo, IsDiagnostic);
+        editor.putBoolean(ConstantsKeys.SuggestedEditCo, SuggestedEdit);
+
+        editor.commit();
+    }
+
+    // Get Unidentified occure status for co driver -------------------
+    public static boolean isUnidentifiedOccurCo( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsUnidentifiedCo, false);
+    }
+
+    // Get Malfunction occur status for co driver -------------------
+    public static boolean isMalfunctionOccurCo( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsMalfunctionCo, false);
+    }
+
+    // Get Diagnostic occur statusfor co driver  -------------------
+    public static boolean isDiagnosticOccurCo( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsDiagnosticCo, false);
+    }
+
+    // Get Suggested Edit status for co driver -------------------
+    public static boolean isSuggestedEditOccurCo( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.SuggestedEditCo, false);
+    }
+
+
+    //  Get suggested recall status-------------------
+    public static boolean isSuggestedRecallCo( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("suggested_log_recallCo", true);
+    }
+
+    // Save suggested recall status -------------------
+    public static void setSuggestedRecallStatusCo( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("suggested_log_recallCo", value);
+        editor.commit();
+    }
+
+
+
 
     // Get driver status he is online or not-------------------
     public static boolean isOnline( Context context) {

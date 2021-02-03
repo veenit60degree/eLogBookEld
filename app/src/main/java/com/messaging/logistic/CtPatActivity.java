@@ -28,7 +28,7 @@ public class CtPatActivity extends FragmentActivity {
 */
 
 
-        setContentView(R.layout.frame_layout_xml);
+        setContentView(R.layout.frame_layout);
 
 
 

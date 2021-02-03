@@ -250,7 +250,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                             notificationMethod.SaveToNotificationHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
 
                             if(DriverLoginType.equals(DriverConst.TeamDriver)){
-                                if(DriverType == 0){    // if Current driver is main driver
+                                if(DriverType == Constants.MAIN_DRIVER_TYPE){    // if Current driver is main driver
                                     CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
                                 }else{   // if Current driver is co driver
                                     CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());

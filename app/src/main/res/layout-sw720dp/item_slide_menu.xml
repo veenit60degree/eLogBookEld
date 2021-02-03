@@ -39,18 +39,31 @@
 
         <TextView
             android:id="@+id/menuBadgeTxtView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/margin_20"
+            android:layout_height="@dimen/margin_20"
             android:textSize="@dimen/text_size_14"
-            android:padding="@dimen/margin_short_1"
             android:textColor="@color/whiteee"
             android:gravity="center"
             android:background="@drawable/circuler_textview_phone"
-
             android:layout_gravity="right|center_vertical"
-            android:layout_marginLeft="@dimen/view_height_90"
+            android:layout_marginLeft="@dimen/view_height_45"
             android:fallbackLineSpacing="true"
             android:visibility="gone"
+
+
+            />
+
+
+        <ImageView
+            android:id="@+id/mwnuErrorImgView"
+            android:layout_width="@dimen/margin_22"
+            android:layout_height="@dimen/margin_22"
+            android:src="@drawable/error"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginLeft="@dimen/view_height_35"
+            android:visibility="gone"
+
+
             />
 
 

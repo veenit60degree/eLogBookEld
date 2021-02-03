@@ -1018,9 +1018,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     void saveActiveDriverData(){
         if(sharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {
-            DriverType = 0;
+            DriverType = Constants.MAIN_DRIVER_TYPE;
         }else{
-            DriverType = 1;
+            DriverType = Constants.CO_DRIVER_TYPE;
         }
 
         String SavedLogApi = "";
@@ -1272,7 +1272,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             if (sharedPref.getDriverType(getApplicationContext()).equals(DriverConst.SingleDriver)) {
                 DriverId        = sharedPref.getDriverId(getApplicationContext());
                 CoDriverId      = "";
-                DriverType      = 0;
+                DriverType      = Constants.MAIN_DRIVER_TYPE;
             } else {
                 if(driverName.equalsIgnoreCase(mainDriverName)){
                     // pass driver and co driver id in the object (DriverId and CoDriverId).
@@ -1283,9 +1283,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     CoDriverId      =  DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
                     DriverId        =  DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
                 }
-                DriverType = 1;
+
                 sharedPref.setDriverId(DriverId, getApplicationContext());
 
+            }
+
+            if (sharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {
+                DriverType      = Constants.MAIN_DRIVER_TYPE;
+            }else{
+                DriverType =Constants.CO_DRIVER_TYPE;
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -2521,13 +2527,26 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                         if(dataObj.has(ConstantsKeys.SuggestedEdit)) {
                                             boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
+                                            boolean isSuggestedRecall;
 
-                                            sharedPref.setEldOccurences(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
-                                                    dataObj.getBoolean(ConstantsKeys.IsMalfunction),
-                                                    dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
-                                                    isSuggestedEdit, getApplicationContext());
+                                            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                                                sharedPref.setEldOccurences(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
+                                                        dataObj.getBoolean(ConstantsKeys.IsMalfunction),
+                                                        dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
+                                                        isSuggestedEdit, getApplicationContext());
 
-                                            if (isSuggestedEdit && sharedPref.isSuggestedRecall(getApplicationContext()) ) {
+                                                isSuggestedRecall = sharedPref.isSuggestedRecall(getApplicationContext());
+
+                                            }else{
+                                                sharedPref.setEldOccurencesCo(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
+                                                        dataObj.getBoolean(ConstantsKeys.IsMalfunction),
+                                                        dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
+                                                        isSuggestedEdit, getApplicationContext());
+
+                                                isSuggestedRecall = sharedPref.isSuggestedRecallCo(getApplicationContext());
+                                            }
+
+                                            if (isSuggestedEdit && isSuggestedRecall) {
                                                 try {
                                                     if(UILApplication.isActivityVisible()) {
                                                         Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
@@ -3155,7 +3174,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-            if(DriverType == 0) {  // Current active driver is Main Driver. So we need co driver details and we are getting co driver's details.
+            if(DriverType == Constants.MAIN_DRIVER_TYPE) {  // Current active driver is Main Driver. So we need co driver details and we are getting co driver's details.
 
                 try {
                     SecondDriverType = 1;   // Co Driver
@@ -3260,9 +3279,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             intent.setClassName(ServerPackage, ServerService);
             this.bindService(intent, this.connection, Context.BIND_AUTO_CREATE);
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        }catch (Exception e){ }
 
     }
 

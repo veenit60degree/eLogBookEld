@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.messaging.logistic.fragment.MalfunctionFragment;
-import com.messaging.logistic.fragment.UnidentifiedFragment;
 
 public class MalfunctionActivity extends FragmentActivity {
 
@@ -17,7 +16,7 @@ public class MalfunctionActivity extends FragmentActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.frame_layout_xml);
+        setContentView(R.layout.frame_layout);
 
 
         MalfunctionFragment fragment = new MalfunctionFragment();

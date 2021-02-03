@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.driver.details.DriverConst;
 import com.messaging.logistic.R;
 import com.models.OtherOptionsModel;
 
@@ -24,7 +25,7 @@ public class OtherOptionsAdapter extends BaseAdapter {
     LayoutInflater mInflater;
     List<OtherOptionsModel> LogList;
     boolean isPendingNotification, isGps;
-    int pendingNotificationCount;
+    int pendingNotificationCount, DriverType;
 
     public OtherOptionsAdapter(Context context, boolean isPendingNotification, int pendingNotificationCount, boolean isGps, List<OtherOptionsModel> logList) {
         this.context = context;
@@ -34,6 +35,12 @@ public class OtherOptionsAdapter extends BaseAdapter {
         this.isGps = isGps;
         LogList = logList;
         sharedPref = new SharedPref();
+
+        if (sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            DriverType = Constants.MAIN_DRIVER_TYPE;
+        }else{
+            DriverType = Constants.CO_DRIVER_TYPE;
+        }
     }
 
 
@@ -119,19 +126,38 @@ public class OtherOptionsAdapter extends BaseAdapter {
                 break;
 
             case Constants.MALFUNCTION:
-                if(sharedPref.isMalfunctionOccur(context) || sharedPref.isDiagnosticOccur(context)){
-                    makeViewHighlighed(imgView, titleView, errorView);
+                if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                    if (sharedPref.isMalfunctionOccur(context) || sharedPref.isDiagnosticOccur(context)) {
+                        makeViewHighlighed(imgView, titleView, errorView);
+                    }
+                }else{
+                    if (sharedPref.isMalfunctionOccurCo(context) || sharedPref.isDiagnosticOccurCo(context)) {
+                        makeViewHighlighed(imgView, titleView, errorView);
+                    }
                 }
                 break;
 
             case Constants.UNIDENTIFIED:
-                if(sharedPref.isUnidentifiedOccur(context)){
-                    makeViewHighlighed(imgView, titleView, errorView);
+                if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                    if (sharedPref.isUnidentifiedOccur(context)) {
+                        makeViewHighlighed(imgView, titleView, errorView);
+                    }
+                }else{
+                    if (sharedPref.isUnidentifiedOccurCo(context)) {
+                        makeViewHighlighed(imgView, titleView, errorView);
+                    }
                 }
                 break;
 
             case Constants.SUGGESTED_LOGS:
-                if(sharedPref.isSuggestedEditOccur(context)){
+                boolean isSuggestedOccur = false;
+                if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                    isSuggestedOccur = sharedPref.isSuggestedEditOccur(context);
+                }else{
+                    isSuggestedOccur = sharedPref.isSuggestedEditOccurCo(context);
+                }
+
+                if(isSuggestedOccur){
                     makeViewHighlighed(imgView, titleView, errorView);
                 }else{
                     imgView.setColorFilter(ContextCompat.getColor(context, R.color.gray_other_feature), android.graphics.PorterDuff.Mode.SRC_IN);

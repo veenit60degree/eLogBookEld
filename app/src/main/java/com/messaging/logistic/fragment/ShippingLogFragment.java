@@ -159,11 +159,11 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
     void LoadDataOnList(){
 
         if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-            DriverType = 0;     // Single Driver Type and Position is 0
+            DriverType = Constants.MAIN_DRIVER_TYPE;     // Single Driver Type and Position is 0
             shipment18DaysJsonArray = shipmentHelper.getShipment18DaysArray(Integer.valueOf(DriverId), dbHelper);
 
         } else {
-            DriverType = 1;     // Co Driver Type and Position is 1
+            DriverType = Constants.CO_DRIVER_TYPE;     // Co Driver Type and Position is 1
             MainDriver18DaysJsonArray   = shipmentHelper.getShipment18DaysArray(Integer.valueOf(MainDriverId), dbHelper);
             CoDriver18DaysJsonArray     = shipmentHelper.getShipment18DaysArray(Integer.valueOf(CoDriverId), dbHelper);
         }
@@ -181,7 +181,7 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
                 GetShipment18Days(CoDriverId, DeviceId, SelectedDate, CoDriver);
             }
 
-            if(DriverType == 0){
+            if(DriverType == Constants.MAIN_DRIVER_TYPE){
                 shipment18DaysJsonArray = shipmentHelper.getShipment18DaysArray(Integer.valueOf(MainDriverId), dbHelper);
             }else{
                 shipment18DaysJsonArray = shipmentHelper.getShipment18DaysArray(Integer.valueOf(CoDriverId), dbHelper);
@@ -304,11 +304,6 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
                                 e.printStackTrace();
                             }
 
-                            if(DriverType == 0){    // If Active Driver is Main Driver
-
-                            }
-
-
                             break;
 
 
@@ -321,10 +316,6 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
                                 LoadDataOnList();
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                            }
-
-                            if(DriverType == 1){    // If Active Driver is Co Driver
-
                             }
 
                             break;
@@ -354,7 +345,7 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
     void GetDriverCycle(int DriverType){
 
         try{
-            if (DriverType == 0) {
+            if (DriverType == Constants.MAIN_DRIVER_TYPE) {
                 CurrentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
                 CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
             }else{

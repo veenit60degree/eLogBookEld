@@ -18,7 +18,7 @@ public class SettingActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.frame_layout_xml);
+        setContentView(R.layout.frame_layout);
 
 
 

@@ -426,9 +426,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         isDOT                   = sharedPref.IsDOT(getActivity());
 
         if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-            DriverType = 0;
+            DriverType = Constants.MAIN_DRIVER_TYPE;
         }else{
-            DriverType = 1;
+            DriverType = Constants.CO_DRIVER_TYPE;
         }
 
         certifyExcptnTV.setVisibility(View.VISIBLE);
@@ -1161,7 +1161,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             case R.id.editLogBtn:
 
                 String driverType = "";
-                if(DriverType == 0){
+                if(DriverType == Constants.MAIN_DRIVER_TYPE){
                     driverType = DriverConst.StatusSingleDriver;
                 }else {
                     driverType = DriverConst.StatusTeamDriver;
@@ -1785,9 +1785,18 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             oDriverLogDetail    = hMethods.getSelectedLogList(Integer.valueOf(DRIVER_ID), currentDateTime, dbHelper);
         }
         int rulesVersion = sharedPref.GetRulesVersion(getActivity());
+        boolean isHaulExcptn, isAdverseExcptn;
+        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
+            isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+        }else{
+            isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
+            isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+        }
+
         DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
-                sharedPref.get16hrHaulExcptn(getActivity()),  sharedPref.getAdverseExcptn(getActivity()),
+                isHaulExcptn, isAdverseExcptn,
                 rulesVersion, oDriverLogDetail);
 
         // EldFragment.SLEEPER is used because we are just checking cycle time
@@ -1796,7 +1805,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         // Calculate 2 days data to get remaining Driving/Onduty hours
         RulesResponseObject RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                 Integer.valueOf(CurrentCycleId), isSingleDriver, Integer.valueOf(DRIVER_ID) , DRIVER_JOB_STATUS, isOldRecord,
-                sharedPref.get16hrHaulExcptn(getActivity()),  sharedPref.getAdverseExcptn(getActivity()),
+                isHaulExcptn, isAdverseExcptn,
                 rulesVersion, dbHelper);
 
         try {
@@ -3484,7 +3493,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         List<EldDataModelNew> tempList = new ArrayList<EldDataModelNew>();
         int listSize = 0;
 
-        if(DriverType == 0){
+        if(DriverType == Constants.MAIN_DRIVER_TYPE){
             try {
                 listSize = MainDriverPref.LoadSavedLoc(getActivity()).size();
                 tempList = MainDriverPref.LoadSavedLoc(getActivity());
