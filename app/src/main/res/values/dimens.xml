@@ -68,6 +68,7 @@
     <dimen name="view_height_160">160dp</dimen>
     <dimen name="view_height_170">170dp</dimen>
     <dimen name="view_height_180">180dp</dimen>
+    <dimen name="view_height_185">185dp</dimen>
     <dimen name="view_height_190">190dp</dimen>
     <dimen name="view_height_195">195dp</dimen>
     <dimen name="view_height_200">200dp</dimen>

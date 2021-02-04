@@ -24,7 +24,7 @@
            android:layout_height="wrap_content"
            android:src="@drawable/als_logo"
            android:layout_centerInParent="true"
-           android:layout_margin="@dimen/view_height_160"
+           android:layout_margin="@dimen/view_height_185"
            />
 
 
