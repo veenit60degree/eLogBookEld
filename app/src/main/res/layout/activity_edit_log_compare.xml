@@ -76,7 +76,7 @@
         app:cardElevation="@dimen/margin_short_2"
         app:cardUseCompatPadding="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/margin_10"
+        android:layout_marginBottom="@dimen/margin_15"
         android:layout_marginRight="@dimen/margin_10"
         android:layout_toLeftOf="@+id/confirmCertifyBtn"
 
@@ -129,7 +129,7 @@
         app:cardUseCompatPadding="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/margin_10"
+        android:layout_marginBottom="@dimen/margin_15"
         android:layout_marginRight="@dimen/margin_10"
 
 

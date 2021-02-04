@@ -313,11 +313,41 @@ public class SharedPref {
 
     // Get Unidentified Records view Status -------------------
     public static boolean IsShowUnidentifiedRecords(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords, true);
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords, true);
+        }
+        return isRecord;
     }
 
 
+    // Save Unidentified Records alert view Status -------------------
+    public static void setUnidentifiedAlertViewStatus(boolean isAlert, Context context) {
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(ConstantsKeys.UnIdentifiedAlertStatus, isAlert);
+            editor.commit();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    // Get Unidentified Records alert view Status -------------------
+    public static boolean getUnidentifiedAlertViewStatus( Context context) {
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.UnIdentifiedAlertStatus, true);
+        }
+        return isRecord;
+
+
+    }
 
 
     // Set Re-Certification and Unidentified Records allow status for co driver-------------------
@@ -342,12 +372,41 @@ public class SharedPref {
 
     // Get Unidentified Records view Status for co driver -------------------
     public static boolean IsShowUnidentifiedRecordsCo(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecordsCo, true);
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecordsCo, true);
+        }
+        return isRecord;
+
+
     }
 
 
+    // Get Unidentified Records alert view Status for co driver-------------------
+    public static boolean getUnidentifiedAlertViewStatusCo( Context context) {
 
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.UnIdentifiedAlertStatusCo, true);
+        }
+        return isRecord;
+
+
+    }
+
+    public static void setUnidentifiedAlertViewStatusCo(boolean isAlert, Context context) {
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(ConstantsKeys.UnIdentifiedAlertStatusCo, isAlert);
+            editor.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     // Get yard move allow Status -------------------
     public static boolean IsYardMoveAllowed(Context context) {
@@ -1140,10 +1199,11 @@ public class SharedPref {
         boolean isHaul = false;
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            preferences.getBoolean("haul_exception", false);
+            isHaul = preferences.getBoolean("haul_exception", false);
         }
         return isHaul;
     }
+
 
 
     // Set 16 hour haul exception for co driver  -------------------
@@ -1173,8 +1233,13 @@ public class SharedPref {
 
     // Get Adverse exception -------------------
     public static boolean getAdverseExcptn( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("adverse_exception", false);
+        boolean isAdverse = false;
+        if(context  != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isAdverse = preferences.getBoolean("adverse_exception", false);
+        }
+
+        return isAdverse;
     }
 
 

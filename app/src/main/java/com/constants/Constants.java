@@ -105,6 +105,9 @@ public class Constants {
     public static String OBD_Speed = "obd_Speed";
     public static String Action = "Action";
 
+    public static String AlertSettings      = "AlertSettings";
+    public static String AlertUnidentified  = "AlertUnidentified";
+
     public static String apiReturnedSpeed = "apiReturnedSpeed";
     public static String obdSource = "obdSource";
     public static String Source = "Source";
@@ -185,6 +188,7 @@ public class Constants {
     public static boolean IsEdiLogBackStack = false;
     public static boolean IsCtPatUploading = false;
     public static boolean IsAlsServerResponding = true;
+    public static boolean isClaim   = false;
 
     public static String DriverLogId = "";
     public static String IsStartingLocation = "";

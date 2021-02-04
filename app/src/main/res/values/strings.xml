@@ -607,6 +607,11 @@
     <string name="already_certify_for_this_date">Record is already certified for this date</string>
     <string name="no_date_for_certify">No date selected for certify</string>
 
+    <string name="unIdentified_record_title">UnIdentified Records !!</string>
+    <string name="want_cancel_download">Do you really want to cancel download ?</string>
+    <string name="pending_unIdentified">You have pending unIdentified records to claim.</string>
+    <string name="view">View</string>
+
 
     <string name="reject_reason">Enter reason to reject unidentified records</string>
     <string name="claim_reason">Enter reason to claim unidentified records </string>

@@ -73,6 +73,7 @@
     <dimen name="view_height_200">200dp</dimen>
 
     <dimen name="view_height_210">210dp</dimen>
+    <dimen name="view_height_215">215dp</dimen>
     <dimen name="view_height_220">220dp</dimen>
     <dimen name="view_height_230">230dp</dimen>
     <dimen name="view_height_240">240dp</dimen>

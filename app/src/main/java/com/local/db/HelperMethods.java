@@ -2396,9 +2396,14 @@ public class HelperMethods {
 
     public RulesResponseObject CheckDriverRule(int eldCyclesId, int JobStatus, DriverDetail oDriverDetail){
 
+        int CANADA_CYCLE_1                       = 1;
+        int CANADA_CYCLE_2                       = 2;
+        int USA_WORKING_6_DAYS                   = 3;
+        int USA_WORKING_7_DAYS                   = 4;
+
         LocalCalls CallDriverRule = new LocalCalls();
 
-        if(eldCyclesId == 1 || eldCyclesId == 2) {  // 1 & 2 stands for CANADA cycle rule
+        if(eldCyclesId == CANADA_CYCLE_1 || eldCyclesId == CANADA_CYCLE_2) {  // 1 & 2 stands for CANADA cycle rule
 
             if (JobStatus == EldFragment.DRIVING ){
                 return CallDriverRule.canadaDrivingRules(oDriverDetail);
@@ -2408,7 +2413,7 @@ public class HelperMethods {
                 return CallDriverRule.calculateLeftCycleMinutes(oDriverDetail);
             }
 
-        }else if(eldCyclesId == 3 || eldCyclesId == 4) { // 3 & 4 stands for USA cycle rule
+        }else if(eldCyclesId == USA_WORKING_6_DAYS || eldCyclesId == USA_WORKING_7_DAYS) { // 3 & 4 stands for USA cycle rule
 
             if (JobStatus == EldFragment.DRIVING ){
                 return CallDriverRule.usaDrivingRules(oDriverDetail);

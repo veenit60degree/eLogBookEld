@@ -278,6 +278,7 @@
                 android:background="@drawable/green_with_corner_drawable"
                 android:visibility="gone"
 
+
                 >
 
                 <ImageView
@@ -291,13 +292,14 @@
 
                 <TextView
                     android:id="@+id/otherOptionBadgeView"
-                    android:layout_width="@dimen/margin_19"
-                    android:layout_height="@dimen/margin_19"
+                    android:layout_width="@dimen/margin_24"
+                    android:layout_height="@dimen/margin_24"
                     android:layout_marginLeft="@dimen/view_height_35"
                     android:textColor="@color/whiteee"
                     android:background="@drawable/error"
                     android:layout_marginTop="@dimen/margin_10"
                     android:visibility="gone"
+
 
                     />
 

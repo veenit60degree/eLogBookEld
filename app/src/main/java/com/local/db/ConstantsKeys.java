@@ -354,6 +354,8 @@ public class ConstantsKeys {
     public static String IsClearMalfunction             = "IsClearMalfunction";
     public static String IsClearDiagnostic              = "IsClearDiagnostic";
     public static String DriverIdDiaMalMain             = "DriverIdDiaMalMain";
+    public static String UnIdentifiedAlertStatus        = "UnIdentifiedDialogAlertStatus";
+    public static String UnIdentifiedAlertStatusCo      = "UnIdentifiedDialogAlertStatusCo";
 
     public static String IsAllowLogReCertificationCo    = "IsAllowLogReCertificationCo";
     public static String IsShowUnidentifiedRecordsCo    = "IsShowUnidentifiedRecordsCo";

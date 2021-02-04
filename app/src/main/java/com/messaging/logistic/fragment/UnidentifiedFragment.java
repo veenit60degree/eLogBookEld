@@ -517,9 +517,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
             listingAdapter = new UnIdentifiedListingAdapter(getActivity(), DriverId, DriverName, isAllSelected, isChecked, recordSelectedList, unIdentifiedRecordList, this);
             unIdentifiedListView.setAdapter(listingAdapter);
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        }catch (Exception e){ }
 
         try{
 
@@ -528,14 +526,17 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 unIdentifiedTopLay.setVisibility(View.VISIBLE);
 
             }else {
+
                 noDataEldTV.setVisibility(View.VISIBLE);
                 unIdentifiedTopLay.setVisibility(View.GONE);
-                if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {    // Single Driver Type and Position is 0
+                  //  sharedPref.setUnidentifiedAlertViewStatus(false, getContext());
                     sharedPref.setEldOccurences(false,
                             sharedPref.isMalfunctionOccur(getActivity()),
                             sharedPref.isDiagnosticOccur(getActivity()),
                             sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
                 }else{
+                   // sharedPref.setUnidentifiedAlertViewStatusCo(false, getContext());
                     sharedPref.setEldOccurencesCo(false,
                             sharedPref.isMalfunctionOccurCo(getActivity()),
                             sharedPref.isDiagnosticOccurCo(getActivity()),

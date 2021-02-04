@@ -103,6 +103,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         hMethods      = new HelperMethods();
         constants     = new Constants();
 
+        vehicleList = new ArrayList<>();
         isTabActOnCreate = true;
         IsTablet = Globally.isTablet(this);
         existingAppVersionStr = "Version - " + Globally.GetAppVersion(this, "VersionName") + "," + getResources().getString(R.string.Powered_by);
@@ -185,8 +186,10 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         if(sharedPref.getCurrentDriverType(TabAct.this).equals(DriverConst.StatusSingleDriver)){
             DriverType = Constants.MAIN_DRIVER_TYPE;
+            sharedPref.setUnidentifiedAlertViewStatus(true, this);
         }else{
             DriverType = Constants.CO_DRIVER_TYPE;
+            sharedPref.setUnidentifiedAlertViewStatusCo(true, this);
         }
 
 
@@ -259,7 +262,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
 
 
-                DisplayMetrics metrics = getResources().getDisplayMetrics();
+           /*     DisplayMetrics metrics = getResources().getDisplayMetrics();
                 int densityDpi = (int)(metrics.density * 160f);
                 Log.d("densityDpi","densityDpi: " +densityDpi);
 
@@ -290,9 +293,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                     }else{
                         smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), DualDriverMenuWidth));
                     }
-                }
-
-              //  smenu.setBehindWidth(CommonUtils.setWidth(TabAct.this));
+                }*/
+               // int slideMenuWidth = constants.intToPixel(getApplicationContext(), CommonUtils.setWidth(TabAct.this));
+                smenu.setBehindWidth(CommonUtils.setWidth(TabAct.this));
                 smenu.setFadeDegree(0.35f);
                 smenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
                 smenu.setMenu(R.layout.slide_menu);

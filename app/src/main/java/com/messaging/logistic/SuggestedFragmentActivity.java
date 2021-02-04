@@ -21,6 +21,7 @@ import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
+import com.messaging.logistic.fragment.EldFragment;
 import com.messaging.logistic.fragment.SuggestedLogFragment;
 import com.messaging.logistic.fragment.SuggestedLogListFragment;
 import com.models.RecapModel;
@@ -43,6 +44,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
     public static JSONArray dataArray = new JSONArray();
     public static JSONArray editDataArray = new JSONArray();
     public static List<RecapModel> otherLogList   = new ArrayList<>();
+
     String editedData = "", DriverId, DeviceId;
     SharedPref sharedPref;
     ProgressDialog progressDialog;
@@ -58,6 +60,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
 // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.frame_layout);
 
+        Constants.isClaim = false;
         GetEditedRecordRequest      = new VolleyRequest(this);
 
         progressDialog              = new ProgressDialog(this);
@@ -257,4 +260,12 @@ public class SuggestedFragmentActivity extends FragmentActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        if(dataArray.length() > 0 && Constants.isClaim){
+            EldFragment.refreshLogBtn.performClick();
+        }
+        super.onDestroy();
+
+    }
 }

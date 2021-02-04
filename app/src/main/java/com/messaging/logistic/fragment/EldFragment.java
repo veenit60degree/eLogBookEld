@@ -59,6 +59,7 @@ import com.constants.TcpClient;
 import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.constants.VolleyRequestWithoutRetry;
+import com.custom.dialogs.ConfirmationDialog;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.DriverLocationDialog;
 import com.custom.dialogs.NotificationNewsDialog;
@@ -281,8 +282,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     public static boolean IsMsgClick = false;
     public static boolean isUpdateDriverLog = false;
 
-    boolean isHaulExcptn;
-    boolean isAdverseExcptn;
+    boolean isHaulExcptn        = false;
+    boolean isAdverseExcptn     = false;
+    boolean isUnIdentifiedOccur = false;
+    boolean isUnIdentifiedAlert = false;
 
     String DeviceTimeZone = "", DriverTimeZone = "", LocationJobTYpe = "";
     String WeeklyRemainingTime = "00:00", DrivingRemainingTime = "00:00", OnDutyRemainingTime = "00:00";
@@ -324,6 +327,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     NotificationPref notificationPref;
     CoNotificationPref coNotificationPref;
 
+    ConfirmationDialog confirmationDialog;
     AlertDialog alertDialog, inspectDialog;
     ProgressDialog progressDialog;
     ProgressDialog progressD;
@@ -500,7 +504,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         editLogAnimation          = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
 
         InitilizeTextView(view);
-        constants.IS_ELD_ON_CREATE = true;
         emptyTrailerNoAnim.setDuration(1500);
         OdometerFaceView.setDuration(1500);
         exceptionFaceView.setDuration(1500);
@@ -606,6 +609,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         }else {
             // -------------------------- CALL API --------------------------
              if(TabAct.isTabActOnCreate) {
+                 constants.IS_ELD_ON_CREATE = true;
                  TabAct.vehicleList = new ArrayList<VehicleModel>();
                  GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
 
@@ -976,11 +980,15 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     void getExceptionStatus(){
         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-            isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
-            isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+            isHaulExcptn        = sharedPref.get16hrHaulExcptn(getActivity());
+            isAdverseExcptn     = sharedPref.getAdverseExcptn(getActivity());
+            isUnIdentifiedOccur = sharedPref.isUnidentifiedOccur(getActivity());
+            isUnIdentifiedAlert = sharedPref.getUnidentifiedAlertViewStatus(getActivity());
         }else{
-            isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
-            isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+            isHaulExcptn        = sharedPref.get16hrHaulExcptnCo(getActivity());
+            isAdverseExcptn     = sharedPref.getAdverseExcptnCo(getActivity());
+            isUnIdentifiedOccur = sharedPref.isUnidentifiedOccurCo(getActivity());
+            isUnIdentifiedAlert = sharedPref.getUnidentifiedAlertViewStatusCo(getActivity());
         }
     }
 
@@ -1002,7 +1010,27 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             excpnEnabledTxtVw.setVisibility(View.GONE);
         }
 
+        if(isUnIdentifiedOccur || isHaulExcptn || isAdverseExcptn){
+            eldMenuErrorImgVw.setVisibility(View.VISIBLE);
+        }else{
+            eldMenuErrorImgVw.setVisibility(View.GONE);
+        }
+
+        if(isUnIdentifiedOccur && isUnIdentifiedAlert && sharedPref.GetNewLoginStatus(getActivity()) == false){
+            try {
+                if (confirmationDialog != null && confirmationDialog.isShowing()){
+                    //  confirmationDialog.dismiss();
+                }else{
+                    confirmationDialog = new ConfirmationDialog(getActivity(), Constants.AlertUnidentified, new ConfirmListener());
+                    confirmationDialog.show();
+                }
+
+
+            }catch (Exception e){e.printStackTrace();}
+        }
+
     }
+
 
 
     void showTimeZoneAlert(boolean isConnected, boolean isTimeZoneValid, boolean isTimeValid){
@@ -1356,6 +1384,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             LogoutUser();
         }
     }
+
+
 
 
     boolean isPendingNotifications(int JobStatus){
@@ -2138,7 +2168,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
             case R.id.refreshLogBtn:
-                if(sharedPref.isSuggestedEditOccur(getActivity())){
+                if(sharedPref.isSuggestedEditOccur(getActivity()) && Constants.isClaim == false){
                     Toast.makeText(getActivity(), getString(R.string.other_suggested_log), Toast.LENGTH_LONG).show();
                     Intent i = new Intent(getActivity(), SuggestedFragmentActivity.class);
                     i.putExtra(ConstantsKeys.suggested_data, "");
@@ -2320,7 +2350,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     resetCertifyLogDialogTitles();
                 } else {
                     if (hMethods.CanChangeStatus(SLEEPER, driverLogArray, Global, false)) {
-                        // constants.IS_ELD_ON_CREATE = false;
+
                         restartLocationService();
                         AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
 
@@ -3568,6 +3598,27 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
         return isCertifySignaturePending;
     }
+
+
+
+    /*================== Confirmation Listener ====================*/
+    private class ConfirmListener implements ConfirmationDialog.ConfirmationListener {
+
+        @Override
+        public void OkBtnReady() {
+
+            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                sharedPref.setUnidentifiedAlertViewStatus(false, getActivity());
+            }else{
+                sharedPref.setUnidentifiedAlertViewStatusCo(false, getActivity());
+            }
+
+
+            confirmationDialog.dismiss();
+            TabAct.host.setCurrentTab(11);
+        }
+    }
+
 
     private class DateListener implements DatePickerDialog.DatePickerListener {
         @Override
@@ -5527,6 +5578,16 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             Toast.makeText(getActivity(), "Updated successfully.", Toast.LENGTH_LONG).show();
                             // ShowRecapDialog();
 
+                            if(isUnIdentifiedOccur && isUnIdentifiedAlert){
+                                try {
+                                    if (confirmationDialog != null && confirmationDialog.isShowing())
+                                        confirmationDialog.dismiss();
+                                    confirmationDialog = new ConfirmationDialog(getActivity(), Constants.AlertUnidentified, new ConfirmListener());
+                                    confirmationDialog.show();
+                                }catch (Exception e){e.printStackTrace();}
+                            }
+
+
                             GetNewsNotification();
                             GetReCertifyRecords();
 
@@ -5846,6 +5907,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 BackgroundLocationService.IsRecapApiACalled = false;
                             }
 
+                            if (flag == GetDriverLog18Days) {
+                                Log.d("response","response: "+response);
+                            }
                             try {
                                 if (progressDialog != null)
                                     progressDialog.dismiss();

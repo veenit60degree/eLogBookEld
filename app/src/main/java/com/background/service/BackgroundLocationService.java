@@ -3316,9 +3316,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 Log.d(TAG_OBD, "Service is Not Bound!!");
                 this.connection = new RemoteServiceConnection();
                 BindConnection();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            }catch (Exception e){  }
         }
     }
 

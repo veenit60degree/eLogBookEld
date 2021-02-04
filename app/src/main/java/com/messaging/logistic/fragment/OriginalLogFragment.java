@@ -1,7 +1,9 @@
 package com.messaging.logistic.fragment;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +13,24 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.adapter.logistic.EditedLogAdapter;
+import com.android.volley.Request;
+import com.android.volley.VolleyError;
+import com.constants.APIs;
+import com.constants.Constants;
+import com.constants.VolleyRequest;
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class OriginalLogFragment extends Fragment {
 
@@ -29,6 +43,7 @@ public class OriginalLogFragment extends Fragment {
     ListView editLogListView;
     WebView editLogWebView;
     LinearLayout editedItemMainLay, editedLogMainLay;
+    VolleyRequest GetLogRequest;
 
 
     @Override
@@ -47,6 +62,7 @@ public class OriginalLogFragment extends Fragment {
             e.printStackTrace();
         }
 
+        GetLogRequest           = new VolleyRequest(getActivity());
         editLogWebView           = (WebView)rootView.findViewById(R.id.previewLogWebView);
         editLogListView          = (ListView)rootView.findViewById(R.id.editLogListView);
         statusEditedTxtView      = (TextView)rootView.findViewById(R.id.statusEditedTxtView);
@@ -65,6 +81,17 @@ public class OriginalLogFragment extends Fragment {
         selectedArray       = suggestedLogFragment.hMethods.GetSingleDateArray( SuggestedLogFragment.driverLogArray, suggestedLogFragment.selectedDateTime, suggestedLogFragment.currentDateTime,
                                         suggestedLogFragment.selectedUtcTime, false, offsetFromUTC );
 
+        if(selectedArray.length() > 0){
+            loadData();
+        }else{
+            GET_DRIVER_LOG(SuggestedLogFragment.LogDate);
+        }
+
+        return rootView;
+    }
+
+
+    void loadData(){
         suggestedLogFragment.LoadDataOnWebView(editLogWebView, selectedArray, SuggestedLogFragment.LogDate, false);
 
         if(SuggestedLogFragment.originalLogList.size() > 0) {
@@ -73,8 +100,6 @@ public class OriginalLogFragment extends Fragment {
 
             SetCertifyListViewHeight();
         }
-
-        return rootView;
     }
 
 
@@ -96,6 +121,66 @@ public class OriginalLogFragment extends Fragment {
     }
 
 
+
+    /* ================== Get Driver Details =================== */
+    void GET_DRIVER_LOG(final String date) {
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("DriverId", DriverId);
+        params.put("ProjectId", Globally.PROJECT_ID);
+        params.put("DeviceId", DeviceId);
+        params.put("ELDSearchDate", date);
+        params.put("TeamDriverType", "1");
+
+        GetLogRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS, params, 101,
+                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+    }
+
+
+    VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback(){
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void getResponse(String response, int flag) {
+
+            JSONObject obj = null, dataObj = null;
+            String status = "";
+
+            if (getActivity() != null) {
+
+                try {
+
+
+                    try {
+                        obj = new JSONObject(response);
+                        status = obj.getString("Status");
+                        if (!obj.isNull("Data")) {
+                            dataObj = new JSONObject(obj.getString("Data"));
+
+                            selectedArray = new JSONArray(dataObj.getString("DriverLogModel"));
+                            loadData();
+                        }
+
+                    } catch (JSONException e) {
+                    }
+
+                    if (status.equalsIgnoreCase("true")) {
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    VolleyRequest.VolleyErrorCall ErrorCallBack = new VolleyRequest.VolleyErrorCall(){
+
+        @Override
+        public void getError(VolleyError error, int flag) {
+            Log.d("error", ">>error: " +error);
+        }
+    };
 
 
 }

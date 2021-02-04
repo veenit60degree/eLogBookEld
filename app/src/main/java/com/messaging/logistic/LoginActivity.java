@@ -630,6 +630,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 								if (!global.obj.isNull("Data")) {
 									//ClearSqliteDB(LoginActivity.this);
 
+									// reset user data
+									Constants.IS_ELD_ON_CREATE = true;
 									sharedPref.SetCycleOfflineDetails("[]", getApplicationContext());
 									sharedPref.SetNewLoginStatus(true, getApplicationContext());
 									sharedPref.setLastUsageDataSavedTime("", getApplicationContext());
@@ -641,6 +643,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 									sharedPref.setEldOccurencesCo(false, false, false, false, getApplicationContext());
 									sharedPref.setSuggestedRecallStatus(true, getApplicationContext());
 									sharedPref.setSuggestedRecallStatusCo(true, getApplicationContext());
+									sharedPref.setUnidentifiedAlertViewStatus(true, getApplicationContext());
+									sharedPref.setUnidentifiedAlertViewStatusCo(true, getApplicationContext());
+
 
 									new ParseLoginJsonData().execute();
 

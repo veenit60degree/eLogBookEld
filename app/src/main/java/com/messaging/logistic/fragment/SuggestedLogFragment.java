@@ -908,11 +908,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             params.put(ConstantsKeys.IsSignCopy, String.valueOf(IsContinueWithSign));
             params.put(ConstantsKeys.IsRecertifyRequied, String.valueOf(IsRecertifyRequied));
         }
-       /* if(IsRecertifyRequied){
-            params.put(ConstantsKeys.IsRecertifyRequied, "false" );
-        }else{
-            params.put(ConstantsKeys.IsRecertifyRequied, "true" );
-        }*/
 
         claimLogRequest.executeRequest(Request.Method.POST, APIs.CHANGE_STATUS_SUGGESTED_EDIT , params, flag,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -975,7 +970,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                             finishActivityWithViewUpdate();
                             EldFragment.refreshLogBtn.performClick();
 
-
                         }else {
                            // SaveDriverSignArray(IsContinueWithSign);
 
@@ -984,6 +978,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                            // certifyLogMethod.CertifyLogHelper(Integer.valueOf(DriverId), dbHelper, CertifyLogArray );
                             globally.EldScreenToast(EldFragment.refreshLogBtn, Message, getResources().getColor(R.color.color_eld_theme));
 
+                            Constants.isClaim = true;
                             removeSelectedDateFromList();
 
                         }

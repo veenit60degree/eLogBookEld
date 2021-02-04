@@ -792,7 +792,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                     if (confirmationDialog != null && confirmationDialog.isShowing())
                         confirmationDialog.dismiss();
-                    confirmationDialog = new ConfirmationDialog(getActivity(), "settings", new ConfirmListener());
+                    confirmationDialog = new ConfirmationDialog(getActivity(), Constants.AlertSettings, new ConfirmListener());
                     confirmationDialog.show();
 
                 }else {
