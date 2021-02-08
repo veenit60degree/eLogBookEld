@@ -1,0 +1,1753 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/dot_titles_bg"
+
+    >
+
+
+    <include
+        android:id="@+id/canadaDotActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/actionbar_eld"
+        />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/margin_15"
+        android:layout_below="@+id/canadaDotActionBar"
+        >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:layout_marginRight="@dimen/margin_10"
+
+
+        >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_eld_theme"
+        android:textSize="@dimen/text_size_22"
+        android:text="@string/ELDViewLog"
+        android:padding="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_10"
+        android:layout_marginBottom="@dimen/margin_short_6"
+        android:background="@color/whiteee"
+        android:textStyle="bold"
+        
+
+
+        />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dot_titles_bg"
+        android:padding="@dimen/margin_short_6"
+        
+
+
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/date_of_rods"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/day_starting_time"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/time_zone"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/whiteee"
+        android:padding="@dimen/margin_short_6"
+        
+
+
+
+        >
+
+        <TextView
+            android:id="@+id/dateRodsTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/dayStartTimeTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/timeZoneCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dot_titles_bg"
+        android:padding="@dimen/margin_short_6"
+        
+
+
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/current_loc"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/comment"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/date_and_time"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/whiteee"
+        android:padding="@dimen/margin_short_6"
+        
+
+
+        >
+
+        <TextView
+            android:id="@+id/currLocCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+        <TextView
+            android:id="@+id/commentCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/dateTimeCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dot_titles_bg"
+        android:padding="@dimen/margin_short_6"
+        
+
+
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/DriverName"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/DriverID"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/exempt_driver_status"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/whiteee"
+        android:padding="@dimen/margin_short_6"
+        
+
+
+        >
+
+
+
+
+
+        <TextView
+            android:id="@+id/driverNameCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/driverIdCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/exemptDriverCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+    </LinearLayout>
+
+
+
+ <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dot_titles_bg"
+        android:padding="@dimen/margin_short_6"
+        
+
+
+     >
+
+
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:textSize="@dimen/text_size_15"
+         android:textColor="@color/colorPrimary"
+         android:text="@string/DriverLicenceNo_jur"
+         android:textStyle="bold"
+         android:layout_weight="1"
+
+         />
+
+
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:textSize="@dimen/text_size_15"
+         android:textColor="@color/colorPrimary"
+         android:text="@string/CoDriverName"
+         android:textStyle="bold"
+         android:layout_weight="1"
+
+         />
+
+
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:textSize="@dimen/text_size_15"
+         android:textColor="@color/colorPrimary"
+         android:text="@string/CoDriverID"
+         android:textStyle="bold"
+         android:layout_weight="1"
+
+         />
+
+
+
+ </LinearLayout>
+
+
+
+            <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/whiteee"
+        android:padding="@dimen/margin_short_6"
+        
+
+
+           >
+
+
+                <TextView
+                    android:id="@+id/driLicNoCTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_14"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_weight="1"
+
+                    />
+
+
+                <TextView
+                    android:id="@+id/coDriverNameCTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_14"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_weight="1"
+
+                    />
+
+
+                <TextView
+                    android:id="@+id/coDriverIdCTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_14"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_weight="1"
+
+                    />
+
+
+            </LinearLayout>
+
+
+
+
+
+
+        <TextView
+            android:id="@+id/viewMoreTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/hos_location"
+            android:textSize="@dimen/text_size_16"
+            android:layout_gravity="right"
+            android:padding="@dimen/margin_10"
+            android:text="@string/view_more"
+            android:textStyle="bold"
+
+            />
+
+
+
+        <LinearLayout
+            android:id="@+id/canDotViewMorelay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+
+
+            >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dot_titles_bg"
+        android:padding="@dimen/margin_short_6"
+
+
+
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/truck_tractor_id"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/truck_tractor_vin"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/TotalDistance"
+                android:textStyle="bold"
+
+
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_12"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/startEnd"
+                android:layout_marginLeft="@dimen/margin_short_3"
+
+
+                />
+
+        </LinearLayout>
+
+
+
+
+
+
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/whiteee"
+        android:padding="@dimen/margin_short_6"
+
+
+        >
+
+        <TextView
+            android:id="@+id/truckTractorIdTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/truckTractorVinTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/totalDisCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dot_titles_bg"
+        android:padding="@dimen/margin_short_6"
+
+
+
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/DistanceToday"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/CurrentTotalDistance"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/CurrentTotalEngineHr"
+            android:textStyle="bold"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/whiteee"
+        android:padding="@dimen/margin_short_6"
+
+
+        >
+
+
+        <TextView
+            android:id="@+id/distanceTodayCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/currTotalDisTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/currTotalEngTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"
+
+            />
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/dot_titles_bg"
+            android:padding="@dimen/margin_short_6"
+
+
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/TrailerId"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/CarrierName"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/carrier_add"
+                android:textStyle="bold"
+
+
+                />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_12"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/home_ter_add"
+                    android:layout_marginLeft="@dimen/margin_short_3"
+
+
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+
+
+            >
+
+            <TextView
+                android:id="@+id/trailerIdCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:id="@+id/carrierNameCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+
+            <TextView
+                android:id="@+id/carrierHomeTerCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+
+
+
+
+
+
+
+        </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/dot_titles_bg"
+            android:padding="@dimen/margin_short_6"
+
+
+            >
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_15"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/carrier_add"
+                    android:textStyle="bold"
+
+
+                    />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_12"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/carrier_principal_add"
+                    android:layout_marginLeft="@dimen/margin_short_3"
+
+
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/CurrentOperatingZone"
+                android:paddingLeft="@dimen/margin_short_6"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/current_cycleee"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+
+            >
+
+            <TextView
+                android:id="@+id/carrierPrinPlaceCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:id="@+id/currOperZoneCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/margin_short_6"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+            <TextView
+                android:id="@+id/curreCycleCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+
+
+        </LinearLayout>
+
+
+
+
+
+           <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/dot_titles_bg"
+               android:padding="@dimen/margin_short_6"
+
+
+            >
+
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:layout_weight="1"
+                   >
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:textSize="@dimen/text_size_15"
+                       android:textColor="@color/colorPrimary"
+                       android:text="@string/total_hrs"
+                       android:textStyle="bold"
+
+
+                       />
+
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:textSize="@dimen/text_size_12"
+                       android:textColor="@color/colorPrimary"
+                       android:text="@string/total_hrs_in_work"
+                       android:layout_marginLeft="@dimen/margin_short_3"
+
+
+                       />
+
+               </LinearLayout>
+
+
+
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:layout_weight="1"
+                   >
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:textSize="@dimen/text_size_15"
+                       android:textColor="@color/colorPrimary"
+                       android:text="@string/total_hrs"
+                       android:textStyle="bold"
+
+
+                       />
+
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:textSize="@dimen/text_size_12"
+                       android:textColor="@color/colorPrimary"
+                       android:text="@string/in_cycle"
+                       android:layout_marginLeft="@dimen/margin_short_3"
+
+
+                       />
+
+               </LinearLayout>
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:layout_weight="1"
+                   >
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:textSize="@dimen/text_size_15"
+                       android:textColor="@color/colorPrimary"
+                       android:text="@string/remaining_hrs"
+                       android:textStyle="bold"
+
+
+                       />
+
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:textSize="@dimen/text_size_12"
+                       android:textColor="@color/colorPrimary"
+                       android:text="@string/in_cycle"
+                       android:layout_marginLeft="@dimen/margin_short_3"
+
+
+                       />
+
+               </LinearLayout>
+
+
+           </LinearLayout>
+
+
+
+      <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/whiteee"
+          android:padding="@dimen/margin_short_6"
+
+            >
+
+
+
+          <TextView
+              android:id="@+id/totalHrsCTV"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textSize="@dimen/text_size_14"
+              android:textColor="@color/colorPrimary"
+              android:layout_weight="1"
+
+              />
+
+
+          <TextView
+              android:id="@+id/totalhrsCycleCTV"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textSize="@dimen/text_size_14"
+              android:textColor="@color/colorPrimary"
+              android:layout_weight="1"
+
+              />
+
+
+          <TextView
+              android:id="@+id/remainingHourCTV"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textSize="@dimen/text_size_14"
+              android:textColor="@color/colorPrimary"
+              android:layout_weight="1"
+
+              />
+
+
+
+      </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/dot_titles_bg"
+            android:padding="@dimen/margin_short_6"
+
+
+            >
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="0.9"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_15"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/off_duty_time_deff"
+                    android:textStyle="bold"
+
+
+                    />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_12"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/date_time_deff"
+                    android:layout_marginLeft="@dimen/margin_short_3"
+
+
+                    />
+
+            </LinearLayout>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/DataDiagnosticStatus"
+                android:textStyle="bold"
+                android:layout_weight="1.1"
+
+                />
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/UnIdentifiedDrivingRecords"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+
+            >
+
+            <TextView
+                android:id="@+id/offDutyDeffCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:id="@+id/datDiagCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:id="@+id/unIdenDriRecCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+
+
+
+        </LinearLayout>
+
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/dot_titles_bg"
+            android:padding="@dimen/margin_short_6"
+
+
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/MalfunctionStatus"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/ELD_ID"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/ELD_Provider"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+
+
+
+            >
+
+            <TextView
+                android:id="@+id/malfStatusCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:id="@+id/eldIdCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:id="@+id/eldProviderCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+
+        </LinearLayout>
+
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/dot_titles_bg"
+            android:padding="@dimen/margin_short_6"
+
+
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/ELD_Certification"
+                android:textStyle="bold"
+                android:layout_weight="2"
+
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/ELD_Auth"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+
+
+            >
+
+            <TextView
+                android:id="@+id/eldCerCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="2"
+
+                />
+
+
+            <TextView
+                android:id="@+id/eldAuthCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+
+                />
+
+
+
+
+
+
+
+        </LinearLayout>
+
+
+
+
+
+        </LinearLayout>
+
+
+
+
+        <RelativeLayout
+            android:id="@+id/canGraphLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minWidth="@dimen/view_height_500"
+            android:minHeight="@dimen/view_height_130"
+            android:layout_marginTop="@dimen/margin_short_4"
+            >
+
+            <WebView
+                android:id="@+id/canDotGraphWebView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minWidth="@dimen/view_height_500"
+                android:minHeight="@dimen/view_height_130"
+                android:fillViewport="true"
+
+                />
+
+        </RelativeLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+            android:paddingLeft="@dimen/margin_10"
+            android:layout_marginTop="@dimen/margin_10"
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/margin_short_3"
+                android:paddingBottom="@dimen/margin_10"
+                android:paddingLeft="@dimen/margin_10"
+                android:text="@string/duty_status_change_desc"
+                android:textColor="@color/blue_button"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_duty_status_change_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/dutyChangeDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+                tools:listitem="@layout/item_duty_status_change_dot"
+
+
+                />
+
+
+        </LinearLayout>
+
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+            android:layout_marginTop="@dimen/margin_10"
+
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/blue_button"
+                android:text="@string/login_logout_desc"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_short_3"
+                android:paddingBottom="@dimen/margin_10"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_login_logout_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/loginLogDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+                tools:listitem="@layout/item_login_logout_dot"
+
+
+                />
+
+
+        </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+            android:layout_marginTop="@dimen/margin_10"
+         
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/blue_button"
+                android:text="@string/comments_remarks_desc"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_short_3"
+                android:paddingBottom="@dimen/margin_10"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_remarks_ano_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/remAnotnDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+                tools:listitem="@layout/item_remarks_ano_dot"
+
+
+                />
+
+
+        </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+            android:layout_marginTop="@dimen/margin_10"
+
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/blue_button"
+                android:text="@string/AdditionalHours_desc"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_short_3"
+                android:paddingBottom="@dimen/margin_10"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_additional_hr_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/addHrsDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+                tools:listitem="@layout/item_additional_hr_dot"
+
+
+                />
+
+
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+            android:layout_marginTop="@dimen/margin_10"
+
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textColor="@color/blue_button"
+                android:text="@string/EnginePower_desc"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_short_3"
+                android:paddingBottom="@dimen/margin_10"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_engine_power_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/enginePwrDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+                tools:listitem="@layout/item_engine_power_dot"
+
+                />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    </ScrollView>
+
+
+
+    <ProgressBar
+        android:id="@+id/canDotProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+
+
+        />
+
+
+</RelativeLayout>

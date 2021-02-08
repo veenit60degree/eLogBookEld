@@ -75,7 +75,7 @@ public class APIs {
     public static String CHANGE_STATUS_SUGGESTED_EDIT       = DOMAIN_URL_ALS + "ChangeStatusSuggestedEdit";
 
     /*-------- ELD API ----------*/
-    public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";  //SaveDriverStatusAndLocation
+    public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
     public static String SAVE_DRIVER_EDIT_LOG     			= DOMAIN_URL_ELD + "SaveDriverEditELDStatus";
     //  public static String GET_DRIVER_STATUS      			= DOMAIN_URL_ELD + "GetDriverStatusAndLocation";   //GetDriverLogDetail
     public static String GET_ONDUTY_REMARKS					= DOMAIN_URL_ELD + "GetOnDutyRemarks";

@@ -670,25 +670,24 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     void GetShipmentDetails(){
 
         JSONObject dataObj = null;
+        try{
+            if(LogDate.equals(CurrentDate)){
 
-        if(LogDate.equals(CurrentDate)){
-            try{
-                //  JSONArray shipmentArray = shipmentHelper.getSavedShipmentArray(Integer.valueOf(Globally.PROJECT_ID), dbHelper);
-                if(Shipping18DaysArray.length() > 0 ){
-                    dataObj = shipmentHelper.GetLastJsonObject(Shipping18DaysArray, 0);
-                }else{
-                    dataObj = shipmentHelper.getShipmentRecord(dataObj, Shipping18DaysArray, DRIVER_ID, LogDate, selectedDateRecap, dbHelper);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
+                    //  JSONArray shipmentArray = shipmentHelper.getSavedShipmentArray(Integer.valueOf(Globally.PROJECT_ID), dbHelper);
+                    if(Shipping18DaysArray.length() > 0 ){
+                        dataObj = shipmentHelper.GetLastJsonObject(Shipping18DaysArray, 0);
+                    }else{
+                        dataObj = shipmentHelper.getShipmentRecord(dataObj, Shipping18DaysArray, DRIVER_ID, LogDate, selectedDateRecap, dbHelper);
+                    }
+
+            }else{
+                dataObj = shipmentHelper.getShipmentRecord(dataObj, Shipping18DaysArray, DRIVER_ID, LogDate, selectedDateRecap, dbHelper);
             }
-        }else{
-            dataObj = shipmentHelper.getShipmentRecord(dataObj, Shipping18DaysArray, DRIVER_ID, LogDate, selectedDateRecap, dbHelper);
+        }catch (Exception e){
+                e.printStackTrace();
         }
 
         setShipperInfo(dataObj, CurrentDate, LogDate);
-
-
 
 
         try {
@@ -711,14 +710,16 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 addDetailShippingList();
             }
 
-            //   Collections.sort(shipmentLogList);
-            shippingAdapter = new ShippingViewDetailAdapter(getActivity(), shipmentLogList);
-            shippingDetailListView.setAdapter(shippingAdapter);
-
         }catch (Exception e){
             e.printStackTrace();
         }
 
+        try{
+            //   Collections.sort(shipmentLogList);
+            shippingAdapter = new ShippingViewDetailAdapter(getActivity(), shipmentLogList);
+            shippingDetailListView.setAdapter(shippingAdapter);
+
+        }catch (Exception e){}
 
         try{
             if(shippingLayHeight == 0) {
@@ -1928,7 +1929,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 }catch (Exception e){  }
 
 
-                //   Log.d("htmlAppendedText", "htmlAppendedText: " + htmlAppendedText);
                 String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
                 ReloadWebView(CloseTag);
 

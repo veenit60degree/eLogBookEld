@@ -1074,7 +1074,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void moveToDotMode(String date, String dayName, String dayFullName, String dayShortName, String cycle){
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
 
-        DotWebViewFragment dotFragment = new DotWebViewFragment();
+        CanadaDotFragment dotFragment = new CanadaDotFragment();
+       // DotWebViewFragment dotFragment = new DotWebViewFragment();
         Globally.bundle.putString("date", date);
         Globally.bundle.putString("day_name", dayName);
         Globally.bundle.putString("month_full_name", dayFullName);

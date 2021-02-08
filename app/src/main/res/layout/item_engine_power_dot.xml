@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dutyStatusDotLay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/dot_titles_bg"
+    android:padding="@dimen/margin_short_6"
+
+    >
+
+
+    <TextView
+        android:id="@+id/dateTimeEDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/date_and_time"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/margin_14"
+        android:textColor="@color/color_eld_theme"
+        android:gravity="center_horizontal"
+        android:layout_weight="1"
+
+        />
+
+
+    <TextView
+        android:id="@+id/eventDotETV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Event"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/margin_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+
+        />
+
+    <TextView
+        android:id="@+id/jeoLocEDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/geo_loc"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/margin_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+
+        />
+
+    <TextView
+        android:id="@+id/distanceAccDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/distance_last_coor"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/margin_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+
+        />
+
+    <TextView
+        android:id="@+id/cmvEDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cmv"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/margin_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+
+        />
+
+    <TextView
+        android:id="@+id/distanceTotalEDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Distance_total"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/margin_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+
+        />
+
+    <TextView
+        android:id="@+id/hoursTotalEDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hours_total"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/margin_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+
+        />
+
+
+    <TextView
+        android:id="@+id/seqNoEDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/seq_no"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:textSize="@dimen/margin_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+
+        />
+
+
+
+</LinearLayout>

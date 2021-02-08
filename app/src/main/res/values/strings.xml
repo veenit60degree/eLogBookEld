@@ -256,6 +256,34 @@
     <string name="Malfunction_with_bracket">(Malfunction)</string>
 
 
+    <string name="Event">Event</string>
+    <string name="geo_loc">Geo Loc</string>
+    <string name="cmv">CMV</string>
+    <string name="distance_last_coor">Distance Last Coord</string>
+    <string name="distance_acc">Distance (Acc)</string>
+    <string name="hrs_acc">Hrs (Acc)</string>
+    <string name="Distance_total">Distance (Total)</string>
+    <string name="hours_total">Hours (Total)</string>
+    <string name="RecordStatus">Record Status</string>
+    <string name="RecordOrigin">Record Origin</string>
+    <string name="seq_no">Seq. No.</string>
+
+    <string name="WorkShiftStart">Work Shift Start (HH:MM)</string>
+    <string name="WorkShiftEnd">Work Shift End (HH:MM)</string>
+    <string name="TotalHoursOnDuty">Total Hours (On-Duty)</string>
+    <string name="TotalHoursOffDuty">Total Hours (Off-Duty)</string>
+    <string name="UsernameOriginator">Username (Originator)</string>
+    <string name="CommentOrAnnotation">Comment Or Annotation</string>
+    <string name="AdditionalInfo">Additional Info</string>
+    <string name="DistanceTotal">Distance Total</string>
+    <string name="HrsTotal">Hrs Total</string>
+
+
+    <string name="duty_status_change_desc">Duty Status Changes, Intermediate Logs and Special Driving Condition (PC and YM)</string>
+    <string name="login_logout_desc">Login and Logout, Certification of RODS, Data Diagnostic and Malfunction</string>
+    <string name="comments_remarks_desc">Comments. Remarks and Annotations</string>
+    <string name="AdditionalHours_desc">Additional Hours not recorded</string>
+    <string name="EnginePower_desc">Engine Power Up and Shut Down</string>
 
     <string name="trip_no">Trip No: </string>
     <string name="Shipper">Shipper: </string>
@@ -280,6 +308,40 @@
     <string name="eld_govt_logs">ELD GOVT LOGS</string>
     <string name="Data_transmission">Data Transmission</string>
 
+    <string name="date_of_rods">Date of RODS</string>
+    <string name="day_starting_time">Day Starting Time</string>
+    <string name="current_loc">Current Loc (Lat,Long)</string>
+    <string name="comment">Comment</string>
+    <string name="date_and_time">Date &amp; Time</string>
+    <string name="exempt_driver_status">Exempt Driver Status</string>
+    <string name="DriverLicenceNo_jur">Driver Licence No &amp; Jurisdiction</string>
+    <string name="truck_tractor_id">Truck/Tractor ID</string>
+    <string name="truck_tractor_vin">Truck/Tractor Vin</string>
+    <string name="TotalDistance">Total Distance</string>
+    <string name="startEnd">(Start-End)</string>StartEnd
+    <string name="DistanceToday">Distance Today</string>
+    <string name="CurrentTotalDistance">Current Total Distance</string>
+    <string name="CurrentTotalEngineHr">Current Total Engine Hrs</string>
+    <string name="CarrierName">Carrier Name</string>
+    <string name="carrier_add">Carrier</string>
+    <string name="home_ter_add"> (Home Terminal Add)</string>
+    <string name="carrier_principal_add"> (Principal Place Of Business Add)</string>
+    <string name="CurrentOperatingZone">Current Operating Zone</string>
+    <string name="total_hrs">Total Hrs</string>
+    <string name="total_hrs_in_work">(In Work Shift)</string>
+    <string name="in_cycle">(In Cycle)</string>
+    <string name="remaining_hrs">Remaining Hrs</string>
+    <string name="off_duty_time_deff">Off Duty Time defferal </string>
+    <string name="date_time_deff">(Day &amp; Time Deffered)</string>
+    <string name="DataDiagnosticStatus">Data Diagnostic Status</string>
+    <string name="UnIdentifiedDrivingRecords">UnIdentified Driving Records</string>
+    <string name="MalfunctionStatus">Malfunction Status</string>
+    <string name="ELD_ID">ELD ID</string>
+    <string name="ELD_Provider">ELD Provider</string>
+    <string name="ELD_Certification">ELD Certification</string>
+    <string name="ELD_Auth">ELD Authentication</string>
+    <string name="CanadaELDViewLog">Canada ELD View Log</string>
+
 
     <string name="sealNoAtArrival">Seal number of container at arrival</string>
     <string name="sealNoAtDeparture">Seal number of container at departure</string>
@@ -289,6 +351,7 @@
     <string name="who_affixed_seal">Person who affixed seals</string>
     <string name="who_verify_physical">Person who verified physical integrity of seal</string>
 
+    <string name="view_more">View More</string>
     <string name="date">Date </string>
     <string name="DateAndTime">Date &amp; Time: </string>
     <string name="today_Recap">Today Recap</string>
