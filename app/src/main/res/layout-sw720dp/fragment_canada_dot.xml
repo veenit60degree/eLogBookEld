@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -17,6 +18,7 @@
 
 
     <ScrollView
+        android:id="@+id/canDotScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/margin_25"
@@ -487,20 +489,6 @@
 
 
 
-
-
-        <TextView
-            android:id="@+id/viewMoreTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/hos_location"
-            android:textSize="@dimen/text_size_21"
-            android:layout_gravity="right"
-            android:padding="@dimen/margin_20"
-            android:text="@string/view_more"
-            android:textAllCaps="true"
-            android:textStyle="bold"
-            />
 
 
 
@@ -1549,6 +1537,19 @@
 
 
 
+        <TextView
+            android:id="@+id/viewMoreTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/hos_location"
+            android:textSize="@dimen/text_size_21"
+            android:layout_gravity="right"
+            android:padding="@dimen/margin_20"
+            android:text="@string/view_more"
+            android:textStyle="bold"
+            />
+
+
 
         <RelativeLayout
             android:id="@+id/canGraphLayout"
@@ -1556,6 +1557,8 @@
             android:layout_height="match_parent"
             android:minWidth="@dimen/view_height_500"
             android:minHeight="@dimen/view_height_115"
+            android:layout_marginBottom="@dimen/margin_15"
+
 
             >
 
@@ -1574,6 +1577,226 @@
 
 
 
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:paddingLeft="@dimen/margin_13"
+            android:layout_marginTop="@dimen/margin_15"
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_15"
+                android:paddingLeft="@dimen/margin_10"
+                android:text="@string/duty_status_change_desc"
+                android:textColor="@color/blue_button"
+                android:textSize="@dimen/text_size_22"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_duty_status_change_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/dutyChangeDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+
+
+                />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_13"
+            android:layout_marginTop="@dimen/margin_15"
+
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_22"
+                android:textColor="@color/blue_button"
+                android:text="@string/comments_remarks_desc"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_15"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_remarks_ano_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/remAnotnDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+
+
+                />
+
+
+        </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_13"
+            android:layout_marginTop="@dimen/margin_15"
+
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_22"
+                android:textColor="@color/blue_button"
+                android:text="@string/AdditionalHours_desc"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_15"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_additional_hr_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/addHrsDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+
+
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_15"
+                android:background="@color/whiteee"
+                android:orientation="vertical"
+                android:padding="@dimen/margin_13"
+
+                >
+
+
+                <ListView
+                    android:id="@+id/loginLogDotListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_80"
+                    android:minHeight="@dimen/view_height_30"
+                    android:scrollbars="none"
+
+
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_15"
+                    android:text="@string/login_logout_desc"
+                    android:textColor="@color/blue_button"
+                    android:textSize="@dimen/text_size_22"
+                    android:textStyle="bold"
+
+                    />
+
+
+                <include layout="@layout/item_login_logout_dot" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_13"
+            android:layout_marginTop="@dimen/margin_15"
+
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_22"
+                android:textColor="@color/blue_button"
+                android:text="@string/EnginePower_desc"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_15"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_engine_power_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/enginePwrDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+
+                />
+
+
+        </LinearLayout>
+
+
+        
+        
+        
     </LinearLayout>
 
     </ScrollView>

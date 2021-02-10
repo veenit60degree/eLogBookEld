@@ -18,6 +18,7 @@
 
 
     <ScrollView
+        android:id="@+id/canDotScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/margin_15"
@@ -469,22 +470,6 @@
             </LinearLayout>
 
 
-
-
-
-
-        <TextView
-            android:id="@+id/viewMoreTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/hos_location"
-            android:textSize="@dimen/text_size_16"
-            android:layout_gravity="right"
-            android:padding="@dimen/margin_10"
-            android:text="@string/view_more"
-            android:textStyle="bold"
-
-            />
 
 
 
@@ -1477,6 +1462,19 @@
 
 
 
+        <TextView
+            android:id="@+id/viewMoreTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/hos_location"
+            android:textSize="@dimen/text_size_16"
+            android:layout_gravity="right"
+            android:padding="@dimen/margin_10"
+            android:text="@string/view_more"
+            android:textStyle="bold"
+
+            />
+
 
         <RelativeLayout
             android:id="@+id/canGraphLayout"
@@ -1485,6 +1483,8 @@
             android:minWidth="@dimen/view_height_500"
             android:minHeight="@dimen/view_height_130"
             android:layout_marginTop="@dimen/margin_short_4"
+            android:layout_marginBottom="@dimen/margin_short_5"
+
             >
 
             <WebView
@@ -1537,7 +1537,6 @@
                 android:layout_height="@dimen/view_height_80"
                 android:scrollbars="none"
                 android:minHeight="@dimen/view_height_30"
-                tools:listitem="@layout/item_duty_status_change_dot"
 
 
                 />
@@ -1585,7 +1584,6 @@
                 android:layout_height="@dimen/view_height_80"
                 android:scrollbars="none"
                 android:minHeight="@dimen/view_height_30"
-                tools:listitem="@layout/item_login_logout_dot"
 
 
                 />
@@ -1632,7 +1630,6 @@
                 android:layout_height="@dimen/view_height_80"
                 android:scrollbars="none"
                 android:minHeight="@dimen/view_height_30"
-                tools:listitem="@layout/item_remarks_ano_dot"
 
 
                 />
@@ -1679,7 +1676,6 @@
                 android:layout_height="@dimen/view_height_80"
                 android:scrollbars="none"
                 android:minHeight="@dimen/view_height_30"
-                tools:listitem="@layout/item_additional_hr_dot"
 
 
                 />
@@ -1725,12 +1721,14 @@
                 android:layout_height="@dimen/view_height_80"
                 android:scrollbars="none"
                 android:minHeight="@dimen/view_height_30"
-                tools:listitem="@layout/item_engine_power_dot"
 
                 />
 
 
         </LinearLayout>
+
+
+
 
 
     </LinearLayout>

@@ -9,12 +9,24 @@
     <RelativeLayout
         android:id="@+id/recapRecordItemLay"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/view_height_65"
-        android:paddingLeft="@dimen/margin_15"
+        android:layout_height="@dimen/view_height_55"
+        android:paddingLeft="@dimen/margin_10"
         android:paddingRight="@dimen/margin_10"
-
         >
 
+
+
+        <CheckBox
+            android:id="@+id/signRecordCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_18"
+            android:textColor="@color/color_eld_bg"
+            android:button="@drawable/unidentified_checkbox_drawable"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:layout_centerVertical="true"
+
+            />
 
         <TextView
             android:id="@+id/dateSignTxtView"
@@ -25,7 +37,7 @@
             android:textSize="@dimen/text_size_21"
             android:textColor="@color/black"
             android:layout_centerVertical="true"
-
+            android:layout_marginLeft="@dimen/margin_10"
             />
 
 
@@ -80,3 +92,5 @@
 
 
 </RelativeLayout>
+
+

@@ -3304,8 +3304,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         messenger.send(msg1);
 
                     }catch(Exception rme){
-                        //Show an Error Message
-                        rme.printStackTrace();
                         Log.d(TAG_OBD, "Invocation Failed!!");
                     }
                 }

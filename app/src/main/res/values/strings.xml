@@ -351,6 +351,7 @@
     <string name="who_affixed_seal">Person who affixed seals</string>
     <string name="who_verify_physical">Person who verified physical integrity of seal</string>
 
+    <string name="view_less">View Less</string>
     <string name="view_more">View More</string>
     <string name="date">Date </string>
     <string name="DateAndTime">Date &amp; Time: </string>

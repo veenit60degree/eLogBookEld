@@ -44,7 +44,7 @@ public class DriverLocationDialog extends Dialog {
     Button btnLoadingJob, btnCancelLoadingJob;
     Spinner locationSpinner;
     TextView TitleTV, SpinnerTitleTV;
-    public TextView updateViewTV;
+    public static TextView updateViewTV;
     View view;
 
     public DriverLocationDialog(Context context, String loc, String state, int position, int jobType,

@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.LocationManager;
 import android.os.Build;
@@ -22,6 +24,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.driver.details.DriverConst;
@@ -2597,5 +2600,9 @@ public class Constants {
     }
 
 
-
+    public void setTextStyleNormal(TextView textView){
+        textView.setTypeface(null, Typeface.NORMAL);
+        textView.setTextColor(Color.parseColor("#354365"));
+    }
+//textView.setTypeface(null, Typeface.NORMAL);
 }

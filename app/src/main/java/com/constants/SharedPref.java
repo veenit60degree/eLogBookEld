@@ -1188,10 +1188,12 @@ public class SharedPref {
 
     // Set 16 hour haul exception -------------------
     public static void set16hrHaulExcptn( boolean value, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("haul_exception", value);
-        editor.commit();
+        if(context != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("haul_exception", value);
+            editor.commit();
+        }
     }
 
     // Get 16 hour haul exception -------------------
@@ -1208,16 +1210,23 @@ public class SharedPref {
 
     // Set 16 hour haul exception for co driver  -------------------
     public static void set16hrHaulExcptnCo( boolean value, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("haul_exception_co", value);
-        editor.commit();
+        if(context != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("haul_exception_co", value);
+            editor.commit();
+        }
     }
 
     // Get 16 hour haul exception for co driver  -------------------
     public static boolean get16hrHaulExcptnCo( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("haul_exception_co", false);
+        boolean isHaul = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isHaul = preferences.getBoolean("haul_exception_co", false);
+        }
+        return isHaul;
+
     }
 
 
@@ -1256,8 +1265,13 @@ public class SharedPref {
 
     // Get Adverse exception for co driver -------------------
     public static boolean getAdverseExcptnCo( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("adverse_exception_co", false);
+        boolean isAdverse = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isAdverse = preferences.getBoolean("adverse_exception_co", false);
+        }
+        return isAdverse;
+
     }
 
 

@@ -9,19 +9,27 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import com.adapter.logistic.CanDotAddHrsAdapter;
+import com.adapter.logistic.CanDotDutyStatusAdapter;
+import com.adapter.logistic.CanDotEnginePowerAdapter;
+import com.adapter.logistic.CanDotLogInOutAdapter;
+import com.adapter.logistic.CanDotRemarksAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
@@ -33,6 +41,7 @@ import com.constants.WebAppInterface;
 import com.messaging.logistic.EldActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.models.PrePostModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,8 +49,10 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CanadaDotFragment extends Fragment implements View.OnClickListener{
@@ -57,16 +68,24 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
     TextView totalHrsCTV, totalhrsCycleCTV, remainingHourCTV, offDutyDeffCTV, datDiagCTV, unIdenDriRecCTV;
     TextView malfStatusCTV, eldIdCTV, eldProviderCTV, eldCerCTV, eldAuthCTV;
     RelativeLayout eldMenuLay, rightMenuBtn;
-    LinearLayout canDotViewMorelay;
+    LinearLayout canDotViewMorelay, enginePwrDotLay;
     ImageView eldMenuBtn;
     WebView canDotGraphWebView;
     ProgressBar canDotProgressBar;
+    ScrollView canDotScrollView;
+    ListView dutyChangeDotListView, remAnotnDotListView, addHrsDotListView, loginLogDotListView, enginePwrDotListView;
 
     Constants constants;
     Globally global;
     SharedPref sharedPref;
     VolleyRequest GetDotLogRequest;
     Map<String, String> params;
+
+    CanDotAddHrsAdapter canDotAddHrsAdapter;
+    CanDotDutyStatusAdapter canDotDutyStatusAdapter;
+    CanDotEnginePowerAdapter canDotEnginePowerAdapter;
+    CanDotLogInOutAdapter canDotLogInOutAdapter;
+    CanDotRemarksAdapter canDotRemarksAdapter;
 
     String DefaultLine      = " <g class=\"event \">\n";
     String ViolationLine    = " <g class=\"event line-red\">\n";
@@ -80,6 +99,7 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
     String TotalOffDutyHours        = "00:00";
     String TotalSleeperBerthHours   = "00:00";
 
+    int inspectionLayHeight = 0;
     int hLineX1         = 0;
     int hLineX2         = 0;
     int hLineY          = 0;
@@ -171,13 +191,23 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
         viewMoreTV          = (TextView)view.findViewById(R.id.viewMoreTV);
         EldTitleTV          = (TextView)view.findViewById(R.id.EldTitleTV);
 
+        dutyChangeDotListView= (ListView)view.findViewById(R.id.dutyChangeDotListView);
+        remAnotnDotListView  = (ListView)view.findViewById(R.id.remAnotnDotListView);
+        addHrsDotListView    = (ListView)view.findViewById(R.id.addHrsDotListView);
+        loginLogDotListView  = (ListView)view.findViewById(R.id.loginLogDotListView);
+        enginePwrDotListView = (ListView)view.findViewById(R.id.enginePwrDotListView);
+
         canDotViewMorelay   = (LinearLayout)view.findViewById(R.id.canDotViewMorelay);
+        enginePwrDotLay     = (LinearLayout)view.findViewById(R.id.enginePwrDotLay);
+
         eldMenuLay          = (RelativeLayout)view.findViewById(R.id.eldMenuLay);
         rightMenuBtn        = (RelativeLayout)view.findViewById(R.id.rightMenuBtn);
 
         eldMenuBtn          = (ImageView)view.findViewById(R.id.eldMenuBtn);
         canDotGraphWebView  = (WebView)view.findViewById(R.id.canDotGraphWebView);
         canDotProgressBar   = (ProgressBar)view.findViewById(R.id.canDotProgressBar);
+        canDotScrollView    = (ScrollView)view.findViewById(R.id.canDotScrollView);
+
 
         eldMenuBtn.setImageResource(R.drawable.back_btn);
         EldTitleTV.setText(getResources().getString(R.string.CanadaELDViewLog));
@@ -192,6 +222,8 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
 
         initilizeWebView();
         ReloadWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
+
+        tempSetAdapter();
 
         eldMenuLay.setOnClickListener(this);
         viewMoreTV.setOnClickListener(this);
@@ -210,12 +242,21 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.viewMoreTV:
-                viewMoreTV.setVisibility(View.GONE);
-                canDotViewMorelay.setVisibility(View.VISIBLE);
+                if(canDotViewMorelay.getVisibility() == View.VISIBLE){
+                    canDotViewMorelay.setVisibility(View.GONE);
+                    viewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_more) + "</u>"));
+                    canDotScrollView.fullScroll(View.FOCUS_UP);
+                }else{
+                    canDotViewMorelay.setVisibility(View.VISIBLE);
+                    viewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_less) + "</u>"));
+                }
+                //viewMoreTV.setVisibility(View.GONE);
+
                 break;
 
         }
     }
+
 
     void initilizeWebView(){
         WebSettings webSettings = canDotGraphWebView.getSettings();
@@ -230,6 +271,66 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
         canDotGraphWebView.setWebChromeClient(new WebChromeClient());
         canDotGraphWebView.addJavascriptInterface( new WebAppInterface(), "Android");
 
+    }
+
+
+    void tempSetAdapter(){
+
+        List<PrePostModel> list = new ArrayList<>();
+        list.add(new PrePostModel("0", "abc"));
+        list.add(new PrePostModel("1", "def"));
+        list.add(new PrePostModel("2", "mno"));
+        list.add(new PrePostModel("3", "xyz"));
+
+        canDotAddHrsAdapter = new CanDotAddHrsAdapter(getActivity(), list);
+        canDotDutyStatusAdapter = new CanDotDutyStatusAdapter(getActivity(), list);
+        canDotEnginePowerAdapter = new CanDotEnginePowerAdapter(getActivity(), list);
+        canDotLogInOutAdapter = new CanDotLogInOutAdapter(getActivity(), list);
+        canDotRemarksAdapter = new CanDotRemarksAdapter(getActivity(), list);
+
+        dutyChangeDotListView.setAdapter(canDotDutyStatusAdapter);
+        remAnotnDotListView.setAdapter(canDotRemarksAdapter);
+        addHrsDotListView.setAdapter(canDotAddHrsAdapter);
+        loginLogDotListView.setAdapter(canDotLogInOutAdapter);
+        enginePwrDotListView.setAdapter(canDotEnginePowerAdapter);
+
+        inspectionLayHeight = enginePwrDotLay.getHeight();
+
+        ViewTreeObserver vto = enginePwrDotLay.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    enginePwrDotLay.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    enginePwrDotLay.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                inspectionLayHeight = enginePwrDotLay.getMeasuredHeight();
+
+            }
+        });
+
+        if(inspectionLayHeight == 0) {
+            if(global.isTablet(getActivity())){
+                inspectionLayHeight = constants.intToPixel(getActivity(), 55);
+            }else{
+                inspectionLayHeight = constants.intToPixel(getActivity(), 50);
+            }
+
+        }
+
+        final int Height      = (inspectionLayHeight ) * list.size();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dutyChangeDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
+                remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
+                addHrsDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
+                loginLogDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
+                enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
+
+            }
+        },500);
     }
 
 

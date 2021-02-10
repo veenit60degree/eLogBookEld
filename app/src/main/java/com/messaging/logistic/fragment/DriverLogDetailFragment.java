@@ -478,7 +478,11 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
             certifyRecordsListLay.setVisibility(View.VISIBLE);
             certifyDateTV.setVisibility(View.GONE);
-            certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length() ));
+
+            if(LogDate.length() > 3)
+                certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length() ));
+            else
+                certifyDateTV.setText(MonthFullName + " " + LogDate);
 
             if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
                 MaxDays = UsaMaxDays;
@@ -1388,13 +1392,14 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             DOTBtnVisibility(DaysDiff, MaxDays);
             LogDate = global.ConvertDateFormatMMddyyyy(selectedDateTime.toString());
 
-            String dayOfTheWeek     = global.GetDayOfWeek(LogDate);
-            int mnth                = Integer.valueOf(LogDate.substring(0, 2));
-            String MonthFullName    =   global.MONTHS_FULL[mnth - 1];
-            String MonthShortName   =   global.MONTHS[mnth - 1];
+            if(LogDate.length() > 2) {
+                String dayOfTheWeek = global.GetDayOfWeek(LogDate);
+                int mnth = Integer.valueOf(LogDate.substring(0, 2));
+                String MonthFullName = global.MONTHS_FULL[mnth - 1];
+                String MonthShortName = global.MONTHS[mnth - 1];
 
-            GetLogWithDate(LogDate, dayOfTheWeek, MonthFullName, MonthShortName);
-
+                GetLogWithDate(LogDate, dayOfTheWeek, MonthFullName, MonthShortName);
+            }
         }else {
             if (DaysDiff > MaxDays) {
                 nextDateBtn.setVisibility(View.VISIBLE);
@@ -2418,8 +2423,12 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }
 
         if(!isDOT) {
-            certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length()));
+            if(LogDate.length() > 3)
+                certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length()));
+            else
+                certifyDateTV.setText(MonthFullName + " " + LogDate);
         }
+
         LogSignImage = ""; LogSignImageInByte = "";
 
         CheckSelectedDateTime();

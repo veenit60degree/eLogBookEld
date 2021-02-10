@@ -376,6 +376,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             getLocation();
             locInspectionTV.setText(Location);
 
+            if(IsAOBRD == false)
+                changeLocBtn.setVisibility(View.GONE);
         }
         inspectionDateTv.setText(CreatedDate.substring(0, 11));
 
@@ -1288,6 +1290,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             pDialog.dismiss();
             Globally.EldToastWithDuration(TabAct.sliderLay, getResources().getString(R.string.inspection_willbe_saved ), getResources().getColor(R.color.colorSleeper) );
             ClearFields();
+            locInspectionTV.setEnabled(false);
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -1577,6 +1580,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             Log.d("InspectionLog", "---Response Inspection: " + response);
             pDialog.dismiss();
             Globally.hideSoftKeyboard(getActivity());
+            locInspectionTV.setEnabled(false);
 
             try {
                 JSONObject obj = new JSONObject(response);
@@ -1626,9 +1630,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
             Log.d("errorrr ", ">>>error dialog: ");
             Globally.hideSoftKeyboard(getActivity());
-            pDialog.dismiss();
+            if(pDialog != null && pDialog.isShowing())
+                pDialog.dismiss();
 
             if(flag != 102) {
+                locInspectionTV.setEnabled(false);
                 Globally.EldToastWithDuration(TabAct.sliderLay, getResources().getString(R.string.inspection_willbe_saved), getResources().getColor(R.color.colorSleeper));
                 new Handler().postDelayed(new Runnable() {
                     @Override

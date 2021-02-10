@@ -5735,8 +5735,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                                 if (!IsAddressUpdate) {
                                     if (JobStatusInt != 101) {
-                                        if (driverLocationDialog.updateViewTV != null) {
-                                            driverLocationDialog.updateViewTV.performClick();
+                                        if (driverLocationDialog != null && DriverLocationDialog.updateViewTV != null) {
+                                                DriverLocationDialog.updateViewTV.performClick();
                                         }
                                     } else {
                                         SaveJobStatusAlert(LocationJobTYpe);
@@ -5893,8 +5893,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                                 try {
                                     if (JobStatusInt != 101) {
-                                        if (driverLocationDialog.updateViewTV != null) {
-                                            driverLocationDialog.updateViewTV.performLongClick();
+                                        if (driverLocationDialog != null && DriverLocationDialog.updateViewTV != null) {
+                                            DriverLocationDialog.updateViewTV.performClick();
                                         }
                                     } else {
                                         SaveJobStatusAlert(LocationJobTYpe);
@@ -5980,8 +5980,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
                             progressBar.setVisibility(View.GONE);
                             if (JobStatusInt != 101) {
-                                if (driverLocationDialog.updateViewTV != null) {
-                                    driverLocationDialog.updateViewTV.performLongClick();
+                                if (driverLocationDialog != null && DriverLocationDialog.updateViewTV != null) {
+                                        DriverLocationDialog.updateViewTV.performClick();
                                 }
                             } else {
                                 SaveJobStatusAlert(LocationJobTYpe);
