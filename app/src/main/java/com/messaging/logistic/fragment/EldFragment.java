@@ -2108,6 +2108,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 GetSavePreferences();
                 boolean isConnected = Global.isConnected(getActivity());
 
+            //    IsRefreshedClick = true;
+            //    GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
+
                 if (isConnected) {
                     GetDriversSavedData(false, DriverType);
                     if (DriverJsonArray.length() > 0) {

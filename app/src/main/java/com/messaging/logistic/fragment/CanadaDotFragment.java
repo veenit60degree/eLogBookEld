@@ -43,6 +43,7 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.PrePostModel;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -224,6 +225,23 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
         ReloadWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
 
         tempSetAdapter();
+
+        if (global.isConnected(getActivity())) {
+
+            /*String selectedDateStr = global.ConvertDateFormat(LogDate);
+            String currentDateStr = global.ConvertDateFormat(CurrentDate);
+            DateTime selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
+            DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
+            int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
+            Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
+            DOTBtnVisibility(DaysDiff, MaxDays);
+            */
+            GetDriverDotDetails(DriverId, LogDate);
+
+        }else{
+            Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            //webViewErrorDisplay();
+        }
 
         eldMenuLay.setOnClickListener(this);
         viewMoreTV.setOnClickListener(this);
@@ -504,8 +522,8 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
         params.put("DriverId", DriverId);
         params.put("Date", date);
 
-        GetDotLogRequest.executeRequest(Request.Method.POST, APIs.MOBILE_ELD_VIEW_NEW, params, 1,
-                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+        GetDotLogRequest.executeRequest(Request.Method.POST, APIs.MOBILE_CANADA_ELD_VIEW, params, 1,
+                Constants.SocketTimeout30Sec, ResponseCallBack, ErrorCallBack);
     }
 
 

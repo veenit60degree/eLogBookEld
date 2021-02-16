@@ -200,9 +200,9 @@ public class RecapViewMethod {
                 JSONObject json = (JSONObject)recapViewArray.get(i);
                 JSONObject recapJson = new JSONObject();
 
-                JSONArray DriverLogArray = new JSONArray(json.getString(ConstantsKeys.DriverLogModel));
+               // JSONArray DriverLogArray = new JSONArray(json.getString(ConstantsKeys.DriverLogModel));
 
-                if(DriverLogArray.length() > 0) {
+               // if(DriverLogArray.length() > 0) {
                     String date = Globally.ConvertDateFormatMMddyyyy(json.getString(ConstantsKeys.Date));
                     String LogSignImage = "";
 
@@ -220,7 +220,7 @@ public class RecapViewMethod {
                     recapJson.put(ConstantsKeys.Date, date);
 
                     recapFinalArray.put(recapJson);
-                }
+               // }
             }
         } catch (JSONException e) {
             e.printStackTrace();

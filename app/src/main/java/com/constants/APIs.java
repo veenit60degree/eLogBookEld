@@ -46,8 +46,8 @@ public class APIs {
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_DEV ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_DEV ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
 
@@ -64,6 +64,7 @@ public class APIs {
     public static String EditDriverLog	  	                = EditLogGraphProduction + "DriverLog/EditDriverLogOnMobile?Date=";  //http://arethos.com:55557
     public static String MOBILE_ELD_VIEW             	    = DOMAIN_URL_ALS + "MobileELDView";
     public static String MOBILE_ELD_VIEW_NEW           	    = DOMAIN_URL_ALS + "MobileELDViewAddedNewStatus";
+    public static String MOBILE_CANADA_ELD_VIEW        	    = DOMAIN_URL_ALS + "MobileCanadaELDView";
     public static String GET_ELD_HELP_DOC                   = DOMAIN_URL_ALS + "GetEldHelpDoc";
     public static String GET_DRIVER_MILES                   = DOMAIN_URL_ALS + "GetDriverMilesFromLogDate";
     public static String SAVE_DRIVER_DEVICE_USAGE_LOG       = DOMAIN_URL_ALS + "SaveDriverDeviceUsageLog";
@@ -98,6 +99,8 @@ public class APIs {
     public static String UPDATE_OFF_LINE_DRIVER_LOG	    	= DOMAIN_URL_ELD + "UpdateOfflineDriverLog";
     public static String GET_DRIVER_LOG_18_DAYS	    	    = DOMAIN_URL_ELD + "GetDriverLogEighteenDaysDetail";
     public static String GET_DRIVER_LOG_18_DAYS_DETAILS 	= DOMAIN_URL_ELD + "GetDriverLogEighteenDaysPastDetail";
+    //public static String GET_DRIVER_LOG_18_DAYS_DETAILS_TEST= DOMAIN_URL_ELD + "GetDriverLogEighteenDaysPastDetailTesting";
+
     public static String GET_SHIPPING_INFO_OFFLINE	  	    = DOMAIN_URL_ELD + "GetShippingInfoOffline";
     public static String GET_ODOMETER_OFFLINE	  	        = DOMAIN_URL_ELD + "GetOdometerOffline";
     public static String SAVE_LOG_TEXT_FILE 	  	        = DOMAIN_URL_ELD + "SaveLogTextFile";

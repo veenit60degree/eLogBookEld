@@ -465,7 +465,11 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
     /*================== Save And Upload Log Record Data ===================*/
     void SaveAndUploadData( EldDriverLogModel logModel, String RecordType, int ItemPosition){
-        JSONObject logObj = logRecordMethod.GetUpdateLogRecordJson(logModel, String.valueOf(DriverId), DeviceId, RecordType);
+        String currentUtcDate = Global.GetCurrentDateTime();
+        String currentDriverZoneDate = Global.GetCurrentUTCTimeFormat();
+
+        JSONObject logObj = logRecordMethod.GetUpdateLogRecordJson(logModel, String.valueOf(DriverId), DeviceId, RecordType,
+                currentUtcDate, currentDriverZoneDate );
 
         finalUpdatedArray = logRecordMethod.getSavedLogRecordArray(DriverId, dbHelper);
 

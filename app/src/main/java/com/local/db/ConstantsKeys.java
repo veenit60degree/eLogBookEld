@@ -268,7 +268,8 @@ public class ConstantsKeys {
 
     public static String RecordType                     = "RecordType";
     public static String RecordValue                    = "RecordValue";
-
+    public static String EditDateTimeUTC                = "EditDateTimeUTC";
+    public static String EditDateTime                   = "EditDateTime ";
 
     public static String StartDate                      = "StartDate";
     public static String StartLat                       = "StartLat";

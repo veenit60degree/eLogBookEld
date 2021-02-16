@@ -709,7 +709,41 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
+    void getLocDegree(Location location){
+        String strLongitude = location.convert(location.getLongitude(), location.FORMAT_SECONDS);
+        String strLatitude = location.convert(location.getLatitude(), location.FORMAT_SECONDS);
+        Log.d("Location", "---strLongitude: " + strLongitude );
+        Log.d("Location", "---strLatitude: " + strLatitude );
+        getFormattedLocationInDegree(location.getLatitude(), location.getLongitude());
+    }
 
+    String getFormattedLocationInDegree(double latitude, double longitude) {
+        try {
+            int latSeconds = (int) Math.round(latitude * 3600);
+            int latDegrees = latSeconds / 3600;
+            latSeconds = Math.abs(latSeconds % 3600);
+            int latMinutes = latSeconds / 60;
+            latSeconds %= 60;
+
+            int longSeconds = (int) Math.round(longitude * 3600);
+            int longDegrees = longSeconds / 3600;
+            longSeconds = Math.abs(longSeconds % 3600);
+            int longMinutes = longSeconds / 60;
+            longSeconds %= 60;
+            String latDegree = latDegrees >= 0 ? "N" : "S";
+            String lonDegrees = longDegrees >= 0 ? "E" : "W";
+
+            String degFormat = Math.abs(latDegrees) + "°" + latMinutes + "'" + latSeconds
+                    + "\"" + latDegree +" "+ Math.abs(longDegrees) + "°" + longMinutes
+                    + "'" + longSeconds + "\"" + lonDegrees;
+            Log.d("LocationDegreeF", "---degFormat: " + degFormat );
+
+            return degFormat ;
+        } catch (Exception e) {
+            return ""+ String.format("%8.5f", latitude) + "  "
+                    + String.format("%8.5f", longitude) ;
+        }
+    }
 
     android.location.LocationListener locationListenerGPS = new android.location.LocationListener() {
         @Override
@@ -722,6 +756,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             isGpsUpdate = true;
 
+           // getLocDegree(location);
 
 /*            final Date date = new Date(location.getTime());
             final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1694,7 +1729,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
 
 
-
+       // getLocDegree(location);
 
        /* final Date date = new Date(location.getTime());
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
