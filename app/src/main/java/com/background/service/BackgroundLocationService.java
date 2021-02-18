@@ -398,6 +398,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 e.printStackTrace();
             }
 
+            sharedPref.setVehicleVin(vin, getApplicationContext());
             sharedPref.setVss(speed, getApplicationContext());
             sharedPref.setRPM(truckRPM, getApplicationContext());
             sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
@@ -1778,6 +1779,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 if (!message.equals(noObd) && message.length() > 10) {
 
+                    sharedPref.setVehicleVin("", getApplicationContext());
+
                     if (message.contains("CAN")) {
 
                         if (message.contains("CAN:UNCONNECTED")) {
@@ -1827,6 +1830,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 HighResolutionDistance = wifiConfig.checkJsonParameter(canObj, "HighResolutionTotalVehicleDistanceInKM", "-1");
                                 obdOdometer = HighResolutionDistance;
                                 // int truckRpmInt = Integer.valueOf(truckRPM);
+
+                                String vin = wifiConfig.checkJsonParameter(canObj, ConstantsKeys.VIN, "");
+                                sharedPref.setVehicleVin(vin, getApplicationContext());
 
                                 if (!latitude.equals("0")) {
                                     global.LATITUDE = latitude;

@@ -286,6 +286,7 @@ public class Constants {
     public static final int DATA_MALFUNCTION      = 12;
     public static final int SETTINGS              = 1;
     public static final int ALS_SUPPORT           = 6;
+    public static final int ALS_TERMS_COND        = 14;
     public static final int LOGOUT                = 2;
     public static final int VERSION               = 13;
 
@@ -313,6 +314,7 @@ public class Constants {
         }
         list.add(new SlideMenuModel(SETTINGS, R.drawable.settings, context.getResources().getString(R.string.action_settings)));
         list.add(new SlideMenuModel(ALS_SUPPORT, R.drawable.als_support, context.getResources().getString(R.string.action_Support)));
+        list.add(new SlideMenuModel(ALS_TERMS_COND, R.drawable.terms_conditions, context.getResources().getString(R.string.terms_conditions)));
         list.add(new SlideMenuModel(LOGOUT, R.drawable.logout, context.getResources().getString(R.string.logout)));
         list.add(new SlideMenuModel(VERSION, R.drawable.transparent, version));
 

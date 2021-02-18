@@ -26,6 +26,9 @@ import android.widget.Toast;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.custom.dialogs.ConfirmationDialog;
+import com.custom.dialogs.PermissionInfoDialog;
+import com.custom.dialogs.ShareDriverLogDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -50,6 +53,8 @@ public class SplashActivity extends Activity implements
     Intent i;
     boolean isFirst = false;
     Handler handler;
+    PermissionInfoDialog permissionInfoDialog;
+
 
     protected static final String TAG = "SplashActivity";
 
@@ -91,6 +96,8 @@ public class SplashActivity extends Activity implements
     Constants constants;
     protected LocationManager locationManager;
     RelativeLayout splashLay, splashMainLay;
+    final int LOCATION_REQUEST  = 101;
+    final int STORAGE_REQUEST   = 102;
 
 
 
@@ -130,11 +137,6 @@ public class SplashActivity extends Activity implements
             splashLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
         }
 
-        /*DisplayMetrics metrics = getResources().getDisplayMetrics();
-        int densityDpi = (int)(metrics.density * 160f);
-        Log.d("densityDpi","densityDpi: " +densityDpi);
-        */
-
     }
 
     @Override
@@ -144,11 +146,11 @@ public class SplashActivity extends Activity implements
         if(!isFirst){
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    checkUserStatus();
+                    CheckPermissionViewStatus();
                 }
             }, 2000);
         }else{
-            checkUserStatus();
+            CheckPermissionViewStatus();
         }
 
         isFirst = true;
@@ -167,7 +169,7 @@ public class SplashActivity extends Activity implements
                 return true;
             } else {
                // Log.v("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 4);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, LOCATION_REQUEST);
                 return false;
             }
         }else { //permission is automatically granted on sdk<23 upon installation
@@ -178,6 +180,29 @@ public class SplashActivity extends Activity implements
 
     }
 
+
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v("TAG","Permission is granted");
+                statusCheck();
+
+                return true;
+            } else {
+                Log.v("TAG","Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_REQUEST);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("TAG","Permission is granted");
+            statusCheck();
+            return true;
+        }
+
+    }
 
 
     public void statusCheck() {
@@ -392,27 +417,67 @@ public class SplashActivity extends Activity implements
 
 
 
-
     void checkUserStatus(){
-        if(!SharedPref.getUserName( SplashActivity.this).equals("") &&
-                !SharedPref.getPassword( SplashActivity.this).equals("")){
+        if (!SharedPref.getUserName(SplashActivity.this).equals("") &&
+                !SharedPref.getPassword(SplashActivity.this).equals("")) {
             // =============== Check storage permission =====================
-            if(Build.VERSION.SDK_INT < 23) {
+            if (Build.VERSION.SDK_INT < 23) {
                 statusCheck();
-            }else {
+            } else {
                 isStoragePermissionGranted();
             }
-        }else{
+        } else {
             if (global.checkPlayServices(getApplicationContext())) {
                 requestLocationPermission();
-            }else{
+            } else {
                 requestLocationWithoutPlayServices();
             }
         }
     }
 
 
-        void MoveToNextScreen(String screen){
+    void CheckPermissionViewStatus(){
+
+        if(SharedPref.getPermissionInfoViewStatus(this) == false){
+            try {
+                if (permissionInfoDialog != null && permissionInfoDialog.isShowing()) {
+                   Log.d("permissionInfoDialog", "already showing");
+                }else{
+                    permissionInfoDialog = new PermissionInfoDialog(SplashActivity.this, new TermsAgreeListener() );
+                    permissionInfoDialog.show();
+                }
+
+
+            } catch (final IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }else {
+            checkUserStatus();
+        }
+    }
+
+
+
+    /*================== Confirmation Listener ====================*/
+    private class TermsAgreeListener implements PermissionInfoDialog.TermsAgreeListener {
+
+
+        @Override
+        public void AgreeReady() {
+            // set view status true to avoid show this window next time
+            SharedPref.SetPermissionInfoViewStatus(true, SplashActivity.this);
+            checkUserStatus();
+
+            permissionInfoDialog.dismiss();
+
+        }
+    }
+
+
+
+    void MoveToNextScreen(String screen){
             if(screen.equals("home"))
                 i = new Intent(SplashActivity.this, TabAct.class);
             else
@@ -424,75 +489,6 @@ public class SplashActivity extends Activity implements
         }
 
 
-    public  boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v("TAG","Permission is granted");
-                requestPermission();
-
-                return true;
-            } else {
-                Log.v("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                return false;
-            }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("TAG","Permission is granted");
-            statusCheck();
-            return true;
-        }
-
-    }
-
-    public boolean requestPermissionForCamera(){
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.CAMERA)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v("TAG","Permission is granted");
-                statusCheck();
-
-                return true;
-            } else {
-                Log.v("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 3);
-                return false;
-            }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("TAG","Permission is granted");
-            statusCheck();
-            return true;
-        }
-
-
-    }
-
-    private boolean requestPermission(){
-
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                requestPermissionForCamera();
-
-                return true;
-            } else {
-                Log.v("TAG","Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 2);
-                return false;
-            }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("TAG","Permission is granted");
-            statusCheck();
-            return true;
-        }
-
-    }
-
 
 
 
@@ -503,32 +499,23 @@ public class SplashActivity extends Activity implements
 
         switch (requestCode) {
 
-            case 1:
+            case STORAGE_REQUEST:
                 if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
                     Log.v("TAG","Permission: "+permissions[0]+ "was "+grantResults[0]);
                     //resume tasks needing this permission
-                    requestPermission();
-                    //	checkPermissionForCamera();
+                    statusCheck();
+
+                }else{
+
                 }
                 break;
 
 
-            case 2:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.v("TAG","Permission: "+permissions[0]+ "was "+grantResults[0]);
-                    //		checkPermissionForCamera();
-                    requestPermissionForCamera();
-                }
-                break;
-
-            case 3:
-                Log.v("TAG","Permission Granted: ");
-                statusCheck();
-                break;
-
-            case 4:
+            case LOCATION_REQUEST:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     statusCheck();
+                }else{
+                    CheckUserCredientials();
                 }
                 break;
         }

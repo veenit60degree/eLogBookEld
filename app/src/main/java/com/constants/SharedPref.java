@@ -659,6 +659,28 @@ public class SharedPref {
     }
 
 
+
+
+    // Set Permission Info View Status -------------------
+    public static void SetPermissionInfoViewStatus( boolean value, Context context) {
+        if(context != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("PermissionInfoView", value);
+            editor.commit();
+        }
+    }
+
+
+    // Get  Permission Info View Status -------------------
+    public static boolean getPermissionInfoViewStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("PermissionInfoView", false);
+    }
+
+
+
+
     // Set notification Deleted -------------------
     public static void notificationDeleted( boolean value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1597,6 +1619,22 @@ public class SharedPref {
         return preferences.getInt("vss", -1);
     }
 
+
+
+
+    // Set VSS value -------------------
+    public static void setVehicleVin( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("VehicleVin", value);
+        editor.commit();
+    }
+
+    // Get VSS value -------------------
+    public static String getVehicleVin(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("VehicleVin", "");
+    }
 
 
 

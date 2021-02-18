@@ -178,6 +178,8 @@
     <color name="polygonViewCircleStrokeColor">#ff59a9ff</color>
     <color name="polygonViewCircleBackground">#90e5f8ff</color>
 
+    <color name="permissionTitle">#1C1A1A</color>
+    <color name="permissionDesc">#707070</color>
 
     <color name="colorDriving">#358A0D</color>
     <color name="colorOnDuty">#8083FF</color>

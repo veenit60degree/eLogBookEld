@@ -208,6 +208,10 @@ public class Slidingmenufunctions implements OnClickListener {
 				TabAct.host.setCurrentTab(6);
 				break;
 
+			case Constants.ALS_TERMS_COND:
+				TabAct.host.setCurrentTab(13);
+				break;
+
 			case Constants.LOGOUT:
 				logoutDialog();
 				break;

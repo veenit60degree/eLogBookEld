@@ -46,8 +46,8 @@ public class APIs {
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_DEV ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_DEV ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
 
@@ -127,6 +127,7 @@ public class APIs {
     public static String GET_SUGGESTED_RECORDS              = DOMAIN_URL_ELD + "GetSuggestedRecords";
     public static String SAVE_CERTIFY_SIGN_REJECTED_AUDIT   = DOMAIN_URL_ELD + "SaveCertifySignRejectedAudit";
     public static String GET_DRIVER_SETTINGS                = DOMAIN_URL_ELD + "GetDriverSettings";
+    public static String GET_DRIVER_DEVICE_ID               = DOMAIN_URL_ELD + "GetDriverDeviceId";
 
 
 }

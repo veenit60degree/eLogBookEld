@@ -387,6 +387,11 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         intent = new Intent(TabAct.this, MalfunctionActivity.class);
         malfunctionSpec.setContent(intent);
 
+        TabHost.TabSpec TermsConditionsSpec = host.newTabSpec("TermsConditions_tab");
+        TermsConditionsSpec.setIndicator("", getResources().getDrawable(R.drawable.als_logo));
+        intent = new Intent(TabAct.this, TermsConditionsActivity.class);
+        TermsConditionsSpec.setContent(intent);
+
 
 
         // Add Tab specs in TabHost
@@ -403,6 +408,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         host.addTab(eldDocSpec);
         host.addTab(unidentifiedSpec);
         host.addTab(malfunctionSpec);
+        host.addTab(TermsConditionsSpec);
 
         host.getTabWidget().setVisibility(View.GONE);
         Globally.hideSoftKeyboard(TabAct.this);

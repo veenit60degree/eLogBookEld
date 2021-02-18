@@ -189,7 +189,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         sendLogScrollView   = (ScrollView)findViewById(R.id.sendLogScrollView);
 
         locLogAutoComplete.setThreshold(3);
-
+        countryLayout.setVisibility(View.GONE);
 
         if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
             MaxDays = UsaMaxDays;

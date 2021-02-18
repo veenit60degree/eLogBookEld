@@ -131,6 +131,9 @@
 
     </style>
 
+
+
+
     <!-- Base application theme. -->
     <style name="AppThemeLogin" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -144,7 +147,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccentTextHover</item>
+        <item name="colorAccent">@color/hos_send_log</item>
         <item name="android:textColorHint">@color/colorAccentTextHover</item>
     </style>
 

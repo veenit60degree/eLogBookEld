@@ -26,6 +26,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -48,6 +50,8 @@ import com.constants.SharedPref;
 import com.constants.Utils;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.local.db.ConstantsKeys;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
@@ -62,7 +66,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LoginActivity extends FragmentActivity implements OnClickListener {
+public class LoginActivity extends FragmentActivity implements OnClickListener, GoogleApiClient.ConnectionCallbacks,
+		GoogleApiClient.OnConnectionFailedListener{
 
 	EditText userNameText, passwordText, coDriverUserNameText, coDriverPasswordText;
 	TextView driverTitleTV, appVersion, appTypeView;
@@ -213,26 +218,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 		});
 
 
-/*		mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-
-				// checking for type intent filter
-				if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
-					// gcm successfully registered. Now subscribe to `global` topic to receive app wide notifications
-					FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
-
-					*//* ============== Get Device Token For Notification ============ *//*
-					GetDeviceTokenForNotification();
-
-				}
-			}
-		};*/
-
-
-		/* ============== Get Device Token For Notification ============ */
-		//GetDeviceTokenForNotification();
-
 		// Get Phone Number from Sim Card
 		getMyPhoneNumber();
 
@@ -243,6 +228,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 			}
 		}
 
+
 	}
 
 
@@ -250,35 +236,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
         return Build.VERSION.SDK_INT >= 19;
     }
 
-
-    public void setFullscreen(Activity activity) {
-        if (Build.VERSION.SDK_INT > 10) {
-            int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-            if (isImmersiveAvailable()) {
-                flags |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            }
-
-            activity.getWindow().getDecorView().setSystemUiVisibility(flags);
-        } else {
-            activity.getWindow()
-                    .setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-    }
-
-
-/*
-	void GetDeviceTokenForNotification() {
-
-		SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
-		global.registrationId = pref.getString("regId", null);
-		sharedPref.SetSystemToken(global.registrationId, LoginActivity.this);
-
-		Log.e("FCM_token", "FCM token: " + global.registrationId);
-
-	}
-*/
 
 
 	public boolean isStoragePermissionGranted() {
@@ -324,7 +281,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 
 
 
-	public boolean requestPermissionForCamera() {
+/*	public boolean requestPermissionForCamera() {
 
 		if (Build.VERSION.SDK_INT >= 23) {
 			if (checkSelfPermission(Manifest.permission.CAMERA)
@@ -344,7 +301,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 			return true;
 		}
 
-	}
+	}*/
 
 
 	public boolean requestPermissionPhone() {
@@ -376,7 +333,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 		if (Build.VERSION.SDK_INT >= 23) {
 			if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
 					== PackageManager.PERMISSION_GRANTED) {
-				requestPermissionForCamera();
+				requestPermissionPhone();
 
 				return true;
 			} else {
@@ -425,16 +382,16 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 			case 2:
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
-					requestPermissionForCamera();
+					requestPermissionPhone();
 				}
 				break;
 
-			case 3:
+		/*	case 3:
 				Log.v("TAG", "Permission Granted: ");
 				requestPermissionPhone();
 
 				break;
-
+*/
 
 			case 5:
 				Log.v("TAG", "Permission Granted: ");
@@ -645,6 +602,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 									sharedPref.setSuggestedRecallStatusCo(true, getApplicationContext());
 									sharedPref.setUnidentifiedAlertViewStatus(true, getApplicationContext());
 									sharedPref.setUnidentifiedAlertViewStatusCo(true, getApplicationContext());
+									sharedPref.setVehicleVin("", getApplicationContext());
 
 
 									new ParseLoginJsonData().execute();
@@ -879,6 +837,20 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 
 	}
 
+	@Override
+	public void onConnected(@Nullable Bundle bundle) {
+
+	}
+
+	@Override
+	public void onConnectionSuspended(int i) {
+
+	}
+
+	@Override
+	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+	}
 
 
 	private class ParseLoginJsonData extends AsyncTask<String, String, String> {
@@ -1097,7 +1069,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener {
 			Sim2 					= checkNullStatus(Sim2);
 			operatorSIM				= checkNullStatus(operatorSIM);
 			Sim1SerialNumber		= checkNullStatus(Sim1SerialNumber);
-			MobileNo				= checkNullStatus(MobileNo);
+			//MobileNo				= checkNullStatus(MobileNo);
 
 
 			if(Sim1.length() > 0){

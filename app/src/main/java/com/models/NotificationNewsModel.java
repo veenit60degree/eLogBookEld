@@ -17,4 +17,6 @@ public class NotificationNewsModel {
     public String getNotificationDesc() {
         return notificationDesc;
     }
+
+
 }

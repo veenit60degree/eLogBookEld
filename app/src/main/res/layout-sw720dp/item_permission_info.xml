@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/margin_25"
+    >
+
+
+    <TextView
+        android:id="@+id/permissionTitleTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/permissionTitle"
+        android:textSize="@dimen/view_height_35"
+        android:textStyle="bold"
+        android:text="@string/RecordStatus"
+        android:layout_marginTop="@dimen/margin_20"
+        android:layout_marginBottom="@dimen/margin_20"
+
+        />
+
+
+    <ImageView
+        android:id="@+id/permissionImgView"
+        android:layout_width="@dimen/view_height_340"
+        android:layout_height="@dimen/view_height_290"
+        android:src="@drawable/permsn_storage"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/view_height_40"
+        android:layout_marginTop="@dimen/view_height_70"
+
+
+        />
+
+
+
+        <TextView
+            android:id="@+id/permissionDescTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/permissionDesc"
+            android:layout_marginTop="@dimen/margin_short_5"
+            android:textSize="@dimen/text_size_20"
+            android:layout_below="@+id/permissionTitleTV"
+            android:layout_toLeftOf="@+id/permissionImgView"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="@dimen/margin_25"
+
+
+            />
+
+</RelativeLayout>
+
+
+
+

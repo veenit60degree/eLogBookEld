@@ -90,6 +90,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     String DriverId;
     String DeviceId;
     String CycleId;
+    String vin = "";
 
     long MIN_TIME_BW_UPDATES = 60000;  // 60 Sec
     final int OFF_DUTY = 1;
@@ -328,6 +329,14 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
              sendLogHosBtn.setCardBackgroundColor(getResources().getColor(R.color.silver));
 
         }
+
+        if(sharedPref.getVehicleVin(getActivity()).length() > 0){
+            vin = "(" + sharedPref.getVehicleVin(getActivity())+ ")";
+        }
+
+      //  String distanceAndVin = "(" + StartOdometer + " - " + EndOdometer + ") = <b>" + Miles + " Miles </b>" + vin;
+      //  hosDistanceTV.setText(Html.fromHtml(distanceAndVin));
+
 
         editLogAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -968,6 +977,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
                     case GetMiles:
                         Log.d("getMiles", "response: " + response);
+
+
                         try {
 
                             if(isRefreshBtnClicked){
@@ -979,11 +990,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                 String StartOdometer = dataObj.getString("StartOdometer");
                                 String EndOdometer = dataObj.getString("EndOdometer");
 
-
-                                hosDistanceTV.setText(Html.fromHtml("(" + StartOdometer + " - " + EndOdometer + ") = <b>" + Miles + " Miles </b>"));
+                                String distanceAndVin = "(" + StartOdometer + " - " + EndOdometer + ") = <b>" + Miles + " Miles </b>" + vin;
+                                hosDistanceTV.setText(Html.fromHtml(distanceAndVin));
                             }
                         }catch (Exception e){
-                            hosDistanceTV.setText(Html.fromHtml(" <b>" + "-- </b>"));
+                            hosDistanceTV.setText(Html.fromHtml(" <b>" + "-- </b>" + vin));
                             e.printStackTrace();
                         }
                         break;
