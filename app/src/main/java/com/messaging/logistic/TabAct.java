@@ -1,7 +1,6 @@
 package com.messaging.logistic;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
@@ -11,10 +10,8 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;

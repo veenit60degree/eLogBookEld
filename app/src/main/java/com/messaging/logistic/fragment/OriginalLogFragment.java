@@ -44,7 +44,7 @@ public class OriginalLogFragment extends Fragment {
     WebView editLogWebView;
     LinearLayout editedItemMainLay, editedLogMainLay;
     VolleyRequest GetLogRequest;
-
+    boolean isAPILoading = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,7 +84,9 @@ public class OriginalLogFragment extends Fragment {
         if(selectedArray.length() > 0){
             loadData();
         }else{
-            GET_DRIVER_LOG(SuggestedLogFragment.LogDate);
+            if(!isAPILoading) {
+                GET_DRIVER_LOG(SuggestedLogFragment.LogDate);
+            }
         }
 
         return rootView;
@@ -125,6 +127,7 @@ public class OriginalLogFragment extends Fragment {
     /* ================== Get Driver Details =================== */
     void GET_DRIVER_LOG(final String date) {
 
+        isAPILoading = true;
         Map<String, String> params = new HashMap<String, String>();
         params.put("DriverId", DriverId);
         params.put("ProjectId", Globally.PROJECT_ID);

@@ -4,7 +4,7 @@ package com.shared.pref;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.driver.details.TimeZoneModel;
+import com.models.TimeZoneModel;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

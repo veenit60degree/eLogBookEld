@@ -2,7 +2,7 @@ package com.local.db;
 
 import android.database.Cursor;
 
-import com.driver.details.EldDriverLogModel;
+import com.models.EldDriverLogModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;

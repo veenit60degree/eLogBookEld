@@ -3,10 +3,8 @@ package com.custom.dialogs;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.driver.details.DriverConst;
-import com.messaging.logistic.EldActivity;
 import com.messaging.logistic.R;
 
 public class LoginDialog extends Dialog {

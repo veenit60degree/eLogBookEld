@@ -1,6 +1,5 @@
 package com.constants;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,13 +13,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -34,7 +31,6 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.background.service.BackgroundLocationService;
 import com.custom.dialogs.LoginDialog;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
@@ -42,22 +38,18 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
-import com.local.db.SyncingMethod;
 import com.messaging.logistic.Globally;
-import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.EldDataModelNew;
-import com.models.SlideMenuModel;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

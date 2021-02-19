@@ -692,13 +692,15 @@
                         />
 
                     <TextView
+                        android:id="@+id/driverMilesTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/hos_driver_miles"
                         android:textColor="@color/black_hos"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/text_size_16"
+                        android:textSize="@dimen/text_size_15"
                         android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_2"
+
                         />
 
                 </LinearLayout>
@@ -759,7 +761,7 @@
                             android:text="@string/CurrentLocation"
                             android:textColor="@color/black_hos"
                             android:textStyle="bold"
-                            android:textSize="@dimen/text_size_16"
+                            android:textSize="@dimen/text_size_15"
                             android:paddingLeft="@dimen/margin_short_3"
                             />
 

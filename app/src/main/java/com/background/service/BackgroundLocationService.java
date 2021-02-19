@@ -3,7 +3,6 @@ package com.background.service;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,7 +35,6 @@ import com.constants.AsyncResponse;
 import com.constants.CheckConnectivity;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
-import com.constants.DownloadAppService;
 import com.constants.DriverLogResponse;
 import com.constants.RequestResponse;
 import com.constants.SaveDriverLogPost;
@@ -73,7 +71,6 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
 import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.EldFragment;
 import com.models.EldDataModelNew;
 import com.notifications.NotificationManagerSmart;
 import com.shared.pref.CoDriverEldPref;
@@ -94,10 +91,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -349,6 +344,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
 
 
+    //    saveDayStartOdometer("960005.115");
+    //    sharedPref.setHighPrecisionOdometer("975515.815", global.GetCurrentDateTime(), getApplicationContext());
     }
 
 
@@ -440,6 +437,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     double obdOdometerDouble  = Double.parseDouble(currentHighPrecisionOdometer);
                     String previousHighPrecisionOdometer = sharedPref.getHighPrecisionOdometer(getApplicationContext());
 
+                    // save current odometer for HOS calculation
+                    saveDayStartOdometer(currentHighPrecisionOdometer);
+
                     String savedDate = sharedPref.getHighPrecesionSavedTime(getApplicationContext());
                     String currentLogDate = global.GetCurrentDateTime();
 
@@ -448,6 +448,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         savedDate = currentLogDate;
                         sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
                     }
+
 
                     // calculating speed to comparing last saved odometer and current odometer (in meter) with time differencein seconds
                     double calculatedSpeedFromOdo = constants.calculateSpeedFromWiredTabOdometer(savedDate, currentLogDate,
@@ -550,7 +551,24 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
+    void saveDayStartOdometer(String currentHighPrecisionOdometer){
+        String savedDate = sharedPref.getDayStartSavedTime(getApplicationContext());
+        String currentLogDate = global.GetCurrentDateTime();
+        try {
+            int odometerInMiles = constants.meterToMiles(Integer.valueOf(currentHighPrecisionOdometer));
 
+            if (savedDate.length() > 0) {
+                int dayDiff = constants.getDayDiff(savedDate, currentLogDate);
+                if (dayDiff != 0) {
+                    sharedPref.setDayStartOdometer(""+odometerInMiles, currentLogDate, getApplicationContext());
+                }
+            } else {
+                sharedPref.setDayStartOdometer(""+odometerInMiles, currentLogDate, getApplicationContext());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     // calculate speed from wifi OBD odometers (in meters) with time difference (in sec)
     private double calculateSpeedFromWifiObdOdometer(String savedTime, String previousHighPrecisionOdometer,
@@ -2031,6 +2049,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             saveObdData(constants.WifiOBD, vin, obdOdometer, HighPrecisionOdometer, rawResponse.trim() + ",  "+speedCalculated,
                     correctedData, ignition, truckRPM, String.valueOf(speed), String.valueOf((int)speedCalculated),
                     tripDistance, currentLogDate, savedTime);
+
+            // save current odometer for HOS calculation
+            double dayStartOdometer = Double.parseDouble(HighPrecisionOdometer) * 1000;
+            saveDayStartOdometer(""+dayStartOdometer);
+
         }
 
         String jobType = sharedPref.getDriverStatusId("jobType", getApplicationContext());

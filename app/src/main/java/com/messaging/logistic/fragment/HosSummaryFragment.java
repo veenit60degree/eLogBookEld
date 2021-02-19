@@ -72,7 +72,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     View rootView;
     Button availableHourBtnTV;
     TextView EldTitleTV, hosDistanceTV, hosLocationTV, nextBrkTitleTV;
-    TextView breakUsedTimeTV, shiftUsedTimeTV, statusUsedTimeTV, cycleUsedTimeTV, hosCurrentCycleTV;
+    TextView breakUsedTimeTV, shiftUsedTimeTV, statusUsedTimeTV, cycleUsedTimeTV, hosCurrentCycleTV, driverMilesTitle;
     TextView statusHosTV, breakInfoTV, shiftInfoTV, statusInfoTV, cycleInfoTV, hosStatusCircle, hosStatusTV, malfunctionTV ;
     ImageView eldMenuBtn, hosStatusImgVw, malfunctionImgView;
     LoadingSpinImgView loadingSpinEldIV;
@@ -201,6 +201,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         hosStatusTV             = (TextView)v.findViewById(R.id.hosStatusTV);
         nextBrkTitleTV          = (TextView)v.findViewById(R.id.nextBrkTitleTV);
         malfunctionTV           = (TextView)v.findViewById(R.id.malfunctionTV);
+        driverMilesTitle        = (TextView)v.findViewById(R.id.driverMilesTitle);
 
         availableHourBtnTV      = (Button)v.findViewById(R.id.availableHourBtnTV);
 
@@ -237,6 +238,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         setMarqueText(hosLocationTV);
         setMarqueText(hosDistanceTV);
+        setMarqueText(driverMilesTitle);
 
         if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
@@ -302,6 +304,21 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         currentStatusCircularView.setSeekModeEnabled(false);
         cycleCircularView.setSeekModeEnabled(false);
 
+        if(sharedPref.getVehicleVin(getActivity()).length() > 3){
+            vin = "(<b>VIN</b>-" + sharedPref.getVehicleVin(getActivity())+ ")";   // getting from OBD directly (Cuurent VIN)
+        }else{
+            vin = "(<b>VIN</b>-" + sharedPref.getVINNumber(getActivity()) + ")";   // getting from truck selection when user select Truck and getting its VIN
+        }
+
+   /*     String s= getString(R.string.hos_driver_miles);
+        SpannableString ss1=  new SpannableString(s);
+        ss1.setSpan(new RelativeSizeSpan(2f), 0,5, 0); // set size
+        ss1.setSpan(new ForegroundColorSpan(Color.RED), 0, 5, 0);// set color
+        TextView tv= (TextView) findViewById(R.id.textview);
+        tv.setText(ss1);
+*/
+        driverMilesTitle.setText(Html.fromHtml("<b>" + getString(R.string.hos_driver_miles) + "</b> " + vin) );
+
         CycleTimeCalculation(true);
 
         setDataOnStatusView(DRIVER_JOB_STATUS);
@@ -329,13 +346,6 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
              sendLogHosBtn.setCardBackgroundColor(getResources().getColor(R.color.silver));
 
         }
-
-        if(sharedPref.getVehicleVin(getActivity()).length() > 0){
-            vin = "(" + sharedPref.getVehicleVin(getActivity())+ ")";
-        }
-
-      //  String distanceAndVin = "(" + StartOdometer + " - " + EndOdometer + ") = <b>" + Miles + " Miles </b>" + vin;
-      //  hosDistanceTV.setText(Html.fromHtml(distanceAndVin));
 
 
         editLogAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -670,10 +680,39 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    void calculateLocalOdometersDistance(){
+        try{
+
+            String dayStartSavedDate    = sharedPref.getDayStartSavedTime(getActivity());
+            String dayStartOdometerStr  = sharedPref.getDayStartOdometer(getActivity());
+            String currentOdometerStr   = sharedPref.getHighPrecisionOdometer(getActivity());
+
+            if(dayStartSavedDate.length() > 0) {
+                int dayDiff = constants.getDayDiff(dayStartSavedDate, currentOdometerStr);
+                if (dayDiff == 0) {
+                    if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE) {
+                        if (currentOdometerStr.contains(".")) {
+                            currentOdometerStr = "" + Double.parseDouble(currentOdometerStr) * 1000;
+                        }
+                    }
+
+                    int currentOdometerInMiles = constants.meterToMiles(Integer.valueOf(currentOdometerStr));
+                    int distanceInMiles = currentOdometerInMiles - Integer.valueOf(dayStartOdometerStr);
+
+                    String distanceAndVin = "(" + dayStartOdometerStr + " - " + currentOdometerInMiles + ") = <b>" + distanceInMiles + " Miles </b>";
+                    hosDistanceTV.setText(Html.fromHtml(distanceAndVin));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     void CycleTimeCalculation(boolean isUpdateUI ) {
 
         try {
+
+            calculateLocalOdometersDistance();
 
             if (isUpdateUI && global.isConnected(getActivity())) {
                 GetAddFromLatLng();
@@ -904,7 +943,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
     //*================== Get Engine Miles===================*//*
     void GetEngineMiles() {
-        String CompanyId    = DriverConst.GetDriverDetails(com.driver.details.DriverConst.CompanyId, getActivity());
+        String CompanyId    = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
         String VIN          = DriverConst.GetDriverTripDetails(DriverConst.VIN, getActivity());
 
         // get device current date and day start UTC date
@@ -990,11 +1029,15 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                 String StartOdometer = dataObj.getString("StartOdometer");
                                 String EndOdometer = dataObj.getString("EndOdometer");
 
-                                String distanceAndVin = "(" + StartOdometer + " - " + EndOdometer + ") = <b>" + Miles + " Miles </b>" + vin;
-                                hosDistanceTV.setText(Html.fromHtml(distanceAndVin));
+
+                                String distance = "(" + StartOdometer + " - " + EndOdometer + ") = <b>" + Miles + " Miles </b>" ;
+                                hosDistanceTV.setText(Html.fromHtml(distance));
+
+                                // saved day start odometer locally to calculate distance
+                                sharedPref.setDayStartOdometer(StartOdometer, global.GetCurrentDateTime(), getActivity());
                             }
                         }catch (Exception e){
-                            hosDistanceTV.setText(Html.fromHtml(" <b>" + "-- </b>" + vin));
+                            hosDistanceTV.setText(Html.fromHtml(" <b>" + "-- </b>" ));
                             e.printStackTrace();
                         }
                         break;

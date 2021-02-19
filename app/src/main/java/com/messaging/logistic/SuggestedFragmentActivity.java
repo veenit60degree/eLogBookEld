@@ -35,8 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import interfaces.DriverStatus;
-
 public class SuggestedFragmentActivity extends FragmentActivity {
 
     ImageView menuImageView;

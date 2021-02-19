@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.driver.details.EldDriverLogModel;
+import com.models.EldDriverLogModel;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 

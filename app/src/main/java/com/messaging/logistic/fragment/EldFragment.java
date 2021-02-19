@@ -72,7 +72,7 @@ import com.custom.dialogs.TrailorDialog;
 import com.custom.dialogs.VehicleDialog;
 import com.custom.dialogs.VehicleDialogLogin;
 import com.driver.details.DriverConst;
-import com.driver.details.EldDriverLogModel;
+import com.models.EldDriverLogModel;
 import com.driver.details.ParseLoginDetails;
 import com.local.db.CTPatInspectionMethod;
 import com.local.db.ConstantsKeys;
@@ -1074,8 +1074,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void moveToDotMode(String date, String dayName, String dayFullName, String dayShortName, String cycle){
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
 
-      //  CanadaDotFragment dotFragment = new CanadaDotFragment();
-        DotWebViewFragment dotFragment = new DotWebViewFragment();
+        CanadaDotFragment dotFragment = new CanadaDotFragment();
+       // DotWebViewFragment dotFragment = new DotWebViewFragment();
         Globally.bundle.putString("date", date);
         Globally.bundle.putString("day_name", dayName);
         Globally.bundle.putString("month_full_name", dayFullName);
@@ -2212,20 +2212,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             DateTime lastSavedRefreshTime = Global.getDateTimeObj(lastRefreshTime, false);
             DateTime currentTime = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), false);
 
-            int minDiff = currentTime.getMinuteOfDay() - lastSavedRefreshTime.getMinuteOfDay();
-            if (minDiff > 0) {  // 1 min diff
+            int secDiff = currentTime.getSecondOfDay() - lastSavedRefreshTime.getSecondOfDay();
+            if (secDiff > 20) {  // 1 min diff
                 onResumeDataSet(isConnected);
                 sharedPref.setRefreshDataTime(Global.GetCurrentUTCTimeFormat(), getActivity());
                 IsRefreshedClick = true;
                 GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
             } else {
-                if (minDiff < 0) {
-                    sharedPref.setRefreshDataTime(Global.GetCurrentUTCTimeFormat(), getActivity());
-                }else{
+               // sharedPref.setRefreshDataTime(Global.GetCurrentUTCTimeFormat(), getActivity());
+                if(!IsRefreshedClick)
                     loadingSpinEldIV.stopAnimation();
-                }
-
-                Global.EldScreenToast(OnDutyBtn, getString(R.string.already_refreshed), getResources().getColor(R.color.color_eld_theme));
+                Global.EldScreenToast(OnDutyBtn, getString(R.string.already_refreshed), getResources().getColor(R.color.colorSleeper));
             }
 
         } else {

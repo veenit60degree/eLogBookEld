@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.constants.Constants;
 import com.messaging.logistic.R;
+import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
 
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.List;
 public class CanDotLogInOutAdapter extends BaseAdapter {
 
     private Context mContext;
-    private final List<PrePostModel> itemsList;
+    private final List<CanadaDutyStatusModel> itemsList;
     LayoutInflater mInflater;
     Constants constants;
 
-    public CanDotLogInOutAdapter(Context c, List<PrePostModel> list) {
+    public CanDotLogInOutAdapter(Context c, List<CanadaDutyStatusModel> list) {
         mContext = c;
         itemsList = list;
         mInflater = LayoutInflater.from(mContext);
@@ -88,17 +89,17 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
 
         holder.logInOutDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateDotTV.setText(itemsList.get(position).getName());
-        holder.eventLoginDotTV.setText(itemsList.get(position).getName());
-        holder.addInfoDotTV.setText(itemsList.get(position).getName());
+        holder.dateDotTV.setText(itemsList.get(position).getEventDate());
+        holder.eventLoginDotTV.setText(itemsList.get(position).getEventCode());
+        holder.addInfoDotTV.setText(itemsList.get(position).getAdditionalInfo());
 
-        holder.cmvLoginDotTV.setText(itemsList.get(position).getName());
-        holder.diatanceTotalLoginDotTV.setText(itemsList.get(position).getName());
-        holder.hrsTotalLoginDotTV.setText(itemsList.get(position).getName());
+        holder.cmvLoginDotTV.setText(itemsList.get(position).getCMVVIN());
+        holder.diatanceTotalLoginDotTV.setText(itemsList.get(position).getDistanceInKM());
+        holder.hrsTotalLoginDotTV.setText(itemsList.get(position).getTotalEngineHours());
 
-        holder.recStatusLoginDotTV.setText(itemsList.get(position).getName());
-        holder.recOriginLoginDotTV.setText(itemsList.get(position).getName());
-        holder.seqNoDotTV.setText(itemsList.get(position).getName());
+        holder.recStatusLoginDotTV.setText(itemsList.get(position).getRecordStatus());
+        holder.recOriginLoginDotTV.setText(itemsList.get(position).getRecordOrigin());
+        holder.seqNoDotTV.setText(itemsList.get(position).getSequenceNumber());
 
 
         // Set text style normal

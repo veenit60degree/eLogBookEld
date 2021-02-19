@@ -694,13 +694,17 @@
                             android:background="@drawable/circular_view_distance" />
 
                         <TextView
+                            android:id="@+id/driverMilesTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="@dimen/margin_short_5"
                             android:text="@string/hos_driver_miles"
                             android:textColor="@color/black_hos"
-                            android:textSize="@dimen/text_size_23"
-                            android:textStyle="bold" />
+                            android:textSize="@dimen/text_size_20"
+                            android:paddingRight="@dimen/margin_short_5"
+
+
+                            />
 
                     </LinearLayout>
 
@@ -711,7 +715,7 @@
                         android:paddingLeft="@dimen/margin_20"
                         android:text="@string/temp_value"
                         android:textColor="@color/gray_hos"
-                        android:textSize="@dimen/text_size_20"
+                        android:textSize="@dimen/text_size_19"
 
                         />
 
@@ -762,7 +766,7 @@
                             android:text="@string/CurrentLocation"
                             android:textColor="@color/black_hos"
                             android:textStyle="bold"
-                            android:textSize="@dimen/text_size_23"
+                            android:textSize="@dimen/text_size_20"
                             android:paddingLeft="@dimen/margin_short_5"
                             />
 
@@ -774,7 +778,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/temp_value"
                         android:textColor="@color/gray_hos"
-                        android:textSize="@dimen/text_size_20"
+                        android:textSize="@dimen/text_size_19"
                         android:paddingLeft="@dimen/margin_20"
 
                         />

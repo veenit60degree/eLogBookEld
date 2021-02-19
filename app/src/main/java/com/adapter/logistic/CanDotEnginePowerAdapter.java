@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.constants.Constants;
 import com.messaging.logistic.R;
+import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
 
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.List;
 public class CanDotEnginePowerAdapter extends BaseAdapter {
 
     private Context mContext;
-    private final List<PrePostModel> itemsList;
+    private final List<CanadaDutyStatusModel> itemsList;
     LayoutInflater mInflater;
     Constants constants;
 
-    public CanDotEnginePowerAdapter(Context c, List<PrePostModel> list) {
+    public CanDotEnginePowerAdapter(Context c, List<CanadaDutyStatusModel> list) {
         mContext = c;
         itemsList = list;
         mInflater = LayoutInflater.from(mContext);
@@ -86,16 +87,16 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
 
         holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateTimeEDotTV.setText(itemsList.get(position).getName());
-        holder.eventDotETV.setText(itemsList.get(position).getName());
-        holder.jeoLocEDotTV.setText(itemsList.get(position).getName());
+        holder.dateTimeEDotTV.setText(itemsList.get(position).getEventDate());
+        holder.eventDotETV.setText(itemsList.get(position).getEventCode());
+        holder.jeoLocEDotTV.setText(itemsList.get(position).getGPSLatitude() + ", " + itemsList.get(position).getGPSLongitude());
 
-        holder.distanceAccDotTV.setText(itemsList.get(position).getName());
-        holder.cmvEDotTV.setText(itemsList.get(position).getName());
-        holder.distanceTotalEDotTV.setText(itemsList.get(position).getName());
+        holder.distanceAccDotTV.setText(itemsList.get(position).getDistanceInKM());
+        holder.cmvEDotTV.setText(itemsList.get(position).getCMVVIN());
+        holder.distanceTotalEDotTV.setText(itemsList.get(position).getTotalEngineHours());
 
-        holder.hoursTotalEDotTV.setText(itemsList.get(position).getName());
-        holder.seqNoEDotTV.setText(itemsList.get(position).getName());
+        holder.hoursTotalEDotTV.setText(itemsList.get(position).getTotalEngineHours());
+        holder.seqNoEDotTV.setText(itemsList.get(position).getSequenceNumber());
 
 
         // Set text style normal

@@ -1,4 +1,4 @@
-package com.driver.details;
+package com.models;
 
 /**
  * Created by kumar on 9/7/2017.

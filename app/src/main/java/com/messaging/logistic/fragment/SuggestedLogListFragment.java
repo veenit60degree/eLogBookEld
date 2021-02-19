@@ -24,7 +24,6 @@ import com.local.db.ConstantsKeys;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SuggestedLogListFragment extends Fragment implements View.OnClickListener {

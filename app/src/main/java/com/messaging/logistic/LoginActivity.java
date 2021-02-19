@@ -2,7 +2,6 @@ package com.messaging.logistic;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,7 +16,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -522,6 +520,28 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		return val.trim();
 	}
 
+	private void resetValues(){
+		try {
+			sharedPref.SetCycleOfflineDetails("[]", getApplicationContext());
+			sharedPref.SetNewLoginStatus(true, getApplicationContext());
+			sharedPref.setLastUsageDataSavedTime("", getApplicationContext());
+			sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
+			sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
+			sharedPref.setRefreshDataTime("", getApplicationContext());
+			sharedPref.setDayStartOdometer("0", "", getApplicationContext());
+			sharedPref.setCertifyAlertViewTime("", getApplicationContext());
+			sharedPref.setEldOccurences(false, false, false, false, getApplicationContext());
+			sharedPref.setEldOccurencesCo(false, false, false, false, getApplicationContext());
+			sharedPref.setSuggestedRecallStatus(true, getApplicationContext());
+			sharedPref.setSuggestedRecallStatusCo(true, getApplicationContext());
+			sharedPref.setUnidentifiedAlertViewStatus(true, getApplicationContext());
+			sharedPref.setUnidentifiedAlertViewStatusCo(true, getApplicationContext());
+			sharedPref.setVehicleVin("", getApplicationContext());
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
 
 	void LoginUser(final String DeviceId, final String username, final String pass, final String CoDriverUsername,
 				   final String CoDriverPassword, final String TeamDriverType, final String OSType,
@@ -589,21 +609,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 									// reset user data
 									Constants.IS_ELD_ON_CREATE = true;
-									sharedPref.SetCycleOfflineDetails("[]", getApplicationContext());
-									sharedPref.SetNewLoginStatus(true, getApplicationContext());
-									sharedPref.setLastUsageDataSavedTime("", getApplicationContext());
-									sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
-									sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
-									sharedPref.setRefreshDataTime("", getApplicationContext());
-									sharedPref.setCertifyAlertViewTime("", getApplicationContext());
-									sharedPref.setEldOccurences(false, false, false, false, getApplicationContext());
-									sharedPref.setEldOccurencesCo(false, false, false, false, getApplicationContext());
-									sharedPref.setSuggestedRecallStatus(true, getApplicationContext());
-									sharedPref.setSuggestedRecallStatusCo(true, getApplicationContext());
-									sharedPref.setUnidentifiedAlertViewStatus(true, getApplicationContext());
-									sharedPref.setUnidentifiedAlertViewStatusCo(true, getApplicationContext());
-									sharedPref.setVehicleVin("", getApplicationContext());
 
+									resetValues();
 
 									new ParseLoginJsonData().execute();
 

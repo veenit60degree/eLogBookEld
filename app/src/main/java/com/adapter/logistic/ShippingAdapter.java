@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.constants.APIs;
 import com.constants.Constants;
@@ -20,15 +19,12 @@ import com.constants.RequestResponse;
 import com.constants.SharedPref;
 import com.constants.ShippingPost;
 import com.custom.dialogs.EditShippingDialog;
-import com.custom.dialogs.VehicleDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.ShipmentHelperMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.fragment.InspectionFragment;
 import com.models.ShipmentModel;
 
 import org.json.JSONArray;

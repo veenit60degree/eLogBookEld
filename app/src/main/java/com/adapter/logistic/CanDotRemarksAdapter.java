@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.constants.Constants;
 import com.messaging.logistic.R;
+import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
 
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.List;
 public class CanDotRemarksAdapter extends BaseAdapter {
 
     private Context mContext;
-    private final List<PrePostModel> itemsList;
+    private final List<CanadaDutyStatusModel> itemsList;
     LayoutInflater mInflater;
     Constants constants;
 
-    public CanDotRemarksAdapter(Context c, List<PrePostModel> list) {
+    public CanDotRemarksAdapter(Context c, List<CanadaDutyStatusModel> list) {
         mContext = c;
         itemsList = list;
         mInflater = LayoutInflater.from(mContext);
@@ -82,12 +83,12 @@ public class CanDotRemarksAdapter extends BaseAdapter {
 
         holder.remarksAnoDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateRemarksDotTV.setText(itemsList.get(position).getName());
-        holder.timeDotTV.setText(itemsList.get(position).getName());
-        holder.usernameDotTV.setText(itemsList.get(position).getName());
+        holder.dateRemarksDotTV.setText(itemsList.get(position).getRemarks());
+        holder.timeDotTV.setText(itemsList.get(position).getEventTime());
+        holder.usernameDotTV.setText(itemsList.get(position).getUserName());
 
-        holder.sqNoRemDotTV.setText(itemsList.get(position).getName());
-        holder.commAnotnDotTV.setText(itemsList.get(position).getName());
+        holder.sqNoRemDotTV.setText(itemsList.get(position).getSequenceNumber());
+        holder.commAnotnDotTV.setText(itemsList.get(position).getAnnotation());
 
         // Set text style normal
         constants.setTextStyleNormal(holder.dateRemarksDotTV);

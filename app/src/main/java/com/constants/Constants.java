@@ -36,6 +36,7 @@ import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
+import com.models.CanadaDutyStatusModel;
 import com.models.EldDataModelNew;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
@@ -51,6 +52,7 @@ import com.shared.pref.MainDriverEldPref;
 import com.shared.pref.NotificationPref;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.Minutes;
 import org.joda.time.Seconds;
 import org.json.JSONArray;
@@ -933,6 +935,28 @@ public class Constants {
     public static double kmToMiles(double distanceInKm) {
         // double miles=distanceInKm/1.609;
         return distanceInKm * 0.621371;
+    }
+
+
+    public static int meterToMiles(int meters){
+        double meters2miles = 1609.344;
+        int miles = (int) (meters / meters2miles);
+       // Log.d("miles", "miles: " + miles);
+
+        return miles;
+    }
+
+    public static int getDayDiff(String savedDate, String currentDate){
+        int dayDiff = -1;
+        try {
+            DateTime savedDateTime = Globally.getDateTimeObj(savedDate, false);
+            DateTime currentDateTime = Globally.getDateTimeObj(currentDate, false);
+            dayDiff = Days.daysBetween(savedDateTime.toLocalDate(), currentDateTime.toLocalDate()).getDays();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return dayDiff;
     }
 
 
@@ -2607,4 +2631,87 @@ public class Constants {
         textView.setTextColor(Color.parseColor("#354365"));
     }
 //textView.setTypeface(null, Typeface.NORMAL);
+
+
+
+    public List<CanadaDutyStatusModel> parseCanadaDotInList(JSONArray logArray){
+
+        List<CanadaDutyStatusModel> dotLogList = new ArrayList<>();
+
+        try{
+            for(int i = 0 ; i< logArray.length() ; i++) {
+                JSONObject obj = (JSONObject)logArray.get(i);
+                CanadaDutyStatusModel dutyModel = new CanadaDutyStatusModel(
+                        obj.getString(ConstantsKeys.DateTimeWithMins),
+                        obj.getString(ConstantsKeys.EventUTCTimeStamp),
+                        obj.getString(ConstantsKeys.DriverStatusID),
+
+                        obj.getInt(ConstantsKeys.EventType),
+                        obj.getInt(ConstantsKeys.EventCode),
+                        obj.getInt(ConstantsKeys.DutyMinutes),
+
+                        obj.getString(ConstantsKeys.Annotation),
+                        obj.getString(ConstantsKeys.EventDate),
+                        obj.getString(ConstantsKeys.EventTime),
+                        obj.getString(ConstantsKeys.AccumulatedVehicleMiles),
+                        obj.getString(ConstantsKeys.AccumulatedEngineHours),
+                        obj.getString(ConstantsKeys.TotalVehicleMiles),
+                        obj.getString(ConstantsKeys.TotalEngineHours),
+                        obj.getString(ConstantsKeys.GPSLatitude),
+                        obj.getString(ConstantsKeys.GPSLongitude),
+                        obj.getString(ConstantsKeys.CMVVIN),
+                        obj.getString(ConstantsKeys.CarrierName),
+
+                        obj.getBoolean(ConstantsKeys.IsMalfunction),
+
+                        obj.getString(ConstantsKeys.OdometerInKm),
+                        obj.getString(ConstantsKeys.strEventType),
+                        obj.getString(ConstantsKeys.Origin),
+                        obj.getString(ConstantsKeys.StartTime),
+                        obj.getString(ConstantsKeys.EndTime),
+                        obj.getString(ConstantsKeys.OBDDeviceDataId),
+                        obj.getString(ConstantsKeys.CurrentObdDeviceDataId),
+                        obj.getString(ConstantsKeys.DriverLogId),
+                        obj.getString(ConstantsKeys.Truck),
+                        obj.getString(ConstantsKeys.Trailor),
+                        obj.getString(ConstantsKeys.Remarks),
+                        obj.getString(ConstantsKeys.DriverId),
+
+                        obj.getBoolean(ConstantsKeys.IsPersonal),
+                        obj.getBoolean(ConstantsKeys.IsYard),
+
+                        obj.getString(ConstantsKeys.IsStatusAutomatic),
+
+                        obj.getInt(ConstantsKeys.CurrentCycleId),
+                        obj.getInt(ConstantsKeys.SequenceNumber),
+
+                        obj.getString(ConstantsKeys.TotalVehicleKM),
+                        obj.getString(ConstantsKeys.AdditionalInfo),
+                        obj.getString(ConstantsKeys.EditedById),
+                        obj.getString(ConstantsKeys.UserName),
+
+                        obj.getInt(ConstantsKeys.RecordStatus),
+
+                        obj.getString(ConstantsKeys.DistanceSinceLastValidCord),
+                        obj.getString(ConstantsKeys.RecordOrigin),
+                        obj.getString(ConstantsKeys.DistanceInKM),
+                        obj.getString(ConstantsKeys.HexaSeqNumber),
+                        obj.getString(ConstantsKeys.OrderBy),
+                        obj.getString(ConstantsKeys.OnDutyHours),
+                        obj.getString(ConstantsKeys.OffDutyHours),
+                        obj.getString(ConstantsKeys.TruckEquipmentNo),
+                        obj.getString(ConstantsKeys.WorkShiftStart),
+                        obj.getString(ConstantsKeys.WorkShiftEnd)
+
+                );
+
+                dotLogList.add(dutyModel);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return dotLogList;
+    }
+
+
 }

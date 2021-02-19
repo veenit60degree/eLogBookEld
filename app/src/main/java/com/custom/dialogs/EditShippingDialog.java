@@ -13,9 +13,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.driver.details.DriverConst;
-import com.local.db.DBHelper;
-import com.local.db.ShipmentHelperMethod;
 import com.messaging.logistic.R;
 
 public class EditShippingDialog extends Dialog {

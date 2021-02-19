@@ -10,9 +10,8 @@ import com.background.service.BackgroundLocationService;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
-import com.driver.details.EldDriverLogModel;
+import com.models.EldDriverLogModel;
 import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.DriverLogModel;
 import com.models.EldDataModelNew;
@@ -1487,7 +1486,12 @@ public class HelperMethods {
                         OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
                 String isAdverseException = "", adverseExceptionRemark = "";
 
-                if(startDateTime.getDayOfMonth() == selectedDate.getDayOfMonth()) {
+                int startDayOfMonth = startDateTime.getDayOfMonth();
+                int selectedDayOfMonth = selectedDate.getDayOfMonth();
+                int startMonthOfYear = startDateTime.getMonthOfYear();
+                int selectedMonthOfYear = selectedDate.getMonthOfYear();
+
+                if(startMonthOfYear == selectedMonthOfYear && startDayOfMonth == selectedDayOfMonth) {
                     JSONObject driverLogJson = new JSONObject();
 
                     driverLogJson.put(ConstantsKeys.DriverLogId, logObj.getLong(ConstantsKeys.DriverLogId));

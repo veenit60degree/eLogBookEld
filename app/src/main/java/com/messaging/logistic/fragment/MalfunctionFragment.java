@@ -1,7 +1,6 @@
 package com.messaging.logistic.fragment;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -15,13 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adapter.logistic.MalfunctionAdapter;
-import com.adapter.logistic.MalfunctionDataAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
@@ -38,7 +35,6 @@ import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
-import com.models.UnIdentifiedRecordModel;
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;

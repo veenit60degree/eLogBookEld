@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.adapter.logistic.SupportAdapter;
 import com.constants.SharedPref;
-import com.driver.details.SupportModel;
+import com.models.SupportModel;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.SupportMethod;

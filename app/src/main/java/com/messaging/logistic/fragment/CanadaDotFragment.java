@@ -38,9 +38,11 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.constants.WebAppInterface;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.EldActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
 
 import org.joda.time.DateTime;
@@ -87,6 +89,12 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
     CanDotEnginePowerAdapter canDotEnginePowerAdapter;
     CanDotLogInOutAdapter canDotLogInOutAdapter;
     CanDotRemarksAdapter canDotRemarksAdapter;
+
+    List<CanadaDutyStatusModel> DutyStatusList = new ArrayList();
+    List<CanadaDutyStatusModel> LoginLogoutList = new ArrayList();
+    List<CanadaDutyStatusModel> CommentsRemarksList = new ArrayList();
+    List<CanadaDutyStatusModel> AdditionalHoursList = new ArrayList();
+    List<CanadaDutyStatusModel> EnginePowerList = new ArrayList();
 
     String DefaultLine      = " <g class=\"event \">\n";
     String ViolationLine    = " <g class=\"event line-red\">\n";
@@ -224,7 +232,6 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
         initilizeWebView();
         ReloadWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
 
-        tempSetAdapter();
 
         if (global.isConnected(getActivity())) {
 
@@ -292,19 +299,13 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    void tempSetAdapter(){
+    void setdataOnAdapter(){
 
-        List<PrePostModel> list = new ArrayList<>();
-        list.add(new PrePostModel("0", "abc"));
-        list.add(new PrePostModel("1", "def"));
-        list.add(new PrePostModel("2", "mno"));
-        list.add(new PrePostModel("3", "xyz"));
-
-        canDotAddHrsAdapter = new CanDotAddHrsAdapter(getActivity(), list);
-        canDotDutyStatusAdapter = new CanDotDutyStatusAdapter(getActivity(), list);
-        canDotEnginePowerAdapter = new CanDotEnginePowerAdapter(getActivity(), list);
-        canDotLogInOutAdapter = new CanDotLogInOutAdapter(getActivity(), list);
-        canDotRemarksAdapter = new CanDotRemarksAdapter(getActivity(), list);
+        canDotDutyStatusAdapter = new CanDotDutyStatusAdapter(getActivity(), DutyStatusList);
+        canDotLogInOutAdapter = new CanDotLogInOutAdapter(getActivity(), LoginLogoutList);
+        canDotRemarksAdapter = new CanDotRemarksAdapter(getActivity(), CommentsRemarksList);
+        canDotAddHrsAdapter = new CanDotAddHrsAdapter(getActivity(), AdditionalHoursList);
+        canDotEnginePowerAdapter = new CanDotEnginePowerAdapter(getActivity(), EnginePowerList);
 
         dutyChangeDotListView.setAdapter(canDotDutyStatusAdapter);
         remAnotnDotListView.setAdapter(canDotRemarksAdapter);
@@ -337,15 +338,20 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
 
         }
 
-        final int Height      = (inspectionLayHeight ) * list.size();
+        final int DutyStatusListHeight      = (inspectionLayHeight ) * DutyStatusList.size();
+        final int LoginLogoutListHeight      = (inspectionLayHeight ) * LoginLogoutList.size();
+        final int CommentsRemarksListHeight      = (inspectionLayHeight ) * CommentsRemarksList.size();
+        final int AdditionalHoursListHeight      = (inspectionLayHeight ) * AdditionalHoursList.size();
+        final int EnginePowerListHeight      = (inspectionLayHeight ) * EnginePowerList.size();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                dutyChangeDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
-                remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
-                addHrsDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
-                loginLogDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
-                enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
+                dutyChangeDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DutyStatusListHeight  ));
+                loginLogDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LoginLogoutListHeight  ));
+                remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CommentsRemarksListHeight  ));
+                addHrsDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AdditionalHoursListHeight  ));
+                enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, EnginePowerListHeight  ));
 
             }
         },500);
@@ -527,6 +533,58 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    void setDataOnTextView(JSONObject dataObj){
+        try{
+            dateRodsTV.setText(dataObj.getString("RecordDate"));
+            dayStartTimeTV.setText(dataObj.getString("PeriodStartingTime"));
+            timeZoneCTV.setText(dataObj.getString("TimeZone"));
+            currLocCTV.setText(dataObj.getString("CurrentLocation"));
+            //commentCTV.setText(dataObj.getString(""));
+            //dateTimeCTV.setText(dataObj.getString(""));
+
+            driverNameCTV.setText(dataObj.getString("DriverLastAndFirstName"));
+            driverIdCTV.setText(dataObj.getString("DriverLoginId"));
+            exemptDriverCTV.setText(dataObj.getString("ExemptDriverStatus"));
+            driLicNoCTV.setText(dataObj.getString("DriverLicenseNumber "));
+            coDriverNameCTV.setText(dataObj.getString("CoDriverLastAndFirstName"));
+            coDriverIdCTV.setText(dataObj.getString("CoDriverLoginId"));
+
+            truckTractorIdTV.setText(dataObj.getString(""));
+            truckTractorVinTV.setText(dataObj.getString(""));
+            totalDisCTV.setText(dataObj.getString(""));
+            distanceTodayCTV.setText(dataObj.getString(""));
+            currTotalDisTV.setText(dataObj.getString(""));
+            currTotalEngTV.setText(dataObj.getString(""));
+
+            trailerIdCTV.setText(dataObj.getString(""));
+            carrierNameCTV.setText(dataObj.getString(""));
+            carrierHomeTerCTV.setText(dataObj.getString(""));
+            carrierPrinPlaceCTV.setText(dataObj.getString(""));
+            currOperZoneCTV.setText(dataObj.getString(""));
+            curreCycleCTV.setText(dataObj.getString(""));
+
+            totalHrsCTV.setText(dataObj.getString(""));
+            totalhrsCycleCTV.setText(dataObj.getString(""));
+            remainingHourCTV.setText(dataObj.getString(""));
+            offDutyDeffCTV.setText(dataObj.getString(""));
+
+            datDiagCTV.setText(dataObj.getString("DataDiagnosticIndicators"));
+            unIdenDriRecCTV.setText(dataObj.getString("UnIdentifiedDriverRecords"));
+
+            malfStatusCTV.setText(dataObj.getString("ELDMalfunctionIndicators"));
+            eldIdCTV.setText(dataObj.getString("ELDID"));
+            eldProviderCTV.setText(dataObj.getString("ELDManufacturer"));
+
+            //eldCerCTV.setText(dataObj.getString(""));
+           // eldAuthCTV.setText(dataObj.getString(""));
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
 
     VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback(){
 
@@ -557,6 +615,13 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
                 TotalDrivingHours        = "00:00";
                 TotalOffDutyHours        = "00:00";
                 TotalSleeperBerthHours   = "00:00";
+
+                DutyStatusList = new ArrayList();
+                LoginLogoutList = new ArrayList();
+                CommentsRemarksList = new ArrayList();
+                AdditionalHoursList = new ArrayList();
+                EnginePowerList = new ArrayList();
+
 
                 try {
                     TotalOffDutyHours       = dataObj.getString("TotalOffDutyHours");
@@ -589,6 +654,23 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
                     }else{
                         dotMalfunctionTV.setVisibility(View.GONE);
                     }*/
+
+                    JSONArray dutyStatusArray = new JSONArray(dataObj.getString(ConstantsKeys.dutyStatusChangesList));
+                    JSONArray loginLogoutArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutList));
+                   // JSONArray ChangeInDriversCycleList = new JSONArray(dataObj.getString(ConstantsKeys.ChangeInDriversCycleList));
+                    JSONArray commentsRemarksArray = new JSONArray(dataObj.getString(ConstantsKeys.commentsRemarksList));
+                    JSONArray additionalHoursArray = new JSONArray(dataObj.getString(ConstantsKeys.additionalHoursNotRecordedList));
+                    JSONArray enginePowerArray = new JSONArray(dataObj.getString(ConstantsKeys.enginePowerUpAndShutDownList));
+
+                    DutyStatusList =   constants.parseCanadaDotInList(dutyStatusArray);
+                    LoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray);
+                    CommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray);
+                    AdditionalHoursList = constants.parseCanadaDotInList(additionalHoursArray);
+                    EnginePowerList = constants.parseCanadaDotInList(enginePowerArray);
+
+
+                    setdataOnAdapter();
+
 
                 }catch (Exception e){
                     e.printStackTrace();

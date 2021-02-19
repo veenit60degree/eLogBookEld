@@ -22,7 +22,7 @@ public class TermsConditionsActivity extends FragmentActivity {
 
     WebView termsCondWebView;
     RelativeLayout rightMenuBtn, eldMenuLay;
-    TextView EldTitleTV;
+    TextView EldTitleTV, dateActionBarTV;
     ImageView eldMenuBtn;
     ProgressBar termsCondProgressBar;
     String URl = "https://alsrealtime.com/PrivacyPolicy.html";
@@ -36,6 +36,8 @@ public class TermsConditionsActivity extends FragmentActivity {
 
         termsCondWebView    = (WebView)findViewById(R.id.termsCondWebView);
         EldTitleTV          = (TextView)findViewById(R.id.EldTitleTV);
+        dateActionBarTV     = (TextView) findViewById(R.id.dateActionBarTV);
+
         eldMenuBtn          = (ImageView)findViewById(R.id.eldMenuBtn);
 
         eldMenuLay          = (RelativeLayout)findViewById(R.id.eldMenuLay);
@@ -50,8 +52,14 @@ public class TermsConditionsActivity extends FragmentActivity {
                 SharedPref.getPassword(this).equals("")) {
             eldMenuBtn.setImageResource(R.drawable.back_white);
             isLoggedIn = false;
+
         }else{
             isLoggedIn = true;
+
+            dateActionBarTV.setVisibility(View.VISIBLE);
+            dateActionBarTV.setBackgroundResource(R.drawable.transparent);
+            dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+
         }
 
         WebSettings webSettings = termsCondWebView.getSettings();
@@ -93,8 +101,28 @@ public class TermsConditionsActivity extends FragmentActivity {
         });
 
 
+        dateActionBarTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TabAct.host.setCurrentTab(0);
+            }
+        });
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(SharedPref.IsAOBRD(TermsConditionsActivity.this)) {
+            dateActionBarTV.setText(getString(R.string.aobrd));
+        }else{
+            dateActionBarTV.setText(getString(R.string.eld));
+        }
+
+
+
+    }
 
     @Override
     public void onBackPressed() {

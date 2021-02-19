@@ -7,12 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.SharedPref;
-import com.driver.details.SupportModel;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.SavedInspectionModel;

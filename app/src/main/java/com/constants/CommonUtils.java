@@ -1,14 +1,11 @@
 package com.constants;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 
 import com.driver.details.DriverConst;
 import com.messaging.logistic.Globally;
-import com.messaging.logistic.TabAct;
 
 public class CommonUtils {
 

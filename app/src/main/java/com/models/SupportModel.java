@@ -1,4 +1,4 @@
-package com.driver.details;
+package com.models;
 
 public class SupportModel {
 

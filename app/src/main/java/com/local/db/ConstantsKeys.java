@@ -366,4 +366,59 @@ public class ConstantsKeys {
     public static String IsClearDiagnosticCo            = "IsClearDiagnosticCo";
     public static String DriverIdDiaMalCo               = "DriverIdDiaMalCo";
 
+
+    public static String DateTimeWithMins               = "DateTimeWithMins";
+    public static String EventUTCTimeStamp              = "EventUTCTimeStamp";
+    public static String EventType                      = "EventType";
+    public static String DutyMinutes                    = "DutyMinutes";
+
+    public static String Annotation                     = "Annotation";
+    public static String EventDate                      = "EventDate";
+    public static String EventTime                      = "EventTime";
+    public static String AccumulatedVehicleMiles        = "AccumulatedVehicleMiles";
+    public static String AccumulatedEngineHours         = "AccumulatedEngineHours";
+    public static String TotalVehicleMiles              = "TotalVehicleMiles";
+    public static String TotalEngineHours               = "TotalEngineHours";
+    public static String GPSLatitude                    = "GPSLatitude";
+    public static String GPSLongitude                   = "GPSLongitude";
+    public static String CMVVIN                         = "CMVVIN";
+
+    public static String OdometerInKm                   = "OdometerInKm";
+    public static String strEventType                   = "strEventType";
+    public static String Origin                         = "Origin";
+    public static String StartTime                      = "StartTime";
+    public static String EndTime                        = "EndTime";
+    public static String OBDDeviceDataId                = "OBDDeviceDataId";
+    public static String CurrentObdDeviceDataId         = "CurrentObdDeviceDataId";
+    public static String IsYard                         = "IsYard";
+
+
+    public static String SequenceNumber                 = "SequenceNumber";
+
+    public static String TotalVehicleKM                 = "TotalVehicleKM";
+    public static String AdditionalInfo                 = "AdditionalInfo";
+    public static String EditedById                     = "EditedById";
+
+    public static String RecordStatus                   = "RecordStatus";
+
+    public static String DistanceSinceLastValidCord     = "DistanceSinceLastValidCord";
+    public static String RecordOrigin                   = "RecordOrigin";
+    public static String DistanceInKM                   = "DistanceInKM";
+    public static String HexaSeqNumber                  = "HexaSeqNumber";
+    public static String OrderBy                        = "OrderBy";
+    public static String OnDutyHours                    = "OnDutyHours";
+    public static String OffDutyHours                   = "OffDutyHours";
+    public static String TruckEquipmentNo               = "TruckEquipmentNo";
+    public static String WorkShiftStart                 = "WorkShiftStart";
+    public static String WorkShiftEnd                   = "WorkShiftEnd";
+
+    public static String dutyStatusChangesList          = "dutyStatusChangesList";
+    public static String loginAndLogoutList             = "loginAndLogoutList";
+    public static String ChangeInDriversCycleList       = "ChangeInDriversCycleList";
+    public static String commentsRemarksList            = "commentsRemarksList";
+    public static String additionalHoursNotRecordedList = "additionalHoursNotRecordedList";
+    public static String enginePowerUpAndShutDownList   = "enginePowerUpAndShutDownList";
+
+
+
 }

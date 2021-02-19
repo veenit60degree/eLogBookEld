@@ -1,20 +1,15 @@
 package com.messaging.logistic.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,7 +21,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.adapter.logistic.DriverLogAdapter;
 import com.adapter.logistic.EditItemTouchHelperCallback;
 import com.adapter.logistic.EditLogRecyclerViewAdapter;
 import com.adapter.logistic.OnStartDragListener;
@@ -41,10 +35,8 @@ import com.constants.SwipeToDeleteCallback;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.EditLogPreviewDialog;
 import com.custom.dialogs.EditLogRemarksDialog;
-import com.drag.SwipeAndDragHelper;
 import com.drag.slide.listview.Menu;
 import com.drag.slide.listview.MenuItem;
-import com.drag.slide.listview.SlideAndDragListView;
 import com.drag.slide.listview.Utils;
 import com.driver.details.DriverConst;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -57,7 +49,6 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.DriverLogModel;
 import com.models.EldDataModelNew;
-import com.models.Notification18DaysModel;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
 

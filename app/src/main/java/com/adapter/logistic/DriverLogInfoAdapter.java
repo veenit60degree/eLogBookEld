@@ -5,12 +5,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
+
 import androidx.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,44 +22,28 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
-import com.constants.ConstantsEnum;
 import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
-import com.constants.VolleyRequest;
 import com.custom.dialogs.DriverLocationDialog;
-import com.custom.dialogs.ShareDriverLogDialog;
 import com.custom.dialogs.TrailorDialog;
-import com.driver.details.EldDriverLogModel;
+import com.models.EldDriverLogModel;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.local.db.UpdateLogRecordMethod;
 import com.messaging.logistic.Globally;
-import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.DriverLogDetailFragment;
-import com.messaging.logistic.fragment.EldFragment;
 import com.models.DriverLocationModel;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.MultipartBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class DriverLogInfoAdapter extends BaseAdapter {
 

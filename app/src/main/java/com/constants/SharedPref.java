@@ -1669,12 +1669,34 @@ public class SharedPref {
 
 
 
-
-    // Set High Precision Odometer value  -------------------
-    public static void setHighPrecisionOdometer( String value, String savedTime, Context context) {
+    // Set Day start Odometer value  -------------------
+    public static void setDayStartOdometer( String odometer, String savedTime, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("highPrecisionOdometer", value);
+        editor.putString("dayStartOdometer", odometer);
+        editor.putString("dayStartSavedTime", savedTime);
+        editor.commit();
+    }
+
+
+    // Get Day start Odometer value -------------------
+    public static String getDayStartOdometer(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("dayStartOdometer", "0");
+    }
+
+    // Get Day start Odometer Saved time -------------------
+    public static String getDayStartSavedTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("dayStartSavedTime", "");
+    }
+
+
+    // Set High Precision Odometer value  -------------------
+    public static void setHighPrecisionOdometer( String odometer, String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("highPrecisionOdometer", odometer);
         editor.putString("HighPrecesionSavedTime", savedTime);
         editor.commit();
     }

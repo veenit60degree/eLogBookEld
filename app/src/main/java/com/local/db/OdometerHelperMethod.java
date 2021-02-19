@@ -2,8 +2,6 @@ package com.local.db;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
-import android.view.View;
 
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;

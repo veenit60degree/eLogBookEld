@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.constants.Constants;
 import com.messaging.logistic.R;
+import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
 
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.List;
 public class CanDotAddHrsAdapter extends BaseAdapter {
 
     private Context mContext;
-    private final List<PrePostModel> itemsList;
+    private final List<CanadaDutyStatusModel> itemsList;
     LayoutInflater mInflater;
     Constants constants;
 
-    public CanDotAddHrsAdapter(Context c, List<PrePostModel> list) {
+    public CanDotAddHrsAdapter(Context c, List<CanadaDutyStatusModel> list) {
         mContext = c;
         itemsList = list;
         mInflater = LayoutInflater.from(mContext);
@@ -89,15 +90,16 @@ public class CanDotAddHrsAdapter extends BaseAdapter {
 
         holder.addHrsDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateDotTV.setText(itemsList.get(position).getName());
-        holder.shiftStartDotTV.setText(itemsList.get(position).getName());
-        holder.shiftEndDotTV.setText(itemsList.get(position).getName());
-        holder.totalHrOnDutyDotTV.setText(itemsList.get(position).getName());
-        holder.totalHrOffDutyDotTV.setText(itemsList.get(position).getName());
-        holder.cmvAHDotTV.setText(itemsList.get(position).getName());
-        holder.recStatusAHDotTV.setText(itemsList.get(position).getName());
-        holder.recOriginAHDotTV.setText(itemsList.get(position).getName());
-        holder.seqNoDotTV.setText(itemsList.get(position).getName());
+        holder.dateDotTV.setText(itemsList.get(position).getEventDate());
+        holder.shiftStartDotTV.setText(itemsList.get(position).getWorkShiftStart());
+        holder.shiftEndDotTV.setText(itemsList.get(position).getWorkShiftEnd());
+        holder.totalHrOnDutyDotTV.setText(itemsList.get(position).getOnDutyHours());
+        holder.totalHrOffDutyDotTV.setText(itemsList.get(position).getOffDutyHours());
+
+        holder.cmvAHDotTV.setText(itemsList.get(position).getCMVVIN());
+        holder.recStatusAHDotTV.setText(itemsList.get(position).getRecordStatus());
+        holder.recOriginAHDotTV.setText(itemsList.get(position).getRecordOrigin());
+        holder.seqNoDotTV.setText(itemsList.get(position).getSequenceNumber());
 
 
         // Set text style normal

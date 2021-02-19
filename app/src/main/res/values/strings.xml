@@ -598,7 +598,7 @@
 
 
     <string name="already_uploading">Please wait! Data saving in progress</string>
-    <string name="already_refreshed">Data already refreshed. Please wait after 1 min</string>
+    <string name="already_refreshed">Please wait. Data is refreshing</string>
     <string name="wired_active">Wired tablet is active</string>
     <string name="wired_inactive">Wired tablet is not working</string>
     <string name="wifi">WiFi</string>
