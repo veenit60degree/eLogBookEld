@@ -32,6 +32,7 @@ import com.constants.Constants;
 import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
+import com.driver.details.DriverConst;
 import com.local.db.CertifyLogMethod;
 import com.local.db.DBHelper;
 import com.local.db.RecapViewMethod;
@@ -74,7 +75,7 @@ public class SignRecordDialog extends Dialog {
     JSONArray recap18DaysArray = new JSONArray();
     ArrayList<String> selectedDateList = new ArrayList<>();
 
-    String DriverId, DeviceId, imagePath = "", LogSignImageInByte = "";
+    String DriverId, DeviceId, imagePath = "", LogSignImageInByte = "", CompanyId;
     boolean isCertifySignExist;
     AlertDialog alertDialog;
     SignDialog signDialog;
@@ -114,8 +115,9 @@ public class SignRecordDialog extends Dialog {
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Loading...");
 
-        DeviceId               = sharedPref.GetSavedSystemToken(context);
-        DriverId               = sharedPref.getDriverId(context);
+        DeviceId           = sharedPref.GetSavedSystemToken(context);
+        DriverId           = sharedPref.getDriverId(context);
+        CompanyId          = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
 
         this.recap18DaysArray = recap18DaysArray;
 
@@ -365,10 +367,10 @@ public class SignRecordDialog extends Dialog {
             boolean isReCertifyRequired = constants.isReCertifyRequired(getContext(), null, Globally.ConvertDateFormat(dateStr));
             if(i == 0) {
                 CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, Globally.PROJECT_ID, dateStr,
-                        SignImageInBytes, IsContinueWithSign, isReCertifyRequired);
+                        SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId);
             }else{
                 CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, Globally.PROJECT_ID, dateStr,
-                        SignImageInBytes, true, isReCertifyRequired);
+                        SignImageInBytes, true, isReCertifyRequired, CompanyId);
             }
             CertifyLogArray.put(CertifyLogObj);
 

@@ -26,9 +26,9 @@ public class CommonUtils {
 			if(densityDpi <= 220){
 				SingleDriverMenuWidth = 355;
 				DualDriverMenuWidth   = 460;
-			}else if (densityDpi > 300 && densityDpi <= 340){
-				SingleDriverMenuWidth = 770;
-				DualDriverMenuWidth   = 840;
+			}else if (densityDpi >= 240 && densityDpi <= 340){
+				SingleDriverMenuWidth = 470;
+				DualDriverMenuWidth   = 540;
 			}
 
 			if(SharedPref.getDriverType(mContext).equals(DriverConst.SingleDriver)){

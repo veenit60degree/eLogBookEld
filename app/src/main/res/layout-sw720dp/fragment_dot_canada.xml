@@ -35,20 +35,64 @@
 
         >
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/color_eld_theme"
-        android:textSize="@dimen/text_size_30"
-        android:text="@string/ELDViewLog"
-        android:padding="@dimen/margin_20"
-        android:layout_marginTop="@dimen/margin_15"
-        android:layout_marginBottom="@dimen/margin_11"
-        android:background="@color/whiteee"
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_80"
+            android:background="@color/whiteee"
+            android:layout_marginTop="@dimen/margin_18"
 
 
-        android:textStyle="bold"
-        />
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_eld_theme"
+                android:textSize="@dimen/text_size_33"
+                android:text="@string/ELDViewLogCanada"
+                android:paddingLeft="@dimen/margin_25"
+                android:background="@color/whiteee"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+
+
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_eld_theme"
+                android:textSize="@dimen/text_size_29"
+                android:text="@string/dot_mode_canada"
+                android:textStyle="bold"
+                android:layout_centerInParent="true"
+
+
+                />
+
+
+            <TextView
+                android:id="@+id/canSendLogBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_21"
+                android:text="@string/Send_Log"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/margin_19"
+                android:paddingRight="@dimen/margin_19"
+                android:textColor="@color/whiteee"
+                android:paddingTop="@dimen/margin_11"
+                android:paddingBottom="@dimen/margin_11"
+                android:background="@drawable/green_eld_drawable"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/margin_20"
+
+                />
+
+
+        </RelativeLayout>
 
 
 
@@ -1632,19 +1676,6 @@
             >
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_22"
-                android:textColor="@color/blue_button"
-                android:text="@string/comments_remarks_desc"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_10"
-                android:paddingBottom="@dimen/margin_15"
-                android:textStyle="bold"
-
-                />
-
             <include
                 layout="@layout/item_remarks_ano_dot"
                 />
@@ -1658,7 +1689,21 @@
                 android:minHeight="@dimen/view_height_30"
 
 
-                />
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_15"
+                    android:text="@string/comments_remarks_desc"
+                    android:textColor="@color/blue_button"
+                    android:textSize="@dimen/text_size_22"
+                    android:textStyle="bold"
+
+                    />
+            </ListView>
 
 
         </LinearLayout>

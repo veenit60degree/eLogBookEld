@@ -1,5 +1,6 @@
 package com.messaging.logistic.fragment;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.adapter.logistic.CanDotAddHrsAdapter;
 import com.adapter.logistic.CanDotDutyStatusAdapter;
@@ -32,18 +35,26 @@ import com.adapter.logistic.CanDotLogInOutAdapter;
 import com.adapter.logistic.CanDotRemarksAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.ConstantHtml;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.constants.WebAppInterface;
+import com.custom.dialogs.DatePickerDialog;
+import com.custom.dialogs.ShareDriverLogDialog;
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
+import com.local.db.HelperMethods;
 import com.messaging.logistic.EldActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.CanadaDutyStatusModel;
-import com.models.PrePostModel;
+import com.models.DriverLocationModel;
+import com.shared.pref.StatePrefManager;
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -57,22 +68,25 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
     View rootView;
 
+    HelperMethods hMethods;
     TextView dateRodsTV, dayStartTimeTV, timeZoneCTV, currLocCTV, commentCTV, dateTimeCTV;
     TextView driverNameCTV, driverIdCTV, exemptDriverCTV, driLicNoCTV, coDriverNameCTV, coDriverIdCTV;
-    TextView viewMoreTV, EldTitleTV;
+    TextView viewMoreTV, EldTitleTV, canSendLogBtn, viewInspectionBtn;
     TextView truckTractorIdTV, truckTractorVinTV, totalDisCTV, distanceTodayCTV, currTotalDisTV, currTotalEngTV;
     TextView trailerIdCTV, carrierNameCTV, carrierHomeTerCTV, carrierPrinPlaceCTV, currOperZoneCTV, curreCycleCTV;
     TextView totalHrsCTV, totalhrsCycleCTV, remainingHourCTV, offDutyDeffCTV, datDiagCTV, unIdenDriRecCTV;
     TextView malfStatusCTV, eldIdCTV, eldProviderCTV, eldCerCTV, eldAuthCTV;
     RelativeLayout eldMenuLay, rightMenuBtn;
     LinearLayout canDotViewMorelay, enginePwrDotLay;
-    ImageView eldMenuBtn;
+    ImageView eldMenuBtn, nextDateBtn, previousDateBtn;
+
     WebView canDotGraphWebView;
     ProgressBar canDotProgressBar;
     ScrollView canDotScrollView;
@@ -95,6 +109,18 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     List<CanadaDutyStatusModel> CommentsRemarksList = new ArrayList();
     List<CanadaDutyStatusModel> AdditionalHoursList = new ArrayList();
     List<CanadaDutyStatusModel> EnginePowerList = new ArrayList();
+
+    DatePickerDialog dateDialog;
+    ShareDriverLogDialog shareDialog;
+    List<String> StateArrayList = new ArrayList<>();
+    List<DriverLocationModel> StateList = new ArrayList<>();
+
+    int SelectedDayOfMonth  = 0;
+    int UsaMaxDays          = 7;
+    int CanMaxDays          = 14;
+    int MaxDays;
+
+    String DayName, MonthFullName , MonthShortName , CurrentCycleId, CountryCycle;
 
     String DefaultLine      = " <g class=\"event \">\n";
     String ViolationLine    = " <g class=\"event line-red\">\n";
@@ -136,7 +162,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 parent.removeView(rootView);
         }
         try {
-            rootView = inflater.inflate(R.layout.fragment_canada_dot, container, false);
+            rootView = inflater.inflate(R.layout.fragment_dot_canada, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         } catch (InflateException e) {
             e.printStackTrace();
@@ -151,6 +177,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     void initView(View view) {
 
+        hMethods            = new HelperMethods();
         constants           = new Constants();
         global              = new Globally();
         sharedPref          = new SharedPref();
@@ -199,6 +226,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         viewMoreTV          = (TextView)view.findViewById(R.id.viewMoreTV);
         EldTitleTV          = (TextView)view.findViewById(R.id.EldTitleTV);
+        canSendLogBtn       = (TextView)view.findViewById(R.id.canSendLogBtn);
+        viewInspectionBtn   = (TextView)view.findViewById(R.id.dateActionBarTV);
 
         dutyChangeDotListView= (ListView)view.findViewById(R.id.dutyChangeDotListView);
         remAnotnDotListView  = (ListView)view.findViewById(R.id.remAnotnDotListView);
@@ -213,37 +242,37 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         rightMenuBtn        = (RelativeLayout)view.findViewById(R.id.rightMenuBtn);
 
         eldMenuBtn          = (ImageView)view.findViewById(R.id.eldMenuBtn);
+        nextDateBtn         = (ImageView)view.findViewById(R.id.nextDateBtn);
+        previousDateBtn     = (ImageView)view.findViewById(R.id.previousDate);
+
         canDotGraphWebView  = (WebView)view.findViewById(R.id.canDotGraphWebView);
         canDotProgressBar   = (ProgressBar)view.findViewById(R.id.canDotProgressBar);
         canDotScrollView    = (ScrollView)view.findViewById(R.id.canDotScrollView);
 
 
         eldMenuBtn.setImageResource(R.drawable.back_btn);
-        EldTitleTV.setText(getResources().getString(R.string.CanadaELDViewLog));
         viewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_more) + "</u>"));
-
         rightMenuBtn.setVisibility(View.GONE);
+        viewInspectionBtn.setText(getResources().getString(R.string.view_inspections));
+        viewInspectionBtn.setVisibility(View.VISIBLE);
 
-        CurrentDate             = global.GetCurrentDeviceDate();
-        DeviceId                = sharedPref.GetSavedSystemToken(getActivity());
-        DriverId               = sharedPref.getDriverId( getActivity());
-
-
+        getBundleData();
         initilizeWebView();
         ReloadWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
 
 
         if (global.isConnected(getActivity())) {
 
-            /*String selectedDateStr = global.ConvertDateFormat(LogDate);
+            String selectedDateStr = global.ConvertDateFormat(LogDate);
             String currentDateStr = global.ConvertDateFormat(CurrentDate);
             DateTime selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
             DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
             int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
             Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
+
             DOTBtnVisibility(DaysDiff, MaxDays);
-            */
-            LogDate = "02/02/2021";
+
+            //LogDate = "02/02/2021";
             GetDriverDotDetails(DriverId, LogDate);
 
         }else{
@@ -253,14 +282,111 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         eldMenuLay.setOnClickListener(this);
         viewMoreTV.setOnClickListener(this);
+        nextDateBtn.setOnClickListener(this);
+        previousDateBtn.setOnClickListener(this);
+        EldTitleTV.setOnClickListener(this);
+        canSendLogBtn.setOnClickListener(this);
+        viewInspectionBtn.setOnClickListener(this);
 
     }
+
+
+        private void getBundleData() {
+
+            CurrentDate             = global.GetCurrentDeviceDate();
+            DeviceId                = sharedPref.GetSavedSystemToken(getActivity());
+            DriverId               = sharedPref.getDriverId( getActivity());
+
+            Bundle getBundle = this.getArguments();
+            LogDate = getBundle.getString("date");
+            DayName = getBundle.getString("day_name");
+            MonthFullName = getBundle.getString("month_full_name");
+            MonthShortName = getBundle.getString("month_short_name");
+            CurrentCycleId = getBundle.getString("cycle");
+            SelectedDayOfMonth = getBundle.getInt("day_of_month");
+            CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
+
+            CurrentDate = global.GetCurrentDeviceDate();
+
+            try {
+                DBHelper dbHelper = new DBHelper(getActivity());
+                DriverPermissionMethod driverPermissionMethod = new DriverPermissionMethod();
+                JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
+                CanMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, true);
+
+                if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
+                    MaxDays = UsaMaxDays;
+                } else {
+                    MaxDays = CanMaxDays;
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
+
+            try {
+                StatePrefManager statePrefManager  = new StatePrefManager();
+                StateList = statePrefManager.GetState(getActivity());
+            } catch (Exception e) { }
+
+            StateArrayList =  sharedPref.getStatesInList(getActivity());
+
+
+
+        }
+
+    private void DOTBtnVisibility(int DaysDiff, int MaxDays){
+        if(DaysDiff == 0){
+            nextDateBtn.setVisibility(View.GONE);
+            previousDateBtn.setVisibility(View.VISIBLE);
+        }else if(DaysDiff == MaxDays){
+            previousDateBtn.setVisibility(View.GONE);
+            nextDateBtn.setVisibility(View.VISIBLE);
+        }else{
+            nextDateBtn.setVisibility(View.VISIBLE);
+            previousDateBtn.setVisibility(View.VISIBLE);
+        }
+    }
+
 
 
     @Override
     public void onClick(View view) {
 
         switch (view.getId()){
+
+            case R.id.nextDateBtn:
+                ChangeViewWithDate(true);
+                break;
+
+
+            case R.id.previousDate:
+                ChangeViewWithDate(false);
+                break;
+
+
+            case R.id.EldTitleTV:
+                if(dateDialog != null && dateDialog.isShowing())
+                    dateDialog.dismiss();
+
+                dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, LogDate, new DateListener());
+                dateDialog.show();
+
+                break;
+
+
+            case R.id.canSendLogBtn:
+                shareDriverLogDialog();
+
+            break;
+
+            //viewInspectionBtn view click
+            case R.id.dateActionBarTV:
+                MoveFragment(LogDate);
+                break;
 
             case R.id.eldMenuLay:
                 EldActivity.DOTButton.performClick();
@@ -276,12 +402,150 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     canDotViewMorelay.setVisibility(View.VISIBLE);
                     viewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_less) + "</u>"));
                 }
-                //viewMoreTV.setVisibility(View.GONE);
 
                 break;
 
         }
     }
+
+
+
+
+
+    private void ChangeViewWithDate(boolean isNext){
+
+        String selectedDate = LogDate;
+        String selectedDateStr = global.ConvertDateFormat(LogDate);
+        String currentDateStr = global.ConvertDateFormat(CurrentDate);
+        DateTime selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
+        DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
+
+
+        if (global.isConnected(getActivity())) {
+            if(isNext){
+                selectedDateTime = selectedDateTime.plusDays(1);
+            }else{
+                selectedDateTime = selectedDateTime.minusDays(1);
+            }
+
+            int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
+            Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
+
+            if ( DaysDiff >= 0 && DaysDiff <= MaxDays) {
+
+                DOTBtnVisibility(DaysDiff, MaxDays);
+                LogDate = global.ConvertDateFormatMMddyyyy(selectedDateTime.toString());
+                int mnth = Integer.valueOf(LogDate.substring(0, 2));
+                String MonthShortName   =   global.MONTHS[mnth - 1];
+
+                Date date = null;
+                try {
+                    SimpleDateFormat inFormat = new SimpleDateFormat("MM/dd/yyyy");
+                    inFormat.setTimeZone(TimeZone.getDefault());
+                    date = inFormat.parse(LogDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                SimpleDateFormat outFormat = new SimpleDateFormat("EEEE");
+                outFormat.setTimeZone(TimeZone.getDefault());
+
+                String dayOfTheWeek     = outFormat.format(date);
+
+
+                EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " (" + dayOfTheWeek + " )");
+
+                GetDriverDotDetails(DriverId, LogDate);
+
+            }
+
+        }else{
+            LogDate = selectedDate;
+            Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            //webViewErrorDisplay();
+        }
+
+    }
+
+
+    private void MoveFragment(String date ){
+        InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
+        Globally.bundle.putString("date", date);
+        Globally.bundle.putString("inspection_type", "pti");
+
+        savedInspectionFragment.setArguments(Globally.bundle);
+
+        FragmentManager fragManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTran = fragManager.beginTransaction();
+        fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
+                android.R.anim.fade_in,android.R.anim.fade_out);
+        fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
+        fragmentTran.addToBackStack("inspection");
+        fragmentTran.commit();
+
+
+    }
+
+
+    private class DateListener implements DatePickerDialog.DatePickerListener{
+        @Override
+        public void JobBtnReady(String SelectedDate, String dayOfTheWeek, String monthFullName, String monthShortName, int dayOfMonth) {
+
+            dateDialog.dismiss();
+
+            LogDate = SelectedDate;
+            DayName = dayOfTheWeek;
+            MonthFullName = monthFullName;
+            MonthShortName = monthShortName;
+            EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
+
+            if (global.isConnected(getActivity())) {
+
+                String selectedDateStr = global.ConvertDateFormat(LogDate);
+                String currentDateStr = global.ConvertDateFormat(CurrentDate);
+                DateTime selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
+                DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
+                int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
+                Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
+
+                DOTBtnVisibility(DaysDiff, MaxDays);
+                GetDriverDotDetails(DriverId, LogDate);
+
+            }else{
+                Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            }
+
+        }
+    }
+
+
+    void shareDriverLogDialog() {
+
+        boolean IsAOBRDAutomatic        = sharedPref.IsAOBRDAutomatic(getActivity());
+        boolean IsAOBRD                 = sharedPref.IsAOBRD(getActivity());
+
+
+        if (!IsAOBRD || IsAOBRDAutomatic) {
+            Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                getActivity().startForegroundService(Globally.serviceIntent);
+            }
+            getActivity().startService(Globally.serviceIntent);
+        }
+
+        try {
+            if (shareDialog != null && shareDialog.isShowing()) {
+                shareDialog.dismiss();
+            }
+            shareDialog = new ShareDriverLogDialog(getActivity(), getActivity(), DriverId, DeviceId, CurrentCycleId,
+                    IsAOBRD, StateArrayList, StateList);
+            shareDialog.show();
+        } catch (final IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     void initilizeWebView(){
@@ -662,7 +926,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                   //  setDataOnView(dataObj);
                    // CheckSignatureVisibilityStatus();
-                    JSONArray dotLogArray = new JSONArray(dataObj.getString("oReportList"));
+                    JSONArray dotLogArray = new JSONArray(dataObj.getString("graphRecordList"));
                   //  setDataOnList(dotLogArray);
 
                   //  JSONArray shippingLogArray = new JSONArray(dataObj.getString("ShippingInformationModel"));

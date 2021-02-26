@@ -260,13 +260,13 @@ public class SharedPref {
     // Get Malfunction Status -------------------
     public static boolean IsAllowMalfunction(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsAllowMalfunction, true);
+        return preferences.getBoolean(ConstantsKeys.IsAllowMalfunction, false);
     }
 
     // Get Diagnostic Status -------------------
     public static boolean IsAllowDiagnostic(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsAllowDiagnostic, true);
+        return preferences.getBoolean(ConstantsKeys.IsAllowDiagnostic, false);
     }
 
     // Get Malfunction clear Status -------------------
@@ -301,13 +301,13 @@ public class SharedPref {
     // Get Malfunction Status -------------------
     public static boolean IsAllowMalfunctionCo(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsAllowMalfunctionCo, true);
+        return preferences.getBoolean(ConstantsKeys.IsAllowMalfunctionCo, false);
     }
 
     // Get Diagnostic Status -------------------
     public static boolean IsAllowDiagnosticCo(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsAllowDiagnosticCo, true);
+        return preferences.getBoolean(ConstantsKeys.IsAllowDiagnosticCo, false);
     }
 
     // Get Malfunction clear Status -------------------
@@ -350,7 +350,7 @@ public class SharedPref {
         boolean isRecord = false;
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            isRecord = preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords, true);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords, false);
         }
         return isRecord;
     }
@@ -376,7 +376,7 @@ public class SharedPref {
         boolean isRecord = false;
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            isRecord = preferences.getBoolean(ConstantsKeys.UnIdentifiedAlertStatus, true);
+            isRecord = preferences.getBoolean(ConstantsKeys.UnIdentifiedAlertStatus, false);
         }
         return isRecord;
 
@@ -410,7 +410,7 @@ public class SharedPref {
         boolean isRecord = false;
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            isRecord = preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecordsCo, true);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsShowUnidentifiedRecordsCo, false);
         }
         return isRecord;
 
@@ -1752,17 +1752,22 @@ public class SharedPref {
 
     // Set wired Obd Odometer -------------------
     public static void SetWiredObdOdometer( String value, Context context) {
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("obd_odometer", value);
+        editor.putString("wired_obd_odometer", value);
         editor.commit();
     }
 
     // Get wired Obd Odometer -------------------
-    public static int getWiredObdOdometer(Context context) {
+    public static String getWiredObdOdometer(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getInt("obd_odometer", 0);
+        return preferences.getString("wired_obd_odometer", "0");
+
     }
+
+
+
 
 
     // Set obd_engine_hours  -------------------

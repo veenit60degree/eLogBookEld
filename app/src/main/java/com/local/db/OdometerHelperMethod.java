@@ -313,8 +313,8 @@ public class OdometerHelperMethod {
                                     jsonObj.put(ConstantsKeys.TotalMiles, "");
                                     jsonObj.put(ConstantsKeys.TotalKM, "");
                                 } else {
-                                    startOdo = Float.valueOf(StartOdometer);
-                                    endOdo = Float.valueOf(obj.getString(ConstantsKeys.EndOdometer));
+                                    startOdo = Float.parseFloat(StartOdometer);
+                                    endOdo = Float.parseFloat(obj.getString(ConstantsKeys.EndOdometer));
                                     TotalKM = endOdo - startOdo;
                                     TotalMiles = convertKmsToMiles(TotalKM);
 
@@ -329,8 +329,11 @@ public class OdometerHelperMethod {
                         } else {
                             if (!obj.getString(ConstantsKeys.EndOdometer).equalsIgnoreCase("null")
                                     && !obj.getString(ConstantsKeys.EndOdometer).equals("")) {
-                                startOdo = Float.valueOf(StartOdometer);
-                                endOdo = Float.valueOf(obj.getString(ConstantsKeys.EndOdometer));
+                                startOdo = Float.parseFloat(StartOdometer);
+                                String endOdoStr = obj.getString(ConstantsKeys.EndOdometer);
+                                if(endOdoStr.length() > 0) {
+                                    endOdo = Float.parseFloat(endOdoStr);
+                                }
                                 TotalKM = endOdo - startOdo;
                                 TotalMiles = convertKmsToMiles(TotalKM);
 
@@ -412,7 +415,7 @@ public class OdometerHelperMethod {
             for(int i = 0 ; i < array.length() ; i++){
                 JSONObject obj = (JSONObject) array.get(i);
                 if(! obj.getString(ConstantsKeys.TotalMiles).equalsIgnoreCase("null"))
-                    miles = miles + Float.valueOf(obj.getString(ConstantsKeys.TotalMiles));
+                    miles = miles + Float.parseFloat(obj.getString(ConstantsKeys.TotalMiles));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -429,7 +432,7 @@ public class OdometerHelperMethod {
             for(int i = 0 ; i < array.length() ; i++){
                 JSONObject obj = (JSONObject) array.get(i);
                 if(! obj.getString(ConstantsKeys.TotalKM).equalsIgnoreCase("null"))
-                    km = km + Float.valueOf(obj.getString(ConstantsKeys.TotalKM));
+                    km = km + Float.parseFloat(obj.getString(ConstantsKeys.TotalKM));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -477,25 +480,43 @@ public class OdometerHelperMethod {
     public void AddOdometerAutomatically(String DriverId, String DeviceId, String odometerValue, String DriverStatusId,
                                          DBHelper dbHelper, Context context){
 
-        JSONArray odometer18DaysArray = getSavedOdometerArray(Integer.valueOf(DriverId), dbHelper);
+        JSONArray odometer18DaysArray = getSavedOdometer18DaysArray(Integer.valueOf(DriverId), dbHelper);
         try {
+            String CreatedDate      = Globally.GetCurrentDeviceDateTime();
+            String VIN_NUMBER       = SharedPref.getVINNumber(context);
+            String TRUCK_NUMBER     = DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
+
+
             if(odometer18DaysArray.length() > 0) {
                 JSONObject lastJsonObj  = GetLastJsonObject(odometer18DaysArray, 1);
                 String DistanceType     = lastJsonObj.getString(ConstantsKeys.DistanceType);
                 String StartOdometer    = lastJsonObj.getString(ConstantsKeys.StartOdometer);
                 String EndOdometer      = lastJsonObj.getString(ConstantsKeys.EndOdometer);
-                String CreatedDate      = Globally.GetCurrentDeviceDateTime();
-                String VIN_NUMBER       = SharedPref.getVINNumber(context);
-                String TRUCK_NUMBER     = DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
 
+                boolean isUpdate = false;
                 if (StartOdometer.length() > 0 && EndOdometer.length() == 0) {
                     EndOdometer = odometerValue;    // end odometer value
+                    isUpdate = true;
                 } else {
                     StartOdometer = odometerValue;  // Start odometer value
+                    EndOdometer = "";
                 }
 
 
                 JSONObject odoJson = AddOdometerInArray(DriverId, DeviceId, VIN_NUMBER, StartOdometer, EndOdometer, DistanceType,
+                        CreatedDate, "false", "", TRUCK_NUMBER, DriverStatusId);
+
+                if(isUpdate){
+                    odometer18DaysArray.put(odometer18DaysArray.length()-1, odoJson);
+                }else{
+                    odometer18DaysArray.put(odoJson);
+                }
+
+
+                Odometer18DaysHelper(Integer.valueOf(DriverId), dbHelper, odometer18DaysArray);
+
+            }else{
+                JSONObject odoJson = AddOdometerInArray(DriverId, DeviceId, VIN_NUMBER, odometerValue, odometerValue, "km",
                         CreatedDate, "false", "", TRUCK_NUMBER, DriverStatusId);
 
                 odometer18DaysArray.put(odoJson);

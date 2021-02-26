@@ -500,17 +500,13 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             if (sharedPref.IsAllowMalfunction(getApplicationContext()) || sharedPref.IsAllowDiagnostic(getApplicationContext()))
                 isMalfunction = true;
 
-
-            if(sharedPref.IsShowUnidentifiedRecords(getApplicationContext()))
-                isUnidentified = true;
+            isUnidentified = sharedPref.IsShowUnidentifiedRecords(getApplicationContext());
 
         }else{
             if (sharedPref.IsAllowMalfunctionCo(getApplicationContext()) || sharedPref.IsAllowDiagnosticCo(getApplicationContext()))
                 isMalfunction = true;
 
-
-            if(sharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext()))
-                isUnidentified = true;
+            isUnidentified = sharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext());
 
         }
 

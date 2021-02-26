@@ -2697,7 +2697,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     private void saveByteSignLocally(String SignImageInBytes){
         // Add signed parameters with values into the json object and put into the json Array.
         JSONObject CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DRIVER_ID, DeviceId, global.PROJECT_ID, LogDate,
-                SignImageInBytes, IsContinueWithSign, isReCertifyRequired  );
+                SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId  );
         CertifyLogArray.put(CertifyLogObj);
 
         // Insert/Update Certify Log table

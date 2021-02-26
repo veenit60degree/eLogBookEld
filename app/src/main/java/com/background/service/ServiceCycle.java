@@ -778,43 +778,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
     }
 
-    // get Obd odometer Data
-    void saveOdometer(String DriverStatusId, HelperMethods hMethods, DBHelper dbHelper){
-
-        if(isALSConnection) {
-            int lastJobStatus = hMethods.getSecondLastJobStatus(driver18DaysLogArray);
-            int currentJobStatus = Integer.valueOf(DriverStatusId);
-            int odometerValue = Integer.valueOf(sharedPref.GetWifiObdOdometer(context));   // get odometer value from wifi obd
-
-            // if wifi odometer value is 0, check Wired obd to get odometer value
-            if(odometerValue == 0){
-               // odometerValue = sharedPref.getHighPrecisionOdometer(context) ;    // get High Precision Odometer for more accuracy result
-
-               // if(odometerValue == 0 ) {
-                    odometerValue = sharedPref.getWiredObdOdometer(context);    // get odometer
-              //  }
-            }
-
-            if(odometerValue != 0){
-                if ((currentJobStatus == ON_DUTY || currentJobStatus == DRIVING) &&
-                        (lastJobStatus == OFF_DUTY || lastJobStatus == SLEEPER)) {
-
-                    odometerhMethod.AddOdometerAutomatically(String.valueOf(DriverId), DeviceId, String.valueOf(odometerValue), DriverStatusId, dbHelper, context);
-
-
-                } else {
-
-                    if (currentJobStatus == OFF_DUTY || currentJobStatus == SLEEPER) {
-                        if (lastJobStatus == DRIVING || lastJobStatus == ON_DUTY) {
-
-                            odometerhMethod.AddOdometerAutomatically(String.valueOf(DriverId), DeviceId, String.valueOf(odometerValue), DriverStatusId, dbHelper, context);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 
 
     public static int getMinutesFromMillis(long milliseconds) {
@@ -1347,7 +1310,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             BackgroundLocationService.IsAutoChange = false;
 
         // Save odometer
-        saveOdometer(DriverStatusId, hMethods, dbHelper);
+        constants.saveOdometer(DriverStatusId, String.valueOf(DriverId), DeviceId, driver18DaysLogArray,
+                odometerhMethod, hMethods, dbHelper, context);
 
         constants.IsAlreadyViolation = false;
     }

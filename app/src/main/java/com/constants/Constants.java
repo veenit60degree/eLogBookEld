@@ -32,6 +32,7 @@ import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
+import com.local.db.OdometerHelperMethod;
 import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
@@ -2704,7 +2705,7 @@ public class Constants {
 
                         obj.getString(ConstantsKeys.IsStatusAutomatic),
 
-                        obj.getInt(ConstantsKeys.CurrentCycleId),
+                        obj.getString(ConstantsKeys.CurrentCycleId),
                         obj.getInt(ConstantsKeys.SequenceNumber),
 
                         obj.getString(ConstantsKeys.TotalVehicleKM),
@@ -2712,7 +2713,7 @@ public class Constants {
                         obj.getString(ConstantsKeys.EditedById),
                         obj.getString(ConstantsKeys.UserName),
 
-                        obj.getInt(ConstantsKeys.RecordStatus),
+                        obj.getString(ConstantsKeys.RecordStatus),
 
                         obj.getString(ConstantsKeys.DistanceSinceLastValidCord),
                         obj.getString(ConstantsKeys.RecordOrigin),
@@ -2734,6 +2735,40 @@ public class Constants {
         }
         return dotLogList;
     }
+
+
+    // get Obd odometer Data
+    public  void saveOdometer(String DriverStatusId, String DriverId, String DeviceId, JSONArray driver18DaysLogArray,
+                              OdometerHelperMethod odometerhMethod, HelperMethods hMethods, DBHelper dbHelper, Context context) {
+
+        try {
+            if (SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE || SharedPref.getObdStatus(context) == Constants.WIFI_ACTIVE) {
+                int lastJobStatus = hMethods.getSecondLastJobStatus(driver18DaysLogArray);
+                int currentJobStatus = Integer.valueOf(DriverStatusId);
+
+                String odometerValue ;
+                if (SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE) {
+                    odometerValue = SharedPref.getWiredObdOdometer(context);
+                } else {
+                    odometerValue = SharedPref.GetWifiObdOdometer(context);   // get odometer value from wifi obd
+                }
+
+                if (!odometerValue.equals("0")) {
+                    if ((currentJobStatus == ON_DUTY || currentJobStatus == DRIVING) && (lastJobStatus == OFF_DUTY || lastJobStatus == SLEEPER) ||
+                            (currentJobStatus == OFF_DUTY || currentJobStatus == SLEEPER) && (lastJobStatus == DRIVING || lastJobStatus == ON_DUTY)) {
+
+                        odometerhMethod.AddOdometerAutomatically(DriverId, DeviceId, String.valueOf(odometerValue), DriverStatusId, dbHelper, context);
+
+                    }
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
 
 
 

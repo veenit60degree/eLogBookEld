@@ -1016,7 +1016,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             eldMenuErrorImgVw.setVisibility(View.GONE);
         }
 
-        if(isUnIdentifiedOccur && isUnIdentifiedAlert && sharedPref.GetNewLoginStatus(getActivity()) == false){
+
+        if(isUnidentifiedAllowed() && isUnIdentifiedOccur && isUnIdentifiedAlert && sharedPref.GetNewLoginStatus(getActivity()) == false){
             try {
                 if (confirmationDialog != null && confirmationDialog.isShowing()){
                     //  confirmationDialog.dismiss();
@@ -1056,6 +1057,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             LogoutUser();
         }
     }
+
+    boolean isUnidentifiedAllowed(){
+        boolean isUnidentifiedAllowed = false;
+        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+            isUnidentifiedAllowed = sharedPref.IsShowUnidentifiedRecords(getActivity());
+        }else{
+            isUnidentifiedAllowed = sharedPref.IsShowUnidentifiedRecordsCo(getActivity());
+        }
+        return isUnidentifiedAllowed;
+    }
+
 
     void dotWithData(){
         sharedPref.SetDOTStatus(true, getActivity());
@@ -3537,6 +3549,15 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     false, false, obdUtil);
 
         }
+
+
+        // Save odometer
+        // save app display status log
+        if(sharedPref.IsOdometerFromOBD(getActivity())) {
+            constants.saveOdometer(DriverStatusId, DRIVER_ID, DeviceId, driverLogArray,
+                    odometerhMethod, hMethods, dbHelper, getActivity());
+        }
+
     }
 
 
@@ -5611,7 +5632,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             Toast.makeText(getActivity(), "Updated successfully.", Toast.LENGTH_LONG).show();
                             // ShowRecapDialog();
 
-                            if(isUnIdentifiedOccur && isUnIdentifiedAlert){
+                            if(isUnidentifiedAllowed() && isUnIdentifiedOccur && isUnIdentifiedAlert){
                                 try {
                                     if (confirmationDialog != null && confirmationDialog.isShowing())
                                         confirmationDialog.dismiss();
@@ -5738,10 +5759,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                     sharedPref.SetCertifyMandatoryStatus(IsCertifyMandatory, getActivity());
 
                                     if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
-                                       // sendReportBtn.setEnabled(true);
                                         sendReportBtn.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
                                     } else {
-                                       // sendReportBtn.setEnabled(false);
                                         sendReportBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
                                     }
                                 }
@@ -6467,6 +6486,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         for (AlertDialog dialog : vectorDialogs)
             if (dialog.isShowing()) dialog.dismiss();
     }
+
+
+
+
 
 
 }

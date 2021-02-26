@@ -22,6 +22,7 @@
         android:textColor="@color/color_eld_theme"
         android:gravity="center_horizontal"
         android:layout_weight="1"
+        android:maxLines="2"
 
         />
 
@@ -38,6 +39,7 @@
         android:gravity="center_horizontal"
         android:textColor="@color/color_eld_theme"
         android:layout_weight="1"
+        android:maxLines="2"
 
         />
 
@@ -53,6 +55,7 @@
         android:gravity="center_horizontal"
         android:textColor="@color/color_eld_theme"
         android:layout_weight="1"
+        android:maxLines="2"
 
         />
 
@@ -68,6 +71,7 @@
         android:gravity="center_horizontal"
         android:textColor="@color/color_eld_theme"
         android:layout_weight="1"
+        android:maxLines="2"
 
         />
 
@@ -83,6 +87,7 @@
         android:gravity="center_horizontal"
         android:textColor="@color/color_eld_theme"
         android:layout_weight="1"
+        android:maxLines="2"
 
         />
 

@@ -1,21 +1,12 @@
 package com.messaging.logistic.fragment;
 
-import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
-import android.util.Log;
+
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.constants.Constants;
 /*import com.github.barteksc.pdfviewer.PDFView;
@@ -24,11 +15,9 @@ import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;*/
-import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 //import com.shockwave.pdfium.PdfDocument;
 
-import java.util.List;
 
 public class PdfWebViewFragment extends Fragment { //implements OnPageChangeListener, OnLoadCompleteListener,
     //OnPageErrorListener , OnErrorListener {
@@ -51,7 +40,7 @@ public class PdfWebViewFragment extends Fragment { //implements OnPageChangeList
                 parent.removeView(rootView);
         }
         try {
-            rootView = inflater.inflate(R.layout.fragment_dot_webview, container, false);
+            rootView = inflater.inflate(R.layout.fragment_dot_us, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         } catch (InflateException e) {
             e.printStackTrace();

@@ -244,7 +244,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-
+   // int tempOdo = 177;
 
 
 
@@ -254,13 +254,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         super.onCreate();
 
         Log.i(TAG, "---------onCreate Service");
-
-
-     /*   StrictMode.ThreadPolicy old = StrictMode.getThreadPolicy();
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder(old)
-                .permitDiskWrites()
-                .build());
-        StrictMode.setThreadPolicy(old);*/
 
         global                  = new Globally();
         sharedPref              = new SharedPref();
@@ -344,8 +337,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
 
 
-    //    saveDayStartOdometer("960005.115");
-    //    sharedPref.setHighPrecisionOdometer("975515.815", global.GetCurrentDateTime(), getApplicationContext());
     }
 
 
@@ -402,9 +393,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
             sharedPref.SetObdEngineHours(obdEngineHours, getApplicationContext());
 
-            // ---------------- temp data ---------------------
-              ignitionStatus = "ON"; truckRPM = "35436"; speed = 30; obdOdometer = "163214";
 
+
+
+            // ---------------- temp data ---------------------
+            /*  ignitionStatus = "ON"; truckRPM = "35436"; speed = 0;  obdOdometer = String.valueOf(tempOdo);
+            sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
+            tempOdo++;
+*/
 
             if(ignitionStatus.equals("ON")){
                 global.IS_OBD_IGNITION = true;

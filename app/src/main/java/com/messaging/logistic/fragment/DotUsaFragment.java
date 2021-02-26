@@ -98,8 +98,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
     DatePickerDialog dateDialog;
     ShareDriverLogDialog shareDialog;
-    List<String> StateArrayList;
-    List<DriverLocationModel> StateList;
+    List<String> StateArrayList = new ArrayList<>();
+    List<DriverLocationModel> StateList = new ArrayList<>();
     List<DotDataModel> dotLogList;
     List<ShipmentModel> shipmentLogList;
 
@@ -158,7 +158,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.fragment_dot_webview, container, false);
+        rootView = inflater.inflate(R.layout.fragment_dot_us, container, false);
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         initView(rootView);

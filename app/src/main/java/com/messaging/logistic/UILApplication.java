@@ -250,7 +250,7 @@ public class UILApplication extends Application {
 		protected void onPostExecute(String onlineVersion) {
 			super.onPostExecute(onlineVersion);
 			if (onlineVersion != null && !onlineVersion.isEmpty()) {
-				// if (Float.valueOf(currentVersion) < Float.valueOf(onlineVersion)) {
+				// if (Float.parseFloat(currentVersion) < Float.parseFloat(onlineVersion)) {
 				//show dialog
 				// }
 

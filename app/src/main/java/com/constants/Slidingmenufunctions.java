@@ -296,7 +296,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		picker.setContentView(R.layout.popup_edit_delete_lay);
 
-		if(sharedPref.isSuggestedEditOccur(context)) {
+		if(sharedPref.isSuggestedEditOccur(context) && sharedPref.IsCCMTACertified(context)) {
 			if (Globally.isTablet(context)) {
 				picker.getWindow().setLayout(constants.intToPixel(context, 700), ViewGroup.LayoutParams.WRAP_CONTENT);
 			} else {
@@ -313,7 +313,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		confirmPopupButton.setText(context.getResources().getString(R.string.logout));
 		changeTitleView.setText(context.getResources().getString(R.string.Confirmation));
 
-		if(sharedPref.isSuggestedEditOccur(context)){
+		if(sharedPref.isSuggestedEditOccur(context) && sharedPref.IsCCMTACertified(context)){
 			titleDescView.setText(context.getResources().getString(R.string.pending_carrier_edit));
 			cancelPopupButton.setText(context.getResources().getString(R.string.review_carrier_edits));
 
@@ -332,7 +332,7 @@ public class Slidingmenufunctions implements OnClickListener {
 			@Override
 			public void onClick(View v) {
 				picker.dismiss();
-				if(sharedPref.isSuggestedEditOccur(context)){
+				if(sharedPref.isSuggestedEditOccur(context) && sharedPref.IsCCMTACertified(context)){
 					Intent i = new Intent(context, SuggestedFragmentActivity.class);
 					i.putExtra(ConstantsKeys.suggested_data, "");
 					i.putExtra(ConstantsKeys.Date, "");

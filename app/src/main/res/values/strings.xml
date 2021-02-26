@@ -205,7 +205,9 @@
     <string name="noti_history">Notifications History</string>
     <string name="change">Change</string>
 
-    <string name="ELDViewLog">ELD View Log</string>
+    <string name="ELDViewLogUs">ELD View Log</string>
+    <string name="ELDViewLogCanada">ELD View Log</string>
+
     <string name="RecordDate">Record Date</string>
     <string name="USDOT"> USDOT #</string>
     <string name="DriverLicenseNo">Driver License No.</string>
@@ -666,7 +668,8 @@
     <string name="sim_info">Sim Info</string>
     <string name="reset_obd">Reset OBD</string>
     <string name="No_data_found">No data found</string>
-    <string name="dot_mode">DOT MODE</string>
+    <string name="dot_mode_us">DOT MODE (US)</string>
+    <string name="dot_mode_canada">DOT MODE (Canada)</string>
     <string name="data_malfunction">Data recording compliance malfunction detected</string>
     <string name="malfunction">Data Malfunction</string>
     <string name="malfunction_diag_occur">Malfunction/Diagnostic occur</string>
