@@ -403,7 +403,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             sharedPref.SetObdEngineHours(obdEngineHours, getApplicationContext());
 
             // ---------------- temp data ---------------------
-           //   ignitionStatus = "ON"; truckRPM = "35436"; speed = 30;
+              ignitionStatus = "ON"; truckRPM = "35436"; speed = 30; obdOdometer = "163214";
 
 
             if(ignitionStatus.equals("ON")){
