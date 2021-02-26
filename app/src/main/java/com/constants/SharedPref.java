@@ -35,6 +35,40 @@ public class SharedPref {
 
 
 
+    // Save Current Status
+    public static void setCurrentStatus(int status, Context context){
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("current_status", status);
+        editor.commit();
+
+    }
+
+
+    // Get Current Status -------------------
+    public static int getCurrentStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt("current_status", -1);
+    }
+
+
+
+    public static void setVehilceMovingStatus(boolean status, Context context){
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("VehilceMovingStatus", status);
+        editor.commit();
+
+    }
+
+
+    // Get Current Status -------------------
+    public static boolean isVehicleMoving( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("VehilceMovingStatus", false);
+    }
 
     // Save VIN Number
     public static void setVINNumber(String VIN, Context context){
@@ -383,6 +417,29 @@ public class SharedPref {
 
     }
 
+
+    // Set CCMTACertified status -------------------
+    public static void SetCCMTACertifiedStatus( boolean CCMTACertified, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsCCMTACertified, CCMTACertified);
+        editor.commit();
+    }
+
+
+
+    // Get CCMTA Certified Status  -------------------
+    public static boolean IsCCMTACertified(Context context) {
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsCCMTACertified, false);
+        }
+        return isRecord;
+
+
+    }
 
     // Get Unidentified Records alert view Status for co driver-------------------
     public static boolean getUnidentifiedAlertViewStatusCo( Context context) {
@@ -1344,26 +1401,42 @@ public class SharedPref {
 
     // Get Unidentified occure status  -------------------
     public static boolean isUnidentifiedOccur( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsUnidentified, false);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsUnidentified, false);
+        }else{
+            return false;
+        }
     }
 
     // Get Malfunction occur status -------------------
     public static boolean isMalfunctionOccur( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsMalfunction, false);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsMalfunction, false);
+        }else {
+            return false;
+        }
     }
 
     // Get Diagnostic occur status -------------------
     public static boolean isDiagnosticOccur( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsDiagnostic, false);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsDiagnostic, false);
+        }else {
+            return false;
+        }
     }
 
     // Get Suggested Edit status  -------------------
     public static boolean isSuggestedEditOccur( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.SuggestedEdit, false);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.SuggestedEdit, false);
+        }else{
+            return false;
+        }
     }
 
 
@@ -1382,8 +1455,12 @@ public class SharedPref {
 
     //  Get suggested recall status-------------------
     public static boolean isSuggestedRecall( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("suggested_log_recall", true);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean("suggested_log_recall", true);
+        }else{
+            return true;
+        }
     }
 
     // Save suggested recall status -------------------
@@ -1410,33 +1487,53 @@ public class SharedPref {
 
     // Get Unidentified occure status for co driver -------------------
     public static boolean isUnidentifiedOccurCo( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsUnidentifiedCo, false);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsUnidentifiedCo, false);
+        }else {
+            return false;
+        }
     }
 
     // Get Malfunction occur status for co driver -------------------
     public static boolean isMalfunctionOccurCo( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsMalfunctionCo, false);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsMalfunctionCo, false);
+        }else{
+            return false;
+        }
     }
 
     // Get Diagnostic occur statusfor co driver  -------------------
     public static boolean isDiagnosticOccurCo( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.IsDiagnosticCo, false);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsDiagnosticCo, false);
+        }else{
+            return false;
+        }
     }
 
     // Get Suggested Edit status for co driver -------------------
     public static boolean isSuggestedEditOccurCo( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.SuggestedEditCo, false);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.SuggestedEditCo, false);
+        }else{
+            return false;
+        }
     }
 
 
     //  Get suggested recall status-------------------
     public static boolean isSuggestedRecallCo( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("suggested_log_recallCo", true);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean("suggested_log_recallCo", true);
+        }else{
+            return true;
+        }
     }
 
     // Save suggested recall status -------------------
@@ -1666,6 +1763,22 @@ public class SharedPref {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getInt("obd_odometer", 0);
     }
+
+
+    // Set obd_engine_hours  -------------------
+    public static void SetObdEngineHours( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("obd_engine_hours", value);
+        editor.commit();
+    }
+
+    // Get obd_engine_hours -------------------
+    public static String getObdEngineHours(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("obd_engine_hours", "0");
+    }
+
 
 
 

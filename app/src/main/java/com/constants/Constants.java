@@ -338,7 +338,8 @@ public class Constants {
             optionsList.add(new OtherOptionsModel(R.drawable.unidentified_other, UNIDENTIFIED, context.getResources().getString(R.string.unIdentified_records)));
         //if(SharedPref.IsShowUnidentifiedRecords(context))
 
-        optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, SUGGESTED_LOGS, context.getResources().getString(R.string.suggested_logs)));
+        if(SharedPref.IsCCMTACertified(context))
+            optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, SUGGESTED_LOGS, context.getResources().getString(R.string.suggested_logs)));
         optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, WIFI, context.getResources().getString(R.string.obd_wifi)));
 
         return optionsList;
@@ -490,6 +491,18 @@ public class Constants {
         return inputValue;
     }
 
+    public static boolean CheckNullBoolean(JSONObject json, String inputValue) {
+        boolean val = false;
+        try {
+            if (!json.isNull(inputValue)) {
+                val = json.getBoolean(inputValue);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return val;
+    }
 
     public void ClearNotifications(Context context) {
         if (context != null) {
@@ -1147,7 +1160,7 @@ public class Constants {
 
     */
 
-    public boolean isDriverAllowedToChange(Context context, int obdStatus, Utils obdUtils, Globally global){
+    public boolean isDriverAllowedToChange(Context context, String DriverId, int obdStatus, Utils obdUtils, Globally global,  DriverPermissionMethod driverPermissionMethod, DBHelper dbHelper){
 
             boolean isAllowedToChange = true;
 
@@ -1162,27 +1175,36 @@ public class Constants {
                     if(fileArray.length > 0) {
                         JSONObject data = new JSONObject(fileArray[fileArray.length - 1]);
 
-                        String lastDate = data.getString(Constants.CurrentLogDate);
-                        DateTime lastSavedTime = global.getDateTimeObj(lastDate, false);
-                        DateTime currentDate = global.getDateTimeObj(global.GetCurrentDateTime(), false);
-                        int secDiff = currentDate.getSecondOfDay() - lastSavedTime.getSecondOfDay();
+                        try {
+                            String lastDate = data.getString(Constants.CurrentLogDate);
+                            DateTime lastSavedTime = global.getDateTimeObj(lastDate, false);
+                            DateTime currentDate = global.getDateTimeObj(global.GetCurrentDateTime(), false);
+                            int secDiff = currentDate.getSecondOfDay() - lastSavedTime.getSecondOfDay();
 
-                        if(secDiff <= 60) {   // 1 min diff
-                            if (obdStatus == WIFI_ACTIVE) {
-                                int wheelSpeed      = Integer.valueOf(data.getString(Constants.WheelBasedVehicleSpeed));
-                                int calculatedSpeed = Integer.valueOf(data.getString(Constants.obdCalculatedSpeed));
+                            if (secDiff <= 60) {   // 1 min diff
+                                if (obdStatus == WIFI_ACTIVE) {
+                                    int wheelSpeed = Integer.valueOf(data.getString(Constants.WheelBasedVehicleSpeed));
+                                    int calculatedSpeed = Integer.valueOf(data.getString(Constants.obdCalculatedSpeed));
 
-                                if(wheelSpeed > 10 || calculatedSpeed > 10){
-                                    isAllowedToChange = false;
-                                }
-                            } else {
-                                int wheelSpeed      = Integer.valueOf(data.getString(Constants.obdSpeed));
-                                int calculatedSpeed = Integer.valueOf(data.getString(Constants.calculatedSpeed));
-                                if(wheelSpeed > 10 || calculatedSpeed > 10){
-                                    isAllowedToChange = false;
+                                    if (wheelSpeed > 10 || calculatedSpeed > 10) {
+                                        isAllowedToChange = false;
+                                    }
+                                } else {
+                                    int wheelSpeed = Integer.valueOf(data.getString(Constants.obdSpeed));
+                                    int calculatedSpeed = Integer.valueOf(data.getString(Constants.calculatedSpeed));
+                                    if (wheelSpeed > 10 || calculatedSpeed > 10) {
+                                        isAllowedToChange = false;
+                                    }
                                 }
                             }
-                        }
+                        }catch (Exception e){e.printStackTrace();}
+                    }
+
+                    // in case if Device debug Log is not enabled from web settings
+                    boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
+                    boolean isDeviceLogEnabled = driverPermissionMethod.isDeviceLogEnabled(DriverId, dbHelper);
+                    if( isVehicleMoving == true && isDeviceLogEnabled == false ){
+                        isAllowedToChange = false;
                     }
 
                 }
@@ -2648,7 +2670,7 @@ public class Constants {
 
                         obj.getInt(ConstantsKeys.EventType),
                         obj.getInt(ConstantsKeys.EventCode),
-                        obj.getInt(ConstantsKeys.DutyMinutes),
+                        obj.getString(ConstantsKeys.DutyMinutes),
 
                         obj.getString(ConstantsKeys.Annotation),
                         obj.getString(ConstantsKeys.EventDate),
@@ -2712,6 +2734,8 @@ public class Constants {
         }
         return dotLogList;
     }
+
+
 
 
 }

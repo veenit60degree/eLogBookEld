@@ -339,7 +339,7 @@
     <string name="in_cycle">(In Cycle)</string>
     <string name="remaining_hrs">Remaining Hrs</string>
     <string name="off_duty_time_deff">Off Duty Time defferal </string>
-    <string name="date_time_deff">(Day &amp; Time Deffered)</string>
+    <string name="date_time_deff">(Day &amp; Time Deff)</string>
     <string name="DataDiagnosticStatus">Data Diagnostic Status</string>
     <string name="UnIdentifiedDrivingRecords">UnIdentified Driving Records</string>
     <string name="MalfunctionStatus">Malfunction Status</string>
@@ -372,6 +372,14 @@
     <string name="onduty_six_days_tomorrow">Total hours available tomorrow (---)</string>
     <string name="onduty_seven_days_last_eight">Total hours onduty last 8 days (---)</string>
     <string name="onduty_seven_days_last_seven">Total hours onduty last 7 days (---)</string>
+
+    <string name="logout_speed_alert">You can\'t logout while vehicle is moving. Please stop your vehicle first.</string>
+    <string name="login_speed_alert">You can\'t login while vehicle is moving. Please stop your vehicle first.</string>
+    <string name="enter_different_user_co">Please enter different username for Co-Driver</string>
+    <string name="enter_your_pass">Please enter your Password</string>
+    <string name="enter_userName">Enter UserName</string>
+    <string name="enter_username_pass">Please enter Username and Password</string>
+    <string name="data_saving_inProgress">Please wait, Data is saving.</string>
 
     <string name="DOT">DOT</string>
     <string name="inspection_date">Inspection Date : </string>

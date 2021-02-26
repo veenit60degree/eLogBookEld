@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
@@ -90,17 +91,17 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
 
         holder.dutyStatusDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateTimeDotTV.setText(itemsList.get(position).getDateTimeWithMins());
-        holder.eventDotTV.setText(itemsList.get(position).getEventType());
+        holder.dateTimeDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins()) );
+        holder.eventDotTV.setText(""+itemsList.get(position).getEventType());
         holder.cmvDotTV.setText(itemsList.get(position).getCMVVIN());
 
         holder.distanceAccDotTV.setText(itemsList.get(position).getDistanceInKM());
         //holder.hrsAccDotTV.setText(itemsList.get(position).getH);
         holder.distanceTotalDotTV.setText(itemsList.get(position).getTotalEngineHours());
 
-        holder.recStatusDotTV.setText(itemsList.get(position).getRecordStatus());
+        holder.recStatusDotTV.setText(""+itemsList.get(position).getRecordStatus());
         holder.recOriginDotTV.setText(itemsList.get(position).getRecordOrigin());
-        holder.seqNoDotTV.setText(itemsList.get(position).getSequenceNumber());
+        holder.seqNoDotTV.setText(""+itemsList.get(position).getSequenceNumber());
 
 
         // Set text style normal

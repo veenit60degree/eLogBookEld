@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
@@ -87,8 +88,8 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
 
         holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateTimeEDotTV.setText(itemsList.get(position).getEventDate());
-        holder.eventDotETV.setText(itemsList.get(position).getEventCode());
+        holder.dateTimeEDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate() ));
+        holder.eventDotETV.setText(""+itemsList.get(position).getEventCode());
         holder.jeoLocEDotTV.setText(itemsList.get(position).getGPSLatitude() + ", " + itemsList.get(position).getGPSLongitude());
 
         holder.distanceAccDotTV.setText(itemsList.get(position).getDistanceInKM());
@@ -96,7 +97,7 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
         holder.distanceTotalEDotTV.setText(itemsList.get(position).getTotalEngineHours());
 
         holder.hoursTotalEDotTV.setText(itemsList.get(position).getTotalEngineHours());
-        holder.seqNoEDotTV.setText(itemsList.get(position).getSequenceNumber());
+        holder.seqNoEDotTV.setText(""+itemsList.get(position).getSequenceNumber());
 
 
         // Set text style normal

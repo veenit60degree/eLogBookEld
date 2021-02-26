@@ -13,6 +13,8 @@ public class ConstantsEnum {
     public static String SAVE_READING_AFTER   = "Please save your odometer reading";
     public static String DUPLICATE_JOB_ALERT  = "You can't change same status at the same time. Please change after 1 minute";
     public static String NO_TRAILER_ALERT     = "You can not select (Trailer Drop) reason when there is no trailer attached";
+    public static String CO_DRIVING_ALERT     = "Co-Driver is also in Driving. Please change his status first.";
+    public static String CO_DRIVING_ALERT1    = "Co-Driver is also in Driving. Please change his status";
     public static String PICK_TRAILER_ALERT   = "Trailer Number to pickup trailer";
     public static String PROPER_REASON_ALERT  = "Enter minimum 4 char for personal use reason";
     public static String ADVERSE_REASON_ALERT = "Enter minimum 4 char for Adverse Exception reason";

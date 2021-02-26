@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.constants.Constants;
 import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.DotWebViewFragment;
 import com.models.DotDataModel;
 
 import java.util.List;

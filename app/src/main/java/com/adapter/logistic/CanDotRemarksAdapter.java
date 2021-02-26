@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
@@ -83,11 +84,16 @@ public class CanDotRemarksAdapter extends BaseAdapter {
 
         holder.remarksAnoDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateRemarksDotTV.setText(itemsList.get(position).getRemarks());
-        holder.timeDotTV.setText(itemsList.get(position).getEventTime());
+        holder.dateRemarksDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate()) );
+
+        String time = itemsList.get(position).getEventTime();
+        if(time.length() > 15) {
+            holder.timeDotTV.setText(time.substring(11, 15));
+        }
+
         holder.usernameDotTV.setText(itemsList.get(position).getUserName());
 
-        holder.sqNoRemDotTV.setText(itemsList.get(position).getSequenceNumber());
+        holder.sqNoRemDotTV.setText(""+itemsList.get(position).getSequenceNumber());
         holder.commAnotnDotTV.setText(itemsList.get(position).getAnnotation());
 
         // Set text style normal

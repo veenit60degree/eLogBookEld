@@ -49,6 +49,8 @@
                 android:textColor="@color/permissionDesc"
                 android:textSize="@dimen/text_size_16"
                 android:text="@string/read_and_agree"
+                android:button="@drawable/checkbox_terms_mobile"
+                android:paddingLeft="@dimen/margin_short_6"
 
                 />
 
@@ -57,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:paddingBottom="@dimen/margin_short_5"
+                android:paddingBottom="@dimen/margin_short_1"
                 android:paddingLeft="@dimen/margin_short_4"
                 android:paddingTop="@dimen/margin_short_5"
                 android:paddingRight="@dimen/margin_short_5"
@@ -100,6 +102,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/blue_new_drawable"
+
 
                 />
 

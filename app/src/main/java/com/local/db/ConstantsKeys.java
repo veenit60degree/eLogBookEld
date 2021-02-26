@@ -366,6 +366,8 @@ public class ConstantsKeys {
     public static String IsClearDiagnosticCo            = "IsClearDiagnosticCo";
     public static String DriverIdDiaMalCo               = "DriverIdDiaMalCo";
 
+    public static String IsCCMTACertified               = "IsCCMTACertified";
+
 
     public static String DateTimeWithMins               = "DateTimeWithMins";
     public static String EventUTCTimeStamp              = "EventUTCTimeStamp";

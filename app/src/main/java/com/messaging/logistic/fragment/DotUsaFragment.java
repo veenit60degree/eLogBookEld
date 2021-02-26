@@ -70,7 +70,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-public class DotWebViewFragment extends Fragment implements View.OnClickListener {
+public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
     View rootView;
     Globally global;

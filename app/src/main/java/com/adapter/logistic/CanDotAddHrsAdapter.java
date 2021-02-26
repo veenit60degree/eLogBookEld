@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
@@ -90,16 +91,16 @@ public class CanDotAddHrsAdapter extends BaseAdapter {
 
         holder.addHrsDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateDotTV.setText(itemsList.get(position).getEventDate());
+        holder.dateDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate()));
         holder.shiftStartDotTV.setText(itemsList.get(position).getWorkShiftStart());
         holder.shiftEndDotTV.setText(itemsList.get(position).getWorkShiftEnd());
         holder.totalHrOnDutyDotTV.setText(itemsList.get(position).getOnDutyHours());
         holder.totalHrOffDutyDotTV.setText(itemsList.get(position).getOffDutyHours());
 
         holder.cmvAHDotTV.setText(itemsList.get(position).getCMVVIN());
-        holder.recStatusAHDotTV.setText(itemsList.get(position).getRecordStatus());
+        holder.recStatusAHDotTV.setText(""+itemsList.get(position).getRecordStatus());
         holder.recOriginAHDotTV.setText(itemsList.get(position).getRecordOrigin());
-        holder.seqNoDotTV.setText(itemsList.get(position).getSequenceNumber());
+        holder.seqNoDotTV.setText(""+itemsList.get(position).getSequenceNumber());
 
 
         // Set text style normal

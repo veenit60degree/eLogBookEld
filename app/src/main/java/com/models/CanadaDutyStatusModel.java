@@ -8,7 +8,7 @@ public class CanadaDutyStatusModel {
 
             int EventType;
             int EventCode;
-            int DutyMinutes;
+            String DutyMinutes;
 
             String Annotation;
             String EventDate;
@@ -64,7 +64,7 @@ public class CanadaDutyStatusModel {
             String WorkShiftEnd;
 
 
-    public CanadaDutyStatusModel(String dateTimeWithMins, String eventUTCTimeStamp, String driverStatusID, int eventType, int eventCode, int dutyMinutes, String annotation, String eventDate, String eventTime, String accumulatedVehicleMiles, String accumulatedEngineHours, String totalVehicleMiles, String totalEngineHours, String GPSLatitude, String GPSLongitude, String CMVVIN, String carrierName, boolean isMalfunction, String odometerInKm, String strEventType, String origin, String startTime, String endTime, String OBDDeviceDataId, String currentObdDeviceDataId, String driverLogId, String truck, String trailor, String remarks, String driverId, boolean isPersonal, boolean isYard, String isStatusAutomatic, int currentCycleId, int sequenceNumber, String totalVehicleKM, String additionalInfo, String editedById, String userName, int recordStatus, String distanceSinceLastValidCord, String recordOrigin, String distanceInKM, String hexaSeqNumber, String orderBy, String onDutyHours, String offDutyHours, String truckEquipmentNo, String workShiftStart, String workShiftEnd) {
+    public CanadaDutyStatusModel(String dateTimeWithMins, String eventUTCTimeStamp, String driverStatusID, int eventType, int eventCode, String dutyMinutes, String annotation, String eventDate, String eventTime, String accumulatedVehicleMiles, String accumulatedEngineHours, String totalVehicleMiles, String totalEngineHours, String GPSLatitude, String GPSLongitude, String CMVVIN, String carrierName, boolean isMalfunction, String odometerInKm, String strEventType, String origin, String startTime, String endTime, String OBDDeviceDataId, String currentObdDeviceDataId, String driverLogId, String truck, String trailor, String remarks, String driverId, boolean isPersonal, boolean isYard, String isStatusAutomatic, int currentCycleId, int sequenceNumber, String totalVehicleKM, String additionalInfo, String editedById, String userName, int recordStatus, String distanceSinceLastValidCord, String recordOrigin, String distanceInKM, String hexaSeqNumber, String orderBy, String onDutyHours, String offDutyHours, String truckEquipmentNo, String workShiftStart, String workShiftEnd) {
         DateTimeWithMins = dateTimeWithMins;
         EventUTCTimeStamp = eventUTCTimeStamp;
         DriverStatusID = driverStatusID;
@@ -138,7 +138,7 @@ public class CanadaDutyStatusModel {
         return EventCode;
     }
 
-    public int getDutyMinutes() {
+    public String getDutyMinutes() {
         return DutyMinutes;
     }
 

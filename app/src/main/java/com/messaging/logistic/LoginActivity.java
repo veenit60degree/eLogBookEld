@@ -67,6 +67,7 @@ import java.util.Map;
 public class LoginActivity extends FragmentActivity implements OnClickListener, GoogleApiClient.ConnectionCallbacks,
 		GoogleApiClient.OnConnectionFailedListener{
 
+	public static boolean IsLoginAllowed = true;
 	EditText userNameText, passwordText, coDriverUserNameText, coDriverPasswordText;
 	TextView driverTitleTV, appVersion, appTypeView;
 	RelativeLayout mainLoginLayout, loginLayout, userTypeLayout, loginCoDriverLayout, loginScrollChildLay;
@@ -155,9 +156,19 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 		if(APIs.DOMAIN_URL_ALS.contains("dev.alsrealtime.com") || APIs.DOMAIN_URL_ALS.contains("104.167.9") ){
 			appTypeView.setVisibility(View.VISIBLE);
+			userNameText.setText(Globally.TEMP_USERNAME);
+			passwordText.setText(Globally.TEMP_PASSWORD);
+
 		}else if(APIs.DOMAIN_URL_ALS.contains("182.73.78") || APIs.DOMAIN_URL_ALS.contains("192.168.0")){
 			appTypeView.setVisibility(View.VISIBLE);
-			appTypeView.setText("INDIAN");
+			userNameText.setText(Globally.TEMP_USERNAME);
+			passwordText.setText(Globally.TEMP_PASSWORD);
+
+			if(APIs.DOMAIN_URL_ALS.contains("182.73.78")){
+				appTypeView.setText("INDIAN Open");
+			}else{
+				appTypeView.setText("INDIAN Lan");
+			}
 		}else{
 			appTypeView.setVisibility(View.GONE);
 		}
@@ -472,17 +483,21 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 							checkNullInputs();
 
 							/*========== LOGIN API =========== */
-							LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername,StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+							if(IsLoginAllowed) {
+								LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+							}else{
+								global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
+							}
 
 						}
 					} else {
-						global.EldScreenToast(mainLoginLayout, "Please enter your Password", getResources().getColor(R.color.colorVoilation));
+						global.EldScreenToast(mainLoginLayout, getString(R.string.enter_your_pass), getResources().getColor(R.color.colorVoilation));
 					}
 				} else {
-					global.EldScreenToast(mainLoginLayout, "Please enter the UserName", getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(mainLoginLayout, getString(R.string.enter_userName), getResources().getColor(R.color.colorVoilation));
 				}
 			} else {
-				global.EldScreenToast(mainLoginLayout, "Please enter your Username and Password", getResources().getColor(R.color.colorVoilation));
+				global.EldScreenToast(mainLoginLayout, getString(R.string.enter_username_pass), getResources().getColor(R.color.colorVoilation));
 			}
 		} else {
 			global.EldScreenToast(mainLoginLayout, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
@@ -537,6 +552,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.setUnidentifiedAlertViewStatus(true, getApplicationContext());
 			sharedPref.setUnidentifiedAlertViewStatusCo(true, getApplicationContext());
 			sharedPref.setVehicleVin("", getApplicationContext());
+			sharedPref.setDriverStatusId("jobType", "", getApplicationContext());
+			sharedPref.setVehilceMovingStatus(false, getApplicationContext());
+			sharedPref.SetObdEngineHours("0", getApplicationContext());
+
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -590,6 +609,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 						sharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
 						//sharedPref.SetConnectionType(constants.ConnectionMalfunction, getApplicationContext());
+						Globally.TEMP_USERNAME = userNameText.getText().toString();
+						Globally.TEMP_PASSWORD = passwordText.getText().toString();
 
 						try {
 							global.obj = new JSONObject(response);
@@ -941,20 +962,23 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 							checkNullInputs();
 
 							/*========== LOGIN API =========== */
-
-							LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+							if(IsLoginAllowed) {
+								LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
+							}else{
+								global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
+							}
 
 						//	ViewOnlyLogin(StrSingleUserame, StrSinglePass);
 						} else {
-							global.EldScreenToast(mainLoginLayout, "Please enter different username for Co-Driver.", getResources().getColor(R.color.colorVoilation));
+							global.EldScreenToast(mainLoginLayout, getString(R.string.enter_different_user_co), getResources().getColor(R.color.colorVoilation));
 						}
 					} else
-						global.EldScreenToast(mainLoginLayout, "Please enter your Password", getResources().getColor(R.color.colorVoilation));
+						global.EldScreenToast(mainLoginLayout, getString(R.string.enter_your_pass), getResources().getColor(R.color.colorVoilation));
 				} else
-					global.EldScreenToast(mainLoginLayout, "Please enter the UserName", getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(mainLoginLayout, getString(R.string.enter_userName), getResources().getColor(R.color.colorVoilation));
 
 			} else
-				global.EldScreenToast(mainLoginLayout, "Please enter your Username and Password", getResources().getColor(R.color.colorVoilation));
+				global.EldScreenToast(mainLoginLayout, getString(R.string.enter_username_pass), getResources().getColor(R.color.colorVoilation));
 		} else {
 			global.EldScreenToast(mainLoginLayout, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
 		}

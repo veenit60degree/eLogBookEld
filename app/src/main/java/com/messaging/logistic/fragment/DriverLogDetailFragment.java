@@ -13,6 +13,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -134,7 +135,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     public static Button saveSignatureBtn, editLogBtn, showHideRecapBtn;
     public static TextView invisibleRfreshBtn ;
     ImageView eldMenuBtn, signImageView, nextDateBtn, previousDateBtn, loadingSpinEldIV, certifyErrorImgView;
-    TextView EldTitleTV, certifyDateTV, certifyCycleTV;
+    TextView EldTitleTV, certifyDateTV, certifyCycleTV, EngineHourTitle, EngineHourTV;
     TextView certifyDriverNameTV, certifyCoDriverNameTV, certifyDriverIDTV, certifyCoDriverIDTV;
     TextView certifyDistanceTV, certifyCarrierTV, certifyVehicleTV, certifyTrailerTV, certifyMainOfficeTV,
             certifyHomeTV, certifyFromTV, certifyToTV, certifyRemarksTV, shipperNameTV, blNumberTV, commodityRecapTV;
@@ -343,6 +344,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         EldTitleTV                  = (TextView)view.findViewById(R.id.EldTitleTV);
         certifyDateTV               = (TextView)view.findViewById(R.id.certifyDateTV);
         certifyCycleTV              = (TextView)view.findViewById(R.id.certifyCycleTV);
+        EngineHourTV                = (TextView)view.findViewById(R.id.EngineHourTV);
+        EngineHourTitle             = (TextView)view.findViewById(R.id.EngineHourTitle);
         certifyDriverNameTV         = (TextView)view.findViewById(R.id.certifyDriverNameTV);
         certifyDriverIDTV           = (TextView)view.findViewById(R.id.certifyDriverIDTV);
         certifyCoDriverNameTV       = (TextView)view.findViewById(R.id.certifyCoDriverNameTV);
@@ -1048,6 +1051,15 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         certifyTrailerTV.setText(TrailerNo);
         certifyMainOfficeTV.setText(OfficeAddress);
         certifyHomeTV.setText(HomeTerminal);
+
+
+        String engineHours = sharedPref.getObdEngineHours(getActivity());
+        int ObdStatus = SharedPref.getObdStatus(getActivity());
+        if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && engineHours.length() > 1) {
+             EngineHourTV.setText(engineHours);
+        }else{
+            EngineHourTitle.setVisibility(View.GONE);
+        }
 
         if(Globally.isConnected(getActivity()) && isCertifyLog){
             GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);

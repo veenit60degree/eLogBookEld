@@ -109,6 +109,7 @@ public class Globally {
 	static String DateFormatMalfunction				= "MMM dd, hh:mm a";
 	static String DateFormatMMM_dd_yyyy				= "MMM dd, yyyy";
 	static String DateFormatMMMM_ddd_dd				= "MMMM,MMM,EEEE";
+	static String DateFormat_dd_MMM_yyyy			= "dd MMM, yyyy";
 
 	public static String DateFormatWithMillSec 		= "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'";
 	public static String[] MONTHS 					= {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -165,6 +166,9 @@ public class Globally {
 	public static String DRIVER_TYPE                	  	  = "driver_type";
 	public static String CURRENT_DRIVER_TYPE				  = "current_driver_type";
 
+	public static String TEMP_USERNAME                	  	  = "";
+	public static String TEMP_PASSWORD				  		  = "";
+
 	public static JSONArray OBD_DataArray = new JSONArray();
 
 	public static List<String> onDutyRemarks = new ArrayList<String>();
@@ -208,7 +212,7 @@ public class Globally {
 			e.printStackTrace();
 			return false;
 		}
-		return false;
+		return true;	//return false
 	}
 
 
@@ -459,11 +463,17 @@ public class Globally {
 		DateTime currentUtcDateTime = GetCurrentUTCDateTime();
 
 		if(savedUtcDateTime != null && savedUtcDateTime.toString().length() > 16 && currentUtcDateTime.toString().length() > 16) {
-			if (savedUtcDateTime.toString().substring(0, 10).equals(currentUtcDateTime.toString().substring(0, 10))) {
+			int dayDiff = Constants.getDayDiff(savedUtcDateTime.toString(), currentUtcDateTime.toString());
+
+			if (dayDiff == 0) {	//savedUtcDateTime.toString().substring(0, 10).equals(currentUtcDateTime.toString().substring(0, 10))
 				int minDiff = currentUtcDateTime.getMinuteOfDay() - savedUtcDateTime.getMinuteOfDay();
 				if (minDiff >= -5) {	//Math.max(-7, minDiff) == Math.min(minDiff, 7)
 					isTimeCorrect = true;
 				} else {
+					isTimeCorrect = false;
+				}
+			}else{
+				if(dayDiff < 0){
 					isTimeCorrect = false;
 				}
 			}
@@ -680,6 +690,30 @@ public class Globally {
 		}
 		return str;
 	}
+
+
+	// Convert default DateTime format to MM/dd/yyyy date format
+	public static String ConvertDateFormatddMMMyyyy(String time) {
+		SimpleDateFormat inputFormat = new SimpleDateFormat(DateFormat);
+		SimpleDateFormat outputFormat = new SimpleDateFormat(DateFormat_dd_MMM_yyyy);
+
+		Date date = null;
+		String str = "";
+
+		if(time.length() > 10) {
+			try {
+				date = inputFormat.parse(time);
+				str = outputFormat.format(date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}else{
+			str = time;
+		}
+		return str;
+	}
+
+
 
 
 	// Convert default DateTime format to MM/dd/yyyy date format

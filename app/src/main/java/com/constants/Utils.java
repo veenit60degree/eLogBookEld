@@ -331,6 +331,7 @@ public class Utils
 
 
 
+
     public void syncAppUsageLog(Context context, String DriverId){
 
         File appUsageLog = Globally.GetWiredLogFile(context, ConstantsKeys.APP_USAGE_LOG, "txt");
@@ -400,24 +401,36 @@ public class Utils
     }
 
 
-    public void deleteWiredObdLog(){
-        File wiredObdLog = Globally.GetWiredLogFile(context, ConstantsKeys.ALS_OBD_LOG, "txt");
-        if(wiredObdLog != null && wiredObdLog.isFile() ) {
-            wiredObdLog.delete();
+    public void deleteWiredObdLog() {
+        try{
+            File wiredObdLog = Globally.GetWiredLogFile(context, ConstantsKeys.ALS_OBD_LOG, "txt");
+            if (wiredObdLog != null && wiredObdLog.isFile()) {
+                wiredObdLog.delete();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     public void deleteAppUsageLog(){
-        File appUsageLogFile = Globally.GetWiredLogFile(context, ConstantsKeys.APP_USAGE_LOG, "txt");
-        if(appUsageLogFile != null && appUsageLogFile.isFile() ) {
-            appUsageLogFile.delete();
+        try {
+            File appUsageLogFile = Globally.GetWiredLogFile(context, ConstantsKeys.APP_USAGE_LOG, "txt");
+            if (appUsageLogFile != null && appUsageLogFile.isFile()) {
+                appUsageLogFile.delete();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     public void deleteExecLog(){
-        File appUsageLogFile = Globally.GetWiredLogFile(context, ConstantsKeys.EXECUTION_TIME_LOG, "txt");
-        if(appUsageLogFile != null && appUsageLogFile.isFile() ) {
-            appUsageLogFile.delete();
+        try {
+            File appUsageLogFile = Globally.GetWiredLogFile(context, ConstantsKeys.EXECUTION_TIME_LOG, "txt");
+            if (appUsageLogFile != null && appUsageLogFile.isFile()) {
+                appUsageLogFile.delete();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

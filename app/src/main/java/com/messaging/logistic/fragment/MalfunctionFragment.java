@@ -52,7 +52,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
     ExpandableListView malfunctionExpListView;
     TextView EldTitleTV, noDataEldTV, dateActionBarTV;
     RelativeLayout rightMenuBtn, eldMenuLay;
-    String DriverId = "", DeviceId = "", VIN = "", FromDateTime, ToDateTime, Country, OffsetFromUTC;
+    String DriverId = "", DeviceId = "", VIN = "", FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId;
     Map<String, String> params;
     VolleyRequest GetMalfunctionEvents;
     List<MalfunctionModel> malfunctionChildList = new ArrayList<>();
@@ -152,6 +152,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         VIN                     = sharedPref.getVINNumber(getActivity());
         Country                 = constants.getCountryName(getActivity());
         OffsetFromUTC           = DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity());
+        CompanyId         = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
         DateTime currentDate    = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
         ToDateTime              = currentDate.toString().substring(0,10);
         FromDateTime            = String.valueOf(currentDate.minusDays(7)).substring(0,10);
@@ -159,7 +160,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         notifyAdapter();
 
         if(Globally.isConnected(getContext())) {
-            GetMalfunctionEvents( VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC);
+            GetMalfunctionEvents( VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
         }else{
             Globally.EldScreenToast(dateActionBarTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
         }
@@ -198,7 +199,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                 break;
 
             case R.id.invisibleMalfnBtn:
-                GetMalfunctionEvents( VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC);
+                GetMalfunctionEvents( VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
                 break;
 
 
@@ -245,7 +246,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
 
     /*================== Get Unidentified Records ===================*/
     void GetMalfunctionEvents(String VIN, final String FromDateTime, final String ToDateTime,
-                              final String Country, String OffsetFromUTC){
+                              final String Country, String OffsetFromUTC, String CompanyId){
 
         params = new HashMap<String, String>();
         params.put("VIN", VIN); //4V4NC9EH7GN929538
@@ -253,6 +254,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         params.put("ToDateTime", ToDateTime );
         params.put("Country", Country);
         params.put("OffsetFromUTC", OffsetFromUTC);
+        params.put("CompanyId", CompanyId);
 
         GetMalfunctionEvents.executeRequest(Request.Method.POST, APIs.GET_MALFUNCTION_EVENTS , params, 0,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

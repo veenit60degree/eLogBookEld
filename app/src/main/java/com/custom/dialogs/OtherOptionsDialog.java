@@ -108,6 +108,7 @@ public class OtherOptionsDialog extends Dialog {
             }
         }
 
+
         otherOptionList = constants.getOtherOptionsList(getContext(), isAllowMalfunction, isAllowUnIdentified);
         OtherOptionsAdapter adapter = new OtherOptionsAdapter(getContext(), isPendingNotification, pendingNotificationCount, isGps, otherOptionList);
         otherFeatureListView.setAdapter(adapter);

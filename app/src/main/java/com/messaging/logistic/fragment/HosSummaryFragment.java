@@ -45,6 +45,7 @@ import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
+import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
 import com.models.DriverLocationModel;
 import com.shared.pref.StatePrefManager;
@@ -72,7 +73,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     View rootView;
     Button availableHourBtnTV;
     TextView EldTitleTV, hosDistanceTV, hosLocationTV, nextBrkTitleTV;
-    TextView breakUsedTimeTV, shiftUsedTimeTV, statusUsedTimeTV, cycleUsedTimeTV, hosCurrentCycleTV, driverMilesTitle;
+    TextView breakUsedTimeTV, shiftUsedTimeTV, statusUsedTimeTV, cycleUsedTimeTV, hosCurrentCycleTV, vinNumberTxtView, engHourTxtView;
     TextView statusHosTV, breakInfoTV, shiftInfoTV, statusInfoTV, cycleInfoTV, hosStatusCircle, hosStatusTV, malfunctionTV ;
     ImageView eldMenuBtn, hosStatusImgVw, malfunctionImgView;
     LoadingSpinImgView loadingSpinEldIV;
@@ -201,7 +202,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         hosStatusTV             = (TextView)v.findViewById(R.id.hosStatusTV);
         nextBrkTitleTV          = (TextView)v.findViewById(R.id.nextBrkTitleTV);
         malfunctionTV           = (TextView)v.findViewById(R.id.malfunctionTV);
-        driverMilesTitle        = (TextView)v.findViewById(R.id.driverMilesTitle);
+        vinNumberTxtView        = (TextView)v.findViewById(R.id.vinNumberTxtView);
+        engHourTxtView          = (TextView)v.findViewById(R.id.engHourTxtView);
 
         availableHourBtnTV      = (Button)v.findViewById(R.id.availableHourBtnTV);
 
@@ -238,7 +240,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         setMarqueText(hosLocationTV);
         setMarqueText(hosDistanceTV);
-        setMarqueText(driverMilesTitle);
+        setMarqueText(vinNumberTxtView);
+        setMarqueText(engHourTxtView);
 
         if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
@@ -305,19 +308,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         cycleCircularView.setSeekModeEnabled(false);
 
         if(sharedPref.getVehicleVin(getActivity()).length() > 3){
-            vin = "(<b>VIN</b>-" + sharedPref.getVehicleVin(getActivity())+ ")";   // getting from OBD directly (Cuurent VIN)
+            vin = "(<b>VIN: </b>" + sharedPref.getVehicleVin(getActivity())+ ")";   // getting from OBD directly (Cuurent VIN)
         }else{
-            vin = "(<b>VIN</b>-" + sharedPref.getVINNumber(getActivity()) + ")";   // getting from truck selection when user select Truck and getting its VIN
+            vin = "(<b>VIN: </b>" + sharedPref.getVINNumber(getActivity()) + ")";   // getting from truck selection when user select Truck and getting its VIN
         }
-
-   /*     String s= getString(R.string.hos_driver_miles);
-        SpannableString ss1=  new SpannableString(s);
-        ss1.setSpan(new RelativeSizeSpan(2f), 0,5, 0); // set size
-        ss1.setSpan(new ForegroundColorSpan(Color.RED), 0, 5, 0);// set color
-        TextView tv= (TextView) findViewById(R.id.textview);
-        tv.setText(ss1);
-*/
-        driverMilesTitle.setText(Html.fromHtml("<b>" + getString(R.string.hos_driver_miles) + "</b> " + vin) );
+        vinNumberTxtView.setText(Html.fromHtml( vin) );
 
         CycleTimeCalculation(true);
 
@@ -384,7 +379,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         RestartTimer();
 
-        if(sharedPref.isSuggestedEditOccur(getActivity())){
+        if(sharedPref.isSuggestedEditOccur(getActivity()) && sharedPref.IsCCMTACertified(getActivity()) ){
             malfunctionTV.setText(getString(R.string.review_carrier_edits));
           //  malfunctionTV.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
             malfunctionLay.setVisibility(View.VISIBLE);
@@ -810,6 +805,19 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
                     setProgressbarValues(shiftCircularView, shiftUsedTimeTV, UsedShiftHoursInt, LeftShiftHoursInt);
                     setProgressViolationColor(shiftCircularView, LeftShiftHoursInt);
+
+                    // set Engine hour
+                    String engineHours = sharedPref.getObdEngineHours(getActivity());
+                    if(engineHours.length() > 1) {
+                        int ObdStatus = SharedPref.getObdStatus(getActivity());
+                        if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) ){
+                            engHourTxtView.setText(Html.fromHtml("(<b>Engine Hours: </b>" + engineHours + ")" ));
+                        }else{
+                            engHourTxtView.setText("");
+                        }
+                    }else{
+                        engHourTxtView.setText("");
+                    }
 
                 }
             });

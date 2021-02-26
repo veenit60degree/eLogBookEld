@@ -58,7 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CanadaDotFragment extends Fragment implements View.OnClickListener{
+public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
     View rootView;
@@ -243,6 +243,7 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
             Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
             DOTBtnVisibility(DaysDiff, MaxDays);
             */
+            LogDate = "02/02/2021";
             GetDriverDotDetails(DriverId, LogDate);
 
         }else{
@@ -301,60 +302,78 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
 
     void setdataOnAdapter(){
 
-        canDotDutyStatusAdapter = new CanDotDutyStatusAdapter(getActivity(), DutyStatusList);
-        canDotLogInOutAdapter = new CanDotLogInOutAdapter(getActivity(), LoginLogoutList);
-        canDotRemarksAdapter = new CanDotRemarksAdapter(getActivity(), CommentsRemarksList);
-        canDotAddHrsAdapter = new CanDotAddHrsAdapter(getActivity(), AdditionalHoursList);
-        canDotEnginePowerAdapter = new CanDotEnginePowerAdapter(getActivity(), EnginePowerList);
+        try {
+            canDotDutyStatusAdapter = new CanDotDutyStatusAdapter(getActivity(), DutyStatusList);
+            dutyChangeDotListView.setAdapter(canDotDutyStatusAdapter);
+        }catch (Exception e){}
 
-        dutyChangeDotListView.setAdapter(canDotDutyStatusAdapter);
-        remAnotnDotListView.setAdapter(canDotRemarksAdapter);
-        addHrsDotListView.setAdapter(canDotAddHrsAdapter);
-        loginLogDotListView.setAdapter(canDotLogInOutAdapter);
-        enginePwrDotListView.setAdapter(canDotEnginePowerAdapter);
+        try{
+            canDotLogInOutAdapter = new CanDotLogInOutAdapter(getActivity(), LoginLogoutList);
+            loginLogDotListView.setAdapter(canDotLogInOutAdapter);
+        }catch (Exception e){}
 
-        inspectionLayHeight = enginePwrDotLay.getHeight();
+        try {
+            canDotRemarksAdapter = new CanDotRemarksAdapter(getActivity(), CommentsRemarksList);
+            remAnotnDotListView.setAdapter(canDotRemarksAdapter);
+        }catch (Exception e){}
 
-        ViewTreeObserver vto = enginePwrDotLay.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    enginePwrDotLay.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                } else {
-                    enginePwrDotLay.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        try {
+            canDotAddHrsAdapter = new CanDotAddHrsAdapter(getActivity(), AdditionalHoursList);
+            addHrsDotListView.setAdapter(canDotAddHrsAdapter);
+        }catch (Exception e){}
+
+        try {
+            canDotEnginePowerAdapter = new CanDotEnginePowerAdapter(getActivity(), EnginePowerList);
+            enginePwrDotListView.setAdapter(canDotEnginePowerAdapter);
+        }catch (Exception e){}
+
+
+        try {
+            inspectionLayHeight = enginePwrDotLay.getHeight();
+
+            ViewTreeObserver vto = enginePwrDotLay.getViewTreeObserver();
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                        enginePwrDotLay.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    } else {
+                        enginePwrDotLay.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                    inspectionLayHeight = enginePwrDotLay.getMeasuredHeight();
+
                 }
-                inspectionLayHeight = enginePwrDotLay.getMeasuredHeight();
+            });
+
+            if (inspectionLayHeight == 0) {
+                if (global.isTablet(getActivity())) {
+                    inspectionLayHeight = constants.intToPixel(getActivity(), 55);
+                } else {
+                    inspectionLayHeight = constants.intToPixel(getActivity(), 50);
+                }
 
             }
-        });
 
-        if(inspectionLayHeight == 0) {
-            if(global.isTablet(getActivity())){
-                inspectionLayHeight = constants.intToPixel(getActivity(), 55);
-            }else{
-                inspectionLayHeight = constants.intToPixel(getActivity(), 50);
-            }
+            final int DutyStatusListHeight = (inspectionLayHeight) * DutyStatusList.size();
+            final int LoginLogoutListHeight = (inspectionLayHeight) * LoginLogoutList.size();
+            final int CommentsRemarksListHeight = (inspectionLayHeight) * CommentsRemarksList.size();
+            final int AdditionalHoursListHeight = (inspectionLayHeight) * AdditionalHoursList.size();
+            final int EnginePowerListHeight = (inspectionLayHeight) * EnginePowerList.size();
 
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    dutyChangeDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DutyStatusListHeight));
+                    loginLogDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LoginLogoutListHeight));
+                    remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CommentsRemarksListHeight));
+                    addHrsDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AdditionalHoursListHeight));
+                    enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, EnginePowerListHeight));
+
+                }
+            }, 500);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        final int DutyStatusListHeight      = (inspectionLayHeight ) * DutyStatusList.size();
-        final int LoginLogoutListHeight      = (inspectionLayHeight ) * LoginLogoutList.size();
-        final int CommentsRemarksListHeight      = (inspectionLayHeight ) * CommentsRemarksList.size();
-        final int AdditionalHoursListHeight      = (inspectionLayHeight ) * AdditionalHoursList.size();
-        final int EnginePowerListHeight      = (inspectionLayHeight ) * EnginePowerList.size();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dutyChangeDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DutyStatusListHeight  ));
-                loginLogDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LoginLogoutListHeight  ));
-                remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CommentsRemarksListHeight  ));
-                addHrsDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AdditionalHoursListHeight  ));
-                enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, EnginePowerListHeight  ));
-
-            }
-        },500);
     }
 
 
@@ -529,13 +548,13 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
         params.put("Date", date);
 
         GetDotLogRequest.executeRequest(Request.Method.POST, APIs.MOBILE_CANADA_ELD_VIEW, params, 1,
-                Constants.SocketTimeout30Sec, ResponseCallBack, ErrorCallBack);
+                Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
     }
 
 
     void setDataOnTextView(JSONObject dataObj){
         try{
-            dateRodsTV.setText(dataObj.getString("RecordDate"));
+            dateRodsTV.setText(global.ConvertDateFormatddMMMyyyy(dataObj.getString("RecordDate")));
             dayStartTimeTV.setText(dataObj.getString("PeriodStartingTime"));
             timeZoneCTV.setText(dataObj.getString("TimeZone"));
             currLocCTV.setText(dataObj.getString("CurrentLocation"));
@@ -545,11 +564,11 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
             driverNameCTV.setText(dataObj.getString("DriverLastAndFirstName"));
             driverIdCTV.setText(dataObj.getString("DriverLoginId"));
             exemptDriverCTV.setText(dataObj.getString("ExemptDriverStatus"));
-            driLicNoCTV.setText(dataObj.getString("DriverLicenseNumber "));
+            driLicNoCTV.setText(dataObj.getString("DriverLicenseNumber"));
             coDriverNameCTV.setText(dataObj.getString("CoDriverLastAndFirstName"));
             coDriverIdCTV.setText(dataObj.getString("CoDriverLoginId"));
 
-            truckTractorIdTV.setText(dataObj.getString(""));
+       /*     truckTractorIdTV.setText(dataObj.getString(""));
             truckTractorVinTV.setText(dataObj.getString(""));
             totalDisCTV.setText(dataObj.getString(""));
             distanceTodayCTV.setText(dataObj.getString(""));
@@ -567,7 +586,7 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
             totalhrsCycleCTV.setText(dataObj.getString(""));
             remainingHourCTV.setText(dataObj.getString(""));
             offDutyDeffCTV.setText(dataObj.getString(""));
-
+*/
             datDiagCTV.setText(dataObj.getString("DataDiagnosticIndicators"));
             unIdenDriRecCTV.setText(dataObj.getString("UnIdentifiedDriverRecords"));
 
@@ -593,6 +612,8 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
         public void getResponse(String response, int flag) {
 
             canDotProgressBar.setVisibility(View.GONE);
+
+            //  {"Status":false,"Message":"Device id is wrong","Data":false}
 
             String status = "", Message = "";
             JSONObject dataObj = null;
@@ -644,7 +665,7 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
                     JSONArray dotLogArray = new JSONArray(dataObj.getString("oReportList"));
                   //  setDataOnList(dotLogArray);
 
-                    JSONArray shippingLogArray = new JSONArray(dataObj.getString("ShippingInformationModel"));
+                  //  JSONArray shippingLogArray = new JSONArray(dataObj.getString("ShippingInformationModel"));
                    // setShippingDataOnList(shippingLogArray);
 
                     ParseGraphData(dotLogArray);
@@ -670,7 +691,7 @@ public class CanadaDotFragment extends Fragment implements View.OnClickListener{
 
 
                     setdataOnAdapter();
-
+                    setDataOnTextView(dataObj);
 
                 }catch (Exception e){
                     e.printStackTrace();

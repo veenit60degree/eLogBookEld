@@ -5,6 +5,7 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 import com.constants.Constants;
+import com.constants.ConstantsEnum;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
 import com.models.EldDriverLogModel;
@@ -154,6 +155,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         connectionType           = connection_type;
         OBDVehicleSpeed          = obdVehicleSpeed;
         GPSVehicleSpeed          = gpsVehicleSpeed;
+
 
         getConnectionSource(connectionType);
 
@@ -320,7 +322,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                     boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
                     boolean isAutoDrive = sharedPref.isAutoDrive(context);
 
-                    if(currentJob.equals(String.valueOf(DRIVER_JOB_STATUS))) {  // reason of this check: some times latest entry was not saved in 18 days array due to unknown/strange error. thats why wrong auto status entry was saved from app. So we need to add this check for safe side.
+                    if(!currentJob.equals("") && currentJob.equals(String.valueOf(DRIVER_JOB_STATUS))) {  // reason of this check: some times latest entry was not saved in 18 days array due to unknown/strange error. thats why wrong auto status entry was saved from app. So we need to add this check for safe side.
                         // Check If vehicle is ELD Type
                         if (!isPersonal && isAutoDrive && VehicleSpeed != -1) {
                             try {
@@ -396,17 +398,26 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                         if (VehicleSpeed > DrivingSpeedLimit && minutesDiff >= DrivingInterval) {
 
-                                            if (BackgroundLocationService.IsAutoChange) {
-                                                message = "Your current status is " + JobStatusStr + " but your vehicle is running. Now your status is going to be changed to Driving.";
-                                            } else {
-                                                message = "Your current status is " + JobStatusStr + " but your vehicle is running. Please change your status to Driving.";
-                                            }
+                                            boolean isDrivingAllowed = hMethods.isDrivingAllowed(context, Global, String.valueOf(DriverId), dbHelper);
 
-                                            LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
-                                            CHANGED_STATUS = DRIVING;
-                                            ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                    driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, IsAOBRDAutomatic);
+                                            if(isDrivingAllowed) {
+                                                if (BackgroundLocationService.IsAutoChange) {
+                                                    message = "Your current status is " + JobStatusStr + " but your vehicle is running. Now your status is going to be changed to Driving.";
+                                                } else {
+                                                    message = "Your current status is " + JobStatusStr + " but your vehicle is running. Please change your status to Driving.";
+                                                }
 
+                                                LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
+                                                CHANGED_STATUS = DRIVING;
+                                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, IsAOBRDAutomatic);
+                                            }else{
+
+                                                serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, ConstantsEnum.CO_DRIVING_ALERT1, "");
+                                                // ---------- Text to speech listener---------
+                                                SpeakOutMsg(ConstantsEnum.CO_DRIVING_ALERT1);
+
+                                        }
                                         } else {
                                             ContinueSpeedCounter = 0;
                                             ClearCount();
@@ -425,7 +436,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 isApplicable = true;
                                             }
                                         } else if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
-                                            if (OBDVehicleSpeed <=  OnDutySpeedLimit && GPSVehicleSpeed < OnDutySpeedLimit) {
+                                            if (OBDVehicleSpeed <=  OnDutySpeedLimit && GPSVehicleSpeed <= OnDutySpeedLimit) {
                                                 isApplicable = true;
                                             }
                                         }else {
@@ -535,10 +546,19 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             }
 
                                             if (isApplicable && minutesDiff >= DrivingInterval) {
-                                                LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
-                                                CHANGED_STATUS = DRIVING;
-                                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+
+                                                boolean isDrivingAllowed = hMethods.isDrivingAllowed(context, Global, String.valueOf(DriverId), dbHelper);
+
+                                                if(isDrivingAllowed) {
+                                                    LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
+                                                    CHANGED_STATUS = DRIVING;
+                                                    ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                            driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                                }else{
+                                                    serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, ConstantsEnum.CO_DRIVING_ALERT1, "");
+                                                    // ---------- Text to speech listener---------
+                                                    SpeakOutMsg(ConstantsEnum.CO_DRIVING_ALERT1);
+                                                }
                                             } else {
                                                 ContinueSpeedCounter = 0;
                                                 ClearCount();
@@ -567,10 +587,18 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             }
 
                                             if (isApplicable && minutesDiff >= DrivingInterval) {
-                                                LastStatus = "_YM_From_" + DRIVER_JOB_STATUS;
-                                                CHANGED_STATUS = DRIVING;
-                                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                                boolean isDrivingAllowed = hMethods.isDrivingAllowed(context, Global, String.valueOf(DriverId), dbHelper);
+
+                                                if(isDrivingAllowed) {
+                                                    LastStatus = "_YM_From_" + DRIVER_JOB_STATUS;
+                                                    CHANGED_STATUS = DRIVING;
+                                                    ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                            driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                                }else{
+                                                    serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, ConstantsEnum.CO_DRIVING_ALERT1, "");
+                                                    // ---------- Text to speech listener---------
+                                                    SpeakOutMsg(ConstantsEnum.CO_DRIVING_ALERT1);
+                                                }
                                             } else {
                                                 ContinueSpeedCounter = 0;
                                                 ClearCount();

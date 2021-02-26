@@ -653,7 +653,7 @@
                 android:id="@+id/hosDistanceCardView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight=".9"
+                android:layout_weight=".75"
                 android:layout_marginRight="@dimen/margin_short_2"
                 card_view:cardCornerRadius="@dimen/margin_10"
                 android:padding="@dimen/margin_short_7"
@@ -687,14 +687,25 @@
                         />
 
                     <TextView
-                        android:id="@+id/driverMilesTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/hos_driver_miles"
                         android:textColor="@color/black_hos"
                         android:textSize="@dimen/text_size_18"
                         android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_4"
+                        android:textStyle="bold"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/engHourTxtView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/hos_shift"
+                        android:textSize="@dimen/text_size_14"
                         android:paddingRight="@dimen/margin_short_3"
+                        android:paddingTop="@dimen/margin_short_2"
 
                         />
 
@@ -722,7 +733,7 @@
                 android:id="@+id/hosLocationCardView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight=".6"
+                android:layout_weight=".75"
                 card_view:cardCornerRadius="@dimen/margin_10"
                 app:cardElevation="@dimen/margin_short_3"
                 app:cardUseCompatPadding="true"
@@ -760,6 +771,18 @@
                             android:textStyle="bold"
                             android:textSize="@dimen/text_size_18"
                             android:paddingLeft="@dimen/margin_short_5"
+                            />
+
+
+                        <TextView
+                            android:id="@+id/vinNumberTxtView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/hos_shift"
+                            android:textSize="@dimen/text_size_14"
+                            android:paddingLeft="@dimen/margin_short_4"
+                            android:paddingRight="@dimen/margin_short_5"
+                            android:paddingTop="@dimen/margin_short_2"
                             />
 
                     </LinearLayout>

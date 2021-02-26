@@ -113,6 +113,33 @@ public class HelperMethods {
     }
 
 
+    public boolean isDrivingAllowed(Context context, Globally Global, String selectedDriverId, DBHelper dbHelper){
+        boolean isDrivingAllowed = true;
+
+        if (Global.isSingleDriver(context)) {
+
+        }else {
+            String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
+            String CotDriverId = "";
+
+            if(selectedDriverId.equals(MainDriverId)){
+                CotDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
+            }else{
+                CotDriverId = MainDriverId;
+            }
+
+            int status = GetDriverStatus(Integer.valueOf(CotDriverId), dbHelper);
+
+            if(status == Constants.DRIVING){
+                isDrivingAllowed = false;
+            }
+
+        }
+
+        return isDrivingAllowed;
+    }
+
+
     public DriverDetail getDriverList(DateTime currentDate, DateTime currentUTCDate, int driverId,
                                       final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver, int LastStatus,
                                       boolean isOldRecord, boolean isHaulException,  boolean isAdverseException, int ruleVersion, List<DriverLog> logList){

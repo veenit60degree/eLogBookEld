@@ -364,6 +364,50 @@
 
 
 
+
+                <View
+                    android:layout_width="@dimen/margin_short_1"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"
+                    />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/margin_10"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/EngineHourTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/EngineHours"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/color_eld_theme"
+                        android:textSize="@dimen/text_size_18"
+                        android:textStyle="bold"
+                        />
+
+                    <TextView
+                        android:id="@+id/EngineHourTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_17"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/EngineHourTitle"
+                        android:layout_marginLeft="@dimen/margin_short_5"
+                        android:layout_marginRight="@dimen/margin_short_5"
+                        android:singleLine="true"
+                        />
+
+
+
+
+
+
+                </RelativeLayout>
+
             </LinearLayout>
 
 

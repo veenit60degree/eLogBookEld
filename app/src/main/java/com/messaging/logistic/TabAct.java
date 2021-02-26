@@ -132,9 +132,11 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             @Override
             public void onReceive(Context context, Intent intent) {
                   Log.d("received", "received from service");
-                boolean isSuggestedEdit = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
-                boolean isFreshLogin    = sharedPref.GetNewLoginStatus(TabAct.this);
-                if(isSuggestedEdit && isFreshLogin == false){
+                boolean isSuggestedEdit     = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
+                boolean isFreshLogin        = sharedPref.GetNewLoginStatus(TabAct.this);
+                boolean IsCCMTACertified    = sharedPref.IsCCMTACertified(TabAct.this);
+
+                if(IsCCMTACertified && isSuggestedEdit && isFreshLogin == false){
                     Intent i = new Intent(TabAct.this, SuggestedFragmentActivity.class);
                     i.putExtra(ConstantsKeys.suggested_data, "");
                     i.putExtra(ConstantsKeys.Date, "");
@@ -257,40 +259,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 smenu.setShadowDrawable(R.drawable.shadow);
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
                 smenu.setBehindOffsetRes(R.dimen.sliding_offset);
-
-
-           /*     DisplayMetrics metrics = getResources().getDisplayMetrics();
-                int densityDpi = (int)(metrics.density * 160f);
-                Log.d("densityDpi","densityDpi: " +densityDpi);
-
-                int SingleDriverMenuWidth = 385;
-                int DualDriverMenuWidth   = 500;
-                if(Globally.isTablet(getApplicationContext())) {
-
-                    if(densityDpi <= 220){
-                        SingleDriverMenuWidth = 355;
-                        DualDriverMenuWidth   = 460;
-                    }
-
-                    if(sharedPref.getDriverType(TabAct.this).equals(DriverConst.SingleDriver)){
-                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), SingleDriverMenuWidth));
-                    }else {
-                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), DualDriverMenuWidth));
-                    }
-                }else{
-                    if(densityDpi <= 420){
-                        SingleDriverMenuWidth = 275;
-                        DualDriverMenuWidth   = 295;
-                    }else{
-                        SingleDriverMenuWidth = 310;
-                        DualDriverMenuWidth   = 335;
-                    }
-                    if(sharedPref.getDriverType(TabAct.this).equals(DriverConst.SingleDriver)) {
-                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), SingleDriverMenuWidth));
-                    }else{
-                        smenu.setBehindWidth(constants.intToPixel(getApplicationContext(), DualDriverMenuWidth));
-                    }
-                }*/
                // int slideMenuWidth = constants.intToPixel(getApplicationContext(), CommonUtils.setWidth(TabAct.this));
                 smenu.setBehindWidth(CommonUtils.setWidth(TabAct.this));
                 smenu.setFadeDegree(0.35f);
@@ -529,17 +497,17 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         boolean isUnidentified = false;
 
         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-            if (sharedPref.IsAllowMalfunction(getApplicationContext()) && sharedPref.IsAllowDiagnostic(getApplicationContext())) {
+            if (sharedPref.IsAllowMalfunction(getApplicationContext()) || sharedPref.IsAllowDiagnostic(getApplicationContext()))
                 isMalfunction = true;
-            }
+
 
             if(sharedPref.IsShowUnidentifiedRecords(getApplicationContext()))
                 isUnidentified = true;
 
         }else{
-            if (sharedPref.IsAllowMalfunctionCo(getApplicationContext()) && sharedPref.IsAllowDiagnosticCo(getApplicationContext())) {
+            if (sharedPref.IsAllowMalfunctionCo(getApplicationContext()) || sharedPref.IsAllowDiagnosticCo(getApplicationContext()))
                 isMalfunction = true;
-            }
+
 
             if(sharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext()))
                 isUnidentified = true;

@@ -205,7 +205,18 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.LOGOUT:
-				logoutDialog();
+
+				boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
+				int ObdStatus = SharedPref.getObdStatus(context);
+
+				if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && isVehicleMoving ){
+					Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
+				}else{
+					logoutDialog();
+				}
+
+
+
 				break;
 
 		}
@@ -271,6 +282,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 			menuAdapter = new SlideMenuAdapter(context, TabAct.menuList, DriverType);
 			menuListView.setAdapter(menuAdapter);
+			menuAdapter.notifyDataSetChanged();
 		}catch (Exception e){
 			e.printStackTrace();
 		}

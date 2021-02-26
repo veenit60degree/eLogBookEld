@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="false" android:drawable="@drawable/terms_unchecked_mobile" />
+    <item android:state_checked="true" android:drawable="@drawable/terms_checked_mobile" />
+    <item android:drawable="@drawable/terms_unchecked_mobile" /> <!-- default state -->
+</selector>

@@ -114,7 +114,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String TAG_OBD = "OBD Service";
     String noObd = "obd not connected";
 
-    String obdOdometer = "0", obdTripDistance = "0", ignitionStatus = "OFF", HighResolutionDistance = "0", truckRPM = "0", apiReturnedSpeed = "";
+    String obdEngineHours = "0", obdOdometer = "0", obdTripDistance = "0", ignitionStatus = "OFF", HighResolutionDistance = "0", truckRPM = "0", apiReturnedSpeed = "";
 
     int GPSSpeed = 0;
     int timeInSec = -1;
@@ -383,6 +383,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 obdTripDistance = bundle.getString(constants.OBD_TripDistance);
                 ignitionStatus = bundle.getString(constants.OBD_IgnitionStatus);
                 truckRPM = bundle.getString(constants.OBD_RPM);
+                obdEngineHours = bundle.getString(constants.OBD_EngineHours);
                 vin = bundle.getString(constants.OBD_VINNumber);
                 speed = bundle.getInt(constants.OBD_Vss);
 
@@ -399,10 +400,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             sharedPref.setVss(speed, getApplicationContext());
             sharedPref.setRPM(truckRPM, getApplicationContext());
             sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
-
+            sharedPref.SetObdEngineHours(obdEngineHours, getApplicationContext());
 
             // ---------------- temp data ---------------------
-            //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 30;
+           //   ignitionStatus = "ON"; truckRPM = "35436"; speed = 30;
 
 
             if(ignitionStatus.equals("ON")){
@@ -462,11 +463,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
                     if(obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
                         if (calculatedSpeedFromOdo < 5 && speed < 5) {
+
                             if (sharedPref.getLastIgnitionStatus(getApplicationContext()) == true && sharedPref.getLastObdSpeed(getApplicationContext()) < 5) {
                                 // ignore it
                             } else {
                                 sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
                             }
+                        }
+
+                        if(calculatedSpeedFromOdo >= 10 || speed >= 10){
+                            sharedPref.setVehilceMovingStatus(true, getApplicationContext());
+                        }else{
+                            sharedPref.setVehilceMovingStatus(false, getApplicationContext());
                         }
 
                         if (jobType.equals(global.DRIVING)) {
@@ -1847,10 +1855,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 String longitude = wifiConfig.checkJsonParameter(canObj, "GPSLongitude", "0.0");
                                 HighResolutionDistance = wifiConfig.checkJsonParameter(canObj, "HighResolutionTotalVehicleDistanceInKM", "-1");
                                 obdOdometer = HighResolutionDistance;
+                                obdEngineHours = wifiConfig.checkJsonParameter(canObj, "EngineHours", "0");
                                 // int truckRpmInt = Integer.valueOf(truckRPM);
 
                                 String vin = wifiConfig.checkJsonParameter(canObj, ConstantsKeys.VIN, "");
                                 sharedPref.setVehicleVin(vin, getApplicationContext());
+                                sharedPref.SetObdEngineHours(obdEngineHours, getApplicationContext());
+
+
 
                                 if (!latitude.equals("0")) {
                                     global.LATITUDE = latitude;
@@ -2041,6 +2053,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 }
             }
         }
+
+        if(speedCalculated >= 10 || speed >= 10){
+            sharedPref.setVehilceMovingStatus(true, getApplicationContext());
+        }else{
+            sharedPref.setVehilceMovingStatus(false, getApplicationContext());
+        }
+
 
         sharedPref.SetWifiObdOdometer(HighResolutionDistance, currentLogDate, rawResponse, getApplicationContext());
 

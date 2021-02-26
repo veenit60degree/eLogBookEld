@@ -559,7 +559,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_14"
+                android:textSize="@dimen/text_size_12"
                 android:textColor="@color/colorPrimary"
                 android:text="@string/startEnd"
                 android:layout_marginLeft="@dimen/margin_short_3"
@@ -810,7 +810,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_14"
+                    android:textSize="@dimen/text_size_12"
                     android:textColor="@color/colorPrimary"
                     android:text="@string/home_ter_add"
                     android:layout_marginLeft="@dimen/margin_short_3"
@@ -923,7 +923,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_14"
+                    android:textSize="@dimen/text_size_12"
                     android:textColor="@color/colorPrimary"
                     android:text="@string/carrier_principal_add"
                     android:layout_marginLeft="@dimen/margin_short_3"
@@ -1056,7 +1056,7 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:textSize="@dimen/text_size_14"
+                       android:textSize="@dimen/text_size_12"
                        android:textColor="@color/colorPrimary"
                        android:text="@string/total_hrs_in_work"
                        android:layout_marginLeft="@dimen/margin_short_3"
@@ -1091,7 +1091,7 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:textSize="@dimen/text_size_14"
+                       android:textSize="@dimen/text_size_12"
                        android:textColor="@color/colorPrimary"
                        android:text="@string/in_cycle"
                        android:layout_marginLeft="@dimen/margin_short_3"
@@ -1122,7 +1122,7 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:textSize="@dimen/text_size_14"
+                       android:textSize="@dimen/text_size_12"
                        android:textColor="@color/colorPrimary"
                        android:text="@string/in_cycle"
                        android:layout_marginLeft="@dimen/margin_short_3"
@@ -1229,7 +1229,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_14"
+                    android:textSize="@dimen/text_size_12"
                     android:textColor="@color/colorPrimary"
                     android:text="@string/date_time_deff"
                     android:layout_marginLeft="@dimen/margin_short_3"

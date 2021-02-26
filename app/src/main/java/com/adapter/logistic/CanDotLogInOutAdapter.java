@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
@@ -89,17 +90,17 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
 
         holder.logInOutDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateDotTV.setText(itemsList.get(position).getEventDate());
-        holder.eventLoginDotTV.setText(itemsList.get(position).getEventCode());
+        holder.dateDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate()) );
+        holder.eventLoginDotTV.setText(""+itemsList.get(position).getEventCode());
         holder.addInfoDotTV.setText(itemsList.get(position).getAdditionalInfo());
 
         holder.cmvLoginDotTV.setText(itemsList.get(position).getCMVVIN());
         holder.diatanceTotalLoginDotTV.setText(itemsList.get(position).getDistanceInKM());
         holder.hrsTotalLoginDotTV.setText(itemsList.get(position).getTotalEngineHours());
 
-        holder.recStatusLoginDotTV.setText(itemsList.get(position).getRecordStatus());
+        holder.recStatusLoginDotTV.setText(""+itemsList.get(position).getRecordStatus());
         holder.recOriginLoginDotTV.setText(itemsList.get(position).getRecordOrigin());
-        holder.seqNoDotTV.setText(itemsList.get(position).getSequenceNumber());
+        holder.seqNoDotTV.setText(""+itemsList.get(position).getSequenceNumber());
 
 
         // Set text style normal

@@ -13,6 +13,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -20,6 +21,7 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.TcpClient;
 import com.messaging.logistic.Globally;
+import com.messaging.logistic.LoginActivity;
 import com.notifications.NotificationManagerSmart;
 import com.wifi.settings.WiFiConfig;
 
@@ -43,7 +45,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     String AlertMsgSpeech = "Your vehicle is moving and there is no driver login in e log book";
 
     String TAG_OBD = "OBD Service";
-    private static final long TIME_UPDATES_INTERVAL = 30 * 1000;   // 60 sec
+    private static final long TIME_UPDATES_INTERVAL = 20 * 1000;   // 20 sec
     String TAG = "Service";
     boolean isStopService = false;
     double lastVehSpeed = -1;
@@ -77,12 +79,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         sharedPref              = new SharedPref();
         constants               = new Constants();
         mTimer                  = new Timer();
-        mTimer.schedule(timerTask, TIME_UPDATES_INTERVAL, TIME_UPDATES_INTERVAL);
 
         //  ------------- Wired OBD ----------
         this.connection = new RemoteServiceConnection();
         this.replyTo = new Messenger(new IncomingHandler());
         BindConnection();
+
+        mTimer.schedule(timerTask, TIME_UPDATES_INTERVAL, TIME_UPDATES_INTERVAL);
 
     }
 
@@ -116,7 +119,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             }
 
             // ---------------- temp data ---------------------
-             // ignitionStatus = "ON"; truckRPM = "35436"; speed = 30;
+            //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 30;
 
 
             // ELD calling rule for Wired OBD
@@ -126,11 +129,15 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             try {
                 if (ignitionStatus.equals("ON") || !truckRPM.equals("0")) {
                     if(speed > 10 && lastVehSpeed > 10){
+                        LoginActivity.IsLoginAllowed = false;
                         Globally.PlaySound(getApplicationContext());
-                        Globally.ShowLocalNotification(getApplicationContext(), "ELD", AlertMsg, 2003);
+                        Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
                         SpeakOutMsg(AlertMsgSpeech);
+
                         // Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
 
+                    }else{
+                        LoginActivity.IsLoginAllowed = true;
                     }
                     lastVehSpeed = speed;
                 }else{
@@ -152,6 +159,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             try {
                 String correctData = "";
+                LoginActivity.IsLoginAllowed = true;
 
                 if (!message.equals(noObd) && message.length() > 10) {
 
@@ -192,10 +200,14 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                 if (ignitionStatus.equals("true")) {
                                     if(WheelBasedVehicleSpeed > 10 && lastVehSpeed > 10){
+                                        LoginActivity.IsLoginAllowed = false;
+
                                         Globally.PlaySound(getApplicationContext());
-                                        Globally.ShowLocalNotification(getApplicationContext(), "ELD", AlertMsg, 2003);
+                                        Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
                                         SpeakOutMsg(AlertMsgSpeech);
                                         //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
+                                    }else{
+                                        LoginActivity.IsLoginAllowed = true;
                                     }
                                     lastVehSpeed = WheelBasedVehicleSpeed;
                                 } else {
