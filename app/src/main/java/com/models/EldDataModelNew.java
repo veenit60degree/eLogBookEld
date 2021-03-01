@@ -40,7 +40,7 @@ public class EldDataModelNew {
     String IsAdverseException ;
     String AdverseExceptionRemarks;
 
-   // String EditedReason;
+    String EditedReason;
 
 
     public EldDataModelNew(String projectId, String driverId, String driverStatusId, String isYard,
@@ -49,7 +49,7 @@ public class EldDataModelNew {
                            String state, String country, String isViolation, String violationReason,
                            String latitude, String longitude, String isStatusAutomatic,
                            String oBDSpeed , String gPSSpeed, String plateNumber, String haulHourException , String isShortHaulUpdate,
-                           String decesionSource, String isAdverseExc , String adverseExcRemarks) { //, String editedReason
+                           String decesionSource, String isAdverseExc , String adverseExcRemarks, String editedReason) {
 
         ProjectId           = projectId;
         DriverId            = driverId;
@@ -79,7 +79,7 @@ public class EldDataModelNew {
         DecesionSource      = decesionSource;
         IsAdverseException  = isAdverseExc;
         AdverseExceptionRemarks = adverseExcRemarks;
-      //  EditedReason        = editedReason;
+        EditedReason        = editedReason;
 
     }
 
@@ -206,9 +206,9 @@ public class EldDataModelNew {
         return AdverseExceptionRemarks;
     }
 
- /*   public String getEditedReason() {
+    public String getEditedReason() {
         return EditedReason;
     }
-   */
+
 
 }

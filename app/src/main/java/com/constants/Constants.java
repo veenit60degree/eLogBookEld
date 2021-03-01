@@ -387,6 +387,7 @@ public class Constants {
         locationObj.put(ConstantsKeys.DecesionSource, ListModel.getDecesionSource());
         locationObj.put(ConstantsKeys.IsAdverseException, ListModel.getIsAdverseException());
         locationObj.put(ConstantsKeys.AdverseExceptionRemarks, ListModel.getAdverseExceptionRemarks());
+        locationObj.put(ConstantsKeys.EditedReason, ListModel.getEditedReason());
 
         jsonArray.put(locationObj);
     }

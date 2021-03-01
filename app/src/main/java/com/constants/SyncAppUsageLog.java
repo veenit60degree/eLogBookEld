@@ -82,17 +82,22 @@ public class SyncAppUsageLog extends AsyncTask<String, String, String> {
         //  postResponse.onAsyncResponse(result);
 
         try {
+            if(result.length() > 0) {
+                JSONObject obj = new JSONObject(result);
+                String status = obj.getString("Status");
+                if (status.equalsIgnoreCase("true")) {
 
-            JSONObject obj = new JSONObject(result);
-            String status = obj.getString("Status");
-            if (status.equalsIgnoreCase("true")) {
+                    /* ------------ Delete posted files from local after successfully posted to server --------------- */
+                    if (appUsageFile != null && appUsageFile.exists())
+                        appUsageFile.delete();
 
+                }
+            }else{
                 /* ------------ Delete posted files from local after successfully posted to server --------------- */
-                if(appUsageFile != null && appUsageFile.exists())
+                if (appUsageFile != null && appUsageFile.exists())
                     appUsageFile.delete();
 
             }
-
         }catch (Exception e){
             e.printStackTrace();
         }

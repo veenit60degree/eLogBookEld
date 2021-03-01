@@ -1103,7 +1103,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         "false",
                         connectionSource + LastStatus,
                         String.valueOf(isAdverseExcptn),
-                        ""
+                        "", ""
 
 
 

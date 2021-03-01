@@ -3389,7 +3389,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         String.valueOf(isHaulExcptn),
                         "false", "mannual_save",
                         String.valueOf(isAdverseExcptn),
-                        ""
+                        "", ""
 
                 );
 

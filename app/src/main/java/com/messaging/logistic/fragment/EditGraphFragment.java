@@ -894,8 +894,7 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
 
 
 
-            JSONArray finalJobsArray =  finalPostedArray(previousDateJobs, finalEditedLogArray, reason);
-
+           // JSONArray finalJobsArray =  finalPostedArray(previousDateJobs, finalEditedLogArray, reason);
             //  SaveDriverCycle(finalJobsArray);
 
           /*  if(global.isConnected(getActivity())) {
@@ -980,6 +979,7 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
 
         for(int i = 0; i < logArray.length() ; i++){
             try {
+                String editLogReason = "";
                 JSONObject obj = (JSONObject)logArray.get(i);
                 String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", TruckNumber = "",
                         DecesionSource = "", PlateNumber = "", isHaulException = "false", IsShortHaulUpdate = "false";
@@ -1025,6 +1025,11 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
                     adverseExceptionRemark = obj.getString(ConstantsKeys.AdverseExceptionRemarks);
                 }
 
+                if (obj.has(ConstantsKeys.EditedReason)) {
+                    editLogReason = obj.getString(ConstantsKeys.EditedReason);
+                }
+
+
 
                 EldDataModelNew logModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1059,7 +1064,8 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
 
                         DecesionSource,
                         isAdverseException,
-                        adverseExceptionRemark
+                        adverseExceptionRemark,
+                        editLogReason
 
                 );
 
@@ -1214,10 +1220,6 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
 
                 remarks = obj.getString(ConstantsKeys.Remarks);
 
-                if(i == 0){
-
-                }
-
 
                 EldDataModelNew eldModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1251,12 +1253,17 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
 
                         DecesionSource,
                         isAdverseException,
-                        adverseExceptionRemark
+                        adverseExceptionRemark,
+                        editLogReason
                         );
 
                     if(eldModel != null) {
                         constants.SaveEldJsonToList(eldModel, DriverJsonArray);  /* Put data as JSON to List */
                     }
+
+
+                    editLogReason = "";
+
 
             } catch (JSONException e) {
                 e.printStackTrace();

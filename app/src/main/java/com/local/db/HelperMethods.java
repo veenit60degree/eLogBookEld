@@ -3189,7 +3189,8 @@ public class HelperMethods {
                     String.valueOf( isShortHaulUpdate),
                     decesionSource,
                     String.valueOf(isAdverseExcptn),
-                    AdverseExceptionRemarks
+                    AdverseExceptionRemarks,
+                    ""
 
             );
 
