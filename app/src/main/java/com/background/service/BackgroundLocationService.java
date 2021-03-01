@@ -1090,15 +1090,19 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         int socketTimeout;
         int logArrayCount = driverLogArray.length();
-        if(logArrayCount < 3 ){
-            socketTimeout = constants.SocketTimeout10Sec;  //10 seconds
-        }else if(logArrayCount < 10){
-            socketTimeout = constants.SocketTimeout20Sec;  //20 seconds
-        }else{
-            socketTimeout = constants.SocketTimeout40Sec;  //40 seconds
-        }
 
-        saveDriverLogPost.PostDriverLogData(driverLogArray, SavedLogApi, socketTimeout, false, false, DriverType, SaveMainDriverLogData);
+        if(logArrayCount > 0) {
+
+            if(logArrayCount < 3 ){
+                socketTimeout = constants.SocketTimeout10Sec;  //10 seconds
+            }else if(logArrayCount < 10){
+                socketTimeout = constants.SocketTimeout20Sec;  //20 seconds
+            }else{
+                socketTimeout = constants.SocketTimeout40Sec;  //40 seconds
+            }
+
+            saveDriverLogPost.PostDriverLogData(driverLogArray, SavedLogApi, socketTimeout, false, false, DriverType, SaveMainDriverLogData);
+        }
 
     }
 

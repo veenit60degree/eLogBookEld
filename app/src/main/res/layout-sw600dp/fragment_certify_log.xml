@@ -1777,6 +1777,8 @@
             android:layout_marginTop="@dimen/view_height_30"
             android:layout_marginRight="@dimen/margin_short_8"
             android:layout_toLeftOf="@+id/signLay"
+            android:visibility="invisible"
+
             />
 
         <RelativeLayout

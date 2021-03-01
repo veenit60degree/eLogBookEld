@@ -5,9 +5,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -26,12 +22,12 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 
 import com.adapter.logistic.RecapRecordSignAdapter;
-import com.adapter.logistic.UnIdentifiedListingAdapter;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
+import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
 import com.local.db.CertifyLogMethod;
 import com.local.db.DBHelper;
@@ -83,9 +79,12 @@ public class SignRecordDialog extends Dialog {
     CertifyLogMethod certifyLogMethod;
     SaveDriverLogPost saveCertifyLogPost;
     SharedPref sharedPref;
+    Globally globally;
     DBHelper dbHelper;
     int DriverType;
     ProgressDialog progressDialog;
+    VolleyRequest notReadyRequest;
+    CertifyConfirmationDialog certifyConfirmationDialog;
 
 
     public SignRecordDialog(Context context, int DriverType, boolean isCertifySignExist, JSONArray recap18DaysArray, List<RecapSignModel> recapList,
@@ -109,10 +108,11 @@ public class SignRecordDialog extends Dialog {
         this.sharedPref =  sharedPref;
         this.dbHelper =  dbHelper;
 
-
         saveCertifyLogPost          = new SaveDriverLogPost(context, saveCertifyResponse);
 
-        progressDialog = new ProgressDialog(context);
+        notReadyRequest = new VolleyRequest(context);
+        globally        = new Globally();
+        progressDialog  = new ProgressDialog(context);
         progressDialog.setMessage("Loading...");
 
         DeviceId           = sharedPref.GetSavedSystemToken(context);
@@ -138,6 +138,7 @@ public class SignRecordDialog extends Dialog {
             getWindow().setLayout(constants.intToPixel(context, 550), ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
+
         signRecordListView      = (ListView) findViewById(R.id.signRecordListView);
         selectAllRecordsCheckBox= (CheckBox) findViewById(R.id.selectAllRecordsCheckBox);
         invisbleSignImgView     = (ImageView)findViewById(R.id.invisbleSignImgView);
@@ -157,10 +158,6 @@ public class SignRecordDialog extends Dialog {
         recapSignAdapter = new RecapRecordSignAdapter(context, recapRecordsList, recordSelectedList,false, false);
         signRecordListView.setAdapter(recapSignAdapter);
 
-        // temp hide label
-       // selectAllRecordsCheckBox.setVisibility(View.GONE);
-      //  certifyRecordBtn.setVisibility(View.GONE);
-
         selectAllRecordsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -170,7 +167,6 @@ public class SignRecordDialog extends Dialog {
                     setListSelectionRecord(isAllSelected);
                     Parcelable state = signRecordListView.onSaveInstanceState();
                     signRecordListView.onRestoreInstanceState(state);
-                   // notifyAdapter(isAllSelected, true);
 
                     try{
                         recapSignAdapter = new RecapRecordSignAdapter(context, recapRecordsList, recordSelectedList, isAllSelected, true);
@@ -204,13 +200,8 @@ public class SignRecordDialog extends Dialog {
 
                 if(selectedDateList.size() > 0){
 
-                    CertifyLogArray     = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(DriverId), dbHelper);
-
-                    if(isCertifySignExist){
-                        ContinueWithoutSignDialog();
-                    }else {
-                        openSignDialog();
-                    }
+                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener() );
+                    certifyConfirmationDialog.show();
 
                 }else{
                     Globally.EldScreenToast(certifyRecordBtn, context.getResources().getString(R.string.no_date_for_certify),
@@ -221,6 +212,24 @@ public class SignRecordDialog extends Dialog {
     }
 
 
+
+    private class CertificationListener implements CertifyConfirmationDialog.CertifyConfirmationListener{
+
+        @Override
+        public void CertifyBtnReady() {
+            CertifyLogArray     = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(DriverId), dbHelper);
+            if(isCertifySignExist){
+                ContinueWithoutSignDialog();
+            }else {
+                openSignDialog();
+            }
+        }
+
+        @Override
+        public void CancelBtnReady() {
+            dismiss();
+        }
+    }
 
 
 
@@ -303,15 +312,12 @@ public class SignRecordDialog extends Dialog {
 
 
 
-
-
-
     private void SaveDriverSignArray(boolean IsCarryForward){
 
         if(IsCarryForward){
 
             String lastSignature = constants.getLastSignature(recapViewMethod, DriverId, dbHelper);
-            //boolean isReCertifyRequired = constants.isReCertifyRequired(getActivity(), dataObj, "");
+            //boolean isReCertifyRequired = constants.isReCertifyRequired(context, dataObj, "");
             saveByteSignLocally(lastSignature, true);
             LogSignImageInByte = lastSignature;
 
@@ -426,6 +432,13 @@ public class SignRecordDialog extends Dialog {
         return selectedDateList;
     }
 
+    void dismissDialog(){
+        try {
+            if (progressDialog != null && progressDialog.isShowing())
+                progressDialog.dismiss();
+        }catch (Exception e){ e.printStackTrace();}
+    }
+
 
 
     /* ---------------------- Save Log Request Response ---------------- */
@@ -434,9 +447,7 @@ public class SignRecordDialog extends Dialog {
         @Override
         public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
             Log.d("signatureLog", "---Response: " + response);
-            if(progressDialog.isShowing()){
-                progressDialog.dismiss();
-            }
+            dismissDialog();
 
             try {
                 JSONObject obj = new JSONObject(response);
@@ -480,11 +491,9 @@ public class SignRecordDialog extends Dialog {
             if(context != null) {
                 try {
 
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
+                    dismissDialog();
 
-                        Globally.EldToastWithDuration(TabAct.sliderLay, context.getResources().getString(R.string.certify_log_offline_saved),
+                    Globally.EldToastWithDuration(TabAct.sliderLay, context.getResources().getString(R.string.certify_log_offline_saved),
                                 context.getResources().getColor(R.color.colorSleeper));
 
                 }catch (Exception e){

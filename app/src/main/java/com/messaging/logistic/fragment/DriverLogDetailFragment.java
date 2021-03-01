@@ -59,6 +59,7 @@ import com.constants.ScrollViewListener;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.constants.WebAppInterface;
+import com.custom.dialogs.CertifyConfirmationDialog;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.LoginDialog;
 import com.custom.dialogs.ShareDriverLogDialog;
@@ -262,6 +263,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             LeftDayDrivingHoursInt = "00:00", TotalCycleUsedHour = "00:00";
     LoginDialog loginDialog;
     SignRecordDialog signRecordDialog;
+    CertifyConfirmationDialog certifyConfirmationDialog;
+
     String MainDriverPass = "", CoDriverPass = "";
     int  eldWarningColor;
 
@@ -1134,6 +1137,40 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }
     }
 
+
+    private class CertificationListener implements CertifyConfirmationDialog.CertifyConfirmationListener{
+
+        @Override
+        public void CertifyBtnReady() {
+            File f = new File(imagePath);
+            if(isCertifySignExist){
+                String signBtnTxt = saveSignatureBtn.getText().toString();
+                if (f.exists() && signBtnTxt.equals(getString(R.string.save)) ) {
+                    SaveDriverSignArray();
+                }else {
+                    ContinueWithoutSignDialog();
+                }
+
+            }else {
+
+                if (f.exists() ) {
+                    SaveDriverSignArray();
+                }else {
+                    openSignDialog();
+                }
+            }
+
+        }
+
+        @Override
+        public void CancelBtnReady() {
+            Log.d("cancel", "cancel listener called");
+        }
+    }
+
+
+
+
     @Override
     public void onClick(View v) {
 
@@ -1150,24 +1187,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
             case R.id.saveSignatureBtn:
 
-                File f = new File(imagePath);
-
-                if(isCertifySignExist){
-                    String signBtnTxt = saveSignatureBtn.getText().toString();
-                    if (f.exists() && signBtnTxt.equals(getString(R.string.save)) ) {
-                        SaveDriverSignArray();
-                    }else {
-                        ContinueWithoutSignDialog();
-                    }
-
-                }else {
-
-                    if (f.exists() ) {
-                        SaveDriverSignArray();
-                    }else {
-                        openSignDialog();
-                    }
-                }
+                certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener() );
+                certifyConfirmationDialog.show();
 
                 break;
 
@@ -2381,7 +2402,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                         signImageView.setBackgroundDrawable(null);
                         signImageView.setImageResource(R.drawable.sign_here);
                         saveSignatureBtn.setText(getString(R.string.certify));
-                        signLogTitle2.setVisibility(View.VISIBLE);
+                        signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
                         SignatureMainLay.setVisibility(View.GONE);
                     }
 
@@ -2461,7 +2482,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
             if(isCertifySignExist){
                 SignatureMainLay.setVisibility(View.GONE);
-                signLogTitle2.setVisibility(View.VISIBLE);
+                signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
                 saveSignatureBtn.setText(getString(R.string.certify));
             }else {
                 SignatureMainLay.setVisibility(View.VISIBLE);
@@ -2487,7 +2508,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                 if(isCertifySignExist){
                     SignatureMainLay.setVisibility(View.GONE);
-                    signLogTitle2.setVisibility(View.VISIBLE);
+                    signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
                     saveSignatureBtn.setText(getString(R.string.certify));
                 }else {
                     SignatureMainLay.setVisibility(View.VISIBLE);

@@ -1,11 +1,8 @@
 package com.messaging.logistic.fragment;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,11 +11,8 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,9 +31,9 @@ import com.constants.ConstantHtml;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
+import com.custom.dialogs.CertifyConfirmationDialog;
 import com.custom.dialogs.SignDialog;
 import com.driver.details.DriverConst;
-import com.models.EldDriverLogModel;
 import com.google.android.material.tabs.TabLayout;
 import com.local.db.CertifyLogMethod;
 import com.local.db.ConstantsKeys;
@@ -50,6 +44,7 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.TabAct;
+import com.models.EldDriverLogModel;
 import com.models.RecapModel;
 import com.simplify.ink.InkView;
 
@@ -115,14 +110,13 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     OriginalLogFragment originalLogFragment;
     CardView confirmCertifyBtn, cancelCertifyBtn;
 
-    //SaveDriverLogPost saveCertifyLogPost;
+    CertifyConfirmationDialog certifyConfirmationDialog;
     VolleyRequest GetEditedRecordRequest, claimLogRequest, GetReCertifyRequest, notReadyRequest;
     Map<String, String> params;
     final int GetRecordFlag             = 101;
     final int CertifyRecordFlag         = 102;
     final int RejectRecordFlag          = 103;
     final int GetReCertifyRecords       = 104;
-    final int NotReady                  = 105;
 
     String AcceptedSuggestedRecord      = "1";
     String RejectSuggestedRecord        = "4";
@@ -373,7 +367,8 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
             case R.id.confirmCertifyBtn:
 
-                    confirmLogDialog();
+                certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener() );
+                certifyConfirmationDialog.show();
 
                 break;
 
@@ -393,76 +388,36 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     }
 
 
+    private class CertificationListener implements CertifyConfirmationDialog.CertifyConfirmationListener{
 
-    void confirmLogDialog(){
-        final Dialog picker = new Dialog(getActivity());
-        picker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        picker.setContentView(R.layout.popup_edit_delete_lay);
+        @Override
+        public void CertifyBtnReady() {
 
-        if(Globally.isTablet(getActivity())){
-            picker.getWindow().setLayout(constants.intToPixel(getActivity(), 730), ViewGroup.LayoutParams.WRAP_CONTENT);
-        }else{
-            picker.getWindow().setLayout(constants.intToPixel(getActivity(), 550), ViewGroup.LayoutParams.WRAP_CONTENT);
-        }
+            if(globally.isConnected(getActivity())){
 
-
-        final TextView changeTitleView, titleDescView;
-        changeTitleView = (TextView) picker.findViewById(R.id.changeTitleView);
-        titleDescView=(TextView)picker.findViewById(R.id.titleDescView);
-        final Button confirmPopupButton = (Button)picker.findViewById(R.id.confirmPopupButton);
-        Button cancelPopupButton = (Button)picker.findViewById(R.id.cancelPopupButton);
-
-        changeTitleView.setText(getString(R.string.Confirmation_suggested));
-        titleDescView.setText(getString(R.string.I_certify_that_suggested) + "\n\n" + getString(R.string.will_finalize_log));
-        confirmPopupButton.setText(getString(R.string.agree_submit));
-        cancelPopupButton.setText(getString(R.string.not_ready));
-        titleDescView.setTextColor(getResources().getColor(R.color.gray_text1));
-        cancelPopupButton.setTextColor(getResources().getColor(R.color.black_unidenfied));
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 0, 20, 0);
-        cancelPopupButton.setLayoutParams(params);
-
-        cancelPopupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                picker.dismiss();
-
-                NotReadyApi();
-
-            }
-        });
-
-        confirmPopupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                picker.dismiss();
-
-                if(globally.isConnected(getActivity())){
-
-                    if(isCurrentDate) {
-                        ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord, CertifyRecordFlag);
-                    }else{
-                        if(isCertifySignExist){
-                            ContinueWithoutSignDialog();
-                        }else {
-                            openSignDialog();
-                        }
-                    }
-
+                if(isCurrentDate) {
+                    ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord, CertifyRecordFlag);
                 }else{
-                    globally.EldScreenToast(confirmCertifyBtn, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                    if(isCertifySignExist){
+                        ContinueWithoutSignDialog();
+                    }else {
+                        openSignDialog();
+                    }
                 }
 
-
-
+            }else{
+                globally.EldScreenToast(confirmCertifyBtn, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             }
-        });
+        }
 
-        picker.show();
-
+        @Override
+        public void CancelBtnReady() {
+            getActivity().finish();
+          // Log.d("cancel", "cancel listener called");
+        }
     }
+
+
 
 
     public void ContinueWithoutSignDialog(){
@@ -820,32 +775,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     }
 
 
-    /*================== call not ready api for count ===================*/
-    private void NotReadyApi() {
-
-        if(progressDialog.isShowing() == false)
-            progressDialog.show();
-
-        String driverName = "";
-        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-            driverName = DriverConst.GetDriverDetails(DriverConst.DriverName, getActivity());
-        } else {
-            driverName = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, getActivity());
-        }
-        String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
-
-        Map<String, String> mapParams = new HashMap<String, String>();
-        mapParams.put("DriverId", DriverId);
-        mapParams.put("DeviceId", DeviceId);
-        mapParams.put("DriverName", driverName);
-        mapParams.put("CompanyId", DriverCompanyId);
-        mapParams.put("DriverTimeZoneName", sharedPref.getTimeZone(getActivity()));
-        mapParams.put("LogDateTime", globally.getCurrentDate());
-
-        notReadyRequest.executeRequest(Request.Method.POST, APIs.SAVE_CERTIFY_SIGN_REJECTED_AUDIT, mapParams, NotReady,
-                Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
-    }
-
 
     /*================== Get suggested records edited from web ===================*/
     void GetSuggestedRecords(final String DriverId, final String DeviceId){
@@ -963,13 +892,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                             EldFragment.refreshLogBtn.performClick();
 
                         }else {
-                           // SaveDriverSignArray(IsContinueWithSign);
-
-                            // Clear unsent Shipping Log from db
-                           // CertifyLogArray = new JSONArray();
-                           // certifyLogMethod.CertifyLogHelper(Integer.valueOf(DriverId), dbHelper, CertifyLogArray );
                             globally.EldScreenToast(EldFragment.refreshLogBtn, Message, getResources().getColor(R.color.color_eld_theme));
-
                             Constants.isClaim = true;
                             removeSelectedDateFromList();
 
@@ -1005,11 +928,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         }
                         break;
 
-                    case NotReady:
-                        dismissDialog();
-                        getActivity().finish();
-                        break;
-
                 }
 
             } else {
@@ -1024,20 +942,12 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         EldFragment.refreshLogBtn.performClick();
 
                     }else {
-                       // CertifyLogArray = new JSONArray();
-                      //  certifyLogMethod.CertifyLogHelper(Integer.valueOf(DriverId), dbHelper, CertifyLogArray );
                         globally.EldScreenToast(EldFragment.refreshLogBtn, Message, getResources().getColor(R.color.color_eld_theme));
-
                         removeSelectedDateFromList();
-
                     }
                 }else {
-                    if(flag == NotReady) {
-                        getActivity().finish();
-                    }else {
-                        setPagetAdapter();
-                        globally.EldScreenToast(confirmCertifyBtn, Message, getResources().getColor(R.color.colorVoilation));
-                    }
+                    setPagetAdapter();
+                    globally.EldScreenToast(confirmCertifyBtn, Message, getResources().getColor(R.color.colorVoilation));
                 }
             }
         }
@@ -1067,10 +977,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                     globally.EldScreenToast(confirmCertifyBtn, error.toString(), getResources().getColor(R.color.colorVoilation));
                     break;
 
-                case NotReady:
-                    getActivity().finish();
-                    break;
-
                 default:
                     globally.EldScreenToast(confirmCertifyBtn, error.toString(), getResources().getColor(R.color.colorVoilation));
 
@@ -1079,59 +985,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         }
     };
 
-
-
-    /* ---------------------- Save Log Request Response ---------------- */
-  /*  DriverLogResponse saveCertifyResponse = new DriverLogResponse() {
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-        @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("signatureLog", "---Response: " + response);
-            dismissDialog();
-
-            try {
-                JSONObject obj = new JSONObject(response);
-
-                if (obj.getString("Status").equals("true")) {
-                    // Clear unsent Shipping Log from db
-                   // CertifyLogArray = new JSONArray();
-                  //  certifyLogMethod.CertifyLogHelper(Integer.valueOf(DriverId), dbHelper, CertifyLogArray );
-                    globally.EldScreenToast(EldFragment.refreshLogBtn, Message, getResources().getColor(R.color.color_eld_theme));
-                }else{
-                    globally.EldScreenToast(EldFragment.refreshLogBtn, Message, getResources().getColor(R.color.colorSleeper));
-                }
-
-                removeSelectedDateFromList();
-
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-
-        @Override
-        public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: ");
-
-            try {
-                dismissDialog();
-
-                Globally.EldToastWithDuration(TabAct.sliderLay, Message, getResources().getColor(R.color.colorSleeper));
-                finishActivityWithViewUpdate();
-                EldFragment.refreshLogBtn.performClick();
-
-              //  removeSelectedDateFromList();
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-    };
-
-
-*/
 
 
     AlertDialogEld.PositiveButtonCallback positiveCallBack = new AlertDialogEld.PositiveButtonCallback() {
@@ -1231,6 +1084,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             e.printStackTrace();
         }
     }
+
     void refreshViewWithPager(JSONObject dataObj, String selectedDate){
         try {
             editedLogArray = new JSONArray(dataObj.getString(ConstantsKeys.SuggestedEditModel));

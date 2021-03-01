@@ -1760,6 +1760,7 @@
             android:layout_marginTop="@dimen/margin_28"
             android:layout_marginRight="@dimen/margin_short_5"
             android:layout_toLeftOf="@+id/signLay"
+            android:visibility="invisible"
 
             />
 
