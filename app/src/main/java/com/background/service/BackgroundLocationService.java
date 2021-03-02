@@ -244,7 +244,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-    int tempOdo = 243011;
+   // int tempOdo = 243011;
 
 
 
@@ -397,11 +397,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
             // ---------------- temp data ---------------------
-              ignitionStatus = "ON"; truckRPM = "35436"; speed = 0;  obdOdometer = String.valueOf(tempOdo);
+          /*    ignitionStatus = "ON"; truckRPM = "35436"; speed = 0;  obdOdometer = String.valueOf(tempOdo);
             currentHighPrecisionOdometer = obdOdometer;
               sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
             tempOdo = tempOdo+1000;
-
+*/
 
             if(ignitionStatus.equals("ON")){
                 global.IS_OBD_IGNITION = true;
