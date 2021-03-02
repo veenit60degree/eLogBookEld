@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
@@ -370,6 +371,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         rightMenuBtn.setOnClickListener(this);
         availableHourBtnTV.setOnClickListener(this);
         malfunctionLay.setOnClickListener(this);
+        hosDistanceCardView.setOnClickListener(this);
+
     }
 
 
@@ -683,7 +686,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             String currentOdometerStr   = sharedPref.getHighPrecisionOdometer(getActivity());
 
             if(dayStartSavedDate.length() > 0) {
-                int dayDiff = constants.getDayDiff(dayStartSavedDate, currentOdometerStr);
+                int dayDiff = constants.getDayDiff(dayStartSavedDate, global.getCurrentDate());
                 if (dayDiff == 0) {
                     if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE) {
                         if (currentOdometerStr.contains(".")) {
@@ -863,6 +866,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+
+            case R.id.hosDistanceCardView:
+                String dayStartOdometerStr  = sharedPref.getDayStartOdometer(getActivity());
+                String currentOdometerStr   = sharedPref.getHighPrecisionOdometer(getActivity());
+
+                Toast.makeText(getActivity(), "     Start Odometer: "+ dayStartOdometerStr + "\nCurrent Odometer: "+ currentOdometerStr, Toast.LENGTH_LONG).show();
+                break;
 
             case R.id.eldMenuLay:
                 getFragmentManager().popBackStack();
