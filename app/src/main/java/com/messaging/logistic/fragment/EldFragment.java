@@ -911,7 +911,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
         loadOnCreateView(isConnected);
 
-        CalculateTimeInOffLine(false, false);
+     //   CalculateTimeInOffLine(false, false);
 
     }
 
@@ -1153,7 +1153,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             FragmentTransaction fragmentTran = fragManager.beginTransaction();
             fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                     android.R.anim.fade_in, android.R.anim.fade_out);
-            fragmentTran.replace(R.id.job_fragment, hosFragment);
+            fragmentTran.add(R.id.job_fragment, hosFragment);
             fragmentTran.addToBackStack("dot_log");
             fragmentTran.commit();
 
@@ -2009,11 +2009,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         if(DRIVER_JOB_STATUS == Constants.DRIVING && constants.isDriverAllowedToChange(getActivity(), DRIVER_ID, sharedPref.getObdStatus(getActivity()), obdUtil, Global, driverPermissionMethod, dbHelper) == false) {
                             Global.EldScreenToast(OnDutyBtn, getString(R.string.statusNotChangedFromDriving), getResources().getColor(R.color.colorVoilation));
                         } else {
+
                             JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                             JSONObject lastItemJson = hMethods.GetLastJsonFromArray(driverLogArray);
 
                             try {
-                                Log.d("IsYardMove", "IsYardMove: " + lastItemJson.getString(ConstantsKeys.YardMove));
                                 if (DRIVER_JOB_STATUS == ON_DUTY && lastItemJson.getString(ConstantsKeys.YardMove).equals("true")) {
                                     Global.EldScreenToast(OnDutyBtn, getResources().getString(R.string.yard_move_validation), getResources().getColor(R.color.colorVoilation));
                                 } else {
@@ -2023,7 +2023,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        }
+
+                            //  if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
+                            //         sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
+                           /* }else{
+                                Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
+                            }*/
+                         }
 
 
                     } else {
@@ -2036,18 +2042,19 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
             case R.id.personalUseBtn:
 
-
                     if (sharedPref.IsPersonalAllowed(getActivity())) {
-                        DateTime lastSaveUtcDate = Global.getDateTimeObj(sharedPref.getCurrentUTCTime(getActivity()), false);
-                        DateTime currentUTCTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), true);
-                        int dayDiff = hMethods.DayDiff(currentUTCTime, lastSaveUtcDate);
 
-                        if ((CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) &&
-                                sharedPref.isPersonalUse75KmCrossed(getActivity()) && dayDiff == 0) {
-                            Global.EldToastWithDuration4Sec(personalUseBtn, getResources().getString(R.string.personal_use_limit_75), getResources().getColor(R.color.colorVoilation));
-                        } else {
-                            PersonalBtnClick();
-                        }
+                            DateTime lastSaveUtcDate = Global.getDateTimeObj(sharedPref.getCurrentUTCTime(getActivity()), false);
+                            DateTime currentUTCTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), true);
+                            int dayDiff = hMethods.DayDiff(currentUTCTime, lastSaveUtcDate);
+
+                            if ((CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) &&
+                                    sharedPref.isPersonalUse75KmCrossed(getActivity()) && dayDiff == 0) {
+                                Global.EldToastWithDuration4Sec(personalUseBtn, getResources().getString(R.string.personal_use_limit_75), getResources().getColor(R.color.colorVoilation));
+                            } else {
+                                PersonalBtnClick();
+                            }
+
                     } else {
                         Global.EldToastWithDuration4Sec(personalUseBtn, getResources().getString(R.string.personal_not_allowed), getResources().getColor(R.color.colorVoilation));
                     }
@@ -2560,43 +2567,49 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             if (DRIVER_JOB_STATUS != OFF_DUTY ||
                     (DRIVER_JOB_STATUS == OFF_DUTY && isPersonal.equals("false"))) {
 
-                if (hMethods.CanChangeStatus(OFF_DUTY, driverLogArray, Global, true)) {
+               if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
+                                sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
 
-                    restartLocationService();
-                    DisableJobViews();
+                    if (hMethods.CanChangeStatus(OFF_DUTY, driverLogArray, Global, true)) {
 
-                    // if Odometers are saving through OBD autmatically then makes all the condition false to ignore odometer save
-                    if(sharedPref.IsOdometerFromOBD(getActivity())) {
-                        EldFragment.IsStartReading = false;
-                    }
+                        restartLocationService();
+                        DisableJobViews();
 
-                  /*  if (Global.isConnected(getActivity())) {
+                        // if Odometers are saving through OBD autmatically then makes all the condition false to ignore odometer save
+                        if(sharedPref.IsOdometerFromOBD(getActivity())) {
+                            EldFragment.IsStartReading = false;
+                        }
+
+                      /*  if (Global.isConnected(getActivity())) {
+                            if (!IsStartReading) {
+                                JobStatusInt = 101;
+                                LocationJobTYpe = "Personal";
+                                GetAddFromLatLng();
+
+                            } else {
+                                Global.EldScreenToast(OnDutyBtn, "Please enter End odometer Reading before Personal use.", getResources().getColor(R.color.colorVoilation));
+                            }
+                        } else {
+                            SaveJobStatusAlert("Personal");
+                        }*/
+
+                        // save status directly on button click. and uploaded automatically in background
                         if (!IsStartReading) {
-                            JobStatusInt = 101;
-                            LocationJobTYpe = "Personal";
-                            GetAddFromLatLng();
-
+                            SaveJobStatusAlert("Personal");
                         } else {
                             Global.EldScreenToast(OnDutyBtn, "Please enter End odometer Reading before Personal use.", getResources().getColor(R.color.colorVoilation));
                         }
-                    } else {
-                        SaveJobStatusAlert("Personal");
-                    }*/
 
-                    // save status directly on button click. and uploaded automatically in background
-                    if (!IsStartReading) {
-                        SaveJobStatusAlert("Personal");
+                        EnableJobViews();
+
+
+
                     } else {
-                        Global.EldScreenToast(OnDutyBtn, "Please enter End odometer Reading before Personal use.", getResources().getColor(R.color.colorVoilation));
+                        Global.EldScreenToast(OnDutyBtn, ConstantsEnum.DUPLICATE_JOB_ALERT, getResources().getColor(R.color.colorVoilation));
                     }
-
-                    EnableJobViews();
-
-
-
-                } else {
-                    Global.EldScreenToast(OnDutyBtn, ConstantsEnum.DUPLICATE_JOB_ALERT, getResources().getColor(R.color.colorVoilation));
-                }
+               }else{
+                   Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
+               }
             }
         }else{
             ClearGPSData();
@@ -5638,7 +5651,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                         confirmationDialog.dismiss();
                                     confirmationDialog = new ConfirmationDialog(getActivity(), Constants.AlertUnidentified, new ConfirmListener());
                                     confirmationDialog.show();
-                                }catch (Exception e){e.printStackTrace();}
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }else{
+                                CalculateTimeInOffLine(false, false);
                             }
 
 

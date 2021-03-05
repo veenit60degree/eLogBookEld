@@ -53,6 +53,7 @@
                 android:text="@string/read_and_agree"
                 android:button="@drawable/checkbox_terms_drawable"
                 android:paddingLeft="@dimen/margin_short_8"
+                android:paddingBottom="@dimen/margin_short_1"
 
 
                 />
@@ -71,6 +72,8 @@
                 android:textSize="@dimen/text_size_18"
                 android:text="@string/terms_of_service"
                 android:layout_toRightOf="@+id/termsCondCheckBox"
+
+
                 />
 
 
@@ -106,6 +109,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/blue_new_drawable"
+
+
 
                 />
 

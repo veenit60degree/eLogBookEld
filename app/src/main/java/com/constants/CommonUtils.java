@@ -3,6 +3,7 @@ package com.constants;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.driver.details.DriverConst;
 import com.messaging.logistic.Globally;
@@ -23,6 +24,8 @@ public class CommonUtils {
 		int DualDriverMenuWidth   = 500;
 		if(Globally.isTablet(mContext)) {
 
+			Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Tablet density pixel: " + densityDpi, 2003);
+
 			if(densityDpi <= 220){
 				SingleDriverMenuWidth = 355;
 				DualDriverMenuWidth   = 460;
@@ -37,6 +40,8 @@ public class CommonUtils {
 				width = DualDriverMenuWidth;
 			}
 		}else{
+			Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Phone density pixel: " + densityDpi, 2003);
+
 			if(densityDpi <= 420){
 				SingleDriverMenuWidth = 275;
 				DualDriverMenuWidth   = 295;

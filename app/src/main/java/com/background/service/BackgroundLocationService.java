@@ -71,6 +71,7 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
 import com.messaging.logistic.UILApplication;
+import com.messaging.logistic.fragment.EldFragment;
 import com.models.EldDataModelNew;
 import com.notifications.NotificationManagerSmart;
 import com.shared.pref.CoDriverEldPref;
@@ -244,8 +245,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-   // int tempOdo = 243011;
-
+  //  int tempOdo = 453011;
+  //  int ignitionCount = 0;
 
 
     @SuppressLint("RestrictedApi")
@@ -397,24 +398,39 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
             // ---------------- temp data ---------------------
-          /*    ignitionStatus = "ON"; truckRPM = "35436"; speed = 0;  obdOdometer = String.valueOf(tempOdo);
-            currentHighPrecisionOdometer = obdOdometer;
+        /*       ignitionStatus = "ON"; truckRPM = "35436"; speed = 30;
+              ignitionCount++;
+              if(ignitionCount > 5) {
+                  ignitionStatus = "OFF"; truckRPM = "0"; speed = 0;
+                  ignitionCount = 0;
+              }
+              obdOdometer = String.valueOf(tempOdo);
+              currentHighPrecisionOdometer = obdOdometer;
               sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
-            tempOdo = tempOdo+1000;
+
+              if(tempOdo == 0){
+                  tempOdo = 243011;
+              }else{
+                  tempOdo = tempOdo+1000;
+              }
 */
+
 
             if(ignitionStatus.equals("ON")){
                 global.IS_OBD_IGNITION = true;
-                saveObdStatus("ON", constants.WiredOBD, global.getCurrentDate());
+                saveObdStatus("ON", constants.WiredOBD, global.getCurrentDate(), Constants.WIRED_ACTIVE);
             }else{
                 global.IS_OBD_IGNITION = false;
-                saveObdStatus("OFF", constants.WiredOBD, "");
-                sharedPref.SaveObdIgnitionStatus(false, global.getCurrentDate(), -1, getApplicationContext());
+                saveObdStatus("OFF", constants.WiredOBD, "", Constants.WIRED_INACTIVE);
 
                 if(ignitionStatus.equals("--")){
                     sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
                 }else {
                     sharedPref.SaveObdStatus(Constants.WIRED_INACTIVE, getApplicationContext());
+
+                    sharedPref.SaveObdIgnitionStatus(false, global.getCurrentDate(), -1, getApplicationContext());
+                    sharedPref.SetTruckIgnitionStatus("OFF", constants.WiredOBD, "", getApplicationContext());
+
                 }
 
             }
@@ -459,15 +475,19 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
                     if(obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
-                        if (calculatedSpeedFromOdo < 5 && speed < 5) {
-
+                        if (calculatedSpeedFromOdo > 0 && speed == 0) {
+                            sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), (int)calculatedSpeedFromOdo, getApplicationContext());
+                        }else{
+                            sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
+                        }
+                        /*  if (calculatedSpeedFromOdo < 5 && speed < 5) {
                             if (sharedPref.getLastIgnitionStatus(getApplicationContext()) == true && sharedPref.getLastObdSpeed(getApplicationContext()) < 5) {
                                 // ignore it
                             } else {
                                 sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
                             }
                         }
-
+*/
                         if(calculatedSpeedFromOdo >= 10 || speed >= 10){
                             sharedPref.setVehilceMovingStatus(true, getApplicationContext());
                         }else{
@@ -562,13 +582,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         try {
             int odometerInMiles = constants.meterToMiles(Integer.valueOf(currentHighPrecisionOdometer));
 
-            if (savedDate.length() > 0) {
-                int dayDiff = constants.getDayDiff(savedDate, currentLogDate);
-                if (dayDiff != 0) {
-                    sharedPref.setDayStartOdometer(""+odometerInMiles, currentLogDate, getApplicationContext());
+            if(odometerInMiles > 0) {
+                if (savedDate.length() > 0) {
+                    int dayDiff = constants.getDayDiff(savedDate, currentLogDate);
+                    String savedOdo = sharedPref.getDayStartOdometer(getApplicationContext());
+                    if (dayDiff != 0 || savedOdo.equals("0")) {
+                        sharedPref.setDayStartOdometer("" + odometerInMiles, currentLogDate, getApplicationContext());
+                    }
+                } else {
+                    sharedPref.setDayStartOdometer("" + odometerInMiles, currentLogDate, getApplicationContext());
                 }
-            } else {
-                sharedPref.setDayStartOdometer(""+odometerInMiles, currentLogDate, getApplicationContext());
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1874,7 +1897,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 if (ignitionStatus.equals("true")) {    // truckRpmInt > 0
                                     sharedPref.SaveObdStatus(Constants.WIFI_ACTIVE, getApplicationContext());
                                     global.IS_OBD_IGNITION = true;
-                                    saveObdStatus("ON", constants.WifiOBD, global.getCurrentDate());
+                                    saveObdStatus("ON", constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_ACTIVE);
 
                                     if (WheelBasedVehicleSpeed > 200) {
                                         WheelBasedVehicleSpeed = 0;
@@ -1890,7 +1913,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 } else {
                                     sharedPref.SaveObdStatus(Constants.WIFI_INACTIVE, getApplicationContext());
                                     global.IS_OBD_IGNITION = false;
-                                    saveObdStatus(ignitionStatus, constants.WifiOBD, global.getCurrentDate());
+                                    saveObdStatus(ignitionStatus, constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_INACTIVE);
 
                                     saveDummyData(rawResponse, constants.WifiOBD);
 
@@ -2046,13 +2069,21 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     sharedPref.GetWifiObdOdometer(getApplicationContext()),
                     HighPrecisionOdometer);
 
-            if(speedCalculated < 5 && speed < 5){
+
+            if (speedCalculated > 0 && speed == 0) {
+                sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), (int)speedCalculated, getApplicationContext());
+            }else{
+                sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
+            }
+
+
+            /*if(speedCalculated < 5 && speed < 5){
                 if(sharedPref.getLastIgnitionStatus(getApplicationContext()) == true && sharedPref.getLastObdSpeed(getApplicationContext()) < 5)  {
                     // ignore it
                 }else{
                     sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
                 }
-            }
+            }*/
         }
 
         if(speedCalculated >= 10 || speed >= 10){
@@ -2455,28 +2486,30 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-    private void saveObdStatus(String ignition, String type, String time){
+    private void saveObdStatus(String obdCurrentIgnition, String type, String time, int obdStatus){
 
         try {
 
+         //   if( obdStatus == Constants.WIFI_ACTIVE && obdStatus == Constants.WIRED_ACTIVE ) {
+             if( obdStatus != Constants.NO_CONNECTION ) {
+                if( EldFragment.driverLogArray.length() > 0) {  //UILApplication.isActivityVisible() &&
+                    JSONObject lastJsonItem = (JSONObject) EldFragment.driverLogArray.get(EldFragment.driverLogArray.length() - 1);
+                    int currentJobStatus = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
+                    boolean isYard = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
+                    boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
 
-          /*  if(UILApplication.isActivityVisible() && EldFragment.driverLogArray.length() > 0) {
-                JSONObject lastJsonItem = (JSONObject) EldFragment.driverLogArray.get(EldFragment.driverLogArray.length() - 1);
-                int currentJobStatus = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
-                boolean isYard = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
-                boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
+                    if( (currentJobStatus == constants.OFF_DUTY && isPersonal) || (currentJobStatus == constants.ON_DUTY && isYard) ){
+                        String lastIgnitionStatus = sharedPref.GetTruckIgnitionStatus(constants.TruckIgnitionStatus, getApplicationContext());
+                        if(lastIgnitionStatus.equals("OFF") && obdCurrentIgnition.equals("ON")) {
+                            sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
+                        }
 
-                if( (currentJobStatus == constants.OFF_DUTY && isPersonal) ||
-                        (currentJobStatus == constants.ON_DUTY && isYard) ){
-                    if(sharedPref.GetTruckIgnitionStatus(constants.TruckIgnitionStatus, getApplicationContext()).equals("OFF")
-                            && ignition.equals("ON")) {
-                        sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
+                        sharedPref.SetTruckIgnitionStatus(obdCurrentIgnition, type, time, getApplicationContext());
                     }
                 }
-            }*/
 
-            sharedPref.SetTruckIgnitionStatus(ignition, type, time, getApplicationContext());
-
+             //
+            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -2592,10 +2625,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                     if(ignitionStatus.equals("true")){
                                         global.IS_OBD_IGNITION = true;
-                                        saveObdStatus("ON", constants.ApiData, global.getCurrentDate());
+                                        saveObdStatus("ON", constants.ApiData, global.getCurrentDate(), Constants.NO_CONNECTION);
                                     }else{
                                         global.IS_OBD_IGNITION = false;
-                                        saveObdStatus("OFF", constants.ApiData, "");
+                                        saveObdStatus("OFF", constants.ApiData, "", Constants.NO_CONNECTION);
                                     }
 
 

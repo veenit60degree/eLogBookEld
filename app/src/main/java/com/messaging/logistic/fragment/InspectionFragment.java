@@ -410,15 +410,14 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     void getLocation(){
         try {
 
-            if(Location.contains("null"))
-                Location = "";
-
             driverLogArray = new JSONArray();
             driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
 
             JSONObject lastItemJson = hMethods.GetLastJsonFromArray(driverLogArray);
 
             Location = lastItemJson.getString(ConstantsKeys.StartLocation);
+            if(Location.contains("null"))
+                Location = Globally.LONGITUDE + ", " + Globally.LATITUDE;
 
             if (Globally.isConnected(getActivity()) && Globally.LATITUDE.length() > 5) {
                 GetAddFromLatLng(Globally.LATITUDE, Globally.LONGITUDE);

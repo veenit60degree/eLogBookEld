@@ -427,7 +427,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                 } else if (DRIVER_JOB_STATUS == DRIVING) {
 
-                                    if (minutesDiff > OnDutyInterval) {   // && IsAlertTimeValid
+                                    if (minutesDiff >= OnDutyInterval) {   // && IsAlertTimeValid
 
                                         boolean isApplicable = false;
 
