@@ -292,6 +292,31 @@ public class HelperMethods {
 
 
 
+    public String isPersonalOrYM(JSONArray array){
+        String isPCYM = ConstantsKeys.False;
+        try {
+
+            if(array != null && array.length() >= 0) {
+
+                JSONObject lastJob = GetLastJsonFromArray(array);
+                int lastStatus = lastJob.getInt(ConstantsKeys.DriverStatusId);
+                boolean YardMove = lastJob.getBoolean(ConstantsKeys.YardMove);
+                boolean Personal = lastJob.getBoolean(ConstantsKeys.Personal);
+
+                if(lastStatus == Constants.OFF_DUTY && Personal){
+                    isPCYM = ConstantsKeys.Personal;
+                }else if(lastStatus == Constants.ON_DUTY && YardMove){
+                    isPCYM = ConstantsKeys.YardMove;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isPCYM;
+    }
+
+
 /*
 
     public JSONObject AddNewDateLog (JSONArray driverLogArray, DateTime currentDateTime, DateTime currentUTCTime,

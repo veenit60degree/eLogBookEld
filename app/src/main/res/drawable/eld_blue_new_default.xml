@@ -23,8 +23,8 @@
                 <corners android:radius="@dimen/margin_short_4" />
                 <padding
                     android:bottom="@dimen/margin_short_2"
-                    android:left="@dimen/margin_10"
-                    android:right="@dimen/margin_short_0"
+                    android:left="@dimen/margin_short_2"
+                    android:right="@dimen/margin_short_2"
                     android:top="@dimen/margin_short_2" />
             </shape>
         </item>

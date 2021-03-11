@@ -473,7 +473,7 @@
     <string name="personal_not_allowed">You have no permission for Personal Use. Please contact your company.</string>
     <string name="share_not_allowed">You have no permission for Send Log. Please contact your company.</string>
     <string name="personal_use_limit_75">Your Personal Use limit (75 km) is exceeded for the day in Canada cycle.</string>
-    <string name="connect_with_obd_first">Connect your device with OBD first.</string>
+    <string name="connect_with_obd_first">Please connect your ELD with truck ECM</string>
 
     <string name="loading">Loading</string>
     <string name="TrailerDrop">Trailer Drop</string>

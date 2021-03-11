@@ -208,7 +208,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:layout_below="@+id/topTitleLay"
-        android:paddingLeft="@dimen/margin_short_5"
+        android:paddingLeft="@dimen/margin_short_3"
         android:paddingBottom="@dimen/margin_short_5"
         >
 

@@ -17,6 +17,8 @@ public class APIs {
     /* ----------- Wired OBD log files -------- */
     //http://eld.alsrealtime.com/Home/DriverLogFile
 
+      /*----------- Driver Logs ------------- */
+    // http://develd.alsrealtime.com/Home/DriverLogYearLive/
 
 
     static String EditLogGraphLocal             = "http://103.20.169.122:9287/";

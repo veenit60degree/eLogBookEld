@@ -245,8 +245,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-  //  int tempOdo = 453011;
-  //  int ignitionCount = 0;
+    int tempOdo = 681012;
+    int ignitionCount = 0;
 
 
     @SuppressLint("RestrictedApi")
@@ -398,21 +398,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
             // ---------------- temp data ---------------------
-        /*       ignitionStatus = "ON"; truckRPM = "35436"; speed = 30;
+           /*    ignitionStatus = "ON"; truckRPM = "35436"; speed = 0;
               ignitionCount++;
-              if(ignitionCount > 5) {
-                  ignitionStatus = "OFF"; truckRPM = "0"; speed = 0;
-                  ignitionCount = 0;
-              }
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
               sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
-
-              if(tempOdo == 0){
-                  tempOdo = 243011;
-              }else{
-                  tempOdo = tempOdo+1000;
-              }
+              tempOdo = tempOdo+1;
 */
 
 

@@ -593,6 +593,9 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	/*================== Logout User ===================*/
 	void LogoutUser(final String DriverId){
+		final String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
+		final String TRUCK_NUMBER = DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
+		final String VIN = DriverConst.GetDriverTripDetails(DriverConst.VIN, context);
 
 		RequestQueue queue = Volley.newRequestQueue(context);
 		StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.DRIVER_LOGOUT , new Response.Listener<String>() {
@@ -645,8 +648,15 @@ public class Slidingmenufunctions implements OnClickListener {
 			protected Map<String, String> getParams()
 			{
 				Map<String,String> params = new HashMap<String, String>();
-				params.put("DriverId", DriverId);
-				params.put("MobileDeviceCurrentDateTime", global.getCurrentDate());
+				params.put(ConstantsKeys.DriverId, DriverId);
+				params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
+				params.put(ConstantsKeys.TruckEquipment, TRUCK_NUMBER);
+				params.put(ConstantsKeys.CompanyId, DriverCompanyId);
+				params.put(ConstantsKeys.VIN, VIN);
+
+		// ------------ will use layer when OBD gives proper engine hr and odometer of vehicle -------------
+			//	params.put(ConstantsKeys.EngineHours, EngineHours);
+			//	params.put(ConstantsKeys.CrntOdodmeter, CrntOdodmeter);
 
 				return params;
 			}

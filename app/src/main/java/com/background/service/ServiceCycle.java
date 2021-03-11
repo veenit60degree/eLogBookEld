@@ -90,7 +90,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     int DrivingInterval      = 0;
     int DrivingSpeedLimit    = 10;
 
-    int OnDutyInterval       = 5;
+    int OnDutyInterval       = 4;
     int OnDutySpeedLimit     = 0;
 
     int CHANGED_STATUS       = 1;
@@ -717,6 +717,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             OnDutySpeedLimit    = DriverConst.getCoDriverConfiguredTime(DriverConst.CoOnDutySpeed, context);
         }
 
+        if(OnDutyInterval > 4){
+            OnDutyInterval--;
+        }
     }
 
 

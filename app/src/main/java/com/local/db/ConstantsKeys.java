@@ -28,6 +28,7 @@ public class ConstantsKeys {
     public static String YardMove           = "YardMove";
     public static String Personal           = "Personal";
     public static String IsEdited           = "IsEdited";
+    public static String False              = "false";
 
     public static String CycleChangeType    = "CycleChangeType";
     public static String CurrentCycleId     = "CurrentCycleId";
@@ -129,10 +130,12 @@ public class ConstantsKeys {
     public static String TotalMiles             = "TotalMiles";
     public static String TotalKM                = "TotalKM";
     public static String TruckEquipmentNumber   = "TruckEquipmentNumber";
+    public static String TruckEquipment         = "TruckEquipment";
     public static String VehicleNumber          = "VehicleNumber";
     public static String DriverStatusID         = "DriverStatusID";
     public static String UTCStartDateTime       = "UTCStartDateTime";
     public static String UTCEndDateTime         = "UTCEndDateTime";
+    public static String CrntOdodmeter          = "CrntOdodmeter";
 
 
     // --------------------- Inspection params -------------------------
@@ -170,6 +173,7 @@ public class ConstantsKeys {
     public static String IsAutoDriving                  = "IsAutoDriving";
     public static String IsDrivingShippingAllowed       = "IsDrivingShippingAllowed";
     public static String IsTimestampEnabled             = "IsTimestampEnabled";
+    public static String MobileDeviceCurrentDateTime    = "MobileDeviceCurrentDateTime";
 
     public static String IsUnidentified                 = "IsUnidentified";
     public static String IsMalfunction                  = "IsMalfunction";

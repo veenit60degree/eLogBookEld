@@ -24,7 +24,7 @@ public class CommonUtils {
 		int DualDriverMenuWidth   = 500;
 		if(Globally.isTablet(mContext)) {
 
-			Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Tablet density pixel: " + densityDpi, 2003);
+			//Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Tablet density pixel: " + densityDpi, 2003);
 
 			if(densityDpi <= 220){
 				SingleDriverMenuWidth = 355;
@@ -40,9 +40,12 @@ public class CommonUtils {
 				width = DualDriverMenuWidth;
 			}
 		}else{
-			Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Phone density pixel: " + densityDpi, 2003);
+		//	Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Phone density pixel: " + densityDpi, 2003);
 
-			if(densityDpi <= 420){
+			if(densityDpi <= 320){
+				SingleDriverMenuWidth = 310;
+				DualDriverMenuWidth   = 333;
+			}else if(densityDpi > 320 && densityDpi <= 420){
 				SingleDriverMenuWidth = 275;
 				DualDriverMenuWidth   = 295;
 			}else{
