@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -1224,31 +1225,36 @@ public class Constants {
                                                       Globally global, SharedPref sharedPref, Context context){
 
         double speedInKm = -1;
-        double odometerDistance = Double.parseDouble(currentHighPrecisionOdometer) - Double.parseDouble(previousHighPrecisionOdometer);
 
-        if(savedTime.length() > 10) {
-            try{
-                String timeStampStr = savedTime.replace(" ", "T");
-                DateTime savedDateTime = global.getDateTimeObj(timeStampStr, false);
-                DateTime currentDateTime = global.getDateTimeObj(currentDate, false);
+        try {
+            double odometerDistance = Double.parseDouble(currentHighPrecisionOdometer) - Double.parseDouble(previousHighPrecisionOdometer);
+            if (savedTime.length() > 10) {
+                try {
+                    String timeStampStr = savedTime.replace(" ", "T");
+                    DateTime savedDateTime = global.getDateTimeObj(timeStampStr, false);
+                    DateTime currentDateTime = global.getDateTimeObj(currentDate, false);
 
-                int timeInSecnd = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();    //Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
-                speedInKm = ( odometerDistance/1000.0f ) / ( timeInSecnd/3600.0f );
-                // speedInKm = odometerDistance / timeInSecnd;
+                    int timeInSecnd = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();    //Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
+                    speedInKm = (odometerDistance / 1000.0f) / (timeInSecnd / 3600.0f);
+                    // speedInKm = odometerDistance / timeInSecnd;
 
-            }catch (Exception e){
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
 
+                    // save current HighPrecisionOdometer locally
+                    sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
+
+                }
+
+            } else {
                 // save current HighPrecisionOdometer locally
                 sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
 
             }
-
-        }else{
-            // save current HighPrecisionOdometer locally
-            sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
         return speedInKm;
 
     }
@@ -2772,7 +2778,139 @@ public class Constants {
 
 
 
+    public boolean isLocationMalfunctionOccured(Context context){
+        boolean isMalfunction = false;
+        int ObdStatus = SharedPref.getObdStatus(context);
+        if(ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) {
+            if (SharedPref.getEcmObdLatitude(context).length() > 4) {
+
+                String currentOdometer  = SharedPref.getHighPrecisionOdometer(context);
+                String lastOdometer     = SharedPref.getEcmOdometer(context);
+
+                if(lastOdometer.length() > 1) {
+                    double odometerDistance = Double.parseDouble(currentOdometer) - Double.parseDouble(lastOdometer);
+                    odometerDistance = odometerDistance / 1000;
+
+                    if (odometerDistance >= 8) {
+                        if(SharedPref.isManualLocAccepted(context)){
+                            SharedPref.setLocMalfunctionType("m", context);
+                        }else{
+                            SharedPref.setLocMalfunctionType("x", context);
+                        }
+
+                        isMalfunction = true;
+                    }else{
+                        SharedPref.setLocMalfunctionType("", context);
+                    }
+
+                    isLocMalOccurDueToTime(context, true, isMalfunction);
+
+                }
+            }
+        }
+
+        return isMalfunction;
+    }
 
 
+    public boolean isLocMalOccurDueToTime(Context context, boolean isSaveMalfunctionStatus, boolean isDistanceMalfncn ){
+        boolean isMalfunction = false;
+        String lastSavedDate    = SharedPref.getEcmObdTime(context);
+        if (lastSavedDate.length() > 10) {
+            DateTime currentDate = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+            DateTime savedDateTime = Globally.getDateTimeObj(lastSavedDate, false);
+            int minDiff = Minutes.minutesBetween(savedDateTime, currentDate).getMinutes();
+
+            if(minDiff >= 60){  // set val as "e" when time will be greater then 1 hour
+                SharedPref.setLocMalfunctionType("e", context);
+                isMalfunction = true;
+            }
+
+            if(isSaveMalfunctionStatus) {
+                if(isMalfunction == false) {
+                    SharedPref.setLocMalfunctionType("", context);
+                    saveMalfncnStatus(context, isDistanceMalfncn);
+                }else{
+                    saveMalfncnStatus(context, isMalfunction);
+                }
+            }
+
+        }
+
+        return isMalfunction;
+    }
+
+    void saveMalfncnStatus(Context context, boolean isDistanceMalfncn){
+        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+            SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(context),
+                    isDistanceMalfncn,
+                    SharedPref.isDiagnosticOccur(context),
+                    SharedPref.isSuggestedEditOccur(context), context);
+        }else{
+            SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccur(context),
+                    isDistanceMalfncn,
+                    SharedPref.isDiagnosticOccurCo(context),
+                    SharedPref.isSuggestedEditOccurCo(context), context);
+        }
+    }
+
+    public static boolean isTabletDevice(Context activityContext) {
+
+        boolean device_large = ((activityContext.getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE);
+        DisplayMetrics metrics = new DisplayMetrics();
+        Activity activity = (Activity) activityContext;
+        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        if (device_large) {
+            //Tablet
+            if (metrics.densityDpi == DisplayMetrics.DENSITY_DEFAULT){
+                return true;
+            }else if(metrics.densityDpi == DisplayMetrics.DENSITY_MEDIUM){
+                return true;
+            }else if(metrics.densityDpi == DisplayMetrics.DENSITY_TV){
+                return true;
+            }else if(metrics.densityDpi == DisplayMetrics.DENSITY_HIGH){
+                return true;
+            }else if(metrics.densityDpi == DisplayMetrics.DENSITY_280){
+                return true;
+            }else if(metrics.densityDpi == DisplayMetrics.DENSITY_XHIGH) {
+                return true;
+            }else if(metrics.densityDpi == DisplayMetrics.DENSITY_400) {
+                return true;
+            }else if(metrics.densityDpi == DisplayMetrics.DENSITY_XXHIGH) {
+                return true;
+            }else if(metrics.densityDpi == DisplayMetrics.DENSITY_560) {
+                return true;
+            }else if(metrics.densityDpi == DisplayMetrics.DENSITY_XXXHIGH) {
+                return true;
+            }
+        }else{
+            //Mobile
+        }
+        return false;
+    }
+
+
+/*    public static boolean isTabletDevice(Context activityContext) {
+
+        boolean device_large = ((activityContext.getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE);
+        DisplayMetrics metrics = new DisplayMetrics();
+        Activity activity = (Activity) activityContext;
+
+
+            Display display = ((Activity)context).WindowManager.DefaultDisplay;
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            display.GetMetrics(displayMetrics);
+
+            var wInches = displayMetrics.WidthPixels / (double)displayMetrics.DensityDpi;
+            var hInches = displayMetrics.HeightPixels / (double)displayMetrics.DensityDpi;
+
+            double screenDiagonal = Math.Sqrt(Math.Pow(wInches, 2) + Math.Pow(hInches, 2));
+            return (screenDiagonal >= 7.0);
+
+
+
+    }*/
 
 }

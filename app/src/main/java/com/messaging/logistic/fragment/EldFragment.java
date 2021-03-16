@@ -276,6 +276,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     boolean isOldRecord = false;
     boolean isMinOffDutyHoursSatisfied = false;
     boolean IsPersonalUseAllowed = true;
+    boolean isEldRuleAlreadyCalled = false;
 
     public static boolean IsPrePost = false;
     public static boolean IsStartReading = false;
@@ -1853,23 +1854,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     progressBar.setVisibility(View.GONE);
 
 
-
-                if(isYardMove){
-                    if (isViolation) {
-                        yardMoveBtn.setBackgroundResource(R.drawable.red_default);
-                    }else{
-                        yardMoveBtn.setBackgroundResource(R.drawable.eld_blue_new_default);
-                    }
-                    yardMoveBtn.setTextColor(getResources().getColor(R.color.whiteee));
-                }else{
-
-                    if (sharedPref.IsYardMoveAllowed(getActivity())) {
-                        yardMoveBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
-                    } else {
-                        yardMoveBtn.setTextColor(getResources().getColor(R.color.gray_hover));
-                    }
-                    yardMoveBtn.setBackgroundResource(R.drawable.gray_eld_selector);
-                }
+                    setYardMoveView();
 
                     if (IsPersonalUseAllowed) {
                         if (DRIVER_JOB_STATUS == constants.OFF_DUTY && isPersonal.equals("true")) {
@@ -1897,6 +1882,25 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             }
         }, 500);
 
+    }
+
+    void setYardMoveView(){
+        if(isYardMove){
+            if (isViolation) {
+                yardMoveBtn.setBackgroundResource(R.drawable.red_default);
+            }else{
+                yardMoveBtn.setBackgroundResource(R.drawable.eld_blue_new_default);
+            }
+            yardMoveBtn.setTextColor(getResources().getColor(R.color.whiteee));
+        }else{
+
+            if (sharedPref.IsYardMoveAllowed(getActivity())) {
+                yardMoveBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
+            } else {
+                yardMoveBtn.setTextColor(getResources().getColor(R.color.gray_hover));
+            }
+            yardMoveBtn.setBackgroundResource(R.drawable.gray_eld_selector);
+        }
     }
 
     void shareDriverLogDialog() {
@@ -2101,10 +2105,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             case R.id.yardMoveBtn:
 
 
-             if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
-                       sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
-
-                    if (sharedPref.IsYardMoveAllowed(getActivity())) {
+                if (sharedPref.IsYardMoveAllowed(getActivity())) {
+                     if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
+                               sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
 
                         if(DRIVER_JOB_STATUS == Constants.DRIVING && constants.isDriverAllowedToChange(getActivity(), DRIVER_ID, sharedPref.getObdStatus(getActivity()), obdUtil, Global, driverPermissionMethod, dbHelper) == false) {
                             Global.EldScreenToast(OnDutyBtn, getString(R.string.statusNotChangedFromDriving), getResources().getColor(R.color.colorVoilation));
@@ -2125,13 +2128,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             }
 
                         }
-                    } else {
-                        Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.yard_move_not_allowed), getResources().getColor(R.color.colorVoilation));
-                    }
-             }else{
-                   Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
-              }
 
+                 }else{
+                       Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
+                  }
+                } else {
+                        Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.yard_move_not_allowed), getResources().getColor(R.color.colorVoilation));
+                }
 
                 break;
 
@@ -2144,17 +2147,20 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
                                 sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
 
-                            DateTime lastSaveUtcDate = Global.getDateTimeObj(sharedPref.getCurrentUTCTime(getActivity()), false);
-                            DateTime currentUTCTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), true);
-                            int dayDiff = hMethods.DayDiff(currentUTCTime, lastSaveUtcDate);
-
-                            if ((CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) &&
-                                    sharedPref.isPersonalUse75KmCrossed(getActivity()) && dayDiff == 0) {
-                                Global.EldToastWithDuration4Sec(personalUseBtn, getResources().getString(R.string.personal_use_limit_75), getResources().getColor(R.color.colorVoilation));
+                            if(DRIVER_JOB_STATUS == Constants.DRIVING && constants.isDriverAllowedToChange(getActivity(), DRIVER_ID, sharedPref.getObdStatus(getActivity()), obdUtil, Global, driverPermissionMethod, dbHelper) == false) {
+                                Global.EldScreenToast(OnDutyBtn, getString(R.string.statusNotChangedFromDriving), getResources().getColor(R.color.colorVoilation));
                             } else {
-                                PersonalBtnClick();
-                            }
+                                DateTime lastSaveUtcDate = Global.getDateTimeObj(sharedPref.getCurrentUTCTime(getActivity()), false);
+                                DateTime currentUTCTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), true);
+                                int dayDiff = hMethods.DayDiff(currentUTCTime, lastSaveUtcDate);
 
+                                if ((CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) &&
+                                        sharedPref.isPersonalUse75KmCrossed(getActivity()) && dayDiff == 0) {
+                                    Global.EldToastWithDuration4Sec(personalUseBtn, getResources().getString(R.string.personal_use_limit_75), getResources().getColor(R.color.colorVoilation));
+                                } else {
+                                    PersonalBtnClick();
+                                }
+                            }
                         }else{
                             Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
                         }
@@ -4316,10 +4322,14 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         }
 
 
-
                         // call 18 days API to get accurate 18 days updated log
                         if( Global.isConnected(getActivity()) && DriverJsonArray.length() == 0 ) {
                             GetDriverLog18Days(DRIVER_ID, DeviceId, Global.GetCurrentUTCDate(), GetDriverLog18Days);
+                        }else{
+                            if(isEldRuleAlreadyCalled == false) {
+                                CalculateTimeInOffLine(false, true);
+                            }
+                            isEldRuleAlreadyCalled = true;
                         }
 
                     } else {
@@ -4352,13 +4362,18 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                             if (isPopupShown && ( isPersonal.equals("true") || (DRIVER_JOB_STATUS == ON_DUTY && isYardMove) ) ) {
 
-                                YardMovePersonalStatusAlert(isYardMove);    //, true, -1
+                                YardMovePersonalStatusAlert(isYardMove);
+                            }else{
+                                if(yardMovePersonalUseAlert != null && yardMovePersonalUseAlert.isShowing()){
+                                    yardMovePersonalUseAlert.dismiss();
+                                }
                             }
 
                             callEldRuleMethod(currentDayArray, currentDateTime, currentUTCTime, onResume);
 
                         }
 
+                        setYardMoveView();
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -4405,79 +4420,81 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void CalculateCycleTime(DateTime currentDateTime, DateTime currentUTCTime, boolean isSingleDriver, boolean onResume) {
 
         getExceptionStatus();
+        if(!CurrentCycleId.equals("") && !CurrentCycleId.equals("-1")) {
 
-        int rulesVersion = sharedPref.GetRulesVersion(getActivity());
-        oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
-                offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
-                isHaulExcptn, isAdverseExcptn,
-                rulesVersion, oDriverLogDetail);
 
-        RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
-
-        if (DRIVER_JOB_STATUS == DRIVING || DRIVER_JOB_STATUS == ON_DUTY) {
-            if (RulesObj != null) {
-                isViolation = RulesObj.isViolation();
-            }
-        } else {
-            isViolation = false;
-            sharedPref.SetIsReadViolation(false, getActivity());
-            sharedPref.SetViolation(isViolation, getActivity());
-        }
-
-        try {
-            // Calculate 2 days data to get remaining Driving/Onduty hours
-            RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
-                    Integer.valueOf(CurrentCycleId), isSingleDriver, Integer.valueOf(DRIVER_ID), DRIVER_JOB_STATUS, isOldRecord,
+            int rulesVersion = sharedPref.GetRulesVersion(getActivity());
+            oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
+                    offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
                     isHaulExcptn, isAdverseExcptn,
-                    rulesVersion, dbHelper);
+                    rulesVersion, oDriverLogDetail);
 
-            LeftWeekOnDutyHoursInt  = (int) RulesObj.getCycleRemainingMinutes();
-            TotalOnDutyHoursInt     = (int) RemainingTimeObj.getOnDutyUsedMinutes();   // hMethods.GetOnDutyTime(currentDayArray);
-            TotalDrivingHoursInt    = (int) RemainingTimeObj.getDrivingUsedMinutes();  // hMethods.GetDrivingTime(currentDayArray);
-            LeftDayOnDutyHoursInt   = (int) RemainingTimeObj.getOnDutyRemainingMinutes();
-            LeftDayDrivingHoursInt  = (int) RemainingTimeObj.getDrivingRemainingMinutes();
+            RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
-            shiftRemainingMinutes   = (int) RemainingTimeObj.getShiftRemainingMinutes();
-            shiftUsedMinutes        = (int) RemainingTimeObj.getShiftUsedMinutes();
-
-            minOffDutyUsedHours        = (int)RemainingTimeObj.getMinimumOffDutyUsedHours();
-            isMinOffDutyHoursSatisfied = RemainingTimeObj.isMinimumOffDutyHoursSatisfied();
-
-            boolean isDisableAdverseException = RemainingTimeObj.isDisableAdverseException();
-            boolean isDisableShortHaul = RemainingTimeObj.isDisableShortHaul();
-
-            if(isDisableAdverseException){
-                if(isAdverseExcptn){
-                    if(DriverType == Constants.MAIN_DRIVER_TYPE)
-                        sharedPref.setAdverseExcptn(false, getActivity());
-                    else
-                        sharedPref.setAdverseExcptnCo(false, getActivity());
-
-                    hMethods.SaveDriversJob(DRIVER_ID, DeviceId, "", getString(R.string.disable_adverse_exception),
-                            false, DriverType, constants, sharedPref,
-                            MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                            syncingMethod, Global, hMethods, dbHelper, getActivity());
+            if (DRIVER_JOB_STATUS == DRIVING || DRIVER_JOB_STATUS == ON_DUTY) {
+                if (RulesObj != null) {
+                    isViolation = RulesObj.isViolation();
                 }
-
+            } else {
+                isViolation = false;
+                sharedPref.SetIsReadViolation(false, getActivity());
+                sharedPref.SetViolation(isViolation, getActivity());
             }
 
-            if(isDisableShortHaul){
+            try {
+                // Calculate 2 days data to get remaining Driving/Onduty hours
+                RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
+                        Integer.valueOf(CurrentCycleId), isSingleDriver, Integer.valueOf(DRIVER_ID), DRIVER_JOB_STATUS, isOldRecord,
+                        isHaulExcptn, isAdverseExcptn,
+                        rulesVersion, dbHelper);
 
-                if(isHaulExcptn){
-                    if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                        sharedPref.set16hrHaulExcptn(false, getActivity());
-                    }else{
-                        sharedPref.set16hrHaulExcptnCo(false, getActivity());
+                LeftWeekOnDutyHoursInt = (int) RulesObj.getCycleRemainingMinutes();
+                TotalOnDutyHoursInt = (int) RemainingTimeObj.getOnDutyUsedMinutes();   // hMethods.GetOnDutyTime(currentDayArray);
+                TotalDrivingHoursInt = (int) RemainingTimeObj.getDrivingUsedMinutes();  // hMethods.GetDrivingTime(currentDayArray);
+                LeftDayOnDutyHoursInt = (int) RemainingTimeObj.getOnDutyRemainingMinutes();
+                LeftDayDrivingHoursInt = (int) RemainingTimeObj.getDrivingRemainingMinutes();
+
+                shiftRemainingMinutes = (int) RemainingTimeObj.getShiftRemainingMinutes();
+                shiftUsedMinutes = (int) RemainingTimeObj.getShiftUsedMinutes();
+
+                minOffDutyUsedHours = (int) RemainingTimeObj.getMinimumOffDutyUsedHours();
+                isMinOffDutyHoursSatisfied = RemainingTimeObj.isMinimumOffDutyHoursSatisfied();
+
+                boolean isDisableAdverseException = RemainingTimeObj.isDisableAdverseException();
+                boolean isDisableShortHaul = RemainingTimeObj.isDisableShortHaul();
+
+                if (isDisableAdverseException) {
+                    if (isAdverseExcptn) {
+                        if (DriverType == Constants.MAIN_DRIVER_TYPE)
+                            sharedPref.setAdverseExcptn(false, getActivity());
+                        else
+                            sharedPref.setAdverseExcptnCo(false, getActivity());
+
+                        hMethods.SaveDriversJob(DRIVER_ID, DeviceId, "", getString(R.string.disable_adverse_exception),
+                                false, DriverType, constants, sharedPref,
+                                MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                                syncingMethod, Global, hMethods, dbHelper, getActivity());
                     }
-                    hMethods.SaveDriversJob(DRIVER_ID, DeviceId, "", getString(R.string.disable_ShortHaul_exception),
-                            true, DriverType, constants, sharedPref,
-                            MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                            syncingMethod, Global, hMethods, dbHelper, getActivity());
+
                 }
 
-            }
+                if (isDisableShortHaul) {
 
-            setExceptionView();
+                    if (isHaulExcptn) {
+                        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
+                            sharedPref.set16hrHaulExcptn(false, getActivity());
+                        } else {
+                            sharedPref.set16hrHaulExcptnCo(false, getActivity());
+                        }
+                        hMethods.SaveDriversJob(DRIVER_ID, DeviceId, "", getString(R.string.disable_ShortHaul_exception),
+                                true, DriverType, constants, sharedPref,
+                                MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                                syncingMethod, Global, hMethods, dbHelper, getActivity());
+                    }
+
+                }
+
+                setExceptionView();
 
            /*     if(RulesObj.getViolationReason().contains(ConstantsEnum.CANADA_MINIMUM_OFFDUTY_HOURS_VIOLATION)){
                     TotalOffDutyHoursInt =  (int) RemainingTimeObj.getOffDutyUsedMinutes();
@@ -4486,43 +4503,39 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 }
 */
 
-        } catch (Exception e) {
-            LeftWeekOnDutyHoursInt = 0;
-            e.printStackTrace();
+            } catch (Exception e) {
+                LeftWeekOnDutyHoursInt = 0;
+                e.printStackTrace();
+            }
+
+            initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
+                    usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
+
+            DrivingOnDutyCalculations();
+            SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
+
+
+            if (sharedPref.IsReadViolation(getActivity()) == false && isViolation) {
+                if (!onResume)
+                    Global.ShowNotificationWithSound(getActivity(), RulesObj, mNotificationManager);
+            }
+
+            SetTextOnView(RulesObj.getViolationReason().trim());
+            ViolationsReason = RulesObj.getViolationReason();
+
         }
 
-        initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
-                usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
-
-        DrivingOnDutyCalculations(isViolation, RulesObj.getViolationReason());
-        SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
-
-
-        if (sharedPref.IsReadViolation(getActivity()) == false  && isViolation) {
-            if(!onResume)
-                Global.ShowNotificationWithSound(getActivity(), RulesObj, mNotificationManager);
-        }
-
-        SetTextOnView(RulesObj.getViolationReason().trim());
-        ViolationsReason = RulesObj.getViolationReason();
         GetDriverLogData();
 
     }
 
 
-    void DrivingOnDutyCalculations(boolean isViolate, String violationReason) {
+    void DrivingOnDutyCalculations() {
 
-       /* if (isViolate) {
-            if(!violationReason.contains(constants.ViolationReason30Min)) {
-                LeftDayDrivingHoursInt = 0;
-                LeftDayOnDutyHoursInt = 0;
-            }
-        }*/
         if (LeftWeekOnDutyHoursInt <= 0) {
             LeftWeekOnDutyHoursInt = 0;
             LeftDayDrivingHoursInt = 0;
             LeftDayOnDutyHoursInt = 0;
-            //  isViolation = true;
         } else if (LeftWeekOnDutyHoursInt < LeftDayDrivingHoursInt || LeftWeekOnDutyHoursInt < LeftDayOnDutyHoursInt) {
             if(LeftWeekOnDutyHoursInt < LeftDayDrivingHoursInt) {
                 LeftDayDrivingHoursInt = LeftWeekOnDutyHoursInt;
@@ -6424,8 +6437,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
             alertDialogBuilder.setTitle("Do you want to continue with " + status + "?");
 
-               // alertDialogBuilder.setTitle("Do you want to end " + status + "?");
-
             alertDialogBuilder.setMessage("");
             alertDialogBuilder.setCancelable(false);
             alertDialogBuilder.setPositiveButton("Yes",
@@ -6433,23 +6444,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         @Override
                         public void onClick(DialogInterface dialog, int arg1) {
                             dialog.dismiss();
-                            //if(wantContinueWithStatus) {
-                                sharedPref.SetTruckStartLoginStatus(false, getActivity());
-                                sharedPref.SetTruckIgnitionStatus(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
-                                CalculateTimeInOffLine(false, false);
-                       /*     }else{
 
-                                if(nextStatus ==constants.OFF_DUTY){
-                                    OffDutyBtnClick();
-                                }else if(nextStatus ==constants.SLEEPER){
-                                    SleeperBtnClick();
-                                }else if(nextStatus ==constants.DRIVING){
-                                    DrivingBtnClick();
-                                }else{
-                                    isYardBtnClick = false;
-                                    OnDutyBtnClick();
-                                }
-                            }*/
+                            sharedPref.SetTruckStartLoginStatus(false, getActivity());
+                            sharedPref.SetTruckIgnitionStatus(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
+                            CalculateTimeInOffLine(false, false);
+
                         }
                     });
 
@@ -6458,7 +6457,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
 
-                  //  if(wantContinueWithStatus) {
                         Log.d("VEHICLE_SPEED", "VEHICLE_SPEED: " + Global.VEHICLE_SPEED);
                         sharedPref.SetTruckStartLoginStatus(false, getActivity());
                         sharedPref.SetTruckIgnitionStatus(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
@@ -6468,7 +6466,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         } else {
                             SaveDrivingStatus();
                         }
-                   // }
+
                 }
             });
 

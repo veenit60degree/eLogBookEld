@@ -555,6 +555,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.setDriverStatusId("jobType", "", getApplicationContext());
 			sharedPref.setVehilceMovingStatus(false, getApplicationContext());
 			sharedPref.SetObdEngineHours("0", getApplicationContext());
+			sharedPref.setHighPrecisionOdometer("", "", getApplicationContext());
+			sharedPref.setEcmObdLocationWithTime("0", "0", "0", "", getApplicationContext());
+			sharedPref.setLocMalfunctionType("", getApplicationContext());
 
 		}catch (Exception e){
 			e.printStackTrace();

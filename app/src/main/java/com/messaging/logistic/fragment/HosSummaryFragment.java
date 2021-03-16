@@ -876,7 +876,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 String dayStartOdometerStr  = sharedPref.getDayStartOdometer(getActivity());
                 String currentOdometerStr   = sharedPref.getHighPrecisionOdometer(getActivity());
 
-                Toast.makeText(getActivity(), "     Start Odometer: "+ dayStartOdometerStr + "\nCurrent Odometer: "+ currentOdometerStr, Toast.LENGTH_LONG).show();
+             //   Toast.makeText(getActivity(), "     Start Odometer: "+ dayStartOdometerStr + "\nCurrent Odometer: "+ currentOdometerStr, Toast.LENGTH_LONG).show();
 
 
 
@@ -885,7 +885,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
             case R.id.hosLocationCardView:
 
-                Toast.makeText(getActivity(), "OBD Vin: "+ sharedPref.getVehicleVin(getActivity()) + "\nAPI Vin: "+ sharedPref.getVINNumber(getActivity()), Toast.LENGTH_LONG).show();
+             //   Toast.makeText(getActivity(), "OBD Vin: "+ sharedPref.getVehicleVin(getActivity()) + "\nAPI Vin: "+ sharedPref.getVINNumber(getActivity()), Toast.LENGTH_LONG).show();
 
                 break;
 

@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SyncingMethod {
 
@@ -54,5 +55,23 @@ public class SyncingMethod {
         }
     }
 
+
+    public int getLastStatus(int DriverId, DBHelper dbHelper){
+
+        int lastStatus = -1;
+        try {
+            JSONArray selectedArray = getSavedSyncingArray(DriverId, dbHelper);
+            if(selectedArray.length() > 0){
+                JSONObject lastJsonItem = (JSONObject) selectedArray.get(selectedArray.length() - 1);
+                lastStatus = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
+            }else{
+                return lastStatus;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return lastStatus;
+    }
 
 }

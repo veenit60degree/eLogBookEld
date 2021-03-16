@@ -85,15 +85,16 @@ public class SyncWiredObdLog extends AsyncTask<String, String, String> {
         //  postResponse.onAsyncResponse(result);
 
         try {
+            if(result.length() > 0){
+                JSONObject obj = new JSONObject(result);
+                String status = obj.getString("Status");
+                if (status.equalsIgnoreCase("true")) {
 
-            JSONObject obj = new JSONObject(result);
-            String status = obj.getString("Status");
-            if (status.equalsIgnoreCase("true")) {
+                    /* ------------ Delete posted files from local after successfully posted to server --------------- */
+                    if(syncingFile != null && syncingFile.exists())
+                        syncingFile.delete();
 
-                /* ------------ Delete posted files from local after successfully posted to server --------------- */
-                if(syncingFile != null && syncingFile.exists())
-                    syncingFile.delete();
-
+                }
             }
 
         }catch (Exception e){

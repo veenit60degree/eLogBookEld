@@ -1,12 +1,18 @@
 package com.constants;
 
 import android.content.Context;
+import android.os.Build;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.widget.Toast;
 
 import com.driver.details.DriverConst;
 import com.messaging.logistic.Globally;
+import com.messaging.logistic.R;
+
+import java.util.Objects;
 
 public class CommonUtils {
 
@@ -22,6 +28,17 @@ public class CommonUtils {
 
 		int SingleDriverMenuWidth = 385;
 		int DualDriverMenuWidth   = 500;
+
+		TelephonyManager manager = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			if (Objects.requireNonNull(manager).getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
+				Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Detected with DisplayMetrics isTablet: " + Constants.isTabletDevice(mContext) + "\nDetected with TelephonyManager: Tablet", 2003);
+			} else {
+				Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Detected with DisplayMetrics isTablet: " + Constants.isTabletDevice(mContext) + "\nDetected with TelephonyManager: Mobile Phone", 2003);
+			}
+		}
+
+
 		if(Globally.isTablet(mContext)) {
 
 			//Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Tablet density pixel: " + densityDpi, 2003);
@@ -64,7 +81,7 @@ public class CommonUtils {
 		return width;
 
 	}
-	
-	
-	
+
+
+
 }

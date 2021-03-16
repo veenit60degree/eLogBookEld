@@ -1833,6 +1833,78 @@ public class SharedPref {
 
 
 
+
+    // Set Ecm Obd location with time  -------------------
+    public static void setEcmObdLocationWithTime( String lat, String lon, String odometer, String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ecmObdLat", lat);
+        editor.putString("ecmObdLon", lon);
+        editor.putString("ecmOdometer", odometer);
+        editor.putString("ecmObdTime", time);
+
+        editor.commit();
+    }
+
+    // Get Ecm Obd Latitude of last saved location -------------------
+    public static String getEcmObdLatitude(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ecmObdLat", "0");
+    }
+
+    // Get Ecm Obd Langitude of last saved location -------------------
+    public static String getEcmObdLongitude(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ecmObdLon", "0");
+    }
+
+    // Get Ecm odometer of last saved from obd -------------------
+    public static String getEcmOdometer(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ecmOdometer", "0");
+    }
+
+
+    // Get Ecm Obd Time of last saved location -------------------
+    public static String getEcmObdTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ecmObdTime", "");
+    }
+
+
+    // save Location Malfunction Type (x,m,e) -------------------
+    public static void setLocMalfunctionType( String type, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ecmMalfunctionType", type);
+
+        editor.commit();
+    }
+
+    // Get Location Malfunction Type -------------------
+    public static String getLocMalfunctionType(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ecmMalfunctionType", "");
+    }
+
+
+    // save Malfunction status for Manual Location input -------------------
+    public static void saveManualLocStatus( boolean type, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("ecmManualLocStatus", type);
+
+        editor.commit();
+    }
+
+    // Get Malfunction status for Manual Location input -------------------
+    public static boolean isManualLocAccepted(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("ecmManualLocStatus", false);
+    }
+
+
+
     // ===========================Save Current Cycle with details ===========================
     public void SetCycleOfflineDetails(String value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
