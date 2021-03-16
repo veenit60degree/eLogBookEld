@@ -2821,7 +2821,7 @@ public class Constants {
             DateTime savedDateTime = Globally.getDateTimeObj(lastSavedDate, false);
             int minDiff = Minutes.minutesBetween(savedDateTime, currentDate).getMinutes();
 
-            if(minDiff >= 60){  // set val as "e" when time will be greater then 1 hour
+            if(minDiff >= 61){  // set val as "e" when time will be greater then 1 hour
                 SharedPref.setLocMalfunctionType("e", context);
                 isMalfunction = true;
             }
@@ -2852,6 +2852,7 @@ public class Constants {
                     SharedPref.isDiagnosticOccurCo(context),
                     SharedPref.isSuggestedEditOccurCo(context), context);
         }
+
     }
 
     public static boolean isTabletDevice(Context activityContext) {
@@ -2891,7 +2892,7 @@ public class Constants {
     }
 
 
-/*    public static boolean isTabletDevice(Context activityContext) {
+    /*public static boolean isTabletDevice(Context activityContext) {
 
         boolean device_large = ((activityContext.getResources().getConfiguration().screenLayout &
                 Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE);
