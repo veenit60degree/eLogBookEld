@@ -17,10 +17,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -365,7 +367,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         public void handleMessage(Message msg)
         {
 
-            Bundle bundle = msg.getData();
+            final Bundle bundle = msg.getData();
 
             String currentHighPrecisionOdometer = "0", timeStamp = "--", vin = "--";
             int speed = 0;
@@ -395,6 +397,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
             sharedPref.SetObdEngineHours(obdEngineHours, getApplicationContext());
 
+
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Speed: " + bundle.getInt(constants.OBD_Vss),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
 
             // ---------------- temp data ---------------------
           /*     ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
@@ -929,6 +942,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         @Override
         public void run() {
             // Log.e(TAG, "-----Running timerTask");
+
+
 
             if (!sharedPref.getUserName(getApplicationContext()).equals("") &&
                     !sharedPref.getPassword(getApplicationContext()).equals("")) {

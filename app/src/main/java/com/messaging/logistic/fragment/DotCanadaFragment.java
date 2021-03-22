@@ -581,11 +581,11 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             remAnotnDotListView.setAdapter(canDotRemarksAdapter);
         }catch (Exception e){}
 
-        try {
+      /*  try {
             canDotAddHrsAdapter = new CanDotAddHrsAdapter(getActivity(), AdditionalHoursList);
             addHrsDotListView.setAdapter(canDotAddHrsAdapter);
         }catch (Exception e){}
-
+*/
         try {
             canDotEnginePowerAdapter = new CanDotEnginePowerAdapter(getActivity(), EnginePowerList);
             enginePwrDotListView.setAdapter(canDotEnginePowerAdapter);
@@ -621,7 +621,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             final int DutyStatusListHeight = (inspectionLayHeight) * DutyStatusList.size();
             final int LoginLogoutListHeight = (inspectionLayHeight) * LoginLogoutList.size();
             final int CommentsRemarksListHeight = (inspectionLayHeight) * CommentsRemarksList.size();
-            final int AdditionalHoursListHeight = (inspectionLayHeight) * AdditionalHoursList.size();
+           // final int AdditionalHoursListHeight = (inspectionLayHeight) * AdditionalHoursList.size();
             final int EnginePowerListHeight = (inspectionLayHeight) * EnginePowerList.size();
 
             new Handler().postDelayed(new Runnable() {
@@ -630,7 +630,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     dutyChangeDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DutyStatusListHeight));
                     loginLogDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LoginLogoutListHeight));
                     remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CommentsRemarksListHeight));
-                    addHrsDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AdditionalHoursListHeight));
+                   // addHrsDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AdditionalHoursListHeight));
                     enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, EnginePowerListHeight));
 
                 }
@@ -950,7 +950,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     DutyStatusList =   constants.parseCanadaDotInList(dutyStatusArray);
                     LoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray);
                     CommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray);
-                    AdditionalHoursList = constants.parseCanadaDotInList(additionalHoursArray);
+                   // AdditionalHoursList = constants.parseCanadaDotInList(additionalHoursArray);
                     EnginePowerList = constants.parseCanadaDotInList(enginePowerArray);
 
 

@@ -57,8 +57,8 @@ public class TrailorDialog extends Dialog {
     Spinner remarkSpinner;
     RadioButton radioNoTrailer, radioEnterTrailer;
     TextView TitleTV, SpinnerTitleTV, recordTitleTV;
-    boolean isUpdatedTrailer = false, isEditRemarks = false, isStart = true, isYardMove;
-    int ItemPosition = 0, jobStatus;
+    boolean isUpdatedTrailer = false, isEditRemarks , isStart = true, isYardMove;
+    int ItemPosition, jobStatus;
     String spinnerSelection = "";
     ShipmentHelperMethod shipmentMethod;
     DBHelper dbHelper;
@@ -337,9 +337,9 @@ public class TrailorDialog extends Dialog {
 
                 if (ReasonEditText.getText().toString().trim().length() >= 4 ) {
 
-                   /* if (SharedPref.getObdStatus(getContext()) == Constants.WIFI_ACTIVE ||
+                    if (SharedPref.getObdStatus(getContext()) == Constants.WIFI_ACTIVE ||
                             SharedPref.getObdStatus(getContext()) == Constants.WIRED_ACTIVE) {
-*/
+
                         readyListener.JobBtnReady(
                                 Trailer,
                                 spinnerSelection,
@@ -349,10 +349,10 @@ public class TrailorDialog extends Dialog {
                                 TrailorNoEditText,
                                 ReasonEditText);
 
-                   /* }else{
+                   }else{
                         Globally.EldToastWithDuration4Sec(TrailorNoEditText, getContext().getResources().getString(R.string.connect_with_obd_first), getContext().getResources().getColor(R.color.colorVoilation));
                     }
-*/
+
 
                 } else {
                     Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.YARD_MOVE_DESC, getContext().getResources().getColor(R.color.red_eld));

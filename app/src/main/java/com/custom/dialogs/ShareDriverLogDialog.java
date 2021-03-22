@@ -103,7 +103,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     int CanMaxDays          = 13;   // 1 = 13  = 14 days
     int MaxDays, SelectedCountry = 0;
     boolean IsAOBRD;
-    private String City = "", State = "", Country = "";
+    private String City = "", State = "", Country = "", canSelectedEmail = "", selectedCountry = "Select";
     List<DriverLocationModel> StateList;
     List<String> StateArrayList;
     Spinner stateSharedSpinner;
@@ -189,7 +189,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         sendLogScrollView   = (ScrollView)findViewById(R.id.sendLogScrollView);
 
         locLogAutoComplete.setThreshold(3);
-        countryLayout.setVisibility(View.GONE);
+      //  countryLayout.setVisibility(View.GONE);
 
         if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
             MaxDays = UsaMaxDays;
@@ -210,16 +210,19 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                         case 0:
                             countryFlagImgView.setImageResource(R.drawable.no_flag);
                             usaView();
+                            selectedCountry = "Select";
                             break;
 
                         case 1:
                             countryFlagImgView.setImageResource(R.drawable.can_flag);
                             canView();
+                            selectedCountry = "CANADA";
                             break;
 
                         case 2:
                             countryFlagImgView.setImageResource(R.drawable.usa_flag);
                             usaView();
+                            selectedCountry = "USA";
                             break;
 
                     }
@@ -361,22 +364,14 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         }
     }
 
-
-    private class ShareBtnClick implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            City  = cityShareEditText.getText().toString().trim();
-            email = amountEditText.getText().toString().trim();
+    private boolean isValidEmailPattern(EditText emailText){
+            String email = emailText.getText().toString().trim();
             email = email.replaceAll(" ", ",");
             email = email.replaceAll(",,", ",");
             String[] EmailArray = email.split(",");
             List<String> validEmailList = new ArrayList<>();
             boolean IsValidEmail = false;
             String EmailData = "";
-            String MailCheck    = String.valueOf(checkboxEmail.isChecked());
-            String ServiceCheck = String.valueOf(checkboxService.isChecked());
-
-            //
             for(int i = 0 ; i < EmailArray.length ; i++){
                 if(EmailArray[i].matches(emailPattern) || EmailArray[i].matches(emailPattern2)){
                     //IsValidEmail = true;
@@ -394,31 +389,60 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             }else{
                 IsValidEmail = true;
             }
-            amountEditText.setText(Html.fromHtml(EmailData));
-            amountEditText.setSelection(amountEditText.getText().toString().length());
+            emailText.setText(Html.fromHtml(EmailData));
+            emailText.setSelection(emailText.getText().toString().length());
 
-            if(Globally.isConnected(getContext()) ) {
-                if(emailLogLay.getVisibility() == View.VISIBLE){
-                    if (IsValidEmail ) {
-                        CheckValdation0(MailCheck, ServiceCheck);
-                    }else{
-                        sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
-                        amountEditText.requestFocus();
-                        Globally.EldScreenToast(shareDriverLogBtn, "Please enter valid email address", getContext().getResources().getColor(R.color.colorVoilation));
+            return IsValidEmail;
+    }
+
+
+    private class ShareBtnClick implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            City  = cityShareEditText.getText().toString().trim();
+            String MailCheck    = String.valueOf(checkboxEmail.isChecked());
+            String ServiceCheck = String.valueOf(checkboxService.isChecked());
+
+            email               = amountEditText.getText().toString().trim();
+            canSelectedEmail    = canEmailEditText.getText().toString().trim();
+
+            if(selectedCountry.equals("Select")){
+                sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
+                Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.select_country), getContext().getResources().getColor(R.color.colorVoilation));
+            }else {
+                if (Globally.isConnected(getContext())) {
+                    if (emailLogLay.getVisibility() == View.VISIBLE) {
+                        if (isValidEmailPattern(amountEditText)) {
+                            CheckValdation0(MailCheck, ServiceCheck);
+                        } else {
+                            sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
+                            amountEditText.requestFocus();
+                            Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
+                        }
+                    } else {
+                        if (selectedCountry.equals("CANADA")){
+                            if(isValidEmailPattern(canEmailEditText)){
+                                ServiceCheck = "false";
+                                CheckValdation0(MailCheck, ServiceCheck);
+                            }else{
+                                sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
+                                canEmailEditText.requestFocus();
+                                Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
+                            }
+                        }else {
+                            if (checkboxEmail.isChecked() || checkboxService.isChecked()) {
+                                CheckValdation0(MailCheck, ServiceCheck);
+                            } else {
+                                sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
+                                Globally.EldScreenToast(shareDriverLogBtn, "Please select Web Service or Email", getContext().getResources().getColor(R.color.colorVoilation));
+                            }
+                        }
                     }
-                }else{
-                    if(checkboxEmail.isChecked() || checkboxService.isChecked()){
-                        CheckValdation0(MailCheck, ServiceCheck);
-                    }else{
-                        sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
-                        Globally.EldScreenToast(shareDriverLogBtn, "Please select Web Service or Email", getContext().getResources().getColor(R.color.colorVoilation));
-                    }
+
+                } else {
+                    Globally.EldScreenToast(shareDriverLogBtn, Globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorVoilation));
                 }
-
-            }else{
-                Globally.EldScreenToast(shareDriverLogBtn, Globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorVoilation));
             }
-
 
         }
     }
@@ -754,6 +778,9 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 params.put("latitude", latitude);
                 params.put("longitude", longitude);
                 params.put("DriverTimeZone", DriverTimeZone);
+                params.put("Country", selectedCountry );
+                params.put("EmailAddress", canSelectedEmail);
+
                 return params;
             }
         };

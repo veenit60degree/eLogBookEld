@@ -225,6 +225,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     boolean isExceptionEnabledForDay= false;
     boolean isLoadImageCalled       = false;
     boolean isReCertifyRequired     = false;
+    boolean isSaveCertifyClicked    = false;
 
     int startHour = 0,startMin = 0, endHour = 0, endMin = 0;
     SignDialog signDialog;
@@ -1142,23 +1143,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         @Override
         public void CertifyBtnReady() {
-            File f = new File(imagePath);
-            if(isCertifySignExist){
-                String signBtnTxt = saveSignatureBtn.getText().toString();
-                if (f.exists() && signBtnTxt.equals(getString(R.string.save)) ) {
-                    SaveDriverSignArray();
-                }else {
-                    ContinueWithoutSignDialog();
-                }
 
-            }else {
-
-                if (f.exists() ) {
-                    SaveDriverSignArray();
-                }else {
-                    openSignDialog();
-                }
-            }
+            certifyListenerCall();
 
         }
 
@@ -1169,6 +1155,28 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     }
 
 
+
+    void certifyListenerCall(){
+        if(isSaveCertifyClicked) {
+            File f = new File(imagePath);
+            if (isCertifySignExist) {
+                String signBtnTxt = saveSignatureBtn.getText().toString();
+                if (f.exists() && signBtnTxt.equals(getString(R.string.save))) {
+                    SaveDriverSignArray();
+                } else {
+                    ContinueWithoutSignDialog();
+                }
+
+            } else {
+
+                if (f.exists()) {
+                    SaveDriverSignArray();
+                } else {
+                    openSignDialog();
+                }
+            }
+        }
+    }
 
 
     @Override
@@ -1186,7 +1194,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 break;
 
             case R.id.saveSignatureBtn:
-
+                isSaveCertifyClicked = true;
                 certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener() );
                 certifyConfirmationDialog.show();
 
@@ -2396,6 +2404,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                                 driverLogScrollView.fullScroll(View.FOCUS_DOWN);
                             }
                         });
+
+                        certifyListenerCall();
 
                     } else {
                         imagePath = "";

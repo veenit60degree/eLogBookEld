@@ -47,9 +47,7 @@ public class APIs {
     static String ELD_DOMAIN_DEV_NEW    = "http://104.167.9.210:43851/api/ELDAPI/";
 
 
- /*   - change txt in YM pop up.
-    - cetify sign manually signature. Agree pop up again coming
-*/
+
     /*========================= API URLs =========================*/
     public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
     public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN

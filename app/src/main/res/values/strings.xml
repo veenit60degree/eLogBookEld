@@ -519,6 +519,8 @@
     <string name="eleven">11</string>
     <string name="twelve">12</string>
 
+    <string name="enter_valid_email">Please enter valid email address</string>
+    <string name="select_country">Please select Country</string>
     <string name="select_all">Select All</string>
     <string name="EnterCity">Enter City</string>
     <string name="EnterReason">Enter Reason</string>

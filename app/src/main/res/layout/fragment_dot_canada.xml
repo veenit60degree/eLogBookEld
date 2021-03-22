@@ -1692,7 +1692,7 @@
             android:background="@color/whiteee"
             android:padding="@dimen/margin_short_6"
             android:layout_marginTop="@dimen/margin_10"
-
+            android:visibility="gone"
             >
 
 

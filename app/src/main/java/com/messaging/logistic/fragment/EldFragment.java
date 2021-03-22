@@ -2106,8 +2106,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
                 if (sharedPref.IsYardMoveAllowed(getActivity())) {
-                     if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
-                               sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
 
                         if(DRIVER_JOB_STATUS == Constants.DRIVING && constants.isDriverAllowedToChange(getActivity(), DRIVER_ID, sharedPref.getObdStatus(getActivity()), obdUtil, Global, driverPermissionMethod, dbHelper) == false) {
                             Global.EldScreenToast(OnDutyBtn, getString(R.string.statusNotChangedFromDriving), getResources().getColor(R.color.colorVoilation));
@@ -2120,8 +2118,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 if (DRIVER_JOB_STATUS == ON_DUTY && lastItemJson.getString(ConstantsKeys.YardMove).equals("true")) {
                                     Global.EldScreenToast(OnDutyBtn, getResources().getString(R.string.yard_move_validation), getResources().getColor(R.color.colorVoilation));
                                 } else {
-                                    isYardBtnClick = true;
-                                    OnDutyBtnClick();
+                                    if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
+                                            sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
+                                        isYardBtnClick = true;
+                                        OnDutyBtnClick();
+                                    }else{
+                                        Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
+                                    }
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -2129,9 +2132,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                         }
 
-                 }else{
-                       Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
-                  }
+
                 } else {
                         Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.yard_move_not_allowed), getResources().getColor(R.color.colorVoilation));
                 }

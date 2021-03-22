@@ -218,13 +218,12 @@ public class Constants {
     public static int clearEvent              = 2;
 
 
-    public static int EditRemarks = 101;
-    public static int EditLocation = 102;
-    public static int NOTIFICATION_ID = 0;
-    public static int SocketTimeout1Sec = 1000;   // 1 second
-    public static int SocketTimeout3Sec = 3000;   // 3 seconds
-    public static int SocketTimeout4Sec = 4000;   // 3 seconds
-    public static int SocketTimeout5Sec = 5000;   // 5 seconds
+    public static int EditRemarks        = 101;
+    public static int EditLocation       = 102;
+    public static int SocketTimeout1Sec  = 1000;   // 1 second
+    public static int SocketTimeout3Sec  = 3000;   // 3 seconds
+    public static int SocketTimeout4Sec  = 4000;   // 3 seconds
+    public static int SocketTimeout5Sec  = 5000;   // 5 seconds
     public static int SocketTimeout10Sec = 10000;   // 10 seconds
     public static int SocketTimeout15Sec = 15000;   // 15 seconds
     public static int SocketTimeout20Sec = 20000;   // 20 seconds
@@ -2839,6 +2838,7 @@ public class Constants {
 
         return isMalfunction;
     }
+
 
     void saveMalfncnStatus(Context context, boolean isDistanceMalfncn){
         if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
