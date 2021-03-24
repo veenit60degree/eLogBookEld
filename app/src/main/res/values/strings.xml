@@ -134,8 +134,13 @@
     <string name="desc">Descriptions</string>
     <string name="enter_remarks">Enter Remarks</string>
 
+    <string name="OperatingZoneSouth">South of latitude 60°N in Canada</string>
+    <string name="OperatingZoneNorth">North of latitude 60°N in Canada</string>
+    <string name="OperatingZoneUS">United States"</string>
+
     <string name="cycle">Cycle:</string>
     <string name="time_zone">Time Zone </string>
+    <string name="Operating_zone">Operating Zone </string>
     <string name="take_16_hour_exc">16 Hour Short Haul Exception </string>
     <string name="adverse_excp">Adverse Exception </string>
     <string name="adverse_excp_enabled">Adverse Exception Enabled</string>
@@ -152,6 +157,8 @@
     <string name="excp_reset_auto">Exception will be auto disabled after 10 hours of rest period. (Shift reset)</string>
     <string name="haul_excp_reset_auto">Exception will be auto disabled after 34 hours of rest period. (Shift reset)</string>
 
+    <string name="canada_cycle">Canada Cycle </string>
+    <string name="usa_cycle">USA Cycle </string>
     <string name="can_cycle">CA Cycle </string>
     <string name="us_cycle">US Cycle </string>
     <string name="cycle_one">Cycle 1</string>
@@ -201,9 +208,12 @@
     <string name="Personal_Use">Personal Use</string>
     <string name="change_cycle">Change Cycle</string>
     <string name="current_cycleee">Current Cycle</string>
+    <string name="current_cyclee">(current cycle)</string>
     <string name="view_history">View Log</string>
     <string name="noti_history">Notifications History</string>
     <string name="change">Change</string>
+    <string name="want_change_cycle">Do you want to change your cycle from </string>
+    <string name="want_change_op_zone">Do you want to change your operating zone from </string>
 
     <string name="ELDViewLogUs">ELD View Log</string>
     <string name="ELDViewLogCanada">ELD View Log</string>
@@ -382,6 +392,8 @@
     <string name="enter_userName">Enter UserName</string>
     <string name="enter_username_pass">Please enter Username and Password</string>
     <string name="data_saving_inProgress">Please wait, Data is saving.</string>
+    <string name="change_cycle_to">Change cycle to </string>
+    <string name="change_op_zone_to">Change Operating Zone to </string>
 
     <string name="DOT">DOT</string>
     <string name="inspection_date">Inspection Date : </string>

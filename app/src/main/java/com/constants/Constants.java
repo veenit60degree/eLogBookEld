@@ -2777,6 +2777,56 @@ public class Constants {
 
 
 
+    // Save Driver Cycle From OBD data those are getting from als server.
+    public void SaveCycleWithCurrentDate(int CycleId, String currentUtcDate, String changeType, SharedPref sharedPref, Globally global, Context context){
+
+
+        try {
+            /* ------------- Save Cycle details with time is different with earlier cycle --------------*/
+            String CurrentCycle   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
+            if(CycleId != -1 && !CurrentCycle.equals(CycleId)) {
+                JSONArray cycleDetailArray = global.getSaveCycleRecords(CycleId, changeType, context);
+                sharedPref.SetCycleOfflineDetails(cycleDetailArray.toString(), context);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        switch (CycleId){
+
+            case 1:
+                DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
+                DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
+                break;
+
+            case 2:
+                DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, context);
+                DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, context);
+                break;
+
+            case 3:
+                DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, context);
+                DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, context);
+                break;
+
+            case 4:
+                DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, context);
+                DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, context);
+                break;
+
+        }
+
+        // Save Current Date
+        sharedPref.setCurrentDate(currentUtcDate, context);
+
+
+
+    }
+
+
+
+
     public boolean isLocationMalfunctionOccured(Context context){
         boolean isMalfunction = false;
         int ObdStatus = SharedPref.getObdStatus(context);
@@ -2820,7 +2870,7 @@ public class Constants {
             DateTime savedDateTime = Globally.getDateTimeObj(lastSavedDate, false);
             int minDiff = Minutes.minutesBetween(savedDateTime, currentDate).getMinutes();
 
-            if(minDiff >= 61){  // set val as "e" when time will be greater then 1 hour
+            if(minDiff > 60){  // set val as "e" when time will be greater then 1 hour
                 SharedPref.setLocMalfunctionType("e", context);
                 isMalfunction = true;
             }

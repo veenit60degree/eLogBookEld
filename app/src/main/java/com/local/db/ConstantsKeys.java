@@ -371,6 +371,8 @@ public class ConstantsKeys {
     public static String DriverIdDiaMalCo               = "DriverIdDiaMalCo";
 
     public static String IsCCMTACertified               = "IsCCMTACertified";
+    public static String IsNorthCanada                  = "IsNorthCanada";
+    public static String IsNorthCanadaCo                = "IsNorthCanadaCo";
 
 
     public static String DateTimeWithMins               = "DateTimeWithMins";

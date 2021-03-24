@@ -532,6 +532,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
                 if(SelectedCountry == CountryCan){
                     fmcsaDescTV.setVisibility(View.GONE);
+                    checkboxEmail.setChecked(true);
                 }else{
                     fmcsaDescTV.setVisibility(View.VISIBLE);
                 }

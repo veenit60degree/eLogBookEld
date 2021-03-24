@@ -76,18 +76,56 @@
             />
 
 
-        <TextView
-            android:id="@+id/remainingTimeTopTV"
+        <RelativeLayout
+            android:id="@+id/currentCycleLay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:paddingRight="@dimen/margin_short_3"
+            >
+
+        <TextView
+            android:id="@+id/currentCycleTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
             android:layout_toLeftOf="@+id/shippingDocLay"
             android:layout_marginTop="@dimen/margin_short_1"
             android:singleLine="true"
             android:layout_marginLeft="@dimen/margin_short_1"
             android:textSize="@dimen/text_size_12"
             android:textColor="@color/color_eld_theme"
-            android:text="(U 70/8) Cycle Time Left: 45:36"
+            android:text="(U 70/8)"
+            android:textStyle="bold"
+            />
+
+
+            <ImageView
+                android:id="@+id/editCycleTmgView"
+                android:layout_width="@dimen/margin_13"
+                android:layout_height="@dimen/margin_13"
+                android:src="@drawable/pencil"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/currentCycleTxtView"
+                android:layout_marginTop="@dimen/margin_short_9"
+                />
+
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/remainingTimeTopTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/currentCycleLay"
+            android:layout_toLeftOf="@+id/shippingDocLay"
+            android:layout_marginTop="@dimen/margin_short_1"
+            android:singleLine="true"
+            android:layout_marginLeft="@dimen/margin_short_1"
+            android:textSize="@dimen/text_size_12"
+            android:textColor="@color/color_eld_theme"
+            android:text="Cycle Time Left: 45:36"
             />
 
 

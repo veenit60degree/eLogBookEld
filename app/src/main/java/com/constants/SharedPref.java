@@ -213,7 +213,6 @@ public class SharedPref {
 
 
 
-
     // Get Obd Status -------------------
     public static boolean getLastIgnitionStatus( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -415,6 +414,51 @@ public class SharedPref {
         return isRecord;
 
 
+    }
+
+
+    // Set North Canada Status for main driver -------------------
+    public static void SetNorthCanadaStatusMain( boolean CCMTACertified, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsNorthCanada, CCMTACertified);
+        editor.commit();
+    }
+
+
+
+    // Get North Canada Status for main driver -------------------
+    public static boolean IsNorthCanadaMain(Context context) {
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsNorthCanada, false);
+        }
+        return isRecord;
+    }
+
+
+
+    // Set North Canada Status for main driver -------------------
+    public static void SetNorthCanadaStatusCo( boolean CCMTACertified, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsNorthCanadaCo, CCMTACertified);
+        editor.commit();
+    }
+
+
+
+    // Get North Canada Status for main driver -------------------
+    public static boolean IsNorthCanadaCo(Context context) {
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsNorthCanadaCo, false);
+        }
+        return isRecord;
     }
 
 

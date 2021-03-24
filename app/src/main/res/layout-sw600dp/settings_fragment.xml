@@ -41,185 +41,285 @@
 
 
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/gray_new_default"
-
-            >
-
-
-            <RelativeLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/view_height_52"
-                android:paddingRight="@dimen/margin_20">
+                android:layout_height="wrap_content"
+                android:background="@drawable/gray_new_default"
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/margin_15"
-                    android:text="@string/can_cycle"
-                    android:textColor="@color/bluee_login"
-                    android:textSize="@dimen/text_size_21"
-                    android:textStyle="bold" />
-
-
-                <TextView
-                    android:id="@+id/caCycleTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/temp_no_value"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/text_size_19"
-                    />
-
-
-                <Spinner
-                    android:id="@+id/caCycleSpinner"
-                    style="@style/spinner_style_transparent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_15"
-                    android:layout_marginTop="@dimen/margin_15"
-                    android:layout_marginRight="@dimen/margin_15"
-                    android:paddingTop="@dimen/margin_short_7"
-                    android:paddingBottom="@dimen/margin_short_7"
-                    android:visibility="gone"
-
-                    />
-            </RelativeLayout>
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_updated_divider_color"
-                android:layout_marginLeft="@dimen/margin_15"
-                android:layout_marginRight="@dimen/margin_15"
-                />
-
-
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/view_height_52"
-                android:paddingRight="@dimen/margin_20"
                 >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/us_cycle"
-                    android:layout_marginLeft="@dimen/margin_15"
-                    android:textColor="@color/bluee_login"
-                    android:textSize="@dimen/text_size_21"
-                    android:textStyle="bold"
-                    android:layout_centerVertical="true"
-                    />
 
-
-                <TextView
-                    android:id="@+id/usCycleTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/temp_no_value"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/text_size_19"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-
-                    />
-
-
-
-                <Spinner
-                    android:id="@+id/usCycleSpinner"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_15"
-                    android:layout_marginRight="@dimen/margin_15"
-                    android:layout_marginTop="@dimen/margin_15"
-                    android:paddingTop="@dimen/margin_short_7"
-                    android:paddingBottom="@dimen/margin_short_7"
-                    style="@style/spinner_style_transparent"
-                    android:visibility="gone"
+                    android:layout_height="@dimen/view_height_45"
+                    android:paddingRight="@dimen/margin_20">
 
-                    />
-
-            </RelativeLayout>
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_updated_divider_color"
-                android:layout_marginLeft="@dimen/margin_15"
-                android:layout_marginRight="@dimen/margin_15"
-                />
+                    <TextView
+                        android:id="@+id/caCycleTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:text="@string/can_cycle"
+                        android:textColor="@color/bluee_login"
+                        android:textSize="@dimen/text_size_21"
+                        android:textStyle="bold" />
 
 
+                    <TextView
+                        android:id="@+id/caCurrentCycleTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/caCycleTitle"
+                        android:layout_centerVertical="true"
+                        android:text="@string/current_cyclee"
+                        android:textColor="@color/gray_unidenfied"
+                        android:textSize="@dimen/text_size_12"
+                        android:paddingLeft="@dimen/margin_short_8"
+                        android:visibility="gone"
+                        />
 
 
+                    <TextView
+                        android:id="@+id/caCycleTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/temp_no_value"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_19"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingLeft="@dimen/margin_10"
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/view_height_52"
-                android:paddingRight="@dimen/margin_20"
-                >
+                        />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/time_zone"
-                    android:layout_marginLeft="@dimen/margin_15"
-                    android:textColor="@color/bluee_login"
-                    android:textSize="@dimen/text_size_21"
-                    android:textStyle="bold"
-                    android:layout_centerVertical="true"
-                    />
+                    <ImageView
+                        android:id="@+id/canEditImgView"
+                        android:layout_width="@dimen/margin_19"
+                        android:layout_height="@dimen/margin_19"
+                        android:src="@drawable/pencil"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        />
 
+                    <Spinner
+                        android:id="@+id/caCycleSpinner"
+                        style="@style/spinner_style_transparent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_15"
+                        android:layout_marginTop="@dimen/margin_15"
+                        android:layout_marginRight="@dimen/margin_15"
+                        android:paddingTop="@dimen/margin_short_7"
+                        android:paddingBottom="@dimen/margin_short_7"
+                        android:visibility="gone"
 
-                <TextView
-                    android:id="@+id/timeZoneTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/temp_no_value"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/text_size_19"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-
-                    />
+                        />
+                </RelativeLayout>
 
 
-
-
-                <Spinner
-                    android:id="@+id/timeZoneSpinner"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_15"
+                    android:layout_height="@dimen/margin_short_1"
+                    android:background="@color/gray_updated_divider_color"
+                    android:layout_marginLeft="@dimen/margin_12"
                     android:layout_marginRight="@dimen/margin_15"
-                    android:layout_marginTop="@dimen/margin_15"
-                    android:paddingTop="@dimen/margin_short_7"
-                    android:paddingBottom="@dimen/margin_short_7"
-                    style="@style/spinner_style_transparent"
-                    android:visibility="gone"
-
                     />
-            </RelativeLayout>
-
-
-        </LinearLayout>
 
 
 
-        <LinearLayout
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_45"
+                    android:paddingRight="@dimen/margin_20"
+                    >
+
+                    <TextView
+                        android:id="@+id/usCycleTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/us_cycle"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/bluee_login"
+                        android:textSize="@dimen/text_size_21"
+                        android:textStyle="bold"
+                        android:layout_centerVertical="true"
+                        />
+
+
+
+                    <TextView
+                        android:id="@+id/usCurrentCycleTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/usCycleTitle"
+                        android:layout_centerVertical="true"
+                        android:text="@string/current_cyclee"
+                        android:textColor="@color/gray_unidenfied"
+                        android:textSize="@dimen/text_size_12"
+                        android:paddingLeft="@dimen/margin_short_8"
+                        android:visibility="gone"
+                        />
+
+                    <TextView
+                        android:id="@+id/usCycleTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_no_value"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_19"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingLeft="@dimen/margin_10"
+
+                        />
+
+
+                    <ImageView
+                        android:id="@+id/usEditImgView"
+                        android:layout_width="@dimen/margin_19"
+                        android:layout_height="@dimen/margin_19"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/pencil" />
+
+                    <Spinner
+                        android:id="@+id/usCycleSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_15"
+                        android:layout_marginRight="@dimen/margin_15"
+                        android:layout_marginTop="@dimen/margin_15"
+                        android:paddingTop="@dimen/margin_short_7"
+                        android:paddingBottom="@dimen/margin_short_7"
+                        style="@style/spinner_style_transparent"
+                        android:visibility="gone"
+
+                        />
+
+                </RelativeLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/margin_short_1"
+                    android:background="@color/gray_updated_divider_color"
+                    android:layout_marginLeft="@dimen/margin_12"
+                    android:layout_marginRight="@dimen/margin_15"
+                    />
+
+
+
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_45"
+                    android:paddingRight="@dimen/margin_20"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/time_zone"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/bluee_login"
+                        android:textSize="@dimen/text_size_21"
+                        android:textStyle="bold"
+                        android:layout_centerVertical="true"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/timeZoneTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/temp_no_value"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_19"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingLeft="@dimen/margin_10"
+
+                        />
+
+
+
+
+                    <Spinner
+                        android:id="@+id/timeZoneSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_15"
+                        android:layout_marginRight="@dimen/margin_15"
+                        android:layout_marginTop="@dimen/margin_15"
+                        android:paddingTop="@dimen/margin_short_7"
+                        android:paddingBottom="@dimen/margin_short_7"
+                        style="@style/spinner_style_transparent"
+                        android:visibility="gone"
+
+                        />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_45"
+                    android:paddingRight="@dimen/margin_20"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Operating_zone"
+                        android:layout_marginLeft="@dimen/margin_12"
+                        android:textColor="@color/bluee_login"
+                        android:textSize="@dimen/text_size_21"
+                        android:textStyle="bold"
+                        android:layout_centerVertical="true"
+                        />
+
+                    <ImageView
+                        android:id="@+id/opZoneTmgView"
+                        android:layout_width="@dimen/margin_19"
+                        android:layout_height="@dimen/margin_19"
+                        android:src="@drawable/pencil"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/operatingZoneTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_19"
+                        android:text="@string/temp_no_value"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingLeft="@dimen/margin_10"
+                        />
+
+
+
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

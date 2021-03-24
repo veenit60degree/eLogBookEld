@@ -2482,55 +2482,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-    // Save Driver Cycle From OBD data those are getting from als server.
-    void SaveCycleWithCurrentDate(int CycleId, String currentUtcDate, String changeType){
-
-
-        try {
-            /* ------------- Save Cycle details with time is different with earlier cycle --------------*/
-            String CurrentCycle   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getApplicationContext() );
-            if(CycleId != -1 && !CurrentCycle.equals(CycleId)) {
-                JSONArray cycleDetailArray = global.getSaveCycleRecords(CycleId, changeType, getApplicationContext());
-                sharedPref.SetCycleOfflineDetails(cycleDetailArray.toString(), getApplicationContext());
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
-        switch (CycleId){
-
-            case 1:
-                DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, getApplicationContext());
-                DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, getApplicationContext());
-                break;
-
-            case 2:
-                DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, getApplicationContext());
-                DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, getApplicationContext());
-                break;
-
-            case 3:
-                DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, getApplicationContext());
-                DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, getApplicationContext());
-                break;
-
-            case 4:
-                DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, getApplicationContext());
-                DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, getApplicationContext());
-                break;
-
-        }
-
-        // Save Current Date
-        sharedPref.setCurrentDate(currentUtcDate, getApplicationContext());
-
-
-
-    }
-
-
-
     private void saveObdStatus(String obdCurrentIgnition, String type, String time, int obdStatus){
 
         try {
@@ -2771,8 +2722,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     //    global.ShowLocalNotification(getApplicationContext(), "API obd Speed", "API obd Speed: " + obdVehicleSpeed, 2009);
 
                                     // Save Driver Cycle With Current Date
-                                    SaveCycleWithCurrentDate(CycleId, utcCurrentDateTime.toString(), "UpdateOfflineDriverLog_api");
-
+                                    constants.SaveCycleWithCurrentDate(CycleId, utcCurrentDateTime.toString(), "UpdateOfflineDriverLog_api", sharedPref, global, getApplicationContext());
                                 } catch (Exception e) {
                                     VehicleSpeed = GpsVehicleSpeed;
                                     global.VEHICLE_SPEED = -1;

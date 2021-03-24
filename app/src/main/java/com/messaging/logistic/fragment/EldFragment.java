@@ -59,6 +59,7 @@ import com.constants.TcpClient;
 import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.constants.VolleyRequestWithoutRetry;
+import com.custom.dialogs.ChangeCycleDialog;
 import com.custom.dialogs.ConfirmationDialog;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.DriverLocationDialog;
@@ -138,7 +139,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     LinearLayout DriverLay, trailorLayout, truckLay, remainingLay, usedHourLay, shippingLay, odometerLay,  eldNewBottomLay, eldChildSubLay;
     ImageView editTrailorIV, editTruckIV, eldMenuBtn, eldMenuErrorImgVw, certifyLogErrorImgVw;
     LoadingSpinImgView loadingSpinEldIV;
-    RelativeLayout OnDutyBtn, DrivingBtn, OffDutyBtn, SleeperBtn, eldMenuLay, dayNightLay, eldHomeDriverUiLay, settingsMenuBtn, otherOptionBtn, malfunctionLay;
+    RelativeLayout OnDutyBtn, DrivingBtn, OffDutyBtn, SleeperBtn, eldMenuLay, dayNightLay, eldHomeDriverUiLay, settingsMenuBtn, otherOptionBtn, malfunctionLay, currentCycleLay;
     ImageView calendarBtn, coDriverImgView, connectionStatusImgView;
     Button sendReportBtn, yardMoveBtn, personalUseBtn;
     RelativeLayout certifyLogBtn;
@@ -150,7 +151,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     TextView onDutyViolationTV, drivingViolationTV, sleeperViolationTV, offDutyViolationTV;
     TextView onDutyTimeTxtVw, drivingTimeTxtVw, sleeperTimeTxtVw, offDutyTimeTxtVw;
     TextView onDutyTxtVw, drivingTxtVw, sleeperTxtVw, offDutyTxtVw, excpnEnabledTxtVw;
-    TextView DriverComNameTV, coDriverComNameTV, remainingTimeTopTV, refreshTitleTV;
+    TextView DriverComNameTV, coDriverComNameTV, remainingTimeTopTV, currentCycleTxtView, refreshTitleTV;
     TextView asPerShiftOnDutyTV, asPerShiftDrivingTV, asPerDateSleepTV, asPerDateOffDutyTV, malfunctionTV;
 
     boolean IsRefreshedClick = false, IsAOBRDAutomatic = false, IsAOBRD = false, isNewDateStart = true, isYardBtnClick = false;
@@ -185,6 +186,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     TimeZoneDialog timeZoneDialog;
     RemainingTimeDialog remainingDialog;
     OtherOptionsDialog otherOptionsDialog;
+    ChangeCycleDialog changeCycleDialog;
 
     Slidingmenufunctions slideMenu;
     MainDriverEldPref MainDriverPref;
@@ -225,6 +227,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     final int GetRecapViewFlagMain  = 230;
     final int GetRecapViewFlagCo    = 240;
     final int NotReady              = 250;
+    final int ChangeCycle           = 260;
 
     /*-------- DRIVER STATUS ----------*/
     public static final int OFF_DUTY = 1;
@@ -290,6 +293,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     String DeviceTimeZone = "", DriverTimeZone = "", LocationJobTYpe = "";
     String WeeklyRemainingTime = "00:00", DrivingRemainingTime = "00:00", OnDutyRemainingTime = "00:00";
+    String changedCycleId = "",  Approved = "2";
     MyTimerTask timerTask;
     Globally Global;
     SharedPref sharedPref;
@@ -297,7 +301,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     SaveDriverLogPost saveDriverLogPost;
     VolleyRequest GetLogRequest, GetOdometerRequest, GetOdo18DaysRequest, GetLog18DaysRequest, GetOnDutyRequest, GetOBDVehRequest, GetShippingRequest, GetPermissions;
     VolleyRequest SaveOBDVehRequest, SaveTrailerNumber, Inspection18DaysRequest, GetInspectionRequest, GetNotificationRequest;
-    VolleyRequest GetNewsNotificationReq, GetReCertifyRequest, GetRecapView18DaysData, notReadyRequest ;
+    VolleyRequest GetNewsNotificationReq, GetReCertifyRequest, GetRecapView18DaysData, notReadyRequest, ChangeCycleRequest ;
     VolleyRequestWithoutRetry GetAddFromLatLngRequest;
     // RequestQueue    SaveLogRequest;
     Map<String, String> params;
@@ -432,6 +436,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         GetAddFromLatLngRequest = new VolleyRequestWithoutRetry(getActivity());
         GetRecapView18DaysData  = new VolleyRequest(getActivity());
         notReadyRequest         = new VolleyRequest(getActivity());
+        ChangeCycleRequest      = new VolleyRequest(getActivity());
 
         updateReceiver = new ServiceBroadcastReceiver();
         //  SaveLogRequest      = Volley.newRequestQueue(getActivity());
@@ -459,6 +464,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         settingsMenuBtn = (RelativeLayout)view.findViewById(R.id.settingsMenuBtn);
         otherOptionBtn = (RelativeLayout)view.findViewById(R.id.otherOptionBtn);
         malfunctionLay = (RelativeLayout)view.findViewById(R.id.malfunctionLay);
+        currentCycleLay= (RelativeLayout)view.findViewById(R.id.currentCycleLay);
 
         shippingLay = (LinearLayout) view.findViewById(R.id.shippingLay);
         odometerLay = (LinearLayout) view.findViewById(R.id.odometerLay);
@@ -534,6 +540,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         connectionStatusImgView.setOnClickListener(this);
         otherOptionBtn.setOnClickListener(this);
         malfunctionLay.setOnClickListener(this);
+        currentCycleLay.setOnClickListener(this);
 
         dotSwitchButton.setChecked(false);
         dotSwitchButton.setVisibility(View.VISIBLE);
@@ -776,6 +783,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         jobTimeTxtVw            = (TextView) view.findViewById(R.id.jobTimeTxtVw);
         jobTimeRemngTxtVw       = (TextView) view.findViewById(R.id.jobTimeRemngTxtVw);
         remainingTimeTopTV      = (TextView) view.findViewById(R.id.remainingTimeTopTV);
+        currentCycleTxtView     = (TextView) view.findViewById(R.id.currentCycleTxtView);
         timeRemainingTxtVw      = (TextView) view.findViewById(R.id.timeRemainingTxtVw);
         perDayTxtVw             = (TextView) view.findViewById(R.id.perDayTxtVw);
         EldTitleTV              = (TextView) view.findViewById(R.id.EldTitleTV);
@@ -1596,7 +1604,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 CurrentCycleId = Global.USA_WORKING_7_DAYS;
             }
 
-            remainingTimeTopTV.setText(Html.fromHtml("<b>" + CurrentCycle + "</b>" + "  Cycle time left <b>" + Global.FinalValue(LeftWeekOnDutyHoursInt) + "</b>" ));
+            remainingTimeTopTV.setText(Html.fromHtml("Cycle time left <b>" + Global.FinalValue(LeftWeekOnDutyHoursInt) + "</b>" ));
+            currentCycleTxtView.setText(CurrentCycle);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -2061,6 +2070,20 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             case R.id.malfunctionLay:
                 TabAct.host.setCurrentTab(12);
                 break;
+
+            case R.id.currentCycleLay:
+                try {
+                    if (changeCycleDialog != null && changeCycleDialog.isShowing())
+                        changeCycleDialog.dismiss();
+
+                    changeCycleDialog = new ChangeCycleDialog(getActivity(), "change_cycle", CurrentCycleId, "", new ChangeCycleListener());
+                    changeCycleDialog.show();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+
 
             case R.id.connectionStatusImgView:
                 setObdStatus(true);
@@ -3701,6 +3724,30 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     }
 
 
+
+    private class ChangeCycleListener implements ChangeCycleDialog.ChangeCycleListener{
+
+        @Override
+        public void ChangeCycleBtn(String type) {
+
+             if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2) ) {
+                 changedCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
+             }else{
+                 changedCycleId = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
+             }
+
+            if (Global.isConnected(getActivity())) {
+                changeCycleRequest(DRIVER_ID, DeviceId, DriverCompanyId, "",
+                        Approved, changedCycleId, CurrentCycleId, Globally.LATITUDE,
+                        Globally.LONGITUDE, DriverTimeZone, Global.TRUCK_NUMBER, Global.GetCurrentDeviceDateDefault());
+            }else{
+                Global.EldScreenToast(viewHistoryBtn, Global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
+            }
+        }
+    }
+
+
+
     private class TrailorListener implements TrailorDialog.TrailorListener {
 
         @Override
@@ -4597,8 +4644,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         }else {
             jobTimeTxtVw.setText(TotalOffDuty);
         }
-        remainingTimeTopTV.setText(Html.fromHtml("<b>" + CurrentCycle + "</b>" + "  Cycle time left <b>" + LeftCycleTime + "</b>"));
-
+        remainingTimeTopTV.setText(Html.fromHtml("Cycle time left <b>" + LeftCycleTime + "</b>"));
+        currentCycleTxtView.setText(CurrentCycle);
     }
 
 
@@ -4832,6 +4879,31 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
         SAVE_LOG_RESPONSE_PROCESS(isLoad, IsRecap);
         IsTrailorUpdate = false;
+    }
+
+
+    /*================== change driver Cycle request ===================*/
+    void changeCycleRequest(final String DriverId, final String DeviceId, final String CompanyId, String Id,
+                            String Status, String ChangedCycleId, String CurrentCycleId, String Latitude ,
+                            String Longitude, String DriverTimZone, String PowerUnitNumber, String LogDate){
+
+        params = new HashMap<String, String>();
+        params.put("DriverId", DriverId);
+        params.put("DeviceId", DeviceId);
+        params.put("CompanyId", CompanyId);
+        params.put("Id", Id);
+        params.put("Status", Status);
+        params.put("CycleId", ChangedCycleId);
+        params.put("CurrentCycleId", CurrentCycleId);
+        params.put("Latitude", Latitude);
+        params.put("Longitude", Longitude);
+        params.put("DriverTimZone", DriverTimZone);
+        params.put("PowerUnitNumber", PowerUnitNumber);
+        params.put("LogDate", LogDate);
+
+        ChangeCycleRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_DRIVER_CYCLE , params, ChangeCycle,
+                Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
+
     }
 
 
@@ -5291,7 +5363,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         public void getResponse(String response, int flag) {
 
             JSONObject obj = null, dataObj = null;
-            String status = "";
+            String status = "", Message = "";
 
             if(flag == GetDriverLog18Days)
                 is18DaysLogApiCalled = false;
@@ -5303,6 +5375,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 if (!obj.isNull("Data")) {
                     dataObj = new JSONObject(obj.getString("Data"));
                 }
+                Message = obj.getString("Message");
 
             } catch (JSONException e) {
             }
@@ -5710,7 +5783,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     case SaveTrailer:
 
                         try {
-                            String Message = obj.getString("Message");
                             Global.EldScreenToast(OnDutyBtn, Message, getResources().getColor(R.color.colorPrimary));
 
                             trailorTv.setText(TrailorNumber);
@@ -5724,7 +5796,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                     showShippingDialog(true);
                                 }
                             }
-                        } catch (JSONException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                         break;
@@ -5803,13 +5875,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 boolean IsAllowDiagnostic = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsAllowDiagnostic);
                                 boolean IsClearMalfunction = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsClearMalfunction);
                                 boolean IsClearDiagnostic = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsClearDiagnostic);
+                                boolean IsNorthCanada     = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsNorthCanada);
 
                                 if(DRIVER_ID.equals(MainDriverId)) {    // Update permissions for main driver
                                     sharedPref.SetCertifcnUnIdenfdSettings(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, context);
                                     sharedPref.SetDiagnosticAndMalfunctionSettingsMain(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, context);
+                                    sharedPref.SetNorthCanadaStatusMain(IsNorthCanada, getActivity());
+
                                 }else{                                  // Update permissions for Co driver
                                     sharedPref.SetCertifcnUnIdenfdSettingsCo(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, context);
                                     sharedPref.SetDiagnosticAndMalfunctionSettingsCo(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, context);
+                                    sharedPref.SetNorthCanadaStatusCo(IsNorthCanada, getActivity());
                                 }
 
 
@@ -5960,6 +6036,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         Log.d("NotReady","NotReady: " + response);
                         break;
 
+                    case ChangeCycle:
+
+                        Global.EldScreenToast(viewHistoryBtn, Message, getResources().getColor(R.color.colorPrimary));
+
+                        // Save Driver Cycle With Current Date
+                        constants.SaveCycleWithCurrentDate(Integer.parseInt(changedCycleId), Global.GetCurrentUTCTimeFormat(), "UpdateOfflineDriverLog_api", sharedPref, Global, getActivity());
+
+                        GetDriverCycle(DriverType);
+
+                        break;
+
                 }
             } else {
 
@@ -5970,7 +6057,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 try {
                     if (!obj.isNull("Message")) {
 
-                        String Message = obj.getString("Message");
                         if (Message.equals("Device Logout") ) {
                             if(DriverJsonArray.length() == 0) {
                                 LogoutUser();
@@ -6013,6 +6099,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             if (flag == GetDriverLog18Days) {
                                 Log.d("response","response: "+response);
                             }
+
+                            if(flag == ChangeCycle){
+                                 Global.EldScreenToast(viewHistoryBtn, Message, getResources().getColor(R.color.colorVoilation));
+                            }
+
                             try {
                                 if (progressDialog != null)
                                     progressDialog.dismiss();
@@ -6021,8 +6112,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         }
 
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

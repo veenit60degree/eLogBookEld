@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ import com.constants.SharedPref;
 import com.constants.SyncDataUpload;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.AdverseRemarksDialog;
+import com.custom.dialogs.ChangeCycleDialog;
 import com.custom.dialogs.ConfirmationDialog;
 import com.models.CycleModel;
 import com.driver.details.DriverConst;
@@ -96,9 +98,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     View rootView;
     TextView actionBarTitle, caCycleTV, usCycleTV, timeZoneTV, dateActionBarTV, checkAppUpdateTV, haulExpTxtView, haulExcptnTxtVw;
+    TextView caCurrentCycleTV, usCurrentCycleTV, operatingZoneTV;
     Spinner caCycleSpinner, usCycleSpinner, timeZoneSpinner;
     Button SettingSaveBtn;
-    ImageView updateAppDownloadIV, downloadHintImgView;
+    ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView;  //canEditImgView, usEditImgView
     LoadingSpinImgView settingSpinImgVw;
     RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn, obdDiagnoseBtn, docBtn;
     LinearLayout settingsMainLay;
@@ -126,8 +129,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     int SyncData = 1, CheckInternetConnection = 2, CheckUpdate = 3;
     int ExistingVersionCodeInt  = 0,  VersionCodeInt = 0, AppInstallAttemp = 0;
     int CanListSize = 0, UsaListSize = 0, TimeZoneListSize = 0, SavedPosition = 0;
-    String SavedCanCycle = "", SavedUsaCycle = "", SavedTimeZone = "", DeviceId = "", DriverId = "", DriverName = "";
-    String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "";
+    String SavedCanCycle = "", SavedUsaCycle = "", CurrentCycleId = "", SavedTimeZone = "", DeviceId = "", DriverId = "", DriverName = "", CompanyId = "";
+    String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "", TruckNumber, DriverTimeZone, IsSouthCanada, SavedCycleType, changedCycleId, changedCycleName;
+    String Approved = "2";
+    String Rejected = "3";
+
     ProgressDialog progressDialog;
     ConfirmationDialog confirmationDialog;
     AdverseRemarksDialog adverseRemarksDialog;
@@ -140,8 +146,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     String VersionCode = "", VersionName = "", ExistingApkVersionCode = "", ExistingApkVersionName = "";
     CircularProgressBar downloadProgressBar;
     JSONArray savedSyncedArray = new JSONArray();
-    VolleyRequest GetAppUpdateRequest, GetDriverLogPostPermission ;
-    final int GetAppUpdate  = 1, DriverLogPermission = 2;
+    VolleyRequest GetAppUpdateRequest, GetDriverLogPostPermission, getCycleChangeApproval, ChangeCycleRequest, OperatingZoneRequest ;
+    final int GetAppUpdate  = 1, DriverLogPermission = 2, CycleChangeApproval = 3, ChangeCycle = 4, OperatingZone = 5;
     int DriverType = 0;
     long progressPercentage = 0;
     boolean IsLogPermission = false, IsDownloading = false, IsManualAppDownload = false;
@@ -158,6 +164,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     WiFiConfig wifiConfig;
     Animation fadeViewAnim;
 
+    ChangeCycleDialog changeCycleDialog;
     AlertDialog enableExceptionAlert;
     private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
 
@@ -195,6 +202,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         global                      = new Globally();
         GetAppUpdateRequest         = new VolleyRequest(getActivity());
         GetDriverLogPostPermission  = new VolleyRequest(getActivity());
+        getCycleChangeApproval      = new VolleyRequest(getActivity());
+        ChangeCycleRequest          = new VolleyRequest(getActivity());
+        OperatingZoneRequest        = new VolleyRequest(getActivity());
         connectivityTask            = new CheckConnectivity(getActivity());
         driverPermissionMethod      = new DriverPermissionMethod();
         SaveSettingDetails          = new ParseLoginDetails();
@@ -227,6 +237,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         checkAppUpdateTV     = (TextView)v.findViewById(R.id.checkAppUpdateTV);
         haulExcptnTxtVw      = (TextView)v.findViewById(R.id.haulExcptnTxtVw);
         haulExpTxtView       = (TextView)v.findViewById(R.id.haulExpTxtView);
+        operatingZoneTV      = (TextView)v.findViewById(R.id.operatingZoneTV);
+        caCurrentCycleTV     = (TextView)v.findViewById(R.id.caCurrentCycleTV);
+        usCurrentCycleTV     = (TextView)v.findViewById(R.id.usCurrentCycleTV);
 
         caCycleSpinner       = (Spinner)v.findViewById(R.id.caCycleSpinner);
         usCycleSpinner       = (Spinner)v.findViewById(R.id.usCycleSpinner);
@@ -235,6 +248,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         SettingSaveBtn       = (Button) v.findViewById(R.id.settingSaveBtn);
         updateAppDownloadIV  = (ImageView)v.findViewById(R.id.updateAppDownloadIV);
         downloadHintImgView  = (ImageView)v.findViewById(R.id.downloadHintImgView);
+        opZoneTmgView        = (ImageView)v.findViewById(R.id.opZoneTmgView);
+      //  canEditImgView       = (ImageView)v.findViewById(R.id.canEditImgView);
+      //  usEditImgView        = (ImageView)v.findViewById(R.id.usEditImgView);
         settingSpinImgVw     = (LoadingSpinImgView)v.findViewById(R.id.settingSpinImgVw);
 
         haulExceptionLay     = (RelativeLayout) v.findViewById(R.id.haulExceptionLay);
@@ -278,6 +294,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         fadeViewAnim.setDuration(1500);
 
         DeviceId        = sharedPref.GetSavedSystemToken(getActivity());
+        DriverId        = sharedPref.getDriverId( getActivity());
+        CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+
+        if (global.isConnected(getActivity())) {
+            getCycleChangeApproval(DriverId, DeviceId, CompanyId);
+        }
 
         haulExceptnSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -392,6 +414,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         obdDiagnoseBtn.setOnClickListener(this);
         docBtn.setOnClickListener(this);
         haulExceptionLay.setOnClickListener(this);
+        operatingZoneTV.setOnClickListener(this);
+        caCycleTV.setOnClickListener(this);
+        usCycleTV.setOnClickListener(this);
 
         caCycleSpinner.setOnItemSelectedListener(this);
         usCycleSpinner.setOnItemSelectedListener(this);
@@ -425,23 +450,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         DriverName          =  DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
 
         actionBarTitle.setText(getResources().getString(R.string.action_settings));
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
-            DriverType = Constants.MAIN_DRIVER_TYPE;
-            SavedPosition = 0;
-            SavedCanCycle = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
-            SavedUsaCycle = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
-            SavedTimeZone = DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity());
-        }else{
-            DriverType = Constants.CO_DRIVER_TYPE;
-            SavedPosition = 1;
-            SavedCanCycle = DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleId, getActivity());
-            SavedUsaCycle = DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleId, getActivity());
-            SavedTimeZone = DriverConst.GetCoDriverSettings(DriverConst.CoTimeZoneID, getActivity());
-        }
+        getSavedCycleData();
 
         getExceptionStatus();
         haulExceptnSwitchButton.setChecked(isHaulExcptn);
         adverseSwitchButton.setChecked(isAdverseExcptn);
+
 
         try{
             JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
@@ -507,6 +521,84 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     }
 
 
+
+    private void changeCycleZoneDialog(String type, String currentCycle, String currentOpZone){
+        try {
+            if (changeCycleDialog != null && changeCycleDialog.isShowing())
+                changeCycleDialog.dismiss();
+
+            changeCycleDialog = new ChangeCycleDialog(getActivity(), type, currentCycle, currentOpZone, new ChangeCycleListener());
+            changeCycleDialog.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private class ChangeCycleListener implements ChangeCycleDialog.ChangeCycleListener{
+
+        @Override
+        public void ChangeCycleBtn(String type) {
+            // operating_zone  us_cycle   can_cycle
+            SavedCycleType = type;
+            if(type.equals("operating_zone")){
+                if(sharedPref.IsNorthCanadaMain(getActivity())) {
+                    IsSouthCanada = "true";
+                   // sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneNorth), getActivity());
+                }else{
+                    IsSouthCanada = "false";
+                  //  sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneSouth), getActivity());
+                }
+
+                if (global.isConnected(getActivity())) {
+                    ChangeOperatingZone(DriverId, DeviceId, CompanyId, IsSouthCanada,
+                            CurrentCycleId, DriverTimeZone, Globally.LATITUDE, Globally.LONGITUDE, TruckNumber);
+                }else{
+                    global.EldScreenToast(SyncDataBtn, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
+                }
+                // temp data
+              //  getSavedCycleData();
+            }else{
+
+                if(type.equals("can_cycle")){
+                    if(SavedCanCycle.equals(global.CANADA_CYCLE_1)){
+                        changedCycleId      = global.CANADA_CYCLE_2;
+                        changedCycleName    = global.CANADA_CYCLE_2_NAME;
+                    }else{
+                        changedCycleId      = global.CANADA_CYCLE_1;
+                        changedCycleName    = global.CANADA_CYCLE_1_NAME;
+                    }
+                }else{
+                    if(SavedUsaCycle.equals(global.USA_WORKING_6_DAYS)){
+                        changedCycleId      = global.USA_WORKING_7_DAYS;
+                        changedCycleName    = global.USA_WORKING_7_DAYS_NAME;
+                    }else{
+                        changedCycleId      = global.USA_WORKING_6_DAYS;
+                        changedCycleName    = global.USA_WORKING_6_DAYS_NAME;
+                    }
+                }
+
+                if (global.isConnected(getActivity())) {
+                    changeCycleRequest(DriverId, DeviceId, CompanyId, "",
+                            Approved, changedCycleId, CurrentCycleId, Globally.LATITUDE,
+                            Globally.LONGITUDE, DriverTimeZone, TruckNumber, global.GetCurrentDeviceDateDefault());
+                }else{
+                    global.EldScreenToast(SyncDataBtn, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
+                }
+
+                // temp data
+             /*   saveUpdatedCycleData();
+                getSavedCycleData();
+
+                DisplayCanCycles();
+                DisplayUsaCycles();
+                DisplayTimeZones();
+*/
+            }
+
+        }
+    }
 
 
     /* ======= Display Canada Cycle ======== */
@@ -851,6 +943,21 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 break;
 
 
+            case R.id.caCycleTV:
+                changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
+                break;
+
+
+            case R.id.usCycleTV:
+                changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
+                break;
+
+
+            case R.id.operatingZoneTV:
+                if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ) {
+                    changeCycleZoneDialog("operating_zone", CurrentCycleId, operatingZoneTV.getText().toString());
+                }
+                break;
 
 
         }
@@ -1219,6 +1326,64 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     }
 
 
+    /*================== Get Cycle Change Approval request ===================*/
+    void getCycleChangeApproval(final String DriverId, final String DeviceId, final String CompanyId){
+
+        params = new HashMap<String, String>();
+        params.put("DriverId", DriverId);
+        params.put("DeviceId", DeviceId);
+        params.put("CompanyId", CompanyId);
+        getCycleChangeApproval.executeRequest(com.android.volley.Request.Method.POST, APIs.GET_CYCLE_CHANGE_REQUESTS , params, CycleChangeApproval,
+                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
+
+    }
+
+    /*================== change driver Cycle request ===================*/
+    void changeCycleRequest(final String DriverId, final String DeviceId, final String CompanyId, String Id,
+                            String Status, String ChangedCycleId, String CurrentCycleId, String Latitude ,
+                            String Longitude, String DriverTimZone, String PowerUnitNumber, String LogDate){
+
+        params = new HashMap<String, String>();
+        params.put("DriverId", DriverId);
+        params.put("DeviceId", DeviceId);
+        params.put("CompanyId", CompanyId);
+        params.put("Id", Id);
+        params.put("Status", Status);
+        params.put("CycleId", ChangedCycleId);
+        params.put("CurrentCycleId", CurrentCycleId);
+        params.put("Latitude", Latitude);
+        params.put("Longitude", Longitude);
+        params.put("DriverTimZone", DriverTimZone);
+        params.put("PowerUnitNumber", PowerUnitNumber);
+        params.put("LogDate", LogDate);
+
+        ChangeCycleRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_DRIVER_CYCLE , params, ChangeCycle,
+                Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
+
+    }
+
+
+    /*================== Save Operating zone request ===================*/
+    void ChangeOperatingZone(final String DriverId, final String DeviceId, final String CompanyId, final String IsSouthCanada,
+                             final String CycleId, final String DriverTimeZone, final String Latitude, final String Longitude, final String PowerUnitNumber){
+
+        params = new HashMap<String, String>();
+        params.put("DriverId", DriverId);
+        params.put("DeviceId", DeviceId);
+        params.put("CompanyId", CompanyId);
+        params.put("IsSouthCanada", IsSouthCanada);
+        params.put("CycleId", CycleId);
+        params.put("DriverTimeZone", DriverTimeZone);
+        params.put("Latitude", Latitude);
+        params.put("Longitude", Longitude);
+        params.put("PowerUnitNumber", PowerUnitNumber);
+
+
+        OperatingZoneRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_OPERATING_ZONE , params, OperatingZone,
+                Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
+
+    }
+
 
     void CheckAppStatus(){
         if (ExistingVersionCodeInt >= VersionCodeInt) {
@@ -1260,13 +1425,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         public void getResponse(String response, int flag) {
 
             JSONObject obj = null;  //, dataObj = null;
-            String status = "";
+            String status = "", Message = "";
             JSONObject dataObj = null;
 
             try {
                 settingSpinImgVw.stopAnimation();
                 obj = new JSONObject(response);
                 status = obj.getString("Status");
+                Message = obj.getString("Message");
 
             } catch (JSONException e) {
             }
@@ -1308,8 +1474,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         break;
 
                     case DriverLogPermission:
-                        // Log.d("response", "response: " + response);
-
                         try {
                             IsLogPermission = obj.getBoolean("Data"); // "Data" parameter is used as Permission parameter to upload or not Driver's 18 Days Log to server with sync file
 
@@ -1317,6 +1481,40 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             e.printStackTrace();
                         }
 
+                        break;
+
+                    case CycleChangeApproval:
+
+                        break;
+
+                    case ChangeCycle:
+                        global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorPrimary));
+
+
+                        saveUpdatedCycleData();
+
+                        break;
+
+                    case OperatingZone:
+                        global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorPrimary));
+
+                        if(IsSouthCanada.equals("true")) {
+                           // sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneSouth), getActivity());
+                            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                                sharedPref.SetNorthCanadaStatusMain(false, getActivity());
+                            }else{
+                                sharedPref.SetNorthCanadaStatusCo(false, getActivity());
+                            }
+                        }else{
+                            //sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneNorth), getActivity());
+                            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                                sharedPref.SetNorthCanadaStatusMain(true, getActivity());
+                            }else{
+                                sharedPref.SetNorthCanadaStatusCo(true, getActivity());
+                            }
+                        }
+
+                        getSavedCycleData();
                         break;
 
 
@@ -1327,16 +1525,17 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         progressDialog.dismiss();
                     settingSpinImgVw.stopAnimation();
 
-                    if(obj.getString("Message").equals("Device Logout") ){
+                    if(Message.equals("Device Logout") ){
                         global.ClearAllFields(getActivity());
                         global.StopService(getActivity());
                         Intent i = new Intent(getActivity(), LoginActivity.class);
                         getActivity().startActivity(i);
                         getActivity().finish();
                     }else{
-                        if(flag == GetAppUpdate){
-                            global.EldScreenToast(SyncDataBtn, obj.getString("Message"), getResources().getColor(R.color.colorVoilation));
+                        if(flag == GetAppUpdate || flag == OperatingZone || flag == ChangeCycle){
+                            global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorVoilation));
                         }
+
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -1445,8 +1644,108 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     };
 
 
+    void getSavedCycleData(){
+
+        boolean isNorthCanada = false;
+        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
+            DriverType = Constants.MAIN_DRIVER_TYPE;
+            SavedPosition  = 0;
+            SavedCanCycle  = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
+            SavedUsaCycle  = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
+            SavedTimeZone  = DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity());
+            CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+            TruckNumber    = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
+            DriverTimeZone = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
+            isNorthCanada  =  sharedPref.IsNorthCanadaMain(getActivity());
+        }else{
+            DriverType = Constants.CO_DRIVER_TYPE;
+            SavedPosition  = 1;
+            SavedCanCycle  = DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleId, getActivity());
+            SavedUsaCycle  = DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleId, getActivity());
+            SavedTimeZone  = DriverConst.GetCoDriverSettings(DriverConst.CoTimeZoneID, getActivity());
+            CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
+            TruckNumber    = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
+            DriverTimeZone = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
+            isNorthCanada  =  sharedPref.IsNorthCanadaCo(getActivity());
+        }
+
+        if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ){
+            caCurrentCycleTV.setVisibility(View.VISIBLE);
+            usCurrentCycleTV.setVisibility(View.GONE);
+            operatingZoneTV.setText("");
+            opZoneTmgView.setVisibility(View.VISIBLE);
+        //    canEditImgView.setVisibility(View.VISIBLE);
+         //   usEditImgView.setVisibility(View.GONE);
+
+            if(isNorthCanada) {
+                operatingZoneTV.setText(getString(R.string.OperatingZoneNorth));
+            }else{
+                operatingZoneTV.setText(getString(R.string.OperatingZoneSouth));
+            }
+
+        }else{
+            caCurrentCycleTV.setVisibility(View.GONE);
+            usCurrentCycleTV.setVisibility(View.VISIBLE);
+            opZoneTmgView.setVisibility(View.INVISIBLE);
+          //  canEditImgView.setVisibility(View.GONE);
+          //  usEditImgView.setVisibility(View.VISIBLE);
+            operatingZoneTV.setText(getString(R.string.OperatingZoneUS));
+        }
+    }
+
+    void saveUpdatedCycleData(){
+
+        CurrentCycleId = changedCycleId;
+        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
+            if(SavedCycleType.equals("can_cycle")){
+                SavedCanCycle = changedCycleId;
+
+                DriverConst.SetDriverSettings(changedCycleName, CurrentCycleId, CurrentCycleId, SavedUsaCycle,  changedCycleName,
+                        DriverConst.GetDriverSettings(DriverConst.USACycleName, getActivity()),
+                        DriverTimeZone, DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity()),
+                        DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
+
+            }else{
+                SavedUsaCycle = changedCycleId;
+                DriverConst.SetDriverSettings(changedCycleName, CurrentCycleId, SavedCanCycle,
+                        changedCycleId,  DriverConst.GetDriverSettings(DriverConst.CANCycleName, getActivity()),
+                        changedCycleName,
+                        DriverTimeZone, DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity()),
+                        DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
+            }
+
+            DriverConst.SetDriverCurrentCycle(changedCycleName, CurrentCycleId, getActivity());
+
+        }else{
+            if(SavedCycleType.equals("can_cycle")){
+                SavedCanCycle = changedCycleId;
+                DriverConst.SetCoDriverSettings(changedCycleName, CurrentCycleId, CurrentCycleId, SavedUsaCycle,  changedCycleName,
+                        DriverConst.GetCoDriverSettings(DriverConst.USACycleName, getActivity()),
+                        DriverTimeZone, DriverConst.GetCoDriverSettings(DriverConst.OffsetHours, getActivity()),
+                        DriverConst.GetCoDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
 
 
+            }else{
+                SavedUsaCycle = changedCycleId;
+                DriverConst.SetCoDriverSettings(changedCycleName, CurrentCycleId, SavedCanCycle,
+                        changedCycleId,  DriverConst.GetCoDriverSettings(DriverConst.CANCycleName, getActivity()),
+                        changedCycleName,
+                        DriverTimeZone, DriverConst.GetCoDriverSettings(DriverConst.OffsetHours, getActivity()),
+                        DriverConst.GetCoDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
+            }
+
+            DriverConst.SetCoDriverCurrentCycle(changedCycleName, CurrentCycleId, getActivity());
+        }
+
+
+        getSavedCycleData();
+
+        DisplayCanCycles();
+        DisplayUsaCycles();
+        DisplayTimeZones();
+
+
+    }
     private void MoveFragment(Fragment fragment){
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();

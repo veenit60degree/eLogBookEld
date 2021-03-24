@@ -53,6 +53,7 @@
                 android:paddingRight="@dimen/margin_20">
 
                 <TextView
+                    android:id="@+id/caCycleTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -64,6 +65,20 @@
 
 
                 <TextView
+                    android:id="@+id/caCurrentCycleTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/caCycleTitle"
+                    android:layout_centerVertical="true"
+                    android:text="@string/current_cyclee"
+                    android:textColor="@color/gray_unidenfied"
+                    android:textSize="@dimen/text_size_12"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:visibility="gone"
+                    />
+
+
+                <TextView
                     android:id="@+id/caCycleTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -72,8 +87,20 @@
                     android:text="@string/temp_no_value"
                     android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/text_size_17"
+                    android:paddingRight="@dimen/margin_20"
+                    android:paddingLeft="@dimen/margin_10"
+
                     />
 
+                <ImageView
+                    android:id="@+id/canEditImgView"
+                    android:layout_width="@dimen/margin_17"
+                    android:layout_height="@dimen/margin_17"
+                    android:src="@drawable/pencil"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/margin_short_2"
+                    />
 
                 <Spinner
                     android:id="@+id/caCycleSpinner"
@@ -109,6 +136,7 @@
                 >
 
                 <TextView
+                    android:id="@+id/usCycleTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/us_cycle"
@@ -120,6 +148,20 @@
                     />
 
 
+
+                <TextView
+                    android:id="@+id/usCurrentCycleTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/usCycleTitle"
+                    android:layout_centerVertical="true"
+                    android:text="@string/current_cyclee"
+                    android:textColor="@color/gray_unidenfied"
+                    android:textSize="@dimen/text_size_12"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:visibility="gone"
+                    />
+
                 <TextView
                     android:id="@+id/usCycleTV"
                     android:layout_width="wrap_content"
@@ -129,10 +171,21 @@
                     android:textSize="@dimen/text_size_17"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:paddingRight="@dimen/margin_20"
+                    android:paddingLeft="@dimen/margin_10"
 
                     />
 
 
+                <ImageView
+                    android:id="@+id/usEditImgView"
+                    android:layout_width="@dimen/margin_17"
+                    android:layout_height="@dimen/margin_17"
+                    android:src="@drawable/pencil"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/margin_short_2"
+                    />
 
                 <Spinner
                     android:id="@+id/usCycleSpinner"
@@ -190,6 +243,8 @@
                     android:textSize="@dimen/text_size_17"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:paddingRight="@dimen/margin_20"
+                    android:paddingLeft="@dimen/margin_10"
 
                     />
 
@@ -211,6 +266,53 @@
                     />
             </RelativeLayout>
 
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_45"
+                android:paddingRight="@dimen/margin_20"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Operating_zone"
+                    android:layout_marginLeft="@dimen/margin_12"
+                    android:textColor="@color/bluee_login"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    />
+
+                <ImageView
+                    android:id="@+id/opZoneTmgView"
+                    android:layout_width="@dimen/margin_17"
+                    android:layout_height="@dimen/margin_17"
+                    android:src="@drawable/pencil"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/margin_short_2"
+                    />
+
+
+                <TextView
+                    android:id="@+id/operatingZoneTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/text_size_17"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="@dimen/margin_20"
+                    android:paddingLeft="@dimen/margin_10"
+                    />
+
+
+
+
+
+            </RelativeLayout>
 
         </LinearLayout>
 

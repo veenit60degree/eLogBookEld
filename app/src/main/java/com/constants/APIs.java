@@ -20,6 +20,10 @@ public class APIs {
       /*----------- Driver Logs ------------- */
     // http://develd.alsrealtime.com/Home/DriverLogYearLive/
 
+      /* ----------------- API document ------------------  */
+    // https://docs.google.com/document/d/1W--cgKbFZcnhF3q6bE7YK_EYJGBZ3YF1jT93u51jd-4/edit#heading=h.xpbvxw45js7s
+    // http://super-admin.alsrealtime.com/
+    // http://super-admin.alsrealtime.com/
 
     static String EditLogGraphLocal             = "http://103.20.169.122:9287/";
     static String EditLogGraphProduction        = "https://alsrealtime.com/";
@@ -49,8 +53,8 @@ public class APIs {
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_DEV ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_DEV ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
 
@@ -77,6 +81,9 @@ public class APIs {
     public static String REJECT_COMPANY_ASSIGNED_RECORD	  	= DOMAIN_URL_ALS + "RejectCompanyAssignedRecord";
     public static String CLEAR_MALFNCN_DIAGSTC_EVENT	  	= DOMAIN_URL_ALS + "ClearMalfunctionAndDiagnosticEvent";
     public static String CHANGE_STATUS_SUGGESTED_EDIT       = DOMAIN_URL_ALS + "ChangeStatusSuggestedEdit";
+    public static String GET_CYCLE_CHANGE_REQUESTS          = DOMAIN_URL_ALS + "GetCycleChangeRequests";
+    public static String CHANGE_DRIVER_CYCLE                = DOMAIN_URL_ALS + "ChangeDriverCycle";
+    public static String CHANGE_OPERATING_ZONE              = DOMAIN_URL_ALS + "SaveOperatingZone";
 
     /*-------- ELD API ----------*/
     public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
