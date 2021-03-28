@@ -127,11 +127,13 @@ public class OtherOptionsAdapter extends BaseAdapter {
 
             case Constants.MALFUNCTION:
                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                    if (sharedPref.isMalfunctionOccur(context) || sharedPref.isDiagnosticOccur(context)) {
+                    if (sharedPref.isMalfunctionOccur(context) || sharedPref.isDiagnosticOccur(context)||
+                            sharedPref.isLocMalfunctionOccur(context) ) {
                         makeViewHighlighed(imgView, titleView, errorView);
                     }
                 }else{
-                    if (sharedPref.isMalfunctionOccurCo(context) || sharedPref.isDiagnosticOccurCo(context)) {
+                    if (sharedPref.isMalfunctionOccurCo(context) || sharedPref.isDiagnosticOccurCo(context) ||
+                            sharedPref.isLocMalfunctionOccur(context)) {
                         makeViewHighlighed(imgView, titleView, errorView);
                     }
                 }

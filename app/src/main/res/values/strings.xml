@@ -414,6 +414,11 @@
     <string name="recent_odometer">Recent Readings :  </string>
     <string name="update">Update</string>
     <string name="update_loc">Update Location</string>
+    <string name="enter_manual_loc">Enter Manual Location</string>
+    <string name="loc_mal_occur">Location malfunction occured</string>
+    <string name="loc_mal">Location Malfunction</string>
+
+
     <string name="save">Save</string>
     <string name="certified">Certified</string>
     <string name="uncertified">Uncertified</string>

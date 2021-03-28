@@ -25,6 +25,22 @@
     </style>
 
 
+    <style name="fontForLocMalTitleMobile">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/text_size_18</item>
+
+    </style>
+
+
+    <style name="fontForLocMalTitleTab">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/text_size_21</item>
+
+    </style>
 
     <style name="Theme.ToogleTheme" parent="Theme.AppCompat.Light">
         <!-- colorPrimary is used for the default action bar background -->

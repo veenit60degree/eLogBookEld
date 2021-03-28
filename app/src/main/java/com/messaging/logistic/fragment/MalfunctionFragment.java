@@ -139,6 +139,8 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
             }
         });
 
+        checkLocMalfunction();
+
         dateActionBarTV.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
         invisibleMalfnBtn.setOnClickListener(this);
@@ -243,6 +245,26 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
     }
 
 
+    void checkLocMalfunction(){
+        if(sharedPref.isLocMalfunctionOccur(getActivity()) && sharedPref.getLocMalfunctionType(getActivity()).equals("m")){
+            malfunctionHeaderList.add(new MalfunctionHeaderModel(
+                    "Invalid Location Occur", "1", getString(R.string.loc_mal)));
+            malfunctionChildList.add(new MalfunctionModel(
+                    sharedPref.getCountryCycle("CountryCycle", getActivity()),
+                    sharedPref.getVINNumber( getActivity()),
+                    DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
+                    sharedPref.getLocMalfunctionOccuredTime(getActivity()),
+                    "", "", "1", "", "1",
+                    getString(R.string.loc_mal_occur), "", "", "",
+                    sharedPref.getLocMalfunctionOccuredTime(getActivity()), "101", ""
+
+            ));
+
+            // Add both list (Header/CHild) in hash map type list
+            malfunctionChildHashMap.put("1", malfunctionChildList);
+
+        }
+    }
 
     /*================== Get Unidentified Records ===================*/
     void GetMalfunctionEvents(String VIN, final String FromDateTime, final String ToDateTime,
@@ -283,6 +305,8 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                     malfunctionHeaderList = new ArrayList<>();
                     malfunctionChildHashMap = new HashMap<>();
 
+                    checkLocMalfunction();
+
                     for(int  i = 0 ; i < malfunctionArray.length() ; i++){
                         malfunctionChildList = new ArrayList<>();
 
@@ -291,6 +315,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                                 mainObj.getString(ConstantsKeys.EventName),
                                 mainObj.getString(ConstantsKeys.EventCode),
                                 mainObj.getString(ConstantsKeys.Definition)
+
                         );
                         // add data in header list
                         malfunctionHeaderList.add(headerModel);
@@ -333,7 +358,11 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                     notifyAdapter();
 
                 } else {
+                    malfunctionHeaderList = new ArrayList<>();
+                    malfunctionChildList = new ArrayList<>();
+                    malfunctionChildHashMap = new HashMap<>();
 
+                    checkLocMalfunction();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -437,6 +466,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         try {
             malfunctionAdapter = new MalfunctionAdapter(getActivity(), DriverId, malfunctionHeaderList, malfunctionChildHashMap);
             malfunctionExpListView.setAdapter(malfunctionAdapter);
+           // malfunctionAdapter.notifyDataSetChanged();
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -743,7 +743,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity())) {
+                if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity()) ||
+                        constants.isAllowLocMalfunctionEvent(getActivity()) ) {
                     malfunctionLay.startAnimation(editLogAnimation);
                 }else {
                     editLogAnimation.cancel();
@@ -795,7 +796,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         tractorTv               = (TextView) view.findViewById(R.id.tractorTv);
         trailorTv               = (TextView) view.findViewById(R.id.trailorTv);
         coDriverTv              = (TextView) view.findViewById(R.id.coDriverTv);
-        otherOptionBadgeView           = (TextView) view.findViewById(R.id.otherOptionBadgeView);
+        otherOptionBadgeView    = (TextView) view.findViewById(R.id.otherOptionBadgeView);
         invisibleTxtVw          = (TextView) view.findViewById(R.id.invisibleTxtVw);
 
         DriverComNameTV         = (TextView) view.findViewById(R.id.DriverComNameTV);
@@ -1425,7 +1426,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             sharedPref.isUnidentifiedOccur(getActivity()) ||
                             sharedPref.isMalfunctionOccur(getActivity()) ||
                             sharedPref.isDiagnosticOccur(getActivity()) ||
-                            constants.CheckGpsStatus(getActivity()) == false ||
+                             constants.isAllowLocMalfunctionEvent(getActivity()) ||
+                    constants.CheckGpsStatus(getActivity()) == false ||
                             (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_ACTIVE &&
                                     sharedPref.getObdStatus(getActivity()) != Constants.WIRED_ACTIVE);
 
@@ -1436,7 +1438,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             sharedPref.isMalfunctionOccurCo(getActivity()) ||
                             sharedPref.isDiagnosticOccurCo(getActivity()) ||
                             constants.CheckGpsStatus(getActivity()) == false ||
-                            (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_ACTIVE &&
+                             constants.isAllowLocMalfunctionEvent(getActivity()) ||
+                    (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_ACTIVE &&
                                     sharedPref.getObdStatus(getActivity()) != Constants.WIRED_ACTIVE);
                 }
 
@@ -1446,7 +1449,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     otherOptionBadgeView.setVisibility(View.GONE);
                 }
 
-                if (sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity())) {
+                if (sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity()) ||
+                         constants.isAllowLocMalfunctionEvent(getActivity()) ) {
                     malfunctionLay.setVisibility(View.VISIBLE);
                     malfunctionLay.startAnimation(editLogAnimation);
                 } else {
@@ -2374,16 +2378,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                            /* } else {
                                 OpenLocationDialog(OFF_DUTY, OldSelectedStatePos);
                             }*/
-                        } else {
+                        }  if(constants.isManualLocMalfunctionEvent(getActivity(), DriverType)){
+                           // DriverLocationDialog.updateViewTV.performClick();
+                            OpenLocationDialog(OFF_DUTY, OldSelectedStatePos, true);
+                        }else {
                             DisableJobViews();
-
-                          /*  if (Global.isConnected(getActivity())) {
-                                JobStatusInt = 101;
-                                LocationJobTYpe = "Off Duty";
-                                GetAddFromLatLng();
-                            } else {
-                                SaveJobStatusAlert("Off Duty");
-                            }*/
 
                             // save status directly on button click. and uploaded automatically in background
                             SaveJobStatusAlert("Off Duty");
@@ -2447,28 +2446,19 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                     } else {
                                         JobStatusInt = SLEEPER;
                                         GetAddFromLatLng();
-                                        // new GetLocAddressAsync().execute("");
                                     }
                                 } else {
                                     JobStatusInt = SLEEPER;
                                     GetAddFromLatLng();
-                                    // new GetLocAddressAsync().execute("");
                                 }
                             }
-                           /* } else {
-                                OpenLocationDialog(SLEEPER, OldSelectedStatePos);
-                            }*/
-                        } else {
+
+                        }  if(constants.isManualLocMalfunctionEvent(getActivity(), DriverType)){
+                           // DriverLocationDialog.updateViewTV.performClick();
+                            OpenLocationDialog(SLEEPER, OldSelectedStatePos, true);
+                        }else {
 
                             DisableJobViews();
-                           /* if (Global.isConnected(getActivity())) {
-                                JobStatusInt = 101;
-                                LocationJobTYpe = "Sleeper Berth";
-                                GetAddFromLatLng();
-                                // new GetLocAddressAsync().execute("Sleeper Berth");
-                            } else {
-                                SaveJobStatusAlert("Sleeper Berth");
-                            }*/
 
                             // save status directly on button click. and uploaded automatically in background
                             SaveJobStatusAlert("Sleeper Berth");
@@ -2802,18 +2792,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 GetAddFromLatLng();
             }
 
-        } else {
+        } if(constants.isManualLocMalfunctionEvent(getActivity(), DriverType)){
+          //  DriverLocationDialog.updateViewTV.performClick();
+            OpenLocationDialog(DRIVING, OldSelectedStatePos, true);
+        }else {
 
             isPersonal = "false";
-          /*  if (Global.isConnected(getActivity())) {
-                JobStatusInt = 101;
-                LocationJobTYpe = "Driving";
-                GetAddFromLatLng();
-                // new GetLocAddressAsync().execute("Driving");
-            }else {
-                SaveJobStatusAlert("Driving");
-            }
-*/
+
             // save status directly on button click. and uploaded automatically in background
             SaveJobStatusAlert("Driving");
         }
@@ -2833,26 +2818,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             SaveRequestCount = 0;
             //  BackgroundLocationService.IsAutoLogSaved = false;
             constants.IS_TRAILER_INSPECT = false;
-
-            /*if (Global.isConnected(getActivity())) {
-                GetDriversSavedData(false, DriverType);
-                saveInfo(Global.DRIVING, true, true, false);
-            } else {
-                DriverStatusId = String.valueOf(SWITCH_VIEW);
-                DRIVER_JOB_STATUS = DRIVING;
-                GetDriversSavedData(false, DriverType);
-                EnableJobViews();
-
-                SaveDriversJob(Global.DRIVING);
-                Global.EldScreenToast(OnDutyBtn, "You are now driving.", getResources().getColor(R.color.colorSleeper));
-
-                GetDriverLogData();
-                initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
-                        usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
-                SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
-                CalculateTimeInOffLine(false, false);
-            }*/
-
 
             // save status directly on button click. and uploaded automatically in background
             DriverStatusId = String.valueOf(SWITCH_VIEW);
@@ -2879,7 +2844,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     void OnDuty(View view) {
         constants.IS_ELD_ON_CREATE = false;
-        if (IsAOBRD && !IsAOBRDAutomatic) {
+        if ( IsAOBRD && !IsAOBRDAutomatic ) {
 
             // if Odometers are saving through OBD autmatically then makes all the condition false to ignore odometer save
             if(sharedPref.IsOdometerFromOBD(getActivity())) {
@@ -2907,31 +2872,23 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     else {
                         JobStatusInt = ON_DUTY;
                         GetAddFromLatLng();
-                        // new GetLocAddressAsync().execute("");
                     }
                 } else {
                     JobStatusInt = ON_DUTY;
                     GetAddFromLatLng();
-                    // new GetLocAddressAsync().execute("");
                 }
             }
 
-        } else {
+        } else if(constants.isManualLocMalfunctionEvent(getActivity(), DriverType)){
+           // DriverLocationDialog.updateViewTV.performClick();
+            OpenLocationDialog(ON_DUTY, OldSelectedStatePos, true);
+        }else {
             DisableJobViews();
-            /*if (Global.isConnected(getActivity())) {
-                JobStatusInt = 101;
-                LocationJobTYpe = "On Duty";
-                GetAddFromLatLng();
-                // new GetLocAddressAsync().execute("On Duty");
-            }else {
-                SaveJobStatusAlert("On Duty");
-
-            }*/
 
             // save status directly on button click. and uploaded automatically in background
             SaveJobStatusAlert("On Duty");
         }
-        //  OnDutyBtn.setEnabled(true);
+
     }
 
 
@@ -2986,24 +2943,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         SWITCH_VIEW = OFF_DUTY;
         DriverStatusId = String.valueOf(SWITCH_VIEW);
         SaveJobType(Global.OFF_DUTY);
-      /*  if (Global.isConnected(getActivity())) {
-            SetJobButtonView(OFF_DUTY, false, isPersonal);
-            GetDriversSavedData(false, DriverType);
-            saveInfo(Global.OFF_DUTY, true, true, false);
-        } else {
-            DRIVER_JOB_STATUS = OFF_DUTY;
-            SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
-            initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
-                    usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
-
-            GetDriversSavedData(false, DriverType);
-            SaveDriversJob(Global.OFF_DUTY);
-            EnableJobViews();
-
-            Global.EldScreenToast(OnDutyBtn, "You are now Off DUTY", getResources().getColor(R.color.colorSleeper));
-            GetDriverLogData();
-            CalculateTimeInOffLine(false, false);
-        }*/
 
         // save status directly on button click. and uploaded automatically in background
         DRIVER_JOB_STATUS = OFF_DUTY;
@@ -3044,26 +2983,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                 sharedPref.SetViolation(isViolation, getActivity());
                 sharedPref.SetViolationReason("", getActivity());
-
-             /*   if (Global.isConnected(getActivity())) {
-                    GetDriversSavedData(false, DriverType);
-                    saveInfo(Global.SLEEPER, true, true, false);
-                } else {
-                    DriverStatusId = String.valueOf(SWITCH_VIEW);
-                    DRIVER_JOB_STATUS = SLEEPER;
-                    GetDriversSavedData(false, DriverType);
-                    SaveDriversJob(Global.SLEEPER);
-                    Global.EldScreenToast(OnDutyBtn, "Your job status is SLEEPER.", getResources().getColor(R.color.colorSleeper));
-                    EnableJobViews();
-
-                    GetDriverLogData();
-                    initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
-                            usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
-                    SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
-                    CalculateTimeInOffLine(false, false);
-
-                }*/
-
 
                 // save status directly on button click. and uploaded automatically in background
                 DriverStatusId = String.valueOf(SWITCH_VIEW);
@@ -3109,20 +3028,6 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         // BackgroundLocationService.IsAutoLogSaved = false;
         constants.IS_TRAILER_INSPECT = false;
 
-
-    /*    if (Global.isConnected(getActivity())) {
-            GetDriversSavedData(false, DriverType);
-            saveInfo(Global.OFF_DUTY, true, true, false);
-        } else {
-            GetDriversSavedData(false, DriverType);
-            SaveDriversJob(Global.OFF_DUTY);
-            Global.EldScreenToast(OnDutyBtn, "You have selected truck for Personal Use", getResources().getColor(R.color.colorSleeper));
-
-            DRIVER_JOB_STATUS = 1;
-            GetDriverLogData();
-            CalculateTimeInOffLine(false, false);
-        }
-*/
         // save status directly on button click. and uploaded automatically in background
         GetDriversSavedData(false, DriverType);
         SaveDriversJob(Global.OFF_DUTY);
@@ -3138,7 +3043,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    void OpenLocationDialog(int JobType, int OldSelectedStatePos) {
+    void OpenLocationDialog(int JobType, int OldSelectedStatePos, boolean isMalfunction) {
 
         //   new GetLocAddressAsync().execute(JobType);
 
@@ -3148,7 +3053,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 if (driverLocationDialog != null && driverLocationDialog.isShowing()) {
                     driverLocationDialog.dismiss();
                 }
-                driverLocationDialog = new DriverLocationDialog(getActivity(), City, State, OldSelectedStatePos, JobType, OnDutyBtn,
+                driverLocationDialog = new DriverLocationDialog(getActivity(), City, State, OldSelectedStatePos, JobType, isMalfunction, OnDutyBtn,
                         StateArrayList, new DriverLocationListener());
                 driverLocationDialog.show();
             }
@@ -5013,7 +4918,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         if(!IsAddressUpdate) {
             if (JobStatusInt != 101) {
                 int OldSelectedStateListPos = -1;
-                OpenLocationDialog(JobStatusInt, OldSelectedStateListPos);
+                OpenLocationDialog(JobStatusInt, OldSelectedStateListPos, false);
             } else {
                 progressBar.setVisibility(View.VISIBLE);
             }

@@ -2826,12 +2826,25 @@ public class Constants {
 
 
 
+    public boolean isAllowLocMalfunctionEvent(Context context){
+          return (SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context)) && SharedPref.isLocMalfunctionOccur(context);
+    }
+
+    public boolean isManualLocMalfunctionEvent(Context context, int DriverType){
+
+        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+            return (SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context)) && (SharedPref.isLocMalfunctionOccur(context) && SharedPref.getLocMalfunctionType(context).equals("m"));
+        }else{
+            return (SharedPref.IsAllowMalfunctionCo(context) || SharedPref.IsAllowDiagnosticCo(context)) && (SharedPref.isLocMalfunctionOccur(context) && SharedPref.getLocMalfunctionType(context).equals("m"));
+        }
+    }
+
 
     public boolean isLocationMalfunctionOccured(Context context){
         boolean isMalfunction = false;
         int ObdStatus = SharedPref.getObdStatus(context);
         if(ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) {
-            if (SharedPref.getEcmObdLatitude(context).length() > 4) {
+            if (SharedPref.getEcmObdLatitude(context).length() < 4) {
 
                 String currentOdometer  = SharedPref.getHighPrecisionOdometer(context);
                 String lastOdometer     = SharedPref.getEcmOdometer(context);
@@ -2839,17 +2852,41 @@ public class Constants {
                 if(lastOdometer.length() > 1) {
                     double odometerDistance = Double.parseDouble(currentOdometer) - Double.parseDouble(lastOdometer);
                     odometerDistance = odometerDistance / 1000;
+                    DateTime malfunctionOccurTime   = Globally.getDateTimeObj(SharedPref.getLocMalfunctionOccuredTime(context), false);
+                    DateTime currentTime            = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+                    int minDiff = Minutes.minutesBetween(malfunctionOccurTime, currentTime).getMinutes();  // Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
 
-                    if (odometerDistance >= 8) {
-                        if(SharedPref.isManualLocAccepted(context)){
-                            SharedPref.setLocMalfunctionType("m", context);
-                        }else{
+                    if(SharedPref.isLocMalfunctionOccur(context)){
+
+                        if(minDiff >= 60){
                             SharedPref.setLocMalfunctionType("x", context);
+                        }else{
+                            if (odometerDistance >= 8 ) {
+                                SharedPref.setLocMalfunctionType("m", context);
+                            }else{
+                                SharedPref.setLocMalfunctionType("", context);
+                            }
                         }
 
                         isMalfunction = true;
+
                     }else{
-                        SharedPref.setLocMalfunctionType("", context);
+                        if (odometerDistance >= 8 ) {
+
+                            SharedPref.setLocMalfunctionType("m", context);
+
+                            /*if(SharedPref.isManualLocAccepted(context)){
+
+                            }else{
+                                SharedPref.setLocMalfunctionType("x", context);
+                            }*/
+
+                            isMalfunction = true;
+                        }else{
+                            SharedPref.setLocMalfunctionType("", context);
+                        }
+
+
                     }
 
                     isLocMalOccurDueToTime(context, true, isMalfunction);

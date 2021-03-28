@@ -1485,6 +1485,36 @@ public class SharedPref {
 
 
     // Save alert status settings -------------------
+    public static void saveLocMalfunctionOccurStatus( boolean IsLocMalfunction, String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsLocMalfunction, IsLocMalfunction);
+        editor.putString(ConstantsKeys.LocMalfunctionOccurTime, time);
+
+        editor.commit();
+    }
+
+    // Get location Malfunction occured status -------------------
+    public static boolean isLocMalfunctionOccur( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsLocMalfunction, false);
+        }else {
+            return false;
+        }
+    }
+
+    // Get location Malfunction occured time -------------------
+    public static String getLocMalfunctionOccuredTime( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.LocMalfunctionOccurTime, "");
+        }else {
+            return "";
+        }
+    }
+
+    // Save alert status settings -------------------
     public static void setEldOccurences( boolean IsUnidentified, boolean IsMalfunction, boolean IsDiagnostic,
                                             boolean SuggestedEdit, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

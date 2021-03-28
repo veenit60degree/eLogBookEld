@@ -286,7 +286,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     driverLocationDialog.dismiss();
                 }
 
-                driverLocationDialog = new DriverLocationDialog(context, city, "", oldSelectedPosition, JobType, view,
+                driverLocationDialog = new DriverLocationDialog(context, city, "", oldSelectedPosition, JobType, false, view,
                         StateArrayList, new DriverLocationListener());
 
                 driverLocationDialog.show();

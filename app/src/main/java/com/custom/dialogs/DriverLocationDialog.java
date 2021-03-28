@@ -4,8 +4,16 @@ package com.custom.dialogs;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -35,6 +43,7 @@ public class DriverLocationDialog extends Dialog {
 
     }
 
+    boolean isMalfunction;
     int Position = -1, spinnerItemPos = 0, JobType;
     private String City = "", State = "", location = "";
     List<String> locationList;
@@ -47,13 +56,14 @@ public class DriverLocationDialog extends Dialog {
     public static TextView updateViewTV;
     View view;
 
-    public DriverLocationDialog(Context context, String loc, String state, int position, int jobType,
+    public DriverLocationDialog(Context context, String loc, String state, int position, int jobType, boolean isMalfunction,
                                 View view, List<String> locList, LocationListener readyListener) {
         super(context);
         this.location        = loc;
         this.State           = state;
         this.Position        = position;
         this.JobType         = jobType;
+        this.isMalfunction  = isMalfunction;
         this.view            = view;
         this.locationList    = locList;
         this.locListener     = readyListener;
@@ -163,6 +173,20 @@ public class DriverLocationDialog extends Dialog {
 
                 }
             });
+
+            if(isMalfunction){
+                String text1 = getContext().getResources().getString(R.string.enter_manual_loc) + " ("+
+                        getContext().getResources().getString(R.string.loc_mal_occur) + ")";
+
+              //  TitleTV.setTextAppearance(getContext(), R.style.fontForLocMalTitleMobile);
+                SpannableString spanString =  new SpannableString(text1);
+                final StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
+               // spanString.setSpan(new RelativeSizeSpan(1.10f), 0,21, 0); // set size
+                spanString.setSpan(new RelativeSizeSpan(0.80f), 23,49, 0); // set size
+                spanString.setSpan(boldSpan, 0, 21, Spannable.SPAN_INCLUSIVE_INCLUSIVE); // set text style
+                spanString.setSpan(new ForegroundColorSpan(Color.RED), 23, 49, 0);// set color
+                TitleTV.setText(spanString, TextView.BufferType.SPANNABLE);
+            }
 
         }
 

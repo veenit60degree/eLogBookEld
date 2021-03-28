@@ -124,7 +124,8 @@ public class SlideMenuAdapter extends BaseAdapter {
 
 
         if(menuList.get(position).getStatus() == Constants.DATA_MALFUNCTION){
-            if(SharedPref.isMalfunctionOccur(context) || SharedPref.isDiagnosticOccur(context)){
+            if(SharedPref.isMalfunctionOccur(context) || SharedPref.isDiagnosticOccur(context) ||
+                    SharedPref.isLocMalfunctionOccur(context)){
                   holder.menuErrorImgView.setVisibility(View.VISIBLE);
             }else{
                 holder.menuErrorImgView.setVisibility(View.GONE);

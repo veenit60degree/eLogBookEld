@@ -179,6 +179,8 @@ public class ConstantsKeys {
     public static String IsMalfunction                  = "IsMalfunction";
     public static String IsDiagnostic                   = "IsDiagnostic";
     public static String SuggestedEdit                  = "SuggestedEdit";
+    public static String IsLocMalfunction               = "IsLocMalfunction";
+    public static String LocMalfunctionOccurTime        = "LocMalfunctionOccurTime";
 
     public static String IsUnidentifiedCo               = "IsUnidentifiedCo";
     public static String IsMalfunctionCo                = "IsMalfunctionCo";

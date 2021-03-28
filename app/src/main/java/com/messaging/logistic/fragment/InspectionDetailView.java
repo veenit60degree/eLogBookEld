@@ -406,7 +406,7 @@ public class    InspectionDetailView  extends Fragment {
                     driverLocationDialog.dismiss();
                 }
                 driverLocationDialog = new DriverLocationDialog(getActivity(), UpdatedLocation, getResources().getString(R.string.update_loc),
-                        0, Constants.EditLocation, changeLocBtn, StateArrayList, new DriverLocationListener());
+                        0, Constants.EditLocation, false, changeLocBtn, StateArrayList, new DriverLocationListener());
                 driverLocationDialog.show();
             }
         } catch (final IllegalArgumentException e) {

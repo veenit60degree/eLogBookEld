@@ -101,8 +101,12 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         TextView seqIdMalTxtVw = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
         TextView originMalTxtVw = (TextView) convertView.findViewById(R.id.originMalTxtVw);
 
-        String date = Globally.dateConversionMalfunction(childData.getDriverZoneEventDate());   //EventDateTime()
-        timeMalTxtVw.setText(date);
+        if(childData.getDriverZoneEventDate().length() > 10) {
+            String date = Globally.dateConversionMalfunction(childData.getDriverZoneEventDate());   //EventDateTime()
+            timeMalTxtVw.setText(date);
+        }else {
+            timeMalTxtVw.setText( "");
+        }
 
         statusMalTxtVw.setText(childData.getMalfunctionDefinition());
         engHoursMalTxtVw.setText(childData.getEngineHours());
