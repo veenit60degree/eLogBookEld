@@ -54,6 +54,7 @@
     <string name="advrs_excptn_enabled">Adverse exception enabled</string>
     <string name="haul_excptn_enabled">16 hour short haul exception enabled</string>
 
+    <string name="AdjustTimeZone">Adjust TimeZone</string>
     <string name="AdjustTime">Adjust Time</string>
     <string name="incorrect_time">Incorrect Time !</string>
     <string name="incorrect_timezone">Incorrect Time Zone !</string>

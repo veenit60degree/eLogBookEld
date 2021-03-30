@@ -86,16 +86,16 @@ public class TimeZoneDialog extends Dialog {
 
         isCurrentTimeBigger = global.isCurrentTimeBigger(getContext());
         logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
-        btnUpdateApp.setText(mContext.getResources().getString(R.string.AdjustTime));
 
         if(isTimeZoneValid){
             // if time zone is valid, means time is invalid
             TitleTV.setText(mContext.getResources().getString(R.string.incorrect_time));
             recordTitleTV.setText(mContext.getResources().getString(R.string.incorrect_time_desc));
-
+            btnUpdateApp.setText(mContext.getResources().getString(R.string.AdjustTime));
         }else {
             TitleTV.setText(mContext.getResources().getString(R.string.incorrect_timezone));
             recordTitleTV.setText(mContext.getResources().getString(R.string.incorrect_timezone_desc));
+            btnUpdateApp.setText(mContext.getResources().getString(R.string.AdjustTimeZone));
         }
 
         btnUpdateApp.setOnClickListener(new ChangeTimeZoneListener());

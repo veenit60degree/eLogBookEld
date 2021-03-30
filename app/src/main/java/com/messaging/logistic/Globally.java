@@ -910,7 +910,7 @@ public class Globally {
 		Calendar c = Calendar.getInstance();
 		DateTime utcDate = new DateTime();
 		try {
-			String dateStr = currentDateFormat.format(c.getTime()).toString();
+			String dateStr = currentDateFormat.format(c.getTime());
 			utcDate = getDateTimeObj(dateStr, false);
 		}catch (Exception e){
 			e.printStackTrace();
