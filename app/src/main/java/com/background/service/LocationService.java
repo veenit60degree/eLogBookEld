@@ -28,7 +28,7 @@ public class LocationService extends Service {
     public Location previousBestLocation = null;
 
     Intent intent;
-    int counter = 0;
+    //int counter = 0;
 
     @Override
     public void onCreate() {
