@@ -653,10 +653,9 @@ public class Slidingmenufunctions implements OnClickListener {
 				params.put(ConstantsKeys.TruckEquipment, TRUCK_NUMBER);
 				params.put(ConstantsKeys.CompanyId, DriverCompanyId);
 				params.put(ConstantsKeys.VIN, VIN);
-
-		// ------------ will use layer when OBD gives proper engine hr and odometer of vehicle -------------
-			//	params.put(ConstantsKeys.EngineHours, EngineHours);
-			//	params.put(ConstantsKeys.CrntOdodmeter, CrntOdodmeter);
+				params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(context));
+				params.put(ConstantsKeys.EngineHours, sharedPref.getObdEngineHours(context));
+				params.put(ConstantsKeys.CrntOdodmeter, sharedPref.getHighPrecisionOdometer(context));
 
 				return params;
 			}

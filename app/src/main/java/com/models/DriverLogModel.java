@@ -43,7 +43,7 @@ public class DriverLogModel {
 
     private boolean isAdverseException ;
     private String adverseExceptionRemark;
-
+    private String LocationType;
 
     public DriverLogModel() {
     }
@@ -83,6 +83,7 @@ public class DriverLogModel {
         this.DecesionSource  = logModel.getDecesionSource();
         this.isAdverseException = logModel.getIsAdverseException();
         this.adverseExceptionRemark  = logModel.getAdverseExceptionRemark();
+        this.LocationType = logModel.getLocationType();
     }
 
     public void setDriverLogId(long driverLogId) {
@@ -376,6 +377,14 @@ public class DriverLogModel {
     }
 
 
+    public String getLocationType() {
+        return LocationType;
+    }
+
+
+    public void setLocationType(String LocationType) {
+        this.LocationType = LocationType;
+    }
 
 
 

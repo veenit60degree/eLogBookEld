@@ -503,9 +503,9 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     void GetNotificationLog(final String DriverId, final String DeviceId){  /*, final String SearchDate*/
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ProjectId", global.PROJECT_ID );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+         params.put(ConstantsKeys.ProjectId, global.PROJECT_ID );
         GetNotificationRequest.executeRequest(Request.Method.POST, APIs.GET_NOTIFICATION_LOG , params, GetNotifications,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
 

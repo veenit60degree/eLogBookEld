@@ -558,6 +558,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.setHighPrecisionOdometer("", "", getApplicationContext());
 			sharedPref.setEcmObdLocationWithTime("0", "0", "0", "", getApplicationContext());
 			sharedPref.setLocMalfunctionType("", getApplicationContext());
+			sharedPref.saveLocMalfunctionOccurStatus(false, "", getApplicationContext());
 
 		}catch (Exception e){
 			e.printStackTrace();
@@ -717,19 +718,19 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			protected Map<String, String> getParams() {
 				Map<String, String> params = new HashMap<String, String>();
 
-				params.put("DeviceId", DeviceId);
-				params.put("Password", pass);
-				params.put("Username", username);
-				params.put("CoDriverUsername", CoDriverUsername);
-				params.put("CoDriverPassword", CoDriverPassword);
-				params.put("TeamDriverType", TeamDriverType);
-				params.put("IMEINumber", ImeiNumber);
-				params.put("OSType", OSType);
-				params.put("DeviceType", deviceType);
-				params.put("MobileDeviceCurrentDateTime", global.getCurrentDate());
+				 params.put(ConstantsKeys.DeviceId, DeviceId);
+				params.put(ConstantsKeys.Password, pass);
+				params.put(ConstantsKeys.Username, username);
+				params.put(ConstantsKeys.CoDriverUsername, CoDriverUsername);
+				params.put(ConstantsKeys.CoDriverPassword, CoDriverPassword);
+				params.put(ConstantsKeys.TeamDriverType, TeamDriverType);
+				params.put(ConstantsKeys.IMEINumber, ImeiNumber);
+				params.put(ConstantsKeys.OSType, OSType);
+				params.put(ConstantsKeys.DeviceType, deviceType);
+				params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
 
-				params.put("SIM1", DeviceSimInfo);
-				params.put("SIM2", "");
+				params.put(ConstantsKeys.SIM1, DeviceSimInfo);
+				//params.put("SIM2, "");
 
 				return params;
 			}
@@ -852,9 +853,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			protected Map<String, String> getParams() {
 				Map<String, String> params = new HashMap<String, String>();
 
-				params.put("Password", pass);
-				params.put("Username", username);
-				params.put("TeamDriverType", "1");
+				params.put(ConstantsKeys.Password, pass);
+				params.put(ConstantsKeys.Username, username);
+				params.put(ConstantsKeys.TeamDriverType, "1");
 
 				return params;
 			}

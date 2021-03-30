@@ -979,7 +979,7 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
 
         for(int i = 0; i < logArray.length() ; i++){
             try {
-                String editLogReason = "";
+                String editLogReason = "", LocationType = "";
                 JSONObject obj = (JSONObject)logArray.get(i);
                 String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", TruckNumber = "",
                         DecesionSource = "", PlateNumber = "", isHaulException = "false", IsShortHaulUpdate = "false";
@@ -1029,7 +1029,9 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
                     editLogReason = obj.getString(ConstantsKeys.EditedReason);
                 }
 
-
+                if (obj.has(ConstantsKeys.LocationType)) {
+                    LocationType = obj.getString(ConstantsKeys.LocationType);
+                }
 
                 EldDataModelNew logModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1065,7 +1067,8 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
                         DecesionSource,
                         isAdverseException,
                         adverseExceptionRemark,
-                        editLogReason
+                        editLogReason,
+                        LocationType
 
                 );
 
@@ -1087,9 +1090,9 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
     void GetDriverStatusPermission(final String DriverId, final String DeviceId, final String VehicleId ){
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("VehicleId", VehicleId );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.VehicleId, VehicleId );
 
         GetPermissions.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS_PERMISSION, params, GetDriverPermission,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -1135,6 +1138,8 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
 
                 String TruckNumber = "";
                 String remarks = "";
+                String LocationType = "";
+
                 int locLength = loc.length - 1;
                 City = "";
                 State = "";
@@ -1218,6 +1223,10 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
                     TruckNumber = obj.getString(ConstantsKeys.Truck);
                 }
 
+                if(obj.has(ConstantsKeys.LocationType)){
+                    LocationType = obj.getString(ConstantsKeys.LocationType);
+                }
+
                 remarks = obj.getString(ConstantsKeys.Remarks);
 
 
@@ -1254,7 +1263,8 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
                         DecesionSource,
                         isAdverseException,
                         adverseExceptionRemark,
-                        editLogReason
+                        editLogReason,
+                        LocationType
                         );
 
                     if(eldModel != null) {

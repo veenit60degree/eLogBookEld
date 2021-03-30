@@ -853,6 +853,12 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
             if(ChangedDriverStatus == DRIVING || ChangedDriverStatus == ON_DUTY){
 
+                String LocationType = "";
+                if(constants.isLocMalfunctionEvent(context, DriverType)){
+                    // SharedPref.setLocMalfunctionType("m", getContext());
+                    LocationType = SharedPref.getLocMalfunctionType( context);
+                }
+
                 JSONArray logArray = constants.AddNewStatusInList("", String.valueOf(ChangedDriverStatus), "", "no_address",
                         String.valueOf(DriverId), "" , "" ,  "",  "",
                         CurrentCycleId,  "",  "false",  isViolation,
@@ -860,7 +866,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         String.valueOf(GPSVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus,false,
                         Global, isHaulExcptn, false,
                         ""+ isAdverseExcptn,
-                        "", hMethods,  dbHelper);
+                        "", LocationType, hMethods,  dbHelper);
 
                     String CurrentDate = Global.GetCurrentDateTime();
                 String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
@@ -1075,7 +1081,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         String City = "", State = "", Country = "", Remarks = "";
         String currentUTCTime = Global.GetCurrentUTCTime();
         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
-        String DriverStatusId = "", isPersonal = "", isYardMove = "", trailorNumber = "", isAutomatic = "";
+        String DriverStatusId = "", isPersonal = "", isYardMove = "", trailorNumber = "", isAutomatic = "", LocationType = "";
+
+        if(constants.isLocMalfunctionEvent(context, DriverType)){
+            LocationType = SharedPref.getLocMalfunctionType( context);
+        }
 
         CurrentCycleId = hMethods.CheckStringNull(CurrentCycleId);
         trailorNumber = sharedPref.getTrailorNumber( context);
@@ -1163,7 +1173,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         "false",
                         connectionSource + LastStatus,
                         String.valueOf(isAdverseExcptn),
-                        "", ""
+                        "", "", LocationType
 
 
 
@@ -1298,7 +1308,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 false,
                 connectionSource + LastStatus,
                 ""+isAdverseExcptn,
-                ""
+                "", LocationType
 
         );
 
@@ -1345,7 +1355,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         false,
                         connectionSource + LastStatus,
                         ""+isAdverseExcptn,
-                       ""
+                       "", LocationType
 
                 );
 

@@ -2590,10 +2590,10 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     void GetDriverLog18Days(final String DriverId, final String DeviceId, final String UtcDate){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("ProjectId", "1");
-        params.put("UTCDateTime", UtcDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+         params.put(ConstantsKeys.ProjectId, "1");
+        params.put(ConstantsKeys.UTCDateTime, UtcDate);
 
         GetLog18DaysRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS, params, GetDriverLog18Days,
                 Constants.SocketTimeout30Sec, ResponseCallBack, ErrorCallBack);
@@ -2604,9 +2604,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     void GetShipmentDetails(final String DriverId, final String DeviceId, final String date ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("ShippingDocDate", date);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.ShippingDocDate, date);
 
         GetShipmentRequest.executeRequest(Request.Method.POST, APIs.GET_SHIPPING_DOC_NUMBER, params, GET_SHIPMENT,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -2618,12 +2618,12 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                             final String CreatedDate, final String CompanyId ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("VIN", VIN );
-        params.put("CreatedDate", CreatedDate);
-        params.put("IsCertifyLog", "true");
-        params.put("CompanyId", CompanyId );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+         params.put(ConstantsKeys.VIN, VIN );
+        params.put(ConstantsKeys.CreatedDate, CreatedDate);
+        params.put(ConstantsKeys.IsCertifyLog, "true");
+         params.put(ConstantsKeys.CompanyId, CompanyId );
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER, params, GetOdometer,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -2634,9 +2634,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     void GetDriverStatusPermission(final String DriverId, final String DeviceId, final String VehicleId ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("VehicleId", VehicleId );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.VehicleId, VehicleId );
 
         GetPermissions.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS_PERMISSION, params, GetDriverPermission,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -2648,9 +2648,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     void GetReCertifyRecords(final String DriverId, final String FromDate, final String ToDate ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("FromDate", FromDate );
-        params.put("ToDate", ToDate );
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.FromDate, FromDate );
+        params.put(ConstantsKeys.ToDate, ToDate );
 
         GetReCertifyRequest.executeRequest(Request.Method.POST, APIs.GET_RECERTIFY_PENDING_RECORDS, params, GetReCertifyRecords,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -2668,11 +2668,11 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         nextPrevBtnClicked = false;
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("ProjectId", ProjectId);
-        params.put("DeviceId", DeviceId);
-        params.put("ELDSearchDate", date);
-        params.put("TeamDriverType", TeamDriverType);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.ProjectId, ProjectId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.ELDSearchDate, date);
+        params.put(ConstantsKeys.TeamDriverType, TeamDriverType);
 
         GetLogRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS, params, GetDriverLog,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -2683,9 +2683,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     void GetShipment18Days(final String DriverId, final String DeviceId, final String ShippingDocDate, int flag){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ShippingDocDate", ShippingDocDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.ShippingDocDate, ShippingDocDate);
 
         GetShippingRequest.executeRequest(Request.Method.POST, APIs.GET_SHIPPING_INFO_OFFLINE , params, flag,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -2695,10 +2695,10 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     void GetOdometer18Days(final String DriverId, final String DeviceId, final String CompanyId , final String CreatedDate){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("CompanyId", CompanyId  );
-        params.put("CreatedDate", CreatedDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+         params.put(ConstantsKeys.CompanyId, CompanyId  );
+        params.put(ConstantsKeys.CreatedDate, CreatedDate);
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER_OFFLINE , params, GetOdometers18Days,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -2713,11 +2713,11 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         IsRecapApiCalled = true;
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ProjectId", Globally.PROJECT_ID);
-        params.put("DrivingStartTime", StartDate);
-        params.put("DriverLogDate", EndDate );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+         params.put(ConstantsKeys.ProjectId, Globally.PROJECT_ID);
+        params.put(ConstantsKeys.DrivingStartTime, StartDate);
+        params.put(ConstantsKeys.DriverLogDate, EndDate );
 
         GetRecapView18DaysData.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS_DETAILS , params, GetRecapViewData,
                 Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
@@ -2728,7 +2728,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     private void saveByteSignLocally(String SignImageInBytes){
         // Add signed parameters with values into the json object and put into the json Array.
         JSONObject CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DRIVER_ID, DeviceId, global.PROJECT_ID, LogDate,
-                SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId  );
+                SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, sharedPref.getLocMalfunctionType(getActivity())  );
         CertifyLogArray.put(CertifyLogObj);
 
         // Insert/Update Certify Log table

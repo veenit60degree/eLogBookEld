@@ -696,8 +696,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     void GetAddFromLatLng(String lat, String lon) {
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("Latitude", lat);
-        params.put("Longitude", lon );
+         params.put(ConstantsKeys.Latitude, lat);
+         params.put(ConstantsKeys.Longitude, lon );
 
         GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, 1,
                 Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
@@ -768,19 +768,19 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             protected Map<String, String> getParams()
             {
                 Map<String,String> params = new HashMap<String, String>();
-                params.put("DriverId", DriverId);
-                params.put("DeviceId", DeviceId);
-                params.put("fromDate", StartDate);
-                params.put("toDate", EndDate);
-                params.put("mailToIds", emails);
-                params.put("InspectorComment", InspectorComment);
-                params.put("IsMail", IsMail);
-                params.put("IsService", IsService);
-                params.put("latitude", latitude);
-                params.put("longitude", longitude);
-                params.put("DriverTimeZone", DriverTimeZone);
-                params.put("Country", selectedCountry );
-                params.put("EmailAddress", canSelectedEmail);
+                params.put(ConstantsKeys.DriverId, DriverId);
+                 params.put(ConstantsKeys.DeviceId, DeviceId);
+                params.put(ConstantsKeys.fromDate, StartDate);
+                params.put(ConstantsKeys.toDate, EndDate);
+                params.put(ConstantsKeys.mailToIds, emails);
+                params.put(ConstantsKeys.InspectorComment, InspectorComment);
+                params.put(ConstantsKeys.IsMail, IsMail);
+                params.put(ConstantsKeys.IsService, IsService);
+                params.put(ConstantsKeys.latitude, latitude);
+                params.put(ConstantsKeys.longitude, longitude);
+                params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
+                params.put(ConstantsKeys.Country, selectedCountry );
+                params.put(ConstantsKeys.EmailAddress, canSelectedEmail);
 
                 return params;
             }

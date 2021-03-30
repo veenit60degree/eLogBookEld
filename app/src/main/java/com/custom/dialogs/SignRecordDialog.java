@@ -371,12 +371,13 @@ public class SignRecordDialog extends Dialog {
             JSONObject CertifyLogObj;
             String dateStr = selectedDateList.get(i);
             boolean isReCertifyRequired = constants.isReCertifyRequired(getContext(), null, Globally.ConvertDateFormat(dateStr));
+            String locationType = sharedPref.getLocMalfunctionType(context);
             if(i == 0) {
                 CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, Globally.PROJECT_ID, dateStr,
-                        SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId);
+                        SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, locationType);
             }else{
                 CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, Globally.PROJECT_ID, dateStr,
-                        SignImageInBytes, true, isReCertifyRequired, CompanyId);
+                        SignImageInBytes, true, isReCertifyRequired, CompanyId, locationType);
             }
             CertifyLogArray.put(CertifyLogObj);
 

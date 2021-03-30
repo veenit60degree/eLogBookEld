@@ -148,6 +148,9 @@ public class Constants {
     public static String OfflineData = "offline_data";
     public static String DataMalfunction = "Data_Malfunction";
 
+    public static String PositionComplianceMalfunction = "L";
+
+
     public static final int MAIN_DRIVER_TYPE    = 0;
     public static final int CO_DRIVER_TYPE      = 1;
 
@@ -388,6 +391,7 @@ public class Constants {
         locationObj.put(ConstantsKeys.IsAdverseException, ListModel.getIsAdverseException());
         locationObj.put(ConstantsKeys.AdverseExceptionRemarks, ListModel.getAdverseExceptionRemarks());
         locationObj.put(ConstantsKeys.EditedReason, ListModel.getEditedReason());
+        locationObj.put(ConstantsKeys.LocationType, ListModel.getLocationType());
 
         jsonArray.put(locationObj);
     }
@@ -400,7 +404,7 @@ public class Constants {
 
         String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
         String decesionSpurce = "", HaulHourException = "false", TruckNumber = "";
-        String isAdverseException = "", adverseExceptionRemark = "";
+        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
 
         String isViolation = obj.getString(ConstantsKeys.IsViolation).trim();
 
@@ -441,7 +445,9 @@ public class Constants {
         if (obj.has(ConstantsKeys.AdverseExceptionRemarks)) {
             adverseExceptionRemark = obj.getString(ConstantsKeys.AdverseExceptionRemarks);
         }
-
+        if (obj.has(ConstantsKeys.LocationType)) {
+            LocationType = obj.getString(ConstantsKeys.LocationType);
+        }
 
         locationObj.put(ConstantsKeys.ProjectId, obj.getString(ConstantsKeys.ProjectId));
         locationObj.put(ConstantsKeys.DriverId, obj.getString(ConstantsKeys.DriverId));
@@ -479,6 +485,7 @@ public class Constants {
 
         locationObj.put(ConstantsKeys.IsAdverseException, isAdverseException);
         locationObj.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
+        locationObj.put(ConstantsKeys.LocationType, LocationType);
 
 
         return locationObj;
@@ -1265,7 +1272,7 @@ public class Constants {
                                         String IsStatusAutomatic, String OBDSpeed, String GPSSpeed, String PlateNumber,
                                         String decesionSource, boolean isYardMove,
                                         Globally Global, boolean isHaulException, boolean isHaulExceptionUpdate,
-                                        String isAdverseException, String adverseExceptionRemark,
+                                        String isAdverseException, String adverseExceptionRemark, String LocationType,
                                         HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
@@ -1345,7 +1352,8 @@ public class Constants {
                 isHaulExceptionUpdate,
                 decesionSource,
                 isAdverseException,
-                adverseExceptionRemark
+                adverseExceptionRemark,
+                LocationType
 
         );
 
@@ -1391,18 +1399,6 @@ public class Constants {
                     initilizeValue = arraylength - 1;
                     daysValidationValue = 0;
                 }
-
-
-
-             /*   if (initilizeValue > 0) {
-
-                    if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
-                        daysValidationValue = initilizeValue - DriverPermittedDays;
-                    }
-
-                } else {
-                    daysValidationValue = initilizeValue;
-                }*/
 
                 if (initilizeValue > DriverPermittedDays) {
                     daysValidationValue = initilizeValue - DriverPermittedDays;
@@ -1784,7 +1780,7 @@ public class Constants {
         try {
             JSONObject obj = new JSONObject();
             obj.put("InputType", "Update Vehicle");
-            obj.put("DriverId", DriverId);
+            obj.put(ConstantsKeys.DriverId, DriverId);
             obj.put("PreviousDeviceMappingId", PreviousDeviceMappingId);
             obj.put("DeviceMappingId", DeviceMappingId);
             obj.put("VehicleId", VehicleId);
@@ -2830,50 +2826,59 @@ public class Constants {
           return (SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context)) && SharedPref.isLocMalfunctionOccur(context);
     }
 
-    public boolean isManualLocMalfunctionEvent(Context context, int DriverType){
-
+    public boolean isLocMalfunctionEvent(Context context, int DriverType){
         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-            return (SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context)) && (SharedPref.isLocMalfunctionOccur(context) && SharedPref.getLocMalfunctionType(context).equals("m"));
+            return (SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context)) && SharedPref.isLocMalfunctionOccur(context) ;
         }else{
-            return (SharedPref.IsAllowMalfunctionCo(context) || SharedPref.IsAllowDiagnosticCo(context)) && (SharedPref.isLocMalfunctionOccur(context) && SharedPref.getLocMalfunctionType(context).equals("m"));
+            return (SharedPref.IsAllowMalfunctionCo(context) || SharedPref.IsAllowDiagnosticCo(context)) && SharedPref.isLocMalfunctionOccur(context) ;
         }
     }
 
 
+    // ------------- Malfunction status ---------------
+    // x = when no loc or valid position for 8 km
+    // m = If driver enter manual loc after position malfunction occur
+    // e = if position malfunction occur more then 60 min
+
     public boolean isLocationMalfunctionOccured(Context context){
         boolean isMalfunction = false;
         int ObdStatus = SharedPref.getObdStatus(context);
-        if(ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) {
-            if (SharedPref.getEcmObdLatitude(context).length() < 4) {
+        try {
+            if (ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) {
+                if (SharedPref.getEcmObdLatitude(context).length() < 4) {
 
-                String currentOdometer  = SharedPref.getHighPrecisionOdometer(context);
-                String lastOdometer     = SharedPref.getEcmOdometer(context);
+                    String currentOdometer = SharedPref.getHighPrecisionOdometer(context);
+                    String lastOdometer = SharedPref.getEcmOdometer(context);
 
-                if(lastOdometer.length() > 1) {
-                    double odometerDistance = Double.parseDouble(currentOdometer) - Double.parseDouble(lastOdometer);
-                    odometerDistance = odometerDistance / 1000;
-                    DateTime malfunctionOccurTime   = Globally.getDateTimeObj(SharedPref.getLocMalfunctionOccuredTime(context), false);
-                    DateTime currentTime            = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
-                    int minDiff = Minutes.minutesBetween(malfunctionOccurTime, currentTime).getMinutes();  // Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
+                    if (lastOdometer.length() > 1) {
+                        double odometerDistance = Double.parseDouble(currentOdometer) - Double.parseDouble(lastOdometer);
+                        odometerDistance = odometerDistance / 1000;
 
-                    if(SharedPref.isLocMalfunctionOccur(context)){
+                        if (SharedPref.isLocMalfunctionOccur(context)) {
+                            DateTime malfunctionOccurTime = Globally.getDateTimeObj(SharedPref.getLocMalfunctionOccuredTime(context), false);
+                            DateTime currentTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+                            int minDiff = Minutes.minutesBetween(malfunctionOccurTime, currentTime).getMinutes();  // Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
 
-                        if(minDiff >= 60){
-                            SharedPref.setLocMalfunctionType("x", context);
-                        }else{
-                            if (odometerDistance >= 8 ) {
-                                SharedPref.setLocMalfunctionType("m", context);
-                            }else{
-                                SharedPref.setLocMalfunctionType("", context);
+                            if (minDiff >= 60) {
+                                SharedPref.setLocMalfunctionType("e", context);
+                            } else {
+                                if (odometerDistance >= 8) {
+                                    if(!SharedPref.getLocMalfunctionType(context).equals("m")) {
+                                        SharedPref.setLocMalfunctionType("x", context);
+                                    }
+                                } /*else {
+                                    SharedPref.setLocMalfunctionType("", context);
+                                }*/
                             }
-                        }
 
-                        isMalfunction = true;
+                            isMalfunction = true;
 
-                    }else{
-                        if (odometerDistance >= 8 ) {
+                        } else {
+                            if (odometerDistance >= 8) {
 
-                            SharedPref.setLocMalfunctionType("m", context);
+                                if(!SharedPref.getLocMalfunctionType(context).equals("m")) {
+                                    SharedPref.setLocMalfunctionType("x", context);
+                                }
 
                             /*if(SharedPref.isManualLocAccepted(context)){
 
@@ -2881,18 +2886,21 @@ public class Constants {
                                 SharedPref.setLocMalfunctionType("x", context);
                             }*/
 
-                            isMalfunction = true;
-                        }else{
-                            SharedPref.setLocMalfunctionType("", context);
+                                isMalfunction = true;
+                            } else {
+                                SharedPref.setLocMalfunctionType("", context);
+                            }
+
+
                         }
 
+                        isLocMalOccurDueToTime(context, true, isMalfunction);
 
                     }
-
-                    isLocMalOccurDueToTime(context, true, isMalfunction);
-
                 }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         return isMalfunction;
@@ -2910,6 +2918,13 @@ public class Constants {
             if(minDiff > 60){  // set val as "e" when time will be greater then 1 hour
                 SharedPref.setLocMalfunctionType("e", context);
                 isMalfunction = true;
+            }else{
+                boolean isLocMalfunctionOccur = SharedPref.isLocMalfunctionOccur(context);
+                String malfunctionType = SharedPref.getLocMalfunctionType(context);
+                if(isLocMalfunctionOccur && malfunctionType.equals("m")){
+                    SharedPref.setLocMalfunctionType("m", context);
+                    isMalfunction = true;
+                }
             }
 
             if(isSaveMalfunctionStatus) {

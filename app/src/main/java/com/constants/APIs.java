@@ -84,6 +84,8 @@ public class APIs {
     public static String GET_CYCLE_CHANGE_REQUESTS          = DOMAIN_URL_ALS + "GetCycleChangeRequests";
     public static String CHANGE_DRIVER_CYCLE                = DOMAIN_URL_ALS + "ChangeDriverCycle";
     public static String CHANGE_OPERATING_ZONE              = DOMAIN_URL_ALS + "SaveOperatingZone";
+    public static String MALFUNCTION_DIAGNOSTIC_EVENT       = DOMAIN_URL_ALS + "AddMalfunctionAndDiagnosticEvent";
+
 
     /*-------- ELD API ----------*/
     public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";

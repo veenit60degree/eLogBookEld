@@ -136,6 +136,7 @@ public class ConstantsKeys {
     public static String UTCStartDateTime       = "UTCStartDateTime";
     public static String UTCEndDateTime         = "UTCEndDateTime";
     public static String CrntOdodmeter          = "CrntOdodmeter";
+    public static String LocationType           = "LocationType";
 
 
     // --------------------- Inspection params -------------------------
@@ -163,6 +164,59 @@ public class ConstantsKeys {
     public static String IsStatusAutomatic              = "IsStatusAutomatic";
     public static String OBDSpeed                       = "OBDSpeed";
     public static String GPSSpeed                       = "GPSSpeed";
+    public static String obdSpeed                       = "obdSpeed";
+    public static String isGpsEnabled                   = "isGpsEnabled";
+
+    public static String UnitNo                         = "UnitNo";
+    public static String DeviceNumber                   = "DeviceNumber";
+    public static String DiagnosticType                 = "DiagnosticType";
+    public static String DrivingStartTime               = "DrivingStartTime";
+    public static String CycleId                        = "CycleId";
+    public static String DriverTimZone                  = "DriverTimZone";
+    public static String PowerUnitNumber                = "PowerUnitNumber";
+    public static String FromDate                       = "FromDate";
+    public static String ToDate                         = "ToDate";
+    public static String PreviousDeviceMappingId        = "PreviousDeviceMappingId";
+    public static String DeviceMappingId                = "DeviceMappingId";
+    public static String IMEINumber                     = "IMEINumber";
+    public static String LoginTruckChange               = "LoginTruckChange";
+
+    public static String IsCertifyLog                   = "IsCertifyLog";
+    public static String SearchedDate                   = "SearchedDate";
+    public static String DriverTimeZoneName             = "DriverTimeZoneName";
+    public static String LogDateTime                    = "LogDateTime";
+    public static String ELDSearchDate                  = "ELDSearchDate";
+    public static String TeamDriverType                 = "TeamDriverType";
+    public static String IsSouthCanada                  = "IsSouthCanada";
+    public static String CurrentDate                    = "CurrentDate";
+    public static String ActionDateTime                 = "ActionDateTime";
+    public static String ActionTimeZone                 = "ActionTimeZone";
+    public static String IsOdometerFromOBD              = "IsOdometerFromOBD";
+    public static String GeoData                        = "GeoData";
+
+    public static String fromDate                       = "fromDate";
+    public static String toDate                         = "toDate";
+    public static String mailToIds                      = "mailToIds";
+    public static String InspectorComment               = "InspectorComment";
+    public static String IsMail                         = "IsMail";
+    public static String IsService                      = "IsService";
+    public static String latitude                       = "latitude";
+    public static String longitude                      = "longitude";
+    public static String EmailAddress                   = "EmailAddress";
+    public static String TitalUsage                     = "TitalUsage";
+    public static String EntryDate                      = "EntryDate";
+    public static String AppVersion                     = "AppVersion";
+    public static String Password                       = "Password";
+    public static String Username                       = "Username";
+    public static String CoDriverUsername               = "CoDriverUsername";
+    public static String CoDriverPassword               = "CoDriverPassword";
+    public static String OSTypeDeviceType               = "OSTypeDeviceType";
+    public static String SIM1                           = "SIM1";
+    public static String OSType                         = "OSType";
+    public static String DeviceType                     = "DeviceType";
+
+
+
     public static String PlateNumber                    = "PlateNumber";
     public static String HaulHourException              = "HaulHourException";
     public static String Carrier                        = "Carrier";

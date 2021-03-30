@@ -808,8 +808,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         canDotProgressBar.setVisibility(View.VISIBLE);
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("Date", date);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.Date, date);
 
         GetDotLogRequest.executeRequest(Request.Method.POST, APIs.MOBILE_CANADA_ELD_VIEW, params, 1,
                 Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);

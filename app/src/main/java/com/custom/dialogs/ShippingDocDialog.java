@@ -612,9 +612,9 @@ public class ShippingDocDialog extends Dialog {
     void GetShippingInfoWithDate(final String DriverId, final String DeviceId, final String ShippingDocDate){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ShippingDocDate", ShippingDocDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.ShippingDocDate, ShippingDocDate);
 
         GetShippingRequest.executeRequest(Request.Method.POST, APIs.GET_SHIPPING_DOC_NUMBER , params, GetShippingNo,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -624,9 +624,9 @@ public class ShippingDocDialog extends Dialog {
     void GetShipment18Days(final String DriverId, final String DeviceId, final String ShippingDocDate, int flag){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ShippingDocDate", ShippingDocDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.ShippingDocDate, ShippingDocDate);
 
         GetShippingRequest.executeRequest(Request.Method.POST, APIs.GET_SHIPPING_INFO_OFFLINE , params, flag,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

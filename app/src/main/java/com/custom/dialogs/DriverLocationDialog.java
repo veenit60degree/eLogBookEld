@@ -17,6 +17,8 @@ import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.constants.Constants;
+import com.constants.SharedPref;
 import com.google.android.material.textfield.TextInputLayout;
 import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.EldFragment;
@@ -37,9 +40,9 @@ public class DriverLocationDialog extends Dialog {
 
     public interface LocationListener {
 
-        public void CancelLocReady();
+        public void CancelLocReady(boolean isMalfunction, int JobType);
 
-        public void SaveLocReady(int position, int spinnerItemPos, int JobType, String city, EditText CityNameEditText, View view);
+        public void SaveLocReady(int position, int spinnerItemPos, int JobType, String city, EditText CityNameEditText, View view, boolean isMalfunction);
 
     }
 
@@ -52,9 +55,11 @@ public class DriverLocationDialog extends Dialog {
     EditText CityNameEditText;
     Button btnLoadingJob, btnCancelLoadingJob;
     Spinner locationSpinner;
-    TextView TitleTV, SpinnerTitleTV;
+    TextView TitleTV, SpinnerTitleTV, dismissTxtView, malfunctionEventTV;
     public static TextView updateViewTV;
     View view;
+    Animation malfunctionAnim;
+
 
     public DriverLocationDialog(Context context, String loc, String state, int position, int jobType, boolean isMalfunction,
                                 View view, List<String> locList, LocationListener readyListener) {
@@ -90,11 +95,14 @@ public class DriverLocationDialog extends Dialog {
         TitleTV             = (TextView) findViewById(R.id.TitleTV);
         SpinnerTitleTV      = (TextView) findViewById(R.id.SpinnerTitleTV);
         updateViewTV        = (TextView) findViewById(R.id.sText);
+        dismissTxtView      = (TextView) findViewById(R.id.logoutTruckPopupTV);
+        malfunctionEventTV  = (TextView) findViewById(R.id.malfunctionEventTV);
 
         locationSpinner     = (Spinner) findViewById(R.id.remarkSpinner);
 
 
-
+        malfunctionAnim = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+        malfunctionAnim.setDuration(1500);
 
         if(JobType == Constants.EditRemarks){
             cityInputLayout.setHint("Enter Remarks");
@@ -174,18 +182,47 @@ public class DriverLocationDialog extends Dialog {
                 }
             });
 
+
             if(isMalfunction){
-                String text1 = getContext().getResources().getString(R.string.enter_manual_loc) + " ("+
+
+                malfunctionAnim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        malfunctionEventTV.startAnimation(malfunctionAnim);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
+
+             /*   String text1 = getContext().getResources().getString(R.string.enter_manual_loc) + " ("+
                         getContext().getResources().getString(R.string.loc_mal_occur) + ")";
 
               //  TitleTV.setTextAppearance(getContext(), R.style.fontForLocMalTitleMobile);
                 SpannableString spanString =  new SpannableString(text1);
                 final StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
                // spanString.setSpan(new RelativeSizeSpan(1.10f), 0,21, 0); // set size
-                spanString.setSpan(new RelativeSizeSpan(0.80f), 23,49, 0); // set size
+                spanString.setSpan(new RelativeSizeSpan(0.80f), 23,51, 0); // set size
                 spanString.setSpan(boldSpan, 0, 21, Spannable.SPAN_INCLUSIVE_INCLUSIVE); // set text style
-                spanString.setSpan(new ForegroundColorSpan(Color.RED), 23, 49, 0);// set color
+                spanString.setSpan(new ForegroundColorSpan(Color.RED), 23, 51, 0);// set color
                 TitleTV.setText(spanString, TextView.BufferType.SPANNABLE);
+*/
+
+                TitleTV.setText(getContext().getResources().getString(R.string.enter_manual_loc) );
+                btnCancelLoadingJob.setText(getContext().getResources().getString(R.string.ignore_location));
+                btnLoadingJob.setText(getContext().getResources().getString(R.string.save_location));
+                dismissTxtView.setText(Html.fromHtml("<u>" + getContext().getResources().getString(R.string.cancel) +"</u>"));
+                dismissTxtView.setVisibility(View.VISIBLE);
+                malfunctionEventTV.setVisibility(View.VISIBLE);
+
+                malfunctionEventTV.startAnimation(malfunctionAnim);
+
             }
 
         }
@@ -210,6 +247,13 @@ public class DriverLocationDialog extends Dialog {
             }
         });
 
+        dismissTxtView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HideKeyboard();
+                dismiss();
+            }
+        });
         btnLoadingJob.setOnClickListener(new LocationFieldListener());
         btnCancelLoadingJob.setOnClickListener(new CancelBtnListener());
 
@@ -238,16 +282,15 @@ public class DriverLocationDialog extends Dialog {
             }
             if(JobType == Constants.EditRemarks && City.equalsIgnoreCase(updatedCityName)){
                 dismiss();
-            }/*else if (City.equalsIgnoreCase(updatedCityName) && State.equalsIgnoreCase(locationList.get(Position))) {
-                dismiss();
-            }*/ else {
+            } else {
                 locListener.SaveLocReady(
                         Position,
                         spinnerItemPos,
                         JobType,
                         updatedCityName,
                         CityNameEditText,
-                        view);
+                        view,
+                        isMalfunction);
             }
         }
     }
@@ -257,7 +300,7 @@ public class DriverLocationDialog extends Dialog {
         @Override
         public void onClick(View v) {
             HideKeyboard();
-            locListener.CancelLocReady();
+            locListener.CancelLocReady(isMalfunction, JobType);
         }
     }
 

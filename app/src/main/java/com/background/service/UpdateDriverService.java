@@ -26,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.constants.APIs;
 import com.constants.SharedPref;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 
 import org.json.JSONArray;
@@ -453,12 +454,12 @@ public class UpdateDriverService  extends Service implements LocationListener {
             {
                 Map<String,String> params = new HashMap<String, String>();
 
-                params.put("DeviceId", DeviceId );
-                params.put("DriverId", DriverId );
-                params.put("GeoData", geoData);
+                 params.put(ConstantsKeys.DeviceId, DeviceId );
+                params.put(ConstantsKeys.DriverId, DriverId );
+                params.put(ConstantsKeys.GeoData, geoData);
 
                /* params.put("Lanttitude", Lanttitude);
-                params.put("Longitude", Longitude );
+                 params.put(ConstantsKeys.Longitude, Longitude );
                 params.put("VehicleId", VehicleId );
                 params.put("VehicleSpeed", VehicleSpeed );*/
 

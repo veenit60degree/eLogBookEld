@@ -606,8 +606,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         dotProgressBar.setVisibility(View.VISIBLE);
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("Date", date);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.Date, date);
 
         GetDotLogRequest.executeRequest(Request.Method.POST, APIs.MOBILE_ELD_VIEW_NEW, params, GetDriverDotLog,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

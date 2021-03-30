@@ -22,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.VolleyRequest;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
@@ -129,11 +130,11 @@ public class OriginalLogFragment extends Fragment {
 
         isAPILoading = true;
         Map<String, String> params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("ProjectId", Globally.PROJECT_ID);
-        params.put("DeviceId", DeviceId);
-        params.put("ELDSearchDate", date);
-        params.put("TeamDriverType", "1");
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.ProjectId, Globally.PROJECT_ID);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.ELDSearchDate, date);
+        params.put(ConstantsKeys.TeamDriverType, "1");
 
         GetLogRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS, params, 101,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

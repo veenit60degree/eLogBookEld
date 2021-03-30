@@ -46,10 +46,10 @@
 
         <TextView
             android:id="@+id/TitleTV"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
-            android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
             android:textSize="@dimen/text_size_24"
             android:textColor="@color/black"
             android:paddingBottom="@dimen/margin_short_8"
@@ -70,7 +70,28 @@
             android:paddingBottom="@dimen/margin_short_5"
             android:gravity="center_horizontal"
             android:visibility="gone"
+
             />
+
+
+
+            <TextView
+                android:id="@+id/malfunctionEventTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loc_mal_occur"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/text_size_19"
+                android:textColor="@color/colorVoilation"
+                android:paddingBottom="@dimen/margin_short_8"
+                android:paddingTop="@dimen/margin_short_4"
+                android:layout_below="@+id/logoutTruckPopupTV"
+                android:visibility="gone"
+
+                />
+
+
+
 
         </RelativeLayout>
 

@@ -323,7 +323,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     private class DriverLocationListener implements DriverLocationDialog.LocationListener {
 
         @Override
-        public void CancelLocReady() {
+        public void CancelLocReady(boolean isMalfunction, int JobType) {
 
             try {
                 if (driverLocationDialog != null && driverLocationDialog.isShowing())
@@ -336,7 +336,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         }
 
         @Override
-        public void SaveLocReady(int position, int spinnerItemPos,  int JobType, String city, EditText CityNameEditText, View view) {
+        public void SaveLocReady(int position, int spinnerItemPos,  int JobType, String city,
+                                 EditText CityNameEditText, View view, boolean isMalfunction) {
 
             City = city;
 

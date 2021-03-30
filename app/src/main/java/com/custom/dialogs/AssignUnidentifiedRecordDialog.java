@@ -22,6 +22,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.constants.SharedPref;
 import com.google.android.material.textfield.TextInputLayout;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
@@ -155,9 +156,9 @@ public class AssignUnidentifiedRecordDialog extends Dialog {
             protected Map<String, String> getParams()
             {
                 Map<String,String> params = new HashMap<String, String>();
-                params.put("DriverId", DriverId);
-                params.put("DeviceId", DeviceId);
-               // params.put("CompanyId", CompanyId);
+                params.put(ConstantsKeys.DriverId, DriverId);
+                 params.put(ConstantsKeys.DeviceId, DeviceId);
+               //  params.put(ConstantsKeys.CompanyId, CompanyId);
 
                 return params;
             }

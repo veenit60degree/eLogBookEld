@@ -41,7 +41,7 @@ public class EldDataModelNew {
     String AdverseExceptionRemarks;
 
     String EditedReason;
-
+    String LocationType;
 
     public EldDataModelNew(String projectId, String driverId, String driverStatusId, String isYard,
                            String isPersonal, String deviceID, String remarks, String utcDateTime,
@@ -49,7 +49,7 @@ public class EldDataModelNew {
                            String state, String country, String isViolation, String violationReason,
                            String latitude, String longitude, String isStatusAutomatic,
                            String oBDSpeed , String gPSSpeed, String plateNumber, String haulHourException , String isShortHaulUpdate,
-                           String decesionSource, String isAdverseExc , String adverseExcRemarks, String editedReason) {
+                           String decesionSource, String isAdverseExc , String adverseExcRemarks, String editedReason, String locationType) {
 
         ProjectId           = projectId;
         DriverId            = driverId;
@@ -80,6 +80,7 @@ public class EldDataModelNew {
         IsAdverseException  = isAdverseExc;
         AdverseExceptionRemarks = adverseExcRemarks;
         EditedReason        = editedReason;
+        LocationType        = locationType;
 
     }
 
@@ -208,6 +209,10 @@ public class EldDataModelNew {
 
     public String getEditedReason() {
         return EditedReason;
+    }
+
+    public String getLocationType() {
+        return LocationType;
     }
 
 

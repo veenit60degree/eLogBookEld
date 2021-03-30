@@ -55,7 +55,8 @@ public class CertifyLogMethod {
     //  Add new log as Json in Array
     public JSONObject AddCertifyLogArray(String DriverId, String DeviceId,
                                          String ProjectId, String LogDate,
-                                         String SignImage, boolean IsContinueWithSign, boolean isReCertifyRequired, String CompanyId ) {
+                                         String SignImage, boolean IsContinueWithSign,
+                                         boolean isReCertifyRequired, String CompanyId, String LocationType ) {
 
         JSONObject jsonObj = new JSONObject();
 
@@ -73,6 +74,7 @@ public class CertifyLogMethod {
             jsonObj.put(ConstantsKeys.IsSignCopy,   IsContinueWithSign);
             jsonObj.put(ConstantsKeys.IsRecertifyRequied , isReCertifyRequired);
             jsonObj.put(ConstantsKeys.CompanyId , CompanyId);
+            jsonObj.put(ConstantsKeys.LocationType, LocationType);
 
         } catch (Exception e) {
             e.printStackTrace();

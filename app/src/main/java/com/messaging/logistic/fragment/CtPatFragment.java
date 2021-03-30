@@ -753,10 +753,10 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
     void GetCtPatInspectionDetail(final String DriverId, final String DeviceId, final String ProjectId, final String VIN) {
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("ProjectId", ProjectId);
-        params.put("VIN", VIN);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+         params.put(ConstantsKeys.ProjectId, ProjectId);
+         params.put(ConstantsKeys.VIN, VIN);
 
         GetCtPatInspRequest.executeRequest(Request.Method.POST, APIs.GET_INSPECTION_DETAIL, params, GetCtPatInspection,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -769,9 +769,9 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
     void GetCtPatInspection18Days(final String DriverId, final String DeviceId, final String SearchedDate, final int GetInspectionFlag ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("SearchedDate", SearchedDate );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.SearchedDate, SearchedDate );
 
         ctPatInsp18DaysRequest.executeRequest(Request.Method.POST, APIs.GET_OFFLINE_17_INSPECTION_LIST, params, GetInspectionFlag,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);

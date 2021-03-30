@@ -965,9 +965,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     void GetAddFromLatLng() {
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("Latitude", global.LATITUDE);
-        params.put("Longitude", global.LONGITUDE);
-        params.put("IsAOBRDAutomatic", String.valueOf(IsAOBRDAutomatic));
+         params.put(ConstantsKeys.Latitude, global.LATITUDE);
+         params.put(ConstantsKeys.Longitude, global.LONGITUDE);
+        params.put(ConstantsKeys.IsAOBRDAutomatic, String.valueOf(IsAOBRDAutomatic));
 
         GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, GetAddFromLatLng,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -994,13 +994,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         int isOdometer = sharedPref.IsOdometerFromOBD(getActivity()) ? 1 : 0;
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("IsOdometerFromOBD", String.valueOf(isOdometer) );
-        params.put("VIN", VIN);
-        params.put("CompanyId", CompanyId);
-        params.put("LogDate", String.valueOf(currentDateTime) );
-        params.put("UTCStartDateTime", utcDateStr );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.IsOdometerFromOBD, String.valueOf(isOdometer) );
+         params.put(ConstantsKeys.VIN, VIN);
+         params.put(ConstantsKeys.CompanyId, CompanyId);
+         params.put(ConstantsKeys.LogDate, String.valueOf(currentDateTime) );
+        params.put(ConstantsKeys.UTCStartDateTime, utcDateStr );
 
         GetMilesRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_MILES, params, GetMiles,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);

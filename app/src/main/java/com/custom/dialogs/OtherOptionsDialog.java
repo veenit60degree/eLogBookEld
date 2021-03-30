@@ -185,8 +185,8 @@ public class OtherOptionsDialog extends Dialog {
             progressDialog.show();
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
 
         GetEditedRecordRequest.executeRequest(Request.Method.POST, APIs.GET_SUGGESTED_RECORDS, params, 101,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);

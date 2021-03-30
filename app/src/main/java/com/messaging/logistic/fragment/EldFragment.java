@@ -165,7 +165,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     String SavedCanCycle = "", SavedUsaCycle = "", CurrentCycle = "", CurrentCycleId = "", TeamDriverType = "",
             MainDriverId = "", CoDriverId = "", ViolationsReason = "", titleDesc, okText, ptiSelectedtxt = "";
     String certifyTitle = "<font color='#1A3561'><b>Alert !!</b></font>";
-    String DriverCompanyId = "", DriverCarrierName = "", CoDriverCarrierName = "", State = "", Country = "", AddressLine = "";
+    String DriverCompanyId = "", DriverCarrierName = "", CoDriverCarrierName = "", State = "", Country = "", AddressLine = "", LocationType = "";
     public static String City = "", AobrdState = "", isPersonal = "false", VehicleId = "", DriverStatusId = "1";
     String packageName              = "com.messaging.logistic";
 
@@ -280,6 +280,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     boolean isMinOffDutyHoursSatisfied = false;
     boolean IsPersonalUseAllowed = true;
     boolean isEldRuleAlreadyCalled = false;
+    boolean isLocMalfunction;
 
     public static boolean IsPrePost = false;
     public static boolean IsStartReading = false;
@@ -2378,7 +2379,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                            /* } else {
                                 OpenLocationDialog(OFF_DUTY, OldSelectedStatePos);
                             }*/
-                        }  if(constants.isManualLocMalfunctionEvent(getActivity(), DriverType)){
+                        }  if(constants.isLocMalfunctionEvent(getActivity(), DriverType)){
                            // DriverLocationDialog.updateViewTV.performClick();
                             OpenLocationDialog(OFF_DUTY, OldSelectedStatePos, true);
                         }else {
@@ -2453,7 +2454,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 }
                             }
 
-                        }  if(constants.isManualLocMalfunctionEvent(getActivity(), DriverType)){
+                        }  if(constants.isLocMalfunctionEvent(getActivity(), DriverType)){
                            // DriverLocationDialog.updateViewTV.performClick();
                             OpenLocationDialog(SLEEPER, OldSelectedStatePos, true);
                         }else {
@@ -2792,7 +2793,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 GetAddFromLatLng();
             }
 
-        } if(constants.isManualLocMalfunctionEvent(getActivity(), DriverType)){
+        } if(constants.isLocMalfunctionEvent(getActivity(), DriverType)){
           //  DriverLocationDialog.updateViewTV.performClick();
             OpenLocationDialog(DRIVING, OldSelectedStatePos, true);
         }else {
@@ -2879,7 +2880,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 }
             }
 
-        } else if(constants.isManualLocMalfunctionEvent(getActivity(), DriverType)){
+        } else if(constants.isLocMalfunctionEvent(getActivity(), DriverType)){
            // DriverLocationDialog.updateViewTV.performClick();
             OpenLocationDialog(ON_DUTY, OldSelectedStatePos, true);
         }else {
@@ -3193,7 +3194,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
     /*===== Save Driver Jobs with Shared Preference to 18 days Array List and in unposted array those will be posted to server======= */
-    private void SaveDriversJob(String driverStatus) {
+    private void SaveDriversJob(String driverStatus ) {
 
         boolean isLogSavedInSyncTable = false;
         String statusStr = "";
@@ -3227,7 +3228,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             String.valueOf(BackgroundLocationService.GpsVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(getActivity()), "mannual_save", isYardBtnClick,
                             Global, sharedPref.get16hrHaulExcptn(getActivity()), false,
                             "" + isHaulExcptn,
-                            "", hMethods, dbHelper);
+                            "", LocationType, hMethods, dbHelper);
 
 
                     String CurrentDate = Global.GetCurrentDateTime();
@@ -3284,7 +3285,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 IsAOBRD = sharedPref.IsAOBRD(getActivity());
                 IsAOBRDAutomatic = sharedPref.IsAOBRDAutomatic(getActivity());
 
-                if (!IsAOBRD || IsAOBRDAutomatic) {
+                if ((!IsAOBRD || IsAOBRDAutomatic) && !isLocMalfunction) {
                     City = "";
                     State = "";
                     Country = "";
@@ -3298,6 +3299,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            isLocMalfunction = false;
 
             try {
                 // Save driver job in array
@@ -3331,7 +3333,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         String.valueOf(isHaulExcptn),
                         "false", "mannual_save",
                         String.valueOf(isAdverseExcptn),
-                        "", ""
+                        "", "", LocationType
 
                 );
 
@@ -3422,7 +3424,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         String.valueOf(BackgroundLocationService.GpsVehicleSpeed),
                         sharedPref.GetCurrentTruckPlateNo(getActivity()), "mannual_save", isYardBtnClick,
                         Global, isHaulExcptn, false, "" + isAdverseExcptn,
-                        "", hMethods, dbHelper);
+                        "", LocationType, hMethods, dbHelper);
 
                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
                 hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray);
@@ -3469,7 +3471,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         String.valueOf(BackgroundLocationService.GpsVehicleSpeed),
                         sharedPref.GetCurrentTruckPlateNo(getActivity()), "mannual_save", isYardBtnClick,
                         Global, isHaulExcptn, false,"" + isAdverseExcptn,
-                        "", hMethods, dbHelper);
+                        "", LocationType, hMethods, dbHelper);
 
                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
                 hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray);
@@ -4075,10 +4077,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     private class DriverLocationListener implements DriverLocationDialog.LocationListener {
 
         @Override
-        public void CancelLocReady() {
+        public void CancelLocReady(boolean isMalfunction, int JobType) {
             IsPopupDismissed = false;
             EnableJobViews();
-
+            LocationType = "";
             try {
                 if (driverLocationDialog != null && driverLocationDialog.isShowing())
                     driverLocationDialog.dismiss();
@@ -4087,13 +4089,21 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             } catch (final Exception e) {
                 e.printStackTrace();
             }
+
+            if(isMalfunction){
+                isLocMalfunction = false;
+                LocationType = SharedPref.getLocMalfunctionType(getActivity());
+                saveInAobrdMalfnModeStatus(JobType);
+            }
         }
 
         @Override
-        public void SaveLocReady(int position, int spinnerItemPos, int JobType, String city, EditText CityNameEditText, View view) {
+        public void SaveLocReady(int position, int spinnerItemPos, int JobType, String city, EditText CityNameEditText,
+                                 View view, boolean isMalfunction) {
 
             City = city;
             OldSelectedStatePos = spinnerItemPos;
+            LocationType = "";
 
             if (spinnerItemPos < StateList.size()) {
                 State = StateList.get(spinnerItemPos).getState();
@@ -4101,6 +4111,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             }
 
             if (City.length() > 0) {
+
+                if(isMalfunction && SharedPref.getLocMalfunctionType( getContext()).equals("x")){
+                    isLocMalfunction = constants.isLocMalfunctionEvent(getActivity(), DriverType);
+                    LocationType = "m";
+                }
 
                 try {
                     if (driverLocationDialog != null && driverLocationDialog.isShowing())
@@ -4112,40 +4127,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 }
                 HideKeyboard(CityNameEditText);
 
-                switch (JobType) {
+                saveInAobrdMalfnModeStatus(JobType);
 
-                    case OFF_DUTY:
-                        Global.SaveCurrentCycle(DriverType, Country, "", getActivity());
-                        SetDataInView();
-                        SaveOffDutyStatus();
-                        break;
-
-                    case SLEEPER:
-                        Global.SaveCurrentCycle(DriverType, Country, "", getActivity());
-                        SetDataInView();
-
-                        SaveSleeperStatus();
-                        break;
-
-                    case DRIVING:
-
-                        Global.SaveCurrentCycle(DriverType, Country, "", getActivity());
-                        SetDataInView();
-                        isPersonal = "false";
-                        SaveDrivingStatus();
-
-                        break;
-
-
-                    case ON_DUTY:
-
-                        SaveOnDutyStatus();
-                        break;
-
-                    case PERSONAL:
-                        SavePersonalStatus();
-                        break;
-                }
             } else {
                 Global.EldScreenToast(CityNameEditText, "Please enter city name", getResources().getColor(R.color.colorVoilation));
             }
@@ -4165,6 +4148,42 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    void saveInAobrdMalfnModeStatus(int JobType){
+        switch (JobType) {
+
+            case OFF_DUTY:
+                Global.SaveCurrentCycle(DriverType, Country, "", getActivity());
+                SetDataInView();
+                SaveOffDutyStatus();
+                break;
+
+            case SLEEPER:
+                Global.SaveCurrentCycle(DriverType, Country, "", getActivity());
+                SetDataInView();
+
+                SaveSleeperStatus();
+                break;
+
+            case DRIVING:
+
+                Global.SaveCurrentCycle(DriverType, Country, "", getActivity());
+                SetDataInView();
+                isPersonal = "false";
+                SaveDrivingStatus();
+
+                break;
+
+
+            case ON_DUTY:
+
+                SaveOnDutyStatus();
+                break;
+
+            case PERSONAL:
+                SavePersonalStatus();
+                break;
+        }
+    }
 
     void HideKeyboard(View view) {
         try {
@@ -4424,7 +4443,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             sharedPref.setAdverseExcptnCo(false, getActivity());
 
                         hMethods.SaveDriversJob(DRIVER_ID, DeviceId, "", getString(R.string.disable_adverse_exception),
-                                false, DriverType, constants, sharedPref,
+                                LocationType,false, DriverType, constants, sharedPref,
                                 MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                 syncingMethod, Global, hMethods, dbHelper, getActivity());
                     }
@@ -4440,7 +4459,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             sharedPref.set16hrHaulExcptnCo(false, getActivity());
                         }
                         hMethods.SaveDriversJob(DRIVER_ID, DeviceId, "", getString(R.string.disable_ShortHaul_exception),
-                                true, DriverType, constants, sharedPref,
+                                LocationType, true, DriverType, constants, sharedPref,
                                 MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                 syncingMethod, Global, hMethods, dbHelper, getActivity());
                     }
@@ -4793,18 +4812,18 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             String Longitude, String DriverTimZone, String PowerUnitNumber, String LogDate){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("CompanyId", CompanyId);
-        params.put("Id", Id);
-        params.put("Status", Status);
-        params.put("CycleId", ChangedCycleId);
-        params.put("CurrentCycleId", CurrentCycleId);
-        params.put("Latitude", Latitude);
-        params.put("Longitude", Longitude);
-        params.put("DriverTimZone", DriverTimZone);
-        params.put("PowerUnitNumber", PowerUnitNumber);
-        params.put("LogDate", LogDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+         params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.Id, Id);
+         params.put(ConstantsKeys.Status, Status);
+         params.put(ConstantsKeys.CycleId, ChangedCycleId);
+         params.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
+         params.put(ConstantsKeys.Latitude, Latitude);
+         params.put(ConstantsKeys.Longitude, Longitude);
+        params.put(ConstantsKeys.DriverTimZone, DriverTimZone);
+        params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
+         params.put(ConstantsKeys.LogDate, LogDate);
 
         ChangeCycleRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_DRIVER_CYCLE , params, ChangeCycle,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
@@ -4833,9 +4852,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             String toDate = Globally.ConvertDateFormatMMddyyyy(currentDateTime.toString());
 
             params = new HashMap<String, String>();
-            params.put("DriverId", DRIVER_ID);
-            params.put("FromDate", fromDateStr);
-            params.put("ToDate", toDate);
+            params.put(ConstantsKeys.DriverId, DRIVER_ID);
+            params.put(ConstantsKeys.FromDate, fromDateStr);
+            params.put(ConstantsKeys.ToDate, toDate);
 
             GetReCertifyRequest.executeRequest(Request.Method.POST, APIs.GET_RECERTIFY_PENDING_RECORDS, params, GetReCertifyRecords,
                     Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -4849,9 +4868,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void SaveTrailerNumber(final String DriverId, final String DeviceId, final String TrailerNumber) {
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("VIN", TrailerNumber);        // ( please note: here VIN is used as TrailorNumber in parameters. )
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+         params.put(ConstantsKeys.VIN, TrailerNumber);        // ( please note: here VIN is used as TrailorNumber in parameters. )
 
         SaveTrailerNumber.executeRequest(Request.Method.POST, APIs.UPDATE_TRAILER_NUMBER, params, SaveTrailer,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -4866,10 +4885,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             progressBar.setVisibility(View.VISIBLE);
         }
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("CompanyId", CompanyId);
-        params.put("VIN", VIN);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+         params.put(ConstantsKeys.CompanyId, CompanyId);
+         params.put(ConstantsKeys.VIN, VIN);
 
         GetOBDVehRequest.executeRequest(Request.Method.POST, APIs.GET_OBD_ASSIGNED_VEHICLES, params, GetObdAssignedVeh,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -4893,18 +4912,18 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         }*/
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("CoDriverId", CoDriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("PreviousDeviceMappingId", PreviousDeviceMappingId);
-        params.put("DeviceMappingId", DeviceMappingId);
-        params.put("VehicleId", VehicleId);
-        params.put("EquipmentNumber", EquipmentNumber);
-        params.put("PlateNumber", PlateNumber);
-        params.put("VIN", VIN);
-        params.put("CompanyId", CompanyId);
-        params.put("IMEINumber", IMEINumber);
-        params.put("LoginTruckChange", LoginTruckChange);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.CoDriverId, CoDriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.PreviousDeviceMappingId, PreviousDeviceMappingId);
+        params.put(ConstantsKeys.DeviceMappingId, DeviceMappingId);
+        params.put(ConstantsKeys.VehicleId, VehicleId);
+        params.put(ConstantsKeys.EquipmentNumber, EquipmentNumber);
+        params.put(ConstantsKeys.PlateNumber, PlateNumber);
+        params.put(ConstantsKeys.VIN, VIN);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.IMEINumber, IMEINumber);
+        params.put(ConstantsKeys.LoginTruckChange, LoginTruckChange);
 
         SaveOBDVehRequest.executeRequest(Request.Method.POST, APIs.UPDATE_OBD_ASSIGNED_VEHICLE, params, UpdateObdVeh,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -4929,9 +4948,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         Global.LONGITUDE = Global.CheckLongitudeWithCycle(Global.LONGITUDE);
 
         params = new HashMap<String, String>();
-        params.put("Latitude", Global.LATITUDE);
-        params.put("Longitude", Global.LONGITUDE);
-        params.put("IsAOBRDAutomatic", String.valueOf(IsAOBRDAutomatic));
+         params.put(ConstantsKeys.Latitude, Global.LATITUDE);
+         params.put(ConstantsKeys.Longitude, Global.LONGITUDE);
+        params.put(ConstantsKeys.IsAOBRDAutomatic, String.valueOf(IsAOBRDAutomatic));
 
         GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, GetAddFromLatLng,
                 Constants.SocketTimeout3Sec, ResponseCallBack, ErrorCallBack);
@@ -4944,11 +4963,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void GetOdometerReading(final String DriverId, final String DeviceId, final String VIN, final String CreatedDate) {
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("VIN", VIN);
-        params.put("CreatedDate", CreatedDate);
-        params.put("IsCertifyLog", "false");
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.VIN, VIN);
+        params.put(ConstantsKeys.CreatedDate, CreatedDate);
+        params.put(ConstantsKeys.IsCertifyLog, "false");
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER, params, GetOdometer,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -4967,10 +4986,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 is18DaysLogApiCalled = true;
 
                 params = new HashMap<String, String>();
-                params.put("DriverId", DriverId);
-                params.put("DeviceId", DeviceId);
-                params.put("ProjectId", "1");
-                params.put("UTCDateTime", UtcDate);
+                params.put(ConstantsKeys.DriverId, DriverId);
+                 params.put(ConstantsKeys.DeviceId, DeviceId);
+                 params.put(ConstantsKeys.ProjectId, "1");
+                params.put(ConstantsKeys.UTCDateTime, UtcDate);
 
                 GetLog18DaysRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS, params, GetDriverLog18Days,
                         Constants.SocketTimeout30Sec, ResponseCallBack, ErrorCallBack);
@@ -4983,9 +5002,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void GetShipment18Days(final String DriverId, final String DeviceId, final String ShippingDocDate, int flag) {
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("ShippingDocDate", ShippingDocDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.ShippingDocDate, ShippingDocDate);
 
         GetShippingRequest.executeRequest(Request.Method.POST, APIs.GET_SHIPPING_INFO_OFFLINE, params, flag,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -4995,10 +5014,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void GetOdometer18Days(final String DriverId, final String DeviceId, final String CompanyId, final String CreatedDate) {
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("CompanyId", CompanyId);
-        params.put("CreatedDate", CreatedDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.CreatedDate, CreatedDate);
 
         GetOdo18DaysRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER_OFFLINE, params, GetOdometers18Days,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -5010,9 +5029,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void GetDriverStatusPermission(final String DriverId, final String DeviceId, final String VehicleId ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("VehicleId", VehicleId );
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.VehicleId, VehicleId );
 
         GetPermissions.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS_PERMISSION, params, GetDriverPermission,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -5024,9 +5043,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void GetInspection18Days(final String DriverId, final String DeviceId, final String SearchedDate, final int GetInspectionFlag ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("SearchedDate", SearchedDate );
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.SearchedDate, SearchedDate );
 
         Inspection18DaysRequest.executeRequest(Request.Method.POST, APIs.GET_OFFLINE_INSPECTION_LIST, params, GetInspectionFlag,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -5039,10 +5058,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void GetInspectionDefectsList(final String DriverId, final String DeviceId, final String ProjectId, final String VIN){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ProjectId", ProjectId );
-        params.put("VIN", VIN );
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.ProjectId, ProjectId );
+        params.put(ConstantsKeys.VIN, VIN );
 
         GetInspectionRequest.executeRequest(Request.Method.POST, APIs.GET_INSPECTION_DETAIL , params, GetInspection,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -5055,9 +5074,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     void GetNotificationLog(final String DriverId, final String DeviceId){  /*, final String SearchDate*/
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ProjectId", Global.PROJECT_ID );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+         params.put(ConstantsKeys.ProjectId, Global.PROJECT_ID );
         GetNotificationRequest.executeRequest(Request.Method.POST, APIs.GET_NOTIFICATION_LOG , params, GetNotifications,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
 
@@ -5083,11 +5102,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         String   EndDate              = Global.GetCurrentDeviceDate();  // current Date
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ProjectId", Global.PROJECT_ID);
-        params.put("DrivingStartTime", StartDate);
-        params.put("DriverLogDate", EndDate );
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.ProjectId, Global.PROJECT_ID);
+        params.put(ConstantsKeys.DrivingStartTime, StartDate);
+        params.put(ConstantsKeys.DriverLogDate, EndDate );
 
         GetRecapView18DaysData.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS_DETAILS , params, GetRecapViewFlag,
                 Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
@@ -6388,12 +6407,12 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         // call NotReady API
                         if (Global.isConnected(getActivity())) {
                             params = new HashMap<String, String>();
-                            params.put("DriverId", DRIVER_ID);
-                            params.put("DeviceId", DeviceId );
-                            params.put("DriverName", nameTv.getText().toString() );
-                            params.put("CompanyId", DriverCompanyId );
-                            params.put("DriverTimeZoneName", DriverTimeZone );
-                            params.put("LogDateTime", Global.getCurrentDate() );
+                            params.put(ConstantsKeys.DriverId, DRIVER_ID);
+                             params.put(ConstantsKeys.DeviceId, DeviceId );
+                            params.put(ConstantsKeys.DriverName, nameTv.getText().toString() );
+                             params.put(ConstantsKeys.CompanyId, DriverCompanyId );
+                            params.put(ConstantsKeys.DriverTimeZoneName, DriverTimeZone );
+                            params.put(ConstantsKeys.LogDateTime, Global.getCurrentDate() );
 
                             notReadyRequest.executeRequest(Request.Method.POST, APIs.SAVE_CERTIFY_SIGN_REJECTED_AUDIT , params, NotReady,
                                     Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);

@@ -130,7 +130,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     int ExistingVersionCodeInt  = 0,  VersionCodeInt = 0, AppInstallAttemp = 0;
     int CanListSize = 0, UsaListSize = 0, TimeZoneListSize = 0, SavedPosition = 0;
     String SavedCanCycle = "", SavedUsaCycle = "", CurrentCycleId = "", SavedTimeZone = "", DeviceId = "", DriverId = "", DriverName = "", CompanyId = "";
-    String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "", TruckNumber, DriverTimeZone, IsSouthCanada, SavedCycleType, changedCycleId, changedCycleName;
+    String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "", TruckNumber, DriverTimeZone,
+            IsSouthCanada, SavedCycleType, changedCycleId, changedCycleName, LocationType = "";
     String Approved = "2";
     String Rejected = "3";
 
@@ -456,6 +457,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         haulExceptnSwitchButton.setChecked(isHaulExcptn);
         adverseSwitchButton.setChecked(isAdverseExcptn);
 
+        if(constants.isLocMalfunctionEvent(getActivity(), DriverType) && SharedPref.getLocMalfunctionType( getContext()).equals("x")){
+            // SharedPref.setLocMalfunctionType("m", getContext());
+            LocationType = "m";
+        }
 
         try{
             JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
@@ -1036,7 +1041,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     adverseRemarksDialog.dismiss();
 
                 hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
-                        false, DriverType, constants, sharedPref,
+                        LocationType, false, DriverType, constants, sharedPref,
                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                         syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
 
@@ -1319,7 +1324,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     void GetDriverLogPermission(final String DriverId){  /*, final String SearchDate*/
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
+        params.put(ConstantsKeys.DriverId, DriverId);
         GetDriverLogPostPermission.executeRequest(com.android.volley.Request.Method.POST, APIs.DRIVER_VIOLATION_PERMISSION , params, DriverLogPermission,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
 
@@ -1330,9 +1335,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     void getCycleChangeApproval(final String DriverId, final String DeviceId, final String CompanyId){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("CompanyId", CompanyId);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+         params.put(ConstantsKeys.CompanyId, CompanyId);
         getCycleChangeApproval.executeRequest(com.android.volley.Request.Method.POST, APIs.GET_CYCLE_CHANGE_REQUESTS , params, CycleChangeApproval,
                  Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
 
@@ -1344,18 +1349,19 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             String Longitude, String DriverTimZone, String PowerUnitNumber, String LogDate){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("CompanyId", CompanyId);
-        params.put("Id", Id);
-        params.put("Status", Status);
-        params.put("CycleId", ChangedCycleId);
-        params.put("CurrentCycleId", CurrentCycleId);
-        params.put("Latitude", Latitude);
-        params.put("Longitude", Longitude);
-        params.put("DriverTimZone", DriverTimZone);
-        params.put("PowerUnitNumber", PowerUnitNumber);
-        params.put("LogDate", LogDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.Id, Id);
+        params.put(ConstantsKeys.Status, Status);
+        params.put(ConstantsKeys.CycleId, ChangedCycleId);
+        params.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
+        params.put(ConstantsKeys.Latitude, Latitude);
+        params.put(ConstantsKeys.Longitude, Longitude);
+        params.put(ConstantsKeys.DriverTimZone, DriverTimZone);
+        params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
+        params.put(ConstantsKeys.LogDate, LogDate);
+        params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(getActivity()));
 
         ChangeCycleRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_DRIVER_CYCLE , params, ChangeCycle,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
@@ -1368,16 +1374,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                              final String CycleId, final String DriverTimeZone, final String Latitude, final String Longitude, final String PowerUnitNumber){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("CompanyId", CompanyId);
-        params.put("IsSouthCanada", IsSouthCanada);
-        params.put("CycleId", CycleId);
-        params.put("DriverTimeZone", DriverTimeZone);
-        params.put("Latitude", Latitude);
-        params.put("Longitude", Longitude);
-        params.put("PowerUnitNumber", PowerUnitNumber);
-
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.IsSouthCanada, IsSouthCanada);
+        params.put(ConstantsKeys.CycleId, CycleId);
+        params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
+        params.put(ConstantsKeys.Latitude, Latitude);
+        params.put(ConstantsKeys.Longitude, Longitude);
+        params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
+        params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(getActivity()));
 
         OperatingZoneRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_OPERATING_ZONE , params, OperatingZone,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
@@ -1792,7 +1798,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.haul_excptn_enabled), getResources().getColor(R.color.colorPrimary));
 
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
-                                        true, DriverType, constants, sharedPref,
+                                        LocationType, true, DriverType, constants, sharedPref,
                                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                         syncingMethod, global, hMethods, dbHelper, getActivity());
 

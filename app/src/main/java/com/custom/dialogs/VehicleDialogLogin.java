@@ -25,6 +25,7 @@ import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.VehicleModel;
@@ -248,8 +249,8 @@ public class VehicleDialogLogin  extends Dialog {
     void LogoutUser(final String DriverId){
         progressD.show();
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("MobileDeviceCurrentDateTime", global.getCurrentDate());
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
 
         LogoutRequest.executeRequest(Request.Method.POST, APIs.DRIVER_LOGOUT , params, 1,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

@@ -1111,17 +1111,17 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                                   final String PlateNumber, final String VIN, final String CompanyId, final String IMEINumber){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("CoDriverId", CoDriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("PreviousDeviceMappingId", PreviousDeviceMappingId);
-        params.put("DeviceMappingId", DeviceMappingId);
-        params.put("VehicleId", VehicleId);
-        params.put("EquipmentNumber", EquipmentNumber);
-        params.put("PlateNumber", PlateNumber);
-        params.put("VIN", VIN);
-        params.put("CompanyId", CompanyId);
-        params.put("IMEINumber", IMEINumber);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.CoDriverId, CoDriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.PreviousDeviceMappingId, PreviousDeviceMappingId);
+        params.put(ConstantsKeys.DeviceMappingId, DeviceMappingId);
+        params.put(ConstantsKeys.VehicleId, VehicleId);
+        params.put(ConstantsKeys.EquipmentNumber, EquipmentNumber);
+        params.put(ConstantsKeys.PlateNumber, PlateNumber);
+        params.put(ConstantsKeys.VIN, VIN);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.IMEINumber, IMEINumber);
 
         SaveOBDVehRequest.executeRequest(Request.Method.POST, APIs.UPDATE_OBD_ASSIGNED_VEHICLE , params, UpdateObdVeh,
                 Constants.SocketTimeout30Sec, ResponseCallBack, ErrorCallBack);
@@ -1134,10 +1134,10 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     void GetOBDAssignedVehicles(final String DriverId, final String DeviceId, final String CompanyId,  final String VIN){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("CompanyId", CompanyId);
-        params.put("VIN", VIN);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+         params.put(ConstantsKeys.CompanyId, CompanyId);
+         params.put(ConstantsKeys.VIN, VIN);
 
         GetOBDVehRequest.executeRequest(Request.Method.POST, APIs.GET_OBD_ASSIGNED_VEHICLES , params, GetObdAssignedVeh,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -1149,9 +1149,9 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     void SaveTrailerNumber(final String DriverId, final String DeviceId, final String TrailerNumber){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("VIN", TrailerNumber);        // ( please note: here VIN is used as TrailorNumber in parameters. )
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
+         params.put(ConstantsKeys.VIN, TrailerNumber);        // ( please note: here VIN is used as TrailorNumber in parameters. )
 
         SaveTrailerNumber.executeRequest(Request.Method.POST, APIs.UPDATE_TRAILER_NUMBER , params, SaveTrailer,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -1164,10 +1164,10 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     void GetInspectionDetail(final String DriverId, final String DeviceId, final String ProjectId, final String VIN){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ProjectId", ProjectId );
-        params.put("VIN", VIN );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+         params.put(ConstantsKeys.ProjectId, ProjectId );
+         params.put(ConstantsKeys.VIN, VIN );
 
         GetInspectionRequest.executeRequest(Request.Method.POST, APIs.GET_INSPECTION_DETAIL , params, GetInspection,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -1179,8 +1179,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     void GetAddFromLatLng(String lat, String lon) {
 
         params = new HashMap<String, String>();
-        params.put("Latitude", lat);
-        params.put("Longitude", lon );
+         params.put(ConstantsKeys.Latitude, lat);
+         params.put(ConstantsKeys.Longitude, lon );
 
         GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, GetAddFromLatLng,
                 Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);

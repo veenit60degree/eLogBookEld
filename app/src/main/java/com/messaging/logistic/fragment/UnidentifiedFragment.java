@@ -377,11 +377,11 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     void GetUnidentifiedRecords(final String DriverId, final String DeviceId, final String CurrentDate, String VIN, int flag){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("CurrentDate", CurrentDate);
-        params.put("VIN", VIN);
-        params.put("Country", Country);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.CurrentDate, CurrentDate);
+         params.put(ConstantsKeys.VIN, VIN);
+        params.put(ConstantsKeys.Country, Country);
 
         GetUnidentifiedRecords.executeRequest(Request.Method.POST, APIs.GET_UNIDENTIFIED_RECORDS , params, flag,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

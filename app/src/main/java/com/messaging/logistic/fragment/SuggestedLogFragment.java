@@ -783,8 +783,8 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 progressDialog.show();
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
 
         GetEditedRecordRequest.executeRequest(Request.Method.POST, APIs.GET_SUGGESTED_RECORDS , params, GetRecordFlag,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -812,17 +812,17 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
         String selectedDate= selectedDateTime.toString().split("T")[0];
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("CurrentDate", selectedDate);
-        params.put("StatusId", StatusId );
-        params.put("CoDriverKey", CoDriverId);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.CurrentDate, selectedDate);
+        params.put(ConstantsKeys.StatusId, StatusId );
+        params.put(ConstantsKeys.CoDriverKey, CoDriverId);
 
-        params.put("ActionDateTime", globally.getCurrentDate() );
-        params.put("ActionTimeZone", sharedPref.getTimeZone(getActivity()) );
+        params.put(ConstantsKeys.ActionDateTime, globally.getCurrentDate() );
+        params.put(ConstantsKeys.ActionTimeZone, sharedPref.getTimeZone(getActivity()) );
 
         if(!isCurrentDate) {
-            params.put("ProjectId", Globally.PROJECT_ID);
+             params.put(ConstantsKeys.ProjectId, Globally.PROJECT_ID);
             if (IsContinueWithSign == false) {
                 params.put(ConstantsKeys.StringImage, LogSignImageInByte);
             }
@@ -840,9 +840,9 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     void GetReCertifyRecords(final String DriverId, final String FromDate, final String ToDate ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("FromDate", FromDate );
-        params.put("ToDate", ToDate );
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.FromDate, FromDate );
+        params.put(ConstantsKeys.ToDate, ToDate );
 
         GetReCertifyRequest.executeRequest(Request.Method.POST, APIs.GET_RECERTIFY_PENDING_RECORDS, params, GetReCertifyRecords,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);

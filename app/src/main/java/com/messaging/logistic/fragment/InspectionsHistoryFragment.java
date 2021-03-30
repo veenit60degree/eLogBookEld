@@ -400,8 +400,8 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         //   inspectionProgressBar.setVisibility(View.VISIBLE);
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId);
         params.put("Inspection.InspectionDateTime", DateTime );
 
         GetInspectionsRequest.executeRequest(Request.Method.POST, APIs.GET_SAVED_INSPECTION, params, 1,

@@ -237,7 +237,7 @@ public class ParseLoginDetails {
             SharedPref.SetSystemToken(DriverDetail.getString("DeviceId"), context);
 
             Drivername      = DriverDetail.getString("DriverName");
-            DriverId        = DriverDetail.getString("DriverId");
+            DriverId        = DriverDetail.getString(ConstantsKeys.DriverId);
             CompanyId       = DriverDetail.getString("CompanyId");
 
             HomeTerminal    = getStringData(DriverDetail, CompanyName, "HomeTerminal");

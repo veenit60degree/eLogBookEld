@@ -269,9 +269,9 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
     void GetShipment18Days(final String DriverId, final String DeviceId, final String ShippingDocDate, int flag){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("ShippingDocDate", ShippingDocDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.ShippingDocDate, ShippingDocDate);
 
         GetShippingRequest.executeRequest(Request.Method.POST, APIs.GET_SHIPPING_INFO_OFFLINE , params, flag,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

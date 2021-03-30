@@ -29,7 +29,7 @@ public class CommonUtils {
 		int SingleDriverMenuWidth = 385;
 		int DualDriverMenuWidth   = 500;
 
-		TelephonyManager manager = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
+	/*	TelephonyManager manager = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			if (Objects.requireNonNull(manager).getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
 				Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Detected with DisplayMetrics isTablet: " + Constants.isTabletDevice(mContext) + "\nDetected with TelephonyManager: Tablet", 2003);
@@ -37,7 +37,7 @@ public class CommonUtils {
 				Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Detected with DisplayMetrics isTablet: " + Constants.isTabletDevice(mContext) + "\nDetected with TelephonyManager: Mobile Phone", 2003);
 			}
 		}
-
+*/
 
 		if(Globally.isTablet(mContext)) {
 

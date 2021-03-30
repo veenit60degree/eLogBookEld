@@ -422,7 +422,7 @@ public class    InspectionDetailView  extends Fragment {
     private class DriverLocationListener implements DriverLocationDialog.LocationListener {
 
         @Override
-        public void CancelLocReady() {
+        public void CancelLocReady(boolean isMalfunction, int JobType) {
 
             try {
                 if (driverLocationDialog != null && driverLocationDialog.isShowing())
@@ -435,7 +435,8 @@ public class    InspectionDetailView  extends Fragment {
         }
 
         @Override
-        public void SaveLocReady(int position, int spinnerItemPos, int JobType, String city, EditText CityNameEditText, View view) {
+        public void SaveLocReady(int position, int spinnerItemPos, int JobType, String city,
+                                 EditText CityNameEditText, View view, boolean isMalfunction) {
 
             City = city;
             if (spinnerItemPos < StateList.size()) {
@@ -583,11 +584,11 @@ public class    InspectionDetailView  extends Fragment {
         inspectionProgressBar.setVisibility(View.VISIBLE);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("InspectionId", InspectionId);
-        params.put("InspectionDateTime", InspectionDateTime);
-        params.put("Location", Location);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.InspectionId, InspectionId);
+        params.put(ConstantsKeys.InspectionDateTime, InspectionDateTime);
+        params.put(ConstantsKeys.Location, Location);
 
         SaveLocationRequest.executeRequest(Request.Method.POST, APIs.UPDATE_DRIVER_INSPECTION_LOC , params, 1,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);

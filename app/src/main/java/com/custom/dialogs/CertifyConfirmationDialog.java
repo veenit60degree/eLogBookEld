@@ -24,6 +24,7 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
@@ -151,12 +152,12 @@ public class CertifyConfirmationDialog extends Dialog {
         String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getContext());
 
         Map<String, String> mapParams = new HashMap<String, String>();
-        mapParams.put("DriverId", DriverId);
-        mapParams.put("DeviceId", DeviceId);
-        mapParams.put("DriverName", driverName);
-        mapParams.put("CompanyId", DriverCompanyId);
-        mapParams.put("DriverTimeZoneName", SharedPref.getTimeZone(getContext()));
-        mapParams.put("LogDateTime", globally.getCurrentDate());
+        mapParams.put(ConstantsKeys.DriverId, DriverId);
+        mapParams.put(ConstantsKeys.DeviceId, DeviceId);
+        mapParams.put(ConstantsKeys.DriverName, driverName);
+        mapParams.put(ConstantsKeys.CompanyId, DriverCompanyId);
+        mapParams.put(ConstantsKeys.DriverTimeZoneName, SharedPref.getTimeZone(getContext()));
+        mapParams.put(ConstantsKeys.LogDateTime, globally.getCurrentDate());
 
         notReadyRequest.executeRequest(Request.Method.POST, APIs.SAVE_CERTIFY_SIGN_REJECTED_AUDIT, mapParams, 1010,
                 Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);

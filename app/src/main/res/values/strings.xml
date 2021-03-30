@@ -418,7 +418,7 @@
     <string name="loc_mal_occur">Location malfunction occured</string>
     <string name="loc_mal">Location Malfunction</string>
 
-
+    <string name="save_location">Save Location</string>
     <string name="save">Save</string>
     <string name="certified">Certified</string>
     <string name="uncertified">Uncertified</string>
@@ -459,6 +459,8 @@
     <string name="TRAILER_pop">Trailer : </string>
     <string name="cancel">Cancel</string>
     <string name="ignore">Ignore</string>
+    <string name="ignore_and_save">Ignore &amp; Save</string>
+    <string name="ignore_location">Ignore Location</string>
     <string name="ShippingDocNo">BL/Trip No. </string>
     <string name="ShipperNo">Shipper Number: </string>
     <string name="ShippingDoc">Shipping Doc</string>

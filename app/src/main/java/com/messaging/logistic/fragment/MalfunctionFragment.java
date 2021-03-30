@@ -246,7 +246,9 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
 
 
     void checkLocMalfunction(){
-        if(sharedPref.isLocMalfunctionOccur(getActivity()) && sharedPref.getLocMalfunctionType(getActivity()).equals("m")){
+        boolean isLocMalfunctionOccur = sharedPref.isLocMalfunctionOccur(getActivity());
+        String malfunctionType = sharedPref.getLocMalfunctionType(getActivity());
+        if(isLocMalfunctionOccur && (malfunctionType.equals("m") || malfunctionType.equals("x"))){
             malfunctionHeaderList.add(new MalfunctionHeaderModel(
                     "Invalid Location Occur", "1", getString(R.string.loc_mal)));
             malfunctionChildList.add(new MalfunctionModel(
@@ -271,12 +273,12 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                               final String Country, String OffsetFromUTC, String CompanyId){
 
         params = new HashMap<String, String>();
-        params.put("VIN", VIN); //4V4NC9EH7GN929538
-        params.put("FromDateTime", FromDateTime);
-        params.put("ToDateTime", ToDateTime );
-        params.put("Country", Country);
-        params.put("OffsetFromUTC", OffsetFromUTC);
-        params.put("CompanyId", CompanyId);
+        params.put(ConstantsKeys.VIN, VIN); //4V4NC9EH7GN929538
+        params.put(ConstantsKeys.FromDateTime, FromDateTime);
+        params.put(ConstantsKeys.ToDateTime, ToDateTime );
+        params.put(ConstantsKeys.Country, Country);
+        params.put(ConstantsKeys.OffsetFromUTC, OffsetFromUTC);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
 
         GetMalfunctionEvents.executeRequest(Request.Method.POST, APIs.GET_MALFUNCTION_EVENTS , params, 0,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

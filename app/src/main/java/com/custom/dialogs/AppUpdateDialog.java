@@ -29,6 +29,7 @@ import com.android.volley.toolbox.Volley;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
@@ -205,9 +206,9 @@ public class AppUpdateDialog extends Dialog {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
 
-                params.put("DriverId", DriverId);
-                params.put("DeviceId", DeviceId);
-                params.put("AppVersion", AppVersion);
+                params.put(ConstantsKeys.DriverId, DriverId);
+                 params.put(ConstantsKeys.DeviceId, DeviceId);
+                params.put(ConstantsKeys.AppVersion, AppVersion);
 
                 return params;
             }

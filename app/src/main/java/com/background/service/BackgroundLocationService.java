@@ -136,6 +136,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     final int GetCtPat18DaysMainDriverLog   = 13;
     final int GetCtPat18DaysCoDriverLog     = 14;
     final int SaveDriverDeviceUsageLog      = 15;
+    final int SaveMalDiagnstcEvent          = 16;
 
     final int GetRecapViewFlagMain          = 111;
     final int GetRecapViewFlagCo            = 112;
@@ -168,16 +169,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     protected LocationManager locationManager;
 
-
-    VolleyRequest GetOdometerRequest, ctPatInsp18DaysRequest, saveDriverDeviceUsageLog;
-
     int LocRefreshTime = 10;
     int CheckInternetConnection = 2;
     private static final long MIN_TIME_BW_UPDATES = 2 * 1000;   //30 sec. 30000 - 1/2 minute -- [960000 milli sec -- (16 minutes)]
     private static final long MIN_TIME_LOCATION_UPDATES = 5 * 1000;   // 5 sec
     private static final long OBD_TIME_LOCATION_UPDATES = 10 * 1000;   // 10 sec
     private static final long IDLE_TIME_LOCATION_UPDATES = 3600 * 1000;   // 1 hour
-    VolleyRequest UpdateLocReqVolley, UpdateUserStatusVolley, GetRecapView18DaysData;
+
+    VolleyRequest GetOdometerRequest, ctPatInsp18DaysRequest, saveDriverDeviceUsageLog;
+    VolleyRequest UpdateLocReqVolley, UpdateUserStatusVolley, GetRecapView18DaysData, SaveMalDiaEventRequest;
     Map<String, String> params;
     String DriverId = "", CoDriverId = "", DeviceId = "", VIN_NUMBER = "", VehicleId = "", CompareLocVal = "";
     String ObdRestarted = "OBD Restarted";
@@ -248,7 +248,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-    int tempOdo = 165334;
+    int tempOdo = 231000;
     int ignitionCount = 0;
 
 
@@ -281,6 +281,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         UpdateLocReqVolley      = new VolleyRequest(getApplicationContext());
         UpdateUserStatusVolley  = new VolleyRequest(getApplicationContext());
         GetRecapView18DaysData  = new VolleyRequest(getApplicationContext());
+        SaveMalDiaEventRequest  = new VolleyRequest(getApplicationContext());
         mNotificationManager    = new NotificationManagerSmart(getApplicationContext());
         DeviceId                = sharedPref.GetSavedSystemToken(getApplicationContext());
 
@@ -401,8 +402,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             // ---------------- temp data ---------------------
         //    sharedPref.saveLocMalfunctionOccurStatus(true, global.getCurrentDate(), getApplicationContext());
-       //     SharedPref.setLocMalfunctionType("m", getApplicationContext());
-             /*  ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
+        //    SharedPref.setLocMalfunctionType("x", getApplicationContext());
+   /*            ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
@@ -513,6 +514,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         if(isMalfunction && sharedPref.isLocMalfunctionOccur(getApplicationContext()) == false) {
                             sharedPref.saveLocMalfunctionOccurStatus(isMalfunction, currentLogDate, getApplicationContext());
+
+                            // save malfunction occur event to server with few inputs
+                            SaveMalDiagstcEvent(DriverId, DeviceId, sharedPref.getVINNumber(getApplicationContext()),
+                                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                                    DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
+                                    sharedPref.getObdEngineHours(getApplicationContext()),
+                                    sharedPref.getDayStartOdometer(getApplicationContext()),
+                                    sharedPref.getHighPrecisionOdometer(getApplicationContext()),
+                                    currentLogDate,  constants.PositionComplianceMalfunction);
                         }
 
                         if(calculatedSpeedFromOdo >= 10 || speed >= 10){
@@ -524,8 +534,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         if (jobType.equals(global.DRIVING)) {
 
                             timeDuration = 30000;
-                            if (SpeedCounter == 10) {
+                           // if (SpeedCounter == 10) {
 
+                            if (minDiff(savedDate) > 0) {
                                 // save current HighPrecisionOdometer in DB
                                 sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
 
@@ -614,6 +625,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 e.printStackTrace();
                 global.IS_OBD_IGNITION = false;
                 global.VEHICLE_SPEED = -1;
+                isWiredDataReceived = false;
             }
 
 
@@ -684,6 +696,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 DateTime savedDateTime = global.getDateTimeObj(timeStampStr, false);
                 DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
 
+                if(savedDateTime.isAfter(currentDateTime)){
+                    sharedPref.setHighPrecisionOdometer(sharedPref.getHighPrecisionOdometer(getApplicationContext()), global.GetCurrentDateTime(), getApplicationContext());
+                }
                 timeInMin = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
 
             }catch (Exception e){
@@ -984,11 +999,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 }
 
                 // communicate with wired OBD server app with Message
-                if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_ACTIVE ){
+                if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_ACTIVE &&
+                        SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_ACTIVE){
                     StartStopServer(constants.WiredOBD);
                 }else{
-                    if(isWiredDataReceived == false && SpeedCounter == 10){
+                    int minDiff = minDiff(sharedPref.getHighPrecesionSavedTime(getApplicationContext()));
+                    if(isWiredDataReceived == false && minDiff > 0){
                         StartStopServer(constants.WiredOBD);
+                    }else{
+                        if(SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_ACTIVE && minDiff > 1){
+                            StartStopServer(constants.WiredOBD);
+                        }
                     }
                 }
 
@@ -1447,7 +1468,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
 
 
-        //   Log.d("DriverId", "DriverId: " + DriverId);
+        //   Log.d(ConstantsKeys.DriverId, "DriverId: " + DriverId);
 
     }
 
@@ -1580,26 +1601,47 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
+    /* ================== Save Malfunction and diagnostic event status =================== */
+    void SaveMalDiagstcEvent(final String DriverId, final String DeviceNumber, final String VIN,
+                                String UnitNo, String CompanyId, final String EngineHours, final String StartOdometer,
+                             final String EndOdometer, final String EventDateTime, final String DiagnosticType){
+
+        params = new HashMap<String, String>();
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceNumber, DeviceNumber );
+        params.put(ConstantsKeys.VIN, VIN );
+
+        params.put(ConstantsKeys.UnitNo, UnitNo);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.EngineHours, EngineHours);
+        params.put(ConstantsKeys.StartOdometer, StartOdometer);
+        params.put(ConstantsKeys.EndOdometer, EndOdometer );
+        params.put(ConstantsKeys.EventDateTime, EventDateTime);
+        params.put(ConstantsKeys.DiagnosticType, DiagnosticType );
+
+        SaveMalDiaEventRequest.executeRequest(Request.Method.POST, APIs.MALFUNCTION_DIAGNOSTIC_EVENT , params, SaveMalDiagnstcEvent,
+                Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
+    }
+
+
 
     /* ================== Update Offline Driver Log =================== */
     void UpdateOfflineDriverLog(final String DriverId, final String CoDriverId, final String DeviceId, final String VIN,
                                 String GpsSpeed, String obdSpeed, boolean isGpsEnabled ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("CoDriverId", CoDriverId);
-        params.put("DeviceId", DeviceId);
-        params.put("VIN", VIN );
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.CoDriverId, CoDriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.VIN, VIN );
 
-        params.put("GPSSpeed", GpsSpeed);
-        params.put("obdSpeed", obdSpeed);
-        params.put("isGpsEnabled", String.valueOf(isGpsEnabled) );
+        params.put(ConstantsKeys.GPSSpeed, GpsSpeed);
+        params.put(ConstantsKeys.obdSpeed, obdSpeed);
+        params.put(ConstantsKeys.isGpsEnabled, String.valueOf(isGpsEnabled) );
 
         UpdateUserStatusVolley.executeRequest(Request.Method.POST, APIs.UPDATE_OFF_LINE_DRIVER_LOG , params, UpdateOffLineStatus,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
     }
-
-
 
 
 
@@ -1616,11 +1658,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             String EndDate = global.GetCurrentDeviceDate();  // current Date
 
             params = new HashMap<String, String>();
-            params.put("DriverId", DriverId);
-            params.put("DeviceId", DeviceId);
-            params.put("ProjectId", global.PROJECT_ID);
-            params.put("DrivingStartTime", StartDate);
-            params.put("DriverLogDate", EndDate);
+            params.put(ConstantsKeys.DriverId, DriverId);
+             params.put(ConstantsKeys.DeviceId, DeviceId);
+             params.put(ConstantsKeys.ProjectId, global.PROJECT_ID);
+            params.put(ConstantsKeys.DrivingStartTime, StartDate);
+            params.put(ConstantsKeys.DriverLogDate, EndDate);
 
             GetRecapView18DaysData.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS_DETAILS, params, GetRecapViewFlag,
                     Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
@@ -2314,7 +2356,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 /* ===================  CROSS CHECK ONCE FOR LOAD_ID AND JOB_ID ================== */
                 MultipartBuilder builderNew = new MultipartBuilder().type(MultipartBuilder.FORM);
-                // .addFormDataPart("DriverId", DriverId ) ;
+                // .addFormDataPart(ConstantsKeys.DriverId, DriverId ) ;
 
                 if (locDataFile != null && locDataFile.exists()) {
                     Log.i("", "---Add File: " + locDataFile.toString());
@@ -2473,12 +2515,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         networkUsage();
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("AlsSendingData", AlsSendingData );
-        params.put("AlsReceivedData", AlsReceivedData   );
-        params.put("MobileUsage", MobileUsage );
-        params.put("TitalUsage", TotalUsage );
-        params.put("EntryDate", savedDate );
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.AlsSendingData, AlsSendingData );
+        params.put(ConstantsKeys.AlsReceivedData, AlsReceivedData   );
+        params.put(ConstantsKeys.MobileUsage, MobileUsage );
+        params.put(ConstantsKeys.TitalUsage, TotalUsage );
+        params.put(ConstantsKeys.EntryDate, savedDate );
 
         saveDriverDeviceUsageLog.executeRequest(Request.Method.POST, APIs.SAVE_DRIVER_DEVICE_USAGE_LOG , params, SaveDriverDeviceUsageLog,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -2492,10 +2534,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     void GetOdometer18Days(final String DriverId, final String DeviceId, final String CompanyId , final String CreatedDate){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("CompanyId", CompanyId  );
-        params.put("CreatedDate", CreatedDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+         params.put(ConstantsKeys.CompanyId, CompanyId  );
+        params.put(ConstantsKeys.CreatedDate, CreatedDate);
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER_OFFLINE , params, GetOdometers18Days,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -2508,9 +2550,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     void GetCtPatInspection18Days(final String DriverId, final String DeviceId, final String SearchedDate, final int GetInspectionFlag ){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("SearchedDate", SearchedDate );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.SearchedDate, SearchedDate );
 
         ctPatInsp18DaysRequest.executeRequest(Request.Method.POST, APIs.GET_OFFLINE_17_INSPECTION_LIST, params, GetInspectionFlag,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -2600,6 +2642,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             if(status.equalsIgnoreCase("true")) {
                 switch (flag) {
+
+                    case SaveMalDiagnstcEvent:
+                        Log.d("SaveMalDiagnstcEvent", "SaveMalDiagnstcEvent saved successfully");
+                        break;
+
 
                     case UpdateOffLineStatus:
 

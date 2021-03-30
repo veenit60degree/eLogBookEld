@@ -476,11 +476,11 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
     void GetOdometerReading(final String DriverId, final String DeviceId, final String VIN, final String CreatedDate){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("VIN", VIN );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+         params.put(ConstantsKeys.VIN, VIN );
         // params.put("CreatedDate", CreatedDate);
-        params.put("IsCertifyLog", "false");
+        params.put(ConstantsKeys.IsCertifyLog, "false");
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER , params, GetOdometerss,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -495,33 +495,29 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
                              final String CreatedDate, final String IsEditOdometer, final String TruckOdometerId){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("VIN", VIN );
-        params.put("StartOdometer", StartOdometer );
-        params.put("EndOdometer", EndOdometer );
-        params.put("DistanceType", DistanceType );
-        params.put("IsEditOdometer", IsEditOdometer );
+        params.put(ConstantsKeys.DriverId, DriverId);
+         params.put(ConstantsKeys.DeviceId, DeviceId );
+         params.put(ConstantsKeys.VIN, VIN );
+        params.put(ConstantsKeys.StartOdometer, StartOdometer );
+        params.put(ConstantsKeys.EndOdometer, EndOdometer );
+        params.put(ConstantsKeys.DistanceType, DistanceType );
+        params.put(ConstantsKeys.IsEditOdometer, IsEditOdometer );
 
         if(IsEditOdometer.equals("true")){
-            params.put("TruckOdometerId", TruckOdometerId );
+            params.put(ConstantsKeys.TruckOdometerId, TruckOdometerId );
         }else{
-            params.put("CreatedDate", CreatedDate );
+            params.put(ConstantsKeys.CreatedDate, CreatedDate );
         }
 
         if(!EldFragment.DriverStatusId.equals("1")) {
-            params.put("DriverStatusID", EldFragment.DriverStatusId); // OnDuty, Driving, Sleeper
+            params.put(ConstantsKeys.DriverStatusID, EldFragment.DriverStatusId); // OnDuty, Driving, Sleeper
         }else{
             if(EldFragment.isPersonal.equals("true")){
-                params.put("DriverStatusID", "5"); // Personal
+                params.put(ConstantsKeys.DriverStatusID, "5"); // Personal
             }else{
-                params.put("DriverStatusID", EldFragment.DriverStatusId ); // Off Duty
+                params.put(ConstantsKeys.DriverStatusID, EldFragment.DriverStatusId ); // Off Duty
             }
         }
-        //  Log.d("DriverStatusId", "DriverStatusId: " + EldFragment.DriverStatusId);
-        //   Log.d("isPersonal", "isPersonal: " + EldFragment.isPersonal);
-
-
 
         SaveOdometerRequest.executeRequest(Request.Method.POST, APIs.SAVE_ODOMETER , params, SaveOdometers,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -532,10 +528,10 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
     void GetOdometer18Days(final String DriverId, final String DeviceId, final String CompanyId , final String CreatedDate){
 
         params = new HashMap<String, String>();
-        params.put("DriverId", DriverId);
-        params.put("DeviceId", DeviceId );
-        params.put("CompanyId", CompanyId  );
-        params.put("CreatedDate", CreatedDate);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.CompanyId, CompanyId  );
+        params.put(ConstantsKeys.CreatedDate, CreatedDate);
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER_OFFLINE , params, GetOdometers18Days,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
