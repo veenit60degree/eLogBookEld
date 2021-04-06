@@ -1,6 +1,7 @@
 package com.messaging.logistic;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -53,7 +54,7 @@ public class EldActivity extends FragmentActivity  {
         DOTButton = (TextView)findViewById(R.id.tripTitleTV);
 
         instance      = this;
-        LoadFragment();
+        LoadFragment(0);
 
         DOTButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,15 +65,21 @@ public class EldActivity extends FragmentActivity  {
     }
 
 
-    private void LoadFragment(){
+    private void LoadFragment(int count ){
         EldFragment detailFragment = new EldFragment();
         fragManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTran = fragManager.beginTransaction();
-        fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
-                android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTran.replace(R.id.job_fragment, detailFragment);
-        fragmentTran.addToBackStack("eld");
-        fragmentTran.commit();
+
+        if(count > 1) {
+            getSupportFragmentManager().popBackStack("eld", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
+            FragmentTransaction fragmentTran = fragManager.beginTransaction();
+            fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
+                    android.R.anim.fade_in, android.R.anim.fade_out);
+            fragmentTran.replace(R.id.job_fragment, detailFragment);
+            fragmentTran.addToBackStack("eld");
+            fragmentTran.commit();
+
     }
 
 
@@ -137,10 +144,14 @@ public class EldActivity extends FragmentActivity  {
                         Globally.hideKeyboardView(getApplicationContext(), PasswordEditText);
                         Globally.EldScreenToast(DOTButton, "Password confirmed", getResources().getColor(R.color.color_eld_bg));
 
+                        if(sharedPref.IsDOT(getApplicationContext())){
+                            isOnStart = true;
+                        }
+
                         sharedPref.SetDOTStatus(false, getApplicationContext());
 
                         if(isOnStart){
-                            LoadFragment();
+                            LoadFragment(getSupportFragmentManager().getBackStackEntryCount());
                         }else {
                             fragManager = getSupportFragmentManager();
                             fragManager.popBackStack();
@@ -157,11 +168,14 @@ public class EldActivity extends FragmentActivity  {
                         if(loginDialog != null)
                             loginDialog.dismiss();
 
+                        if(sharedPref.IsDOT(getApplicationContext())){
+                            isOnStart = true;
+                        }
                         Globally.EldScreenToast(DOTButton, "Password confirmed", getResources().getColor(R.color.color_eld_bg) );
                         sharedPref.SetDOTStatus(false, getApplicationContext());
 
                         if(isOnStart){
-                            LoadFragment();
+                            LoadFragment(getSupportFragmentManager().getBackStackEntryCount());
                         }else {
                             getSupportFragmentManager().popBackStack();
                         }
@@ -202,7 +216,11 @@ public class EldActivity extends FragmentActivity  {
                             fragManager.popBackStack();
                         }
                     } else {
-                        fragManager.popBackStack();
+                        if(sharedPref.IsDOT(getApplicationContext())){
+                            ConfirmDOT();
+                        }else {
+                            fragManager.popBackStack();
+                        }
                     }
                 } else {
                     Constants.IsEdiLogBackStack = false;

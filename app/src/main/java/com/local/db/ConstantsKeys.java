@@ -82,6 +82,7 @@ public class ConstantsKeys {
     public static String ViewCertifyDays        = "ViewCertifyDays";
     public static String EditDays               = "EditDays";
     public static String LogDate                = "LogDate";
+    public static String UTCCreatedDate         = "UTCCreatedDate";
     public static String SignImage              = "SignImage";
     public static String StringImage            = "StringImage";
     public static String IsSignCopy             = "IsSignCopy";
@@ -429,8 +430,14 @@ public class ConstantsKeys {
     public static String IsCCMTACertified               = "IsCCMTACertified";
     public static String IsNorthCanada                  = "IsNorthCanada";
     public static String IsNorthCanadaCo                = "IsNorthCanadaCo";
+    public static String IsExemptDriver                 = "IsExemptDriver";
+    public static String IsExemptDriverCo               = "IsExemptDriverCo";
+    public static String IsCycleRequest                 = "IsCycleRequest";
+    public static String IsCycleRequestCo               = "IsCycleRequestCo";
 
-
+    public static String GeoLocation                    = "GeoLocation";
+    public static String StatusName                     = "StatusName";
+    public static String cycleRequests                  = "cycleRequests";
     public static String DateTimeWithMins               = "DateTimeWithMins";
     public static String EventUTCTimeStamp              = "EventUTCTimeStamp";
     public static String EventType                      = "EventType";

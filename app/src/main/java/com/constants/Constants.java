@@ -173,7 +173,7 @@ public class Constants {
     public static final int MALFUNCTION       = 2;
     public static final int UNIDENTIFIED      = 3;
     public static final int SUGGESTED_LOGS    = 4;
-    public static final int WIFI              = 5;
+    public static final int OBD               = 5;
 
     public static String TruckIgnitionStatus = "TruckIgnitionStatus";
     public static String IgnitionSource = "IgnitionSource";
@@ -204,11 +204,20 @@ public class Constants {
     public static String IsStartingLocation = "";
 
     public static int OFF_DUTY = 1;
-    public static int SLEEPER = 2;
-    public static int DRIVING = 3;
-    public static int ON_DUTY = 4;
+    public static int SLEEPER  = 2;
+    public static int DRIVING  = 3;
+    public static int ON_DUTY  = 4;
     public static int PERSONAL = 1;
 
+    final int EngineUp              = 1;
+    final int EngineDown            = 3;
+    final int Login                 = 1;
+    final int Logout                = 2;
+    final int MalfunctionActive     = 1;
+    final int MalfunctionInactive   = 2;
+    final int DiagnosticActive      = 3;
+    final int DiagnosticInactive    = 4;
+    
     public static int WIRED_OBD = 1001;
     public static int WIFI_OBD = 1002;
     public static int API = 1003;
@@ -344,7 +353,15 @@ public class Constants {
 
         if(SharedPref.IsCCMTACertified(context))
             optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, SUGGESTED_LOGS, context.getResources().getString(R.string.suggested_logs)));
-        optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, WIFI, context.getResources().getString(R.string.obd_wifi)));
+
+        if(SharedPref.getObdStatus(context) == Constants.WIFI_ACTIVE ){
+            optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, OBD, context.getResources().getString(R.string.obd_wifi)));
+        }else if(SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE){
+            optionsList.add(new OtherOptionsModel(R.drawable.wired_status_inactive, OBD, context.getResources().getString(R.string.wired_tablet)));
+        }else{
+            optionsList.add(new OtherOptionsModel(R.drawable.eld_malfunction, OBD, context.getResources().getString(R.string.obd_not_connected)));
+        }
+
 
         return optionsList;
     }
@@ -981,6 +998,26 @@ public class Constants {
         return dayDiff;
     }
 
+
+    public int getDateTitleCount(List<CanadaDutyStatusModel> logList){
+        int count = 0;
+        try {
+            for(int i = 0; i < logList.size() ; i++) {
+                if (i == 0) {
+                    count++;
+                } else {
+                    int dayDiff = getDayDiff(logList.get(i - 1).getDateTimeWithMins(), logList.get(i).getDateTimeWithMins());
+                    if (dayDiff != 0) {
+                        count++;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return count;
+    }
 
     public String DeviceSimInfo(String Phone, String SerialNo, String Brand, String Model,
                                 String Version, String OperatorName) {
@@ -2739,6 +2776,15 @@ public class Constants {
     }
 
 
+    public String checkNullString(String data){
+        if(data.equals("null") || data.length() == 0){
+            data = "--";
+        }
+        return data;
+    }
+
+
+
     // get Obd odometer Data
     public  void saveOdometer(String DriverStatusId, String DriverId, String DeviceId, JSONArray driver18DaysLogArray,
                               OdometerHelperMethod odometerhMethod, HelperMethods hMethods, DBHelper dbHelper, Context context) {
@@ -2991,6 +3037,202 @@ public class Constants {
             //Mobile
         }
         return false;
+    }
+
+
+    // Duty Status Changes, Intermediate Logs and Special Driving Condition(Personal Use and Yard Move)
+    public String getDutyChangeEventName(int EventType, int EventCode, boolean IsPersonal, boolean IsYard ){
+        String event = "";
+        switch (EventType){
+            case 1:
+                if (EventCode == DRIVING)
+                {
+                    event = "DR";
+                }
+                else if (EventCode == ON_DUTY)
+                {
+                    event = "ON";
+                }
+                else if (EventCode == SLEEPER)
+                {
+                    event = "SB";
+                }
+                else
+                {
+                    event = "OFF";
+                }
+
+                break;
+
+            case 3:
+                if (EventCode == 1)
+                {
+                    event = "PC Start";
+                }
+                else if (EventCode == 2)
+                {
+                    event = "YM Start";
+                }
+                else if (IsPersonal == true)
+                {
+                    event = "PC End";
+                }
+                else if (IsYard == true)
+                {
+                    event = "YM End";
+                }
+
+                break;
+
+            case 4:  // Certify Log
+                event = "Certification of RODS";
+                break;
+
+            case 5: // Login Logout
+                if (EventCode == Login)
+                {
+                    event = "Login";
+                }
+                else if (EventCode == Logout)
+                {
+                    event = "Logout";
+                }
+                break;
+
+            case 6:  // Engine Up Down
+                if (EventCode == EngineUp)
+                {
+                    event = "Power Up";
+                }
+                else if (EventCode == EngineDown)
+                {
+                    event = "Shut Down";
+                }
+                break;
+
+
+            default:
+                event = "" +EventType;
+                break;
+
+        }
+
+        return event;
+    }
+
+
+    // Login and Logout, Certification of RODS, Data Diagnostic and Malfunction
+    public String getLoginLogoutEventName(int EventType, int EventCode){
+        String event = "";
+
+        switch (EventType){
+
+            case 4:     // Certify Log
+                if(EventCode == 1){
+                    event = "Certification of RODS (1)";
+                }else{
+                    event = "Re-Certification of RODS (" + EventCode + ")";
+                }
+                break;
+
+            case 5: // Login Logout
+                if (EventCode == Login)
+                {
+                    event = "Login";
+                }
+                else if (EventCode == Logout)
+                {
+                    event = "Logout";
+                }
+                break;
+
+            case 7: // Diagnostic and Malfunction
+                if (EventCode == MalfunctionActive)
+                {
+                    event = "Malfunction (detected)";
+                }
+                else if (EventCode == MalfunctionInactive)
+                {
+                    event = "Malfunction (cleared)";
+                }
+                else if (EventCode == DiagnosticActive)
+                {
+                    event = "Data Diagnostic (detected)";
+                }
+                else if (EventCode == DiagnosticInactive)
+                {
+                    event = "Data Diagnostic (cleared)";
+                }
+                break;
+
+
+            default:
+                event = "" +EventType;
+                break;
+
+        }
+
+        return event;
+
+    }
+
+
+
+    // Change in Driver's Cycle. Change in Operating Zone, Off Dutty Time Deferral
+    public String getCycleOpZoneEventName(int EventType, int EventCode){
+        String event = "";
+
+        switch (EventType){
+
+            case 21:
+                if (EventCode == 1)
+                {
+                event = "Cycle 1";
+                }
+                else if (EventCode == 2)
+                {
+                    event = "Cycle 2";
+                }
+                else
+                {
+                    event = "United State";
+                }
+                break;
+
+            default:
+            event = "Remarks";
+            break;
+
+        }
+
+        return event;
+    }
+
+
+    //  Engine Power Up and Shut Down
+    public String getEnginePowerUpDownEventName(int EventType, int EventCode){
+        String event = "";
+
+        switch (EventType){
+
+            case 6: // Engine Up Down
+                if (EventCode == EngineUp)
+                {
+                    event = "Power Up";
+                }
+                else if (EventCode == EngineDown)
+                {
+                    event = "Shut Down";
+                }
+                break;
+
+            default:
+                event = ""+EventCode;
+                break;
+
+        }
+
+        return event;
     }
 
 

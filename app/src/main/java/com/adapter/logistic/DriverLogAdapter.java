@@ -2,7 +2,6 @@ package com.adapter.logistic;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,13 +21,12 @@ import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.EditGraphFragment;
+import com.messaging.logistic.fragment.EditLogFragment;
 import com.models.DriverLogModel;
 
 import org.joda.time.DateTime;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DriverLogAdapter extends BaseAdapter {
@@ -157,7 +155,7 @@ public class DriverLogAdapter extends BaseAdapter {
                         parentPosition = getParentViewPosition(holder.editLogSerialNoTV);
 
                         isTouch = false;
-                        DriverLogModel logModel = EditGraphFragment.oDriverLogDetail.get(parentPosition);
+                        DriverLogModel logModel = EditLogFragment.oDriverLogDetail.get(parentPosition);
                         logModel.setDriverStatusId(pos + 1);
                         if (pos == 4) { // Check for Personal use
                             logModel.setPersonal(true);
@@ -169,7 +167,7 @@ public class DriverLogAdapter extends BaseAdapter {
                             logModel.setRemarks("");
                         }
 
-                        EditGraphFragment.oDriverLogDetail.set(parentPosition, logModel);
+                        EditLogFragment.oDriverLogDetail.set(parentPosition, logModel);
                     }
                 }
 
@@ -212,8 +210,8 @@ public class DriverLogAdapter extends BaseAdapter {
         DateTime currenDateTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
         DateTime startDateTime ,endDateTime ;
         if(position == 0){
-            startDateTime   = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(0).getStartDateTime().toString(), false);
-            endDateTime     = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(0).getEndDateTime().toString(), false);
+            startDateTime   = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(0).getStartDateTime().toString(), false);
+            endDateTime     = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(0).getEndDateTime().toString(), false);
 
             if(endDateTime.isAfter(startDateTime)){
                 if(endTime.equals("00:00")){
@@ -223,9 +221,9 @@ public class DriverLogAdapter extends BaseAdapter {
             CheckTimeInLogEditing(startDateTime, endDateTime, holder.endTimeLayout, false, currenDateTime, false);
 
         }else{
-            DateTime previousEndTime = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(position - 1).getEndDateTime().toString(), false );
-            startDateTime   = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(position).getStartDateTime().toString(), false);
-            endDateTime     = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(position).getEndDateTime().toString(), false);
+            DateTime previousEndTime = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(position - 1).getEndDateTime().toString(), false );
+            startDateTime   = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(position).getStartDateTime().toString(), false);
+            endDateTime     = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(position).getEndDateTime().toString(), false);
 
             boolean isLast = false;
             if(position == driverLogList.size() -1){
@@ -455,11 +453,11 @@ public class DriverLogAdapter extends BaseAdapter {
                 endView.setText(time);
             }
 
-            DriverLogModel logModel = getDriverLog(EditGraphFragment.oDriverLogDetail, position, startView.getText().toString(),  endView.getText().toString());
-            EditGraphFragment.oDriverLogDetail.set(position, logModel);
+            DriverLogModel logModel = getDriverLog(EditLogFragment.oDriverLogDetail, position, startView.getText().toString(),  endView.getText().toString());
+            EditLogFragment.oDriverLogDetail.set(position, logModel);
 
-            if(position < EditGraphFragment.oDriverLogDetail.size()-1){
-                DriverLogModel logModelNextPos = EditGraphFragment.oDriverLogDetail.get(position + 1);
+            if(position < EditLogFragment.oDriverLogDetail.size()-1){
+                DriverLogModel logModelNextPos = EditLogFragment.oDriverLogDetail.get(position + 1);
                 int Status = logModelNextPos.getDriverStatusId();
                 boolean isEnabled = false;
 
@@ -482,8 +480,8 @@ public class DriverLogAdapter extends BaseAdapter {
                 }
 
                 if(isEnabled){
-                    DriverLogModel nextPosLogModel = getDriverNextLog(EditGraphFragment.oDriverLogDetail, position + 1, endView.getText().toString());
-                    EditGraphFragment.oDriverLogDetail.set(position + 1, nextPosLogModel);
+                    DriverLogModel nextPosLogModel = getDriverNextLog(EditLogFragment.oDriverLogDetail, position + 1, endView.getText().toString());
+                    EditLogFragment.oDriverLogDetail.set(position + 1, nextPosLogModel);
                 }
             }
 
@@ -501,12 +499,12 @@ public class DriverLogAdapter extends BaseAdapter {
             if (LastJobTotalMin == 0) {             // || LastJobTotalMin == 1         //compareDate.equals(viewDate)
                 view.setBackgroundResource(R.drawable.edit_log_drawable);
             } else {
-                EditGraphFragment.IsWrongDateEditLog = true;
+                EditLogFragment.IsWrongDateEditLog = true;
                 view.setBackgroundResource(R.drawable.edit_log_red_drawable);
             }
 
             if (hMethods.DayDiff(startDate, endDate) > 0 ){
-                EditGraphFragment.IsWrongDateEditLog = true;
+                EditLogFragment.IsWrongDateEditLog = true;
                 view.setBackgroundResource(R.drawable.edit_log_red_drawable);
             }
 
@@ -519,14 +517,14 @@ public class DriverLogAdapter extends BaseAdapter {
                 if (LastJobTotalMin >= 0) {              //compareDate.equals(viewDate) || viewDate.isBefore(compareDate)
                     view.setBackgroundResource(R.drawable.edit_log_drawable);
                 } else {
-                    EditGraphFragment.IsWrongDateEditLog = true;
+                    EditLogFragment.IsWrongDateEditLog = true;
                     view.setBackgroundResource(R.drawable.edit_log_red_drawable);
                 }
             }
 
 
             if(endDate.isAfter(selectedDateTime)){
-                EditGraphFragment.IsWrongDateEditLog = true;
+                EditLogFragment.IsWrongDateEditLog = true;
                 view.setBackgroundResource(R.drawable.edit_log_red_drawable);
             }
 

@@ -106,7 +106,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     public Globally globally;
     public Constants constants;
     public static JSONArray driverLogArray;
-    EditedLogFragment editedLogFragment;
+    EditedLogConfirmationFragment editedLogConfirmationFragment;
     OriginalLogFragment originalLogFragment;
     CardView confirmCertifyBtn, cancelCertifyBtn;
 
@@ -214,7 +214,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         confirmCertifyBtn   = (CardView)rootView.findViewById(R.id.confirmCertifyBtn);
         cancelCertifyBtn    = (CardView)rootView.findViewById(R.id.cancelCertifyBtn);
 
-        editedLogFragment   = new EditedLogFragment();
+        editedLogConfirmationFragment = new EditedLogConfirmationFragment();
         originalLogFragment = new OriginalLogFragment();
         confirmationDialog  = new AlertDialogEld(getActivity());
 
@@ -307,7 +307,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     private void setPagetAdapter(){
         ViewPager editedLogViewPager  = (ViewPager) rootView.findViewById(R.id.editedLogPager);
         tabAdapter = new TabLayoutAdapter(getChildFragmentManager(), getActivity());
-        tabAdapter.addFragment(editedLogFragment, getString(R.string.edited_log), tabIcons[0]);
+        tabAdapter.addFragment(editedLogConfirmationFragment, getString(R.string.edited_log), tabIcons[0]);
         tabAdapter.addFragment(originalLogFragment, getString(R.string.original_log), tabIcons[1]);
         editedLogViewPager.setAdapter(tabAdapter);
         tabLayout.setupWithViewPager(editedLogViewPager);

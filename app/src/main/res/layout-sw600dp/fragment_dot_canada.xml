@@ -59,6 +59,7 @@
 
 
             <TextView
+                android:id="@+id/canDotModeTxtVw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_eld_theme"
@@ -69,6 +70,16 @@
 
 
                 />
+
+            <ImageView
+                android:layout_width="@dimen/margin_26"
+                android:layout_height="@dimen/margin_26"
+                android:src="@drawable/pencil"
+                android:layout_toRightOf="@+id/canDotModeTxtVw"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_short_3"
+                />
+
 
 
             <TextView
@@ -1715,6 +1726,50 @@
 
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_short_6"
+            android:layout_marginTop="@dimen/margin_15"
+
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_19"
+                android:textColor="@color/blue_button"
+                android:text="@string/change_cycle_duty_def"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_short_8"
+                android:paddingBottom="@dimen/margin_15"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_cycle_op_zone_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/addHrsDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+
+
+                />
+
+
+        </LinearLayout>
+
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -1761,48 +1816,6 @@
 
 
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/whiteee"
-            android:padding="@dimen/margin_short_6"
-            android:layout_marginTop="@dimen/margin_15"
-
-            >
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_19"
-                android:textColor="@color/blue_button"
-                android:text="@string/AdditionalHours_desc"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_8"
-                android:paddingBottom="@dimen/margin_15"
-                android:textStyle="bold"
-
-                />
-
-            <include
-                layout="@layout/item_additional_hr_dot"
-                />
-
-
-            <ListView
-                android:id="@+id/addHrsDotListView"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/view_height_80"
-                android:scrollbars="none"
-                android:minHeight="@dimen/view_height_30"
-
-
-                />
-
-
-        </LinearLayout>
 
 
 
@@ -1857,6 +1870,58 @@
 
     </ScrollView>
 
+
+
+
+    <RelativeLayout
+        android:id="@+id/scrollUpBtn"
+        android:layout_width="@dimen/view_height_44"
+        android:layout_height="@dimen/view_height_44"
+        android:background="@drawable/blue_scale_btn_selector"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/margin_18"
+        android:layout_above="@+id/scrollDownBtn"
+        android:layout_marginBottom="@dimen/margin_11"
+
+
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_top"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/margin_12"
+            android:tint="@color/whiteee"
+            />
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/scrollDownBtn"
+        android:layout_width="@dimen/view_height_44"
+        android:layout_height="@dimen/view_height_44"
+        android:background="@drawable/blue_scale_btn_selector"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/margin_18"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/view_height_30"
+
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_bottom"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/margin_12"
+            android:tint="@color/whiteee"
+            />
+
+
+    </RelativeLayout>
 
 
     <ProgressBar

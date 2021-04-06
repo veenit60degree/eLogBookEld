@@ -84,17 +84,18 @@ public class CanDotRemarksAdapter extends BaseAdapter {
 
         holder.remarksAnoDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateRemarksDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate()) );
-
-        String time = itemsList.get(position).getEventTime();
-        if(time.length() > 15) {
-            holder.timeDotTV.setText(time.substring(11, 15));
+        String eventTime = itemsList.get(position).getDateTimeWithMins();
+        holder.dateRemarksDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(eventTime));
+        if(eventTime.length() > 11) {
+            holder.timeDotTV.setText(eventTime.substring(11, eventTime.length()));
         }
 
-        holder.usernameDotTV.setText(itemsList.get(position).getUserName());
+        //holder.timeDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins()));
 
-        holder.sqNoRemDotTV.setText(""+itemsList.get(position).getSequenceNumber());
-        holder.commAnotnDotTV.setText(itemsList.get(position).getAnnotation());
+        holder.usernameDotTV.setText(constants.checkNullString(itemsList.get(position).getUserName()));
+
+        holder.sqNoRemDotTV.setText(""+itemsList.get(position).getHexaSeqNumber());
+        holder.commAnotnDotTV.setText(constants.checkNullString(itemsList.get(position).getRemarks()));
 
         // Set text style normal
         constants.setTextStyleNormal(holder.dateRemarksDotTV);

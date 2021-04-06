@@ -13,12 +13,12 @@ public class Notification18DaysModel {
     String ImagePath;
     String SendDate;
     String CompanyId;
-
+    String Type;
 
     public Notification18DaysModel(int notificationLogId, String driverId, String driverName,
                               String notificationTypeId, String notificationTypeName, String title,
                               String message, String imagePath,  String sendDate,
-                              String companyId) {
+                              String companyId, String type) {
         NotificationLogId = notificationLogId;
         DriverId = driverId;
         DriverName = driverName;
@@ -29,6 +29,7 @@ public class Notification18DaysModel {
         ImagePath = imagePath;
         SendDate = sendDate;
         CompanyId = companyId;
+        Type      = type;
     }
 
     public int getNotificationLogId() {
@@ -72,5 +73,7 @@ public class Notification18DaysModel {
         return CompanyId;
     }
 
-
+    public String getType() {
+        return Type;
+    }
 }

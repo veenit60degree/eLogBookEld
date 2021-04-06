@@ -66,7 +66,7 @@ import models.DriverDetail;
 import models.DriverLog;
 import models.RulesResponseObject;
 
-public class EditGraphFragment extends Fragment implements View.OnClickListener, OnStartDragListener{
+public class EditLogFragment extends Fragment implements View.OnClickListener, OnStartDragListener{
 
 
     View rootView;
@@ -892,7 +892,7 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
             logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail);
             finalEditedLogArray = GetEditDataAsJson(logArray, lastDaySavedLocation, reason);
 
-
+         //   updateLocalLog();
 
            // JSONArray finalJobsArray =  finalPostedArray(previousDateJobs, finalEditedLogArray, reason);
             //  SaveDriverCycle(finalJobsArray);
@@ -1473,6 +1473,21 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
         }
     }
 
+    void updateLocalLog(){
+        try {
+            JSONArray editableLogArray = hMethods.GetSameArray(logArrayBeforeSelectedDate);
+            for (int i = 0; i < logArray.length(); i++) {
+                JSONObject jsonObj = (JSONObject) logArray.get(i);
+                editableLogArray.put(jsonObj);
+            }
+
+            // ------------ Update log array in local DB ---------
+            hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, editableLogArray);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     void UpdateLocalLogWithBackStack(boolean isBackStack){
@@ -1480,17 +1495,8 @@ public class EditGraphFragment extends Fragment implements View.OnClickListener,
         try {
 
           //  Log.d("finalEditedLogArray", "finalEditedLogArray: " + finalEditedLogArray);
-            JSONArray editableLogArray = hMethods.GetSameArray(logArrayBeforeSelectedDate);
 
-
-            for (int i = 0; i < logArray.length(); i++) {
-                JSONObject jsonObj = (JSONObject) logArray.get(i);
-                editableLogArray.put(jsonObj);
-            }
-
-
-            // ------------ Update log array in local DB ---------
-            hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, editableLogArray);
+            updateLocalLog();
 
             EldFragment.isUpdateDriverLog = true;
             if(isBackStack) {

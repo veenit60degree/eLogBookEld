@@ -94,6 +94,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -248,7 +249,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-    int tempOdo = 231000;
+    int tempOdo = 1471000;
     int ignitionCount = 0;
 
 
@@ -403,25 +404,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             // ---------------- temp data ---------------------
         //    sharedPref.saveLocMalfunctionOccurStatus(true, global.getCurrentDate(), getApplicationContext());
         //    SharedPref.setLocMalfunctionType("x", getApplicationContext());
-   /*            ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
+              /* ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
               sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
               tempOdo = tempOdo+800;
-
-
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(),
-                            "Speed: " + bundle.getInt(constants.OBD_Vss),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
 */
+
+
+
 
 
             if(ignitionStatus.equals("ON")){
@@ -474,13 +466,34 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                     // calculating speed to comparing last saved odometer and current odometer (in meter) with time differencein seconds
-                    double calculatedSpeedFromOdo = constants.calculateSpeedFromWiredTabOdometer(savedDate, currentLogDate,
+                    final double calculatedSpeedFromOdo = constants.calculateSpeedFromWiredTabOdometer(savedDate, currentLogDate,
                             previousHighPrecisionOdometer, currentHighPrecisionOdometer, global, sharedPref, getApplicationContext());
 
                     // write wired OBD details in a text file and save into the SD card.
                     saveObdData(constants.WiredOBD, vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
                             currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                             String.valueOf((int)calculatedSpeedFromOdo), obdTripDistance, timeStamp, savedDate);
+
+                  /*  Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed
+                            + "\nCalculated Speed: " + calculatedSpeedFromOdo, 203040);
+*/
+                    try {
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                if(getApplicationContext() != null) {
+                                    Toast.makeText(getApplicationContext(),
+                                            "OBD Speed: " + bundle.getInt(constants.OBD_Vss) + "\nCalculated Speed: " +
+                                                    new DecimalFormat("##.##").format(calculatedSpeedFromOdo),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
 
                     int timeDuration = 10000;
                     double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
@@ -2735,6 +2748,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                                 isSuggestedRecall = sharedPref.isSuggestedRecall(getApplicationContext());
 
+                                                sharedPref.SetExemptDriverStatusMain(dataObj.getBoolean(ConstantsKeys.IsExemptDriver), getApplicationContext());
+                                                sharedPref.SetNorthCanadaStatusMain(dataObj.getBoolean(ConstantsKeys.IsNorthCanada), getApplicationContext());
                                             }else{
                                                 sharedPref.setEldOccurencesCo(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
                                                         dataObj.getBoolean(ConstantsKeys.IsMalfunction),
@@ -2742,6 +2757,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                                         isSuggestedEdit, getApplicationContext());
 
                                                 isSuggestedRecall = sharedPref.isSuggestedRecallCo(getApplicationContext());
+
+                                                sharedPref.SetExemptDriverStatusCo(dataObj.getBoolean(ConstantsKeys.IsExemptDriver), getApplicationContext());
+                                                sharedPref.SetNorthCanadaStatusCo(dataObj.getBoolean(ConstantsKeys.IsNorthCanada), getApplicationContext());
                                             }
 
                                             if (isSuggestedEdit && isSuggestedRecall) {

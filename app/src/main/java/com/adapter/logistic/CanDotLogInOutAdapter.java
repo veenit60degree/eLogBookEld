@@ -68,6 +68,8 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
 
             holder.logInOutDotLay           = (LinearLayout) convertView.findViewById(R.id.logInOutDotLay);
 
+            holder.dateTimeDiffLogInTV      = (TextView)convertView.findViewById(R.id.dateTimeDiffLogInTV);
+
             holder.dateDotTV                = (TextView) convertView.findViewById(R.id.dateDotTV);
             holder.eventLoginDotTV          = (TextView) convertView.findViewById(R.id.eventLoginDotTV);
             holder.addInfoDotTV             = (TextView) convertView.findViewById(R.id.addInfoDotTV);
@@ -90,17 +92,40 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
 
         holder.logInOutDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate()) );
-        holder.eventLoginDotTV.setText(""+itemsList.get(position).getEventCode());
-        holder.addInfoDotTV.setText(itemsList.get(position).getAdditionalInfo());
+        String EventDateTime = itemsList.get(position).getDateTimeWithMins();
+        try {
+            if (position == 0) {
+                holder.dateTimeDiffLogInTV.setVisibility(View.VISIBLE);
+                holder.dateTimeDiffLogInTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+            } else {
+                int dayDiff = constants.getDayDiff(itemsList.get(position-1).getDateTimeWithMins(), EventDateTime);
+                if (dayDiff != 0){
+                    holder.dateTimeDiffLogInTV.setVisibility(View.VISIBLE);
+                    holder.dateTimeDiffLogInTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        holder.cmvLoginDotTV.setText(itemsList.get(position).getCMVVIN());
-        holder.diatanceTotalLoginDotTV.setText(itemsList.get(position).getDistanceInKM());
-        holder.hrsTotalLoginDotTV.setText(itemsList.get(position).getTotalEngineHours());
+        if(EventDateTime.length() > 11) {
+            holder.dateDotTV.setText(EventDateTime.substring(11, EventDateTime.length()));
+        }
+
+
+        //holder.dateDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins()) );
+        holder.eventLoginDotTV.setText(constants.getLoginLogoutEventName(
+                                                        itemsList.get(position).getEventType(),
+                                                        itemsList.get(position).getEventCode() ));
+        holder.addInfoDotTV.setText(constants.checkNullString(itemsList.get(position).getAdditionalInfo()));
+
+        holder.cmvLoginDotTV.setText(constants.checkNullString(itemsList.get(position).getTruckEquipmentNo()));
+        holder.diatanceTotalLoginDotTV.setText(constants.checkNullString(itemsList.get(position).getDistanceInKM()));
+        holder.hrsTotalLoginDotTV.setText(constants.checkNullString(itemsList.get(position).getTotalEngineHours()));
 
         holder.recStatusLoginDotTV.setText(""+itemsList.get(position).getRecordStatus());
         holder.recOriginLoginDotTV.setText(itemsList.get(position).getRecordOrigin());
-        holder.seqNoDotTV.setText(""+itemsList.get(position).getSequenceNumber());
+        holder.seqNoDotTV.setText(""+itemsList.get(position).getHexaSeqNumber());
 
 
         // Set text style normal
@@ -122,6 +147,7 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView dateDotTV, eventLoginDotTV, addInfoDotTV, cmvLoginDotTV, diatanceTotalLoginDotTV, hrsTotalLoginDotTV, recStatusLoginDotTV, recOriginLoginDotTV, seqNoDotTV  ;
+        TextView dateTimeDiffLogInTV;
         LinearLayout logInOutDotLay;
 
     }

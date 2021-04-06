@@ -25,7 +25,7 @@ import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.EditGraphFragment;
+import com.messaging.logistic.fragment.EditLogFragment;
 import com.models.DriverLogModel;
 
 import org.joda.time.DateTime;
@@ -138,7 +138,7 @@ public class EditLogRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.V
                     parentPosition = getParentViewPosition(((EditLogViewHolder) holder).editLogSerialNoTV);
 
                     isTouch = false;
-                    DriverLogModel logModel = EditGraphFragment.oDriverLogDetail.get(parentPosition);
+                    DriverLogModel logModel = EditLogFragment.oDriverLogDetail.get(parentPosition);
                     logModel.setDriverStatusId(pos + 1);
                     if (pos == 4) { // Check for Personal use
                         logModel.setPersonal(true);
@@ -150,7 +150,7 @@ public class EditLogRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.V
                         logModel.setRemarks("");
                     }
 
-                    EditGraphFragment.oDriverLogDetail.set(parentPosition, logModel);
+                    EditLogFragment.oDriverLogDetail.set(parentPosition, logModel);
                 }
             }
 
@@ -199,8 +199,8 @@ public class EditLogRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.V
         DateTime currenDateTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
         DateTime startDateTime ,endDateTime ;
         if(position == 0){
-            startDateTime   = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(0).getStartDateTime().toString(), false);
-            endDateTime     = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(0).getEndDateTime().toString(), false);
+            startDateTime   = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(0).getStartDateTime().toString(), false);
+            endDateTime     = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(0).getEndDateTime().toString(), false);
 
             if(endDateTime.isAfter(startDateTime)){
                 if(endTime.equals("00:00")){
@@ -210,9 +210,9 @@ public class EditLogRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.V
             CheckTimeInLogEditing(startDateTime, endDateTime, ((EditLogViewHolder) holder).endTimeLayout, false, currenDateTime, false);
 
         }else{
-            DateTime previousEndTime = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(position - 1).getEndDateTime().toString(), false );
-            startDateTime   = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(position).getStartDateTime().toString(), false);
-            endDateTime     = Globally.getDateTimeObj(EditGraphFragment.oDriverLogDetail.get(position).getEndDateTime().toString(), false);
+            DateTime previousEndTime = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(position - 1).getEndDateTime().toString(), false );
+            startDateTime   = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(position).getStartDateTime().toString(), false);
+            endDateTime     = Globally.getDateTimeObj(EditLogFragment.oDriverLogDetail.get(position).getEndDateTime().toString(), false);
 
             boolean isLast = false;
             if(position == driverLogList.size() -1){
@@ -473,11 +473,11 @@ public class EditLogRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.V
                 endView.setText(time);
             }
 
-            DriverLogModel logModel = getDriverLog(EditGraphFragment.oDriverLogDetail, position, startView.getText().toString(),  endView.getText().toString());
-            EditGraphFragment.oDriverLogDetail.set(position, logModel);
+            DriverLogModel logModel = getDriverLog(EditLogFragment.oDriverLogDetail, position, startView.getText().toString(),  endView.getText().toString());
+            EditLogFragment.oDriverLogDetail.set(position, logModel);
 
-            if(position < EditGraphFragment.oDriverLogDetail.size()-1){
-                DriverLogModel logModelNextPos = EditGraphFragment.oDriverLogDetail.get(position + 1);
+            if(position < EditLogFragment.oDriverLogDetail.size()-1){
+                DriverLogModel logModelNextPos = EditLogFragment.oDriverLogDetail.get(position + 1);
                 int Status = logModelNextPos.getDriverStatusId();
                 boolean isEnabled = false;
 
@@ -500,8 +500,8 @@ public class EditLogRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.V
                 }
 
                 if(isEnabled){
-                    DriverLogModel nextPosLogModel = getDriverNextLog(EditGraphFragment.oDriverLogDetail, position + 1, endView.getText().toString());
-                    EditGraphFragment.oDriverLogDetail.set(position + 1, nextPosLogModel);
+                    DriverLogModel nextPosLogModel = getDriverNextLog(EditLogFragment.oDriverLogDetail, position + 1, endView.getText().toString());
+                    EditLogFragment.oDriverLogDetail.set(position + 1, nextPosLogModel);
                 }
             }
 
@@ -519,12 +519,12 @@ public class EditLogRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.V
             if (LastJobTotalMin == 0) {             // || LastJobTotalMin == 1         //compareDate.equals(viewDate)
                 view.setBackgroundResource(R.drawable.edit_log_drawable);
             } else {
-                EditGraphFragment.IsWrongDateEditLog = true;
+                EditLogFragment.IsWrongDateEditLog = true;
                 view.setBackgroundResource(R.drawable.edit_log_red_drawable);
             }
 
             if (hMethods.DayDiff(startDate, endDate) > 0 ){
-                EditGraphFragment.IsWrongDateEditLog = true;
+                EditLogFragment.IsWrongDateEditLog = true;
                 view.setBackgroundResource(R.drawable.edit_log_red_drawable);
             }
 
@@ -537,14 +537,14 @@ public class EditLogRecyclerAdapter  extends RecyclerView.Adapter<RecyclerView.V
                 if (LastJobTotalMin >= 0) {              //compareDate.equals(viewDate) || viewDate.isBefore(compareDate)
                     view.setBackgroundResource(R.drawable.edit_log_drawable);
                 } else {
-                    EditGraphFragment.IsWrongDateEditLog = true;
+                    EditLogFragment.IsWrongDateEditLog = true;
                     view.setBackgroundResource(R.drawable.edit_log_red_drawable);
                 }
             }
 
 
             if(endDate.isAfter(selectedDateTime)){
-                EditGraphFragment.IsWrongDateEditLog = true;
+                EditLogFragment.IsWrongDateEditLog = true;
                 view.setBackgroundResource(R.drawable.edit_log_red_drawable);
             }
 

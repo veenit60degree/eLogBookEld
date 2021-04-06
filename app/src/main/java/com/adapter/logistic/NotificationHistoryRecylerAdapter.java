@@ -2,6 +2,7 @@ package com.adapter.logistic;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.constants.Constants;
 import com.constants.RecycleViewClickListener;
 import com.constants.RecyclerViewItemClickListener;
+import com.driver.details.DriverConst;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.NotificationHistoryFragment;
@@ -72,16 +74,54 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
     }
 
     @Override
-    public void onBindViewHolder(NotificationViewHolder holder, final int position) {
+    public void onBindViewHolder(final NotificationViewHolder holder, final int position) {
 
-        Notification18DaysModel itemModel = notificationList.get(position);
+        final Notification18DaysModel itemModel = notificationList.get(position);
         String title = itemModel.getTitle();
 
         holder.historyTitleTV.setText(title);
-        holder.historyDescTV.setText(itemModel.getMessage());
 
-        //  holder.historyDurationTV.setText();
-        String CurrentDate  =  global.getCurrentDate();
+        String CurrentDate  = "";
+
+        if(itemModel.getType().equals("Requested")){
+            CurrentDate = global.GetCurrentUTCTimeFormat();
+            holder.historyTitleTV.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+            holder.historyTitleTV.setText(context.getResources().getString(R.string.cycle_change_request));
+
+            String changedCycleName = "";
+            String currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, context);
+            String currentCycleId = itemModel.getNotificationTypeName();
+            String changedCycleId = itemModel.getTitle();
+            if(currentCycleId.equals(Globally.CANADA_CYCLE_1) || currentCycleId.equals(Globally.CANADA_CYCLE_2)){
+                if(changedCycleId.equals(Globally.USA_WORKING_6_DAYS)){
+                    changedCycleName = Globally.USA_WORKING_6_DAYS_NAME;
+                }else{
+                    changedCycleName = Globally.USA_WORKING_7_DAYS_NAME;
+                }
+            }else{
+                if(changedCycleId.equals(Globally.CANADA_CYCLE_1)){
+                    changedCycleName = Globally.CANADA_CYCLE_1_NAME;
+                }else{
+                    changedCycleName = Globally.CANADA_CYCLE_2_NAME;
+                }
+            }
+
+
+            holder.historyDescTV.setText(Html.fromHtml(context.getResources().getString(R.string.change_cycle_request) + "<font color='#1A3561'> <b>"+ currentCycle
+                    +"</b></font> to<font color='#1A3561'> <b>"+ changedCycleName +"</b></font>.") );
+
+            holder.deleteHistoryBtn.setImageResource(R.drawable.change_cycle);
+
+        }else {
+            CurrentDate  =  global.getCurrentDate();
+            if (title.equals(context.getResources().getString(R.string.violation))) {
+                holder.historyTitleTV.setTextColor(context.getResources().getColor(R.color.colorVoilation));
+            } else if (title.equals(context.getResources().getString(R.string.warning))) {
+                holder.historyTitleTV.setTextColor(context.getResources().getColor(R.color.warning));
+            }
+            holder.historyDescTV.setText(itemModel.getMessage());
+        }
+
         String selectedDate =  String.valueOf(itemModel.getSendDate());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Globally.DateFormat);  //:SSSZ
         Date DateCurrent = new Date();
@@ -97,11 +137,6 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
         holder.historyDurationTV.setText(Constants.DateDifference(DateItem, DateCurrent));
 
 
-        if(title.equals(context.getResources().getString(R.string.violation))){
-            holder.historyTitleTV.setTextColor(context.getResources().getColor(R.color.colorVoilation));
-        }else  if(title.equals(context.getResources().getString(R.string.warning))){
-            holder.historyTitleTV.setTextColor(context.getResources().getColor(R.color.warning));
-        }
 
 
 
@@ -121,8 +156,12 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
                             }
                         }
                     }else{
-                        view.setBackgroundResource(R.drawable.gray_eld_hover);
-                        selectedPosArray.add(position);
+                        if(!itemModel.getType().equals("Requested")) {
+                            view.setBackgroundResource(R.drawable.gray_eld_hover);
+                            selectedPosArray.add(position);
+                        }else{
+                            Globally.showToast(holder.notiRecycleMainView, context.getResources().getString(R.string.not_able_to_select));
+                        }
                     }
 
                     if(selectedPosArray.size() > 0){
@@ -143,11 +182,15 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
             public boolean onLongClick(View view) {
                 Log.d("onLongClick", "onLongClick" );
                 if(!isItemSelected) {
-                    view.setBackgroundResource(R.drawable.gray_eld_hover);
-                    isItemSelected = true;
-                    selectedPosArray.add(position);
+                    if(!itemModel.getType().equals("Requested")) {
+                        view.setBackgroundResource(R.drawable.gray_eld_hover);
+                        isItemSelected = true;
+                        selectedPosArray.add(position);
 
-                    NotificationHistoryFragment.deleteNotificationBtn.setVisibility(View.VISIBLE);
+                        NotificationHistoryFragment.deleteNotificationBtn.setVisibility(View.VISIBLE);
+                    }else{
+                        Globally.showToast(holder.notiRecycleMainView, context.getResources().getString(R.string.not_able_to_select));
+                    }
                 }
 
                 return true;
@@ -159,8 +202,16 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
         @Override
         public void onClick(View view) {
             if(!isItemSelected) {
-                selectedPosArray.add(position);
-                NotificationHistoryFragment.deleteNotificationBtn.performClick();
+                if(itemModel.getType().equals("Requested")){
+                    NotificationHistoryFragment.invisibleNotiBtn.performClick();
+                }else {
+                    selectedPosArray.add(position);
+                    NotificationHistoryFragment.deleteNotificationBtn.performClick();
+                }
+            }else{
+                if(itemModel.getType().equals("Requested")){
+                    NotificationHistoryFragment.invisibleNotiBtn.performClick();
+                }
             }
         }
     });

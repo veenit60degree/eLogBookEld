@@ -1752,6 +1752,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
     }
+
+
     private void MoveFragment(Fragment fragment){
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();

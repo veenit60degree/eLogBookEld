@@ -187,5 +187,13 @@
         />
 
 
+    <Button
+        android:id="@+id/invisibleNotiBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:visibility="gone"
+
+        />
 
 </RelativeLayout>

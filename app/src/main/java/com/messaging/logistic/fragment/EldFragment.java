@@ -143,7 +143,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     ImageView calendarBtn, coDriverImgView, connectionStatusImgView;
     Button sendReportBtn, yardMoveBtn, personalUseBtn;
     RelativeLayout certifyLogBtn;
-    public static Button refreshLogBtn; //resetTimerBtn
+    public static Button refreshLogBtn, moveToCertifyPopUpBtn;
     int DRIVER_JOB_STATUS = 1, SWITCH_VIEW = 1, oldStatusView = 0, DriverType = 0;
     TextView dateTv, nameTv, jobTypeTxtVw, perDayTxtVw, jobTimeTxtVw, jobTimeRemngTxtVw, EldTitleTV,
             timeRemainingTxtVw, invisibleTxtVw, viewHistoryBtn, summaryBtn;
@@ -281,6 +281,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     boolean IsPersonalUseAllowed = true;
     boolean isEldRuleAlreadyCalled = false;
     boolean isLocMalfunction;
+    boolean isExemptDriver = false;
 
     public static boolean IsPrePost = false;
     public static boolean IsStartReading = false;
@@ -486,7 +487,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         yardMoveBtn   = (Button)view.findViewById(R.id.yardMoveBtn);
 
         personalUseBtn = (Button) view.findViewById(R.id.personalUseBtn);
-      //  resetTimerBtn = (Button) view.findViewById(R.id.resetTimerBtn);
+        moveToCertifyPopUpBtn = (Button) view.findViewById(R.id.resetTimerBtn);
         refreshLogBtn = (Button) view.findViewById(R.id.refreshLogBtn);
 
         summaryBtn = (TextView) view.findViewById(R.id.summaryBtn);
@@ -529,7 +530,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         OffDutyBtn.setOnClickListener(this);
         SleeperBtn.setOnClickListener(this);
         personalUseBtn.setOnClickListener(this);
-       // resetTimerBtn.setOnClickListener(this);
+        moveToCertifyPopUpBtn.setOnClickListener(this);
         refreshLogBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
         shippingLay.setOnClickListener(this);
@@ -918,6 +919,31 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    void setTitleView(boolean isOdometerFromOBD, boolean isExemtDriver){
+        try {
+            if (IsAOBRD) {
+                EldTitleTV.setText(getString(R.string.title_aobrd));
+                dotSwitchButton.setVisibility(View.GONE);
+            } else {
+                dotSwitchButton.setVisibility(View.VISIBLE);
+                if(isExemtDriver){
+                    EldTitleTV.setText(getString(R.string.title_eld_exempt));
+                }else{
+                    EldTitleTV.setText(getString(R.string.title_eld));
+                }
+
+            }
+
+            if(isOdometerFromOBD){
+                odometerLay.setVisibility(View.INVISIBLE);
+            }else{
+                odometerLay.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+        }
+
+    }
+
 
     void setObdStatus(final boolean isToastShowing){
 
@@ -1105,8 +1131,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         FragmentTransaction fragmentTran = fragManager.beginTransaction();
         fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
                 android.R.anim.fade_in,android.R.anim.fade_out);
-        fragmentTran.replace(R.id.job_fragment, dotFragment);
-        fragmentTran.addToBackStack("dot_log");
+        fragmentTran.add(R.id.job_fragment, dotFragment);
+        fragmentTran.addToBackStack(null);  //"dot_log"
         fragmentTran.commit();
 
     }
@@ -1636,29 +1662,18 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             coDriverTv.setText(CoDriverName);
             DriverComNameTV.setText(DriverCarrierName);
             coDriverComNameTV.setText(CoDriverCarrierName);
-
+            isExemptDriver = sharedPref.IsExemptDriverMain(getActivity());
         } else {
             nameTv.setText(CoDriverName);
             coDriverTv.setText(MainDriverName);
             DriverComNameTV.setText(CoDriverCarrierName);
             coDriverComNameTV.setText(DriverCarrierName);
-
+            isExemptDriver = sharedPref.IsExemptDriverCo(getActivity());
         }
 
         GetDriverCycle(DriverType);
 
-        try {
-            if (IsAOBRD) {
-                EldTitleTV.setText("HOURS OF SERVICE - AOBRD");
-               // slideMenu.homeTxtView.setText("AOBRD - HOS");
-                dotSwitchButton.setVisibility(View.GONE);
-            } else {
-                EldTitleTV.setText("HOURS OF SERVICE - ELD");
-                //slideMenu.homeTxtView.setText("ELD - HOS");
-                dotSwitchButton.setVisibility(View.VISIBLE);
-            }
-        } catch (Exception e) {
-        }
+        setTitleView(sharedPref.IsOdometerFromOBD(getActivity()), isExemptDriver);
 
         try {
             if (Global.isSingleDriver(getActivity())) {
@@ -2146,6 +2161,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 if (DRIVER_JOB_STATUS == ON_DUTY && lastItemJson.getString(ConstantsKeys.YardMove).equals("true")) {
                                     Global.EldScreenToast(OnDutyBtn, getResources().getString(R.string.yard_move_validation), getResources().getColor(R.color.colorVoilation));
                                 } else {
+
                                     if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
                                             sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
                                         isYardBtnClick = true;
@@ -2259,6 +2275,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                 break;
 
+            case R.id.resetTimerBtn:
+                moveToCertifyWithPopup();
+                break;
 
         }
     }
@@ -2595,7 +2614,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             if (DRIVER_JOB_STATUS != OFF_DUTY ||
                     (DRIVER_JOB_STATUS == OFF_DUTY && isPersonal.equals("false"))) {
 
-               /*if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
+          /*     if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
                                 sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
 */
                     if (hMethods.CanChangeStatus(OFF_DUTY, driverLogArray, Global, true)) {
@@ -2622,7 +2641,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     } else {
                         Global.EldScreenToast(OnDutyBtn, ConstantsEnum.DUPLICATE_JOB_ALERT, getResources().getColor(R.color.colorVoilation));
                     }
-               /*}else{
+              /* }else{
                    Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
                }*/
             }
@@ -3527,7 +3546,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     }
 
     // ------------- Check Certify signature status -------------
-    private boolean isCertifySignPending(boolean isOnCreate ){
+    public boolean isCertifySignPending(boolean isOnCreate ){
         DateTime currentDateTime          = Global.getDateTimeObj(Global.GetCurrentDateTime(), false);    // Current Date Time
         DateTime currentUTCTime           = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), true);
         JSONObject logPermissionObj       = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
@@ -3884,6 +3903,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     Reason = reason;
                     SavePersonalStatus();
                     HideKeyboard(ReasonEditText);
+
+                    TrailorNumber = TrailorNo.trim();
+                    SaveTrailerLocally(TrailorNumber);
+                    trailorTv.setText(TrailorNumber);
+
 
                     try {
                         if (trailerDialog != null || trailerDialog.isShowing())
@@ -5400,19 +5424,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             //    GetOdometer18Days(DRIVER_ID, DeviceId, DriverCompanyId, SelectedDate);
 
                                 IsAOBRD = sharedPref.IsAOBRD(getActivity());
-                                Log.d("IsAOBRD", "IsAOBRD 3: " + IsAOBRD);
-                                try {
-                                    if (IsAOBRD) {
-                                        EldTitleTV.setText("HOURS OF SERVICE - AOBRD");
-                                        //slideMenu.homeTxtView.setText("AOBRD - HOS");
-                                        dotSwitchButton.setVisibility(View.GONE);
-                                    } else {
-                                        EldTitleTV.setText("HOURS OF SERVICE - ELD");
-                                        //slideMenu.homeTxtView.setText("ELD - HOS");
-                                        dotSwitchButton.setVisibility(View.VISIBLE);
-                                    }
-                                } catch (Exception e) {
-                                }
+                                setTitleView(sharedPref.IsOdometerFromOBD(getActivity()), isExemptDriver);
                             }
                         }
 
@@ -5591,26 +5603,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             sharedPref.SetOdometerFromOBD(isOdometerFromOBD, getActivity());
                             sharedPref.setCurrentTruckPlateNo(plateNo, getActivity());
 
-                            try {
-                                if (IsAOBRD) {
-                                    EldTitleTV.setText("HOURS OF SERVICE - AOBRD");
-                                   // slideMenu.homeTxtView.setText("AOBRD - HOS");
-                                    dotSwitchButton.setVisibility(View.GONE);
-                                } else {
-                                    EldTitleTV.setText("HOURS OF SERVICE - ELD");
-                                    //slideMenu.homeTxtView.setText("ELD - HOS");
-                                    dotSwitchButton.setVisibility(View.VISIBLE);
-                                }
-
-                                if(isOdometerFromOBD){
-                                    odometerLay.setVisibility(View.INVISIBLE);
-
-                                }else{
-                                    odometerLay.setVisibility(View.VISIBLE);
-                                }
-                            } catch (Exception e) {
-                            }
-
+                            setTitleView(isOdometerFromOBD, isExemptDriver);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -5667,6 +5660,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                             GetNewsNotification();
                             GetReCertifyRecords();
+
+                            if(isExemptDriver){
+                                Globally.DriverSwitchAlert(getActivity(), getString(R.string.Reminder), getString(R.string.exempt_reminder_desc), getString(R.string.ok));
+                            }
 
                         } else {
                             Global.EldScreenToast(OnDutyBtn, "Updated successfully.", getResources().getColor(R.color.colorPrimary));
@@ -5790,30 +5787,37 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 boolean IsCCMTACertified = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsCCMTACertified);
                                 sharedPref.SetCCMTACertifiedStatus(IsCCMTACertified, getActivity());
 
-                                boolean IsAllowLogReCertification = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsAllowLogReCertification);
-                                boolean IsShowUnidentifiedRecords = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsShowUnidentifiedRecords);
-                                boolean IsPersonal = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsPersonal);
-                                boolean IsYardMove = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsYardMove);
+                                boolean IsAllowLogReCertification   = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsAllowLogReCertification);
+                                boolean IsShowUnidentifiedRecords   = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsShowUnidentifiedRecords);
+                                boolean IsPersonal                  = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsPersonal);
+                                boolean IsYardMove                  = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsYardMove);
 
-                                boolean IsAllowMalfunction = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsAllowMalfunction);
-                                boolean IsAllowDiagnostic = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsAllowDiagnostic);
-                                boolean IsClearMalfunction = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsClearMalfunction);
-                                boolean IsClearDiagnostic = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsClearDiagnostic);
-                                boolean IsNorthCanada     = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsNorthCanada);
+                                boolean IsAllowMalfunction  = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsAllowMalfunction);
+                                boolean IsAllowDiagnostic   = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsAllowDiagnostic);
+                                boolean IsClearMalfunction  = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsClearMalfunction);
+                                boolean IsClearDiagnostic   = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsClearDiagnostic);
+                                boolean IsNorthCanada       = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsNorthCanada);
+                                isExemptDriver              = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsExemptDriver);
+                                boolean IsCycleRequest      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsCycleRequest);
 
                                 if(DRIVER_ID.equals(MainDriverId)) {    // Update permissions for main driver
                                     sharedPref.SetCertifcnUnIdenfdSettings(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, context);
                                     sharedPref.SetDiagnosticAndMalfunctionSettingsMain(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, context);
                                     sharedPref.SetNorthCanadaStatusMain(IsNorthCanada, getActivity());
+                                    sharedPref.SetExemptDriverStatusMain(isExemptDriver, getActivity());
+                                    sharedPref.SetCycleRequestStatusMain(IsCycleRequest, getActivity());
 
                                 }else{                                  // Update permissions for Co driver
                                     sharedPref.SetCertifcnUnIdenfdSettingsCo(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, context);
                                     sharedPref.SetDiagnosticAndMalfunctionSettingsCo(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, context);
                                     sharedPref.SetNorthCanadaStatusCo(IsNorthCanada, getActivity());
+                                    sharedPref.SetExemptDriverStatusCo(isExemptDriver, getActivity());
+                                    sharedPref.SetCycleRequestStatusCo(IsCycleRequest, getActivity());
+
                                 }
 
 
-
+                                setTitleView(sharedPref.IsOdometerFromOBD(getActivity()), isExemptDriver);
 
                             }
                         } catch (Exception e) {
@@ -6357,7 +6361,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             }
         }
 
-        if(isAlertAllowed) {
+        if(isAlertAllowed && sharedPref.IsDOT(getActivity()) == false) {
             if (certifyLogAlert != null && certifyLogAlert.isShowing()) {
                 Log.d("dialog", "dialog is showing");
             } else {
@@ -6374,27 +6378,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             public void onClick(DialogInterface dialog, int arg1) {
                                 dialog.dismiss();
 
-                                try {
-                                    FragmentManager fragManager = getActivity().getSupportFragmentManager();
-
-                                    String dayOfTheWeek = "", MonthFullName = "", MonthShortName = "";
-
-                                    DateTime currentDate = Global.getDateTimeObj(Global.getCurrentDate(), false);
-                                    String[] dateMonth = Global.dateConversionMMMM_ddd_dd(currentDate.toString()).split(",");
-
-                                    if (dateMonth.length > 1) {
-                                        MonthFullName = dateMonth[0];
-                                        MonthShortName = dateMonth[1];
-                                        dayOfTheWeek = dateMonth[2];
-
-                                    }
-
-                                    initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, constants.CertifyLog, isCertifyLog,
-                                            VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
-                                            Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), fragManager);
-                                } catch (final Exception e) {
-                                    e.printStackTrace();
-                                }
+                                moveToCertifyWithPopup();
 
                             }
                         });
@@ -6428,6 +6412,31 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                 sharedPref.setCertifyAlertViewTime(Global.GetCurrentUTCTimeFormat(), getActivity());
             }
+        }
+    }
+
+
+    public void moveToCertifyWithPopup(){
+        try {
+            FragmentManager fragManager = getActivity().getSupportFragmentManager();
+
+            String dayOfTheWeek = "", MonthFullName = "", MonthShortName = "";
+
+            DateTime currentDate = Global.getDateTimeObj(Global.getCurrentDate(), false);
+            String[] dateMonth = Global.dateConversionMMMM_ddd_dd(currentDate.toString()).split(",");
+
+            if (dateMonth.length > 1) {
+                MonthFullName = dateMonth[0];
+                MonthShortName = dateMonth[1];
+                dayOfTheWeek = dateMonth[2];
+
+            }
+
+            initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, constants.CertifyLog, isCertifyLog,
+                    VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
+                    Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), fragManager);
+        } catch (final Exception e) {
+            e.printStackTrace();
         }
     }
 

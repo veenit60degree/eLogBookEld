@@ -1,20 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/addHrsDotLay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@color/dot_titles_bg"
-    android:padding="@dimen/margin_short_6"
+    android:orientation="vertical"
+    android:background="@color/whiteee"
 
     >
 
 
     <TextView
-        android:id="@+id/dateDotTV"
+        android:id="@+id/dateTimeDiffCycleTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/date_date"
+        android:text="@string/date_and_time"
+        android:paddingLeft="@dimen/margin_20"
+        android:paddingTop="@dimen/margin_short_6"
+        android:paddingBottom="@dimen/margin_short_6"
+        android:textSize="@dimen/text_size_16"
+        android:textColor="@color/color_eld_theme"
+        android:gravity="left"
+        android:maxLines="1"
+        android:visibility="gone"
+        />
+
+
+
+    <LinearLayout
+        android:id="@+id/addHrsDotLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dot_titles_bg"
+        android:padding="@dimen/margin_short_6"
+
+    >
+
+    <TextView
+        android:id="@+id/dateCycleDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/date_and_time"
         android:textStyle="bold"
         android:paddingLeft="@dimen/margin_short_2"
         android:paddingRight="@dimen/margin_short_2"
@@ -28,10 +53,10 @@
 
 
     <TextView
-        android:id="@+id/shiftStartDotTV"
+        android:id="@+id/eventCycleEventTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/WorkShiftStart"
+        android:text="@string/Event"
         android:textStyle="bold"
         android:paddingLeft="@dimen/margin_short_2"
         android:paddingRight="@dimen/margin_short_2"
@@ -44,10 +69,26 @@
         />
 
     <TextView
-        android:id="@+id/shiftEndDotTV"
+        android:id="@+id/geoLocCycleTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/WorkShiftEnd"
+        android:text="@string/geo_location"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/text_size_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="0.9"
+        android:maxLines="2"
+
+        />
+
+    <TextView
+        android:id="@+id/latLongCycleTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/lat_long"
         android:textStyle="bold"
         android:paddingLeft="@dimen/margin_short_2"
         android:paddingRight="@dimen/margin_short_2"
@@ -60,26 +101,10 @@
         />
 
     <TextView
-        android:id="@+id/totalHrOnDutyDotTV"
+        android:id="@+id/distanceLastCoCycleTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/TotalHoursOnDuty"
-        android:textStyle="bold"
-        android:paddingLeft="@dimen/margin_short_2"
-        android:paddingRight="@dimen/margin_short_2"
-        android:textSize="@dimen/text_size_14"
-        android:gravity="center_horizontal"
-        android:textColor="@color/color_eld_theme"
-        android:layout_weight="1"
-        android:maxLines="2"
-
-        />
-
-    <TextView
-        android:id="@+id/totalHrOffDutyDotTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/TotalHoursOffDuty"
+        android:text="@string/distance_last_coor"
         android:textStyle="bold"
         android:paddingLeft="@dimen/margin_short_2"
         android:paddingRight="@dimen/margin_short_2"
@@ -155,5 +180,5 @@
         />
 
 
-
+</LinearLayout>
 </LinearLayout>

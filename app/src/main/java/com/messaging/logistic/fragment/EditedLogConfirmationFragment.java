@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import com.adapter.logistic.EditedLogAdapter;
 import com.messaging.logistic.R;
 
-public class EditedLogFragment extends Fragment {
+public class EditedLogConfirmationFragment extends Fragment {
 
     View rootView;
     SuggestedLogFragment suggestedLogFragment;

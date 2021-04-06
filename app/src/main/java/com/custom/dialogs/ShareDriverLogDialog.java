@@ -779,8 +779,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 params.put(ConstantsKeys.latitude, latitude);
                 params.put(ConstantsKeys.longitude, longitude);
                 params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
-                params.put(ConstantsKeys.Country, selectedCountry );
-                params.put(ConstantsKeys.EmailAddress, canSelectedEmail);
+                params.put(ConstantsKeys.Country, selectedCountry );    // for canada view
+                params.put(ConstantsKeys.EmailAddress, canSelectedEmail);   // for canada view
 
                 return params;
             }

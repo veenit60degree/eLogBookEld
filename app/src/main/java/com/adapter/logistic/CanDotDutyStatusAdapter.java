@@ -69,6 +69,8 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
 
             holder.dutyStatusDotLay     = (LinearLayout) convertView.findViewById(R.id.dutyStatusDotLay);
 
+            holder.dateTimeDiffTV       = (TextView) convertView.findViewById(R.id.dateTimeDiffTV);
+
             holder.dateTimeDotTV        = (TextView) convertView.findViewById(R.id.dateTimeDotTV);
             holder.eventDotTV           = (TextView) convertView.findViewById(R.id.eventDotTV);
             holder.cmvDotTV             = (TextView) convertView.findViewById(R.id.cmvDotTV);
@@ -88,20 +90,42 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
         }
 
 
-
         holder.dutyStatusDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateTimeDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins()) );
-        holder.eventDotTV.setText(""+itemsList.get(position).getEventType());
-        holder.cmvDotTV.setText(itemsList.get(position).getCMVVIN());
+        String EventDateTime = itemsList.get(position).getDateTimeWithMins();
+        try {
+            if (position == 0) {
+                holder.dateTimeDiffTV.setVisibility(View.VISIBLE);
+                holder.dateTimeDiffTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+            } else {
+                int dayDiff = constants.getDayDiff(itemsList.get(position-1).getDateTimeWithMins(), EventDateTime);
+                if (dayDiff != 0){
+                    holder.dateTimeDiffTV.setVisibility(View.VISIBLE);
+                    holder.dateTimeDiffTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        holder.distanceAccDotTV.setText(itemsList.get(position).getDistanceInKM());
+        if(EventDateTime.length() > 11) {
+            holder.dateTimeDotTV.setText(EventDateTime.substring(11, EventDateTime.length()));
+        }
+
+        holder.eventDotTV.setText(constants.getDutyChangeEventName( itemsList.get(position).getEventType(),
+                                                                    itemsList.get(position).getEventCode(),
+                                                                    itemsList.get(position).isPersonal(),
+                                                                    itemsList.get(position).isYard() ));
+
+        holder.cmvDotTV.setText(constants.checkNullString(itemsList.get(position).getTruckEquipmentNo()));
+
+        holder.distanceAccDotTV.setText(constants.checkNullString(itemsList.get(position).getDistanceInKM()));
         //holder.hrsAccDotTV.setText(itemsList.get(position).getH);
-        holder.distanceTotalDotTV.setText(itemsList.get(position).getTotalEngineHours());
+        holder.distanceTotalDotTV.setText(constants.checkNullString(itemsList.get(position).getTotalEngineHours()) );
 
         holder.recStatusDotTV.setText(""+itemsList.get(position).getRecordStatus());
         holder.recOriginDotTV.setText(itemsList.get(position).getRecordOrigin());
-        holder.seqNoDotTV.setText(""+itemsList.get(position).getSequenceNumber());
+        holder.seqNoDotTV.setText(""+itemsList.get(position).getHexaSeqNumber());
 
 
         // Set text style normal
@@ -124,6 +148,7 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView dateTimeDotTV, eventDotTV, cmvDotTV, distanceAccDotTV, hrsAccDotTV, distanceTotalDotTV, recStatusDotTV, recOriginDotTV, seqNoDotTV;
+        TextView dateTimeDiffTV;
         LinearLayout dutyStatusDotLay;
 
     }

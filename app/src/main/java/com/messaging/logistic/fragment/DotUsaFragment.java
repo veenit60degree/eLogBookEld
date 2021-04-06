@@ -91,7 +91,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     TextView period24startTV, driverIdTV, coDriverIdTV, truckTractorTV;
     TextView unidentifiedDriverTV, eldMalfTV, carrierTV, startEndOdoTV;
     TextView OdometerDiffTV, truckTractorVinTV, exemptDriverStatusTV, startEndEngineHrTV;
-    TextView currentLocTV, fileCommentTV, PrintDisplayDateTV;
+    TextView currentLocTV, fileCommentTV, PrintDisplayDateTV, dotModeTV;
 
     ListView dotDataListView, shippingDotListView;
     ScrollViewExt dotScrollView;
@@ -235,6 +235,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         EldTitleTV.setOnClickListener(this);
         sendLogBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
+        dotModeTV.setOnClickListener(this);
 
     }
 
@@ -279,7 +280,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         currentLocTV        = (TextView)view.findViewById(R.id.currentLocTV);
         fileCommentTV       = (TextView)view.findViewById(R.id.fileCommentTV);
         PrintDisplayDateTV  = (TextView)view.findViewById(R.id.PrintDisplayDateTV);
-
+        dotModeTV           = (TextView)view.findViewById(R.id.dotModeTV);
 
 
 
@@ -404,9 +405,43 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
                 break;
 
+            case R.id.dotModeTV:
+                if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
+                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
+                }else{
+                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
+                }
+                moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
+                break;
 
         }
     }
+
+
+
+    void moveToDotMode(String date, String dayName, String dayFullName, String dayShortName, String cycle){
+
+        getFragmentManager().popBackStackImmediate();
+
+        FragmentManager fragManager = getActivity().getSupportFragmentManager();
+        Fragment dotFragment = new DotCanadaFragment();
+        Globally.bundle.putString("date", date);
+        Globally.bundle.putString("day_name", dayName);
+        Globally.bundle.putString("month_full_name", dayFullName);
+        Globally.bundle.putString("month_short_name", dayShortName);
+        Globally.bundle.putString("cycle", cycle);
+
+        dotFragment.setArguments(Globally.bundle);
+
+        FragmentTransaction fragmentTran = fragManager.beginTransaction();
+        fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
+                android.R.anim.fade_in,android.R.anim.fade_out);
+        fragmentTran.replace(R.id.job_fragment, dotFragment);
+        fragmentTran.addToBackStack(null);  //"dot_log"
+        fragmentTran.commit();
+
+    }
+
 
     @Override
     public void onDestroy() {

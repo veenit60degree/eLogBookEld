@@ -418,10 +418,10 @@ public class SharedPref {
 
 
     // Set North Canada Status for main driver -------------------
-    public static void SetNorthCanadaStatusMain( boolean CCMTACertified, Context context) {
+    public static void SetNorthCanadaStatusMain( boolean IsNorthCanada, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(ConstantsKeys.IsNorthCanada, CCMTACertified);
+        editor.putBoolean(ConstantsKeys.IsNorthCanada, IsNorthCanada);
         editor.commit();
     }
 
@@ -440,17 +440,17 @@ public class SharedPref {
 
 
 
-    // Set North Canada Status for main driver -------------------
-    public static void SetNorthCanadaStatusCo( boolean CCMTACertified, Context context) {
+    // Set North Canada Status for co driver -------------------
+    public static void SetNorthCanadaStatusCo( boolean IsNorthCanada, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(ConstantsKeys.IsNorthCanadaCo, CCMTACertified);
+        editor.putBoolean(ConstantsKeys.IsNorthCanadaCo, IsNorthCanada);
         editor.commit();
     }
 
 
 
-    // Get North Canada Status for main driver -------------------
+    // Get North Canada Status for co driver -------------------
     public static boolean IsNorthCanadaCo(Context context) {
 
         boolean isRecord = false;
@@ -460,6 +460,104 @@ public class SharedPref {
         }
         return isRecord;
     }
+
+
+
+
+    // Set Exempt Driver Status for main driver -------------------
+    public static void SetExemptDriverStatusMain( boolean ExemptDriver, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsExemptDriver, ExemptDriver);
+        editor.commit();
+    }
+
+
+
+    // Get Exempt Driver Status for main driver -------------------
+    public static boolean IsExemptDriverMain(Context context) {
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsExemptDriver, false);
+        }
+        return isRecord;
+    }
+
+
+
+    // Set Exempt Driver Status for co driver -------------------
+    public static void SetExemptDriverStatusCo( boolean CCMTACertified, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsExemptDriverCo, CCMTACertified);
+        editor.commit();
+    }
+
+
+
+    // Get ExemptDriver Status for co driver -------------------
+    public static boolean IsExemptDriverCo(Context context) {
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsExemptDriverCo, false);
+        }
+        return isRecord;
+    }
+
+
+
+
+
+
+
+    // Set Cycle Request Status for main driver -------------------
+    public static void SetCycleRequestStatusMain( boolean isCycleRequest, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsCycleRequest, isCycleRequest);
+        editor.commit();
+    }
+
+
+
+    // Get Cycle Request Status for main driver -------------------
+    public static boolean IsCycleRequestMain(Context context) {
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsCycleRequest, false);
+        }
+        return isRecord;
+    }
+
+
+
+    // Set Cycle Request Status for co driver -------------------
+    public static void SetCycleRequestStatusCo( boolean isCycleRequest, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsCycleRequestCo, isCycleRequest);
+        editor.commit();
+    }
+
+
+
+    // Get Cycle Request Status for co driver -------------------
+    public static boolean IsCycleRequestCo(Context context) {
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsCycleRequestCo, false);
+        }
+        return isRecord;
+    }
+
+
+
 
 
     // Set CCMTACertified status -------------------

@@ -1,14 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/whiteee"
+
+    >
+
+
+    <TextView
+        android:id="@+id/dateTimeDiffTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/margin_22"
+        android:paddingTop="@dimen/margin_short_9"
+        android:paddingBottom="@dimen/margin_short_9"
+        android:textSize="@dimen/text_size_18"
+        android:textColor="@color/color_eld_theme"
+        android:gravity="left"
+        android:maxLines="1"
+        android:visibility="gone"
+        />
+
+
+    <LinearLayout
     android:id="@+id/dutyStatusDotLay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@color/dot_titles_bg"
-    android:padding="@dimen/margin_10"
+    android:layout_margin="@dimen/margin_10"
 
     >
-
 
     <TextView
         android:id="@+id/dateTimeDotTV"
@@ -155,5 +178,5 @@
         />
 
 
-
+</LinearLayout>
 </LinearLayout>

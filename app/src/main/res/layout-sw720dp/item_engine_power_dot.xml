@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/enginePwrDotLay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@color/dot_titles_bg"
-    android:padding="@dimen/margin_11"
+    android:orientation="vertical"
+    android:background="@color/whiteee"
+
+    >
+
+
+    <TextView
+        android:id="@+id/dateTimeDiffEngineTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/date_and_time"
+        android:paddingLeft="@dimen/view_height_45"
+        android:paddingTop="@dimen/margin_11"
+        android:paddingBottom="@dimen/margin_11"
+        android:textSize="@dimen/text_size_20"
+        android:textColor="@color/color_eld_theme"
+        android:gravity="left"
+        android:maxLines="1"
+        android:visibility="gone"
+
+        />
+
+
+
+    <LinearLayout
+        android:id="@+id/enginePwrDotLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dot_titles_bg"
+        android:padding="@dimen/margin_11"
 
     >
 
@@ -140,5 +167,5 @@
         />
 
 
-
+</LinearLayout>
 </LinearLayout>

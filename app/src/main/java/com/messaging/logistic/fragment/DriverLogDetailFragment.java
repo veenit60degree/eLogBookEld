@@ -13,7 +13,6 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -2872,7 +2871,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             Constants.MonthShortName    = MonthShortName;
 
             FragmentManager fragManager = getActivity().getSupportFragmentManager();
-            EditGraphFragment editLogFragment = new EditGraphFragment();   //EditLogFragment
+            EditLogFragment editLogFragment = new EditLogFragment();   //EditLogFragment
 
             Globally.bundle.putString("screen_type", "edit_log");
             Globally.bundle.putString("link", "");

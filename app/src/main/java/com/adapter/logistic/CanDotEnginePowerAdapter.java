@@ -67,6 +67,8 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
 
             holder.enginePwrDotLay     = (LinearLayout) convertView.findViewById(R.id.enginePwrDotLay);
 
+            holder.dateTimeDiffEngineTV= (TextView) convertView.findViewById(R.id.dateTimeDiffEngineTV);
+
             holder.dateTimeEDotTV      = (TextView) convertView.findViewById(R.id.dateTimeEDotTV);
             holder.eventDotETV         = (TextView) convertView.findViewById(R.id.eventDotETV);
             holder.jeoLocEDotTV        = (TextView) convertView.findViewById(R.id.jeoLocEDotTV);
@@ -88,16 +90,38 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
 
         holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
-        holder.dateTimeEDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate() ));
-        holder.eventDotETV.setText(""+itemsList.get(position).getEventCode());
+        String EventDateTime = itemsList.get(position).getDateTimeWithMins();
+        try {
+            if (position == 0) {
+                holder.dateTimeDiffEngineTV.setVisibility(View.VISIBLE);
+                holder.dateTimeDiffEngineTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+            } else {
+                int dayDiff = constants.getDayDiff(itemsList.get(position-1).getDateTimeWithMins(), EventDateTime);
+                if (dayDiff != 0){
+                    holder.dateTimeDiffEngineTV.setVisibility(View.VISIBLE);
+                    holder.dateTimeDiffEngineTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(EventDateTime.length() > 11) {
+            holder.dateTimeEDotTV.setText(EventDateTime.substring(11, EventDateTime.length()));
+        }
+
+       // holder.dateTimeEDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins() ));
+        holder.eventDotETV.setText(constants.getEnginePowerUpDownEventName(
+                                        itemsList.get(position).getEventType(),
+                                        itemsList.get(position).getEventCode()));
         holder.jeoLocEDotTV.setText(itemsList.get(position).getGPSLatitude() + ", " + itemsList.get(position).getGPSLongitude());
 
-        holder.distanceAccDotTV.setText(itemsList.get(position).getDistanceInKM());
-        holder.cmvEDotTV.setText(itemsList.get(position).getCMVVIN());
+        holder.distanceAccDotTV.setText(constants.checkNullString(itemsList.get(position).getDistanceInKM()));
+        holder.cmvEDotTV.setText(constants.checkNullString(itemsList.get(position).getTruckEquipmentNo()));
         holder.distanceTotalEDotTV.setText(itemsList.get(position).getTotalEngineHours());
 
-        holder.hoursTotalEDotTV.setText(itemsList.get(position).getTotalEngineHours());
-        holder.seqNoEDotTV.setText(""+itemsList.get(position).getSequenceNumber());
+        holder.hoursTotalEDotTV.setText(constants.checkNullString(itemsList.get(position).getTotalEngineHours()));
+        holder.seqNoEDotTV.setText(""+itemsList.get(position).getHexaSeqNumber());
 
 
         // Set text style normal
@@ -118,6 +142,7 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView dateTimeEDotTV, eventDotETV, jeoLocEDotTV, distanceAccDotTV, cmvEDotTV, distanceTotalEDotTV, hoursTotalEDotTV, seqNoEDotTV ;
+        TextView dateTimeDiffEngineTV;
         LinearLayout enginePwrDotLay;
 
     }

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -35,6 +36,8 @@ import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.SwipeToDeleteCallback;
 import com.constants.VolleyRequest;
+import com.custom.dialogs.ConfirmationDialog;
+import com.custom.dialogs.CycleChangeRequestDialog;
 import com.driver.details.DriverConst;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -70,12 +73,18 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     RelativeLayout rightMenuBtn;
     TextView EldTitleTV, noDataEldTV, dateActionBarTV;
     public static FloatingActionButton deleteNotificationBtn;
+    public static Button invisibleNotiBtn;
     //NotificationHistoryAdapter historyAdapter;
     NotificationHistoryRecylerAdapter historyRecylerAdapter;
     List<Notification18DaysModel> notificationsList = new ArrayList<Notification18DaysModel>();
     JSONArray historyArray = new JSONArray();
     JSONArray saveToNotificationArray = new JSONArray();
-    String DeviceId = "", DriverId = "", CoDriverId = "", DriverLoginType = "";
+    String DeviceId = "", DriverId = "", CoDriverId = "", DriverLoginType = "", CompanyId = "";
+    String Approved = "2";
+    String Rejected = "3";
+    String changedCycleId = "", Id = "", currentCycleId = "", TruckNumber, DriverTimeZone;
+    String savedCycleType = "", changedCycleName = "", savedCycleId = "";
+    boolean isCycleRequest, isApprovedCycleRequest = true;
 
     SharedPref sharedPref;
     DBHelper dbHelper;
@@ -87,14 +96,18 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     Globally global;
     AlertDialog saveJobAlertDialog;
     private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
+    CycleChangeRequestDialog confirmationDialog;
 
 
-    VolleyRequest GetNotificationRequest, GetMessagesRequest;
+    VolleyRequest GetNotificationRequest, GetMessagesRequest, getCycleChangeApproval, ChangeCycleRequest;
     Map<String, String> params;
-    final int GetNotifications  = 1;
-    final int MainDriverLog     = 101;
-    final int CoDriverLog       = 102;
-    final int DeleteLog         = 103;
+    final int GetNotifications      = 1;
+    final int MainDriverLog         = 101;
+    final int CoDriverLog           = 102;
+    final int DeleteLog             = 103;
+    final int CycleChangeApproval   = 104;
+    final int ChangeCycle           = 105;
+
     int DriverType              = 0;
     boolean isUndo = false, isSwipe = false;
 
@@ -135,9 +148,13 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         rightMenuBtn                = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         EldTitleTV                  = (TextView)view.findViewById(R.id.EldTitleTV);
         noDataEldTV                 = (TextView)view.findViewById(R.id.noDataEldTV);
+        invisibleNotiBtn            = (Button)view.findViewById(R.id.invisibleNotiBtn);
 
         GetNotificationRequest      = new VolleyRequest(getActivity());
         GetMessagesRequest          = new VolleyRequest(getActivity());
+        getCycleChangeApproval      = new VolleyRequest(getActivity());
+        ChangeCycleRequest          = new VolleyRequest(getActivity());
+
         notificationMethod          = new NotificationMethod();
         saveNotificationHistoryReq  = new SaveDriverLogPost(getActivity(), saveNotificationReqResponse);
 
@@ -160,7 +177,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         eldMenuLay.setOnClickListener(this);
         dateActionBarTV.setOnClickListener(this);
         deleteNotificationBtn.setOnClickListener(this);
-        //  dateActionBarTV.setVisibility(View.GONE);
+        invisibleNotiBtn.setOnClickListener(this);
 
     }
 
@@ -183,14 +200,24 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
         DeviceId        = sharedPref.GetSavedSystemToken(getActivity());
         DriverLoginType = sharedPref.getDriverType(getContext());
+        CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
 
         if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-            DriverType  = 0;
-            DriverId    = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+            DriverType      = 0;
+            DriverId        = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+            TruckNumber     = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
+            DriverTimeZone  = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
+            savedCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+            isCycleRequest  = sharedPref.IsCycleRequestMain(getActivity());
         }else {
-            DriverType  = 1;
-            DriverId    = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+            DriverType      = 1;
+            DriverId        = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+            TruckNumber     = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
+            DriverTimeZone  = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
+            savedCycleId    = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
+            isCycleRequest  = sharedPref.IsCycleRequestCo(getActivity());
         }
+
 
         // Clear unread notification badge count
         constants.ClearUnreadNotifications(DriverType, notificationPref, coNotificationPref,  getActivity());
@@ -210,7 +237,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         if (global.isConnected(getActivity()) ) {
             boolean isDeleted = sharedPref.isNotificationDeleted(getActivity());
 
-            if(notificationsList.size() == 0 && !isDeleted ) {
+            if(notificationsList.size() == 0 && !isDeleted || isCycleRequest) {
                 GetNotificationLog(DriverId, DeviceId);
             }
 
@@ -218,8 +245,10 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                 saveNotificationHistoryReq.PostDriverLogData(saveToNotificationArray, APIs.SAVE_NOTIFICATION, constants.SocketTimeout20Sec, false, false, DriverType, MainDriverLog);
             }
 
+           /* if(isCycleRequest) {
+                getCycleChangeApproval(DriverId, DeviceId, CompanyId);
+            }*/
         }
-
 
     }
 
@@ -345,6 +374,12 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
                 break;
 
+
+            case R.id.invisibleNotiBtn:
+                confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
+                confirmationDialog.show();
+
+                break;
 
         }
     }
@@ -504,14 +539,54 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
-         params.put(ConstantsKeys.ProjectId, global.PROJECT_ID );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.ProjectId, global.PROJECT_ID );
+        params.put(ConstantsKeys.CompanyId, CompanyId );
+
         GetNotificationRequest.executeRequest(Request.Method.POST, APIs.GET_NOTIFICATION_LOG , params, GetNotifications,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
 
     }
 
 
+    /*================== Get Cycle Change Approval request ===================*/
+    void getCycleChangeApproval(final String DriverId, final String DeviceId, final String CompanyId){
+
+        params = new HashMap<String, String>();
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+
+        getCycleChangeApproval.executeRequest(com.android.volley.Request.Method.POST, APIs.GET_CYCLE_CHANGE_REQUESTS , params, CycleChangeApproval,
+                Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
+
+    }
+
+
+    /*================== change driver Cycle request ===================*/
+    void changeCycleRequest(final String DriverId, final String DeviceId, final String CompanyId, String Id,
+                            String Status, String ChangedCycleId, String CurrentCycleId, String Latitude ,
+                            String Longitude, String DriverTimZone, String PowerUnitNumber, String LogDate){
+
+        params = new HashMap<String, String>();
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.Id, Id);
+        params.put(ConstantsKeys.Status, Status);
+        params.put(ConstantsKeys.CycleId, ChangedCycleId);
+        params.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
+        params.put(ConstantsKeys.Latitude, Latitude);
+        params.put(ConstantsKeys.Longitude, Longitude);
+        params.put(ConstantsKeys.DriverTimZone, DriverTimZone);
+        params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
+        params.put(ConstantsKeys.LogDate, LogDate);
+        params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(getActivity()));
+
+        ChangeCycleRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_DRIVER_CYCLE , params, ChangeCycle,
+                Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
+
+    }
 
 
     @SuppressLint("RestrictedApi")
@@ -519,8 +594,45 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         try {
 
             notificationsList = new ArrayList<Notification18DaysModel>();
-
             JSONArray notification18DaysArray = new JSONArray();
+
+            if(isServerData) {
+                if (obj.has(ConstantsKeys.cycleRequests) && !obj.isNull(ConstantsKeys.cycleRequests)) {
+                    JSONArray cycleReqArray = new JSONArray(obj.getString(ConstantsKeys.cycleRequests));
+                    if (cycleReqArray.length() > 0) {
+                        JSONObject cycleReqObj = (JSONObject) cycleReqArray.get(0);
+
+                        changedCycleId = cycleReqObj.getString(ConstantsKeys.CycleId);
+                        currentCycleId = cycleReqObj.getString(ConstantsKeys.CurrentCycleId);
+                        Id = cycleReqObj.getString(ConstantsKeys.Id);
+
+                        if (currentCycleId.equals("0")) {
+                            currentCycleId = savedCycleId;
+                        }
+
+                        Notification18DaysModel model = new Notification18DaysModel(
+                                1,
+                                cycleReqObj.getString(ConstantsKeys.DriverId),
+                                cycleReqObj.getString(ConstantsKeys.DriverTimeZone),
+                                Id,                 // used as cycle request Id here
+                                currentCycleId,     // used as cycle request CurrentCycleId
+                                changedCycleId,     // used as cycle request Changed CycleId
+                                cycleReqObj.getString(ConstantsKeys.PowerUnitNumber),   // used as cycle request PowerUnitNumber
+                                cycleReqObj.getString(ConstantsKeys.GeoLocation),       // used as cycle request GeoLocation
+                                cycleReqObj.getString(ConstantsKeys.UTCCreatedDate),
+                                cycleReqObj.getString(ConstantsKeys.CompanyId),
+                                cycleReqObj.getString(ConstantsKeys.StatusName)
+                        );
+                        notificationsList.add(model);
+
+                        confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
+                        confirmationDialog.show();
+
+                    }
+                }
+            }
+
+
             if(isServerData) {
                 jsonArray = new JSONArray(obj.getString(ConstantsKeys.Data));
             }
@@ -539,7 +651,8 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                             dataJson.getString(ConstantsKeys.Message),
                             dataJson.getString(ConstantsKeys.ImagePath),
                             dataJson.getString(ConstantsKeys.SendDate),
-                            dataJson.getString(ConstantsKeys.CompanyId)
+                            dataJson.getString(ConstantsKeys.CompanyId),
+                            "Notification"
                     );
                     notificationsList.add(model);
                     notification18DaysArray.put(dataJson);
@@ -584,7 +697,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                 historyRecylerAdapter.removeItem(position);
                 // notificationsList.remove(position);
 
-                Snackbar snackbar = Snackbar.make(eldMenuLay, getResources().getString(R.string.notification_deleted), Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(eldMenuLay, getResources().getString(R.string.notification_deleted) , Snackbar.LENGTH_LONG);
                 snackbar.setAction("UNDO", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -596,14 +709,20 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
                     }
                 });
-
-
-
                 snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();
+
+                if(item.getType().equals("Requested")){
+                    isUndo = true;
+                    historyRecylerAdapter.restoreItem(item, position);
+                    notiHistoryRecyclerView.scrollToPosition(position);
+                    Globally.showToast(eldMenuBtn, getString(R.string.change_req_not_deleted));
+                }else{
+                    snackbar.show();
+                }
 
                 // Update notification list after delete on Undo item
                 updateNotificationList(position);
+
             }
         };
 
@@ -635,6 +754,93 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
 
 
+    void saveUpdatedCycleData(String SavedCycleType, String changedCycleName){
+
+        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
+            if(SavedCycleType.equals("can_cycle")){
+
+                DriverConst.SetDriverSettings(changedCycleName, changedCycleId, changedCycleId,
+                        DriverConst.GetDriverCurrentCycle(DriverConst.USACycleId, getContext()),  changedCycleName,
+                        DriverConst.GetDriverSettings(DriverConst.USACycleName, getActivity()),
+                        DriverTimeZone, DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity()),
+                        DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
+
+            }else{
+                DriverConst.SetDriverSettings(changedCycleName, changedCycleId,
+                        DriverConst.GetDriverCurrentCycle(DriverConst.CANCycleId, getContext()),
+                        changedCycleId,  DriverConst.GetDriverSettings(DriverConst.CANCycleName, getActivity()),
+                        changedCycleName,
+                        DriverTimeZone, DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity()),
+                        DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
+            }
+
+            DriverConst.SetDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
+
+        }else{
+            if(SavedCycleType.equals("can_cycle")){
+                DriverConst.SetCoDriverSettings(changedCycleName, changedCycleId, changedCycleId,
+                        DriverConst.GetCoDriverCurrentCycle(DriverConst.CoUSACycleId, getContext()),  changedCycleName,
+                        DriverConst.GetCoDriverSettings(DriverConst.USACycleName, getActivity()),
+                        DriverTimeZone, DriverConst.GetCoDriverSettings(DriverConst.OffsetHours, getActivity()),
+                        DriverConst.GetCoDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
+
+
+            }else{
+                DriverConst.SetCoDriverSettings(changedCycleName, changedCycleId,
+                        DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCANCycleId, getContext()),
+                        changedCycleId,  DriverConst.GetCoDriverSettings(DriverConst.CANCycleName, getActivity()),
+                        changedCycleName,
+                        DriverTimeZone, DriverConst.GetCoDriverSettings(DriverConst.OffsetHours, getActivity()),
+                        DriverConst.GetCoDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
+            }
+
+            DriverConst.SetCoDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
+        }
+
+
+    }
+
+
+
+
+    /*================== Confirmation Listener ====================*/
+    private class ConfirmListener implements CycleChangeRequestDialog.ConfirmationListener {
+
+        @Override
+        public void OkBtnReady(String savedCycleTypee, String changedCycleNamee) {
+
+            confirmationDialog.dismiss();
+            savedCycleType = savedCycleTypee;
+            changedCycleName = changedCycleNamee;
+
+            if (global.isConnected(getActivity())) {
+                isApprovedCycleRequest = true;
+                changeCycleRequest(DriverId, DeviceId, CompanyId, Id,
+                        Approved, changedCycleId, currentCycleId, Globally.LATITUDE,
+                        Globally.LONGITUDE, DriverTimeZone, TruckNumber, global.GetCurrentDeviceDateDefault());
+            }else{
+                global.EldScreenToast(eldMenuLay, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
+            }
+
+        }
+
+        @Override
+        public void CancelBtnReady(String savedCycleTypee, String changedCycleNamee) {
+            confirmationDialog.dismiss();
+            savedCycleType = savedCycleTypee;
+            changedCycleName = changedCycleNamee;
+
+            if (global.isConnected(getActivity())) {
+                isApprovedCycleRequest = false;
+                changeCycleRequest(DriverId, DeviceId, CompanyId, Id,
+                        Rejected, changedCycleId, currentCycleId, Globally.LATITUDE,
+                        Globally.LONGITUDE, DriverTimeZone, TruckNumber, global.GetCurrentDeviceDateDefault());
+            }else{
+                global.EldScreenToast(eldMenuLay, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
+            }
+        }
+    }
+
 
 
     VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback() {
@@ -643,13 +849,13 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         public void getResponse(String response, int flag) {
 
             JSONObject obj = null;  //, dataObj = null;
-            String status = "";
-
+            String status = "", Message = "";
+            Log.d("response", "response: " + response);
 
             try {
                 obj = new JSONObject(response);
                 status = obj.getString("Status");
-
+                Message = obj.getString("Message");
                /* if (!obj.isNull("Data")) {
                     dataObj = new JSONObject(obj.getString("Data"));
                 }*/
@@ -658,23 +864,64 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
             if (status.equalsIgnoreCase("true")) {
                 switch (flag) {
-                    case GetNotifications:
-                        Log.d("response", "response: " + response);
 
+                    case GetNotifications:
                         // Parse Notification details
                         ParseJSON(true, new JSONArray(), obj);
+                    break;
+
+                    case CycleChangeApproval:
+
+                        try {
+                            JSONArray dataArray = new JSONArray(obj.getString("Data"));
+                            if(dataArray.length() > 0){
+                                JSONObject dataObj = (JSONObject)dataArray.get(0);
+                                changedCycleId = dataObj.getString("CycleId");
+                                currentCycleId = dataObj.getString("CurrentCycleId");
+                                Id             = dataObj.getString("Id");
+
+                                if(currentCycleId.equals("0")){
+                                    currentCycleId = savedCycleId;
+                                }
+                                confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
+                                confirmationDialog.show();
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        break;
+
+                    case ChangeCycle:
+
+                        // refresh list
+                        ParseJSON(false, new JSONArray(), obj);
+
+                        global.EldScreenToast(eldMenuBtn, Message, getResources().getColor(R.color.colorPrimary));
+
+                        if(isApprovedCycleRequest) {
+                            saveUpdatedCycleData(savedCycleType, changedCycleName);
+                        }
+
+                        break;
+
 
                 }
             }else{
                 try {
-                    if(obj.getString("Message").equals("Device Logout") && EldFragment.DriverJsonArray.length() == 0){
+                    if(Message.equals("Device Logout") && EldFragment.DriverJsonArray.length() == 0){
                         global.ClearAllFields(getActivity());
                         global.StopService(getActivity());
                         Intent i = new Intent(getActivity(), LoginActivity.class);
                         getActivity().startActivity(i);
                         getActivity().finish();
                     }else{
-                        TabAct.host.setCurrentTab(0);
+                        if(flag == GetNotifications) {
+                            TabAct.host.setCurrentTab(0);
+                        }else if(flag == ChangeCycle){
+                            global.EldScreenToast(eldMenuBtn, Message, getResources().getColor(R.color.colorVoilation));
+                        }
                     }
                 }catch (Exception e){
                     e.printStackTrace();

@@ -45,7 +45,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     String AlertMsgSpeech = "Your vehicle is moving and there is no driver login in e log book";
 
     String TAG_OBD = "OBD Service";
-    private static final long TIME_UPDATES_INTERVAL = 20 * 1000;   // 20 sec
+    private static final long TIME_INTERVAL_WIFI  = 10 * 1000;   // 10 sec
+    private static final long TIME_INTERVAL_WIRED = 3 * 1000;   // 3 sec
     String TAG = "Service";
     boolean isStopService = false;
     double lastVehSpeed = -1;
@@ -85,7 +86,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         this.replyTo = new Messenger(new IncomingHandler());
         BindConnection();
 
-        mTimer.schedule(timerTask, TIME_UPDATES_INTERVAL, TIME_UPDATES_INTERVAL);
+        mTimer.schedule(timerTask, TIME_INTERVAL_WIFI, TIME_INTERVAL_WIFI);
 
     }
 
@@ -128,20 +129,32 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             try {
                 if (ignitionStatus.equals("ON") || !truckRPM.equals("0")) {
+                    sharedPref.SaveObdStatus(Constants.WIRED_ACTIVE, getApplicationContext());
                     if(speed > 10 && lastVehSpeed > 10){
                         LoginActivity.IsLoginAllowed = false;
-                        Globally.PlaySound(getApplicationContext());
+
+                       // ------------- temp disabled ------------
+                      /*  Globally.PlaySound(getApplicationContext());
                         Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
                         SpeakOutMsg(AlertMsgSpeech);
-
-                        // Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
-
+*/
+                        Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed, 203040);
                     }else{
                         LoginActivity.IsLoginAllowed = true;
                     }
                     lastVehSpeed = speed;
+
+                    CallWired(TIME_INTERVAL_WIRED);
+
                 }else{
                     lastVehSpeed = -1;
+
+                    if(sharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_ACTIVE ||
+                            sharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_ACTIVE) {
+                        sharedPref.SaveObdStatus(Constants.WIRED_INACTIVE, getApplicationContext());
+                        CallWired(TIME_INTERVAL_WIFI);
+                    }
+
                 }
 
             }catch (Exception e){
@@ -151,86 +164,32 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     }
 
 
-    //  ------------- WiFI OBD data response handler ----------
-    TcpClient.OnMessageReceived obdResponseHandler = new TcpClient.OnMessageReceived() {
-        @Override
-        public void messageReceived(String message) {
-            Log.d("response", "OBD Response: " +message);
-
-            try {
-                String correctData = "";
-                LoginActivity.IsLoginAllowed = true;
-
-                if (!message.equals(noObd) && message.length() > 10) {
-
-                    if (message.contains("CAN")) {
-
-                        if (!message.contains("CAN:UNCONNECTED")) {
-                            double WheelBasedVehicleSpeed = -1;
-                            try {
-                                String preFix = "*TS01,861107039609723,050743230120,";
-                                String postFix = "#";
-
-                                if (message.length() > 5) {
-                                    String first = message.substring(0, 5);
-                                    String last = message.substring(message.length() - 1, message.length());
-                                    if (!first.equals("*TS01") && !last.equals("#")) {
-                                        message = preFix + message + postFix;
-                                    }
-                                }
-
-                                if (message.length() > 500) {
-                                    correctData = constants.correctOBDWrongData(message);
-                                    message = correctData;
-                                }
-
-                                data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
-                                JSONObject canObj = new JSONObject(data.toString());
-
-
-                                double GPSSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "GPSSpeed", "0"));
-                                WheelBasedVehicleSpeed = Double.parseDouble(wifiConfig.checkJsonParameter(canObj, "WheelBasedVehicleSpeed", "0"));
-
-                                if (WheelBasedVehicleSpeed == 0) {
-                                    WheelBasedVehicleSpeed = GPSSpeed;
-                                }
-
-                                truckRPM = wifiConfig.checkJsonParameter(canObj, "RPMEngineSpeed", "0");
-                                ignitionStatus = wifiConfig.checkJsonParameter(canObj, "EngineRunning", "false");
-
-                                if (ignitionStatus.equals("true")) {
-                                    if(WheelBasedVehicleSpeed > 10 && lastVehSpeed > 10){
-                                        LoginActivity.IsLoginAllowed = false;
-
-                                        Globally.PlaySound(getApplicationContext());
-                                        Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
-                                        SpeakOutMsg(AlertMsgSpeech);
-                                        //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
-                                    }else{
-                                        LoginActivity.IsLoginAllowed = true;
-                                    }
-                                    lastVehSpeed = WheelBasedVehicleSpeed;
-                                } else {
-                                    lastVehSpeed = -1;
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }else{
-                        lastVehSpeed = -1;
-                    }
-
-                }
-            }catch (Exception e){
-                ignitionStatus = "false";
-                e.printStackTrace();
+    private void CallWired(long time){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                StartStopServer(constants.WiredOBD);
             }
+        }, time);
+    }
 
+    private void checkWifiOBDConnection(){
+
+        // communicate with wired OBD server app with Message
+       // StartStopServer(constants.WiredOBD);
+
+        boolean isAlsNetworkConnected   = wifiConfig.IsAlsNetworkConnected(getApplicationContext());  // get ALS Wifi ssid availability
+        boolean isWiredObdConnected     = false;
+        if(isBound && ( ignitionStatus.equals("ON") && !truckRPM.equals("0") ) ) {
+            isWiredObdConnected = true;
         }
-    };
+
+        // check WIFI connection
+        if( !isWiredObdConnected && isAlsNetworkConnected ){    // check ALS SSID connection
+            tcpClient.sendMessage("123456,can");
+        }
+
+    }
 
 
 
@@ -239,7 +198,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         Log.i("service", "---------onStartCommand Service");
 
-        checkOBDConnection();
+        StartStopServer(constants.WiredOBD);
+        checkWifiOBDConnection();
 
         //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
         return START_STICKY;
@@ -261,7 +221,14 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 StopService();
 
             }else{
-                checkOBDConnection();
+
+                // communicate with wired OBD server app with Message
+                if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_ACTIVE &&
+                        SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_ACTIVE){
+                    StartStopServer(constants.WiredOBD);
+                }
+
+                checkWifiOBDConnection();
             }
 
         }
@@ -286,25 +253,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     }
 
 
-
-
-    private void checkOBDConnection(){
-
-        // communicate with wired OBD server app with Message
-        StartStopServer(constants.WiredOBD);
-
-        boolean isAlsNetworkConnected   = wifiConfig.IsAlsNetworkConnected(getApplicationContext());  // get ALS Wifi ssid availability
-        boolean isWiredObdConnected     = false;
-        if(isBound && ( ignitionStatus.equals("ON") && !truckRPM.equals("0") ) ) {
-            isWiredObdConnected = true;
-        }
-
-        // check WIFI connection
-        if( !isWiredObdConnected && isAlsNetworkConnected ){    // check ALS SSID connection
-            tcpClient.sendMessage("123456,can");
-        }
-
-    }
 
 
     //  ------------- Wired OBD ----------
@@ -403,6 +351,94 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             isBound = false;
         }
     }
+
+
+
+    //  ------------- WiFI OBD data response handler ----------
+    TcpClient.OnMessageReceived obdResponseHandler = new TcpClient.OnMessageReceived() {
+        @Override
+        public void messageReceived(String message) {
+            Log.d("response", "OBD Response: " +message);
+
+            try {
+                String correctData = "";
+                LoginActivity.IsLoginAllowed = true;
+
+                if (!message.equals(noObd) && message.length() > 10) {
+
+                    if (message.contains("CAN")) {
+
+                        if (!message.contains("CAN:UNCONNECTED")) {
+
+                            double WheelBasedVehicleSpeed = -1;
+                            try {
+                                String preFix = "*TS01,861107039609723,050743230120,";
+                                String postFix = "#";
+
+                                if (message.length() > 5) {
+                                    String first = message.substring(0, 5);
+                                    String last = message.substring(message.length() - 1, message.length());
+                                    if (!first.equals("*TS01") && !last.equals("#")) {
+                                        message = preFix + message + postFix;
+                                    }
+                                }
+
+                                if (message.length() > 500) {
+                                    correctData = constants.correctOBDWrongData(message);
+                                    message = correctData;
+                                }
+
+                                data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
+                                JSONObject canObj = new JSONObject(data.toString());
+
+
+                                double GPSSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "GPSSpeed", "0"));
+                                WheelBasedVehicleSpeed = Double.parseDouble(wifiConfig.checkJsonParameter(canObj, "WheelBasedVehicleSpeed", "0"));
+
+                                if (WheelBasedVehicleSpeed == 0) {
+                                    WheelBasedVehicleSpeed = GPSSpeed;
+                                }
+
+                                truckRPM = wifiConfig.checkJsonParameter(canObj, "RPMEngineSpeed", "0");
+                                ignitionStatus = wifiConfig.checkJsonParameter(canObj, "EngineRunning", "false");
+
+                                if (ignitionStatus.equals("true")) {
+                                    sharedPref.SaveObdStatus(Constants.WIFI_ACTIVE, getApplicationContext());
+                                    if(WheelBasedVehicleSpeed > 10 && lastVehSpeed > 10){
+                                        LoginActivity.IsLoginAllowed = false;
+
+                                        Globally.PlaySound(getApplicationContext());
+                                        Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
+                                        SpeakOutMsg(AlertMsgSpeech);
+                                        //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
+                                    }else{
+                                        LoginActivity.IsLoginAllowed = true;
+                                    }
+                                    lastVehSpeed = WheelBasedVehicleSpeed;
+                                } else {
+                                    if(sharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_ACTIVE) {
+                                        sharedPref.SaveObdStatus(Constants.WIFI_INACTIVE, getApplicationContext());
+                                    }
+                                    lastVehSpeed = -1;
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }else{
+                        lastVehSpeed = -1;
+                    }
+
+                }
+            }catch (Exception e){
+                ignitionStatus = "false";
+                e.printStackTrace();
+            }
+
+        }
+    };
 
 
 

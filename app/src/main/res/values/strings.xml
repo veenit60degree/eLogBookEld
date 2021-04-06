@@ -41,6 +41,7 @@
     <string name="ctPat">CT-PAT Inspection</string>
     <string name="connection_error">Internet connection error</string>
 
+    <string name="change_req_not_deleted">Change request not deleted</string>
     <string name="notification_deleted">Notification has deleted from the list</string>
     <string name="detaildCtPatIns">CT-PAT Inspection detail</string>
     <string name="SavedCtPatIns">Saved CT-PAT Inspections</string>
@@ -213,11 +214,16 @@
     <string name="view_history">View Log</string>
     <string name="noti_history">Notifications History</string>
     <string name="change">Change</string>
+    <string name="change_cycle_request">You have cycle change request from </string>
     <string name="want_change_cycle">Do you want to change your cycle from </string>
     <string name="want_change_op_zone">Do you want to change your operating zone from </string>
 
     <string name="ELDViewLogUs">ELD View Log</string>
     <string name="ELDViewLogCanada">ELD View Log</string>
+
+    <string name="title_aobrd">HOURS OF SERVICE - AOBRD</string>
+    <string name="title_eld">HOURS OF SERVICE - ELD</string>
+    <string name="title_eld_exempt">HOS - ELD (Exempt Driver)</string>
 
     <string name="RecordDate">Record Date</string>
     <string name="USDOT"> USDOT #</string>
@@ -272,9 +278,10 @@
     <string name="Origin">Origin</string>
     <string name="Malfunction_with_bracket">(Malfunction)</string>
 
-
+    <string name="lat_long">Lat, Long</string>
     <string name="Event">Event</string>
     <string name="geo_loc">Geo Loc</string>
+    <string name="geo_location">Geo Location</string>
     <string name="cmv">CMV</string>
     <string name="distance_last_coor">Distance Last Coord</string>
     <string name="distance_acc">Distance (Acc)</string>
@@ -304,6 +311,7 @@
     <string name="comments_remarks_desc">Comments. Remarks and Annotations</string>
     <string name="AdditionalHours_desc">Additional Hours not recorded</string>
     <string name="EnginePower_desc">Engine Power Up and Shut Down</string>
+    <string name="change_cycle_duty_def">Change in Driver\'s Cycle. Change in Operating Zone, Off Dutty Time Deferral</string>
 
     <string name="trip_no">Trip No: </string>
     <string name="Shipper">Shipper: </string>
@@ -332,6 +340,7 @@
     <string name="day_starting_time">Day Starting Time</string>
     <string name="current_loc">Current Loc (Lat,Long)</string>
     <string name="comment">Comment</string>
+    <string name="date_time">DateTime</string>
     <string name="date_and_time">Date &amp; Time</string>
     <string name="exempt_driver_status">Exempt Driver Status</string>
     <string name="DriverLicenceNo_jur">Driver Licence No &amp; Jurisdiction</string>
@@ -362,7 +371,8 @@
     <string name="ELD_Auth">ELD Authentication</string>
     <string name="CanadaELDViewLog">Canada ELD View Log</string>
 
-
+    <string name="Reminder">Reminder !!</string>
+    <string name="exempt_reminder_desc">You are logged in as a Exempt Driver.</string>
     <string name="sealNoAtArrival">Seal number of container at arrival</string>
     <string name="sealNoAtDeparture">Seal number of container at departure</string>
 
@@ -635,7 +645,9 @@
     <string name="wired_active">Wired tablet is active</string>
     <string name="wired_inactive">Wired tablet is not working</string>
     <string name="wifi">WiFi</string>
-    <string name="obd_wifi">OBD WiFi</string>
+    <string name="wired_tablet">Wired Tablet Connected</string>
+    <string name="obd_wifi">WiFi OBD Connected</string>
+    <string name="obd_not_connected">OBD not connected</string>
     <string name="wifi_active">WIFI OBD is connected</string>
     <string name="wifi_inactive">WIFI OBD is not working</string>
     <string name="obd_data_connection_desc">Kindly connect with OBD via Wifi or Cable connection</string>
@@ -699,6 +711,8 @@
     <string name="want_to_logout">Do you really want to logout ?</string>
     <string name="pending_carrier_edit">You have pending carrier edits that need your approval.</string>
     <string name="Confirmation">Confirmation</string>
+    <string name="cycle_change_request">Cycle Change Request</string>
+    <string name="not_able_to_select">Not able to select</string>
     <string name="Confirmation_suggested">Confirmation !!</string>
     <string name="found_local_data">We found some local data in your App which need to save on server. Please try after some time</string>
     <string name="enter_reason">Edit log reason</string>
@@ -729,6 +743,7 @@
     <string name="reject_title">Do you you want to reject this unidentified records ?</string>
     <string name="claim">Claim</string>
     <string name="reject">Reject</string>
+    <string name="approve">Approve</string>
     <string name="details">Details</string>
     <string name="aobrd">AOBRD</string>
     <string name="eld">ELD</string>

@@ -1,13 +1,16 @@
 package com.constants;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,8 +22,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentManager;
 
 import com.adapter.logistic.SlideMenuAdapter;
 import com.android.volley.DefaultRetryPolicy;
@@ -37,7 +42,9 @@ import com.driver.details.ParseLoginDetails;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
+import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
@@ -47,6 +54,8 @@ import com.models.EldDataModelNew;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -54,9 +63,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 public class Slidingmenufunctions implements OnClickListener {
 
+	EldFragment eldFragment;
 	SlidingMenu menu;
 	Context context;
 	public static TextView usernameTV;
@@ -84,7 +95,10 @@ public class Slidingmenufunctions implements OnClickListener {
 	SaveDriverLogPost saveDriverLogPost;
 	public SlideMenuAdapter menuAdapter;
 	int DriverType;
-
+	AlertDialog certifyLogAlert;
+	private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
+	RecapViewMethod recapViewMethod;
+	DriverPermissionMethod driverPermissionMethod;
 
 	public Slidingmenufunctions() {
 		super();
@@ -96,6 +110,9 @@ public class Slidingmenufunctions implements OnClickListener {
 		this.context = context;
 		this.DriverType	= DriverType;
 
+		driverPermissionMethod = new DriverPermissionMethod();
+		recapViewMethod = new RecapViewMethod();
+		eldFragment = new EldFragment();
 		sharedPref		 = new SharedPref();
 		global			 = new Globally();
 		hMethod			 = new HelperMethods();
@@ -212,7 +229,22 @@ public class Slidingmenufunctions implements OnClickListener {
 				if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && isVehicleMoving ){
 					Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
 				}else{
-					logoutDialog();
+					boolean isExemptDriver = false;
+					if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+						isExemptDriver = sharedPref.IsExemptDriverMain(context);
+					} else {
+						isExemptDriver = sharedPref.IsExemptDriverCo(context);
+					}
+
+					if(isExemptDriver){
+						Toast.makeText(context, context.getResources().getString(R.string.exempt_reminder_desc), Toast.LENGTH_LONG).show();
+					}
+
+					if(isSignPending()){
+						certifyLogAlert();
+					}else {
+						logoutDialog();
+					}
 				}
 
 
@@ -221,6 +253,70 @@ public class Slidingmenufunctions implements OnClickListener {
 
 		}
 	}
+
+	boolean isSignPending(){
+		JSONObject logPermissionObj       = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(SharedPref.getDriverId(context)), dbHelper);
+		boolean isSignPending             = constants.GetCertifyLogSignStatus(recapViewMethod, SharedPref.getDriverId(context), dbHelper, global.GetCurrentDeviceDate(),
+												DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context), logPermissionObj);
+		return isSignPending;
+	}
+
+
+	private void certifyLogAlert(){
+
+			if (certifyLogAlert != null && certifyLogAlert.isShowing()) {
+				Log.d("dialog", "dialog is showing");
+			} else {
+
+				closeDialogs();
+
+				String title                      = "<font color='#1A3561'><b>Certify Reminder !!</b></font>";
+				String message                   = "<font color='#2E2E2E'><html>" + context.getResources().getString(R.string.certify_previous_days_log_warning) + " </html></font>";
+
+
+				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+				alertDialogBuilder.setTitle(Html.fromHtml(title));
+				alertDialogBuilder.setMessage(Html.fromHtml(message));
+				//alertDialogBuilder.setCancelable(false);
+				alertDialogBuilder.setPositiveButton("Agree",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int arg1) {
+								dialog.dismiss();
+
+							EldFragment.moveToCertifyPopUpBtn.performClick();
+
+							}
+						});
+
+				alertDialogBuilder.setNegativeButton("Logout", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+
+						if(sharedPref.isSuggestedEditOccur(context) && sharedPref.IsCCMTACertified(context)){
+							logoutDialog();
+						}else{
+							callLogoutApi();
+						}
+					}
+				});
+
+				certifyLogAlert = alertDialogBuilder.create();
+				vectorDialogs.add(certifyLogAlert);
+				certifyLogAlert.show();
+
+
+
+		}
+	}
+
+
+	public void closeDialogs() {
+		for (AlertDialog dialog : vectorDialogs)
+			if (dialog.isShowing()) dialog.dismiss();
+	}
+
 
 
 	@Override
@@ -346,21 +442,8 @@ public class Slidingmenufunctions implements OnClickListener {
 			public void onClick(View v) {
 				picker.dismiss();
 
-				if(Globally.isWifiOrMobileDataEnabled(context) ) {
+				callLogoutApi();
 
-					DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
-					dialog.show();
-
-					JSONArray driverLogArray = GetDriversSavedData();
-					if(driverLogArray.length() == 0){
-						LogoutUser(SharedPref.getDriverId(context));
-					}else{
-						SaveDataToServer(driverLogArray);
-
-					}
-				}else{
-					Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
-				}
 			}
 		});
 
@@ -370,7 +453,23 @@ public class Slidingmenufunctions implements OnClickListener {
 	}
 
 
+	private void callLogoutApi(){
+		if(Globally.isWifiOrMobileDataEnabled(context) ) {
 
+			DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
+			dialog.show();
+
+			JSONArray driverLogArray = GetDriversSavedData();
+			if(driverLogArray.length() == 0){
+				LogoutUser(SharedPref.getDriverId(context));
+			}else{
+				SaveDataToServer(driverLogArray);
+
+			}
+		}else{
+			Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
+		}
+	}
 	private void SaveDataToServer(JSONArray DriverLogArray){
 
 		if(DriverLogArray.length() > 0) {

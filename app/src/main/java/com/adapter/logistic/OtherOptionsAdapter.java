@@ -24,7 +24,7 @@ public class OtherOptionsAdapter extends BaseAdapter {
     SharedPref sharedPref;
     LayoutInflater mInflater;
     List<OtherOptionsModel> LogList;
-    boolean isPendingNotification, isGps;
+    boolean isPendingNotification, isGps, isCycleRequest;
     int pendingNotificationCount, DriverType;
 
     public OtherOptionsAdapter(Context context, boolean isPendingNotification, int pendingNotificationCount, boolean isGps, List<OtherOptionsModel> logList) {
@@ -38,8 +38,10 @@ public class OtherOptionsAdapter extends BaseAdapter {
 
         if (sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             DriverType = Constants.MAIN_DRIVER_TYPE;
+            isCycleRequest = sharedPref.IsCycleRequestMain(context);
         }else{
             DriverType = Constants.CO_DRIVER_TYPE;
+            isCycleRequest = sharedPref.IsCycleRequestCo(context);
         }
     }
 
@@ -110,10 +112,13 @@ public class OtherOptionsAdapter extends BaseAdapter {
         switch (status){
 
             case Constants.NOTIFICATION:
-                if(isPendingNotification){
+                if(isPendingNotification || isCycleRequest){
                     imgView.setColorFilter(ContextCompat.getColor(context, R.color.red_custom), android.graphics.PorterDuff.Mode.SRC_IN);
                     titleView.setTextColor(context.getResources().getColor(R.color.red_custom));
                     notiBadgeView.setVisibility(View.VISIBLE);
+                    if(pendingNotificationCount == 0 && isCycleRequest){
+                        pendingNotificationCount = 1;
+                    }
                     notiBadgeView.setText(""+pendingNotificationCount);
                 }
 
@@ -166,8 +171,8 @@ public class OtherOptionsAdapter extends BaseAdapter {
                 }
                 break;
 
-            case Constants.WIFI:
-                if(sharedPref.getObdStatus(context) != Constants.WIFI_ACTIVE){
+            case Constants.OBD:
+                if(sharedPref.getObdStatus(context) != Constants.WIFI_ACTIVE && sharedPref.getObdStatus(context) != Constants.WIRED_ACTIVE){
                     makeViewHighlighed(imgView, titleView, errorView);
                 }
                 break;
