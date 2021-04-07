@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/unidentifiedVehDotLay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/dot_titles_bg"
+    android:padding="@dimen/margin_10"
+
+    >
+
+
+        <TextView
+            android:id="@+id/truckNoUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/truck_no"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:textColor="@color/color_eld_theme"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+
+        <TextView
+            android:id="@+id/vinUnLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/vin"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+        <TextView
+            android:id="@+id/startOdoUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_odo"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+        <TextView
+            android:id="@+id/endOdoUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/end_odo"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+
+        <TextView
+            android:id="@+id/totalKmUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/total_km"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+        <TextView
+            android:id="@+id/totalMilesUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/total_miles"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+        <TextView
+            android:id="@+id/startTimeUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Start_time"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+
+        <TextView
+            android:id="@+id/endTimeUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/End_time"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+
+        <TextView
+            android:id="@+id/statusUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Status"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+
+        <TextView
+            android:id="@+id/seqNoUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/seq_no"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1"
+            android:maxLines="2"
+
+            />
+
+
+
+</LinearLayout>

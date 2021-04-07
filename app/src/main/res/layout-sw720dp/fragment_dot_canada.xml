@@ -1854,9 +1854,52 @@
         </LinearLayout>
 
 
-        
-        
-        
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/whiteee"
+            android:padding="@dimen/margin_13"
+            android:layout_marginTop="@dimen/margin_15"
+
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_22"
+                android:textColor="@color/blue_button"
+                android:text="@string/UnidentifiedDriverRecords"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_15"
+                android:textStyle="bold"
+
+                />
+
+            <include
+                layout="@layout/item_unidentified_veh_dot"
+                />
+
+
+            <ListView
+                android:id="@+id/unIdnfdVehDotListView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_80"
+                android:scrollbars="none"
+                android:minHeight="@dimen/view_height_30"
+
+                />
+
+
+        </LinearLayout>
+
+
+
+
     </LinearLayout>
 
     </ScrollView>

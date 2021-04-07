@@ -77,22 +77,20 @@ public class CycleChangeRequestDialog extends Dialog {
         cancelPopupButton.setTypeface(null, Typeface.NORMAL);
 
         String currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getContext());
-        if(currentCycleId.equals(Globally.CANADA_CYCLE_1) || currentCycleId.equals(Globally.CANADA_CYCLE_2)){
-            if(changedCycleId.equals(Globally.USA_WORKING_6_DAYS)){
-                changedCycleName = Globally.USA_WORKING_6_DAYS_NAME;
-            }else{
-                changedCycleName = Globally.USA_WORKING_7_DAYS_NAME;
-            }
+
+        if(changedCycleId.equals(Globally.CANADA_CYCLE_1)){
+            changedCycleName = Globally.CANADA_CYCLE_1_NAME;
+            savedCycleType = "can_cycle";
+        }else if(changedCycleId.equals(Globally.CANADA_CYCLE_2)){
+            changedCycleName = Globally.CANADA_CYCLE_2_NAME;
+            savedCycleType = "can_cycle";
+        }else if(changedCycleId.equals(Globally.USA_WORKING_6_DAYS)){
+            changedCycleName = Globally.USA_WORKING_6_DAYS_NAME;
             savedCycleType = "us_cycle";
         }else{
-            if(changedCycleId.equals(Globally.CANADA_CYCLE_1)){
-                changedCycleName = Globally.CANADA_CYCLE_1_NAME;
-            }else{
-                changedCycleName = Globally.CANADA_CYCLE_2_NAME;
-            }
-            savedCycleType = "can_cycle";
+            changedCycleName = Globally.USA_WORKING_7_DAYS_NAME;
+            savedCycleType = "us_cycle";
         }
-
 
         titleDescView.setText(Html.fromHtml(getContext().getString(R.string.change_cycle_request) + "<font color='#1A3561'> <b>"+ currentCycle
                                             +"</b></font> to<font color='#1A3561'> <b>"+ changedCycleName +"</b></font>.") );

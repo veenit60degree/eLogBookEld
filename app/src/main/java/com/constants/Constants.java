@@ -47,6 +47,7 @@ import com.models.OtherOptionsModel;
 import com.models.PrePostModel;
 import com.models.RecapSignModel;
 import com.models.SlideMenuModel;
+import com.models.UnAssignedVehicleModel;
 import com.models.UnIdentifiedRecordModel;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.CoNotificationPref;
@@ -2764,6 +2765,41 @@ public class Constants {
                         obj.getString(ConstantsKeys.TruckEquipmentNo),
                         obj.getString(ConstantsKeys.WorkShiftStart),
                         obj.getString(ConstantsKeys.WorkShiftEnd)
+
+                );
+
+                dotLogList.add(dutyModel);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return dotLogList;
+    }
+
+    public List<UnAssignedVehicleModel> parseCanadaDotUnIdenfdVehList(JSONArray logArray){
+
+        List<UnAssignedVehicleModel> dotLogList = new ArrayList<>();
+
+        try{
+            for(int i = 0 ; i< logArray.length() ; i++) {
+                JSONObject obj = (JSONObject)logArray.get(i);
+                UnAssignedVehicleModel dutyModel = new UnAssignedVehicleModel(
+                        obj.getString(ConstantsKeys.UnAssignedVehicleMilesId),
+                        obj.getString(ConstantsKeys.AssignedUnidentifiedRecordsId),
+                        obj.getString(ConstantsKeys.EquipmentNumber),
+                        obj.getString(ConstantsKeys.VIN),
+
+                        obj.getString(ConstantsKeys.StartOdometer),
+                        obj.getString(ConstantsKeys.EndOdometer),
+                        obj.getString(ConstantsKeys.TotalMiles),
+                        obj.getString(ConstantsKeys.TotalKm),
+
+                        obj.getString(ConstantsKeys.DriverZoneStartDateTime),
+                        obj.getString(ConstantsKeys.DriverZoneEndDateTime),
+                        obj.getString(ConstantsKeys.StatusId),
+
+                        obj.getBoolean(ConstantsKeys.IsIntermediateLog),
+                        obj.getString(ConstantsKeys.HexaSeqNumber)
 
                 );
 

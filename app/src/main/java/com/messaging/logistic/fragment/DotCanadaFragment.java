@@ -34,6 +34,7 @@ import com.adapter.logistic.CanDotDutyStatusAdapter;
 import com.adapter.logistic.CanDotEnginePowerAdapter;
 import com.adapter.logistic.CanDotLogInOutAdapter;
 import com.adapter.logistic.CanDotRemarksAdapter;
+import com.adapter.logistic.CanDotUnAssignedVehAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.background.service.BackgroundLocationService;
@@ -55,6 +56,7 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.CanadaDutyStatusModel;
 import com.models.DriverLocationModel;
+import com.models.UnAssignedVehicleModel;
 import com.shared.pref.StatePrefManager;
 
 import org.joda.time.DateTime;
@@ -91,7 +93,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     WebView canDotGraphWebView;
     ProgressBar canDotProgressBar;
     ScrollView canDotScrollView;
-    ListView dutyChangeDotListView, remAnotnDotListView, cycleOpZoneDotListView, loginLogDotListView, enginePwrDotListView;
+    ListView dutyChangeDotListView, remAnotnDotListView, cycleOpZoneDotListView, loginLogDotListView, enginePwrDotListView, unIdnfdVehDotListView;
 
     Constants constants;
     Globally global;
@@ -105,12 +107,14 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     CanDotCycleOpZoneAdapter canDotCycleOpZoneAdapter;
     CanDotRemarksAdapter canDotRemarksAdapter;
     CanDotEnginePowerAdapter canDotEnginePowerAdapter;
+    CanDotUnAssignedVehAdapter canDotUnAssignedVehAdapter;
 
     List<CanadaDutyStatusModel> DutyStatusList = new ArrayList();
     List<CanadaDutyStatusModel> LoginLogoutList = new ArrayList();
     List<CanadaDutyStatusModel> CycleOpZoneList = new ArrayList();
     List<CanadaDutyStatusModel> CommentsRemarksList = new ArrayList();
     List<CanadaDutyStatusModel> EnginePowerList = new ArrayList();
+    List<UnAssignedVehicleModel> UnAssignedVehicleList = new ArrayList<>();
 
     DatePickerDialog dateDialog;
     ShareDriverLogDialog shareDialog;
@@ -237,6 +241,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         cycleOpZoneDotListView    = (ListView)view.findViewById(R.id.addHrsDotListView);
         loginLogDotListView  = (ListView)view.findViewById(R.id.loginLogDotListView);
         enginePwrDotListView = (ListView)view.findViewById(R.id.enginePwrDotListView);
+        unIdnfdVehDotListView= (ListView)view.findViewById(R.id.unIdnfdVehDotListView);
 
         canDotViewMorelay   = (LinearLayout)view.findViewById(R.id.canDotViewMorelay);
         enginePwrDotLay     = (LinearLayout)view.findViewById(R.id.enginePwrDotLay);
@@ -654,6 +659,12 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             enginePwrDotListView.setAdapter(canDotEnginePowerAdapter);
         }catch (Exception e){}
 
+        try {
+            canDotUnAssignedVehAdapter = new CanDotUnAssignedVehAdapter(getActivity(), UnAssignedVehicleList);
+            unIdnfdVehDotListView.setAdapter(canDotUnAssignedVehAdapter);
+        }catch (Exception e){}
+
+
 
         try {
             inspectionLayHeight = enginePwrDotLay.getHeight();
@@ -686,6 +697,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             final int CommentsRemarksListHeight = (inspectionLayHeight) * CommentsRemarksList.size() ;  //+ (constants.getDateTitleCount(CommentsRemarksList) * inspectionLayHeight)
             final int CycleOpZoneListHeight = (inspectionLayHeight) * CycleOpZoneList.size() + (constants.getDateTitleCount(CycleOpZoneList) * inspectionLayHeight);
             final int EnginePowerListHeight = (inspectionLayHeight) * EnginePowerList.size() + (constants.getDateTitleCount(EnginePowerList) * inspectionLayHeight);
+            final int UnIdenfdVehListHeight = (inspectionLayHeight) * UnAssignedVehicleList.size();
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -695,6 +707,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CommentsRemarksListHeight));
                     cycleOpZoneDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CycleOpZoneListHeight));
                     enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, EnginePowerListHeight));
+                    unIdnfdVehDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, UnIdenfdVehListHeight));
 
                 }
             }, 500);
@@ -1014,27 +1027,15 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     TotalDrivingHours      = TotalDrivingHours.replaceAll("-", "");
                     TotalSleeperBerthHours = TotalSleeperBerthHours.replaceAll("-", "");
 
-                  //  setDataOnView(dataObj);
-                   // CheckSignatureVisibilityStatus();
                     JSONArray dotLogArray = new JSONArray(dataObj.getString("graphRecordList"));
-                  //  setDataOnList(dotLogArray);
-
-                  //  JSONArray shippingLogArray = new JSONArray(dataObj.getString("ShippingInformationModel"));
-                   // setShippingDataOnList(shippingLogArray);
-
                     ParseGraphData(dotLogArray);
-
-                   /* if(IsMalfunction){
-                        dotMalfunctionTV.setVisibility(View.VISIBLE);
-                    }else{
-                        dotMalfunctionTV.setVisibility(View.GONE);
-                    }*/
 
                     JSONArray dutyStatusArray = new JSONArray(dataObj.getString(ConstantsKeys.dutyStatusChangesList));
                     JSONArray loginLogoutArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutList));
                     JSONArray ChangeInDriversCycleList = new JSONArray(dataObj.getString(ConstantsKeys.ChangeInDriversCycleList));
                     JSONArray commentsRemarksArray = new JSONArray(dataObj.getString(ConstantsKeys.commentsRemarksList));
                     JSONArray enginePowerArray = new JSONArray(dataObj.getString(ConstantsKeys.enginePowerUpAndShutDownList));
+                    JSONArray unIdentifiedVehArray = new JSONArray(dataObj.getString(ConstantsKeys.UnAssignedVehicleMilesList));
 
                     DutyStatusList =   constants.parseCanadaDotInList(dutyStatusArray);
                     LoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray);
@@ -1042,6 +1043,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList);
                     EnginePowerList = constants.parseCanadaDotInList(enginePowerArray);
 
+                    UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
 
                     setdataOnAdapter();
                     setDataOnTextView(dataObj);

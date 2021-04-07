@@ -1475,6 +1475,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
     void updateLocalLog(){
         try {
+            //  Log.d("finalEditedLogArray", "finalEditedLogArray: " + finalEditedLogArray);
             JSONArray editableLogArray = hMethods.GetSameArray(logArrayBeforeSelectedDate);
             for (int i = 0; i < logArray.length(); i++) {
                 JSONObject jsonObj = (JSONObject) logArray.get(i);
@@ -1490,20 +1491,23 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    void UpdateLocalLogWithBackStack(boolean isBackStack){
+    void UpdateLocalLogWithBackStack(final boolean isBackStack){
+
+        updateLocalLog();
+        EldFragment.isUpdateDriverLog = true;
 
         try {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(isBackStack) {
+                        getFragmentManager().popBackStack();
+                    }else {
+                        RefreshTempAdapter();
+                    }
+                }
+            }, 300);
 
-          //  Log.d("finalEditedLogArray", "finalEditedLogArray: " + finalEditedLogArray);
-
-            updateLocalLog();
-
-            EldFragment.isUpdateDriverLog = true;
-            if(isBackStack) {
-                getFragmentManager().popBackStack();
-            }else {
-                RefreshTempAdapter();
-            }
 
 
         }catch (Exception e){

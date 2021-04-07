@@ -62,6 +62,7 @@ import com.local.db.HelperMethods;
 import com.local.db.InspectionMethod;
 import com.local.db.LatLongHelper;
 import com.local.db.LocationMethod;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.local.db.NotificationMethod;
 import com.local.db.OdometerHelperMethod;
 import com.local.db.RecapViewMethod;
@@ -198,6 +199,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     LatLongHelper latLongHelper;
     NotificationMethod notificationMethod;
     DriverPermissionMethod driverPermissionMethod;
+    MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
+
     Globally global;
     SharedPref sharedPref;
 
@@ -214,6 +217,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     boolean IsAlertTimeValid = false;
     boolean isGpsUpdate      = false;
     boolean IsOBDPingAllowed = false;
+    boolean isMalfncDataAlreadyPosting = false;
     public static boolean IsAutoChange = false; //, IsAutoLogSaved = false;
 
     double latitude, longitude;
@@ -273,6 +277,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         notificationMethod      = new NotificationMethod();
         syncingMethod           = new SyncingMethod();
         driverPermissionMethod  = new DriverPermissionMethod();
+        malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
 
         MainDriverPref          = new MainDriverEldPref();
         CoDriverPref            = new CoDriverEldPref();
@@ -402,19 +407,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
             // ---------------- temp data ---------------------
-        //    sharedPref.saveLocMalfunctionOccurStatus(true, global.getCurrentDate(), getApplicationContext());
-        //    SharedPref.setLocMalfunctionType("x", getApplicationContext());
-              /* ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
+          /*     ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
               sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
               tempOdo = tempOdo+800;
 */
-
-
-
-
 
             if(ignitionStatus.equals("ON")){
                 global.IS_OBD_IGNITION = true;
@@ -485,7 +484,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             public void run() {
                                 if(getApplicationContext() != null) {
                                     Toast.makeText(getApplicationContext(),
-                                            "OBD Speed: " + bundle.getInt(constants.OBD_Vss) + "\nCalculated Speed: " +
+                                            "Vehicle Speed: " + bundle.getInt(constants.OBD_Vss) + "\nCalculated Speed: " +
                                                     new DecimalFormat("##.##").format(calculatedSpeedFromOdo),
                                             Toast.LENGTH_SHORT).show();
                                 }
@@ -529,13 +528,31 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             sharedPref.saveLocMalfunctionOccurStatus(isMalfunction, currentLogDate, getApplicationContext());
 
                             // save malfunction occur event to server with few inputs
-                            SaveMalDiagstcEvent(DriverId, DeviceId, sharedPref.getVINNumber(getApplicationContext()),
+                      /*      SaveMalDiagstcEvent(DriverId, DeviceId, sharedPref.getVINNumber(getApplicationContext()),
                                     DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
                                     DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
                                     sharedPref.getObdEngineHours(getApplicationContext()),
                                     sharedPref.getDayStartOdometer(getApplicationContext()),
                                     sharedPref.getHighPrecisionOdometer(getApplicationContext()),
                                     currentLogDate,  constants.PositionComplianceMalfunction);
+*/
+                            JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetJsonFromList(
+                                    DriverId, DeviceId, sharedPref.getVINNumber(getApplicationContext()),
+                                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                                    DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
+                                    sharedPref.getObdEngineHours(getApplicationContext()),
+                                    sharedPref.getDayStartOdometer(getApplicationContext()),
+                                    sharedPref.getHighPrecisionOdometer(getApplicationContext()),
+                                    currentLogDate,  constants.PositionComplianceMalfunction);
+
+                            JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DriverId), dbHelper);
+                            malArray.put(newOccuredEventObj);
+
+                            // save Occured event locally until not posted to server
+                            malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DriverId), dbHelper, malArray);
+
+                            SaveMalfnDiagnstcLogToServer(malArray);
+
                         }
 
                         if(calculatedSpeedFromOdo >= 10 || speed >= 10){
@@ -1615,7 +1632,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
     /* ================== Save Malfunction and diagnostic event status =================== */
-    void SaveMalDiagstcEvent(final String DriverId, final String DeviceNumber, final String VIN,
+   /* void SaveMalDiagstcEvent(final String DriverId, final String DeviceNumber, final String VIN,
                                 String UnitNo, String CompanyId, final String EngineHours, final String StartOdometer,
                              final String EndOdometer, final String EventDateTime, final String DiagnosticType){
 
@@ -1635,7 +1652,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         SaveMalDiaEventRequest.executeRequest(Request.Method.POST, APIs.MALFUNCTION_DIAGNOSTIC_EVENT , params, SaveMalDiagnstcEvent,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
     }
-
+*/
 
 
     /* ================== Update Offline Driver Log =================== */
@@ -2521,6 +2538,24 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
+    void SaveMalfnDiagnstcLogToServer(JSONArray malArray1){
+        try{
+            if(DriverId.length() > 0) {
+                if(malArray1 == null) {
+                    malArray1 = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.valueOf(DriverId), dbHelper);
+                }
+                if (global.isConnected(getApplicationContext()) && malArray1.length() > 0 && isMalfncDataAlreadyPosting == false) {
+                    isMalfncDataAlreadyPosting = true;
+                    saveDriverLogPost.PostDriverLogData(malArray1, APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout30Sec, false, false, 1, SaveMalDiagnstcEvent);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 
     //*================== Get Odometer 18 Days data ===================*//*
@@ -2658,6 +2693,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     case SaveMalDiagnstcEvent:
                         Log.d("SaveMalDiagnstcEvent", "SaveMalDiagnstcEvent saved successfully");
+                        isMalfncDataAlreadyPosting = false;
+                        // clear malfunction array
+                        malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DriverId), dbHelper, new JSONArray());
                         break;
 
 
@@ -2835,6 +2873,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 // -------- upload offline locally saved data ---------
                                 UploadSavedShipmentData();
                                 SaveCertifyLog();
+                                SaveMalfnDiagnstcLogToServer(null);
+
                                 if (!sharedPref.GetOdoSavingStatus(getApplicationContext()))
                                     UploadSavedOdometerData();
 
@@ -3334,6 +3374,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         break;
 
 
+                    case SaveMalDiagnstcEvent:
+                        isMalfncDataAlreadyPosting = false;
+                        // clear malfunction array
+                        malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DriverId), dbHelper, new JSONArray());
+                        break;
                 }
             }else {
 

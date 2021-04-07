@@ -2104,6 +2104,7 @@ public class Globally {
 				dbHelper.DeleteNotificationSaveToTable();
 				dbHelper.DeleteCtPatInspectionTable();
 				dbHelper.DeleteCtPat18DaysInspTable();
+				dbHelper.DeleteMalfunctionDiagnosticTable();
 
 			}catch (Exception e){
 				e.printStackTrace();

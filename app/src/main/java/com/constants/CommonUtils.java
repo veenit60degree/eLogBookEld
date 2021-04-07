@@ -29,7 +29,7 @@ public class CommonUtils {
 		int SingleDriverMenuWidth = 385;
 		int DualDriverMenuWidth   = 500;
 
-		TelephonyManager manager = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
+/*		TelephonyManager manager = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			if (Objects.requireNonNull(manager).getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
 				Globally.ShowLocalNotification(mContext, "Screen Dimensions", "DisplayMetrics IsTablet: " + Constants.isTabletDevice(mContext) +
@@ -38,7 +38,7 @@ public class CommonUtils {
 				Globally.ShowLocalNotification(mContext, "Screen Dimensions", "DisplayMetrics IsTablet: " + Constants.isTabletDevice(mContext) +
 						"\nTelephonyManager: Mobile Phone \nPixels: " + ""+metrics.widthPixels + "x" + metrics.heightPixels, 2003);
 			}
-		}
+		}*/
 
 
 		if(Globally.isTablet(mContext)) {
@@ -72,11 +72,20 @@ public class CommonUtils {
 				DualDriverMenuWidth   = 335;
 			}
 
+			// this check is for special device resolution (Chinese tablet)
+			if(metrics.widthPixels == 1280 && metrics.heightPixels == 800){
+				SingleDriverMenuWidth = 450;
+				DualDriverMenuWidth   = 520;
+			}
+
 			if(SharedPref.getDriverType(mContext).equals(DriverConst.SingleDriver)) {
 				width = SingleDriverMenuWidth;
 			}else{
 				width = DualDriverMenuWidth;
 			}
+
+
+
 		}
 
 

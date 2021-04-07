@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.driver.details.DriverConst;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
@@ -118,7 +119,19 @@ public class SlideMenuAdapter extends BaseAdapter {
                 holder.menuBadgeTxtView.setVisibility(View.VISIBLE);
                 holder.menuBadgeTxtView.setText(""+badgeCount);
             }else{
-                holder.menuBadgeTxtView.setVisibility(View.GONE);
+                boolean isCycleRequest;
+                if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+                    isCycleRequest = SharedPref.IsCycleRequestMain(context);
+                }else{
+                    isCycleRequest = SharedPref.IsCycleRequestCo(context);
+                }
+
+                if(isCycleRequest){
+                    holder.menuBadgeTxtView.setVisibility(View.VISIBLE);
+                    holder.menuBadgeTxtView.setText("1");
+                }else {
+                    holder.menuBadgeTxtView.setVisibility(View.GONE);
+                }
             }
         }
 

@@ -949,9 +949,10 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             MonthFullName           = Constants.MonthFullName;
             MonthShortName          = Constants.MonthShortName;
 
-            EldFragment.isUpdateDriverLog = false;
-            progressBarDriverLog.setVisibility(View.VISIBLE);
-            GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
+          //  EldFragment.isUpdateDriverLog = false;
+          //  progressBarDriverLog.setVisibility(View.VISIBLE);
+           // GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
+
         }else{
 
             if(Constants.IsEdiLogBackStack) {

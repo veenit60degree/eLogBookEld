@@ -172,6 +172,7 @@
     <string name="Violation">Violation</string>
     <string name="Start_Trip">Start Trip</string>
     <string name="vin_number">VIN Number: </string>
+    <string name="vin">VIN</string>
     <string name="plate_number">Plate Number: </string>
     <string name="Mid_Night">M</string>
     <string name="is_yard">Yard</string>
@@ -336,6 +337,7 @@
     <string name="eld_govt_logs">ELD GOVT LOGS</string>
     <string name="Data_transmission">Data Transmission</string>
 
+    <string name="truck_no">Truck No</string>
     <string name="date_of_rods">Date of RODS</string>
     <string name="day_starting_time">Day Starting Time</string>
     <string name="current_loc">Current Loc (Lat,Long)</string>
@@ -419,6 +421,8 @@
     <string name="total_km">Total Km</string>
     <string name="total_miles">Total Miles</string>
 
+    <string name="start_odo">Start Odo</string>
+    <string name="end_odo">  End   Odo</string>
     <string name="start_ododmeter">Start Odometer : </string>
     <string name="end_ododmeter">  End   Odometer : </string>
     <string name="update_odometer">Update Odometer Reading </string>

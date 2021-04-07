@@ -559,6 +559,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.setEcmObdLocationWithTime("0", "0", "0", "", getApplicationContext());
 			sharedPref.setLocMalfunctionType("", getApplicationContext());
 			sharedPref.saveLocMalfunctionOccurStatus(false, "", getApplicationContext());
+			sharedPref.SetCycleRequestStatusCo(false, getApplicationContext());
+			sharedPref.SetCycleRequestStatusMain(false, getApplicationContext());
 
 		}catch (Exception e){
 			e.printStackTrace();

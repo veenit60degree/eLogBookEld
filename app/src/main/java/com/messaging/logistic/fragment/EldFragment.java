@@ -914,7 +914,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
         loadOnCreateView(isConnected);
 
-     //   CalculateTimeInOffLine(false, false);
+        if(isUpdateDriverLog){
+            isUpdateDriverLog = false;
+            CalculateTimeInOffLine(false, false);
+        }
+     //
 
     }
 

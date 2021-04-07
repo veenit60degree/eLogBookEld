@@ -83,7 +83,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     String Approved = "2";
     String Rejected = "3";
     String changedCycleId = "", Id = "", currentCycleId = "", TruckNumber, DriverTimeZone;
-    String savedCycleType = "", changedCycleName = "", savedCycleId = "";
+    String savedCycleType = "", changedCycleName = "";
     boolean isCycleRequest, isApprovedCycleRequest = true;
 
     SharedPref sharedPref;
@@ -207,16 +207,17 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
             DriverId        = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
             TruckNumber     = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
             DriverTimeZone  = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
-            savedCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+            currentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
             isCycleRequest  = sharedPref.IsCycleRequestMain(getActivity());
         }else {
             DriverType      = 1;
             DriverId        = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
             TruckNumber     = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
             DriverTimeZone  = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
-            savedCycleId    = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
+            currentCycleId    = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
             isCycleRequest  = sharedPref.IsCycleRequestCo(getActivity());
         }
+
 
 
         // Clear unread notification badge count
@@ -603,12 +604,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                         JSONObject cycleReqObj = (JSONObject) cycleReqArray.get(0);
 
                         changedCycleId = cycleReqObj.getString(ConstantsKeys.CycleId);
-                        currentCycleId = cycleReqObj.getString(ConstantsKeys.CurrentCycleId);
                         Id = cycleReqObj.getString(ConstantsKeys.Id);
-
-                        if (currentCycleId.equals("0")) {
-                            currentCycleId = savedCycleId;
-                        }
 
                         Notification18DaysModel model = new Notification18DaysModel(
                                 1,
@@ -625,8 +621,8 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                         );
                         notificationsList.add(model);
 
-                        confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
-                        confirmationDialog.show();
+                     //   confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
+                      //  confirmationDialog.show();
 
                     }
                 }
@@ -775,6 +771,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
             }
 
             DriverConst.SetDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
+            sharedPref.SetCycleRequestStatusMain(false, getActivity());
 
         }else{
             if(SavedCycleType.equals("can_cycle")){
@@ -795,8 +792,11 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
             }
 
             DriverConst.SetCoDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
+            sharedPref.SetCycleRequestStatusCo(false, getActivity());
+
         }
 
+        currentCycleId = changedCycleId;
 
     }
 
@@ -877,12 +877,8 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                             if(dataArray.length() > 0){
                                 JSONObject dataObj = (JSONObject)dataArray.get(0);
                                 changedCycleId = dataObj.getString("CycleId");
-                                currentCycleId = dataObj.getString("CurrentCycleId");
                                 Id             = dataObj.getString("Id");
 
-                                if(currentCycleId.equals("0")){
-                                    currentCycleId = savedCycleId;
-                                }
                                 confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
                                 confirmationDialog.show();
 
@@ -902,6 +898,8 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
                         if(isApprovedCycleRequest) {
                             saveUpdatedCycleData(savedCycleType, changedCycleName);
+
+                            GetNotificationLog(DriverId, DeviceId);
                         }
 
                         break;

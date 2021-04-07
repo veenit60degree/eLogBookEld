@@ -482,6 +482,9 @@ public class ConstantsKeys {
     public static String TruckEquipmentNo               = "TruckEquipmentNo";
     public static String WorkShiftStart                 = "WorkShiftStart";
     public static String WorkShiftEnd                   = "WorkShiftEnd";
+    public static String DriverZoneStartDateTime        = "DriverZoneStartDateTime";
+    public static String DriverZoneEndDateTime          = "DriverZoneEndDateTime";
+    public static String IsIntermediateLog              = "IsIntermediateLog";
 
     public static String dutyStatusChangesList          = "dutyStatusChangesList";
     public static String loginAndLogoutList             = "loginAndLogoutList";
@@ -489,6 +492,7 @@ public class ConstantsKeys {
     public static String commentsRemarksList            = "commentsRemarksList";
     public static String additionalHoursNotRecordedList = "additionalHoursNotRecordedList";
     public static String enginePowerUpAndShutDownList   = "enginePowerUpAndShutDownList";
+    public static String UnAssignedVehicleMilesList     = "UnAssignedVehicleMilesList";
 
 
 
