@@ -205,7 +205,7 @@ public class HelperMethods {
                                     String IsStatusAutomatic, String OBDSpeed,
                                     String GPSSpeed, String PlateNumber, boolean isHaulException, boolean isShortHaulUpdate,
                                     String decesionSource,   String isAdverseException,
-                                    String adverseExceptionRemark, String LocationType){
+                                    String adverseExceptionRemark, String LocationType, String malAddInfo){
 
         JSONObject driverLogJson = new JSONObject();
 
@@ -258,6 +258,7 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.IsAdverseException, isAdverseException);
             driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
             driverLogJson.put(ConstantsKeys.LocationType, LocationType);
+            driverLogJson.put(ConstantsKeys.MalfunctionDefinition, malAddInfo);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -315,105 +316,6 @@ public class HelperMethods {
 
         return isPCYM;
     }
-
-
-/*
-
-    public JSONObject AddNewDateLog (JSONArray driverLogArray, DateTime currentDateTime, DateTime currentUTCTime,
-                                    int offsetFromUTC, DBHelper dbHelper){
-        JSONObject newJsonData = new JSONObject();
-        long DriverId = 0;
-        try {
-            JSONObject Lastobj = (JSONObject) driverLogArray.get(driverLogArray.length() - 1);
-            String startDateTime = Globally.ConvertDeviceDateTimeFormat(Globally.GetCurrentDeviceDate() + " 00:00:00"); //MM/dd/yyyy HH:mm:ss
-            String startUTCDateTime = Globally.GetUTCFromDate(startDateTime, offsetFromUTC);
-            String endUTCDateTime = Globally.GetUTCFromDate(String.valueOf(currentUTCTime), offsetFromUTC);
-            double totalMin = currentDateTime.getMinuteOfDay() - Globally.getDateTimeObj(startDateTime, false).getMinuteOfDay();
-
-            DriverId = Lastobj.getLong(ConstantsKeys.DriverId);
-
-            DateTime lastEndDate = Globally.getDateTimeObj(Lastobj.getString(ConstantsKeys.endDateTime), false);
-
-            int diff = DayDiffSplitMethod(currentDateTime, lastEndDate);
-
-
-            int CycleId = 1;
-            if (!Lastobj.isNull("ConstantsKeys.CurrentCycleId")) {
-                CycleId = Lastobj.getInt(ConstantsKeys.CurrentCycleId);
-            }
-
-                if (diff == 0) {
-                    return null;
-                } else {
-                    newJsonData = addJSON(Lastobj, DriverId, startDateTime, startUTCDateTime,
-                            currentDateTime, Globally.getDateTimeObj(endUTCDateTime, true), totalMin, CycleId);
-                    driverLogArray.put(newJsonData);
-                    DriverLogHelper((int) DriverId, dbHelper, driverLogArray);
-                   */
-/* selectedArray = GetSelectedDateArray(driverLogArray, String.valueOf(DriverId), currentDateTime,
-                            currentDateTime, currentUTCTime, offsetFromUTC, dbHelper);*//*
-
-                }
-            }catch(JSONException e){
-                e.printStackTrace();
-        }
-
-        return newJsonData;
-    }
-
-
-
-    private JSONObject addJSON(JSONObject Lastobj, long DriverId, String startDateTime, String startUTCDateTime, 
-                               DateTime currentEndDateTime, DateTime endUTCTime, double totalMin, int CycleId, boolean HaulHourException){
-        JSONObject newJsonData = new JSONObject();
-        try {
-            String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0";
-            if(newJsonData.has(ConstantsKeys.IsStatusAutomatic))
-                IsStatusAutomatic = newJsonData.getString(ConstantsKeys.IsStatusAutomatic);
-
-            if(newJsonData.has(ConstantsKeys.OBDSpeed))
-                OBDSpeed = newJsonData.getString(ConstantsKeys.OBDSpeed);
-
-            if(newJsonData.has(ConstantsKeys.GPSSpeed))
-                GPSSpeed = newJsonData.getString(ConstantsKeys.GPSSpeed);
-
-
-            newJsonData = AddJobInArray(
-                    Lastobj.getLong(ConstantsKeys.DriverLogId) + 1,
-                    DriverId,
-                    Lastobj.getInt(ConstantsKeys.DriverStatusId),
-
-                    startDateTime,
-                    String.valueOf(currentEndDateTime),
-                    startUTCDateTime,
-                    String.valueOf(endUTCTime),
-
-                    totalMin,
-                    "", "", "", "",
-                    false,
-                    Lastobj.getBoolean(ConstantsKeys.Personal),
-                    CycleId,
-                    Lastobj.getBoolean(ConstantsKeys.IsViolation),
-                    "",
-                    Lastobj.getString(ConstantsKeys.DriverName),
-                    Lastobj.getString(ConstantsKeys.Remarks),
-                    Lastobj.getString(ConstantsKeys.Trailor),
-                    "", "",
-                    Lastobj.getString(ConstantsKeys.Truck),
-                    IsStatusAutomatic,
-                    OBDSpeed,
-                    GPSSpeed,
-                    HaulHourException
-
-            );
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return newJsonData;
-        
-    }
-
-*/
 
 
     public JSONArray UpdateJobLastItemInArray(JSONArray array, JSONObject jsonObject){
@@ -565,7 +467,7 @@ public class HelperMethods {
 
                 String DriverName = "", IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0";
                 String DecesionSource = "", PlateNumber = "";
-                String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
+                String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", malAddInfo = "";
                 boolean HaulHourException = false, IsShortHaulUpdate = false;
 
                 int CycleId = 1;
@@ -643,6 +545,11 @@ public class HelperMethods {
                     LocationType = logObj.getString(ConstantsKeys.LocationType);
                 }
 
+                if (logObj.has(ConstantsKeys.MalfunctionDefinition)) {
+                    malAddInfo = logObj.getString(ConstantsKeys.MalfunctionDefinition);
+                }
+
+
                 driverLogJson.put(ConstantsKeys.DriverName,        DriverName );
                 driverLogJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
                 driverLogJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
@@ -658,6 +565,8 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                 driverLogJson.put(ConstantsKeys.LocationType, LocationType);
 
+                driverLogJson.put(ConstantsKeys.MalfunctionDefinition, malAddInfo);
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -667,7 +576,7 @@ public class HelperMethods {
     }
 
 
-    //  Sppit log date time in Array
+    //  Split log date time in Array
     public JSONObject SplitJsonFromArray(JSONArray logArray, String startDateTime, String startUtcDate, String endDateTime, String endUtcDate,
                                          double totalMin, boolean isSplitPart1,     RulesResponseObject RulesObj){
         JSONObject driverLogJson = new JSONObject();
@@ -775,6 +684,7 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.IsAdverseException, isAdverseException);
                 driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                 driverLogJson.put(ConstantsKeys.LocationType, LocationType);
+                driverLogJson.put(ConstantsKeys.MalfunctionDefinition, "");
 
             }
         }catch (Exception e){
@@ -786,7 +696,7 @@ public class HelperMethods {
 
 
 
-    //  Slpit log date time in Array
+    //  Split log date time in Array
     public JSONObject AddSameStatusInNextDayArray(JSONArray logArray, String startDateTime, String startUtcDate, String endDateTime,
                                                   String endUtcDate){
         JSONObject driverLogJson = new JSONObject();
@@ -888,7 +798,7 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.IsAdverseException, isAdverseException);
                 driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                 driverLogJson.put(ConstantsKeys.LocationType, LocationType);
-
+                driverLogJson.put(ConstantsKeys.MalfunctionDefinition, "");
 
 
             }
@@ -991,7 +901,7 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.IsAdverseException, isAdverseException);
                 driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                 driverLogJson.put(ConstantsKeys.LocationType, LocationType);
-
+                driverLogJson.put(ConstantsKeys.MalfunctionDefinition, "");
 
 
 
@@ -1009,7 +919,7 @@ public class HelperMethods {
         JSONObject sameStatusJson = new JSONObject();
         String IsStatusAutomatic = "false", HaulHourException = "false", IsShortHaulUpdate = "false", OBDSpeed = "0";
         String DecesionSource = "", GPSSpeed = "0", PlateNumber = "";
-        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
+        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "";
 
         try {
             int DriverLogId = lastItemJson.getInt(ConstantsKeys.DriverLogId) + 1;
@@ -1100,6 +1010,9 @@ public class HelperMethods {
             if (lastItemJson.has(ConstantsKeys.LocationType)) {
                 LocationType = lastItemJson.getString(ConstantsKeys.LocationType);
             }
+            if (lastItemJson.has(ConstantsKeys.MalfunctionDefinition)) {
+                MalfunctionDefinition = lastItemJson.getString(ConstantsKeys.MalfunctionDefinition);
+            }
 
             sameStatusJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
             sameStatusJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
@@ -1113,6 +1026,7 @@ public class HelperMethods {
             sameStatusJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
             sameStatusJson.put(ConstantsKeys.LocationType, LocationType);
 
+            sameStatusJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -1238,7 +1152,7 @@ public class HelperMethods {
         int CurrentCycleId, diff = 0, diffLast = 0;
         String IsStatusAutomatic = "false", HaulHourException = "false", IsShortHaulUpdate = "false", OBDSpeed = "0";
         String DecesionSource = "", GPSSpeed = "0", PlateNumber = "";
-        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
+        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "",  MalfunctionDefinition = "";
 
         boolean IsViolation, isNewEntry = false;
         //  String startDateTimeStr = getYesterdayDateString(1, Globally.DateFormatMMddyyyy) + " 00:00:00"; //MM/dd/yyyy HH:mm:ss
@@ -1371,6 +1285,9 @@ public class HelperMethods {
                     if (logObj.has(ConstantsKeys.LocationType)) {
                         LocationType = logObj.getString(ConstantsKeys.LocationType);
                     }
+                    if (logObj.has(ConstantsKeys.MalfunctionDefinition)) {
+                        MalfunctionDefinition = logObj.getString(ConstantsKeys.MalfunctionDefinition);
+                    }
 
                     driverLogJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
                     driverLogJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
@@ -1384,6 +1301,7 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.IsAdverseException, isAdverseException);
                     driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                     driverLogJson.put(ConstantsKeys.LocationType, LocationType);
+                    driverLogJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
 
                     parseArray.put(driverLogJson);
 
@@ -1416,7 +1334,7 @@ public class HelperMethods {
         JSONArray parseArray = new JSONArray();
         String IsStatusAutomatic = "false", HaulHourException = "false", IsShortHaulUpdate = "false", OBDSpeed = "0";
         String DecesionSource = "", GPSSpeed = "0", PlateNumber = "";
-        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
+        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "";
 
         String lastDateTimeStr  = getYesterdayDateString(1, Globally.DateFormatHalf) + "T23:59:59";
         DateTime startDateTimeNow = Globally.getDateTimeObj(getYesterdayDateString(0, Globally.DateFormatHalf) + "T00:00:00", false);
@@ -1508,6 +1426,9 @@ public class HelperMethods {
             if (logObj.has(ConstantsKeys.LocationType)) {
                 LocationType = logObj.getString(ConstantsKeys.LocationType);
             }
+            if (logObj.has(ConstantsKeys.MalfunctionDefinition)) {
+                MalfunctionDefinition = logObj.getString(ConstantsKeys.MalfunctionDefinition);
+            }
 
             driverLogJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
             driverLogJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
@@ -1521,6 +1442,7 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.IsAdverseException, isAdverseException);
             driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
             driverLogJson.put(ConstantsKeys.LocationType, LocationType);
+            driverLogJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
 
             parseArray.put(driverLogJson);
 
@@ -1566,7 +1488,7 @@ public class HelperMethods {
                 IsViolation = false;
                 String IsStatusAutomatic = "false", DecesionSource = "", HaulHourException = "false", IsShortHaulUpdate = "false",
                         OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
-                String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
+                String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "";
 
                 int startDayOfMonth = startDateTime.getDayOfMonth();
                 int selectedDayOfMonth = selectedDate.getDayOfMonth();
@@ -1725,6 +1647,9 @@ public class HelperMethods {
                     if (logObj.has(ConstantsKeys.LocationType)) {
                         LocationType = logObj.getString(ConstantsKeys.LocationType);
                     }
+                    if (logObj.has(ConstantsKeys.MalfunctionDefinition)) {
+                        MalfunctionDefinition = logObj.getString(ConstantsKeys.MalfunctionDefinition);
+                    }
 
                     driverLogJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
                     driverLogJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
@@ -1739,6 +1664,7 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.IsAdverseException, isAdverseException);
                     driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                     driverLogJson.put(ConstantsKeys.LocationType, LocationType);
+                    driverLogJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
 
                     parseArray.put(driverLogJson);
                 }
@@ -2846,7 +2772,8 @@ public class HelperMethods {
                         logModel.getDecesionSource(),
                         ""+logModel.getIsAdverseException(),
                         logModel.getAdverseExceptionRemark(),
-                        logModel.getLocationType()
+                        logModel.getLocationType(),
+                        logModel.getMalfunctionDefinition()
                 );
 
                 array.put(obj);
@@ -2878,7 +2805,7 @@ public class HelperMethods {
 
             boolean HaulHourException = false, IsAdverseException = false;
             String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "", DecesionSource = "";
-            String adverseExceptionRemark = "", LocationType = "";
+            String adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "";
 
             int status = json.getInt(ConstantsKeys.DriverStatusId); //Integer.valueOf(statusStr);
 
@@ -2915,6 +2842,9 @@ public class HelperMethods {
 
             if (json.has(ConstantsKeys.LocationType)) {
                 LocationType = json.getString(ConstantsKeys.LocationType);
+            }
+            if (json.has(ConstantsKeys.MalfunctionDefinition)) {
+                MalfunctionDefinition = json.getString(ConstantsKeys.MalfunctionDefinition);
             }
 
             driverLogModel.setDriverLogId(json.getLong(ConstantsKeys.DriverLogId));
@@ -2974,6 +2904,8 @@ public class HelperMethods {
             driverLogModel.setAdverseException(IsAdverseException);
             driverLogModel.setAdverseExceptionRemark(adverseExceptionRemark);
             driverLogModel.setLocationType(LocationType);
+            driverLogModel.setMalfunctionDefinition(LocationType);
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -3112,7 +3044,7 @@ public class HelperMethods {
 
     /*===== Save Driver Jobs with Shared Preference to 18 days Array List and in unposted array those will be posted to server======= */
     public void SaveDriversJob(String DRIVER_ID, String DeviceId, String AdverseExceptionRemarks,
-                               String decesionSource, String LocationType, boolean isShortHaulUpdate,
+                               String decesionSource, String LocationType, String malAddInfo, boolean isShortHaulUpdate,
                                int DriverType, Constants constants, SharedPref sharedPref,
                                MainDriverEldPref MainDriverPref, CoDriverEldPref CoDriverPref,
                                EldSingleDriverLogPref eldSharedPref, EldCoDriverLogPref coEldSharedPref,
@@ -3196,7 +3128,7 @@ public class HelperMethods {
                         String.valueOf(BackgroundLocationService.GpsVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                         Global, isHaulExcptn, isShortHaulUpdate,
                         ""+isAdverseExcptn,
-                        AdverseExceptionRemarks, LocationType,
+                        AdverseExceptionRemarks, LocationType, malAddInfo,
                         hMethods, dbHelper);
 
 
@@ -3308,7 +3240,7 @@ public class HelperMethods {
                     sharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                     Global, isHaulExcptn, isShortHaulUpdate,
                     ""+isAdverseExcptn,
-                    AdverseExceptionRemarks, LocationType, hMethods, dbHelper);
+                    AdverseExceptionRemarks, LocationType, malAddInfo, hMethods, dbHelper);
 
 
 

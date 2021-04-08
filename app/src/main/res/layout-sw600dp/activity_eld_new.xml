@@ -112,6 +112,8 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/currentCycleTxtView"
                         android:layout_marginTop="@dimen/margin_10"
+                        android:visibility="gone"
+
                         />
 
 

@@ -34,22 +34,54 @@
             />
 
 
-        <TextView
-            android:id="@+id/titleDescView"
+
+
+
+        <LinearLayout
+            android:id="@+id/descLay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Do you really want to confirm the Load Delivery?"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/text_size_20"
-            android:layout_marginLeft="@dimen/margin_25"
-            android:layout_marginRight="@dimen/margin_25"
-            android:layout_marginTop="@dimen/view_height_30"
-            android:layout_marginBottom="@dimen/margin_25"
-            android:textColor="@color/bluee_login_hover"
+            android:orientation="vertical"
             android:layout_below="@+id/changeTitleView"
-            />
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/margin_25"
+            android:gravity="center"
+            >
 
+
+            <TextView
+                android:id="@+id/titleDescView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Do you really want to confirm the Load Delivery?"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/text_size_20"
+                android:layout_marginLeft="@dimen/margin_25"
+                android:layout_marginRight="@dimen/margin_25"
+                android:layout_marginTop="@dimen/view_height_30"
+                android:textColor="@color/text_forgot"
+                />
+
+
+            <TextView
+                android:id="@+id/changedCycleRuleTxtVw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/chaged_cycle_rule"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/text_size_18"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone"
+
+                />
+
+        </LinearLayout>
 
 
 
@@ -58,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/view_height_47"
             android:layout_marginTop="20dp"
-            android:layout_below="@+id/titleDescView"
+            android:layout_below="@+id/descLay"
             android:orientation="horizontal"
             android:layout_marginRight="18dp"
             android:layout_alignParentRight="true"
@@ -73,7 +105,7 @@
                 android:layout_height="match_parent"
                 android:text="@string/cancel"
                 android:layout_margin="1dp"
-                android:textColor="@color/blue"
+                android:textColor="@color/text_forgot"
                 android:textAllCaps="false"
                 android:textSize="@dimen/text_size_20"
                 android:background="@drawable/transparent"

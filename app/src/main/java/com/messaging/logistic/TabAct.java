@@ -133,6 +133,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             public void onReceive(Context context, Intent intent) {
                   Log.d("received", "received from service");
                 boolean isSuggestedEdit     = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
+                boolean IsCycleRequest      = intent.getBooleanExtra(ConstantsKeys.IsCycleRequest, false);
                 boolean isFreshLogin        = sharedPref.GetNewLoginStatus(TabAct.this);
                 boolean IsCCMTACertified    = sharedPref.IsCCMTACertified(TabAct.this);
 
@@ -142,6 +143,18 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                     i.putExtra(ConstantsKeys.Date, "");
                     startActivity(i);
 
+                }else{
+                    if(IsCycleRequest && isFreshLogin == false){
+
+                        if(sharedPref.IsCycleRequestAlertShownAlready(TabAct.this) == false) {
+                            String certifyTitle = "<font color='#1A3561'><b>Alert !!</b></font>";
+                            String titleDesc = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.cycle_change_req) + " </html> </font>";
+                            String okText = "<font color='#1A3561'><b>" + getResources().getString(R.string.ok) + "</b></font>";
+                            Globally.SwitchAlertWIthTabPosition(TabAct.this, certifyTitle, titleDesc, okText, 3);
+                        }
+                        sharedPref.SetCycleRequestAlertViewStatus(true, TabAct.this);
+
+                    }
                 }
 
             }
@@ -496,30 +509,33 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         boolean isMalfunction  = false;
         boolean isUnidentified = false;
 
-        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-            if (sharedPref.IsAllowMalfunction(getApplicationContext()) || sharedPref.IsAllowDiagnostic(getApplicationContext()))
-                isMalfunction = true;
+        try {
+            if (DriverType == Constants.MAIN_DRIVER_TYPE) {
+                if (sharedPref.IsAllowMalfunction(getApplicationContext()) || sharedPref.IsAllowDiagnostic(getApplicationContext()))
+                    isMalfunction = true;
 
-            isUnidentified = sharedPref.IsShowUnidentifiedRecords(getApplicationContext());
+                isUnidentified = sharedPref.IsShowUnidentifiedRecords(getApplicationContext());
 
-        }else{
-            if (sharedPref.IsAllowMalfunctionCo(getApplicationContext()) || sharedPref.IsAllowDiagnosticCo(getApplicationContext()))
-                isMalfunction = true;
+            } else {
+                if (sharedPref.IsAllowMalfunctionCo(getApplicationContext()) || sharedPref.IsAllowDiagnosticCo(getApplicationContext()))
+                    isMalfunction = true;
 
-            isUnidentified = sharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext());
+                isUnidentified = sharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext());
 
+            }
+
+            if (isNotify) {
+                menuList.clear();
+                menuList.addAll(constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
+                        isUnidentified, isMalfunction, existingAppVersionStr));
+                slideMenu.menuAdapter.notifyDataSetChanged();
+            } else {
+                menuList = constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
+                        isUnidentified, isMalfunction, existingAppVersionStr);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        if(isNotify){
-            menuList.clear();
-            menuList.addAll(constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
-                    isUnidentified, isMalfunction, existingAppVersionStr));
-            slideMenu.menuAdapter.notifyDataSetChanged();
-        }else{
-            menuList = constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
-                    isUnidentified, isMalfunction, existingAppVersionStr);
-        }
-
     }
 
 

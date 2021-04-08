@@ -90,22 +90,18 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
 
             String changedCycleName = "";
             String currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, context);
-            String currentCycleId = itemModel.getNotificationTypeName();
             String changedCycleId = itemModel.getTitle();
-            if(currentCycleId.equals(Globally.CANADA_CYCLE_1) || currentCycleId.equals(Globally.CANADA_CYCLE_2)){
-                if(changedCycleId.equals(Globally.USA_WORKING_6_DAYS)){
-                    changedCycleName = Globally.USA_WORKING_6_DAYS_NAME;
-                }else{
-                    changedCycleName = Globally.USA_WORKING_7_DAYS_NAME;
-                }
-            }else{
-                if(changedCycleId.equals(Globally.CANADA_CYCLE_1)){
-                    changedCycleName = Globally.CANADA_CYCLE_1_NAME;
-                }else{
-                    changedCycleName = Globally.CANADA_CYCLE_2_NAME;
-                }
-            }
 
+
+            if(changedCycleId.equals(Globally.CANADA_CYCLE_1)){
+                changedCycleName = Globally.CANADA_CYCLE_1_NAME;
+            }else if(changedCycleId.equals(Globally.CANADA_CYCLE_2)){
+                changedCycleName = Globally.CANADA_CYCLE_2_NAME;
+            }else if(changedCycleId.equals(Globally.USA_WORKING_6_DAYS)){
+                changedCycleName = Globally.USA_WORKING_6_DAYS_NAME;
+            }else{
+                changedCycleName = Globally.USA_WORKING_7_DAYS_NAME;
+            }
 
             holder.historyDescTV.setText(Html.fromHtml(context.getResources().getString(R.string.change_cycle_request) + "<font color='#1A3561'> <b>"+ currentCycle
                     +"</b></font> to<font color='#1A3561'> <b>"+ changedCycleName +"</b></font>.") );

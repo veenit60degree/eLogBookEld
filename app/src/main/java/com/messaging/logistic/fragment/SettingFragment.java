@@ -101,7 +101,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     TextView caCurrentCycleTV, usCurrentCycleTV, operatingZoneTV;
     Spinner caCycleSpinner, usCycleSpinner, timeZoneSpinner;
     Button SettingSaveBtn;
-    ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView;  //canEditImgView, usEditImgView
+    ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView, canEditImgView, usEditImgView;
     LoadingSpinImgView settingSpinImgVw;
     RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn, obdDiagnoseBtn, docBtn;
     LinearLayout settingsMainLay;
@@ -250,8 +250,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         updateAppDownloadIV  = (ImageView)v.findViewById(R.id.updateAppDownloadIV);
         downloadHintImgView  = (ImageView)v.findViewById(R.id.downloadHintImgView);
         opZoneTmgView        = (ImageView)v.findViewById(R.id.opZoneTmgView);
-      //  canEditImgView       = (ImageView)v.findViewById(R.id.canEditImgView);
-      //  usEditImgView        = (ImageView)v.findViewById(R.id.usEditImgView);
+        canEditImgView       = (ImageView)v.findViewById(R.id.canEditImgView);
+        usEditImgView        = (ImageView)v.findViewById(R.id.usEditImgView);
         settingSpinImgVw     = (LoadingSpinImgView)v.findViewById(R.id.settingSpinImgVw);
 
         haulExceptionLay     = (RelativeLayout) v.findViewById(R.id.haulExceptionLay);
@@ -949,12 +949,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
             case R.id.caCycleTV:
-                changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
+                if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ) {
+                    changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
+                }
                 break;
 
 
             case R.id.usCycleTV:
-                changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
+                if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ) {
+                    changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
+                }
                 break;
 
 
@@ -1041,7 +1045,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     adverseRemarksDialog.dismiss();
 
                 hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
-                        LocationType, false, DriverType, constants, sharedPref,
+                        LocationType, "", false, DriverType, constants, sharedPref,
                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                         syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
 
@@ -1346,10 +1350,18 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     /*================== change driver Cycle request ===================*/
     void changeCycleRequest(final String DriverId, final String DeviceId, final String CompanyId, String Id,
                             String Status, String ChangedCycleId, String CurrentCycleId, String Latitude ,
-                            String Longitude, String DriverTimZone, String PowerUnitNumber, String LogDate){
+                            String Longitude, String DriverTimeZone, String PowerUnitNumber, String LogDate){
+
+        String CoDriverId = "";
+        if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+            CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+        }else{
+            CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+        }
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.CoDriverId, CoDriverId);
         params.put(ConstantsKeys.DeviceId, DeviceId);
         params.put(ConstantsKeys.CompanyId, CompanyId);
         params.put(ConstantsKeys.Id, Id);
@@ -1358,7 +1370,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         params.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
         params.put(ConstantsKeys.Latitude, Latitude);
         params.put(ConstantsKeys.Longitude, Longitude);
-        params.put(ConstantsKeys.DriverTimZone, DriverTimZone);
+        params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
         params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
         params.put(ConstantsKeys.LogDate, LogDate);
         params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(getActivity()));
@@ -1680,8 +1692,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             usCurrentCycleTV.setVisibility(View.GONE);
             operatingZoneTV.setText("");
             opZoneTmgView.setVisibility(View.VISIBLE);
-        //    canEditImgView.setVisibility(View.VISIBLE);
-         //   usEditImgView.setVisibility(View.GONE);
+            canEditImgView.setVisibility(View.VISIBLE);
+            usEditImgView.setVisibility(View.GONE);
 
             if(isNorthCanada) {
                 operatingZoneTV.setText(getString(R.string.OperatingZoneNorth));
@@ -1693,8 +1705,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             caCurrentCycleTV.setVisibility(View.GONE);
             usCurrentCycleTV.setVisibility(View.VISIBLE);
             opZoneTmgView.setVisibility(View.INVISIBLE);
-          //  canEditImgView.setVisibility(View.GONE);
-          //  usEditImgView.setVisibility(View.VISIBLE);
+            canEditImgView.setVisibility(View.GONE);
+            usEditImgView.setVisibility(View.VISIBLE);
             operatingZoneTV.setText(getString(R.string.OperatingZoneUS));
         }
     }
@@ -1800,7 +1812,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.haul_excptn_enabled), getResources().getColor(R.color.colorPrimary));
 
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
-                                        LocationType, true, DriverType, constants, sharedPref,
+                                        LocationType, "", true, DriverType, constants, sharedPref,
                                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                         syncingMethod, global, hMethods, dbHelper, getActivity());
 

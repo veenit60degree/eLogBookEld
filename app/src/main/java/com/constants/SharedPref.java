@@ -511,6 +511,27 @@ public class SharedPref {
 
 
 
+    // Set Cycle Request Status for main driver -------------------
+    public static void SetCycleRequestAlertViewStatus( boolean isCycleRequest, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsCycleRequest, isCycleRequest);
+        editor.commit();
+    }
+
+
+
+    // Get Cycle Request Status for main driver -------------------
+    public static boolean IsCycleRequestAlertShownAlready(Context context) {
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsCycleRequest, false);
+        }
+        return isRecord;
+    }
+
+
 
 
 

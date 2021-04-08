@@ -44,6 +44,8 @@ public class DriverLogModel {
     private boolean isAdverseException ;
     private String adverseExceptionRemark;
     private String LocationType;
+    private String MalfunctionDefinition;
+
 
     public DriverLogModel() {
     }
@@ -84,6 +86,7 @@ public class DriverLogModel {
         this.isAdverseException = logModel.getIsAdverseException();
         this.adverseExceptionRemark  = logModel.getAdverseExceptionRemark();
         this.LocationType = logModel.getLocationType();
+        this.MalfunctionDefinition = logModel.getMalfunctionDefinition();
     }
 
     public void setDriverLogId(long driverLogId) {
@@ -380,11 +383,21 @@ public class DriverLogModel {
     public String getLocationType() {
         return LocationType;
     }
-
-
     public void setLocationType(String LocationType) {
         this.LocationType = LocationType;
     }
+
+
+
+    public String getMalfunctionDefinition() {
+        return MalfunctionDefinition;
+    }
+    public void setMalfunctionDefinition(String MalfunctionDefinition) {
+        this.MalfunctionDefinition = MalfunctionDefinition;
+    }
+
+
+
 
 
 

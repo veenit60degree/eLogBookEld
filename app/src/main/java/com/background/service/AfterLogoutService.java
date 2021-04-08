@@ -47,6 +47,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     String TAG_OBD = "OBD Service";
     private static final long TIME_INTERVAL_WIFI  = 10 * 1000;   // 10 sec
     private static final long TIME_INTERVAL_WIRED = 3 * 1000;   // 3 sec
+    private static final long TIME_INTERVAL_LIMIT = 30000;   // 30 sec
+    private long TIME_INTERVAL_DIFF  = 30000;   // 30 sec
+
     String TAG = "Service";
     boolean isStopService = false;
     double lastVehSpeed = -1;
@@ -64,6 +67,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private Messenger replyTo = null;       //invocation replies are processed by this Messenger
     private Handler mHandler = new Handler();
     NotificationManagerSmart mNotificationManager;
+    boolean isWiredCallBackCalled = false;
+
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -120,7 +125,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             }
 
             // ---------------- temp data ---------------------
-            //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 30;
+            //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
 
 
             // ELD calling rule for Wired OBD
@@ -130,15 +135,17 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             try {
                 if (ignitionStatus.equals("ON") || !truckRPM.equals("0")) {
                     sharedPref.SaveObdStatus(Constants.WIRED_ACTIVE, getApplicationContext());
-                    if(speed > 10 && lastVehSpeed > 10){
+                    if(speed > 8 && lastVehSpeed > 8){
                         LoginActivity.IsLoginAllowed = false;
 
-                       // ------------- temp disabled ------------
-                      /*  Globally.PlaySound(getApplicationContext());
-                        Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
-                        SpeakOutMsg(AlertMsgSpeech);
-*/
-                        Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed, 203040);
+                        if(TIME_INTERVAL_DIFF >= TIME_INTERVAL_LIMIT) {
+                            TIME_INTERVAL_DIFF = 0;
+                            Globally.PlaySound(getApplicationContext());
+                            Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
+                            SpeakOutMsg(AlertMsgSpeech);
+                        }
+                        TIME_INTERVAL_DIFF = TIME_INTERVAL_DIFF + TIME_INTERVAL_WIRED;
+                       // Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed, 203040);
                     }else{
                         LoginActivity.IsLoginAllowed = true;
                     }
@@ -168,6 +175,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                isWiredCallBackCalled = true;
                 StartStopServer(constants.WiredOBD);
             }
         }, time);
@@ -213,7 +221,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-            Log.e(TAG, "-----Running timerTask");
+            Log.e(TAG, "-----Running Logout timerTask");
 
             if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
                     !SharedPref.getPassword(getApplicationContext()).equals("")) {
@@ -226,6 +234,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_ACTIVE &&
                         SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_ACTIVE){
                     StartStopServer(constants.WiredOBD);
+                }else{
+                    if(isWiredCallBackCalled == false){
+                        StartStopServer(constants.WiredOBD);
+                    }
                 }
 
                 checkWifiOBDConnection();
@@ -404,7 +416,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                 if (ignitionStatus.equals("true")) {
                                     sharedPref.SaveObdStatus(Constants.WIFI_ACTIVE, getApplicationContext());
-                                    if(WheelBasedVehicleSpeed > 10 && lastVehSpeed > 10){
+                                    if(WheelBasedVehicleSpeed > 8 && lastVehSpeed > 8){
                                         LoginActivity.IsLoginAllowed = false;
 
                                         Globally.PlaySound(getApplicationContext());

@@ -149,8 +149,9 @@ public class Constants {
     public static String OfflineData = "offline_data";
     public static String DataMalfunction = "Data_Malfunction";
 
-    public static String PositionComplianceMalfunction = "L";
-
+    public static String PositionComplianceMalfunction  = "L";
+    public static String MissingDataElementDiagnostic   = "3";
+    public static String ConstLocationMissing           = "LM";
 
     public static final int MAIN_DRIVER_TYPE    = 0;
     public static final int CO_DRIVER_TYPE      = 1;
@@ -200,6 +201,7 @@ public class Constants {
     public static boolean IsCtPatUploading = false;
     public static boolean IsAlsServerResponding = true;
     public static boolean isClaim   = false;
+    //public static boolean isCycleRequestAlert   = false;
 
     public static String DriverLogId = "";
     public static String IsStartingLocation = "";
@@ -1311,7 +1313,7 @@ public class Constants {
                                         String decesionSource, boolean isYardMove,
                                         Globally Global, boolean isHaulException, boolean isHaulExceptionUpdate,
                                         String isAdverseException, String adverseExceptionRemark, String LocationType,
-                                        HelperMethods hMethods, DBHelper dbHelper) {
+                                        String malAddInfo, HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
         long DriverLogId = 0;
@@ -1391,7 +1393,8 @@ public class Constants {
                 decesionSource,
                 isAdverseException,
                 adverseExceptionRemark,
-                LocationType
+                LocationType,
+                malAddInfo
 
         );
 
@@ -2948,9 +2951,7 @@ public class Constants {
                                     if(!SharedPref.getLocMalfunctionType(context).equals("m")) {
                                         SharedPref.setLocMalfunctionType("x", context);
                                     }
-                                } /*else {
-                                    SharedPref.setLocMalfunctionType("", context);
-                                }*/
+                                }
                             }
 
                             isMalfunction = true;
@@ -2961,13 +2962,6 @@ public class Constants {
                                 if(!SharedPref.getLocMalfunctionType(context).equals("m")) {
                                     SharedPref.setLocMalfunctionType("x", context);
                                 }
-
-                            /*if(SharedPref.isManualLocAccepted(context)){
-
-                            }else{
-                                SharedPref.setLocMalfunctionType("x", context);
-                            }*/
-
                                 isMalfunction = true;
                             } else {
                                 SharedPref.setLocMalfunctionType("", context);
@@ -3269,6 +3263,40 @@ public class Constants {
         }
 
         return event;
+    }
+
+
+
+    public int minDiff(String savedTime, Globally global, Context context){
+
+        int timeInMin = 0;
+        if(savedTime.length() > 10) {
+            try{
+                String timeStampStr = savedTime.replace(" ", "T");
+                DateTime savedDateTime = global.getDateTimeObj(timeStampStr, false);
+                DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
+
+                if(savedDateTime.isAfter(currentDateTime)){
+                    SharedPref.setHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
+                }
+                timeInMin = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+        return timeInMin;
+
+    }
+
+
+
+    public int checkIntValue(int value){
+        if(value < 0)
+            value = 0;
+
+        return value;
     }
 
 

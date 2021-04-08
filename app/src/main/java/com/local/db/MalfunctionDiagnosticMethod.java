@@ -58,7 +58,8 @@ public class MalfunctionDiagnosticMethod {
 
 
     public JSONObject GetJsonFromList(String DriverId, String DeviceId, String VIN, String UnitNo, String CompanyId,
-                                      String EngineHours, String StartOdometer, String EndOdometer, String EventDateTime, String DiagnosticType )  {
+                                      String EngineHours, String StartOdometer, String EndOdometer, String EventDateTime,
+                                      String DiagnosticType, String MalfunctionDefinition )  {
 
         JSONObject malfnDiagnstcObj = new JSONObject();
 
@@ -75,6 +76,7 @@ public class MalfunctionDiagnosticMethod {
             malfnDiagnstcObj.put(ConstantsKeys.EndOdometer, EndOdometer );
             malfnDiagnstcObj.put(ConstantsKeys.EventDateTime, EventDateTime);
             malfnDiagnstcObj.put(ConstantsKeys.DiagnosticType, DiagnosticType );
+            malfnDiagnstcObj.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
 
         }catch (Exception e){
             e.printStackTrace();

@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -377,7 +378,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
 
             case R.id.invisibleNotiBtn:
-                confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
+                confirmationDialog = new CycleChangeRequestDialog(getActivity(), DriverId, currentCycleId, changedCycleId, new ConfirmListener());
                 confirmationDialog.show();
 
                 break;
@@ -567,10 +568,18 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     /*================== change driver Cycle request ===================*/
     void changeCycleRequest(final String DriverId, final String DeviceId, final String CompanyId, String Id,
                             String Status, String ChangedCycleId, String CurrentCycleId, String Latitude ,
-                            String Longitude, String DriverTimZone, String PowerUnitNumber, String LogDate){
+                            String Longitude, String DriverTimeZone, String PowerUnitNumber, String LogDate){
+
+        String CoDriverId = "";
+        if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+            CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+        }else{
+            CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+        }
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.CoDriverId, CoDriverId);
         params.put(ConstantsKeys.DeviceId, DeviceId);
         params.put(ConstantsKeys.CompanyId, CompanyId);
         params.put(ConstantsKeys.Id, Id);
@@ -579,7 +588,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         params.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
         params.put(ConstantsKeys.Latitude, Latitude);
         params.put(ConstantsKeys.Longitude, Longitude);
-        params.put(ConstantsKeys.DriverTimZone, DriverTimZone);
+        params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
         params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
         params.put(ConstantsKeys.LogDate, LogDate);
         params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(getActivity()));
@@ -621,9 +630,11 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                         );
                         notificationsList.add(model);
 
-                     //   confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
-                      //  confirmationDialog.show();
-
+                     /*   if(Constants.isCycleRequestAlert) {
+                            Constants.isCycleRequestAlert = false;
+                             confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
+                             confirmationDialog.show();
+                        }*/
                     }
                 }
             }
@@ -879,7 +890,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                                 changedCycleId = dataObj.getString("CycleId");
                                 Id             = dataObj.getString("Id");
 
-                                confirmationDialog = new CycleChangeRequestDialog(getActivity(), currentCycleId, changedCycleId, new ConfirmListener());
+                                confirmationDialog = new CycleChangeRequestDialog(getActivity(), DriverId, currentCycleId, changedCycleId, new ConfirmListener());
                                 confirmationDialog.show();
 
                             }
@@ -893,13 +904,16 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
                         // refresh list
                         ParseJSON(false, new JSONArray(), obj);
-
-                        global.EldScreenToast(eldMenuBtn, Message, getResources().getColor(R.color.colorPrimary));
+                        sharedPref.SetCycleRequestAlertViewStatus(false, getActivity());
 
                         if(isApprovedCycleRequest) {
                             saveUpdatedCycleData(savedCycleType, changedCycleName);
-
                             GetNotificationLog(DriverId, DeviceId);
+
+                            Toast.makeText(getActivity(), Message, Toast.LENGTH_LONG).show();
+                            TabAct.host.setCurrentTab(0);
+                        }else{
+                            global.EldScreenToast(eldMenuBtn, Message, getResources().getColor(R.color.colorPrimary));
                         }
 
                         break;

@@ -866,7 +866,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         String.valueOf(GPSVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus,false,
                         Global, isHaulExcptn, false,
                         ""+ isAdverseExcptn,
-                        "", LocationType, hMethods,  dbHelper);
+                        "", LocationType, "", hMethods,  dbHelper);
 
                     String CurrentDate = Global.GetCurrentDateTime();
                 String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
@@ -1308,7 +1308,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 false,
                 connectionSource + LastStatus,
                 ""+isAdverseExcptn,
-                "", LocationType
+                "", LocationType,
+                ""
 
         );
 
@@ -1355,7 +1356,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         false,
                         connectionSource + LastStatus,
                         ""+isAdverseExcptn,
-                       "", LocationType
+                       "", LocationType,
+                        ""
 
                 );
 

@@ -180,6 +180,7 @@
     <string name="driver_confirmation">Do you want to continue with this Truck/Trailer?</string>
     <string name="certify_previous_days_log">Before start your duty please certify your previous days log.</string>
     <string name="certify_previous_days_log_ask_popup">You need to certify your previous days log.</string>
+    <string name="cycle_change_req">You have a cycle change request.</string>
 
     <string name="certify_previous_days_log_warning">It seems you haven\'t certified your previous days logs.Please certify your logs.</string>
     <string name="has_been_certified">Log has been successfully certified.</string>
@@ -219,6 +220,9 @@
     <string name="want_change_cycle">Do you want to change your cycle from </string>
     <string name="want_change_op_zone">Do you want to change your operating zone from </string>
 
+    <string name="pos_mal_occured">Position malfunction occured</string>
+    <string name="ignore_to_save_loc">Driver ignore to save location in </string>
+    <string name="hos_limitation">New HOS Limitations</string>
     <string name="ELDViewLogUs">ELD View Log</string>
     <string name="ELDViewLogCanada">ELD View Log</string>
 
@@ -626,6 +630,7 @@
     <string name="Hrs_Worked_Tomorrow">Hrs Available Tomorrow</string>
     <string name="Total_distance">Total Distance: </string>
     <string name="check_available_hour">Check available hours</string>
+    <string name="chaged_cycle_rule">Changed Cycle Rule</string>
 
     <string name="No_">No.</string>
     <string name="Status">Status</string>

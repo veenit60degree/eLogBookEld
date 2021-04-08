@@ -1814,6 +1814,28 @@ public class Globally {
 	}
 
 
+
+	public static void SwitchAlertWIthTabPosition(final Context context, final String title, final String msg, final String okText, final int position){
+		try {
+			AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+			alertDialog.setTitle(Html.fromHtml(title));
+			alertDialog.setMessage(Html.fromHtml(msg));
+
+			// Setting OK Button
+			alertDialog.setButton(Html.fromHtml(okText), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+				//	Constants.isCycleRequestAlert = true;
+					TabAct.host.setCurrentTab(position);
+					dialog.dismiss();
+				}
+			});
+
+			// Showing Alert Message
+			alertDialog.show();
+		}catch (Exception e){e.printStackTrace();}
+	}
+
+
 	public static void ReadViolationDialog(final String title, final Context context){
 		try {
 			AlertDialog alertDialog = new AlertDialog.Builder(context).create();

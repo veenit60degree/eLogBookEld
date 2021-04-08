@@ -561,6 +561,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.saveLocMalfunctionOccurStatus(false, "", getApplicationContext());
 			sharedPref.SetCycleRequestStatusCo(false, getApplicationContext());
 			sharedPref.SetCycleRequestStatusMain(false, getApplicationContext());
+			sharedPref.SetCycleRequestAlertViewStatus(false, getApplicationContext());
 
 		}catch (Exception e){
 			e.printStackTrace();

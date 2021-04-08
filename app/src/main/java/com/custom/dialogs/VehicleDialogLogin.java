@@ -118,12 +118,13 @@ public class VehicleDialogLogin  extends Dialog {
             //  SpinnerTitleTV.setText("Select truck from list to change.");
         }
 
-        if (Truck.trim().length() > 0) {
-            Title = "Please select truck from list.";
+        /*if (Truck.trim().length() > 0) {
+            Title = "Please select the truck from list.";
         } else {
             Title = "You haven't selected any truck for now. Please select a truck first.";
-        }
+        }*/
 
+        Title = "Please select the truck from list.";
         TitleTV.setText(Title);
         if (truckList.size() > 1) {
             ArrayList<String> EquipmentList = new ArrayList<String>();

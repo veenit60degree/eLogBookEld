@@ -34,21 +34,51 @@
             />
 
 
+        <LinearLayout
+            android:id="@+id/descLay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@+id/changeTitleView"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            >
+
+
         <TextView
             android:id="@+id/titleDescView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:text="Do you really want to confirm the Load Delivery?"
-            android:layout_centerHorizontal="true"
             android:textSize="16sp"
+            android:gravity="center"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="@dimen/margin_15"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/bluee_login_hover"
-            android:layout_below="@+id/changeTitleView"
+            android:textColor="@color/text_forgot"
+
             />
+
+
+        <TextView
+            android:id="@+id/changedCycleRuleTxtVw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/chaged_cycle_rule"
+            android:layout_centerHorizontal="true"
+            android:textSize="16sp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/colorPrimary"
+            android:visibility="gone"
+            />
+
+        </LinearLayout>
+
 
 
            <LinearLayout
@@ -56,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="42dp"
            android:layout_marginTop="20dp"
-         android:layout_below="@+id/titleDescView"
+            android:layout_below="@+id/descLay"
              android:orientation="horizontal"
              android:layout_marginLeft="18dp"
              android:layout_marginRight="18dp"
@@ -72,7 +102,7 @@
                   android:layout_height="match_parent"
                   android:text="@string/cancel"
                  android:layout_margin="1dp"
-                  android:textColor="@color/blue"
+                  android:textColor="@color/text_forgot"
                   android:textAllCaps="false"
                   android:textSize="18sp"
                   android:background="@drawable/transparent"

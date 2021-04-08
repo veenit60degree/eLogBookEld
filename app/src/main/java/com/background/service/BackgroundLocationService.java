@@ -253,7 +253,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-    int tempOdo = 1471000;
+    int tempOdo = 169510;
     int ignitionCount = 0;
 
 
@@ -407,12 +407,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
             // ---------------- temp data ---------------------
-          /*     ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
+        //    sharedPref.saveLocMalfunctionOccurStatus(true, global.GetCurrentDateTime(), getApplicationContext());
+        //    sharedPref.SetDiagnosticAndMalfunctionSettingsMain(true, true, true, true, getApplicationContext());
+
+            /*   ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
               sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
-              tempOdo = tempOdo+800;
+              tempOdo = tempOdo+500;
 */
 
             if(ignitionStatus.equals("ON")){
@@ -473,9 +476,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                             String.valueOf((int)calculatedSpeedFromOdo), obdTripDistance, timeStamp, savedDate);
 
-                  /*  Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed
-                            + "\nCalculated Speed: " + calculatedSpeedFromOdo, 203040);
-*/
+
                     try {
                         Handler handler = new Handler(Looper.getMainLooper());
                         handler.post(new Runnable() {
@@ -494,7 +495,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         e.printStackTrace();
                     }
 
-                    int timeDuration = 10000;
+                    int timeDuration = 2000;
+
                     double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
                     if(obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
                         if (calculatedSpeedFromOdo > 0 && speed == 0) {
@@ -502,60 +504,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         }else{
                             sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
                         }
-                        /*  if (calculatedSpeedFromOdo < 5 && speed < 5) {
-                            if (sharedPref.getLastIgnitionStatus(getApplicationContext()) == true && sharedPref.getLastObdSpeed(getApplicationContext()) < 5) {
-                                // ignore it
-                            } else {
-                                sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
-                            }
-                        }
-*/
 
-
-                        if(constants.CheckGpsStatus(getApplicationContext()) == false) {
-                            global.LATITUDE = "0.0";
-                            global.LONGITUDE = "0.0";
-                            if(sharedPref.getEcmObdLatitude(getApplicationContext()).length() > 4) {
-                                sharedPref.setEcmObdLocationWithTime(global.LATITUDE, global.LONGITUDE, currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
-                            }
-                        }
-
-                        // check malfunction
-                        boolean isMalfunction = constants.isLocationMalfunctionOccured(getApplicationContext());
-                        Log.d("isMalfunction", "isMalfunction: " + isMalfunction);
-
-                        if(isMalfunction && sharedPref.isLocMalfunctionOccur(getApplicationContext()) == false) {
-                            sharedPref.saveLocMalfunctionOccurStatus(isMalfunction, currentLogDate, getApplicationContext());
-
-                            // save malfunction occur event to server with few inputs
-                      /*      SaveMalDiagstcEvent(DriverId, DeviceId, sharedPref.getVINNumber(getApplicationContext()),
-                                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
-                                    DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
-                                    sharedPref.getObdEngineHours(getApplicationContext()),
-                                    sharedPref.getDayStartOdometer(getApplicationContext()),
-                                    sharedPref.getHighPrecisionOdometer(getApplicationContext()),
-                                    currentLogDate,  constants.PositionComplianceMalfunction);
-*/
-                            JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetJsonFromList(
-                                    DriverId, DeviceId, sharedPref.getVINNumber(getApplicationContext()),
-                                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
-                                    DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
-                                    sharedPref.getObdEngineHours(getApplicationContext()),
-                                    sharedPref.getDayStartOdometer(getApplicationContext()),
-                                    sharedPref.getHighPrecisionOdometer(getApplicationContext()),
-                                    currentLogDate,  constants.PositionComplianceMalfunction);
-
-                            JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DriverId), dbHelper);
-                            malArray.put(newOccuredEventObj);
-
-                            // save Occured event locally until not posted to server
-                            malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DriverId), dbHelper, malArray);
-
-                            SaveMalfnDiagnstcLogToServer(malArray);
-
-                        }
-
-                        if(calculatedSpeedFromOdo >= 10 || speed >= 10){
+                        if(calculatedSpeedFromOdo >= 8 || speed >= 8){
                             sharedPref.setVehilceMovingStatus(true, getApplicationContext());
                         }else{
                             sharedPref.setVehilceMovingStatus(false, getApplicationContext());
@@ -563,21 +513,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         if (jobType.equals(global.DRIVING)) {
 
-                            timeDuration = 30000;
-                           // if (SpeedCounter == 10) {
+                            timeDuration = 10000;
+                           // if (SpeedCounter == 8) {
 
-                            if (minDiff(savedDate) > 0) {
+                            if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
                                 // save current HighPrecisionOdometer in DB
                                 sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                                if (speed >= 10 && calculatedSpeedFromOdo >= 10) {
-
+                                if (speed >= 8 && calculatedSpeedFromOdo >= 8) {
                                     callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-
-                                } else if (speed < 10 && calculatedSpeedFromOdo < 10) {
-
+                                } else if (speed < 8 && calculatedSpeedFromOdo < 8) {
                                     callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-
                                 }
                             }
 
@@ -585,24 +531,20 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         } else if (jobType.equals(global.ON_DUTY)) {
 
 
-                            // if speed is coming >10 then ELD rule is called after 10 sec to change the status to Driving as soon as.
-                            if (speed > 10 && calculatedSpeedFromOdo > 10) {
-                                timeDuration = 3000;
+                            // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
+                            if (speed >= 8 && calculatedSpeedFromOdo >= 8) {
+                                timeDuration = 2000;
 
                                 // save current HighPrecisionOdometer locally
                                 sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-
                                 callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
 
                             } else {
-                                timeDuration = 30000;
-
+                                timeDuration = 10000;
                                 // call ELD rule after 1 minute to improve performance
-                                if (minDiff(savedDate) > 0) {
-
+                                if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
                                     // save current HighPrecisionOdometer locally
                                     sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-
                                     callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
                                 }
                             }
@@ -610,21 +552,23 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         } else {
 
                             // =================== For OFF Duty & Sleeper case =====================
-
-
                             // save current HighPrecisionOdometer in DB
                             sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                            timeDuration = 30000;
+                            timeDuration = 10000;
                             if (speed <= 0 && calculatedSpeedFromOdo <= 0) {
                                 Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
                             } else {
-                                if (speed > 10 && calculatedSpeedFromOdo > 10) {    //if speed is coming >10 then ELD rule is called after 10 sec to change the status to Driving as soon as.
-                                    timeDuration = 3000;
+                                if (speed >= 8 && calculatedSpeedFromOdo >= 8) {    //if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
+                                    timeDuration = 2000;
                                     callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
                                 }
                             }
                         }
+
+
+                        checkPositionMalfunction(currentHighPrecisionOdometer, currentLogDate);
+
 
                         if (SpeedCounter == 0 || SpeedCounter == HalfSpeedCounter) {
                             resetDataAfterCycleCall(true);
@@ -645,7 +589,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             }
                         }
                     }, timeDuration);
-
+                   // Log.d("timeDuration", "JobType: " + jobType + " , timeDuration: " +timeDuration);
 
                 } else {
                     global.VEHICLE_SPEED = -1;
@@ -659,6 +603,50 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
 
 
+        }
+    }
+
+
+    private void checkPositionMalfunction(String currentHighPrecisionOdometer, String currentLogDate){
+
+        try {
+            if (constants.CheckGpsStatus(getApplicationContext()) == false) {
+                global.LATITUDE = "0.0";
+                global.LONGITUDE = "0.0";
+                if (sharedPref.getEcmObdLatitude(getApplicationContext()).length() > 4) {
+                    sharedPref.setEcmObdLocationWithTime(global.LATITUDE, global.LONGITUDE, currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
+                }
+            }
+
+            // check malfunction
+            boolean isMalfunction = constants.isLocationMalfunctionOccured(getApplicationContext());
+            Log.d("isMalfunction", "isMalfunction: " + isMalfunction);
+
+            if (isMalfunction && sharedPref.isLocMalfunctionOccur(getApplicationContext()) == false) {
+                sharedPref.saveLocMalfunctionOccurStatus(isMalfunction, currentLogDate, getApplicationContext());
+
+                // save malfunction occur event to server with few inputs
+                JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetJsonFromList(
+                        DriverId, DeviceId, sharedPref.getVINNumber(getApplicationContext()),
+                        DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                        DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
+                        sharedPref.getObdEngineHours(getApplicationContext()),
+                        sharedPref.getHighPrecisionOdometer(getApplicationContext()),
+                        sharedPref.getHighPrecisionOdometer(getApplicationContext()),
+                        currentLogDate, constants.PositionComplianceMalfunction,
+                        getApplicationContext().getResources().getString(R.string.pos_mal_occured));
+
+                JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DriverId), dbHelper);
+                malArray.put(newOccuredEventObj);
+
+                // save Occured event locally until not posted to server
+                malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DriverId), dbHelper, malArray);
+
+                SaveMalfnDiagnstcLogToServer(malArray);
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -715,32 +703,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         return speedInKm;
 
     }
-
-
-    private int minDiff(String savedTime){
-
-        int timeInMin = 0;
-        if(savedTime.length() > 10) {
-            try{
-                String timeStampStr = savedTime.replace(" ", "T");
-                DateTime savedDateTime = global.getDateTimeObj(timeStampStr, false);
-                DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
-
-                if(savedDateTime.isAfter(currentDateTime)){
-                    sharedPref.setHighPrecisionOdometer(sharedPref.getHighPrecisionOdometer(getApplicationContext()), global.GetCurrentDateTime(), getApplicationContext());
-                }
-                timeInMin = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-        return timeInMin;
-
-    }
-
-
 
 
 
@@ -1033,7 +995,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_ACTIVE){
                     StartStopServer(constants.WiredOBD);
                 }else{
-                    int minDiff = minDiff(sharedPref.getHighPrecesionSavedTime(getApplicationContext()));
+                    int minDiff = constants.minDiff(sharedPref.getHighPrecesionSavedTime(getApplicationContext()), global, getApplicationContext());
                     if(isWiredDataReceived == false && minDiff > 0){
                         StartStopServer(constants.WiredOBD);
                     }else{
@@ -1931,7 +1893,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("onLocationChanged", "Latitude: " + location.getLatitude() + " -- Longitude: " + location.getLongitude());
+       // Log.d("onLocationChanged", "Latitude: " + location.getLatitude() + " -- Longitude: " + location.getLongitude());
         global.LATITUDE = "" +location.getLatitude();
         global.LONGITUDE = "" +location.getLongitude();
         global.LONGITUDE = Globally.CheckLongitudeWithCycle(global.LONGITUDE);
@@ -2241,7 +2203,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }*/
         }
 
-        if(speedCalculated >= 10 || speed >= 10){
+        if(speedCalculated >= 8 || speed >= 8){
             sharedPref.setVehilceMovingStatus(true, getApplicationContext());
         }else{
             sharedPref.setVehilceMovingStatus(false, getApplicationContext());
@@ -2293,7 +2255,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
 
                     ServiceCycle.ContinueSpeedCounter = 0;
-                    if (minDiff(savedDate) > 1) {  //&& !HighPrecisionOdometer.equals(sharedPref.getHighPrecisionOdometer(getApplicationContext()))
+                    if (constants.minDiff(savedDate, global, getApplicationContext()) > 1) {  //&& !HighPrecisionOdometer.equals(sharedPref.getHighPrecisionOdometer(getApplicationContext()))
                         sharedPref.setHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
                         serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
                                 hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
@@ -2302,7 +2264,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 } else {
 
-                    if (minDiff(savedDate) > 0) {
+                    if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
                         sharedPref.setHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
                         serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
                                 hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
@@ -2327,7 +2289,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 } else {
 
                     ServiceCycle.ContinueSpeedCounter = 0;
-                    if (minDiff(savedDate) > 1) {
+                    if (constants.minDiff(savedDate, global, getApplicationContext()) > 1) {
                         sharedPref.setHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
                         serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
                                 hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
@@ -2774,44 +2736,48 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         sharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
                                         sharedPref.setPersonalUse75Km(dataObj.getBoolean(ConstantsKeys.PersonalUse75Km), getApplicationContext());
 
-                                        if(dataObj.has(ConstantsKeys.SuggestedEdit)) {
-                                            boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
-                                            boolean isSuggestedRecall;
+                                        boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
+                                        boolean isSuggestedRecall;
+                                        boolean IsCycleRequest      =  dataObj.getBoolean(ConstantsKeys.IsCycleRequest);
 
-                                            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                                                sharedPref.setEldOccurences(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
-                                                        dataObj.getBoolean(ConstantsKeys.IsMalfunction),
-                                                        dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
-                                                        isSuggestedEdit, getApplicationContext());
+                                        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                                            sharedPref.setEldOccurences(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
+                                                    dataObj.getBoolean(ConstantsKeys.IsMalfunction),
+                                                    dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
+                                                    isSuggestedEdit, getApplicationContext());
 
-                                                isSuggestedRecall = sharedPref.isSuggestedRecall(getApplicationContext());
+                                            isSuggestedRecall = sharedPref.isSuggestedRecall(getApplicationContext());
 
-                                                sharedPref.SetExemptDriverStatusMain(dataObj.getBoolean(ConstantsKeys.IsExemptDriver), getApplicationContext());
-                                                sharedPref.SetNorthCanadaStatusMain(dataObj.getBoolean(ConstantsKeys.IsNorthCanada), getApplicationContext());
-                                            }else{
-                                                sharedPref.setEldOccurencesCo(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
-                                                        dataObj.getBoolean(ConstantsKeys.IsMalfunction),
-                                                        dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
-                                                        isSuggestedEdit, getApplicationContext());
+                                            sharedPref.SetExemptDriverStatusMain(dataObj.getBoolean(ConstantsKeys.IsExemptDriver), getApplicationContext());
+                                            sharedPref.SetNorthCanadaStatusMain(dataObj.getBoolean(ConstantsKeys.IsNorthCanada), getApplicationContext());
+                                            sharedPref.SetCycleRequestStatusMain(IsCycleRequest, getApplicationContext());
+                                        }else{
+                                            sharedPref.setEldOccurencesCo(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
+                                                    dataObj.getBoolean(ConstantsKeys.IsMalfunction),
+                                                    dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
+                                                    isSuggestedEdit, getApplicationContext());
 
-                                                isSuggestedRecall = sharedPref.isSuggestedRecallCo(getApplicationContext());
+                                            isSuggestedRecall = sharedPref.isSuggestedRecallCo(getApplicationContext());
 
-                                                sharedPref.SetExemptDriverStatusCo(dataObj.getBoolean(ConstantsKeys.IsExemptDriver), getApplicationContext());
-                                                sharedPref.SetNorthCanadaStatusCo(dataObj.getBoolean(ConstantsKeys.IsNorthCanada), getApplicationContext());
-                                            }
+                                            sharedPref.SetExemptDriverStatusCo(dataObj.getBoolean(ConstantsKeys.IsExemptDriver), getApplicationContext());
+                                            sharedPref.SetNorthCanadaStatusCo(dataObj.getBoolean(ConstantsKeys.IsNorthCanada), getApplicationContext());
+                                            sharedPref.SetCycleRequestStatusCo(IsCycleRequest, getApplicationContext());
+                                        }
 
-                                            if (isSuggestedEdit && isSuggestedRecall) {
-                                                try {
-                                                    if(UILApplication.isActivityVisible()) {
-                                                        Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
-                                                        intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
-                                                        LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
-                                                    }
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
+                                        if ( (isSuggestedEdit && isSuggestedRecall) || IsCycleRequest) {
+                                            try {
+                                                if(UILApplication.isActivityVisible()) {
+                                                    Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                                                    intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
+                                                    intent.putExtra(ConstantsKeys.IsCycleRequest, IsCycleRequest);
+                                                    LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
                                                 }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
                                         }
+
+
                                     }catch (Exception e){
                                         e.printStackTrace();
                                     }

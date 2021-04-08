@@ -155,7 +155,6 @@ public class ConstantsKeys {
     public static String AboveDefectsNotCorrected       = "AboveDefectsNotCorrected";
     public static String Latitude                       = "Latitude";
     public static String Longitude                      = "Longitude";
-    public static String DriverTimeZone                 = "DriverTimeZone";
     public static String SupervisorMechanicsName        = "SupervisorMechanicsName";
     public static String TruckIssueType                 = "TruckIssueType";
     public static String TraiorIssueType                = "TraiorIssueType";
@@ -173,7 +172,7 @@ public class ConstantsKeys {
     public static String DiagnosticType                 = "DiagnosticType";
     public static String DrivingStartTime               = "DrivingStartTime";
     public static String CycleId                        = "CycleId";
-    public static String DriverTimZone                  = "DriverTimZone";
+    public static String DriverTimeZone                 = "DriverTimeZone";
     public static String PowerUnitNumber                = "PowerUnitNumber";
     public static String FromDate                       = "FromDate";
     public static String ToDate                         = "ToDate";

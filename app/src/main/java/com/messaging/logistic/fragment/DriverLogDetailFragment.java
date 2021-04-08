@@ -383,11 +383,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         certifyExcptnTV             = (TextView)view.findViewById(R.id.certifyExcptnTV);
         signLogTitle2               = (TextView)view.findViewById(R.id.signLogTitle2);
 
-        dayRecapTV.setTypeface(dayRecapTV.getTypeface(), Typeface.BOLD);
-        dateRecapTV.setTypeface(dateRecapTV.getTypeface(), Typeface.BOLD);
-        hourRecapTV.setTypeface(hourRecapTV.getTypeface(), Typeface.BOLD);
-        RecapViewHeight     = dayRecapTV.getLayoutParams().height;
-
         itemOdometerLay.measure(0,0);
         itemShippingLay.measure(0,0);
         odometerLayHeight   = itemOdometerLay.getMeasuredHeight();
@@ -434,7 +429,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             DriverType = Constants.CO_DRIVER_TYPE;
         }
 
-        certifyExcptnTV.setVisibility(View.VISIBLE);
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading...");
 
@@ -452,13 +446,22 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         crossVerifyRecapData();
 
 
-        if(LogDate.split("/").length > 1) {
-            EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
-        }else{
-            EldTitleTV.setText(LogDate);
-        }
-        signImageView.setBackgroundDrawable(null);
-        signImageView.setImageResource(R.drawable.transparent);
+
+                dayRecapTV.setTypeface(dayRecapTV.getTypeface(), Typeface.BOLD);
+                dateRecapTV.setTypeface(dateRecapTV.getTypeface(), Typeface.BOLD);
+                hourRecapTV.setTypeface(hourRecapTV.getTypeface(), Typeface.BOLD);
+                RecapViewHeight     = dayRecapTV.getLayoutParams().height;
+                certifyExcptnTV.setVisibility(View.VISIBLE);
+
+                if(LogDate.split("/").length > 1) {
+                    EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
+                }else{
+                    EldTitleTV.setText(LogDate);
+                }
+                signImageView.setBackgroundDrawable(null);
+                signImageView.setImageResource(R.drawable.transparent);
+
+
 
         if(CurrentCycleId.equalsIgnoreCase("null"))
             CurrentCycleId = Globally.CANADA_CYCLE_1;
@@ -560,6 +563,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 .build();
 
         driverLogScrollView.setScrollViewListener(this);
+
         setMarqueonView(certifyVehicleTV);
         setMarqueonView(certifyTrailerTV);
 
@@ -1448,26 +1452,29 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
 
 
-    private void DOTBtnVisibility(int DaysDiff, int MaxDays){
-        if(DaysDiff == 0){
-            nextDateBtn.setVisibility(View.GONE);
-            if(DriverPermitMaxDays > 0) {
-                previousDateBtn.setVisibility(View.VISIBLE);
-            }
-        }else if(DaysDiff == MaxDays){
-            previousDateBtn.setVisibility(View.GONE);
-            if(DriverPermitMaxDays > 0) {
-                nextDateBtn.setVisibility(View.VISIBLE);
-            }
-        }else{
-            if(DriverPermitMaxDays > 0) {
-                nextDateBtn.setVisibility(View.VISIBLE);
-                previousDateBtn.setVisibility(View.VISIBLE);
-            }else{
-                nextDateBtn.setVisibility(View.GONE);
-                previousDateBtn.setVisibility(View.GONE);
-            }
-        }
+    private void DOTBtnVisibility(final int DaysDiff, final int MaxDays){
+
+                if(DaysDiff == 0){
+                    nextDateBtn.setVisibility(View.GONE);
+                    if(DriverPermitMaxDays > 0) {
+                        previousDateBtn.setVisibility(View.VISIBLE);
+                    }
+                }else if(DaysDiff == MaxDays){
+                    previousDateBtn.setVisibility(View.GONE);
+                    if(DriverPermitMaxDays > 0) {
+                        nextDateBtn.setVisibility(View.VISIBLE);
+                    }
+                }else{
+                    if(DriverPermitMaxDays > 0) {
+                        nextDateBtn.setVisibility(View.VISIBLE);
+                        previousDateBtn.setVisibility(View.VISIBLE);
+                    }else{
+                        nextDateBtn.setVisibility(View.GONE);
+                        previousDateBtn.setVisibility(View.GONE);
+                    }
+                }
+
+
     }
 
 
@@ -1853,10 +1860,10 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 rulesVersion, dbHelper);
 
         try {
-            int CycleRemainingMinutes   = checkIntValue((int) RulesObj.getCycleRemainingMinutes());
-            int CycleUsedMinutes        = checkIntValue((int) RulesObj.getCycleUsedMinutes());
-            int OnDutyRemainingMinutes  = checkIntValue((int) RemainingTimeObj.getOnDutyRemainingMinutes());
-            int ShiftUsedMinutes        = checkIntValue((int) RemainingTimeObj.getShiftUsedMinutes());
+            int CycleRemainingMinutes   = constants.checkIntValue((int) RulesObj.getCycleRemainingMinutes());
+            int CycleUsedMinutes        = constants.checkIntValue((int) RulesObj.getCycleUsedMinutes());
+            int OnDutyRemainingMinutes  = constants.checkIntValue((int) RemainingTimeObj.getOnDutyRemainingMinutes());
+            int ShiftUsedMinutes        = constants.checkIntValue((int) RemainingTimeObj.getShiftUsedMinutes());
 
 
             if(CycleRemainingMinutes < OnDutyRemainingMinutes){
@@ -1878,15 +1885,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         hourAvailableTomoTV .setText( "14:00" );
 
     }
-
-
-    int checkIntValue(int value){
-        if(value < 0)
-            value = 0;
-
-        return value;
-    }
-
 
 
 
@@ -2115,12 +2113,13 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
 
 
-    private void setMarqueonView(TextView textView){
-        textView.setHorizontallyScrolling(true);
-        textView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-        textView.setSingleLine(true);
-        textView.setMarqueeRepeatLimit(-1);
-        textView.setSelected(true);
+    private void setMarqueonView(final TextView textView){
+
+                textView.setHorizontallyScrolling(true);
+                textView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                textView.setSingleLine(true);
+                textView.setMarqueeRepeatLimit(-1);
+                textView.setSelected(true);
 
 
     }
@@ -2545,6 +2544,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
            // saveSignatureBtn.setVisibility(View.GONE);
 
         }
+
     }
 
 

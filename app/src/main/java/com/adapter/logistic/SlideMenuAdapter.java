@@ -153,6 +153,7 @@ public class SlideMenuAdapter extends BaseAdapter {
             }
         }
 
+
         return convertView;
     }
 

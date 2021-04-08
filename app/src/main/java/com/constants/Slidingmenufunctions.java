@@ -148,11 +148,13 @@ public class Slidingmenufunctions implements OnClickListener {
 		menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-				int status = TabAct.menuList.get(position).getStatus();
-				if(status != Constants.VERSION) {
-					menu.showContent();
+				if(TabAct.menuList.size() > position) {
+					int status = TabAct.menuList.get(position).getStatus();
+					if (status != Constants.VERSION) {
+						menu.showContent();
+					}
+					listItemClick(status);
 				}
-				listItemClick(status);
 			}
 		});
 
