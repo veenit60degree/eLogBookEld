@@ -338,13 +338,19 @@ public class ShippingDocDialog extends Dialog {
 
 
     void DismissDialog(String msgg){
-        Toast.makeText(getContext(), msgg, Toast.LENGTH_LONG).show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dismiss();
+        try {
+            if(getContext() != null) {
+                Toast.makeText(getContext(), msgg, Toast.LENGTH_LONG).show();
             }
-        },500);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    dismiss();
+                }
+            }, 500);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     void LogoutUser(){
         if( constant.GetDriverSavedArray(getContext()).length() == 0) {
@@ -557,7 +563,9 @@ public class ShippingDocDialog extends Dialog {
                         // Save data in 18 Days shipping list
                         //  JSONObject objItem = shipmentHelper.GetLastJsonObject(shipmentJsonArray, shipmentJsonArray.length()-1);
                         //    Update18DaysDriverInfo(objItem);
-                        Toast.makeText(getContext(), MsgOffline, Toast.LENGTH_LONG).show();
+                        if(getContext() != null) {
+                            Toast.makeText(getContext(), MsgOffline, Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     dismiss();

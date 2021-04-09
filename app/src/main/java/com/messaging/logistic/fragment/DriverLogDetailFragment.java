@@ -208,6 +208,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     boolean UpdateRecap     = false;
     boolean isOldRecord     = false;
     boolean isDOT           = false;
+    boolean isNorthCanada   = false;
 
     boolean nextPrevBtnClicked      = false;
     boolean isCertifyViewAgain      = false;
@@ -1005,7 +1006,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             OfficeAddress       = DriverConst.GetDriverDetails(DriverConst.CarrierAddress, getActivity());
             Carrier             = DriverConst.GetDriverDetails(DriverConst.Carrier, getActivity());
             CountryCycle        = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
-
+            isNorthCanada       =  sharedPref.IsNorthCanadaMain(getActivity());
         } else {
             certifyDriverNameTV.setText(CoDriverName);
 
@@ -1014,7 +1015,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             OfficeAddress       = DriverConst.GetCoDriverDetails(DriverConst.CoCarrierAddress, getActivity());
             Carrier             = DriverConst.GetCoDriverDetails(DriverConst.CoCarrier, getActivity());
             CountryCycle        = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycle, getActivity());
-
+            isNorthCanada       =  sharedPref.IsNorthCanadaMain(getActivity());
         }
 
         if(CountryCycle.equalsIgnoreCase("null"))
@@ -1717,7 +1718,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                     int listSize     = DriverLogList.size() ;
                     if(listSize < 10){
                         listSize    = listSize + 2;
-                    }else {
+                    }else   if(listSize > 20){
+                        listSize = listSize + 4;
+                    }else{
                         listSize = listSize + 1;
                     }
 
@@ -1847,7 +1850,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
-                isHaulExcptn, isAdverseExcptn,
+                isHaulExcptn, isAdverseExcptn, isNorthCanada,
                 rulesVersion, oDriverLogDetail);
 
         // EldFragment.SLEEPER is used because we are just checking cycle time
@@ -1856,7 +1859,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         // Calculate 2 days data to get remaining Driving/Onduty hours
         RulesResponseObject RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                 Integer.valueOf(CurrentCycleId), isSingleDriver, Integer.valueOf(DRIVER_ID) , DRIVER_JOB_STATUS, isOldRecord,
-                isHaulExcptn, isAdverseExcptn,
+                isHaulExcptn, isAdverseExcptn, isNorthCanada,
                 rulesVersion, dbHelper);
 
         try {

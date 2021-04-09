@@ -142,7 +142,7 @@ public class HelperMethods {
 
     public DriverDetail getDriverList(DateTime currentDate, DateTime currentUTCDate, int driverId,
                                       final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver, int LastStatus,
-                                      boolean isOldRecord, boolean isHaulException,  boolean isAdverseException, int ruleVersion, List<DriverLog> logList){
+                                      boolean isOldRecord, boolean isHaulException,  boolean isAdverseException, boolean isNorthCanada, int ruleVersion, List<DriverLog> logList){
 
         LocalTime time = new LocalTime();
         DriverDetail model = new DriverDetail();
@@ -182,6 +182,7 @@ public class HelperMethods {
 
         // is16HourExceptionEnabled is used for Adverse Exception
         model.setIs16HourExceptionEnabled(isAdverseException);
+        model.setNorthArea(isNorthCanada);
 
         return model;
     }
@@ -205,7 +206,7 @@ public class HelperMethods {
                                     String IsStatusAutomatic, String OBDSpeed,
                                     String GPSSpeed, String PlateNumber, boolean isHaulException, boolean isShortHaulUpdate,
                                     String decesionSource,   String isAdverseException,
-                                    String adverseExceptionRemark, String LocationType, String malAddInfo){
+                                    String adverseExceptionRemark, String LocationType, String malAddInfo, boolean IsNorthCanada){
 
         JSONObject driverLogJson = new JSONObject();
 
@@ -259,6 +260,7 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
             driverLogJson.put(ConstantsKeys.LocationType, LocationType);
             driverLogJson.put(ConstantsKeys.MalfunctionDefinition, malAddInfo);
+            driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -468,7 +470,7 @@ public class HelperMethods {
                 String DriverName = "", IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0";
                 String DecesionSource = "", PlateNumber = "";
                 String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", malAddInfo = "";
-                boolean HaulHourException = false, IsShortHaulUpdate = false;
+                boolean HaulHourException = false, IsShortHaulUpdate = false, IsNorthCanada = false;
 
                 int CycleId = 1;
                 if(!logObj.isNull("ConstantsKeys.CurrentCycleId"))
@@ -531,6 +533,11 @@ public class HelperMethods {
                     IsShortHaulUpdate = logObj.getBoolean(ConstantsKeys.IsShortHaulUpdate);
                 }
 
+                if(logObj.has(ConstantsKeys.IsNorthCanada) && !logObj.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
+                    IsNorthCanada = logObj.getBoolean(ConstantsKeys.IsNorthCanada);
+                }
+
+
                 if(logObj.has(ConstantsKeys.DecesionSource))
                     DecesionSource = logObj.getString(ConstantsKeys.DecesionSource);
 
@@ -566,6 +573,7 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.LocationType, LocationType);
 
                 driverLogJson.put(ConstantsKeys.MalfunctionDefinition, malAddInfo);
+                driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
             }
         }catch (Exception e){
@@ -583,6 +591,7 @@ public class HelperMethods {
         String IsStatusAutomatic = "false", HaulHourException = "false", IsShortHaulUpdate = "false", OBDSpeed = "0";
         String DecesionSource = "", GPSSpeed = "0", PlateNumber = "";
         String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
+        boolean IsNorthCanada = false;
 
         try {
             if(logArray.length() > 0){
@@ -656,7 +665,9 @@ public class HelperMethods {
                 if(logObj.has(ConstantsKeys.IsShortHaulUpdate))
                     IsShortHaulUpdate = logObj.getString(ConstantsKeys.IsShortHaulUpdate);
 
-
+                if(logObj.has(ConstantsKeys.IsNorthCanada) && !logObj.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
+                    IsNorthCanada = logObj.getBoolean(ConstantsKeys.IsNorthCanada);
+                }
 
                 if(logObj.has(ConstantsKeys.DecesionSource))
                     DecesionSource = logObj.getString(ConstantsKeys.DecesionSource);
@@ -685,6 +696,8 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                 driverLogJson.put(ConstantsKeys.LocationType, LocationType);
                 driverLogJson.put(ConstantsKeys.MalfunctionDefinition, "");
+                driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
+
 
             }
         }catch (Exception e){
@@ -703,6 +716,7 @@ public class HelperMethods {
         String IsStatusAutomatic = "false", HaulHourException = "false", IsShortHaulUpdate = "false", OBDSpeed = "0", GPSSpeed = "0";
         String DecesionSource = "", PlateNumber = "";
         String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
+        boolean IsNorthCanada = false;
 
         int totalMin = 0;
 
@@ -786,6 +800,10 @@ public class HelperMethods {
                     LocationType = logObj.getString(ConstantsKeys.LocationType);
                 }
 
+                if(logObj.has(ConstantsKeys.IsNorthCanada) && !logObj.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
+                    IsNorthCanada = logObj.getBoolean(ConstantsKeys.IsNorthCanada);
+                }
+
                 driverLogJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
                 driverLogJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
                 driverLogJson.put(ConstantsKeys.GPSSpeed,          GPSSpeed);
@@ -799,6 +817,7 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                 driverLogJson.put(ConstantsKeys.LocationType, LocationType);
                 driverLogJson.put(ConstantsKeys.MalfunctionDefinition, "");
+                driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
 
             }
@@ -817,6 +836,7 @@ public class HelperMethods {
         String IsStatusAutomatic = "false", HaulHourException = "false", IsShortHaulUpdate = "", OBDSpeed = "0";
         String DecesionSource = "", GPSSpeed = "0", PlateNumber = "";
         String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
+        boolean IsNorthCanada = false;
 
         try {
             if(logArray.length() > 0){
@@ -875,7 +895,9 @@ public class HelperMethods {
                 if(logObj.has(ConstantsKeys.IsShortHaulUpdate))
                     IsShortHaulUpdate = logObj.getString(ConstantsKeys.IsShortHaulUpdate);
 
-
+                if(logObj.has(ConstantsKeys.IsNorthCanada) && !logObj.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
+                    IsNorthCanada = logObj.getBoolean(ConstantsKeys.IsNorthCanada);
+                }
 
                 if(logObj.has(ConstantsKeys.DecesionSource))
                     DecesionSource = logObj.getString(ConstantsKeys.DecesionSource);
@@ -902,6 +924,7 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                 driverLogJson.put(ConstantsKeys.LocationType, LocationType);
                 driverLogJson.put(ConstantsKeys.MalfunctionDefinition, "");
+                driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
 
 
@@ -920,6 +943,7 @@ public class HelperMethods {
         String IsStatusAutomatic = "false", HaulHourException = "false", IsShortHaulUpdate = "false", OBDSpeed = "0";
         String DecesionSource = "", GPSSpeed = "0", PlateNumber = "";
         String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "";
+        boolean IsNorthCanada = false;
 
         try {
             int DriverLogId = lastItemJson.getInt(ConstantsKeys.DriverLogId) + 1;
@@ -1014,6 +1038,8 @@ public class HelperMethods {
                 MalfunctionDefinition = lastItemJson.getString(ConstantsKeys.MalfunctionDefinition);
             }
 
+
+
             sameStatusJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
             sameStatusJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
             sameStatusJson.put(ConstantsKeys.GPSSpeed,          GPSSpeed);
@@ -1027,6 +1053,7 @@ public class HelperMethods {
             sameStatusJson.put(ConstantsKeys.LocationType, LocationType);
 
             sameStatusJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
+            sameStatusJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -1131,17 +1158,6 @@ public class HelperMethods {
     }
 
 
-    //MM/dd/yyyy
-
-
-  /*  private String getYesterdayUtcDateString(int diff) {
-        DateFormat dateFormat = new SimpleDateFormat(Globally.DateFormat);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return dateFormat.format(yesterday(diff));
-    }*/
-
-
-
 
     // Get Selected Date Array
     public JSONArray GetSelectedDateArray (JSONArray driverLogJsonArray, String DriverId, DateTime selectedDate,  DateTime currentDate,
@@ -1155,7 +1171,7 @@ public class HelperMethods {
         String isAdverseException = "", adverseExceptionRemark = "", LocationType = "",  MalfunctionDefinition = "";
 
         boolean IsViolation, isNewEntry = false;
-        //  String startDateTimeStr = getYesterdayDateString(1, Globally.DateFormatMMddyyyy) + " 00:00:00"; //MM/dd/yyyy HH:mm:ss
+        boolean IsNorthCanada = false;
         String lastDateTimeStr  = getYesterdayDateString(1, Globally.DateFormatHalf) + "T23:59:59";
         DateTime startDateTimeNow = Globally.getDateTimeObj(getYesterdayDateString(0, Globally.DateFormatHalf) + "T00:00:00", false);
 
@@ -1289,6 +1305,10 @@ public class HelperMethods {
                         MalfunctionDefinition = logObj.getString(ConstantsKeys.MalfunctionDefinition);
                     }
 
+                    if(logObj.has(ConstantsKeys.IsNorthCanada) && !logObj.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
+                        IsNorthCanada = logObj.getBoolean(ConstantsKeys.IsNorthCanada);
+                    }
+
                     driverLogJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
                     driverLogJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
                     driverLogJson.put(ConstantsKeys.GPSSpeed,          GPSSpeed);
@@ -1302,6 +1322,7 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                     driverLogJson.put(ConstantsKeys.LocationType, LocationType);
                     driverLogJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
+                    driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
                     parseArray.put(driverLogJson);
 
@@ -1340,6 +1361,7 @@ public class HelperMethods {
         DateTime startDateTimeNow = Globally.getDateTimeObj(getYesterdayDateString(0, Globally.DateFormatHalf) + "T00:00:00", false);
         int CurrentCycleId = 1;
         boolean IsViolation = false;
+        boolean IsNorthCanada = false;
 
         try {
 
@@ -1430,6 +1452,10 @@ public class HelperMethods {
                 MalfunctionDefinition = logObj.getString(ConstantsKeys.MalfunctionDefinition);
             }
 
+            if(logObj.has(ConstantsKeys.IsNorthCanada) && !logObj.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
+                IsNorthCanada = logObj.getBoolean(ConstantsKeys.IsNorthCanada);
+            }
+
             driverLogJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
             driverLogJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
             driverLogJson.put(ConstantsKeys.GPSSpeed,          GPSSpeed);
@@ -1443,6 +1469,7 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
             driverLogJson.put(ConstantsKeys.LocationType, LocationType);
             driverLogJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
+            driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
             parseArray.put(driverLogJson);
 
@@ -1486,6 +1513,7 @@ public class HelperMethods {
                 DateTime startDateTime      = Globally.getDateTimeObj(logObj.getString("StartDateTime"), false);
                 CurrentCycleId = 1;
                 IsViolation = false;
+                boolean IsNorthCanada = false;
                 String IsStatusAutomatic = "false", DecesionSource = "", HaulHourException = "false", IsShortHaulUpdate = "false",
                         OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
                 String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "";
@@ -1651,6 +1679,9 @@ public class HelperMethods {
                         MalfunctionDefinition = logObj.getString(ConstantsKeys.MalfunctionDefinition);
                     }
 
+                    if(logObj.has(ConstantsKeys.IsNorthCanada) && !logObj.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
+                        IsNorthCanada = logObj.getBoolean(ConstantsKeys.IsNorthCanada);
+                    }
                     driverLogJson.put(ConstantsKeys.IsStatusAutomatic, IsStatusAutomatic);
                     driverLogJson.put(ConstantsKeys.OBDSpeed,          OBDSpeed);
                     driverLogJson.put(ConstantsKeys.GPSSpeed,          GPSSpeed);
@@ -1665,6 +1696,7 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
                     driverLogJson.put(ConstantsKeys.LocationType, LocationType);
                     driverLogJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
+                    driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
                     parseArray.put(driverLogJson);
                 }
@@ -2449,7 +2481,7 @@ public class HelperMethods {
     public RulesResponseObject getRemainingTime(DateTime currentDate, DateTime currentUTCDate,
                                                 final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver,
                                                 int DriverId, int LastStatus, boolean isOldRecord, boolean isHaulException, boolean isAdverseException,
-                                                int rulesVersion, DBHelper dbHelper){
+                                                boolean isNorthCanada, int rulesVersion, DBHelper dbHelper){
 
         LocalCalls CallDriverRule = new LocalCalls();
 
@@ -2457,10 +2489,8 @@ public class HelperMethods {
         //List<DriverLog> oDriverLogDetail = getSavedLogList(DriverId, currentDate, currentUTCDate, dbHelper);    // temp array
 
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
-                offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException,
+                offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException, isNorthCanada,
                 rulesVersion, oDriverLog3DaysList);  //oDriverLog3DaysList
-
-        //oDriverDetailRemaining.getEldCyclesId()
 
         return CallDriverRule.calculateDailyMinutes(oDriverDetailRemaining);
 
@@ -2471,14 +2501,14 @@ public class HelperMethods {
     public RulesResponseObject getDailyOffLeftMinutes(DateTime currentDate, DateTime currentUTCDate,
                                                       final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver,
                                                       int DriverId, int LastStatus, boolean isOldRecord,
-                                                      boolean isHaulException, boolean isAdverseException, int rulesVersion,
-                                                      DBHelper dbHelper){
+                                                      boolean isHaulException, boolean isAdverseException,
+                                                      boolean isNorthCanada, int rulesVersion, DBHelper dbHelper){
 
         LocalCalls CallDriverRule = new LocalCalls();
         List<DriverLog> oDriverLog3DaysList = get3DaysLog(DriverId, currentDate, currentUTCDate, dbHelper);
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException,
-                rulesVersion, oDriverLog3DaysList);
+                isNorthCanada, rulesVersion, oDriverLog3DaysList);
 
         return CallDriverRule.calculateDailyOffLeftMinutes(oDriverDetailRemaining);
 
@@ -2581,6 +2611,7 @@ public class HelperMethods {
         String IsStatusAutomatic = "false", DecesionSource = "", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
         String adverseExceptionRemark = "";
         boolean HaulHourException = false, IsAdverseException = false;
+        boolean IsNorthCanada = false;
 
         try {
             DateTime startDateTime       = Globally.getDateTimeObj(json.getString(ConstantsKeys.startDateTime),  false);
@@ -2678,6 +2709,10 @@ public class HelperMethods {
                 adverseExceptionRemark = json.getString(ConstantsKeys.AdverseExceptionRemarks);
             }
 
+            if(json.has(ConstantsKeys.IsNorthCanada) && !json.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
+                IsNorthCanada = json.getBoolean(ConstantsKeys.IsNorthCanada);
+            }
+
             driverLogModel.setIsStatusAutomatic(IsStatusAutomatic);
             driverLogModel.setOBDSpeed(OBDSpeed);
             driverLogModel.setGPSSpeed(GPSSpeed);
@@ -2687,6 +2722,7 @@ public class HelperMethods {
 
             driverLogModel.setAdverseException(IsAdverseException);
             driverLogModel.setAdverseExceptionRemark(adverseExceptionRemark);
+            driverLogModel.setNorthCanadaStatus(IsNorthCanada);
 
 
         }catch (Exception e){
@@ -2773,7 +2809,8 @@ public class HelperMethods {
                         ""+logModel.getIsAdverseException(),
                         logModel.getAdverseExceptionRemark(),
                         logModel.getLocationType(),
-                        logModel.getMalfunctionDefinition()
+                        logModel.getMalfunctionDefinition(),
+                        logModel.IsNorthCanada()
                 );
 
                 array.put(obj);
@@ -2804,6 +2841,7 @@ public class HelperMethods {
             }
 
             boolean HaulHourException = false, IsAdverseException = false;
+            boolean IsNorthCanada = false;
             String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "", DecesionSource = "";
             String adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "";
 
@@ -2845,6 +2883,10 @@ public class HelperMethods {
             }
             if (json.has(ConstantsKeys.MalfunctionDefinition)) {
                 MalfunctionDefinition = json.getString(ConstantsKeys.MalfunctionDefinition);
+            }
+
+            if(json.has(ConstantsKeys.IsNorthCanada) && !json.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
+                IsNorthCanada = json.getBoolean(ConstantsKeys.IsNorthCanada);
             }
 
             driverLogModel.setDriverLogId(json.getLong(ConstantsKeys.DriverLogId));
@@ -2904,7 +2946,8 @@ public class HelperMethods {
             driverLogModel.setAdverseException(IsAdverseException);
             driverLogModel.setAdverseExceptionRemark(adverseExceptionRemark);
             driverLogModel.setLocationType(LocationType);
-            driverLogModel.setMalfunctionDefinition(LocationType);
+            driverLogModel.setMalfunctionDefinition(MalfunctionDefinition);
+            driverLogModel.setNorthCanadaStatus(IsNorthCanada);
 
 
         }catch (Exception e){
@@ -3044,7 +3087,7 @@ public class HelperMethods {
 
     /*===== Save Driver Jobs with Shared Preference to 18 days Array List and in unposted array those will be posted to server======= */
     public void SaveDriversJob(String DRIVER_ID, String DeviceId, String AdverseExceptionRemarks,
-                               String decesionSource, String LocationType, String malAddInfo, boolean isShortHaulUpdate,
+                               String decesionSource, String LocationType, String malAddInfo, boolean isShortHaulUpdate, boolean IsNorthCanada,
                                int DriverType, Constants constants, SharedPref sharedPref,
                                MainDriverEldPref MainDriverPref, CoDriverEldPref CoDriverPref,
                                EldSingleDriverLogPref eldSharedPref, EldCoDriverLogPref coEldSharedPref,
@@ -3128,7 +3171,7 @@ public class HelperMethods {
                         String.valueOf(BackgroundLocationService.GpsVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                         Global, isHaulExcptn, isShortHaulUpdate,
                         ""+isAdverseExcptn,
-                        AdverseExceptionRemarks, LocationType, malAddInfo,
+                        AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada,
                         hMethods, dbHelper);
 
 
@@ -3140,7 +3183,7 @@ public class HelperMethods {
                 DriverDetail oDriverDetail1 = getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
                         Integer.valueOf(DRIVER_ID), offsetFromUTC, Integer.valueOf(CurrentCycleId), Global.isSingleDriver(context),
                         DRIVER_JOB_STATUS, false, isHaulExcptn,
-                        isAdverseExcptn, rulesVersion, oDriverLog);
+                        isAdverseExcptn, IsNorthCanada, rulesVersion, oDriverLog);
                 RulesObj = CheckDriverRule(Integer.valueOf(CurrentCycleId), DRIVER_JOB_STATUS,
                         oDriverDetail1);
 
@@ -3189,7 +3232,8 @@ public class HelperMethods {
                     String.valueOf(isAdverseExcptn),
                     AdverseExceptionRemarks,
                     "",
-                    LocationType
+                    LocationType,
+                    String.valueOf(IsNorthCanada)
 
             );
 
@@ -3240,7 +3284,7 @@ public class HelperMethods {
                     sharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                     Global, isHaulExcptn, isShortHaulUpdate,
                     ""+isAdverseExcptn,
-                    AdverseExceptionRemarks, LocationType, malAddInfo, hMethods, dbHelper);
+                    AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, hMethods, dbHelper);
 
 
 

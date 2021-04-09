@@ -378,7 +378,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
 
             case R.id.invisibleNotiBtn:
-                confirmationDialog = new CycleChangeRequestDialog(getActivity(), DriverId, currentCycleId, changedCycleId, new ConfirmListener());
+                confirmationDialog = new CycleChangeRequestDialog(getActivity(), DriverId, changedCycleId, new ConfirmListener());
                 confirmationDialog.show();
 
                 break;
@@ -890,7 +890,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                                 changedCycleId = dataObj.getString("CycleId");
                                 Id             = dataObj.getString("Id");
 
-                                confirmationDialog = new CycleChangeRequestDialog(getActivity(), DriverId, currentCycleId, changedCycleId, new ConfirmListener());
+                                confirmationDialog = new CycleChangeRequestDialog(getActivity(), DriverId, changedCycleId, new ConfirmListener());
                                 confirmationDialog.show();
 
                             }

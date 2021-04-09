@@ -45,7 +45,7 @@ public class DriverLogModel {
     private String adverseExceptionRemark;
     private String LocationType;
     private String MalfunctionDefinition;
-
+    private boolean IsNorthCanada;
 
     public DriverLogModel() {
     }
@@ -87,6 +87,7 @@ public class DriverLogModel {
         this.adverseExceptionRemark  = logModel.getAdverseExceptionRemark();
         this.LocationType = logModel.getLocationType();
         this.MalfunctionDefinition = logModel.getMalfunctionDefinition();
+        this.IsNorthCanada = logModel.IsNorthCanada();
     }
 
     public void setDriverLogId(long driverLogId) {
@@ -397,7 +398,14 @@ public class DriverLogModel {
     }
 
 
+    public boolean IsNorthCanada() {
+        return IsNorthCanada;
+    }
 
+
+    public void setNorthCanadaStatus(boolean isNorthCanada) {
+        IsNorthCanada = isNorthCanada;
+    }
 
 
 

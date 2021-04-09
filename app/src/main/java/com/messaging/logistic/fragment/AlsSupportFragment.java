@@ -152,7 +152,6 @@ public class AlsSupportFragment extends Fragment {
                 supportAdapter = new SupportAdapter(getActivity(), supportList);
                 supportListView.setAdapter(supportAdapter);
             }else{
-
                 Toast.makeText(getActivity(), "No record found.", Toast.LENGTH_LONG).show();
             }
 

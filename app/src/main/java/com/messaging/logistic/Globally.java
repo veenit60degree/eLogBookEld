@@ -1991,6 +1991,59 @@ public class Globally {
 	}
 
 
+	public static void ShowLogoutSpeedNotification(Context context, String title, String message, int id ){
+
+		Intent intent = new Intent(context, LoginActivity.class);   //
+		//mNotificationManager.showLocalNotification(title, message, id , intent);
+
+		PendingIntent resultPendingIntent =
+				PendingIntent.getActivity(
+						context,
+						101,
+						intent,
+						PendingIntent.FLAG_UPDATE_CURRENT
+				);
+
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification notification;
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			String CHANNEL_ID = "als_01";// The id of the channel.
+			CharSequence name = context.getResources().getString(R.string.app_name);
+			int importance = NotificationManager.IMPORTANCE_HIGH;
+			NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+
+			// Create a notification and set the notification channel.
+			notification = mBuilder
+					.setAutoCancel(true)
+					.setContentTitle(title)
+					.setContentText(message)
+					.setContentIntent(resultPendingIntent)
+					.setSmallIcon(R.drawable.als_notification)
+					.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.als_notification_big))
+					.setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+					.setChannelId(CHANNEL_ID)
+					.build();
+
+			notificationManager.createNotificationChannel(mChannel);
+		}else {
+			notification = mBuilder
+					.setAutoCancel(true)
+					.setContentTitle(title)
+					.setContentText(message)
+					.setContentIntent(resultPendingIntent)
+					.setSmallIcon(R.drawable.als_notification)
+					.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.als_notification_big))
+					.setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+					.build();
+
+		}
+
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notificationManager.notify(id, notification);
+	}
+
 
 	public static void ClearAllFields(Context c) {
 
@@ -2004,6 +2057,7 @@ public class Globally {
 			sharedPref.setServiceOnDestoryStatus(true, c);
 			sharedPref.SetTruckStartLoginStatus(true, c);
 			sharedPref.SetUpdateAppDialogTime("", c);
+			sharedPref.setLastCalledWiredCallBack(0, c);
 
 			ClearSqliteDB(c);
 		} catch (Exception e) {

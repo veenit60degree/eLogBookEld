@@ -146,6 +146,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     Animation editLogAnimation;
     boolean isHaulExcptn;
     boolean isAdverseExcptn;
+    boolean isNorthCanada;
 
 
     @Override
@@ -247,9 +248,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
             isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+            isNorthCanada  =  sharedPref.IsNorthCanadaMain(getActivity());
         }else{
             isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
             isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+            isNorthCanada  =  sharedPref.IsNorthCanadaCo(getActivity());
         }
 
         editLogAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
@@ -731,7 +734,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
             DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DriverId),
                     offsetFromUTC, Integer.valueOf(CycleId), isSingleDriver, DRIVER_JOB_STATUS, false,
-                    isHaulExcptn, isAdverseExcptn,
+                    isHaulExcptn, isAdverseExcptn, isNorthCanada,
                     rulesVersion, oDriverLogDetail);
 
             RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
@@ -742,7 +745,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     RulesResponseObject remainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                             Integer.valueOf(CycleId), isSingleDriver, Integer.valueOf(DriverId), DRIVER_JOB_STATUS,
                             false, isHaulExcptn,
-                            isAdverseExcptn, rulesVersion, dbHelper);
+                            isAdverseExcptn,  isNorthCanada, rulesVersion, dbHelper);
 
                     LeftNextBreak = (int) localCalls.usaBreakRemainingHours(oDriverDetail).getBreakRemainingMinutes();
 
@@ -934,7 +937,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
                RulesResponseObject RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                         Integer.valueOf(CycleId), isSingleDriver, Integer.valueOf(DriverId), Constants.DRIVING, false,
-                       isHaulExcptn, isAdverseExcptn,
+                       isHaulExcptn, isAdverseExcptn, isNorthCanada,
                         rulesVersion, dbHelper);
 
                 HosInfoDialog dialog = new HosInfoDialog(getActivity(), RemainingTimeObj, RulesObj);

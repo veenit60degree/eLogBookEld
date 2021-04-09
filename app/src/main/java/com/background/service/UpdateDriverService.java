@@ -273,8 +273,10 @@ public class UpdateDriverService  extends Service implements LocationListener {
                 // no network provider is enabled
                 Log.i("No gps and No Network ",
                         "No gps and No Network is enabled enable either one of them");
-                Toast.makeText(this, "Enable either Network or GPS",
-                        Toast.LENGTH_LONG).show();
+                if(getApplicationContext() != null) {
+                    Toast.makeText(this, "Enable either Network or GPS",
+                            Toast.LENGTH_LONG).show();
+                }
             } else {
                 this.canGetLocation = true;
 

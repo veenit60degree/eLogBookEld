@@ -2026,6 +2026,23 @@ public class SharedPref {
 
 
 
+    // Save Last Called Wired Call Back count
+    public static void setLastCalledWiredCallBack(long count, Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("WiredCallBack", count);
+        editor.commit();
+
+    }
+
+
+    // Get Last Called Wired Call Backs count -------------------
+    public static long getLastCalledWiredCallBack( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getLong("WiredCallBack", 0);
+    }
+
+
 
     // Set Ecm Obd location with time  -------------------
     public static void setEcmObdLocationWithTime( String lat, String lon, String odometer, String time, Context context) {

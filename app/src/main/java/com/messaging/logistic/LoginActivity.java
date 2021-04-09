@@ -483,11 +483,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 							checkNullInputs();
 
 							/*========== LOGIN API =========== */
-							if(IsLoginAllowed) {
-								LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
-							}else{
-								global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
-							}
+							LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
 
 						}
 					} else {
@@ -969,11 +965,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 							checkNullInputs();
 
 							/*========== LOGIN API =========== */
-							if(IsLoginAllowed) {
-								LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
-							}else{
-								global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
-							}
+							LoginUser(global.registrationId, StrSingleUserame, StrSinglePass, StrCoDriverUsername, StrCoDriverPass, LoginUserType, StrOSType, DeviceSimInfo, Sim2);
 
 						//	ViewOnlyLogin(StrSingleUserame, StrSinglePass);
 						} else {
@@ -1152,26 +1144,32 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			case R.id.mainDriverBtn:
 
-				LoginUserType = DriverConst.SingleDriver;
-				loginBtn.setText("Login");
-				driverTitleTV.setVisibility(View.INVISIBLE);
-				backImgView.setVisibility(View.VISIBLE);
-				OutToLeftAnim(userTypeLayout);
-				InFromRightAnim(loginLayout);
+				if(IsLoginAllowed) {
+					LoginUserType = DriverConst.SingleDriver;
+					loginBtn.setText("Login");
+					driverTitleTV.setVisibility(View.INVISIBLE);
+					backImgView.setVisibility(View.VISIBLE);
+					OutToLeftAnim(userTypeLayout);
+					InFromRightAnim(loginLayout);
+
+				}else{
+					global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
+				}
 
 				break;
 
 
 			case R.id.CoDriverBtn:
-				LoginUserType = DriverConst.TeamDriver;
-				loginBtn.setText("Next");
-				driverTitleTV.setVisibility(View.VISIBLE);
-				backImgView.setVisibility(View.VISIBLE);
-
-				//userTypeLayout.setVisibility(View.GONE);
-				OutToLeftAnim(userTypeLayout);
-				//loginLayout.setVisibility(View.VISIBLE);
-				InFromRightAnim(loginLayout);
+				if(IsLoginAllowed) {
+					LoginUserType = DriverConst.TeamDriver;
+					loginBtn.setText("Next");
+					driverTitleTV.setVisibility(View.VISIBLE);
+					backImgView.setVisibility(View.VISIBLE);
+					OutToLeftAnim(userTypeLayout);
+					InFromRightAnim(loginLayout);
+				}else{
+					global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
+				}
 
 				break;
 

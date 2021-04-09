@@ -42,6 +42,7 @@ public class EldDataModelNew {
 
     String EditedReason;
     String LocationType;
+    String IsNorthCanada;
 
     public EldDataModelNew(String projectId, String driverId, String driverStatusId, String isYard,
                            String isPersonal, String deviceID, String remarks, String utcDateTime,
@@ -49,7 +50,8 @@ public class EldDataModelNew {
                            String state, String country, String isViolation, String violationReason,
                            String latitude, String longitude, String isStatusAutomatic,
                            String oBDSpeed , String gPSSpeed, String plateNumber, String haulHourException , String isShortHaulUpdate,
-                           String decesionSource, String isAdverseExc , String adverseExcRemarks, String editedReason, String locationType) {
+                           String decesionSource, String isAdverseExc , String adverseExcRemarks, String editedReason, String locationType,
+                           String isNorthCanada) {
 
         ProjectId           = projectId;
         DriverId            = driverId;
@@ -81,6 +83,7 @@ public class EldDataModelNew {
         AdverseExceptionRemarks = adverseExcRemarks;
         EditedReason        = editedReason;
         LocationType        = locationType;
+        IsNorthCanada       = isNorthCanada;
 
     }
 
@@ -215,5 +218,11 @@ public class EldDataModelNew {
         return LocationType;
     }
 
+    public String getIsShortHaulUpdate() {
+        return IsShortHaulUpdate;
+    }
 
+    public String getIsNorthCanada() {
+        return IsNorthCanada;
+    }
 }

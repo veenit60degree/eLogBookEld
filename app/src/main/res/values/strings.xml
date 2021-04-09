@@ -54,6 +54,8 @@
     <string name="per_shift">(as per shift)</string>
     <string name="advrs_excptn_enabled">Adverse exception enabled</string>
     <string name="haul_excptn_enabled">16 hour short haul exception enabled</string>
+    <string name="cycle_change_check">You can change Cycle in Sleeper/OffDuty.</string>
+    <string name="op_zone_change_check">You can change Operating Zone in Sleeper/OffDuty.</string>
 
     <string name="AdjustTimeZone">Adjust TimeZone</string>
     <string name="AdjustTime">Adjust Time</string>
@@ -222,7 +224,7 @@
 
     <string name="pos_mal_occured">Position malfunction occured</string>
     <string name="ignore_to_save_loc">Driver ignore to save location in </string>
-    <string name="hos_limitation">New HOS Limitations</string>
+    <string name="hos_limitation">Changed HOS Limitations</string>
     <string name="ELDViewLogUs">ELD View Log</string>
     <string name="ELDViewLogCanada">ELD View Log</string>
 
@@ -402,6 +404,7 @@
     <string name="onduty_seven_days_last_eight">Total hours onduty last 8 days (---)</string>
     <string name="onduty_seven_days_last_seven">Total hours onduty last 7 days (---)</string>
 
+    <string name="stop_vehicle_alert">Please stop your vehicle first to take this action.</string>
     <string name="logout_speed_alert">You can\'t logout while vehicle is moving. Please stop your vehicle first.</string>
     <string name="login_speed_alert">You can\'t login while vehicle is moving. Please stop your vehicle first.</string>
     <string name="enter_different_user_co">Please enter different username for Co-Driver</string>

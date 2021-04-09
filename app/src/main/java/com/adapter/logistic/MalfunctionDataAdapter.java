@@ -88,7 +88,7 @@ public class MalfunctionDataAdapter extends BaseAdapter {
         holder.clearMalBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
             }
         });
 

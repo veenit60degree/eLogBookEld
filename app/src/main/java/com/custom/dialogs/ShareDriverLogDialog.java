@@ -735,7 +735,10 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
                             if ( obj.getString("Status").equals("true")) {
 
-                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                                if(getContext() != null) {
+                                    Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                                }
+
                                 if (!obj.isNull("Data")) {
                                     dataObj = new JSONObject(obj.getString("Data"));
                                     String filePath = dataObj.getString("FilePath");
@@ -814,7 +817,9 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                                 i.setData(Uri.parse(link));
                                 context.startActivity(i);
                             }catch (Exception e){
-                                Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_viewer_found), Toast.LENGTH_LONG).show();
+                                if(getContext() != null) {
+                                    Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_viewer_found), Toast.LENGTH_LONG).show();
+                                }
                                 e.printStackTrace();
                             }
 

@@ -166,6 +166,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	}
 
+
 	void listItemClick(int status){
 		switch (status){
 
@@ -175,19 +176,31 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.PTI_INSPECTION:
-				TabAct.host.setCurrentTab(4);
+				if(constants.isActionAllowed(context)) {
+					TabAct.host.setCurrentTab(4);
+				}else{
+					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+				}
 				break;
 
 			case Constants.CT_PAT_INSPECTION:
-				TabAct.host.setCurrentTab(8);
+				if(constants.isActionAllowed(context)) {
+					TabAct.host.setCurrentTab(8);
+				}else{
+					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+				}
 				break;
 
 			case Constants.ODOMETER_READING:
-				if(!SharedPref.IsOdometerFromOBD(context)) {
-					EldFragment.IsMsgClick = false;
-					TabAct.host.setCurrentTab(5);
+				if(constants.isActionAllowed(context)) {
+					if(!SharedPref.IsOdometerFromOBD(context)) {
+						EldFragment.IsMsgClick = false;
+						TabAct.host.setCurrentTab(5);
+					}else{
+						Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.odometer_permission_desc), context.getResources().getColor(R.color.colorSleeper));
+					}
 				}else{
-					Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.odometer_permission_desc), context.getResources().getColor(R.color.colorSleeper));
+					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 				break;
 
@@ -196,7 +209,11 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.SHIPPING_DOC:
-				TabAct.host.setCurrentTab(7);
+				if(constants.isActionAllowed(context)) {
+					TabAct.host.setCurrentTab(7);
+				}else{
+					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+				}
 				break;
 
 			case Constants.ELD_DOC:
@@ -204,15 +221,27 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.UNIDENTIFIED_RECORD:
-				TabAct.host.setCurrentTab(11);
+				if(constants.isActionAllowed(context)) {
+					TabAct.host.setCurrentTab(11);
+				}else{
+					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+				}
 				break;
 
 			case Constants.DATA_MALFUNCTION:
-				TabAct.host.setCurrentTab(12);
+				if(constants.isActionAllowed(context)) {
+					TabAct.host.setCurrentTab(12);
+				}else{
+					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+				}
 				break;
 
 			case Constants.SETTINGS:
-				TabAct.host.setCurrentTab(1);
+				if(constants.isActionAllowed(context)) {
+					TabAct.host.setCurrentTab(1);
+				}else{
+					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+				}
 				break;
 
 			case Constants.ALS_SUPPORT:
@@ -225,12 +254,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 			case Constants.LOGOUT:
 
-				boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
-				int ObdStatus = SharedPref.getObdStatus(context);
-
-				if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && isVehicleMoving ){
-					Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
-				}else{
+				if(constants.isActionAllowed(context)){
 					boolean isExemptDriver = false;
 					if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
 						isExemptDriver = sharedPref.IsExemptDriverMain(context);
@@ -238,7 +262,7 @@ public class Slidingmenufunctions implements OnClickListener {
 						isExemptDriver = sharedPref.IsExemptDriverCo(context);
 					}
 
-					if(isExemptDriver){
+					if(isExemptDriver && context != null){
 						Toast.makeText(context, context.getResources().getString(R.string.exempt_reminder_desc), Toast.LENGTH_LONG).show();
 					}
 
@@ -247,6 +271,8 @@ public class Slidingmenufunctions implements OnClickListener {
 					}else {
 						logoutDialog();
 					}
+				}else{
+					Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 
 
@@ -708,17 +734,21 @@ public class Slidingmenufunctions implements OnClickListener {
 				}
 
 					Log.d("response", " logout response: " + response);
-				String status = "";
+				String status = "", message = "";
 
 				try {
 					Globally.obj = new JSONObject(response);
-					status = Globally.obj.getString("Status");
+					status 	= Globally.obj.getString(ConstantsKeys.Status);
+					message	= Globally.obj.getString(ConstantsKeys.Message);
 
 					if(status.equalsIgnoreCase("true")){
 						constants.ClearLogoutData(context);
 					}else{
-						if(Globally.obj.getString("Message").equals("Device Logout"))
+						if(Globally.obj.getString("Message").equals("Device Logout")) {
 							constants.ClearLogoutData(context);
+						}else{
+							Globally.EldScreenToast(usernameTV, message, context.getResources().getColor(R.color.red_eld));
+						}
 					}
 
 				}catch(Exception e){  }

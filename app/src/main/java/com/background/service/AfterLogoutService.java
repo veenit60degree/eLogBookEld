@@ -47,8 +47,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     String TAG_OBD = "OBD Service";
     private static final long TIME_INTERVAL_WIFI  = 10 * 1000;   // 10 sec
     private static final long TIME_INTERVAL_WIRED = 3 * 1000;   // 3 sec
-    private static final long TIME_INTERVAL_LIMIT = 30000;   // 30 sec
-    private long TIME_INTERVAL_DIFF  = 30000;   // 30 sec
+    private static final long TIME_INTERVAL_LIMIT = 60000;
 
     String TAG = "Service";
     boolean isStopService = false;
@@ -102,35 +101,22 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private class IncomingHandler extends Handler
     {
         @Override
-        public void handleMessage(Message msg)
-        {
+        public void handleMessage(Message msg) {
 
             Bundle bundle = msg.getData();
-
             int speed = 0;
 
             try {
-                /*  if(bundle.getString(constants.OBD_HighPrecisionOdometer) != null) {
-                    currentHighPrecisionOdometer = bundle.getString(constants.OBD_HighPrecisionOdometer);
-                }
-                timeStamp = bundle.getString(constants.OBD_TimeStamp);
-                  vin = bundle.getString(constants.OBD_VINNumber);  */
-
                 ignitionStatus = bundle.getString(constants.OBD_IgnitionStatus);
                 truckRPM = bundle.getString(constants.OBD_RPM);
                 speed = bundle.getInt(constants.OBD_Vss);
-
+               // Log.d("time", "timeStamp: " + bundle.getString(constants.OBD_TimeStamp));
             }catch (Exception e){
                 e.printStackTrace();
             }
 
             // ---------------- temp data ---------------------
-            //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
-
-
-            // ELD calling rule for Wired OBD
-            /* Timer is calling after 10 sec. SpeedCounter value is 0,10,20,30,40,50,60. It is called 6 times in a minute.
-                    In Driving time it is calling only once in a minute. */
+             // ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
 
             try {
                 if (ignitionStatus.equals("ON") || !truckRPM.equals("0")) {
@@ -138,14 +124,19 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     if(speed > 8 && lastVehSpeed > 8){
                         LoginActivity.IsLoginAllowed = false;
 
-                        if(TIME_INTERVAL_DIFF >= TIME_INTERVAL_LIMIT) {
-                            TIME_INTERVAL_DIFF = 0;
+                        long count = sharedPref.getLastCalledWiredCallBack(getApplicationContext());
+                        if(count > TIME_INTERVAL_LIMIT) {
+                            // reset call back count
+                            count = 0;
+                            sharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
                             Globally.PlaySound(getApplicationContext());
-                            Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
+                            Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
                             SpeakOutMsg(AlertMsgSpeech);
                         }
-                        TIME_INTERVAL_DIFF = TIME_INTERVAL_DIFF + TIME_INTERVAL_WIRED;
-                       // Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed, 203040);
+
+                        // save count --------------
+                        sharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
+                       // Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed, 203040);
                     }else{
                         LoginActivity.IsLoginAllowed = true;
                     }
@@ -172,13 +163,15 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
     private void CallWired(long time){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                isWiredCallBackCalled = true;
-                StartStopServer(constants.WiredOBD);
-            }
-        }, time);
+        if (sharedPref.getUserName(getApplicationContext()).equals("") && sharedPref.getPassword(getApplicationContext()).equals("")) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isWiredCallBackCalled = true;
+                    StartStopServer(constants.WiredOBD);
+                }
+            }, time);
+        }
     }
 
     private void checkWifiOBDConnection(){
@@ -186,17 +179,19 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         // communicate with wired OBD server app with Message
        // StartStopServer(constants.WiredOBD);
 
-        boolean isAlsNetworkConnected   = wifiConfig.IsAlsNetworkConnected(getApplicationContext());  // get ALS Wifi ssid availability
-        boolean isWiredObdConnected     = false;
-        if(isBound && ( ignitionStatus.equals("ON") && !truckRPM.equals("0") ) ) {
-            isWiredObdConnected = true;
-        }
+        if (sharedPref.getUserName(getApplicationContext()).equals("") &&  sharedPref.getPassword(getApplicationContext()).equals("")) {
 
-        // check WIFI connection
-        if( !isWiredObdConnected && isAlsNetworkConnected ){    // check ALS SSID connection
-            tcpClient.sendMessage("123456,can");
-        }
+            boolean isAlsNetworkConnected = wifiConfig.IsAlsNetworkConnected(getApplicationContext());  // get ALS Wifi ssid availability
+            boolean isWiredObdConnected = false;
+            if (isBound && (ignitionStatus.equals("ON") && !truckRPM.equals("0"))) {
+                isWiredObdConnected = true;
+            }
 
+            // check WIFI connection
+            if (!isWiredObdConnected && isAlsNetworkConnected) {    // check ALS SSID connection
+                tcpClient.sendMessage("123456,can");
+            }
+        }
     }
 
 
@@ -420,7 +415,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                         LoginActivity.IsLoginAllowed = false;
 
                                         Globally.PlaySound(getApplicationContext());
-                                        Globally.ShowLocalNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
+                                        Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
                                         SpeakOutMsg(AlertMsgSpeech);
                                         //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
                                     }else{

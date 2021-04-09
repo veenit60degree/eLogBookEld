@@ -62,6 +62,8 @@ public class TrailorDialog extends Dialog {
     String spinnerSelection = "";
     ShipmentHelperMethod shipmentMethod;
     DBHelper dbHelper;
+    Constants constants;
+
 
     public TrailorDialog(Context context, String type, boolean isYardmove, String trailor, int position, boolean IsEdit,  List<String> remarkList,
                          int jobStatuss, DBHelper dbHelper, TrailorListener readyListener) {
@@ -77,6 +79,7 @@ public class TrailorDialog extends Dialog {
         this.dbHelper = dbHelper;
 
         shipmentMethod = new ShipmentHelperMethod();
+        constants = new Constants();
 
     }
 
@@ -337,8 +340,7 @@ public class TrailorDialog extends Dialog {
 
                 if (ReasonEditText.getText().toString().trim().length() >= 4 ) {
 
-                    if (SharedPref.getObdStatus(getContext()) == Constants.WIFI_ACTIVE ||
-                            SharedPref.getObdStatus(getContext()) == Constants.WIRED_ACTIVE) {
+                    if (constants.isObdConnected(getContext())) {
 
                         readyListener.JobBtnReady(
                                 Trailer,

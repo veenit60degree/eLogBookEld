@@ -253,7 +253,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-    int tempOdo = 169510;
+    int tempOdo = 111510;
     int ignitionCount = 0;
 
 
@@ -410,7 +410,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         //    sharedPref.saveLocMalfunctionOccurStatus(true, global.GetCurrentDateTime(), getApplicationContext());
         //    sharedPref.SetDiagnosticAndMalfunctionSettingsMain(true, true, true, true, getApplicationContext());
 
-            /*   ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
+           /*    ignitionStatus = "ON"; truckRPM = "700"; speed = 30;
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
@@ -478,19 +478,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                     try {
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                if(getApplicationContext() != null) {
+                        if(getApplicationContext() != null) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
                                     Toast.makeText(getApplicationContext(),
                                             "Vehicle Speed: " + bundle.getInt(constants.OBD_Vss) + "\nCalculated Speed: " +
                                                     new DecimalFormat("##.##").format(calculatedSpeedFromOdo),
                                             Toast.LENGTH_SHORT).show();
                                 }
-                            }
-                        });
+                            });
+                        }
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -533,7 +532,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
                             if (speed >= 8 && calculatedSpeedFromOdo >= 8) {
-                                timeDuration = 2000;
+                                timeDuration = 5000;
 
                                 // save current HighPrecisionOdometer locally
                                 sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
@@ -555,12 +554,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             // save current HighPrecisionOdometer in DB
                             sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                            timeDuration = 10000;
+                            timeDuration = 5000;
                             if (speed <= 0 && calculatedSpeedFromOdo <= 0) {
                                 Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
                             } else {
                                 if (speed >= 8 && calculatedSpeedFromOdo >= 8) {    //if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
-                                    timeDuration = 2000;
+                                  //  timeDuration = 2000;
                                     callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
                                 }
                             }

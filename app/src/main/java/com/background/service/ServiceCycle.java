@@ -102,6 +102,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
     boolean isHaulExcptn;
     boolean isAdverseExcptn;
+    boolean isNorthCanada;
 
     boolean isOldRecord      = false;
     boolean IsAlertTimeValid = false;
@@ -214,11 +215,13 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 CurrentCycleId  = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
                 isHaulExcptn    = sharedPref.get16hrHaulExcptn(context);
                 isAdverseExcptn = sharedPref.getAdverseExcptn(context);
+                isNorthCanada  =  sharedPref.IsNorthCanadaMain(context);
             } else {                // If Current driver is Co Driver
                 DriverType = Constants.CO_DRIVER_TYPE;
                 CurrentCycleId  = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, context);
                 isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(context);
                 isAdverseExcptn = sharedPref.getAdverseExcptnCo(context);
+                isNorthCanada  =  sharedPref.IsNorthCanadaCo(context);
             }
 
             if(CurrentCycleId.equalsIgnoreCase("null") || CurrentCycleId.equalsIgnoreCase("-1")
@@ -379,6 +382,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                         message = "Your current status is " + JobStatusStr + " but your vehicle is running. Please change your status to Driving.";
                                                     }
 
+
                                                     // added new lines according to AOBRD changes..
                                                     /* =================================================================================== */
                                                     if (hMethods.getSecondLastJobStatus(driver18DaysLogArray) == DRIVING) {
@@ -410,23 +414,25 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             boolean isDrivingAllowed = hMethods.isDrivingAllowed(context, Global, String.valueOf(DriverId), dbHelper);
 
                                             if(isDrivingAllowed) {
-                                                if (BackgroundLocationService.IsAutoChange) {
+                                               /* if (BackgroundLocationService.IsAutoChange) {
                                                     message = "Your current status is " + JobStatusStr + " but your vehicle is running. Now your status is going to be changed to Driving.";
                                                 } else {
                                                     message = "Your current status is " + JobStatusStr + " but your vehicle is running. Please change your status to Driving.";
-                                                }
+                                                }*/
+                                                BackgroundLocationService.IsAutoChange = true;
+                                                message = "Duty status switched to DRIVING due to vehicle moving above threshold speed.";
 
                                                 LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
                                                 CHANGED_STATUS = DRIVING;
                                                 ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, IsAOBRDAutomatic);
-                                            }else{
+                                                         driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, IsAOBRDAutomatic);
+                                             }else{
 
-                                                serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, ConstantsEnum.CO_DRIVING_ALERT1, "");
-                                                // ---------- Text to speech listener---------
-                                                SpeakOutMsg(ConstantsEnum.CO_DRIVING_ALERT1);
+                                                  serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, ConstantsEnum.CO_DRIVING_ALERT1, "");
+                                                    // ---------- Text to speech listener---------
+                                                  SpeakOutMsg(ConstantsEnum.CO_DRIVING_ALERT1);
 
-                                        }
+                                            }
                                         } else {
                                             ContinueSpeedCounter = 0;
                                             ClearCount();
@@ -459,9 +465,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                             if (!IsAOBRD || (IsAOBRD && IsAOBRDAutoDrive)) {
                                                 if (BackgroundLocationService.IsAutoChange) {
-                                                    message = "Your current status is Driving but your vehicle is running below the driving speed limit. Now your status is going to be changed to On Duty.";
+                                                    message = "Vehicle is running below the threshold speed limit. Now your status is going to be changed to On Duty.";
                                                 } else {
-                                                    message = "Your current status is Driving but your vehicle is running below the driving speed limit. Please change your status to On Duty.";
+                                                    message = "Vehicle is running below the threshold speed limit. Please change your status to On Duty.";
                                                 }
 
                                                 CHANGED_STATUS = ON_DUTY;
@@ -501,11 +507,14 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                     boolean isYardMove = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
 
                                     if (!isYardMove) {   // if isYardMove = true. No ELD rule called when Truck in yardfor USA.
-                                        if (BackgroundLocationService.IsAutoChange) {
+                                      /*  if (BackgroundLocationService.IsAutoChange) {
                                             message = "Your current status is On Duty but your vehicle is running. Now your status is going to be changed to Driving.";
                                         } else {
                                             message = "Your current status is On Duty but your vehicle is running. Please change your status to Driving.";
-                                        }
+                                        }*/
+
+                                        BackgroundLocationService.IsAutoChange = true;
+                                        message = "Duty status switched to DRIVING due to vehicle moving above threshold speed.";
 
 
                                         if (IsAOBRD) {
@@ -597,10 +606,16 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
 
                                             }else {
-                                                if (BackgroundLocationService.IsAutoChange) {
+                                              /*  if (BackgroundLocationService.IsAutoChange) {
                                                     message = "Your current status is On Duty - Yard Move but your vehicle is moving more then 32 km/h in Canada Cycle. Now your status is going to be changed to Driving.";
                                                 } else {
                                                     message = "Your current status is On Duty - Yard Move but your vehicle is moving more then 32 km/h in Canada Cycle. Please change your status to Driving.";
+                                                }*/
+
+                                                if (BackgroundLocationService.IsAutoChange) {
+                                                    message = "Vehicle is running above threshold speed limit (32 km/h) in Yard Move. Now your status is going to be changed to Driving.";
+                                                } else {
+                                                    message = "Vehicle is running above threshold speed limit (32 km/h) in Yard Move. Please change your status to Driving.";
                                                 }
 
                                                 boolean isApplicable = false;
@@ -783,11 +798,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         if(message.contains("Personal Use limit") || message.contains("32 km/h in Canada Cycle")){
             AlertMsg = message;
         }else{
-            AlertMsg = "Your vehicle speed is " + new DecimalFormat("##.##").format(VehicleSpeed) + " km/h." + message;
+            AlertMsg = "Vehicle speed is " + new DecimalFormat("##.##").format(VehicleSpeed) + " km/h. " + message;
         }
 
         if(message.contains("not confirming")){
-            message = "Your vehicle speed is " + new DecimalFormat("##.##").format(VehicleSpeed) + " km/h" + message;
+            message = "Vehicle speed is " + new DecimalFormat("##.##").format(VehicleSpeed) + " km/h. " + message;
             AlertMsg = message;
         }
 
@@ -866,7 +881,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         String.valueOf(GPSVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus,false,
                         Global, isHaulExcptn, false,
                         ""+ isAdverseExcptn,
-                        "", LocationType, "", hMethods,  dbHelper);
+                        "", LocationType, "", isNorthCanada, hMethods,  dbHelper);
 
                     String CurrentDate = Global.GetCurrentDateTime();
                 String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
@@ -875,7 +890,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
                 DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
                         DriverId,offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
-                        DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, rulesVersion, oDriverLog);
+                        DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, isNorthCanada, rulesVersion, oDriverLog);
                 RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), ChangedDriverStatus, oDriverDetail1);
 
 
@@ -901,14 +916,14 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, DriverId,
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
-                isHaulExcptn, isAdverseExcptn,
+                isHaulExcptn, isAdverseExcptn, isNorthCanada,
                 rulesVersion, oDriverLogDetail);
         RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), DRIVER_JOB_STATUS, oDriverDetail);
 
         // Calculate 2 days data to get remaining Driving/Onduty hours
         RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                 Integer.valueOf(CurrentCycleId), isSingleDriver, DriverId, DRIVER_JOB_STATUS, isOldRecord,
-                isHaulExcptn, isAdverseExcptn,
+                isHaulExcptn, isAdverseExcptn, isNorthCanada,
                 rulesVersion, dbHelper);
 
 
@@ -1173,7 +1188,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         "false",
                         connectionSource + LastStatus,
                         String.valueOf(isAdverseExcptn),
-                        "", "", LocationType
+                        "", "", LocationType,
+                        String.valueOf(isNorthCanada)
 
 
 
@@ -1309,7 +1325,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 connectionSource + LastStatus,
                 ""+isAdverseExcptn,
                 "", LocationType,
-                ""
+                "", isNorthCanada
 
         );
 
@@ -1357,7 +1373,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         connectionSource + LastStatus,
                         ""+isAdverseExcptn,
                        "", LocationType,
-                        ""
+                        "", isNorthCanada
 
                 );
 

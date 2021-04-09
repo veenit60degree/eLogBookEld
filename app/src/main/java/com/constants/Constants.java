@@ -20,6 +20,7 @@ import android.os.Build;
 import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
 import android.telephony.TelephonyManager;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -38,6 +39,7 @@ import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
+import com.messaging.logistic.fragment.EldFragment;
 import com.models.CanadaDutyStatusModel;
 import com.models.EldDataModelNew;
 import com.models.MalfunctionHeaderModel;
@@ -75,6 +77,7 @@ import java.util.concurrent.TimeUnit;
 
 import models.DriverDetail;
 import models.DriverLog;
+import models.RulesResponseObject;
 import webapi.LocalCalls;
 
 public class Constants {
@@ -412,6 +415,7 @@ public class Constants {
         locationObj.put(ConstantsKeys.AdverseExceptionRemarks, ListModel.getAdverseExceptionRemarks());
         locationObj.put(ConstantsKeys.EditedReason, ListModel.getEditedReason());
         locationObj.put(ConstantsKeys.LocationType, ListModel.getLocationType());
+        locationObj.put(ConstantsKeys.IsNorthCanada, ListModel.getIsNorthCanada());
 
         jsonArray.put(locationObj);
     }
@@ -424,7 +428,7 @@ public class Constants {
 
         String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
         String decesionSpurce = "", HaulHourException = "false", TruckNumber = "";
-        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "";
+        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", IsNorthCanada = "false";
 
         String isViolation = obj.getString(ConstantsKeys.IsViolation).trim();
 
@@ -468,6 +472,9 @@ public class Constants {
         if (obj.has(ConstantsKeys.LocationType)) {
             LocationType = obj.getString(ConstantsKeys.LocationType);
         }
+        if (obj.has(ConstantsKeys.IsNorthCanada)) {
+            IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
+        }
 
         locationObj.put(ConstantsKeys.ProjectId, obj.getString(ConstantsKeys.ProjectId));
         locationObj.put(ConstantsKeys.DriverId, obj.getString(ConstantsKeys.DriverId));
@@ -506,6 +513,7 @@ public class Constants {
         locationObj.put(ConstantsKeys.IsAdverseException, isAdverseException);
         locationObj.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
         locationObj.put(ConstantsKeys.LocationType, LocationType);
+        locationObj.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
 
         return locationObj;
@@ -1313,7 +1321,7 @@ public class Constants {
                                         String decesionSource, boolean isYardMove,
                                         Globally Global, boolean isHaulException, boolean isHaulExceptionUpdate,
                                         String isAdverseException, String adverseExceptionRemark, String LocationType,
-                                        String malAddInfo, HelperMethods hMethods, DBHelper dbHelper) {
+                                        String malAddInfo, boolean IsNorthCanada, HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
         long DriverLogId = 0;
@@ -1394,7 +1402,8 @@ public class Constants {
                 isAdverseException,
                 adverseExceptionRemark,
                 LocationType,
-                malAddInfo
+                malAddInfo,
+                IsNorthCanada
 
         );
 
@@ -1966,7 +1975,7 @@ public class Constants {
 
 
     public boolean getShortHaulExceptionDetail(Context context, String DriverId, Globally global, SharedPref sharedPref,
-                                               boolean isShortHaul, boolean isAdverseExcptn,
+                                               boolean isShortHaul, boolean isAdverseExcptn, boolean IsNorthCanada,
                                                HelperMethods hMethods, DBHelper dbHelper){
 
         boolean isHaulException = false;
@@ -1985,7 +1994,7 @@ public class Constants {
             List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
             DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DriverId),
                     offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, false,
-                    isShortHaul,  isAdverseExcptn,
+                    isShortHaul,  isAdverseExcptn, IsNorthCanada,
                     rulesVersion, oDriverLogDetail);
 
             LocalCalls CallDriverRule = new LocalCalls();
@@ -2048,7 +2057,9 @@ public class Constants {
                 android.content.ClipData clip = android.content.ClipData.newPlainText("text label",data);
                 clipboard.setPrimaryClip(clip);
             }
-            Toast.makeText(context, "Sim number copied", Toast.LENGTH_LONG).show();
+            if(context != null) {
+                Toast.makeText(context, "Sim number copied", Toast.LENGTH_LONG).show();
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -3299,6 +3310,116 @@ public class Constants {
         return value;
     }
 
+
+    public boolean isActionAllowed(Context context){
+        boolean isAllowed = true;
+        int ObdStatus = SharedPref.getObdStatus(context);
+        if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && SharedPref.isVehicleMoving(context) ){
+            isAllowed = false;
+        }
+        return isAllowed;
+    }
+
+    public boolean isObdConnected(Context context){
+        boolean isObdConnected = false;
+        if (SharedPref.getObdStatus(context) == Constants.WIFI_ACTIVE || SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE){
+            isObdConnected = true;
+        }
+
+        return isObdConnected;
+    }
+
+
+
+
+    public String CalculateCycleTimeData(Context context, String DriverId, boolean OperatingZoneChange, boolean isNorth, String changedCycleId,
+                                            Globally Global, SharedPref sharedPref, HelperMethods hMethods,DBHelper dbHelper ){
+
+        int offsetFromUTC = (int) Global.GetTimeZoneOffSet();
+        List<DriverLog> oDriverLogDetail ;
+
+        String finalCycleData = "";
+        String currentJobStatus     = sharedPref.getDriverStatusId("jobType", context);
+
+        DateTime currentDateTime    = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);    // Current Date Time
+        DateTime currentUTCTime     = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
+        oDriverLogDetail           = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
+
+        int rulesVersion = sharedPref.GetRulesVersion(context);
+        boolean isHaulExcptn, isAdverseExcptn, IsNorthCanada;
+        boolean isSingleDriver = false;
+
+        if (sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            isHaulExcptn = sharedPref.get16hrHaulExcptn(context);
+            isAdverseExcptn = sharedPref.getAdverseExcptn(context);
+            isSingleDriver = true;
+        } else {
+            isHaulExcptn = sharedPref.get16hrHaulExcptnCo(context);
+            isAdverseExcptn = sharedPref.getAdverseExcptnCo(context);
+        }
+
+        if(OperatingZoneChange){
+            IsNorthCanada = isNorth;
+        }else {
+            if (sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+                IsNorthCanada = sharedPref.IsNorthCanadaMain(context);
+            } else {
+                IsNorthCanada = sharedPref.IsNorthCanadaCo(context);
+            }
+        }
+
+
+        DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DriverId),
+                offsetFromUTC, Integer.valueOf(changedCycleId), isSingleDriver, Integer.valueOf(currentJobStatus), false,
+                isHaulExcptn, isAdverseExcptn, IsNorthCanada,
+                rulesVersion, oDriverLogDetail);
+
+        // EldFragment.SLEEPER is used because we are just checking cycle time
+        RulesResponseObject RulesObj = hMethods.CheckDriverRule(Integer.valueOf(changedCycleId), EldFragment.SLEEPER, oDriverDetail);
+
+        // Calculate 2 days data to get remaining Driving/Onduty hours
+        RulesResponseObject RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
+                Integer.valueOf(changedCycleId), isSingleDriver, Integer.valueOf(DriverId) , Integer.valueOf(currentJobStatus), false,
+                isHaulExcptn, isAdverseExcptn, IsNorthCanada,
+                rulesVersion, dbHelper);
+
+        try {
+            int CycleRemainingMinutes   = checkIntValue((int) RulesObj.getCycleRemainingMinutes());
+            int OnDutyRemainingMinutes  = checkIntValue((int) RemainingTimeObj.getOnDutyRemainingMinutes());
+            int DriveRemainingMin       = checkIntValue((int) RemainingTimeObj.getDrivingRemainingMinutes());
+
+            if(CycleRemainingMinutes < OnDutyRemainingMinutes){
+                OnDutyRemainingMinutes = CycleRemainingMinutes;
+            }
+
+            String CycleRemaining          = addZeroForSingle(Global, CycleRemainingMinutes)  ;
+            String OnDutyRemaining         = addZeroForSingle(Global, OnDutyRemainingMinutes)  ;
+            String DriveRemaining          = addZeroForSingle(Global, DriveRemainingMin)  ;
+
+            finalCycleData = "<font color='#3F88C5'><b>"+context.getResources().getString(R.string.hos_limitation) + "</b><br/>" +
+                    "<b>Cycle &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> :&nbsp;&nbsp; " + CycleRemaining + "<br/>" +
+                    "<b>Driving  &nbsp;&nbsp;</b> :&nbsp;&nbsp; " + DriveRemaining + "<br/>" +
+                    "<b>OnDuty   &nbsp;&nbsp;</b> :&nbsp;&nbsp; " + OnDutyRemaining + " </font>" ;
+
+           // txtView.setText(Html.fromHtml(finalCycleData) );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return finalCycleData;
+
+    }
+
+
+    String addZeroForSingle(Globally Global, int min){
+        String hours = "" +Global.HourFromMin(min);
+        if(hours.length() == 1){
+            return "0" + hours + " Hr";
+        }else{
+            return hours + " Hrs";
+        }
+    }
 
     /*public static boolean isTabletDevice(Context activityContext) {
 

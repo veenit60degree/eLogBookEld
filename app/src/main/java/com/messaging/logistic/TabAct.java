@@ -195,7 +195,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         }
 
-
+        sharedPref.setLastCalledWiredCallBack(0, getApplicationContext());
         if(sharedPref.getCurrentDriverType(TabAct.this).equals(DriverConst.StatusSingleDriver)){
             DriverType = Constants.MAIN_DRIVER_TYPE;
             sharedPref.setUnidentifiedAlertViewStatus(true, this);

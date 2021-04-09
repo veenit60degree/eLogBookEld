@@ -122,7 +122,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     SharedPref sharedPref;
     boolean isHaulExcptn;
     boolean isAdverseExcptn;
-
+    boolean isNorthCanada;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -233,10 +233,12 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 IsSingleDriver = true;
                 isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
                 isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+                isNorthCanada   =  sharedPref.IsNorthCanadaMain(getActivity());
             }else{
                 IsSingleDriver = false;
                 isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
                 isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+                isNorthCanada   =  sharedPref.IsNorthCanadaCo(getActivity());
             }
 
 
@@ -620,7 +622,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
-                isHaulExcptn, isAdverseExcptn,
+                isHaulExcptn, isAdverseExcptn, isNorthCanada,
                 rulesVersion, oDriverLogList);
         RulesResponseObject RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
@@ -846,7 +848,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
                         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
-                                isHaulExcptn, isAdverseExcptn,
+                                isHaulExcptn, isAdverseExcptn, isNorthCanada,
                                 rulesVersion, oDriverLogList);
                         RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
@@ -983,7 +985,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 JSONObject obj = (JSONObject)logArray.get(i);
                 String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", TruckNumber = "",
                         DecesionSource = "", PlateNumber = "", isHaulException = "false", IsShortHaulUpdate = "false";
-                String isAdverseException = "", adverseExceptionRemark = "";
+                String isAdverseException = "false", adverseExceptionRemark = "", IsNorthCanada = "false";
 
                 if(obj.has(ConstantsKeys.IsStatusAutomatic)){
                     IsStatusAutomatic = obj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1033,6 +1035,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     LocationType = obj.getString(ConstantsKeys.LocationType);
                 }
 
+                if (obj.has(ConstantsKeys.IsNorthCanada)) {
+                    IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
+                }
+
                 EldDataModelNew logModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
                         obj.getString(ConstantsKeys.DriverId),
@@ -1068,7 +1074,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         isAdverseException,
                         adverseExceptionRemark,
                         editLogReason,
-                        LocationType
+                        LocationType,
+                        IsNorthCanada
 
                 );
 
@@ -1139,6 +1146,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 String TruckNumber = "";
                 String remarks = "";
                 String LocationType = "";
+                String IsNorthCanada = "false";
 
                 int locLength = loc.length - 1;
                 City = "";
@@ -1226,6 +1234,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 if(obj.has(ConstantsKeys.LocationType)){
                     LocationType = obj.getString(ConstantsKeys.LocationType);
                 }
+                if(obj.has(ConstantsKeys.IsNorthCanada)){
+                    IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
+                }
 
                 remarks = obj.getString(ConstantsKeys.Remarks);
 
@@ -1264,7 +1275,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         isAdverseException,
                         adverseExceptionRemark,
                         editLogReason,
-                        LocationType
+                        LocationType,
+                        IsNorthCanada
                         );
 
                     if(eldModel != null) {

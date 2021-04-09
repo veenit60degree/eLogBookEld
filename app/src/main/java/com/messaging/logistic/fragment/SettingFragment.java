@@ -151,6 +151,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     final int GetAppUpdate  = 1, DriverLogPermission = 2, CycleChangeApproval = 3, ChangeCycle = 4, OperatingZone = 5;
     int DriverType = 0;
     long progressPercentage = 0;
+    boolean isNorthCanada = false;
     boolean IsLogPermission = false, IsDownloading = false, IsManualAppDownload = false;
     DriverPermissionMethod driverPermissionMethod;
     MainDriverEldPref MainDriverPref;
@@ -949,29 +950,59 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
             case R.id.caCycleTV:
-                if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ) {
-                    changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
+
+                if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
+                    if(isEligibleToChangeCycle()) {
+                        changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
+                    }else{
+                        global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
+                    }
                 }
+
+
+
                 break;
 
 
             case R.id.usCycleTV:
-                if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ) {
-                    changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
-                }
+
+                    if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
+                        if(isEligibleToChangeCycle()) {
+                            changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
+                        }else{
+                            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
+                        }
+                    }
+
+
                 break;
 
 
             case R.id.operatingZoneTV:
-                if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ) {
-                    changeCycleZoneDialog("operating_zone", CurrentCycleId, operatingZoneTV.getText().toString());
-                }
+
+                    if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
+                        if(isEligibleToChangeCycle()) {
+                            changeCycleZoneDialog("operating_zone", CurrentCycleId, operatingZoneTV.getText().toString());
+                        }else{
+                            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.op_zone_change_check), getResources().getColor(R.color.colorPrimary));
+                        }
+                    }
+
                 break;
 
 
         }
     }
 
+
+    private boolean isEligibleToChangeCycle(){
+        String currentJob     = sharedPref.getDriverStatusId("jobType", getActivity());
+        if(currentJob.equals(global.SLEEPER) || currentJob.equals(global.OFF_DUTY)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 
     /**
@@ -1045,7 +1076,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     adverseRemarksDialog.dismiss();
 
                 hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
-                        LocationType, "", false, DriverType, constants, sharedPref,
+                        LocationType, "", false, isNorthCanada, DriverType, constants, sharedPref,
                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                         syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
 
@@ -1664,7 +1695,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     void getSavedCycleData(){
 
-        boolean isNorthCanada = false;
         if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
             DriverType = Constants.MAIN_DRIVER_TYPE;
             SavedPosition  = 0;
@@ -1800,7 +1830,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             dialog.dismiss();
 
                             boolean isHaulException = constant.getShortHaulExceptionDetail(getActivity(), DriverId, global, sharedPref,
-                                                        isHaulExcptn, isAdverseExcptn, hMethods, dbHelper);
+                                                        isHaulExcptn, isAdverseExcptn, isNorthCanada, hMethods, dbHelper);
 
                             if (isHaulException) {
                                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
@@ -1812,7 +1842,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.haul_excptn_enabled), getResources().getColor(R.color.colorPrimary));
 
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
-                                        LocationType, "", true, DriverType, constants, sharedPref,
+                                        LocationType, "", true, isNorthCanada, DriverType, constants, sharedPref,
                                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                         syncingMethod, global, hMethods, dbHelper, getActivity());
 
