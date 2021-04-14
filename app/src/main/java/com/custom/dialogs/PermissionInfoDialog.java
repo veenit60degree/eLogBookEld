@@ -146,6 +146,7 @@ public class PermissionInfoDialog extends Dialog {
         termsCondBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                termsCondCheckBox.setChecked(true);
                 Intent i = new Intent(getContext(), TermsConditionsActivity.class);
                 getContext().startActivity(i);
             }

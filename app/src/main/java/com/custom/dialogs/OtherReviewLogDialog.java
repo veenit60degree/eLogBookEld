@@ -1,12 +1,9 @@
 package com.custom.dialogs;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,20 +14,11 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 
-import com.adapter.logistic.OtherOptionsAdapter;
 import com.adapter.logistic.OtherReviewLogAdapter;
-import com.constants.Constants;
-import com.constants.SharedPref;
-import com.constants.VolleyRequest;
-import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.fragment.EldFragment;
-import com.models.OtherOptionsModel;
 import com.models.RecapModel;
 
 import java.util.List;
-import java.util.Map;
 
 public class OtherReviewLogDialog extends Dialog {
 
@@ -68,10 +56,10 @@ public class OtherReviewLogDialog extends Dialog {
         otherFeatureListView = (ListView) findViewById(R.id.otherFeatureListView);
         otherOptionMainLay = (RelativeLayout) findViewById(R.id.otherOptionMainLay);
 
-
-        OtherReviewLogAdapter adapter = new OtherReviewLogAdapter(getContext(), otherLogList);
-        otherFeatureListView.setAdapter(adapter);
-
+        try {
+            OtherReviewLogAdapter adapter = new OtherReviewLogAdapter(getContext(), otherLogList);
+            otherFeatureListView.setAdapter(adapter);
+        }catch (Exception e){}
         otherFeatureListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {

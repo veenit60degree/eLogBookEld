@@ -1,6 +1,8 @@
 package com.background.service;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
@@ -174,13 +176,13 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         try {
             driver18DaysLogArray = hMethods.getSavedLogArray(DriverId, dbHelper);
 
-            Thread.sleep(2200);
+              Thread.sleep(500); // 500 milli sec delay to get updated data from db
+                CheckEldRule(driver18DaysLogArray, currentDateTime, currentUTCTime,  isSingleDriver,  IsLogApiACalled,
+                        serviceResponse,  latLongHelper,  locMethod,
+                        hMethods,  dbHelper,  serviceError);
 
-            CheckEldRule(driver18DaysLogArray, currentDateTime, currentUTCTime,  isSingleDriver,  IsLogApiACalled,
-                    serviceResponse,  latLongHelper,  locMethod,
-                    hMethods,  dbHelper,  serviceError);
 
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -333,7 +335,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                     boolean isAutoDrive = sharedPref.isAutoDrive(context);
 
                    // (DRIVER_JOB_STATUS == -1 || DRIVER_JOB_STATUS == lastStatusFromSyncTable)
-                        Log.d("CurrentStatus", "CurrentStatusFromSyncTable: "+ lastStatusFromSyncTable + "    DRIVER_JOB_STATUS: " + DRIVER_JOB_STATUS);
+                      //  Log.d("CurrentStatus", "CurrentStatusFromSyncTable: "+ lastStatusFromSyncTable + "    DRIVER_JOB_STATUS: " + DRIVER_JOB_STATUS);
                     if(!currentJob.equals("") && currentJob.equals(String.valueOf(DRIVER_JOB_STATUS))) {  // reason of this check: some times latest entry was not saved in 18 days array due to unknown/strange error. thats why wrong auto status entry was saved from app. So we need to add this check for safe side.
                         // Check If vehicle is ELD Type
                         if (!isPersonal && isAutoDrive && VehicleSpeed != -1) {
@@ -372,7 +374,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 jobStatus = "sleeper";
                                             }
 
-                                            if (VehicleSpeed > AobrdSpeedLimit && minutesDiff >= DrivingInterval) {
+                                            if (VehicleSpeed >= AobrdSpeedLimit && minutesDiff >= DrivingInterval) {
 
                                                 if (IsAOBRDAutoDrive) {
 
@@ -409,7 +411,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                         }
                                     } else {
 
-                                        if (VehicleSpeed > DrivingSpeedLimit && minutesDiff >= DrivingInterval) {
+                                        if (VehicleSpeed >= DrivingSpeedLimit && minutesDiff >= DrivingInterval) {
 
                                             boolean isDrivingAllowed = hMethods.isDrivingAllowed(context, Global, String.valueOf(DriverId), dbHelper);
 
@@ -465,9 +467,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                             if (!IsAOBRD || (IsAOBRD && IsAOBRDAutoDrive)) {
                                                 if (BackgroundLocationService.IsAutoChange) {
-                                                    message = "Vehicle is running below the threshold speed limit. Now your status is going to be changed to On Duty.";
+                                                  // message = "Vehicle is running below the threshold speed limit. Now your status is going to be changed to On Duty.";
+                                                    message = "Duty status switched to On Duty due to vehicle moving below threshold speed.";
                                                 } else {
-                                                    message = "Vehicle is running below the threshold speed limit. Please change your status to On Duty.";
+                                                   // message = "Vehicle is running below the threshold speed limit. Please change your status to On Duty.";
+                                                    message = "Please change your status to On Duty due to vehicle moving below threshold speed.";
                                                 }
 
                                                 CHANGED_STATUS = ON_DUTY;
@@ -519,7 +523,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                         if (IsAOBRD) {
                                             if (IsAOBRDAutomatic) {
-                                                if (VehicleSpeed > AobrdSpeedLimit && minutesDiff >= DrivingInterval) {
+                                                if (VehicleSpeed >= AobrdSpeedLimit && minutesDiff >= DrivingInterval) {
 
                                                     if (IsAOBRDAutoDrive) {
 
@@ -554,11 +558,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                             boolean isApplicable = false;
                                             if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
-                                                if (OBDVehicleSpeed > DrivingSpeedLimit && VehicleSpeed > DrivingSpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
+                                                if (OBDVehicleSpeed >= DrivingSpeedLimit && VehicleSpeed >= DrivingSpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
                                                     isApplicable = true;
                                                 }
                                             } else {
-                                                if (VehicleSpeed > DrivingSpeedLimit) {
+                                                if (VehicleSpeed >= DrivingSpeedLimit) {
                                                     isApplicable = true;
                                                 }
                                             }
@@ -591,12 +595,12 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                             if(isYmPcAlertShown){
                                                 if (BackgroundLocationService.IsAutoChange) {
-                                                    message = " and you are not confirming Yard Move status. Now your status is going to be changed to Driving.";
+                                                    message = " Duty status switched to DRIVING due to vehicle moving above threshold speed.";
                                                 } else {
                                                     message = " Please confirm your Yard Move status.";
                                                 }
 
-                                                if (VehicleSpeed > DrivingSpeedLimit && isDrivingAllowed) {
+                                                if (VehicleSpeed >= DrivingSpeedLimit && isDrivingAllowed) {
                                                     pcYmRemarks = "none";
                                                     LastStatus = "_YMNotConfirmed_From_" + DRIVER_JOB_STATUS;
                                                     CHANGED_STATUS = DRIVING;
@@ -606,27 +610,23 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
 
                                             }else {
-                                              /*  if (BackgroundLocationService.IsAutoChange) {
-                                                    message = "Your current status is On Duty - Yard Move but your vehicle is moving more then 32 km/h in Canada Cycle. Now your status is going to be changed to Driving.";
-                                                } else {
-                                                    message = "Your current status is On Duty - Yard Move but your vehicle is moving more then 32 km/h in Canada Cycle. Please change your status to Driving.";
-                                                }*/
 
-                                                if (BackgroundLocationService.IsAutoChange) {
-                                                    message = "Vehicle is running above threshold speed limit (32 km/h) in Yard Move. Now your status is going to be changed to Driving.";
-                                                } else {
-                                                    message = "Vehicle is running above threshold speed limit (32 km/h) in Yard Move. Please change your status to Driving.";
-                                                }
+                                               // if (BackgroundLocationService.IsAutoChange) {
+                                                    BackgroundLocationService.IsAutoChange = true;
+                                                    message = "Duty status switched to Driving due to vehicle moving above threshold speed limit (32 km/h).";
+                                              /*  } else {
+                                                    message = "Please change your status to Driving due to vehicle moving above threshold speed limit (32 km/h).";
+                                                }*/
 
                                                 boolean isApplicable = false;
                                                 DrivingSpeedLimit = 32; // in canada cycle for Yard Move status if speed will be more then on equal to 32 km/h, change to driving.
 
                                                 if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
-                                                    if (OBDVehicleSpeed > DrivingSpeedLimit && VehicleSpeed > DrivingSpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
+                                                    if (OBDVehicleSpeed >= DrivingSpeedLimit && VehicleSpeed >= DrivingSpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
                                                         isApplicable = true;
                                                     }
                                                 } else {
-                                                    if (VehicleSpeed > DrivingSpeedLimit) {
+                                                    if (VehicleSpeed >= DrivingSpeedLimit) {
                                                         isApplicable = true;
                                                     }
                                                 }
@@ -669,21 +669,21 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                     int dayDiff = hMethods.DayDiff(currentUTCTime, lastSaveUtcDate);
                                     if (dayDiff == 0) {    // if current day
 
-                                        if (BackgroundLocationService.IsAutoChange) {
+                                      //  if (BackgroundLocationService.IsAutoChange) {
+                                            BackgroundLocationService.IsAutoChange = true;
                                             if(isPersonalUse75KmCrossed)
-                                                message = "Your Personal Use limit (75 km) is exceeded for the day in Canada cycle. Now your status is going to be changed to Driving.";
+                                                message = "Duty status switched to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
                                             else {
                                                 // set value false when status will be changed to driving.
                                                 sharedPref.SetTruckStartLoginStatus(false, context);
-
-                                                message = " and you are not confirming Personal use status. Now your status is going to be changed to Driving.";
+                                                message = " Duty status switched to DRIVING due to not confirming Personal use status.";
                                             }
-                                        } else {
+                                   /*     } else {
                                             if(isPersonalUse75KmCrossed)
-                                                message = "Your Personal Use limit (75 km) is exceeded for the day in Canada cycle. Please change your status to Driving.";
+                                                message = "Please change duty your status to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
                                             else
                                                 message = " Please confirm your Personal use status.";
-                                        }
+                                        }*/
 
                                         if (VehicleSpeed >= DrivingSpeedLimit) {
                                             if(isPersonalUse75KmCrossed) {
@@ -794,59 +794,63 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             VehicleSpeed = 0;
         }
 
-        String AlertMsg = "";
-        if(message.contains("Personal Use limit") || message.contains("32 km/h in Canada Cycle")){
-            AlertMsg = message;
-        }else{
-            AlertMsg = "Vehicle speed is " + new DecimalFormat("##.##").format(VehicleSpeed) + " km/h. " + message;
-        }
-
-        if(message.contains("not confirming")){
-            message = "Vehicle speed is " + new DecimalFormat("##.##").format(VehicleSpeed) + " km/h. " + message;
-            AlertMsg = message;
-        }
-
-        // --------- Showing notification to user to change there status...
-
-        if(IsAOBRDAuto) {
-            Log.d("AobrdAutomatic","AobrdAutomatic: " + constants.AobrdAutomatic );
-            // hide notification for blank aobrd Auto notification
-         //   serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, isEldToast, constants.AobrdAutomatic, AlertMsg);
-        }else{
-            serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, isEldToast, AlertMsg, "");
-        }
-        // ---------- Text to speech listener---------
-        SpeakOutMsg(message);
-
-        // --------- Change Wrong Status Automatically -----------
-        if (BackgroundLocationService.IsAutoChange == true) {  //&& BackgroundLocationService.IsAutoLogSaved == false
-                ChangeWrongStatusAutomatically(dbHelper, hMethods, driverLogArray, currentDateTime, currentUTCTime, CHANGE_STATUS, serviceResponse);
-        }else{
-
-            JSONArray notificationArray = notificationMethod.getSavedNotificationArray(Integer.valueOf(DriverId), dbHelper);
-            if(notificationArray.length() == 0 && driver18DaysLogArray.length() > 15 ) {
-                // nothing to save
-            }else {
-                boolean IsWarningNotificationAllowed = constants.IsWarningNotificationAllowed(String.valueOf(DriverId), dbHelper);
-                if(IsWarningNotificationAllowed) {
-                    constants.SaveNotification(DriverType, context.getResources().getString(R.string.warning), AlertMsg, currentDateTime.toString(), hMethods, notificationPref, coNotificationPref, context);
-
-                    // Save Notification in 18 days notification history array
-                    notificationMethod.saveNotificationHistory(
-                            DriverId,
-                            DeviceId,
-                            DriverName,
-                            context.getResources().getString(R.string.warning),
-                            AlertMsg,
-                            currentDateTime,
-                            DriverCompanyId,
-                            dbHelper);
-                }
+        try {
+            String AlertMsg = "";
+            if (message.contains("Personal Use limit") || message.contains("32 km/h in Canada Cycle")) {
+                AlertMsg = message;
+            } else {
+                AlertMsg = "Vehicle speed is " + new DecimalFormat("##.##").format(VehicleSpeed) + " km/h. " + message;
             }
 
-        }
-        BackgroundLocationService.IsAutoChange = true;
+            if (message.contains("not confirming")) {
+                message = "Vehicle speed is " + new DecimalFormat("##.##").format(VehicleSpeed) + " km/h. " + message;
+                AlertMsg = message;
+            }
 
+            // --------- Showing notification to user to change there status...
+
+            if (IsAOBRDAuto) {
+                Log.d("AobrdAutomatic", "AobrdAutomatic: " + constants.AobrdAutomatic);
+                // hide notification for blank aobrd Auto notification
+                //   serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, isEldToast, constants.AobrdAutomatic, AlertMsg);
+            } else {
+                serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, isEldToast, AlertMsg, "");
+            }
+            // ---------- Text to speech listener---------
+            SpeakOutMsg(message);
+
+            // --------- Change Wrong Status Automatically -----------
+            if (BackgroundLocationService.IsAutoChange == true) {  //&& BackgroundLocationService.IsAutoLogSaved == false
+                ChangeWrongStatusAutomatically(dbHelper, hMethods, driverLogArray, currentDateTime, currentUTCTime, CHANGE_STATUS, serviceResponse);
+            } else {
+
+                JSONArray notificationArray = notificationMethod.getSavedNotificationArray(Integer.valueOf(DriverId), dbHelper);
+                if (notificationArray.length() == 0 && driver18DaysLogArray.length() > 15) {
+                    // nothing to save
+                } else {
+                    boolean IsWarningNotificationAllowed = constants.IsWarningNotificationAllowed(String.valueOf(DriverId), dbHelper);
+                    if (IsWarningNotificationAllowed) {
+                        constants.SaveNotification(DriverType, context.getResources().getString(R.string.warning), AlertMsg, currentDateTime.toString(), hMethods, notificationPref, coNotificationPref, context);
+
+                        // Save Notification in 18 days notification history array
+                        notificationMethod.saveNotificationHistory(
+                                DriverId,
+                                DeviceId,
+                                DriverName,
+                                context.getResources().getString(R.string.warning),
+                                AlertMsg,
+                                currentDateTime,
+                                DriverCompanyId,
+                                dbHelper);
+                    }
+                }
+
+            }
+            BackgroundLocationService.IsAutoChange = true;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -860,50 +864,54 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     void ChangeWrongStatusAutomatically(DBHelper dbHelper, HelperMethods hMethods, JSONArray driverLogArray,
                                         DateTime currentDateTime , DateTime currentUTCTime, int ChangedDriverStatus,
                                         ServiceCallback serviceCallback ){
-        JSONObject lastItemJson = hMethods.GetLastJsonFromArray(driverLogArray);
-        if (lastItemJson != null) {
-           // ContinueSpeedCounter = 0;
-            BackgroundLocationService.IsAutoChange = false;
-            boolean isAutomatic = true;
+        try {
+            JSONObject lastItemJson = hMethods.GetLastJsonFromArray(driverLogArray);
+            if (lastItemJson != null) {
+                // ContinueSpeedCounter = 0;
+                BackgroundLocationService.IsAutoChange = false;
+                boolean isAutomatic = true;
 
-            if(ChangedDriverStatus == DRIVING || ChangedDriverStatus == ON_DUTY){
+                if (ChangedDriverStatus == DRIVING || ChangedDriverStatus == ON_DUTY) {
 
-                String LocationType = "";
-                if(constants.isLocMalfunctionEvent(context, DriverType)){
-                    // SharedPref.setLocMalfunctionType("m", getContext());
-                    LocationType = SharedPref.getLocMalfunctionType( context);
-                }
+                    String LocationType = "";
+                    if (constants.isLocMalfunctionEvent(context, DriverType)) {
+                        // SharedPref.setLocMalfunctionType("m", getContext());
+                        LocationType = SharedPref.getLocMalfunctionType(context);
+                    }
 
-                JSONArray logArray = constants.AddNewStatusInList("", String.valueOf(ChangedDriverStatus), "", "no_address",
-                        String.valueOf(DriverId), "" , "" ,  "",  "",
-                        CurrentCycleId,  "",  "false",  isViolation,
-                        "false", String.valueOf(OBDVehicleSpeed),
-                        String.valueOf(GPSVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus,false,
-                        Global, isHaulExcptn, false,
-                        ""+ isAdverseExcptn,
-                        "", LocationType, "", isNorthCanada, hMethods,  dbHelper);
+                    JSONArray logArray = constants.AddNewStatusInList("", String.valueOf(ChangedDriverStatus), "", "no_address",
+                            String.valueOf(DriverId), "", "", "", "",
+                            CurrentCycleId, "", "false", isViolation,
+                            "false", String.valueOf(OBDVehicleSpeed),
+                            String.valueOf(GPSVehicleSpeed), sharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus, false,
+                            Global, isHaulExcptn, false,
+                            "" + isAdverseExcptn,
+                            "", LocationType, "", isNorthCanada, hMethods, dbHelper);
 
                     String CurrentDate = Global.GetCurrentDateTime();
-                String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
-                int rulesVersion = sharedPref.GetRulesVersion(context);
+                    String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
+                    int rulesVersion = sharedPref.GetRulesVersion(context);
 
-                List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
-                DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
-                        DriverId,offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
-                        DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, isNorthCanada, rulesVersion, oDriverLog);
-                RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), ChangedDriverStatus, oDriverDetail1);
+                    List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
+                    DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
+                            DriverId, offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
+                            DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, isNorthCanada, rulesVersion, oDriverLog);
+                    RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), ChangedDriverStatus, oDriverDetail1);
 
 
+                }
+
+                JSONObject sameStatusJson = hMethods.AddSameStatusJson(lastItemJson, currentDateTime, currentUTCTime, RulesObj, false, 0);
+                driverLogArray.put(sameStatusJson);
+
+                SaveDriversJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType, String.valueOf(RulesObj.isViolation()),
+                        RulesObj.getViolationReason(), ChangedDriverStatus, isAutomatic, false);
+
+                // callback method called to update Eld home screen
+                serviceCallback.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, "", context.getResources().getString(R.string.screen_reset));
             }
-
-            JSONObject sameStatusJson = hMethods.AddSameStatusJson(lastItemJson, currentDateTime, currentUTCTime, RulesObj, false, 0);
-            driverLogArray.put(sameStatusJson);
-
-            SaveDriversJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType, String.valueOf(RulesObj.isViolation()),
-                    RulesObj.getViolationReason(), ChangedDriverStatus, isAutomatic, false);
-
-            // callback method called to update Eld home screen
-            serviceCallback.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, "", context.getResources().getString(R.string.screen_reset));
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

@@ -952,7 +952,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             case R.id.caCycleTV:
 
                 if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
-                    if(isEligibleToChangeCycle()) {
+                    if(isSleepOffDuty()) {
                         changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
                     }else{
                         global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
@@ -967,7 +967,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             case R.id.usCycleTV:
 
                     if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
-                        if(isEligibleToChangeCycle()) {
+                        if(isSleepOffDuty()) {
                             changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
                         }else{
                             global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
@@ -981,7 +981,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             case R.id.operatingZoneTV:
 
                     if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
-                        if(isEligibleToChangeCycle()) {
+                        if(isSleepOffDuty() == false) {
                             changeCycleZoneDialog("operating_zone", CurrentCycleId, operatingZoneTV.getText().toString());
                         }else{
                             global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.op_zone_change_check), getResources().getColor(R.color.colorPrimary));
@@ -995,7 +995,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     }
 
 
-    private boolean isEligibleToChangeCycle(){
+    private boolean isSleepOffDuty(){
         String currentJob     = sharedPref.getDriverStatusId("jobType", getActivity());
         if(currentJob.equals(global.SLEEPER) || currentJob.equals(global.OFF_DUTY)){
             return true;
@@ -1416,8 +1416,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     void ChangeOperatingZone(final String DriverId, final String DeviceId, final String CompanyId, final String IsSouthCanada,
                              final String CycleId, final String DriverTimeZone, final String Latitude, final String Longitude, final String PowerUnitNumber){
 
+        String CoDriverId = "";
+        if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+            CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+        }else{
+            CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+        }
+
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.CoDriverId, CoDriverId);
         params.put(ConstantsKeys.DeviceId, DeviceId);
         params.put(ConstantsKeys.CompanyId, CompanyId);
         params.put(ConstantsKeys.IsSouthCanada, IsSouthCanada);

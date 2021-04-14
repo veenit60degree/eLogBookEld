@@ -68,6 +68,7 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
             holder.enginePwrDotLay     = (LinearLayout) convertView.findViewById(R.id.enginePwrDotLay);
 
             holder.dateTimeDiffEngineTV= (TextView) convertView.findViewById(R.id.dateTimeDiffEngineTV);
+            holder.latLonEDotTV        = (TextView) convertView.findViewById(R.id.latLonEDotTV);
 
             holder.dateTimeEDotTV      = (TextView) convertView.findViewById(R.id.dateTimeEDotTV);
             holder.eventDotETV         = (TextView) convertView.findViewById(R.id.eventDotETV);
@@ -106,8 +107,8 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-        if(EventDateTime.length() > 11) {
-            holder.dateTimeEDotTV.setText(EventDateTime.substring(11, EventDateTime.length()));
+        if(EventDateTime.length() > 16) {
+            holder.dateTimeEDotTV.setText(EventDateTime.substring(11, 16));
         }
 
        // holder.dateTimeEDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins() ));
@@ -122,7 +123,7 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
 
         holder.hoursTotalEDotTV.setText(constants.checkNullString(itemsList.get(position).getTotalEngineHours()));
         holder.seqNoEDotTV.setText(""+itemsList.get(position).getHexaSeqNumber());
-
+        holder.latLonEDotTV.setText(""+itemsList.get(position).getGPSLatitude() + ", " + itemsList.get(position).getGPSLongitude());
 
         // Set text style normal
         constants.setTextStyleNormal(holder.dateTimeEDotTV);
@@ -135,6 +136,20 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
 
         constants.setTextStyleNormal(holder.hoursTotalEDotTV);
         constants.setTextStyleNormal(holder.seqNoEDotTV);
+        constants.setTextStyleNormal(holder.latLonEDotTV);
+
+
+        // set Marque on view
+        constants.setMarqueonView(holder.dateTimeEDotTV);
+        constants.setMarqueonView(holder.eventDotETV);
+        constants.setMarqueonView(holder.jeoLocEDotTV);
+        constants.setMarqueonView(holder.distanceAccDotTV);
+        constants.setMarqueonView(holder.cmvEDotTV);
+        constants.setMarqueonView(holder.distanceTotalEDotTV);
+        constants.setMarqueonView(holder.hoursTotalEDotTV);
+        constants.setMarqueonView(holder.seqNoEDotTV);
+        constants.setMarqueonView(holder.latLonEDotTV);
+
 
         return convertView;
     }
@@ -142,7 +157,7 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView dateTimeEDotTV, eventDotETV, jeoLocEDotTV, distanceAccDotTV, cmvEDotTV, distanceTotalEDotTV, hoursTotalEDotTV, seqNoEDotTV ;
-        TextView dateTimeDiffEngineTV;
+        TextView dateTimeDiffEngineTV, latLonEDotTV;
         LinearLayout enginePwrDotLay;
 
     }

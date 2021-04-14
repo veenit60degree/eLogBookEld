@@ -70,6 +70,9 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
             holder.dutyStatusDotLay     = (LinearLayout) convertView.findViewById(R.id.dutyStatusDotLay);
 
             holder.dateTimeDiffTV       = (TextView) convertView.findViewById(R.id.dateTimeDiffTV);
+            holder.distanceCordDotTV       = (TextView) convertView.findViewById(R.id.distanceCordDotTV);
+            holder.latLongDotTV       = (TextView) convertView.findViewById(R.id.latLongDotTV);
+            holder.geoLocDotTV       = (TextView) convertView.findViewById(R.id.geoLocDotTV);
 
             holder.dateTimeDotTV        = (TextView) convertView.findViewById(R.id.dateTimeDotTV);
             holder.eventDotTV           = (TextView) convertView.findViewById(R.id.eventDotTV);
@@ -108,8 +111,8 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-        if(EventDateTime.length() > 11) {
-            holder.dateTimeDotTV.setText(EventDateTime.substring(11, EventDateTime.length()));
+        if(EventDateTime.length() > 16) {
+            holder.dateTimeDotTV.setText(EventDateTime.substring(11, 16));
         }
 
         holder.eventDotTV.setText(constants.getDutyChangeEventName( itemsList.get(position).getEventType(),
@@ -119,13 +122,18 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
 
         holder.cmvDotTV.setText(constants.checkNullString(itemsList.get(position).getTruckEquipmentNo()));
 
-        holder.distanceAccDotTV.setText(constants.checkNullString(itemsList.get(position).getDistanceInKM()));
-        //holder.hrsAccDotTV.setText(itemsList.get(position).getH);
-        holder.distanceTotalDotTV.setText(constants.checkNullString(itemsList.get(position).getTotalEngineHours()) );
+        holder.distanceAccDotTV.setText(constants.checkNullString(itemsList.get(position).getAccumulatedVehicleMiles()));
+        holder.hrsAccDotTV.setText(itemsList.get(position).getAccumulatedEngineHours());
+        holder.distanceTotalDotTV.setText(constants.checkNullString(itemsList.get(position).getTotalVehicleKM()) );
 
         holder.recStatusDotTV.setText(""+itemsList.get(position).getRecordStatus());
         holder.recOriginDotTV.setText(itemsList.get(position).getRecordOrigin());
         holder.seqNoDotTV.setText(""+itemsList.get(position).getHexaSeqNumber());
+
+        holder.distanceCordDotTV.setText(""+itemsList.get(position).getDistanceSinceLastValidCord());
+        holder.latLongDotTV.setText(""+itemsList.get(position).getGPSLatitude() + ", " + itemsList.get(position).getGPSLongitude());
+        holder.geoLocDotTV.setText(""+itemsList.get(position).getAnnotation());
+
 
 
         // Set text style normal
@@ -141,6 +149,25 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
         constants.setTextStyleNormal(holder.recOriginDotTV);
         constants.setTextStyleNormal(holder.seqNoDotTV);
 
+        constants.setTextStyleNormal(holder.distanceCordDotTV);
+        constants.setTextStyleNormal(holder.latLongDotTV);
+        constants.setTextStyleNormal(holder.geoLocDotTV);
+
+
+        // set Marque on view
+        constants.setMarqueonView(holder.geoLocDotTV);
+        constants.setMarqueonView(holder.latLongDotTV);
+        constants.setMarqueonView(holder.cmvDotTV);
+        constants.setMarqueonView(holder.dateTimeDotTV);
+        constants.setMarqueonView(holder.eventDotTV);
+        constants.setMarqueonView(holder.distanceAccDotTV);
+        constants.setMarqueonView(holder.hrsAccDotTV);
+        constants.setMarqueonView(holder.distanceTotalDotTV);
+        constants.setMarqueonView(holder.recStatusDotTV);
+        constants.setMarqueonView(holder.recOriginDotTV);
+        constants.setMarqueonView(holder.seqNoDotTV);
+        constants.setMarqueonView(holder.distanceCordDotTV);
+
 
         return convertView;
     }
@@ -148,7 +175,7 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView dateTimeDotTV, eventDotTV, cmvDotTV, distanceAccDotTV, hrsAccDotTV, distanceTotalDotTV, recStatusDotTV, recOriginDotTV, seqNoDotTV;
-        TextView dateTimeDiffTV;
+        TextView dateTimeDiffTV, distanceCordDotTV, latLongDotTV, geoLocDotTV;
         LinearLayout dutyStatusDotLay;
 
     }

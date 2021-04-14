@@ -70,9 +70,8 @@ public class Slidingmenufunctions implements OnClickListener {
 	EldFragment eldFragment;
 	SlidingMenu menu;
 	Context context;
-	public static TextView usernameTV;
+	public static TextView usernameTV, invisibleRefreshAdapterEvent;
 	private TextView appVersionHome;
-	//public TextView invisibleViewEvent;
 	ListView menuListView;
 
 	public static LinearLayout driversLayout;
@@ -122,7 +121,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 		appVersionHome	 = (TextView)       menu.findViewById(R.id.appVersionHome);
 		usernameTV 		 = (TextView)       menu.findViewById(R.id.usernameTV);
-	//	invisibleViewEvent= (TextView)       menu.findViewById(R.id.invisibleViewEvent);
+		invisibleRefreshAdapterEvent= (TextView)       menu.findViewById(R.id.invisibleViewEvent);
 
 		driversLayout	 = (LinearLayout)   menu.findViewById(R.id.driversLayout);
 		menuListView 	 = (ListView)		menu.findViewById(R.id.menuListView);
@@ -162,7 +161,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 		MainDriverBtn.setOnClickListener(this);
 		CoDriverBtn.setOnClickListener(this);
-		//invisibleViewEvent.setOnClickListener(this);
+		invisibleRefreshAdapterEvent.setOnClickListener(this);
 
 	}
 
@@ -332,8 +331,9 @@ public class Slidingmenufunctions implements OnClickListener {
 
 				certifyLogAlert = alertDialogBuilder.create();
 				vectorDialogs.add(certifyLogAlert);
-				certifyLogAlert.show();
-
+				if(context != null) {
+					certifyLogAlert.show();
+				}
 
 
 		}
@@ -350,8 +350,10 @@ public class Slidingmenufunctions implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		
-		
-		menu.showContent();
+		if(v.getId() != R.id.invisibleViewEvent){
+			menu.showContent();
+		}
+
 
 		switch (v.getId()) {
 
@@ -391,10 +393,10 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 
-			/*case R.id.invisibleViewEvent:
+			case R.id.invisibleViewEvent:
 				setMenuAdapter();
 				break;
-*/
+
 
 		}
 
@@ -403,10 +405,14 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void setMenuAdapter(){
 		try {
+			//View c = menuListView.getChildAt(0);
+			//int scrolly = -c.getTop() + menuListView.getFirstVisiblePosition() * c.getHeight();
+			int index = menuListView.getFirstVisiblePosition();
 
 			menuAdapter = new SlideMenuAdapter(context, TabAct.menuList, DriverType);
 			menuListView.setAdapter(menuAdapter);
 			menuAdapter.notifyDataSetChanged();
+			menuListView.smoothScrollToPosition(index);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -474,9 +480,9 @@ public class Slidingmenufunctions implements OnClickListener {
 
 			}
 		});
-
-		picker.show();
-
+		if(context != null) {
+			picker.show();
+		}
 
 	}
 
@@ -484,15 +490,17 @@ public class Slidingmenufunctions implements OnClickListener {
 	private void callLogoutApi(){
 		if(Globally.isWifiOrMobileDataEnabled(context) ) {
 
-			DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
-			dialog.show();
+			DriverId = Integer.valueOf(SharedPref.getDriverId(context));
+			if (context != null) {
+				dialog.show();
 
-			JSONArray driverLogArray = GetDriversSavedData();
-			if(driverLogArray.length() == 0){
-				LogoutUser(SharedPref.getDriverId(context));
-			}else{
-				SaveDataToServer(driverLogArray);
+				JSONArray driverLogArray = GetDriversSavedData();
+				if (driverLogArray.length() == 0) {
+					LogoutUser(SharedPref.getDriverId(context));
+				} else {
+					SaveDataToServer(driverLogArray);
 
+				}
 			}
 		}else{
 			Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
@@ -650,12 +658,14 @@ public class Slidingmenufunctions implements OnClickListener {
 		CoDriverName = DriverConst.GetCoDriverLoginDetails( DriverConst.CoUserName, context);
 		CoDriverPass = DriverConst.GetCoDriverLoginDetails( DriverConst.CoPasssword, context);
 
-		loginDialog = new LoginDialog(context ,
-				userType,
-				"certify",
-				MainDriverName,
-				CoDriverName, new LoginListener());
-		loginDialog.show();
+		if(context != null) {
+			loginDialog = new LoginDialog(context,
+					userType,
+					"certify",
+					MainDriverName,
+					CoDriverName, new LoginListener());
+			loginDialog.show();
+		}
 	}
 
 
@@ -785,8 +795,8 @@ public class Slidingmenufunctions implements OnClickListener {
 				params.put(ConstantsKeys.CompanyId, DriverCompanyId);
 				params.put(ConstantsKeys.VIN, VIN);
 				params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(context));
-				params.put(ConstantsKeys.EngineHours, sharedPref.getObdEngineHours(context));
-				params.put(ConstantsKeys.CrntOdodmeter, sharedPref.getHighPrecisionOdometer(context));
+				params.put(ConstantsKeys.EngineHours,  sharedPref.getObdEngineHours(context));
+				params.put(ConstantsKeys.CrntOdodmeter, constants.meterToKm(sharedPref.getHighPrecisionOdometer(context)));
 
 				return params;
 			}

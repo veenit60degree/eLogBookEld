@@ -53,6 +53,7 @@ public class ConstantsKeys {
     public static String Truck              = "Truck";
     public static String Trailor            = "Trailor";
     public static String UserName           = "UserName";
+    public static String DutyStatus         = "DutyStatus";
 
     public static String rulesVersion       = "rulesVersion";
     public static String ChkDateTime        = "ChkDateTime";
@@ -434,6 +435,7 @@ public class ConstantsKeys {
     public static String IsCycleRequest                 = "IsCycleRequest";
     public static String IsCycleRequestCo               = "IsCycleRequestCo";
 
+    public static String IsIgnitionOn                   = "IsIgnitionOn";
     public static String GeoLocation                    = "GeoLocation";
     public static String StatusName                     = "StatusName";
     public static String cycleRequests                  = "cycleRequests";

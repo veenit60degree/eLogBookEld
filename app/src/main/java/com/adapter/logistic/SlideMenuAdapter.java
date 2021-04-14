@@ -60,9 +60,14 @@ public class SlideMenuAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        //return arg0;
-        return getItem(position).hashCode();
+        //
+        if(menuList.size() > position) {
+            return getItem(position).hashCode();
+        }else{
+            return position;
+        }
     }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -88,71 +93,71 @@ public class SlideMenuAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-
-        holder.menuTitleTxtView.setText(menuList.get(position).getTitle());
-        holder.menuImgView.setImageResource(menuList.get(position).getIcon());
-
-
-        int badgeCount = constants.getPendingNotifications(DriverType, notificationPref , coNotificationPref, context);
-
-        int currentTab = TabAct.host.getCurrentTab();
-        if(currentTab == menuList.get(position).getStatus()){
-            holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.white_hover));
-            holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.color_eld_theme), android.graphics.PorterDuff.Mode.MULTIPLY);
-            holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
-        }else{
-            holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
-            holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.slide_menu_default), android.graphics.PorterDuff.Mode.MULTIPLY);
-            holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.gray_unidenfied));
-
-            if(menuList.get(position).getStatus() == Constants.VERSION){
-                holder.menuItemLay.setVisibility(View.GONE);
-                holder.appVerTxtView.setVisibility(View.VISIBLE);
-                String[] versionArray = menuList.get(position).getTitle().split(",");
-                holder.appVerTxtView.setText(versionArray[0] + "\n" + versionArray[1]);
-            }
-        }
+        if(menuList.size() > position) {
+            holder.menuTitleTxtView.setText(menuList.get(position).getTitle());
+            holder.menuImgView.setImageResource(menuList.get(position).getIcon());
 
 
-        if(menuList.get(position).getStatus() == Constants.NOTIFICATION_HISTORY){
-            if(badgeCount > 0){
-                holder.menuBadgeTxtView.setVisibility(View.VISIBLE);
-                holder.menuBadgeTxtView.setText(""+badgeCount);
-            }else{
-                boolean isCycleRequest;
-                if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-                    isCycleRequest = SharedPref.IsCycleRequestMain(context);
-                }else{
-                    isCycleRequest = SharedPref.IsCycleRequestCo(context);
+            int badgeCount = constants.getPendingNotifications(DriverType, notificationPref, coNotificationPref, context);
+
+            int currentTab = TabAct.host.getCurrentTab();
+            if (currentTab == menuList.get(position).getStatus()) {
+                holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.white_hover));
+                holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.color_eld_theme), android.graphics.PorterDuff.Mode.MULTIPLY);
+                holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
+            } else {
+                holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
+                holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.slide_menu_default), android.graphics.PorterDuff.Mode.MULTIPLY);
+                holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.gray_unidenfied));
+
+                if (menuList.get(position).getStatus() == Constants.VERSION) {
+                    holder.menuItemLay.setVisibility(View.GONE);
+                    holder.appVerTxtView.setVisibility(View.VISIBLE);
+                    String[] versionArray = menuList.get(position).getTitle().split(",");
+                    holder.appVerTxtView.setText(versionArray[0] + "\n" + versionArray[1]);
                 }
+            }
 
-                if(isCycleRequest){
+
+            if (menuList.get(position).getStatus() == Constants.NOTIFICATION_HISTORY) {
+                if (badgeCount > 0) {
                     holder.menuBadgeTxtView.setVisibility(View.VISIBLE);
-                    holder.menuBadgeTxtView.setText("1");
-                }else {
-                    holder.menuBadgeTxtView.setVisibility(View.GONE);
+                    holder.menuBadgeTxtView.setText("" + badgeCount);
+                } else {
+                    boolean isCycleRequest;
+                    if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+                        isCycleRequest = SharedPref.IsCycleRequestMain(context);
+                    } else {
+                        isCycleRequest = SharedPref.IsCycleRequestCo(context);
+                    }
+
+                    if (isCycleRequest) {
+                        holder.menuBadgeTxtView.setVisibility(View.VISIBLE);
+                        holder.menuBadgeTxtView.setText("1");
+                    } else {
+                        holder.menuBadgeTxtView.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+
+            if (menuList.get(position).getStatus() == Constants.DATA_MALFUNCTION) {
+                if (SharedPref.isMalfunctionOccur(context) || SharedPref.isDiagnosticOccur(context) ||
+                        SharedPref.isLocMalfunctionOccur(context)) {
+                    holder.menuErrorImgView.setVisibility(View.VISIBLE);
+                } else {
+                    holder.menuErrorImgView.setVisibility(View.GONE);
+                }
+            }
+
+            if (menuList.get(position).getStatus() == Constants.UNIDENTIFIED_RECORD) {
+                if (SharedPref.isUnidentifiedOccur(context)) {
+                    holder.menuErrorImgView.setVisibility(View.VISIBLE);
+                } else {
+                    holder.menuErrorImgView.setVisibility(View.GONE);
                 }
             }
         }
-
-
-        if(menuList.get(position).getStatus() == Constants.DATA_MALFUNCTION){
-            if(SharedPref.isMalfunctionOccur(context) || SharedPref.isDiagnosticOccur(context) ||
-                    SharedPref.isLocMalfunctionOccur(context)){
-                  holder.menuErrorImgView.setVisibility(View.VISIBLE);
-            }else{
-                holder.menuErrorImgView.setVisibility(View.GONE);
-            }
-        }
-
-        if(menuList.get(position).getStatus() == Constants.UNIDENTIFIED_RECORD){
-            if(SharedPref.isUnidentifiedOccur(context)){
-                holder.menuErrorImgView.setVisibility(View.VISIBLE);
-            }else{
-                holder.menuErrorImgView.setVisibility(View.GONE);
-            }
-        }
-
 
         return convertView;
     }

@@ -661,6 +661,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
         if (!IsAOBRD || IsAOBRDAutomatic) {
+            Constants.isEldHome = false;
             Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 getActivity().startForegroundService(Globally.serviceIntent);

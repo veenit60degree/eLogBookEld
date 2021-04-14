@@ -40,7 +40,7 @@
         android:id="@+id/dateDotTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/date_date"
+        android:text="@string/date_and_time"
         android:textStyle="bold"
         android:paddingLeft="@dimen/margin_short_5"
         android:paddingRight="@dimen/margin_short_5"

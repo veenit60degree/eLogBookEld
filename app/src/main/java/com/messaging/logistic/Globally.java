@@ -342,8 +342,9 @@ public class Globally {
 				}
 			});
 			mSnackBar.setActionTextColor(Color.WHITE);
-			mSnackBar.show();
-
+			if(context != null) {
+				mSnackBar.show();
+			}
 
 		}catch (Exception e){
 			e.printStackTrace();
@@ -393,8 +394,9 @@ public class Globally {
 			}
 		});
 
-		AlertPicker.show();
-
+		if(activityReference != null) {
+			AlertPicker.show();
+		}
 
 		if(notification == Constants.PersonalDrivingExceed){
 
@@ -1760,7 +1762,9 @@ public class Globally {
 						alertDialog.dismiss();
 
 					alertDialog = alertDialogBuilder.create();
-					alertDialog.show();
+					if(context != null) {
+						alertDialog.show();
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1788,7 +1792,9 @@ public class Globally {
 				alertDialog.dismiss();
 
 			alertDialog = alertDialogBuilder.create();
-			alertDialog.show();
+			if(context != null) {
+				alertDialog.show();
+			}
 		}catch (Exception e){e.printStackTrace();}
 	}
 
@@ -1809,7 +1815,9 @@ public class Globally {
 			});
 
 			// Showing Alert Message
-			alertDialog.show();
+			if(context != null) {
+				alertDialog.show();
+			}
 		}catch (Exception e){e.printStackTrace();}
 	}
 
@@ -1831,7 +1839,9 @@ public class Globally {
 			});
 
 			// Showing Alert Message
-			alertDialog.show();
+			if(context != null) {
+				alertDialog.show();
+			}
 		}catch (Exception e){e.printStackTrace();}
 	}
 
@@ -1851,7 +1861,9 @@ public class Globally {
 			});
 
 			// Showing Alert Message
-			alertDialog.show();
+			if(context != null) {
+				alertDialog.show();
+			}
 		}catch (Exception e){e.printStackTrace();}
 	}
 

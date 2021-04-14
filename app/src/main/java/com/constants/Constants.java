@@ -21,6 +21,7 @@ import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -204,7 +205,7 @@ public class Constants {
     public static boolean IsCtPatUploading = false;
     public static boolean IsAlsServerResponding = true;
     public static boolean isClaim   = false;
-    //public static boolean isCycleRequestAlert   = false;
+    public static boolean isEldHome   = false;
 
     public static String DriverLogId = "";
     public static String IsStartingLocation = "";
@@ -995,6 +996,17 @@ public class Constants {
 
         return miles;
     }
+
+    public static String meterToKm(String odometer){
+        try {
+            double meter = Double.parseDouble(odometer);
+            odometer = ""+(meter * 0.001);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return odometer;
+    }
+
 
     public static int getDayDiff(String savedDate, String currentDate){
         int dayDiff = -1;
@@ -2790,6 +2802,17 @@ public class Constants {
         return dotLogList;
     }
 
+    public void setMarqueonView(final TextView textView){
+
+        textView.setHorizontallyScrolling(true);
+        textView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+        textView.setSingleLine(true);
+        textView.setMarqueeRepeatLimit(-1);
+        textView.setSelected(true);
+
+    }
+
+
     public List<UnAssignedVehicleModel> parseCanadaDotUnIdenfdVehList(JSONArray logArray){
 
         List<UnAssignedVehicleModel> dotLogList = new ArrayList<>();
@@ -2813,9 +2836,13 @@ public class Constants {
                         obj.getString(ConstantsKeys.StatusId),
 
                         obj.getBoolean(ConstantsKeys.IsIntermediateLog),
-                        obj.getString(ConstantsKeys.HexaSeqNumber)
+                        obj.getString(ConstantsKeys.HexaSeqNumber),
 
-                );
+                        obj.getString(ConstantsKeys.StartLocation),
+                        obj.getString(ConstantsKeys.EndLocation),
+                        obj.getString(ConstantsKeys.DutyStatus)
+
+                        );
 
                 dotLogList.add(dutyModel);
             }
@@ -3105,6 +3132,10 @@ public class Constants {
 
                 break;
 
+            case 2:
+                event = "INT";
+                break;
+
             case 3:
                 if (EventCode == 1)
                 {
@@ -3228,15 +3259,21 @@ public class Constants {
             case 21:
                 if (EventCode == 1)
                 {
-                event = "Cycle 1";
+                event = "Cycle 1 (7 days)";
                 }
                 else if (EventCode == 2)
                 {
-                    event = "Cycle 2";
+                    event = "Cycle 2 (14 days)";
+                } else if (EventCode == 3)
+                {
+                    event = "US (60/7)";
+                } else if (EventCode == 4)
+                {
+                    event = "US (70/8)";
                 }
                 else
                 {
-                    event = "United State";
+                    event = "US";
                 }
                 break;
 
@@ -3301,6 +3338,29 @@ public class Constants {
 
     }
 
+
+    public int minDiffMalfunction(String savedTime, Globally global, Context context){
+
+        int timeInMin = 0;
+        if(savedTime.length() > 10) {
+            try{
+                String timeStampStr = savedTime.replace(" ", "T");
+                DateTime savedDateTime = global.getDateTimeObj(timeStampStr, false);
+                DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
+
+                if(savedDateTime.isAfter(currentDateTime)){
+                    SharedPref.setMalfCallTime(global.GetCurrentDateTime(), context);
+                }
+                timeInMin = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+        return timeInMin;
+
+    }
 
 
     public int checkIntValue(int value){
@@ -3387,19 +3447,27 @@ public class Constants {
             int CycleRemainingMinutes   = checkIntValue((int) RulesObj.getCycleRemainingMinutes());
             int OnDutyRemainingMinutes  = checkIntValue((int) RemainingTimeObj.getOnDutyRemainingMinutes());
             int DriveRemainingMin       = checkIntValue((int) RemainingTimeObj.getDrivingRemainingMinutes());
+            int ShiftRemainingMin       = checkIntValue((int) RemainingTimeObj.getShiftRemainingMinutes());
 
             if(CycleRemainingMinutes < OnDutyRemainingMinutes){
                 OnDutyRemainingMinutes = CycleRemainingMinutes;
             }
 
-            String CycleRemaining          = addZeroForSingle(Global, CycleRemainingMinutes)  ;
-            String OnDutyRemaining         = addZeroForSingle(Global, OnDutyRemainingMinutes)  ;
-            String DriveRemaining          = addZeroForSingle(Global, DriveRemainingMin)  ;
+            if(ShiftRemainingMin < 0){
+                ShiftRemainingMin = 0;
+            }
 
-            finalCycleData = "<font color='#3F88C5'><b>"+context.getResources().getString(R.string.hos_limitation) + "</b><br/>" +
+
+            String CycleRemaining          = addZeroForSingle(Global, CycleRemainingMinutes) + ":" + addZeroForMinSingle(Global, CycleRemainingMinutes) ;
+            String OnDutyRemaining         = addZeroForSingle(Global, OnDutyRemainingMinutes) + ":" + addZeroForMinSingle(Global, OnDutyRemainingMinutes) ;
+            String DriveRemaining          = addZeroForSingle(Global, DriveRemainingMin) + ":" + addZeroForMinSingle(Global, DriveRemainingMin) ;
+            String ShiftRemaining          = addZeroForSingle(Global, ShiftRemainingMin) + ":" + addZeroForMinSingle(Global, ShiftRemainingMin) ;
+
+            finalCycleData = "<font color='#3F88C5'>" +
                     "<b>Cycle &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> :&nbsp;&nbsp; " + CycleRemaining + "<br/>" +
-                    "<b>Driving  &nbsp;&nbsp;</b> :&nbsp;&nbsp; " + DriveRemaining + "<br/>" +
-                    "<b>OnDuty   &nbsp;&nbsp;</b> :&nbsp;&nbsp; " + OnDutyRemaining + " </font>" ;
+                    "<b>Driving  &nbsp;&nbsp;</b>&nbsp;:&nbsp;&nbsp; " + DriveRemaining + "<br/>" +
+                    "<b>OnDuty   &nbsp;&nbsp;</b>&nbsp:&nbsp        " + OnDutyRemaining   + "<br/>" +
+                    "<b>Shift    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>&nbsp;:&nbsp  " + ShiftRemaining+ " </font>" ;
 
            // txtView.setText(Html.fromHtml(finalCycleData) );
 
@@ -3412,10 +3480,21 @@ public class Constants {
     }
 
 
+
+
     String addZeroForSingle(Globally Global, int min){
         String hours = "" +Global.HourFromMin(min);
         if(hours.length() == 1){
-            return "0" + hours + " Hr";
+            return "0" + hours ;
+        }else{
+            return hours;
+        }
+    }
+
+    String addZeroForMinSingle(Globally Global, int min){
+        String hours = "" +Global.MinFromHourOnly(min);
+        if(hours.length() == 1){
+            return "0" + hours + " Hrs";
         }else{
             return hours + " Hrs";
         }

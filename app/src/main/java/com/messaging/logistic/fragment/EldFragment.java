@@ -19,7 +19,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 
 import android.text.Html;
@@ -132,7 +132,7 @@ import models.RulesResponseObject;
 import obdDecoder.Decoder;
 
 
-public class EldFragment extends Fragment implements View.OnClickListener{
+public class EldFragment extends Fragment implements View.OnClickListener {
 
     View rootView, loginDialogView;
 
@@ -155,7 +155,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     TextView DriverComNameTV, coDriverComNameTV, remainingTimeTopTV, currentCycleTxtView, refreshTitleTV;
     TextView asPerShiftOnDutyTV, asPerShiftDrivingTV, asPerDateSleepTV, asPerDateOffDutyTV, malfunctionTV;
 
-    boolean IsRefreshedClick = false, IsAOBRDAutomatic = false, IsAOBRD = false, isNewDateStart = true, isYardBtnClick = false;
+    boolean IsRefreshedClick = false, IsAOBRDAutomatic = false, IsAOBRD = false, isNewDateStart = true, isYardBtnClick = false, isFragmentAdd = false;
     boolean isFirst = true, isViolation = false, isCertifyLog = false, IsSaveOperationInProgress = false, isDrivingCalled = false, IsDOT = false;
     boolean IsAddressUpdate = false, is18DaysLogApiCalled = false, isTimeDefault = true;
     public static boolean IsOdometerReading = false, IsPopupDismissed = false;
@@ -555,16 +555,16 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                 if (isChecked && buttonView.isPressed()) {
 
-                    if(constants.isActionAllowed(getActivity())) {
+                  //  if(constants.isActionAllowed(getActivity())) {
                         if (sharedPref.IsDOT(getActivity()) == false) {
                             dotWithData();
                         } else {
                             sharedPref.SetDOTStatus(false, getActivity());
                         }
-                    }else{
+                   /* }else{
                         dotSwitchButton.setChecked(false);
                         Global.EldScreenToast(settingsMenuBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
-                    }
+                    }*/
 
                 } else {
                     dotSwitchButton.setChecked(false);
@@ -601,12 +601,12 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
         /*========= Start Service =============*/
+        Constants.isEldHome = false;
         Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getActivity().startForegroundService(serviceIntent);
         }
         getActivity().startService(serviceIntent);
-
 
 
         IsDOT = sharedPref.IsDOT(getActivity());
@@ -651,7 +651,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             isCertifySignPending( Constants.IsHomePageOnCreate);
         }
         Constants.IsHomePageOnCreate = false;
-        emptyTrailerNoAnim.setAnimationListener(new Animation.AnimationListener() {
+
+
+     emptyTrailerNoAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
             }
@@ -659,14 +661,16 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onAnimationEnd(Animation animation) {
 
-                getActivity().runOnUiThread(new Runnable(){
-                    public void run() {
+                try {
+                    if (getActivity() != null) {
                         if (TrailorNumber.trim().length() == 0)
                             trailorLayout.startAnimation(emptyTrailerNoAnim);
                         else
                             emptyTrailerNoAnim.cancel();
                     }
-                });
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -684,10 +688,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onAnimationEnd(Animation animation) {
 
-                if (IsOdometerReading)
-                    odometerLay.startAnimation(OdometerFaceView);
-                else
-                    OdometerFaceView.cancel();
+                try {
+                    if (getActivity() != null) {
+                        if (IsOdometerReading)
+                            odometerLay.startAnimation(OdometerFaceView);
+                        else
+                            OdometerFaceView.cancel();
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
@@ -706,8 +717,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 try {
                     getExceptionStatus();
 
-                    getActivity().runOnUiThread(new Runnable(){
-                        public void run() {
+                    if(getActivity() != null){
                             if (isHaulExcptn || isAdverseExcptn) {
                                 excpnEnabledTxtVw.setAlpha(1f);
                                 excpnEnabledTxtVw.startAnimation(exceptionFaceView);
@@ -716,9 +726,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                                 excpnEnabledTxtVw.setVisibility(View.GONE);
                                 excpnEnabledTxtVw.setAlpha(0f);
                             }
-                        }
-                    });
-
+                     }
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -738,19 +746,15 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onAnimationEnd(Animation animation) {
                 try {
-                    getActivity().runOnUiThread(new Runnable(){
-                        public void run() {
-                            if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE) {
-                                connectionStatusAnimation.cancel();
-                                connectionStatusImgView.setAlpha(0f);
-                            } else {
-                                connectionStatusImgView.setAlpha(1f);
-                                connectionStatusImgView.startAnimation(connectionStatusAnimation);
-                            }
+                    if(getActivity() != null) {
+                        if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE) {
+                            connectionStatusAnimation.cancel();
+                            connectionStatusImgView.setAlpha(0f);
+                        } else {
+                            connectionStatusImgView.setAlpha(1f);
+                            connectionStatusImgView.startAnimation(connectionStatusAnimation);
                         }
-                    });
-
-
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -769,8 +773,8 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onAnimationEnd(Animation animation) {
 
-                getActivity().runOnUiThread(new Runnable(){
-                    public void run() {
+                try {
+                    if (getActivity() != null) {
                         if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity()) ||
                                 constants.isAllowLocMalfunctionEvent(getActivity()) ) {
                             malfunctionLay.startAnimation(editLogAnimation);
@@ -779,8 +783,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             malfunctionLay.setVisibility(View.GONE);
                         }
                     }
-                });
-
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -950,6 +955,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         }
      //
 
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter(ConstantsKeys.IsIgnitionOn));
+
+
     }
 
 
@@ -1084,8 +1092,10 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 if (confirmationDialog != null && confirmationDialog.isShowing()){
                     //  confirmationDialog.dismiss();
                 }else{
-                    confirmationDialog = new ConfirmationDialog(getActivity(), Constants.AlertUnidentified, new ConfirmListener());
-                    confirmationDialog.show();
+                    if(getActivity() != null) {
+                        confirmationDialog = new ConfirmationDialog(getActivity(), Constants.AlertUnidentified, new ConfirmListener());
+                        confirmationDialog.show();
+                    }
                 }
 
 
@@ -1097,26 +1107,32 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
     void showTimeZoneAlert(boolean isConnected, boolean isTimeZoneValid, boolean isTimeValid){
-        if (DRIVER_ID.length() > 0) {
+        try {
+            if(getActivity() != null) {
+                if (DRIVER_ID.length() > 0) {
 
-            if (sharedPref.GetNewLoginStatus(getActivity())) {
-                loadOnCreateView(isConnected);
-            }
+                    if (sharedPref.GetNewLoginStatus(getActivity())) {
+                        loadOnCreateView(isConnected);
+                    }
 
-            try {
-                if (timeZoneDialog != null && timeZoneDialog.isShowing()) {
-                    timeZoneDialog.dismiss();
+                    try {
+                        if (timeZoneDialog != null && timeZoneDialog.isShowing()) {
+                            timeZoneDialog.dismiss();
+                        }
+
+                        timeZoneDialog = new TimeZoneDialog(getActivity(), isTimeZoneValid, isTimeValid);
+                        timeZoneDialog.show();
+                    } catch (final IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    LogoutUser();
                 }
-
-                timeZoneDialog = new TimeZoneDialog(getActivity(), isTimeZoneValid, isTimeValid);
-                timeZoneDialog.show();
-            } catch (final IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (final Exception e) {
-                e.printStackTrace();
             }
-        }else {
-            LogoutUser();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -1342,6 +1358,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             e.printStackTrace();
         }
     }
+
 
 
     private class MyTimerTask extends TimerTask {
@@ -1973,27 +1990,32 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     void shareDriverLogDialog() {
 
-        if (!IsAOBRD || IsAOBRDAutomatic) {
-            Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                getActivity().startForegroundService(Globally.serviceIntent);
+        if(getActivity() != null) {
+            if (!IsAOBRD || IsAOBRDAutomatic) {
+                Constants.isEldHome = false;
+                Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    getActivity().startForegroundService(Globally.serviceIntent);
+                }
+                getActivity().startService(Globally.serviceIntent);
             }
-            getActivity().startService(Globally.serviceIntent);
-        }
 
-        try {
-            if (shareDialog != null && shareDialog.isShowing()) {
-                shareDialog.dismiss();
+            try {
+                if (shareDialog != null && shareDialog.isShowing()) {
+                    shareDialog.dismiss();
+                }
+                shareDialog = new ShareDriverLogDialog(getActivity(), getActivity(), DRIVER_ID, DeviceId, CurrentCycleId,
+                        IsAOBRD, StateArrayList, StateList);
+                shareDialog.show();
+            } catch (final IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (final Exception e) {
+                e.printStackTrace();
             }
-            shareDialog = new ShareDriverLogDialog(getActivity(), getActivity(), DRIVER_ID, DeviceId, CurrentCycleId,
-                    IsAOBRD, StateArrayList, StateList);
-            shareDialog.show();
-        } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (final Exception e) {
-            e.printStackTrace();
         }
     }
+
+
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -2060,21 +2082,26 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
             case R.id.trailorLayout:
-
-                if(constants.isActionAllowed(getActivity())){
-                    if (Global.isConnected(getActivity())) {
-                        if (DRIVER_JOB_STATUS == DRIVING) {
-                            Global.EldScreenToast(OnDutyBtn, ConstantsEnum.TRAILER_CHANGE, getResources().getColor(R.color.colorVoilation));
+                try{
+                    if(getActivity() != null){
+                      if(constants.isActionAllowed(getActivity())){
+                        if (Global.isConnected(getActivity())) {
+                            if (DRIVER_JOB_STATUS == DRIVING) {
+                                Global.EldScreenToast(OnDutyBtn, ConstantsEnum.TRAILER_CHANGE, getResources().getColor(R.color.colorVoilation));
+                            } else {
+                                trailerDialog = new TrailorDialog(getActivity(), "trailor", false, TrailorNumber, 0, false,
+                                        Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
+                                trailerDialog.show();
+                            }
                         } else {
-                            trailerDialog = new TrailorDialog(getActivity(), "trailor", false, TrailorNumber, 0, false,
-                                    Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
-                            trailerDialog.show();
+                            Globally.EldScreenToast(truckLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                         }
                     } else {
-                        Globally.EldScreenToast(truckLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                        Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                     }
-                } else {
-                    Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
+                }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
 
                 break;
@@ -2109,12 +2136,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 break;*/
 
             case R.id.certifyLogBtn:
-                if(constants.isActionAllowed(getActivity())){
-                    isCertifyLog = true;
-                    ShowDateDialog();
+                isCertifyLog = true;
+                ShowDateDialog();
+
+             /*   if(constants.isActionAllowed(getActivity())){
                 } else {
                     Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
-                }
+                }*/
 
                 break;
 
@@ -2274,7 +2302,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
             case R.id.onDutyLay:
                 MalfunctionDefinition = "";
-                if(constants.isActionAllowed(getActivity())){
+               if(constants.isActionAllowed(getActivity())){
                     isYardBtnClick = false;
                     OnDutyBtnClick();
                 } else {
@@ -2294,7 +2322,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 MalfunctionDefinition = "";
                 if(constants.isActionAllowed(getActivity())){
                     SleeperBtnClick();
-                } else {
+               } else {
                     Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                 }
                 break;
@@ -2307,6 +2335,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 } else {
                     Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                 }
+
                 break;
 
 
@@ -2326,7 +2355,9 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.resetTimerBtn:
+                isFragmentAdd = true;
                 moveToCertifyWithPopup();
+                isFragmentAdd = false;
                 break;
 
         }
@@ -2776,6 +2807,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     private void restartLocationService(){
         if (Global.LATITUDE.equals("0.0") || Global.LATITUDE.equals("") ){
+            Constants.isEldHome = false;
             Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 getActivity().startForegroundService(Globally.serviceIntent);
@@ -2789,15 +2821,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void showShippingDialog(boolean IsShippingCleared){
         try {
-            progressBar.setVisibility(View.GONE);
 
-            if (shippingDocDialog != null && shippingDocDialog.isShowing()) {
-                shippingDocDialog.dismiss();
+            if(getActivity() != null) {
+                progressBar.setVisibility(View.GONE);
+
+                if (shippingDocDialog != null && shippingDocDialog.isShowing()) {
+                    shippingDocDialog.dismiss();
+                }
+
+                shippingDocDialog = new ShippingDocDialog(getActivity(), DRIVER_ID, DeviceId, SelectedDate, dbHelper, DriverType, IsShippingCleared);
+                shippingDocDialog.show();
             }
-
-            shippingDocDialog = new ShippingDocDialog(getActivity(), DRIVER_ID, DeviceId, SelectedDate, dbHelper, DriverType, IsShippingCleared);
-            shippingDocDialog.show();
-
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();
         } catch (final Exception e) {
@@ -2808,11 +2842,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     void ShowDateDialog() {
         try {
-            if (dateDialog != null && dateDialog.isShowing())
-                dateDialog.dismiss();
+            if(getActivity() != null) {
+                if (dateDialog != null && dateDialog.isShowing())
+                    dateDialog.dismiss();
 
-            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, Global.GetCurrentDeviceDate(), new DateListener());
-            dateDialog.show();
+                dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, Global.GetCurrentDeviceDate(), new DateListener());
+                dateDialog.show();
+            }
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();
         } catch (final Exception e) {
@@ -2822,11 +2858,13 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     void RemainingTimeDialog(int status, String currentStatus, String time) {
         try {
-            if (remainingDialog != null && remainingDialog.isShowing()) {
-                remainingDialog.dismiss();
+            if(getActivity() != null) {
+                if (remainingDialog != null && remainingDialog.isShowing()) {
+                    remainingDialog.dismiss();
+                }
+                remainingDialog = new RemainingTimeDialog(getActivity(), status, currentStatus, time, new RemainingTimeListener());
+                remainingDialog.show();
             }
-            remainingDialog = new RemainingTimeDialog(getActivity(), status, currentStatus, time, new RemainingTimeListener());
-            remainingDialog.show();
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();
         } catch (final Exception e) {
@@ -2984,17 +3022,21 @@ public class EldFragment extends Fragment implements View.OnClickListener{
             }
 
             try {
-                if (trailerDialog != null || trailerDialog.isShowing())
-                    trailerDialog.dismiss();
+                if(getActivity() != null) {
+
+                        if (trailerDialog != null && trailerDialog.isShowing())
+                            trailerDialog.dismiss();
+
+                    trailerDialog = new TrailorDialog(getActivity(), "on_duty", isYardBtnClick, TrailorNumber,
+                            0, false, Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
+                    trailerDialog.show();
+                }
             } catch (final IllegalArgumentException e) {
                 e.printStackTrace();
             } catch (final Exception e) {
                 e.printStackTrace();
             }
 
-            trailerDialog = new TrailorDialog(getActivity(), "on_duty", isYardBtnClick, TrailorNumber,
-                    0, false, Global.onDutyRemarks,  0, dbHelper, new TrailorListener());
-            trailerDialog.show();
 
         } else {
             Global.EldScreenToast(OnDutyBtn, "Please add Truck before start On Duty.", getResources().getColor(R.color.colorPrimary));
@@ -3122,17 +3164,17 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
     void OpenLocationDialog(int JobType, int OldSelectedStatePos, boolean isMalfunction) {
 
-        //   new GetLocAddressAsync().execute(JobType);
-
         isRemainingView = false;
         try {
-            if (StateArrayList.size() > 0) {
-                if (driverLocationDialog != null && driverLocationDialog.isShowing()) {
-                    driverLocationDialog.dismiss();
+            if(getActivity() != null) {
+                if (StateArrayList.size() > 0) {
+                    if (driverLocationDialog != null && driverLocationDialog.isShowing()) {
+                        driverLocationDialog.dismiss();
+                    }
+                    driverLocationDialog = new DriverLocationDialog(getActivity(), City, State, OldSelectedStatePos, JobType, isMalfunction, OnDutyBtn,
+                            StateArrayList, new DriverLocationListener());
+                    driverLocationDialog.show();
                 }
-                driverLocationDialog = new DriverLocationDialog(getActivity(), City, State, OldSelectedStatePos, JobType, isMalfunction, OnDutyBtn,
-                        StateArrayList, new DriverLocationListener());
-                driverLocationDialog.show();
             }
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();
@@ -3163,7 +3205,28 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         Constants.IS_ACTIVE_ELD = false;
         exceptionFaceView.cancel();
         clearTimer();
+
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(progressReceiver);
+
     }
+
+
+
+    private BroadcastReceiver progressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            boolean IsIgnitionOn = intent.getBooleanExtra(ConstantsKeys.IsIgnitionOn, false);
+            if(IsIgnitionOn){
+                if (sharedPref.GetNewLoginStatus(getActivity()) == false) {
+                    boolean isPopupShown = sharedPref.GetTruckStartLoginStatus(getActivity());
+                    if (isPopupShown && ( isPersonal.equals("true") || (DRIVER_JOB_STATUS == ON_DUTY && isYardMove) ) ) {
+                        YardMovePersonalStatusAlert(isYardMove);
+                    }
+                }
+            }
+        }
+    };
 
 
     /*===== Get Driver Jobs in Array List======= */
@@ -3700,7 +3763,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                 FragmentManager fragManager = getActivity().getSupportFragmentManager();
                 initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, dayOfMonth, isCertifyLog,
                         VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
-                        Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), fragManager);
+                        Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), isFragmentAdd, fragManager);
             } catch (final Exception e) {
                 e.printStackTrace();
             }
@@ -3716,7 +3779,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         public void CancelReady() {
 
             try {
-                if (trailerDialog != null || trailerDialog.isShowing())
+                if (trailerDialog != null && trailerDialog.isShowing())
                     trailerDialog.dismiss();
             } catch (final IllegalArgumentException e) {
                 e.printStackTrace();
@@ -3921,7 +3984,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
                                 try {
-                                    if (trailerDialog != null || trailerDialog.isShowing())
+                                    if (trailerDialog != null && trailerDialog.isShowing())
                                         trailerDialog.dismiss();
 
 
@@ -3954,7 +4017,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
                     try {
-                        if (trailerDialog != null || trailerDialog.isShowing())
+                        if (trailerDialog != null && trailerDialog.isShowing())
                             trailerDialog.dismiss();
                     } catch (final IllegalArgumentException e) {
                         e.printStackTrace();
@@ -3976,7 +4039,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     DrivingBtnClick();
 
                     try {
-                        if (trailerDialog != null || trailerDialog.isShowing())
+                        if (trailerDialog != null && trailerDialog.isShowing())
                             trailerDialog.dismiss();
                     } catch (final IllegalArgumentException e) {
                         e.printStackTrace();
@@ -4006,7 +4069,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
                         try {
-                            if (trailerDialog != null || trailerDialog.isShowing())
+                            if (trailerDialog != null && trailerDialog.isShowing())
                                 trailerDialog.dismiss();
                         } catch (final IllegalArgumentException e) {
                             e.printStackTrace();
@@ -4094,19 +4157,26 @@ public class EldFragment extends Fragment implements View.OnClickListener{
     private class VehicleLoginListener implements VehicleDialogLogin.VehicleLoginListener {
         @Override
         public void ChangeVehicleReady(String Title, int position, View view) {
-            if (!Title.equals(ConstantsEnum.StrTruckAttachedTxt)) {
-                if (Global.isConnected(getActivity())) {
-                    LoginTruckChange = "true";
-                    progressDialog.show();
-                    loginDialogView = view;
-                    VehicleBtnClick(Title, position);
-                } else {
-                    Global.EldScreenToast(view, Global.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
-                }
 
-            } else {
-                Global.EldScreenToast(view, Title, getResources().getColor(R.color.colorVoilation));
-                getActivity().finish();
+            try{
+                if(getActivity() != null){
+                     if (!Title.equals(ConstantsEnum.StrTruckAttachedTxt)) {
+                        if (Global.isConnected(getActivity())) {
+                            LoginTruckChange = "true";
+                            progressDialog.show();
+                            loginDialogView = view;
+                            VehicleBtnClick(Title, position);
+                        } else {
+                            Global.EldScreenToast(view, Global.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                        }
+
+                    } else {
+                        Global.EldScreenToast(view, Title, getResources().getColor(R.color.colorVoilation));
+                        getActivity().finish();
+                    }
+                  }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
 
@@ -5682,6 +5752,14 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                         if (sharedPref.GetNewLoginStatus(getActivity())) {
                             sharedPref.SetNewLoginStatus(false, getActivity());
 
+                            Constants.isEldHome = true;
+                            Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+                            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                getActivity().startForegroundService(serviceIntent);
+                            }
+                            getActivity().startService(serviceIntent);
+
+
                             String updatePopupDate = sharedPref.GetUpdateAppDialogTime(getActivity());
                             if(!updatePopupDate.equals(SelectedDate)){
                                 TabAct.openUpdateDialogBtn.performClick();
@@ -5698,22 +5776,23 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                             } catch (final Exception e) {
                                 e.printStackTrace();
                             }
-                            Toast.makeText(getActivity(), "Updated successfully.", Toast.LENGTH_LONG).show();
-                            // ShowRecapDialog();
 
-                            if(isUnidentifiedAllowed() && isUnIdentifiedOccur && isUnIdentifiedAlert){
-                                try {
-                                    if (confirmationDialog != null && confirmationDialog.isShowing())
-                                        confirmationDialog.dismiss();
-                                    confirmationDialog = new ConfirmationDialog(getActivity(), Constants.AlertUnidentified, new ConfirmListener());
-                                    confirmationDialog.show();
-                                }catch (Exception e){
-                                    e.printStackTrace();
+                            if(getActivity() != null) {
+                                Toast.makeText(getActivity(), "Updated successfully.", Toast.LENGTH_LONG).show();
+                                if (isUnidentifiedAllowed() && isUnIdentifiedOccur && isUnIdentifiedAlert) {
+                                    try {
+                                        if (confirmationDialog != null && confirmationDialog.isShowing())
+                                            confirmationDialog.dismiss();
+                                        confirmationDialog = new ConfirmationDialog(getActivity(), Constants.AlertUnidentified, new ConfirmListener());
+                                        confirmationDialog.show();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    setExceptionView();
+                                    CalculateTimeInOffLine(false, false);
                                 }
-                            }else{
-                                CalculateTimeInOffLine(false, false);
                             }
-
 
                             GetNewsNotification();
                             GetReCertifyRecords();
@@ -6013,7 +6092,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                             }
 
-                            if(newsNotificationList.size() > 0) {
+                            if(newsNotificationList.size() > 0 && getActivity() != null) {
                                 NotificationNewsDialog newsDialog = new NotificationNewsDialog(getActivity(), newsNotificationList);
                                 newsDialog.show();
                             }
@@ -6362,11 +6441,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
                                     }
                                 } else {
-
-                                    trailerDialog = new TrailorDialog(getActivity(), constants.Personal, false,
-                                            TrailorNumber, 0, false, Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
-                                    trailerDialog.show();
-
+                                    if(getActivity() != null) {
+                                        trailerDialog = new TrailorDialog(getActivity(), constants.Personal, false,
+                                                TrailorNumber, 0, false, Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
+                                        trailerDialog.show();
+                                    }
 
                                 }
                             }
@@ -6381,10 +6460,11 @@ public class EldFragment extends Fragment implements View.OnClickListener{
                     }
                 });
 
-
-                saveJobAlertDialog = alertDialogBuilder.create();
-                vectorDialogs.add(saveJobAlertDialog);
-                saveJobAlertDialog.show();
+                if(getActivity() != null) {
+                    saveJobAlertDialog = alertDialogBuilder.create();
+                    vectorDialogs.add(saveJobAlertDialog);
+                    saveJobAlertDialog.show();
+                }
             }
         }catch (Exception e){}
         isDrivingCalled = false;
@@ -6398,69 +6478,75 @@ public class EldFragment extends Fragment implements View.OnClickListener{
         String certifyAlertTime = sharedPref.getCertifyAlertViewTime(getActivity());
         boolean isAlertAllowed = true;
 
-        if(certifyAlertTime.length() > 0){
-            DateTime savedDate = Global.getDateTimeObj(certifyAlertTime, false);
-            DateTime currentDate = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), false);
-            int dayDiff = Days.daysBetween(savedDate.toLocalDate(), currentDate.toLocalDate()).getDays();
-            if(dayDiff == 0){
-                int hourDiff = currentDate.getHourOfDay() - savedDate.getHourOfDay();
-                if(hourDiff < 4){
-                    isAlertAllowed = false;
+        try{
+            if(getActivity() != null){
+                if(certifyAlertTime.length() > 0){
+                    DateTime savedDate = Global.getDateTimeObj(certifyAlertTime, false);
+                    DateTime currentDate = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), false);
+                    int dayDiff = Days.daysBetween(savedDate.toLocalDate(), currentDate.toLocalDate()).getDays();
+                    if(dayDiff == 0){
+                        int hourDiff = currentDate.getHourOfDay() - savedDate.getHourOfDay();
+                        if(hourDiff < 4){
+                            isAlertAllowed = false;
+                        }
+                    }
                 }
-            }
-        }
 
-        if(isAlertAllowed && sharedPref.IsDOT(getActivity()) == false) {
-            if (certifyLogAlert != null && certifyLogAlert.isShowing()) {
-                Log.d("dialog", "dialog is showing");
-            } else {
+                if(isAlertAllowed && sharedPref.IsDOT(getActivity()) == false) {
+                    if (certifyLogAlert != null && certifyLogAlert.isShowing()) {
+                        Log.d("dialog", "dialog is showing");
+                    } else {
 
-                closeDialogs();
+                        closeDialogs();
 
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                alertDialogBuilder.setTitle(Html.fromHtml(title));
-                alertDialogBuilder.setMessage(Html.fromHtml(message));
-                alertDialogBuilder.setCancelable(false);
-                alertDialogBuilder.setPositiveButton("Agree",
-                        new DialogInterface.OnClickListener() {
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                        alertDialogBuilder.setTitle(Html.fromHtml(title));
+                        alertDialogBuilder.setMessage(Html.fromHtml(message));
+                        alertDialogBuilder.setCancelable(false);
+                        alertDialogBuilder.setPositiveButton("Agree",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int arg1) {
+                                        dialog.dismiss();
+
+                                        moveToCertifyWithPopup();
+
+                                    }
+                                });
+
+                        alertDialogBuilder.setNegativeButton("Not Ready", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int arg1) {
+                            public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
 
-                                moveToCertifyWithPopup();
+                                // call NotReady API
+                                if (Global.isConnected(getActivity())) {
+                                    params = new HashMap<String, String>();
+                                    params.put(ConstantsKeys.DriverId, DRIVER_ID);
+                                     params.put(ConstantsKeys.DeviceId, DeviceId );
+                                    params.put(ConstantsKeys.DriverName, nameTv.getText().toString() );
+                                     params.put(ConstantsKeys.CompanyId, DriverCompanyId );
+                                    params.put(ConstantsKeys.DriverTimeZoneName, DriverTimeZone );
+                                    params.put(ConstantsKeys.LogDateTime, Global.getCurrentDate() );
+
+                                    notReadyRequest.executeRequest(Request.Method.POST, APIs.SAVE_CERTIFY_SIGN_REJECTED_AUDIT , params, NotReady,
+                                            Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
+                                }
 
                             }
                         });
 
-                alertDialogBuilder.setNegativeButton("Not Ready", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
 
-                        // call NotReady API
-                        if (Global.isConnected(getActivity())) {
-                            params = new HashMap<String, String>();
-                            params.put(ConstantsKeys.DriverId, DRIVER_ID);
-                             params.put(ConstantsKeys.DeviceId, DeviceId );
-                            params.put(ConstantsKeys.DriverName, nameTv.getText().toString() );
-                             params.put(ConstantsKeys.CompanyId, DriverCompanyId );
-                            params.put(ConstantsKeys.DriverTimeZoneName, DriverTimeZone );
-                            params.put(ConstantsKeys.LogDateTime, Global.getCurrentDate() );
+                        certifyLogAlert = alertDialogBuilder.create();
+                        vectorDialogs.add(certifyLogAlert);
+                        certifyLogAlert.show();
 
-                            notReadyRequest.executeRequest(Request.Method.POST, APIs.SAVE_CERTIFY_SIGN_REJECTED_AUDIT , params, NotReady,
-                                    Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
-                        }
-
+                        sharedPref.setCertifyAlertViewTime(Global.GetCurrentUTCTimeFormat(), getActivity());
                     }
-                });
-
-
-                certifyLogAlert = alertDialogBuilder.create();
-                vectorDialogs.add(certifyLogAlert);
-                certifyLogAlert.show();
-
-                sharedPref.setCertifyAlertViewTime(Global.GetCurrentUTCTimeFormat(), getActivity());
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -6483,7 +6569,7 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
             initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, constants.CertifyLog, isCertifyLog,
                     VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
-                    Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), fragManager);
+                    Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), isFragmentAdd, fragManager);
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -6491,105 +6577,121 @@ public class EldFragment extends Fragment implements View.OnClickListener{
 
 
     public void YardMovePersonalStatusAlert(boolean isYardMove) {
-        if(yardMovePersonalUseAlert != null && yardMovePersonalUseAlert.isShowing()){
-            Log.d("dialog", "dialog is showing" );
-        }else {
 
-            closeDialogs();
+        try {
+            if(getActivity() != null) {
+                if (yardMovePersonalUseAlert != null && yardMovePersonalUseAlert.isShowing()) {
+                    Log.d("dialog", "dialog is showing");
+                } else {
 
-            final String TruckIgnitionStatus = sharedPref.GetTruckIgnitionStatus(constants.TruckIgnitionStatus, getActivity());
+                    closeDialogs();
 
-            String status = "";
-            if (isYardMove) {
-                status = getResources().getString(R.string.YardMove) + " status";
-            } else {
-                status = "Personal Use status";
-            }
+                    final String TruckIgnitionStatus = sharedPref.GetTruckIgnitionStatus(constants.TruckIgnitionStatus, getActivity());
 
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle("Do you want to continue with " + status + "?");
+                    String status = "";
+                    if (isYardMove) {
+                        status = getResources().getString(R.string.YardMove) + " status";
+                    } else {
+                        status = "Personal Use status";
+                    }
 
-            alertDialogBuilder.setMessage("");
-            alertDialogBuilder.setCancelable(false);
-            alertDialogBuilder.setPositiveButton("Yes",
-                    new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    alertDialogBuilder.setTitle("Do you want to continue with " + status + "?");
+
+                    alertDialogBuilder.setMessage("");
+                    alertDialogBuilder.setCancelable(false);
+                    alertDialogBuilder.setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int arg1) {
+                                    dialog.dismiss();
+
+                                    sharedPref.SetTruckStartLoginStatus(false, getActivity());
+                                    sharedPref.SetTruckIgnitionStatus(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
+                                    CalculateTimeInOffLine(false, false);
+
+                                }
+                            });
+
+                    alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int arg1) {
+                        public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
 
+                            Log.d("VEHICLE_SPEED", "VEHICLE_SPEED: " + Global.VEHICLE_SPEED);
                             sharedPref.SetTruckStartLoginStatus(false, getActivity());
                             sharedPref.SetTruckIgnitionStatus(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
-                            CalculateTimeInOffLine(false, false);
+
+                            if (Global.VEHICLE_SPEED < 10) {
+                                SaveOffDutyStatus();
+                            } else {
+                                SaveDrivingStatus();
+                            }
 
                         }
                     });
 
-            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
 
-                        Log.d("VEHICLE_SPEED", "VEHICLE_SPEED: " + Global.VEHICLE_SPEED);
-                        sharedPref.SetTruckStartLoginStatus(false, getActivity());
-                        sharedPref.SetTruckIgnitionStatus(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
-
-                        if (Global.VEHICLE_SPEED < 10) {
-                            SaveOffDutyStatus();
-                        } else {
-                            SaveDrivingStatus();
-                        }
-
+                    yardMovePersonalUseAlert = alertDialogBuilder.create();
+                    vectorDialogs.add(yardMovePersonalUseAlert);
+                    yardMovePersonalUseAlert.show();
                 }
-            });
-
-
-            yardMovePersonalUseAlert = alertDialogBuilder.create();
-            vectorDialogs.add(yardMovePersonalUseAlert);
-            yardMovePersonalUseAlert.show();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
 
     public void shipmentInfoAlert() {
-        closeDialogs();
 
-        String title = "";
-      /*  if(isUnloading){
-            title = "Do you want to clear your shipping details ?";
-        }else{*/
-        title = "Do you want to add/update your shipping details ?";
-        //}
+        try{
+            if(getActivity() != null){
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder.setTitle("Shipping Details");
-        alertDialogBuilder.setMessage(title);
-        alertDialogBuilder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                closeDialogs();
+
+                String title = "";
+              /*  if(isUnloading){
+                    title = "Do you want to clear your shipping details ?";
+                }else{*/
+                title = "Do you want to add/update your shipping details ?";
+                //}
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                alertDialogBuilder.setTitle("Shipping Details");
+                alertDialogBuilder.setMessage(title);
+                alertDialogBuilder.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                            @Override
+                            public void onClick(DialogInterface dialog, int arg1) {
+                                dialog.dismiss();
+
+                                isDrivingCalled = false;
+                                showShippingDialog(false);
+
+                            }
+                        });
+
+                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int arg1) {
+                    public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
 
-                        isDrivingCalled = false;
-                        showShippingDialog(false);
-
+                        isDrivingCalled = true;
+                        DrivingWithCertifySign();
                     }
                 });
 
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
 
-                isDrivingCalled = true;
-                DrivingWithCertifySign();
+                saveJobAlertDialog = alertDialogBuilder.create();
+                vectorDialogs.add(saveJobAlertDialog);
+                saveJobAlertDialog.show();
+
             }
-        });
-
-
-        saveJobAlertDialog = alertDialogBuilder.create();
-        vectorDialogs.add(saveJobAlertDialog);
-        saveJobAlertDialog.show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.background.service.BackgroundLocationService;
 import com.constants.CheckIsUpdateReady;
 import com.constants.CommonUtils;
 import com.constants.Constants;
@@ -78,7 +81,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     Animation fadeInAnim, fadeOutAnim;
     AppUpdateDialog appUpdateDialog;
     Utils util;
-    private FirebaseAnalytics mFirebaseAnalytics;
     String existingAppVersionStr = "";
 
     @Override
@@ -86,7 +88,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -99,6 +101,14 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         dbHelper      = new DBHelper(this);
         hMethods      = new HelperMethods();
         constants     = new Constants();
+
+        Constants.isEldHome = true;
+        Intent serviceIntent = new Intent(TabAct.this, BackgroundLocationService.class);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        }
+        startService(serviceIntent);
+
 
         vehicleList = new ArrayList<>();
         isTabActOnCreate = true;
@@ -427,7 +437,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         ActiveScreen();
 
         // save app display status log
-        constants.saveAppUsageLog(ConstantsEnum.StatusForeground, false, false, util);
+       // constants.saveAppUsageLog(ConstantsEnum.StatusForeground, false, false, util);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(ConstantsKeys.SuggestedEdit));
 
@@ -472,13 +482,18 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 break;
 
             case R.id.sliderLay:
-                Globally.hideSoftKeyboard(TabAct.this);
 
-                getMenuList(true);
-                slideMenu.menuAdapter.notifyDataSetChanged();
+                try {
+                    Globally.hideSoftKeyboard(TabAct.this);
+                    getMenuList(true);
 
-                smenu.showMenu();
-                smenu.addIgnoredView(tabcontent);
+                    smenu.showMenu();
+                    smenu.addIgnoredView(tabcontent);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
 
                // slideMenu.invisibleViewEvent.performClick();
 
@@ -510,29 +525,34 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         boolean isUnidentified = false;
 
         try {
-            if (DriverType == Constants.MAIN_DRIVER_TYPE) {
-                if (sharedPref.IsAllowMalfunction(getApplicationContext()) || sharedPref.IsAllowDiagnostic(getApplicationContext()))
-                    isMalfunction = true;
+            if(getApplicationContext() != null) {
+                if (DriverType == Constants.MAIN_DRIVER_TYPE) {
+                    if (sharedPref.IsAllowMalfunction(getApplicationContext()) || sharedPref.IsAllowDiagnostic(getApplicationContext()))
+                        isMalfunction = true;
 
-                isUnidentified = sharedPref.IsShowUnidentifiedRecords(getApplicationContext());
+                    isUnidentified = sharedPref.IsShowUnidentifiedRecords(getApplicationContext());
 
-            } else {
-                if (sharedPref.IsAllowMalfunctionCo(getApplicationContext()) || sharedPref.IsAllowDiagnosticCo(getApplicationContext()))
-                    isMalfunction = true;
+                } else {
+                    if (sharedPref.IsAllowMalfunctionCo(getApplicationContext()) || sharedPref.IsAllowDiagnosticCo(getApplicationContext()))
+                        isMalfunction = true;
 
-                isUnidentified = sharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext());
+                    isUnidentified = sharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext());
 
+                }
+
+                if (isNotify) {
+                    menuList.clear();
+                    menuList.addAll(constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
+                            isUnidentified, isMalfunction, existingAppVersionStr));
+                } else {
+                    menuList = constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
+                            isUnidentified, isMalfunction, existingAppVersionStr);
+                }
+
+                if(Slidingmenufunctions.invisibleRefreshAdapterEvent != null)
+                    Slidingmenufunctions.invisibleRefreshAdapterEvent.performClick();
             }
 
-            if (isNotify) {
-                menuList.clear();
-                menuList.addAll(constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
-                        isUnidentified, isMalfunction, existingAppVersionStr));
-                slideMenu.menuAdapter.notifyDataSetChanged();
-            } else {
-                menuList = constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
-                        isUnidentified, isMalfunction, existingAppVersionStr);
-            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -581,7 +601,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 public void onReceived(String responseVersion) {
                     Log.d("responseStr", "responseStr: " + responseVersion);
 
-                    if (isUpdateAvailable(responseVersion)) {
+                    if (isUpdateAvailable(responseVersion) && getApplicationContext() != null ) {
                         String playStorePackage = "com.android.vending";
                         isPlayStoreDownload = constants.appInstalledOrNot(playStorePackage, TabAct.this);
                         try {

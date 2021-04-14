@@ -598,8 +598,10 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                         if( diff < 2 && isTrueAnyPermission ) {
 
                             if(diff == 0 && EditDaysCount != -1){
-                                IsEditBtnVisible = true;
-                                editLogBtn.setVisibility(View.VISIBLE);
+                                if(sharedPref.IsCCMTACertified(getActivity()) == false) {
+                                    IsEditBtnVisible = true;
+                                    editLogBtn.setVisibility(View.VISIBLE);
+                                }
                             }else if(diff == 1 && EditDaysCount == 1){
                                 IsEditBtnVisible = true;
                                 editLogBtn.setVisibility(View.VISIBLE);
@@ -634,13 +636,13 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
 
 
-        RelativeLayout graphLayout = (RelativeLayout)view.findViewById(R.id.graphLayout);
+       /* RelativeLayout graphLayout = (RelativeLayout)view.findViewById(R.id.graphLayout);
         graphLayout.setOnClickListener(new DoubleClickListener() {
             @Override
             public void onDoubleClick() {
                 //  Log.d("onDoubleClick", "onDoubleClick");
             }
-        });
+        });*/
 
         eldMenuLay.setOnClickListener(this);
         signLay.setOnClickListener(this);
@@ -3587,6 +3589,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     void shareDriverLogDialog() {
 
         if (!IsAOBRD || IsAOBRDAutomatic) {
+            Constants.isEldHome = false;
             Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 getActivity().startForegroundService(Globally.serviceIntent);

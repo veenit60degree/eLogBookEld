@@ -122,7 +122,8 @@ public class InitilizeEldView {
     public void MoveFragment(String date, String dayName, String dayFullName, String dayShortName, int dayOfMonth,
                               boolean isCertifyLog, String VIN_NUMBER, int offsetFromUTC,
                              String LeftWeekOnDutyHoursInt, String LeftDayOnDutyHoursInt,
-                             String LeftDayDrivingHoursInt, String cycle, String VehicleId, boolean isSignPending, FragmentManager fragManager){
+                             String LeftDayDrivingHoursInt, String cycle, String VehicleId,
+                             boolean isSignPending, boolean isFragmentAdd, FragmentManager fragManager){
 
         Constants.IS_ACTIVE_ELD = false;
 
@@ -149,7 +150,11 @@ public class InitilizeEldView {
             FragmentTransaction fragmentTran = fragManager.beginTransaction();
             fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                     android.R.anim.fade_in, android.R.anim.fade_out);
-            fragmentTran.replace(R.id.job_fragment, detailFragment);
+            if(isFragmentAdd){
+                fragmentTran.add(R.id.job_fragment, detailFragment);
+            }else {
+                fragmentTran.replace(R.id.job_fragment, detailFragment);
+            }
             fragmentTran.addToBackStack("eld_certify_log");
             fragmentTran.commit();
 

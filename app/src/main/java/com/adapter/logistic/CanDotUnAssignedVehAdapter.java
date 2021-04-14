@@ -70,6 +70,9 @@ public class CanDotUnAssignedVehAdapter extends BaseAdapter {
             holder.startOdoUnTV     = (TextView) convertView.findViewById(R.id.startOdoUnTV);
             holder.endOdoUnTV       = (TextView) convertView.findViewById(R.id.endOdoUnTV);
 
+            holder.startLocUnTV     = (TextView) convertView.findViewById(R.id.startLocUnTV);
+            holder.endLocUnTV       = (TextView) convertView.findViewById(R.id.endLocUnTV);
+
             holder.totalKmUnTV      = (TextView) convertView.findViewById(R.id.totalKmUnTV);
             holder.totalMilesUnTV   = (TextView) convertView.findViewById(R.id.totalMilesUnTV);
             holder.startTimeUnTV    = (TextView) convertView.findViewById(R.id.startTimeUnTV);
@@ -93,10 +96,14 @@ public class CanDotUnAssignedVehAdapter extends BaseAdapter {
         holder.startOdoUnTV.setText( itemsList.get(position).getStartOdometer());
         holder.endOdoUnTV.setText( itemsList.get(position).getEndOdometer());
 
+        holder.startLocUnTV.setText( itemsList.get(position).getStartLocation());
+        holder.endLocUnTV.setText( itemsList.get(position).getEndLocation());
+
         holder.totalKmUnTV.setText( itemsList.get(position).getTotalKm());
         holder.totalMilesUnTV.setText( itemsList.get(position).getTotalMiles());
 
-        holder.statusUnTV.setText( itemsList.get(position).getStatusId());
+        //holder.statusUnTV.setText( itemsList.get(position).getStatusId());
+        holder.statusUnTV.setText( itemsList.get(position).getDutyStatus());
         holder.seqNoUnTV.setText( itemsList.get(position).getHexaSeqNumber());
 
         holder.startTimeUnTV.setText(Globally.ConvertTo12HTimeFormat(itemsList.get(position).getDriverZoneStartDateTime(), Globally.DateFormat));
@@ -116,12 +123,26 @@ public class CanDotUnAssignedVehAdapter extends BaseAdapter {
         constants.setTextStyleNormal(holder.statusUnTV);
         constants.setTextStyleNormal(holder.seqNoUnTV);
 
+
+        // set Marque on view
+        constants.setMarqueonView(holder.truckNoUnTV);
+        constants.setMarqueonView(holder.vinUnLay);
+        constants.setMarqueonView(holder.startOdoUnTV);
+        constants.setMarqueonView(holder.endOdoUnTV);
+        constants.setMarqueonView(holder.totalKmUnTV);
+        constants.setMarqueonView(holder.totalMilesUnTV);
+        constants.setMarqueonView(holder.startTimeUnTV);
+        constants.setMarqueonView(holder.endTimeUnTV);
+        constants.setMarqueonView(holder.statusUnTV);
+        constants.setMarqueonView(holder.seqNoUnTV);
+
         return convertView;
     }
 
 
     public class ViewHolder {
         TextView truckNoUnTV, vinUnLay, startOdoUnTV, endOdoUnTV, totalKmUnTV, totalMilesUnTV, startTimeUnTV, endTimeUnTV, statusUnTV, seqNoUnTV;
+        TextView startLocUnTV, endLocUnTV;
         LinearLayout unidentifiedVehDotLay;
 
     }

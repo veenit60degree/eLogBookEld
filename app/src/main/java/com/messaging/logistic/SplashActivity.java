@@ -24,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.background.service.AfterLogoutService;
+import com.background.service.BackgroundLocationService;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.custom.dialogs.ConfirmationDialog;
@@ -50,7 +52,6 @@ public class SplashActivity extends Activity implements
 
     String ScreenName = "";
     TextView appVersionSplash;
-    Intent i;
     boolean isFirst = false;
     Handler handler;
     PermissionInfoDialog permissionInfoDialog;
@@ -136,6 +137,9 @@ public class SplashActivity extends Activity implements
             splashMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
             splashLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
         }
+
+        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+        SharedPref.setLastCalledWiredCallBack(0, getApplicationContext());
 
     }
 
@@ -478,15 +482,29 @@ public class SplashActivity extends Activity implements
 
 
     void MoveToNextScreen(String screen){
-            if(screen.equals("home"))
-                i = new Intent(SplashActivity.this, TabAct.class);
-            else
-                i = new Intent(SplashActivity.this, LoginActivity.class);
+        /*========= Call main Service to start obd server service =============*/
+        Constants.isEldHome = false;
+        Intent intent;
+      //  Intent serviceIntent;
 
-            i.putExtra("user_type", "splash");
-            startActivity(i);
-            finish();
+        if(screen.equals("home")) {
+            intent = new Intent(SplashActivity.this, TabAct.class);
+         //  serviceIntent = new Intent(SplashActivity.this, BackgroundLocationService.class);
+        }else {
+            intent = new Intent(SplashActivity.this, LoginActivity.class);
+          //  serviceIntent = new Intent(SplashActivity.this, AfterLogoutService.class);
         }
+
+        // start ELD services
+    /*    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        }  startService(serviceIntent);
+*/
+        // call home/login activity
+        intent.putExtra("user_type", "splash");
+        startActivity(intent);
+        finish();
+    }
 
 
 

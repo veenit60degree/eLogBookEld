@@ -15,10 +15,13 @@ public class UnAssignedVehicleModel {
     String StatusId;
     boolean IsIntermediateLog;
     String HexaSeqNumber;
+    String StartLocation;
+    String EndLocation;
+    String DutyStatus;
 
     public UnAssignedVehicleModel(String unAssignedVehicleMilesId, String assignedUnidentifiedRecordsId, String equipmentNumber, String VIN, String startOdometer,
                                   String endOdometer, String totalMiles, String totalKm, String driverZoneStartDateTime, String driverZoneEndDateTime, String statusId,
-                                  boolean isIntermediateLog, String hexaSeqNumber) {
+                                  boolean isIntermediateLog, String hexaSeqNumber, String startLoc, String endLoc, String dutyStatus) {
         UnAssignedVehicleMilesId = unAssignedVehicleMilesId;
         AssignedUnidentifiedRecordsId = assignedUnidentifiedRecordsId;
         EquipmentNumber = equipmentNumber;
@@ -32,6 +35,11 @@ public class UnAssignedVehicleModel {
         StatusId = statusId;
         IsIntermediateLog = isIntermediateLog;
         HexaSeqNumber = hexaSeqNumber;
+        StartLocation = startLoc;
+        EndLocation = endLoc;
+        DutyStatus = dutyStatus;
+
+
     }
 
     public String getUnAssignedVehicleMilesId() {
@@ -84,5 +92,17 @@ public class UnAssignedVehicleModel {
 
     public String getHexaSeqNumber() {
         return HexaSeqNumber;
+    }
+
+    public String getStartLocation() {
+        return StartLocation;
+    }
+
+    public String getEndLocation() {
+        return EndLocation;
+    }
+
+    public String getDutyStatus() {
+        return DutyStatus;
     }
 }

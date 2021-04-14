@@ -155,8 +155,10 @@ public class SignRecordDialog extends Dialog {
         }
 
         setListSelectionRecord(false);
-        recapSignAdapter = new RecapRecordSignAdapter(context, recapRecordsList, recordSelectedList,false, false);
-        signRecordListView.setAdapter(recapSignAdapter);
+        try {
+            recapSignAdapter = new RecapRecordSignAdapter(context, recapRecordsList, recordSelectedList, false, false);
+            signRecordListView.setAdapter(recapSignAdapter);
+        }catch (Exception e){}
 
         selectAllRecordsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

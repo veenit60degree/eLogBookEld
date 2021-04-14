@@ -1190,6 +1190,23 @@ public class SharedPref {
     }
 
 
+    // Set Login Allowed Status -------------------
+    public static void setLoginAllowedStatus(boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("IsLoginAllowed", value);
+        editor.commit();
+    }
+
+
+    // Get Login Allowed Status -------------------
+    public static boolean isLoginAllowed(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("IsLoginAllowed", true);
+    }
+
+
+
     // Set Country Cycle -------------------
     public static void setUserCountryCycle(String keyCA, String valueCA,
                                            String keyUS, String valueUS,
@@ -2022,6 +2039,22 @@ public class SharedPref {
     public static String getHighPrecesionSavedTime(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("HighPrecesionSavedTime", "");
+    }
+
+
+
+    // Set Malfunction Called Time  -------------------
+    public static void setMalfCallTime(String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("MalfunctionCalledTime", savedTime);
+        editor.commit();
+    }
+
+    // Get Malfunction last Called Time -------------------
+    public static String getLastMalfCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("MalfunctionCalledTime", "");
     }
 
 

@@ -2302,11 +2302,17 @@ public class HelperMethods {
                             driverLogModel.setPersonal(json.getBoolean(ConstantsKeys.Personal));
 
                             driverLogModel.setCurrentCyleId(CurrentCycleId);
-                            driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
+
+                            if (!json.isNull(ConstantsKeys.IsViolation))
+                                driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
+                            else
+                                driverLogModel.setViolation(false);
+
                             if (!json.isNull(ConstantsKeys.ViolationReason))
                                 driverLogModel.setViolationReason(json.getString(ConstantsKeys.ViolationReason));
                             else
                                 driverLogModel.setViolationReason("");
+
 
                             driverLogModel.setCreatedDate(endDateTime);
 

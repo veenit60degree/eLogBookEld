@@ -87,10 +87,11 @@ public class CycleChangeRequestDialog extends Dialog {
         getWindow().setAttributes(lp);
 
 
-        TextView changeTitleView, titleDescView, changedCycleRuleTxtVw;
+        TextView changeTitleView, titleDescView, changedCycleRuleTxtVw, changedCycleRuleDescVw;
         changeTitleView = (TextView)findViewById(R.id.changeTitleView);
         titleDescView=(TextView)findViewById(R.id.titleDescView);
         changedCycleRuleTxtVw=(TextView)findViewById(R.id.changedCycleRuleTxtVw);
+        changedCycleRuleDescVw=(TextView)findViewById(R.id.changedCycleRuleDescVw);
 
         final Button confirmPopupButton = (Button)findViewById(R.id.confirmPopupButton);
         Button cancelPopupButton = (Button)findViewById(R.id.cancelPopupButton);
@@ -103,6 +104,7 @@ public class CycleChangeRequestDialog extends Dialog {
         cancelPopupButton.setTypeface(null, Typeface.NORMAL);
 
         changedCycleRuleTxtVw.setVisibility(View.VISIBLE);
+        changedCycleRuleDescVw.setVisibility(View.VISIBLE);
 
         String currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getContext());
 
@@ -124,7 +126,7 @@ public class CycleChangeRequestDialog extends Dialog {
                                             +"</b></font> to<font color='#1A3561'> <b>"+ changedCycleName +"</b></font>.") );
 
         String cycleCalculatedData = constants.CalculateCycleTimeData(getContext(), DriverId, false, false, changedCycleId, Global, sharedPref, hMethods, dbHelper);
-        changedCycleRuleTxtVw.setText(Html.fromHtml(cycleCalculatedData) );
+        changedCycleRuleDescVw.setText(Html.fromHtml(cycleCalculatedData) );
 
         cancelPopupButton.setOnClickListener(new CancelJobListener());
         confirmPopupButton.setOnClickListener(new OkJobListener());

@@ -86,8 +86,8 @@ public class CanDotRemarksAdapter extends BaseAdapter {
 
         String eventTime = itemsList.get(position).getDateTimeWithMins();
         holder.dateRemarksDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(eventTime));
-        if(eventTime.length() > 11) {
-            holder.timeDotTV.setText(eventTime.substring(11, eventTime.length()));
+        if(eventTime.length() > 16) {
+            holder.timeDotTV.setText(eventTime.substring(11, 16));
         }
 
         //holder.timeDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins()));
@@ -104,6 +104,14 @@ public class CanDotRemarksAdapter extends BaseAdapter {
 
         constants.setTextStyleNormal(holder.sqNoRemDotTV);
         constants.setTextStyleNormal(holder.commAnotnDotTV);
+
+        // set Marque on view
+        constants.setMarqueonView(holder.dateRemarksDotTV);
+        constants.setMarqueonView(holder.timeDotTV);
+        constants.setMarqueonView(holder.usernameDotTV);
+        constants.setMarqueonView(holder.sqNoRemDotTV);
+        constants.setMarqueonView(holder.commAnotnDotTV);
+
 
         return convertView;
     }

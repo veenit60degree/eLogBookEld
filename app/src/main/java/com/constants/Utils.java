@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -256,6 +257,45 @@ public class Utils
         return text;
 
     }
+
+
+
+   public String getFileContent(String targetFilePath){
+            File file = new File(targetFilePath);
+       FileInputStream fileInputStream = null;
+       String fileContent = "";
+
+            try {
+                fileInputStream = new FileInputStream(file);
+                StringBuilder sb = null;
+                while(fileInputStream.available() > 0) {
+
+                    if(null== sb)  sb = new StringBuilder();
+
+                    sb.append((char)fileInputStream.read());
+                }
+
+                if(null!=sb){
+                    fileContent= sb.toString();
+                    // This is your fileContent in String.
+
+
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+       try {
+            fileInputStream.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return fileContent;
+    }
+
 
 
 

@@ -55,7 +55,7 @@
     <string name="advrs_excptn_enabled">Adverse exception enabled</string>
     <string name="haul_excptn_enabled">16 hour short haul exception enabled</string>
     <string name="cycle_change_check">You can change Cycle in Sleeper/OffDuty.</string>
-    <string name="op_zone_change_check">You can change Operating Zone in Sleeper/OffDuty.</string>
+    <string name="op_zone_change_check">You can change Operating Zone in Driving/OnDuty.</string>
 
     <string name="AdjustTimeZone">Adjust TimeZone</string>
     <string name="AdjustTime">Adjust Time</string>
@@ -224,7 +224,7 @@
 
     <string name="pos_mal_occured">Position malfunction occured</string>
     <string name="ignore_to_save_loc">Driver ignore to save location in </string>
-    <string name="hos_limitation">Changed HOS Limitations</string>
+    <string name="hos_limitation">New HOS Limitations</string>
     <string name="ELDViewLogUs">ELD View Log</string>
     <string name="ELDViewLogCanada">ELD View Log</string>
 
@@ -285,12 +285,13 @@
     <string name="Origin">Origin</string>
     <string name="Malfunction_with_bracket">(Malfunction)</string>
 
-    <string name="lat_long">Lat, Long</string>
+    <string name="lat_long">Lat Long</string>
     <string name="Event">Event</string>
     <string name="geo_loc">Geo Loc</string>
     <string name="geo_location">Geo Location</string>
     <string name="cmv">CMV</string>
     <string name="distance_last_coor">Distance Last Coord</string>
+    <string name="dis_last_coord">Dis Last Coord</string>
     <string name="distance_acc">Distance (Acc)</string>
     <string name="hrs_acc">Hrs (Acc)</string>
     <string name="Distance_total">Distance (Total)</string>
@@ -425,6 +426,8 @@
     <string name="truck_ododmeter_reading">Truck Odometer Reading : </string>
     <string name="start_loc">Start Location</string>
     <string name="end_loc">End Location</string>
+    <string name="start_loc_">Start Loc</string>
+    <string name="end_loc_">End Loc</string>
     <string name="total_km">Total Km</string>
     <string name="total_miles">Total Miles</string>
 

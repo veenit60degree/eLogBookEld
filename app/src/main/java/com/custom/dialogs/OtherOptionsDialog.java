@@ -108,11 +108,12 @@ public class OtherOptionsDialog extends Dialog {
             }
         }
 
-
-        otherOptionList = constants.getOtherOptionsList(getContext(), isAllowMalfunction, isAllowUnIdentified);
-        OtherOptionsAdapter adapter = new OtherOptionsAdapter(getContext(), isPendingNotification, pendingNotificationCount, isGps, otherOptionList);
-        otherFeatureListView.setAdapter(adapter);
-
+        try {
+            otherOptionList = constants.getOtherOptionsList(getContext(), isAllowMalfunction, isAllowUnIdentified);
+            OtherOptionsAdapter adapter = new OtherOptionsAdapter(getContext(), isPendingNotification, pendingNotificationCount, isGps, otherOptionList);
+            otherFeatureListView.setAdapter(adapter);
+        }catch (Exception e){}
+        
         otherFeatureListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {

@@ -41,7 +41,9 @@ import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.ConstantHtml;
 import com.constants.Constants;
+import com.constants.DoubleClickListener;
 import com.constants.SharedPref;
+import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.constants.WebAppInterface;
 import com.custom.dialogs.DatePickerDialog;
@@ -64,6 +66,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -85,9 +88,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     TextView truckTractorIdTV, truckTractorVinTV, totalDisCTV, distanceTodayCTV, currTotalDisTV, currTotalEngTV;
     TextView trailerIdCTV, carrierNameCTV, carrierHomeTerCTV, carrierPrinPlaceCTV, currOperZoneCTV, curreCycleCTV;
     TextView totalHrsCTV, totalhrsCycleCTV, remainingHourCTV, offDutyDeffCTV, datDiagCTV, unIdenDriRecCTV;
-    TextView malfStatusCTV, eldIdCTV, eldProviderCTV, eldCerCTV, eldAuthCTV, canDotModeTxtVw;
+    TextView malfStatusCTV, eldIdCTV, eldProviderCTV, eldCerCTV, eldAuthCTV, canDotModeTxtVw, eventDotETV;
     RelativeLayout eldMenuLay, rightMenuBtn, scrollUpBtn, scrollDownBtn;
-    LinearLayout canDotViewMorelay, enginePwrDotLay;
+    LinearLayout canDotViewMorelay;
     ImageView eldMenuBtn, nextDateBtn, previousDateBtn;
 
     WebView canDotGraphWebView;
@@ -127,13 +130,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     int MaxDays;
 
     String DayName, MonthFullName , MonthShortName , CurrentCycleId, CountryCycle;
-
     String DefaultLine      = " <g class=\"event \">\n";
-    String ViolationLine    = " <g class=\"event line-red\">\n";
 
     String DriverId = "", DeviceId = "";
     String htmlAppendedText = "", LogDate = "", CurrentDate = "", LogSignImage = "";
-    String colorVoilation = "#C92627";
 
     String TotalOnDutyHours         = "00:00";
     String TotalDrivingHours        = "00:00";
@@ -143,15 +143,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     int inspectionLayHeight = 0;
     int hLineX1         = 0;
     int hLineX2         = 0;
-    int hLineY          = 0;
 
-    int vLineX          = 0;
-    int vLineY1         = 0;
-    int vLineY2         = 0;
-    int offsetFromUTC   = 0;
-    int DriverType      = 0;
-    int scrollX         = 0;
-    int scrollY         = -1;
     int OldStatus       = -1;
     int startHour       = 0;
     int startMin        = 0;
@@ -235,6 +227,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         EldTitleTV          = (TextView)view.findViewById(R.id.EldTitleTV);
         canSendLogBtn       = (TextView)view.findViewById(R.id.canSendLogBtn);
         viewInspectionBtn   = (TextView)view.findViewById(R.id.dateActionBarTV);
+        eventDotETV         = (TextView)view.findViewById(R.id.eventDotETV);
 
         dutyChangeDotListView= (ListView)view.findViewById(R.id.dutyChangeDotListView);
         remAnotnDotListView  = (ListView)view.findViewById(R.id.remAnotnDotListView);
@@ -244,7 +237,6 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         unIdnfdVehDotListView= (ListView)view.findViewById(R.id.unIdnfdVehDotListView);
 
         canDotViewMorelay   = (LinearLayout)view.findViewById(R.id.canDotViewMorelay);
-        enginePwrDotLay     = (LinearLayout)view.findViewById(R.id.enginePwrDotLay);
 
         eldMenuLay          = (RelativeLayout)view.findViewById(R.id.eldMenuLay);
         rightMenuBtn        = (RelativeLayout)view.findViewById(R.id.rightMenuBtn);
@@ -289,6 +281,33 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             //webViewErrorDisplay();
         }
+
+
+        // Scroll up LongClick listener
+        scrollUpBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                canDotScrollView.smoothScrollTo(0, 0);
+                ObjectAnimator.ofInt(canDotScrollView, "scrollY",  0).setDuration(1000).start();
+
+                return false;
+            }
+        });
+
+        // Scroll down LongClick listener
+        scrollDownBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                int totalHeight = canDotScrollView.getChildAt(0).getHeight();
+                ObjectAnimator.ofInt(canDotScrollView, "scrollY",  totalHeight).setDuration(1000).start();
+
+                return false;
+            }
+        });
+
+
 
         eldMenuLay.setOnClickListener(this);
         viewMoreTV.setOnClickListener(this);
@@ -593,6 +612,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
         if (!IsAOBRD || IsAOBRDAutomatic) {
+            Constants.isEldHome = false;
             Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 getActivity().startForegroundService(Globally.serviceIntent);
@@ -667,18 +687,18 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
         try {
-            inspectionLayHeight = enginePwrDotLay.getHeight();
+            inspectionLayHeight = eventDotETV.getHeight() + 5;
 
-            ViewTreeObserver vto = enginePwrDotLay.getViewTreeObserver();
+            ViewTreeObserver vto = eventDotETV.getViewTreeObserver();
             vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                        enginePwrDotLay.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        eventDotETV.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     } else {
-                        enginePwrDotLay.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        eventDotETV.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
-                    inspectionLayHeight = enginePwrDotLay.getMeasuredHeight();
+                    inspectionLayHeight = eventDotETV.getMeasuredHeight() + 5;
 
                 }
             });
@@ -908,18 +928,48 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             coDriverNameCTV.setText(dataObj.getString("CoDriverLastAndFirstName"));
             coDriverIdCTV.setText(dataObj.getString("CoDriverLoginId"));
 
-            truckTractorIdTV.setText(dataObj.getString("TruckTractorID"));
-            truckTractorVinTV.setText(dataObj.getString("TruckTractorVIN"));
-          //  totalDisCTV.setText(dataObj.getString(""));
-          //  distanceTodayCTV.setText(dataObj.getString(""));
-           // currTotalDisTV.setText(dataObj.getString(""));
-           // currTotalEngTV.setText(dataObj.getString(""));
-
             trailerIdCTV.setText(dataObj.getString("TrailerId"));
             carrierNameCTV.setText(dataObj.getString("Carrier"));
             carrierHomeTerCTV.setText(dataObj.getString("Hometerminal"));
             carrierPrinPlaceCTV.setText(dataObj.getString("OfficeAddress"));
             currOperZoneCTV.setText(dataObj.getString("CurrentOperatingZone"));
+
+            String truckTractorId = "", truckTractorVin = "", totalDisC = "", distanceToday = "",  currTotalDis = "", currTotalEng = "";
+
+            JSONArray EngineHourArray = new JSONArray(dataObj.getString("EngineHourMilesReportList"));
+            if(EngineHourArray.length() > 0) {
+
+                for (int i = 0; i < EngineHourArray.length(); i++) {
+                    JSONObject engineObj = (JSONObject) EngineHourArray.get(i);
+                    if(i == 0) {
+                        truckTractorId  = "" + (i+1) + ") "+ engineObj.getString("TruckEquipmentNo");
+                        truckTractorVin = "" + (i+1) + ") "+ engineObj.getString("CMVVIN");
+                        totalDisC       = "" + (i+1) + ") "+ engineObj.getString("StartOdometr") + " - " + engineObj.getString("EndOdometer");
+                        distanceToday   = "" + (i+1) + ") "+ engineObj.getString("DifferenceKM") ;
+                    }else{
+                        truckTractorId = truckTractorId     + "\n" + (i+1) + ") "+ engineObj.getString("TruckEquipmentNo");
+                        truckTractorVin = truckTractorVin   + "\n" + (i+1) + ") "+ engineObj.getString("CMVVIN");
+                        totalDisC       = totalDisC         + "\n" + (i+1) + ") "+ engineObj.getString("StartOdometr") + " - " + engineObj.getString("EndOdometer");
+                        distanceToday   = distanceToday     + "\n" + (i+1) + ") "+ engineObj.getString("DifferenceKM") ;
+                    }
+
+                    currTotalDis = engineObj.getString("EndOdometer");
+                    currTotalEng = engineObj.getString("EndEngineHours");
+
+                }
+
+            }else{
+                truckTractorId  = dataObj.getString("TruckTractorID");
+                truckTractorVin = dataObj.getString("TruckTractorVIN");
+            }
+
+            truckTractorIdTV.setText(truckTractorId);
+            truckTractorVinTV.setText(truckTractorVin);
+            totalDisCTV.setText(totalDisC);
+            distanceTodayCTV.setText(distanceToday);
+            currTotalDisTV.setText(currTotalDis);
+            currTotalEngTV.setText(currTotalEng);
+
 
             String currentCycle = "";
             if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
@@ -985,6 +1035,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             String status = "", Message = "";
             JSONObject dataObj = null;
             try {
+               // Utils obdUtils = new Utils(getActivity());
+              //  String dataa = obdUtils.getFileContent("/storage/emulated/0/Android/data/com.messaging.logistic/files/Logistic/AlsLog/can_dot_response.txt");
+
                 JSONObject obj = new JSONObject(response);
 
                 status = obj.getString("Status");

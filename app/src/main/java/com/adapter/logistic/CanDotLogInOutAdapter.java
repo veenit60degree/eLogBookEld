@@ -108,8 +108,8 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-        if(EventDateTime.length() > 11) {
-            holder.dateDotTV.setText(EventDateTime.substring(11, EventDateTime.length()));
+        if(EventDateTime.length() > 16) {
+            holder.dateDotTV.setText(EventDateTime.substring(11, 16));
         }
 
 
@@ -120,7 +120,7 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
         holder.addInfoDotTV.setText(constants.checkNullString(itemsList.get(position).getAdditionalInfo()));
 
         holder.cmvLoginDotTV.setText(constants.checkNullString(itemsList.get(position).getTruckEquipmentNo()));
-        holder.diatanceTotalLoginDotTV.setText(constants.checkNullString(itemsList.get(position).getDistanceInKM()));
+        holder.diatanceTotalLoginDotTV.setText(constants.checkNullString(itemsList.get(position).getTotalVehicleKM()));
         holder.hrsTotalLoginDotTV.setText(constants.checkNullString(itemsList.get(position).getTotalEngineHours()));
 
         holder.recStatusLoginDotTV.setText(""+itemsList.get(position).getRecordStatus());
@@ -140,6 +140,18 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
         constants.setTextStyleNormal(holder.recStatusLoginDotTV);
         constants.setTextStyleNormal(holder.recOriginLoginDotTV);
         constants.setTextStyleNormal(holder.seqNoDotTV);
+
+        // set Marque on view
+        constants.setMarqueonView(holder.dateDotTV);
+        constants.setMarqueonView(holder.eventLoginDotTV);
+        constants.setMarqueonView(holder.addInfoDotTV);
+        constants.setMarqueonView(holder.cmvLoginDotTV);
+        constants.setMarqueonView(holder.diatanceTotalLoginDotTV);
+        constants.setMarqueonView(holder.hrsTotalLoginDotTV);
+        constants.setMarqueonView(holder.recStatusLoginDotTV);
+        constants.setMarqueonView(holder.recOriginLoginDotTV);
+        constants.setMarqueonView(holder.seqNoDotTV);
+
 
         return convertView;
     }

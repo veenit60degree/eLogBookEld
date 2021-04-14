@@ -25,7 +25,7 @@ public class ChangeCycleDialog extends Dialog {
 
     }
 
-    private TextView changeCycleTitleTV, changeCycleDescTV, changedCycleRuleTxtVw;
+    private TextView changeCycleTitleTV, changeCycleDescTV, changedCycleRuleTxtVw, changedCycleRuleDescVw;
     private Button btnChangeCycle, cancelPopupButton;
     private String type, currentCycle, changedCycleId, currentOpZone;
     private ChangeCycleListener changeCycleListener;
@@ -77,11 +77,14 @@ public class ChangeCycleDialog extends Dialog {
         changeCycleTitleTV      = (TextView) findViewById(R.id.changeTitleView);
         changeCycleDescTV       = (TextView)findViewById(R.id.titleDescView);
         changedCycleRuleTxtVw   = (TextView)findViewById(R.id.changedCycleRuleTxtVw);
+        changedCycleRuleDescVw  = (TextView)findViewById(R.id.changedCycleRuleDescVw);
+
 
         btnChangeCycle          = (Button)findViewById(R.id.confirmPopupButton);
         cancelPopupButton       = (Button)findViewById(R.id.cancelPopupButton);
 
         changedCycleRuleTxtVw.setVisibility(View.VISIBLE);
+        changedCycleRuleDescVw.setVisibility(View.VISIBLE);
 
         btnChangeCycle.setText(getContext().getString(R.string.change));
        // cancelPopupButton.setText(getContext().getString(R.string.no));
@@ -113,12 +116,13 @@ public class ChangeCycleDialog extends Dialog {
             }
         }else if(type.equals("operating_zone")){
             OperatingZoneChange = true;
-            if(currentCycle.equals(Globally.CANADA_CYCLE_1)){
+            changedCycleId = currentCycle;
+          /*  if(currentCycle.equals(Globally.CANADA_CYCLE_1)){
                 changedCycleId = Globally.CANADA_CYCLE_2;
             }else {
                 changedCycleId = Globally.CANADA_CYCLE_1;
             }
-
+*/
             if(currentOpZone.equals(getContext().getResources().getString(R.string.OperatingZoneSouth))){
                 isNorth = true;
                 changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_op_zone) + " <b>" + getContext().getString(R.string.OperatingZoneSouth) + "</b> to <b>" + getContext().getString(R.string.OperatingZoneNorth) + "</b>"));
@@ -137,9 +141,10 @@ public class ChangeCycleDialog extends Dialog {
             }
         }
 
+
         String cycleCalculatedData = constants.CalculateCycleTimeData(getContext(), sharedPref.getDriverId( getContext()), OperatingZoneChange, isNorth,
                                         changedCycleId, Global, sharedPref, hMethods, dbHelper);
-        changedCycleRuleTxtVw.setText(Html.fromHtml(cycleCalculatedData) );
+        changedCycleRuleDescVw.setText(Html.fromHtml(cycleCalculatedData) );
 
         cancelPopupButton.setOnClickListener(new View.OnClickListener() {
             @Override

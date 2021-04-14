@@ -110,14 +110,15 @@ public class CanDotCycleOpZoneAdapter extends BaseAdapter {
 
 
        // holder.dateCycleDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate()));
-        if(EventDateTime.length() > 11) {
-            holder.dateCycleDotTV.setText(EventDateTime.substring(11, EventDateTime.length()));
+        if(EventDateTime.length() > 16) {
+            holder.dateCycleDotTV.setText(EventDateTime.substring(11, 16));
         }
 
         holder.eventCycleEventTV.setText( constants.getCycleOpZoneEventName(
                                                         itemsList.get(position).getEventType(),
                                                         itemsList.get(position).getEventCode()) );
-       // holder.geoLocCycleTV.setText(itemsList.get(position).geta);
+
+        holder.geoLocCycleTV.setText(itemsList.get(position).getAnnotation());
         holder.latLongCycleTV.setText(constants.checkNullString(itemsList.get(position).getGPSLatitude()) + ", "+
                 constants.checkNullString(itemsList.get(position).getGPSLongitude()));
         holder.distanceLastCoCycleTV.setText(constants.checkNullString(itemsList.get(position).getDistanceSinceLastValidCord()));
@@ -139,6 +140,19 @@ public class CanDotCycleOpZoneAdapter extends BaseAdapter {
         constants.setTextStyleNormal(holder.recStatusAHDotTV);
         constants.setTextStyleNormal(holder.recOriginAHDotTV);
         constants.setTextStyleNormal(holder.seqNoDotTV);
+
+
+        // set Marque on view
+        constants.setMarqueonView(holder.dateCycleDotTV);
+        constants.setMarqueonView(holder.eventCycleEventTV);
+        constants.setMarqueonView(holder.geoLocCycleTV);
+        constants.setMarqueonView(holder.latLongCycleTV);
+        constants.setMarqueonView(holder.distanceLastCoCycleTV);
+        constants.setMarqueonView(holder.cmvAHDotTV);
+        constants.setMarqueonView(holder.recStatusAHDotTV);
+        constants.setMarqueonView(holder.recOriginAHDotTV);
+        constants.setMarqueonView(holder.seqNoDotTV);
+
 
 
         return convertView;

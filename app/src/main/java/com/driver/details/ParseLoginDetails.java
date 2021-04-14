@@ -96,9 +96,9 @@ public class ParseLoginDetails {
 
                                 try {
                                     stateListSize       = statePrefManager.GetState(context).size();
-                                    if(stateListSize > 100){
-                                        statePrefManager.RemoveState(context);
-                                        stateListSize = 0;
+                                    if(stateListSize > 0){
+                                       // statePrefManager.RemoveState(context);
+                                       // stateListSize = 0;
                                     }
                                 }catch (Exception e){
                                     stateListSize = 0;
@@ -192,23 +192,23 @@ public class ParseLoginDetails {
                     }
                 }
 
-                if(!dataObj.isNull("DriverTripDetail")) {
+               /* if(!dataObj.isNull("DriverTripDetail")) {
                     JSONObject DriverTripDetail = new JSONObject(dataObj.getString("DriverTripDetail"));
                     ParseDriverTripDetail(DriverTripDetail, resultCount, context);
                 }
-
 
                 if(!dataObj.isNull("DriverLogDetail")) {
                     JSONObject DriverLogDetail = new JSONObject(dataObj.getString("DriverLogDetail"));
                     ParseDriverLogDetail(DriverLogDetail, resultCount, context);
                     SharedPref.SetIsAOBRD(DriverLogDetail.getBoolean("IsAOBRD"), context);
-                    Log.d("set_IsAOBRD", "SetIsAOBRD parse: " + DriverLogDetail.getBoolean("IsAOBRD") );
 
                     if(!DriverLogDetail.isNull("DriverLog")) {
                         JSONArray driverLogJsonArray = new JSONArray(DriverLogDetail.getString("DriverLog"));
                         ParseDriverLogArray(driverLogJsonArray, resultCount, context);
                     }
                 }
+*/
+
 
                 if(dataObj.has("DriverPermission")) {
                     if (!dataObj.isNull("DriverPermission")) {

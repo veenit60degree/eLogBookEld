@@ -216,7 +216,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                         case 1:
                             countryFlagImgView.setImageResource(R.drawable.can_flag);
                             canView();
-                            selectedCountry = "CANADA";
+                            selectedCountry = "CAN";
                             break;
 
                         case 2:
@@ -420,7 +420,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                             Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
                         }
                     } else {
-                        if (selectedCountry.equals("CANADA")){
+                        if (selectedCountry.equals("CAN")){
                             if(isValidEmailPattern(canEmailEditText)){
                                 ServiceCheck = "false";
                                 CheckValdation0(MailCheck, ServiceCheck);

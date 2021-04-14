@@ -46,8 +46,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     String TAG_OBD = "OBD Service";
     private static final long TIME_INTERVAL_WIFI  = 10 * 1000;   // 10 sec
-    private static final long TIME_INTERVAL_WIRED = 3 * 1000;   // 3 sec
-    private static final long TIME_INTERVAL_LIMIT = 60000;
+    private static final long TIME_INTERVAL_WIRED = 2 * 1000;   // 3 sec
+    private static final long TIME_INTERVAL_LIMIT = 70000;
 
     String TAG = "Service";
     boolean isStopService = false;
@@ -115,30 +115,33 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 e.printStackTrace();
             }
 
-            // ---------------- temp data ---------------------
-             // ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
+            // ---------------- temp data ---------------------CalculateCycleTime
+            //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
 
             try {
                 if (ignitionStatus.equals("ON") || !truckRPM.equals("0")) {
                     sharedPref.SaveObdStatus(Constants.WIRED_ACTIVE, getApplicationContext());
                     if(speed > 8 && lastVehSpeed > 8){
-                        LoginActivity.IsLoginAllowed = false;
+                        sharedPref.setLoginAllowedStatus(false, getApplicationContext());
 
                         long count = sharedPref.getLastCalledWiredCallBack(getApplicationContext());
-                        if(count > TIME_INTERVAL_LIMIT) {
-                            // reset call back count
-                            count = 0;
+                        if(count == 0) {
                             sharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
                             Globally.PlaySound(getApplicationContext());
                             Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
                             SpeakOutMsg(AlertMsgSpeech);
                         }
 
+                        if(count >= TIME_INTERVAL_LIMIT){
+                            // reset call back count
+                            count = 0;
+                        }
+
                         // save count --------------
                         sharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
                        // Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed, 203040);
                     }else{
-                        LoginActivity.IsLoginAllowed = true;
+                        sharedPref.setLoginAllowedStatus(true, getApplicationContext());
                     }
                     lastVehSpeed = speed;
 
@@ -369,7 +372,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             try {
                 String correctData = "";
-                LoginActivity.IsLoginAllowed = true;
+
+                sharedPref.setLoginAllowedStatus(true, getApplicationContext());
 
                 if (!message.equals(noObd) && message.length() > 10) {
 
@@ -412,14 +416,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                 if (ignitionStatus.equals("true")) {
                                     sharedPref.SaveObdStatus(Constants.WIFI_ACTIVE, getApplicationContext());
                                     if(WheelBasedVehicleSpeed > 8 && lastVehSpeed > 8){
-                                        LoginActivity.IsLoginAllowed = false;
-
+                                        sharedPref.setLoginAllowedStatus(false, getApplicationContext());
                                         Globally.PlaySound(getApplicationContext());
                                         Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
                                         SpeakOutMsg(AlertMsgSpeech);
                                         //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
                                     }else{
-                                        LoginActivity.IsLoginAllowed = true;
+                                        sharedPref.setLoginAllowedStatus(true, getApplicationContext());
                                     }
                                     lastVehSpeed = WheelBasedVehicleSpeed;
                                 } else {

@@ -223,7 +223,6 @@ public class TimeZoneDialog extends Dialog {
                         if(isCurrentTimeBigger)
                             sharedPref.setCurrentUTCTime( global.GetCurrentUTCTimeFormat() , mContext );
 
-                      //  Toast.makeText(mContext, "Error", Toast.LENGTH_LONG).show();
                         dismiss();
                     }
                 }

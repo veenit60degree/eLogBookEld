@@ -217,14 +217,15 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 JSONArray claimArray = Constants.getClaimRecordsInArray("", "", "", "",
                         unIdentifiedRecordList,  recordSelectedList);
 
-                if (claimArray.length() > 0) {
-                    unidentifiedDialog = new UnidentifiedDialog(getActivity(), getResources().getString(R.string.claim), new UnIdentifiedListener());
-                    unidentifiedDialog.show();
+                if(getActivity() != null) {
+                    if (claimArray.length() > 0) {
+                        unidentifiedDialog = new UnidentifiedDialog(getActivity(), getResources().getString(R.string.claim), new UnIdentifiedListener());
+                        unidentifiedDialog.show();
 
-                } else {
-                    global.EldScreenToast(dateActionBarTV, "Select record first", getResources().getColor(R.color.colorVoilation));
+                    } else {
+                        global.EldScreenToast(dateActionBarTV, "Select record first", getResources().getColor(R.color.colorVoilation));
+                    }
                 }
-
 
                 break;
 
@@ -235,12 +236,15 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 JSONArray companyRejectedArray = Constants.getCompanyRejectRecordsInArray("", "", unIdentifiedRecordList,  recordSelectedList);
                 JSONArray rejectedArray = Constants.getRejectRecordsInArray( "", "", unIdentifiedRecordList,  recordSelectedList);
 
-                if (companyRejectedArray.length() > 0 || rejectedArray.length() > 0) {
-                    unidentifiedDialog = new UnidentifiedDialog(getActivity(), getResources().getString(R.string.reject), new UnIdentifiedListener());
-                    unidentifiedDialog.show();
-                }else{
-                    global.EldScreenToast(dateActionBarTV, "Select record first", getResources().getColor(R.color.colorVoilation));
+                if(getActivity() != null) {
+                    if (companyRejectedArray.length() > 0 || rejectedArray.length() > 0) {
+                        unidentifiedDialog = new UnidentifiedDialog(getActivity(), getResources().getString(R.string.reject), new UnIdentifiedListener());
+                        unidentifiedDialog.show();
+                    } else {
+                        global.EldScreenToast(dateActionBarTV, "Select record first", getResources().getColor(R.color.colorVoilation));
+                    }
                 }
+
                 break;
 
         }

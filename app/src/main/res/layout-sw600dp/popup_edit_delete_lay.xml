@@ -71,14 +71,30 @@
                 android:gravity="center"
                 android:text="@string/chaged_cycle_rule"
                 android:layout_centerHorizontal="true"
-                android:textSize="@dimen/text_size_18"
+                android:textSize="@dimen/text_size_19"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="@dimen/margin_10"
+                android:textColor="@color/text_forgot"
+                android:textStyle="bold"
+                android:visibility="gone"
+
+                />
+
+
+            <TextView
+                android:id="@+id/changedCycleRuleDescVw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="@string/hos_limitation"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/text_size_17"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/colorPrimary"
                 android:visibility="gone"
-
                 />
 
         </LinearLayout>
