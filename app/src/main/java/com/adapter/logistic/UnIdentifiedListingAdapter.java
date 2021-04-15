@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -94,11 +95,19 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
         String startDate = Globally.dateConversionMalfunction(unIdentifiedList.get(position).getStartDateTime());   //Globally.convertToMonNameFormat(unIdentifiedList.get(position).getStartDateTime() );
         String endDate = Globally.dateConversionMalfunction(unIdentifiedList.get(position).getEndDateTime()); //Globally.convertToMonNameFormat(unIdentifiedList.get(position).getEndDateTime() );
         holder.unIdenRecordDescTV.setText(startDate + " - "+endDate);
-        holder.unIdenDistanceTV.setText(unIdentifiedList.get(position).getTotalMiles() + " Miles");
+
        holder.unIdenRecorTimeTV.setText("");
 
         if(unIdentifiedList.get(position).isCompanyAssigned()){
             holder.requestedByTxtVw.setVisibility(View.VISIBLE);
+        }
+
+        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+
+        if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
+            holder.unIdenDistanceTV.setText(unIdentifiedList.get(position).getTotalMiles() + " Miles");
+        }else{
+            holder.unIdenDistanceTV.setText(unIdentifiedList.get(position).getTotalKm() + " km");
         }
 
         if(IsAllSelectedClicked) {

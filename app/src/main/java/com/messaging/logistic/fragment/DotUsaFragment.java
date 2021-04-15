@@ -79,7 +79,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     Constants constants;
     WebView dotGraphWebView;    //dotWebView;
     TextView errorConnectionView,  EldTitleTV, dotMalfunctionTV, viewInspectionBtn,sendLogBtn;
-    ImageView nextDateBtn, previousDateBtn, eldMenuBtn, signImageView;
+    ImageView nextDateBtn, previousDateBtn, eldMenuBtn, signImageView, dotModeImgVw;
 
     LinearLayout itemOdometerLay, itemShippingLay;
     RelativeLayout rightMenuBtn, eldMenuLay, SignatureMainLay;
@@ -114,24 +114,13 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     String LogDate, DayName, MonthFullName , MonthShortName , CurrentCycleId;
     String CurrentDate, CountryCycle, DRIVER_ID, DeviceId ;
     String DefaultLine      = " <g class=\"event \">\n";
-    String ViolationLine    = " <g class=\"event line-red\">\n";
 
     String htmlAppendedText = "";
-    String colorVoilation = "#C92627";
 
     int shippingLayHeight = 0;
     int inspectionLayHeight = 0;
     int hLineX1         = 0;
     int hLineX2         = 0;
-    int hLineY          = 0;
-
-    int vLineX          = 0;
-    int vLineY1         = 0;
-    int vLineY2         = 0;
-    int offsetFromUTC   = 0;
-    int DriverType      = 0;
-    int scrollX         = 0;
-    int scrollY         = -1;
     int OldStatus       = -1;
     int startHour       = 0;
     int startMin        = 0;
@@ -192,6 +181,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         previousDateBtn     = (ImageView)view.findViewById(R.id.previousDate);
         eldMenuBtn          = (ImageView)view.findViewById(R.id.eldMenuBtn);
         signImageView       = (ImageView)view.findViewById(R.id.signImageView);
+        dotModeImgVw        = (ImageView)view.findViewById(R.id.dotModeImgVw);
 
         rightMenuBtn        = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         itemOdometerLay     = (LinearLayout)view.findViewById(R.id.itemOdometerLay);
@@ -236,6 +226,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         sendLogBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
         dotModeTV.setOnClickListener(this);
+        dotModeImgVw.setOnClickListener(this);
 
     }
 
@@ -414,6 +405,9 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
                 break;
 
+            case R.id.dotModeImgVw:
+                dotModeTV.performClick();
+                break;
         }
     }
 

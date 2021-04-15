@@ -468,10 +468,10 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             if (!IsAOBRD || (IsAOBRD && IsAOBRDAutoDrive)) {
                                                 if (BackgroundLocationService.IsAutoChange) {
                                                   // message = "Vehicle is running below the threshold speed limit. Now your status is going to be changed to On Duty.";
-                                                    message = "Duty status switched to On Duty due to vehicle moving below threshold speed.";
+                                                    message = "Duty status switched to On Duty due to vehicle is not moving.";
                                                 } else {
                                                    // message = "Vehicle is running below the threshold speed limit. Please change your status to On Duty.";
-                                                    message = "Please change your status to On Duty due to vehicle moving below threshold speed.";
+                                                    message = "Please change your status to On Duty due to vehicle is not moving.";
                                                 }
 
                                                 CHANGED_STATUS = ON_DUTY;

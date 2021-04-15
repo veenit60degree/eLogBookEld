@@ -1,6 +1,8 @@
 package com.models;
 
-public class CanadaDutyStatusModel {
+import java.util.Date;
+
+public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
 
             String DateTimeWithMins;
             String EventUTCTimeStamp;
@@ -62,9 +64,16 @@ public class CanadaDutyStatusModel {
             String TruckEquipmentNo;
             String WorkShiftStart;
             String WorkShiftEnd;
+            private Date dateTime;
 
 
-    public CanadaDutyStatusModel(String dateTimeWithMins, String eventUTCTimeStamp, String driverStatusID, int eventType, int eventCode, String dutyMinutes, String annotation, String eventDate, String eventTime, String accumulatedVehicleMiles, String accumulatedEngineHours, String totalVehicleMiles, String totalEngineHours, String GPSLatitude, String GPSLongitude, String CMVVIN, String carrierName, boolean isMalfunction, String odometerInKm, String strEventType, String origin, String startTime, String endTime, String OBDDeviceDataId, String currentObdDeviceDataId, String driverLogId, String truck, String trailor, String remarks, String driverId, boolean isPersonal, boolean isYard, String isStatusAutomatic, String currentCycleId, int sequenceNumber, String totalVehicleKM, String additionalInfo, String editedById, String userName, String recordStatus, String distanceSinceLastValidCord, String recordOrigin, String distanceInKM, String hexaSeqNumber, String orderBy, String onDutyHours, String offDutyHours, String truckEquipmentNo, String workShiftStart, String workShiftEnd) {
+    public CanadaDutyStatusModel(String dateTimeWithMins, String eventUTCTimeStamp, String driverStatusID, int eventType, int eventCode, String dutyMinutes, String annotation,
+                                 String eventDate, String eventTime, String accumulatedVehicleMiles, String accumulatedEngineHours, String totalVehicleMiles, String totalEngineHours,
+                                 String GPSLatitude, String GPSLongitude, String CMVVIN, String carrierName, boolean isMalfunction, String odometerInKm, String strEventType, String origin,
+                                 String startTime, String endTime, String OBDDeviceDataId, String currentObdDeviceDataId, String driverLogId, String truck, String trailor, String remarks,
+                                 String driverId, boolean isPersonal, boolean isYard, String isStatusAutomatic, String currentCycleId, int sequenceNumber, String totalVehicleKM,
+                                 String additionalInfo, String editedById, String userName, String recordStatus, String distanceSinceLastValidCord, String recordOrigin, String distanceInKM,
+                                 String hexaSeqNumber, String orderBy, String onDutyHours, String offDutyHours, String truckEquipmentNo, String workShiftStart, String workShiftEnd, Date dateTimee) {
         DateTimeWithMins = dateTimeWithMins;
         EventUTCTimeStamp = eventUTCTimeStamp;
         DriverStatusID = driverStatusID;
@@ -115,6 +124,7 @@ public class CanadaDutyStatusModel {
         TruckEquipmentNo = truckEquipmentNo;
         WorkShiftStart = workShiftStart;
         WorkShiftEnd = workShiftEnd;
+        dateTime = dateTimee;
     }
 
 
@@ -316,5 +326,19 @@ public class CanadaDutyStatusModel {
 
     public String getWorkShiftEnd() {
         return WorkShiftEnd;
+    }
+
+
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Date datetime) {
+        this.dateTime = datetime;
+    }
+
+    @Override
+    public int compareTo(CanadaDutyStatusModel canadaDutyStatusModel) {
+        return getDateTime().compareTo(canadaDutyStatusModel.getDateTime());
     }
 }

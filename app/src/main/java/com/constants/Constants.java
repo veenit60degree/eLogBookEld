@@ -67,12 +67,15 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -2723,13 +2726,19 @@ public class Constants {
 
 
 
-    public List<CanadaDutyStatusModel> parseCanadaDotInList(JSONArray logArray){
+    public List<CanadaDutyStatusModel> parseCanadaDotInList(JSONArray logArray, boolean isSorting){
 
         List<CanadaDutyStatusModel> dotLogList = new ArrayList<>();
+        List<CanadaDutyStatusModel> dotDateWiseList = new ArrayList<>();
+        String lastDateTimeMin = "";
 
         try{
             for(int i = 0 ; i< logArray.length() ; i++) {
                 JSONObject obj = (JSONObject)logArray.get(i);
+
+                DateFormat format = new SimpleDateFormat(Globally.DateFormat, Locale.ENGLISH);
+                Date date = format.parse(obj.getString(ConstantsKeys.DateTimeWithMins));
+
                 CanadaDutyStatusModel dutyModel = new CanadaDutyStatusModel(
                         obj.getString(ConstantsKeys.DateTimeWithMins),
                         obj.getString(ConstantsKeys.EventUTCTimeStamp),
@@ -2790,11 +2799,37 @@ public class Constants {
                         obj.getString(ConstantsKeys.OffDutyHours),
                         obj.getString(ConstantsKeys.TruckEquipmentNo),
                         obj.getString(ConstantsKeys.WorkShiftStart),
-                        obj.getString(ConstantsKeys.WorkShiftEnd)
+                        obj.getString(ConstantsKeys.WorkShiftEnd),
+                        date
 
                 );
 
-                dotLogList.add(dutyModel);
+                if(isSorting){
+                 if(i > 0){
+                     int dayDiff = getDayDiff(lastDateTimeMin, obj.getString(ConstantsKeys.DateTimeWithMins));
+                     if (dayDiff == 0){
+                         dotDateWiseList.add(dutyModel);
+                     }else{
+                         Collections.sort(dotDateWiseList);
+                         for(int listPos = 0 ; listPos < dotDateWiseList.size() ; listPos++){
+                             dotLogList.add(dotDateWiseList.get(listPos));
+                         }
+                         dotDateWiseList = new ArrayList<>();
+                     }
+                 }else{
+                     dotDateWiseList.add(dutyModel);
+                 }
+                }else {
+                    dotLogList.add(dutyModel);
+                }
+                lastDateTimeMin = obj.getString(ConstantsKeys.DateTimeWithMins);
+            }
+
+            if(dotLogList.size() == 0){
+                Collections.sort(dotDateWiseList);
+                for(int listPos = 0 ; listPos < dotDateWiseList.size() ; listPos++){
+                    dotLogList.add(dotDateWiseList.get(listPos));
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -3370,6 +3405,22 @@ public class Constants {
         return value;
     }
 
+    public int getListNewDateCount(List<CanadaDutyStatusModel> DutyStatusList){
+        int count = 0;
+        for(int i = 0; i < DutyStatusList.size() ; i++){
+            if (i == 0) {
+                count++;
+            } else {
+                int dayDiff = getDayDiff(DutyStatusList.get(i-1).getDateTimeWithMins(), DutyStatusList.get(i).getDateTimeWithMins());
+                if (dayDiff != 0){
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
 
     public boolean isActionAllowed(Context context){
         boolean isAllowed = true;
@@ -3377,7 +3428,7 @@ public class Constants {
         if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && SharedPref.isVehicleMoving(context) ){
             isAllowed = false;
         }
-        return isAllowed;
+        return true;
     }
 
     public boolean isObdConnected(Context context){
@@ -3386,7 +3437,7 @@ public class Constants {
             isObdConnected = true;
         }
 
-        return isObdConnected;
+        return true;
     }
 
 

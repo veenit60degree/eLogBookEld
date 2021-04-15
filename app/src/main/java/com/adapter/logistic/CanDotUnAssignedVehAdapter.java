@@ -123,6 +123,9 @@ public class CanDotUnAssignedVehAdapter extends BaseAdapter {
         constants.setTextStyleNormal(holder.statusUnTV);
         constants.setTextStyleNormal(holder.seqNoUnTV);
 
+        constants.setTextStyleNormal(holder.startLocUnTV);
+        constants.setTextStyleNormal(holder.endLocUnTV);
+
 
         // set Marque on view
         constants.setMarqueonView(holder.truckNoUnTV);

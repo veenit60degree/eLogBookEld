@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/dot_titles_bg"
-    xmlns:tools="http://schemas.android.com/tools"
 
     >
 
@@ -16,17 +15,21 @@
         layout="@layout/actionbar_eld"
         />
 
+    <HorizontalScrollView
+        android:layout_width="1700dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/canadaDotActionBar"
+        >
 
     <ScrollView
         android:id="@+id/canDotScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/margin_20"
         android:layout_below="@+id/canadaDotActionBar"
         >
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="1700dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginLeft="@dimen/margin_17"
@@ -36,7 +39,7 @@
         >
 
         <RelativeLayout
-            android:layout_width="match_parent"
+            android:layout_width="1700dp"
             android:layout_height="@dimen/view_height_70"
             android:background="@color/whiteee"
             android:layout_marginTop="@dimen/margin_15"
@@ -72,6 +75,7 @@
                 />
 
             <ImageView
+                android:id="@+id/canDotModeImgVw"
                 android:layout_width="@dimen/margin_26"
                 android:layout_height="@dimen/margin_26"
                 android:src="@drawable/pencil"
@@ -1599,7 +1603,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/hos_location"
             android:textSize="@dimen/text_size_18"
-            android:layout_gravity="right"
+            android:layout_gravity="left"
             android:padding="@dimen/margin_15"
             android:text="@string/view_more"
             android:textStyle="bold"
@@ -1610,9 +1614,9 @@
         <RelativeLayout
             android:id="@+id/canGraphLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/view_height_190"
             android:minWidth="@dimen/view_height_500"
-            android:minHeight="@dimen/view_height_115"
+            android:minHeight="@dimen/view_height_150"
             android:layout_marginBottom="@dimen/margin_10"
 
             >
@@ -1620,9 +1624,9 @@
             <WebView
                 android:id="@+id/canDotGraphWebView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/view_height_190"
                 android:minWidth="@dimen/view_height_700"
-                android:minHeight="@dimen/view_height_125"
+                android:minHeight="@dimen/view_height_150"
                 android:layout_marginTop="@dimen/margin_short_8"
                 android:fillViewport="true"
 
@@ -1898,7 +1902,7 @@
                 android:layout_height="@dimen/view_height_80"
                 android:scrollbars="none"
                 android:minHeight="@dimen/view_height_30"
-
+                android:paddingBottom="@dimen/margin_20"
                 />
 
 
@@ -1912,6 +1916,7 @@
     </ScrollView>
 
 
+    </HorizontalScrollView>
 
 
     <RelativeLayout

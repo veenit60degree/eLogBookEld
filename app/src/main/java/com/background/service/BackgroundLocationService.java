@@ -478,7 +478,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-                          /*      Handler handler = new Handler(Looper.getMainLooper());
+                                Handler handler = new Handler(Looper.getMainLooper());
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -486,13 +486,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                                 "Vehicle Speed: " + bundle.getInt(constants.OBD_Vss),  //+ "\nCalculated Speed: " +  new DecimalFormat("##.##").format(calculatedSpeedFromOdo)
                                                 Toast.LENGTH_SHORT).show();
                                     }
-                                });*/
+                                });
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
 
-                        int timeDuration = 2000;
+                        int timeDuration = 1600;
 
                         double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
                         if (obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
@@ -533,7 +533,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                                 // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
-                                if (speed >= 8 && calculatedSpeedFromOdo >= 8) {
+                                if (speed >= 8 ) {  // && calculatedSpeedFromOdo >= 8
                                   //  timeDuration = 2000;
 
                                     // save current HighPrecisionOdometer locally

@@ -84,6 +84,7 @@
 
 
                     <ImageView
+                        android:id="@+id/dotModeImgVw"
                         android:layout_width="@dimen/margin_18"
                         android:layout_height="@dimen/margin_18"
                         android:src="@drawable/pencil"
