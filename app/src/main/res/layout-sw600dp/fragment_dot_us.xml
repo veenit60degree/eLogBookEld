@@ -35,11 +35,13 @@
             />
 
 
-        <com.constants.ScrollViewExt
+        <com.constants.ZoomScrollViewwww
             android:id="@+id/dotScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/dotActionBar"
+            android:fillViewport="true"
+
             >
 
             <LinearLayout
@@ -1385,7 +1387,7 @@
 
 
             </LinearLayout>
-        </com.constants.ScrollViewExt>
+        </com.constants.ZoomScrollViewwww>
 
 
 

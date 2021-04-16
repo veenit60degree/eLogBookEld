@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -15,21 +16,19 @@
         layout="@layout/actionbar_eld"
         />
 
-    <HorizontalScrollView
-        android:layout_width="1700dp"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/canadaDotActionBar"
-        >
+
 
     <ScrollView
         android:id="@+id/canDotScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/canadaDotActionBar"
+
+
         >
 
     <LinearLayout
-        android:layout_width="1700dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginLeft="@dimen/margin_17"
@@ -39,7 +38,7 @@
         >
 
         <RelativeLayout
-            android:layout_width="1700dp"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_70"
             android:background="@color/whiteee"
             android:layout_marginTop="@dimen/margin_15"
@@ -1603,7 +1602,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/hos_location"
             android:textSize="@dimen/text_size_18"
-            android:layout_gravity="left"
+            android:layout_gravity="right"
             android:padding="@dimen/margin_15"
             android:text="@string/view_more"
             android:textStyle="bold"
@@ -1915,8 +1914,6 @@
 
     </ScrollView>
 
-
-    </HorizontalScrollView>
 
 
     <RelativeLayout

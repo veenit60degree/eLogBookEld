@@ -17,7 +17,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 100  //99
-        versionName "3.5.5.15"  //3.5.4
+        versionName "3.5.5.16"  //3.5.4
         // Enabling multidex support.
         multiDexEnabled true
 
@@ -32,6 +32,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 

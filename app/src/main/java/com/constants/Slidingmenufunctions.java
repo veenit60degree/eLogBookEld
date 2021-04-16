@@ -79,7 +79,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	LoginDialog loginDialog;
 	String MainDriverName = "", MainDriverPass = "", CoDriverName = "", CoDriverPass = "";
 	String title                      = "<font color='#1A3561'><b>Alert !!</b></font>";
-	String titleDesc = "<html>You can't switch while <font color='#1A3561'><b>DRIVING</b></font>. Please change your status first to switch with your co-driver.</html>";
+	String titleDesc = "<html>You can't switch while <font color='#1A3561'><b>DRIVING</b></font>. Please stop your vehicle first to take this action.</html>";	//Please change your status first to switch with your co-driver.
 	String okText = "<font color='#1A3561' ><b>Ok</b></font>";
 	ProgressDialog dialog;
 	DBHelper dbHelper;
@@ -364,7 +364,11 @@ public class Slidingmenufunctions implements OnClickListener {
 					DriverStatus	= hMethod.GetDriverStatus(DriverId, dbHelper);
 
 					if(DriverStatus == DRIVING){
-						Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+						if(constants.isObdConnected(context) && sharedPref.isVehicleMoving(context)){
+							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+						}else{
+							ShowLoginDialog(DriverConst.StatusSingleDriver);
+						}
 					}else{
 						ShowLoginDialog(DriverConst.StatusSingleDriver);
 					}
@@ -380,10 +384,13 @@ public class Slidingmenufunctions implements OnClickListener {
 					DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
 					DriverStatus	= hMethod.GetDriverStatus(DriverId, dbHelper);
 
-					//ShowLoginDialog("co_driver");
-
 					if(DriverStatus == DRIVING){
-						Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+						if(constants.isObdConnected(context) && sharedPref.isVehicleMoving(context)){
+							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+						}else{
+							ShowLoginDialog("co_driver");
+						}
+
 					}else{
 						ShowLoginDialog("co_driver");
 					}

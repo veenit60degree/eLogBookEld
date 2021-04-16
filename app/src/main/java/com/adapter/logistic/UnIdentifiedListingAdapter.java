@@ -103,7 +103,6 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
         }
 
         String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
-
         if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
             holder.unIdenDistanceTV.setText(unIdentifiedList.get(position).getTotalMiles() + " Miles");
         }else{
@@ -160,7 +159,10 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
                         unIdentifiedList.get(position).getEndDateTime(),
                         unIdentifiedList.get(position).getStartLocation(),
                         unIdentifiedList.get(position).getEndLocation(),
-                        unIdentifiedList.get(position).getTotalMiles()
+                        unIdentifiedList.get(position).getTotalMiles(),
+                        unIdentifiedList.get(position).getTotalKm(),
+                        unIdentifiedList.get(position).getStartLocationKm(),
+                        unIdentifiedList.get(position).getEndLocationKm()
 
                 );
             }
@@ -191,7 +193,8 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
             String StartOdometer, String EndOdometer,
             String StartDateTime, String EndDateTime,
             String StartLocation, String EndLocation,
-            String TotalMiles
+            String TotalMiles, String TotalKM,
+            String StartLocationkm, String EndLocationKm
     ){
         UnidentifiedRecordDetailFragment detailFragment = new UnidentifiedRecordDetailFragment();
         Globally.bundle.putString(ConstantsKeys.DriverId, DriverId);
@@ -209,6 +212,9 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
         Globally.bundle.putString(ConstantsKeys.StartLocation, StartLocation);
         Globally.bundle.putString(ConstantsKeys.EndLocation, EndLocation);
         Globally.bundle.putString(ConstantsKeys.TotalMiles, TotalMiles);
+        Globally.bundle.putString(ConstantsKeys.TotalKM, TotalKM);
+        Globally.bundle.putString(ConstantsKeys.StartLocationKM, StartLocationkm);
+        Globally.bundle.putString(ConstantsKeys.EndLocationKM, EndLocationKm);
 
         detailFragment.setArguments(Globally.bundle);
 

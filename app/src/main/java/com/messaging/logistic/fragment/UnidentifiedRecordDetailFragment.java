@@ -23,6 +23,7 @@ import com.constants.Constants;
 import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.custom.dialogs.AdverseRemarksDialog;
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -37,7 +38,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     View rootView;
     RelativeLayout rightMenuBtn, eldMenuLay;
     TextView EldTitleTV;
-    TextView recordTimeTxtVw, endOdoTxtVw, startOdoTxtVw, endTimeTxtVw, startTimeTxtVw, endLocTxtVw, startLocTxtVw, totalKmTxtVw;
+    TextView recordTimeTxtVw, endOdoTxtVw, startOdoTxtVw, endTimeTxtVw, startTimeTxtVw, endLocTxtVw, startLocTxtVw, totalKmTxtVw, totalKmLabelTV;
     ImageView eldMenuBtn;
     Button rejectRecordBtn, claimRecordBtn;
     RadioGroup unIdentifyRadGroup;
@@ -49,6 +50,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     final int RejectRecordFlag                  = 102;
     final int RejectCompanyAssignedRecordFlag   = 103;
 
+    String CurrentCycleId = "";
     String DriverId = "", DriverStatusId = "", AssignedRecordsId = "", unAssignedVehicleMilesId = "",  DriverName = "";
     boolean isCompanyAssigned = false;
     ProgressDialog progressDialog;
@@ -92,6 +94,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         startLocTxtVw = (TextView)view.findViewById(R.id.startLocTxtVw);
         endLocTxtVw = (TextView)view.findViewById(R.id.endLocTxtVw);
         totalKmTxtVw = (TextView)view.findViewById(R.id.totalKmTxtVw);
+        totalKmLabelTV= (TextView)view.findViewById(R.id.totalKmLabelTV);
 
         EldTitleTV = (TextView)view.findViewById(R.id.EldTitleTV);
         eldMenuBtn = (ImageView) view.findViewById(R.id.eldMenuBtn);
@@ -137,8 +140,8 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         });
 
 
-        
-        
+        CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+
         eldMenuLay.setOnClickListener(this);
         rejectRecordBtn.setOnClickListener(this);
         claimRecordBtn.setOnClickListener(this);
@@ -148,7 +151,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
     private void getData(){
 
-        String StartOdometer = "", EndOdometer, StartDateTime, EndDateTime, StartLocation, EndLocation, TotalMiles;
+       String StartOdometer = "", EndOdometer, StartDateTime, EndDateTime, StartLocation, EndLocation, TotalMiles, TotalKm;
 
         Bundle getBundle        = this.getArguments();
         DriverId = getBundle.getString(ConstantsKeys.DriverId);
@@ -167,6 +170,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         StartLocation = getBundle.getString(ConstantsKeys.StartLocation);
         EndLocation = getBundle.getString(ConstantsKeys.EndLocation);
         TotalMiles = getBundle.getString(ConstantsKeys.TotalMiles);
+        TotalKm     = getBundle.getString(ConstantsKeys.TotalKM);
 
         String startTime = getTime(StartDateTime);
         String endTime = getTime(EndDateTime);
@@ -174,15 +178,32 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         if(TotalMiles.length() == 0){
             TotalMiles = "N/A";
         }
-        totalKmTxtVw.setText(TotalMiles);
+
+        if(TotalKm.length() == 0){
+            TotalKm = "N/A";
+        }
+
         startOdoTxtVw.setText(StartOdometer);
         endOdoTxtVw.setText(EndOdometer);
 
         startTimeTxtVw.setText(startTime);
         endTimeTxtVw.setText(endTime);
 
-        startLocTxtVw.setText(StartLocation);
-        endLocTxtVw.setText(EndLocation);
+        if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
+            totalKmTxtVw.setText(TotalMiles);
+
+            startLocTxtVw.setText(StartLocation);
+            endLocTxtVw.setText(EndLocation);
+
+        }else{
+            totalKmLabelTV.setText(getString(R.string.total_km));
+            totalKmTxtVw.setText(TotalKm);
+
+            startLocTxtVw.setText(getBundle.getString(ConstantsKeys.StartLocationKM));
+            endLocTxtVw.setText(getBundle.getString(ConstantsKeys.EndLocationKM));
+
+
+        }
 
     }
 

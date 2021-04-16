@@ -438,7 +438,9 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                                         Constants.CheckNullString(objItem.getString(ConstantsKeys.StatusId)),
                                         objItem.getString(ConstantsKeys.UnAssignedVehicleMilesId),
                                         objItem.getString(ConstantsKeys.AssignedUnidentifiedRecordsId),
-                                        false
+                                        false,
+                                        objItem.getString(ConstantsKeys.StartLocationKM),
+                                        objItem.getString(ConstantsKeys.EndLocationKM)
                                         );
 
                                 unIdentifiedRecordList.add(model);
@@ -467,9 +469,11 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                                         Constants.CheckNullString(objItem.getString(ConstantsKeys.DriverStatusId)),
                                         Constants.CheckNullString(objItem.getString(ConstantsKeys.Remarks)),
                                         Constants.CheckNullString(objItem.getString(ConstantsKeys.StatusId)),
-                                        objItem.getString(ConstantsKeys.UnAssignedVehicleMilesId),
-                                        objItem.getString(ConstantsKeys.AssignedUnidentifiedRecordsId),
-                                        true
+                                        Constants.CheckNullString(objItem.getString(ConstantsKeys.UnAssignedVehicleMilesId)),
+                                        Constants.CheckNullString(objItem.getString(ConstantsKeys.AssignedUnidentifiedRecordsId)),
+                                        true,
+                                         Constants.CheckNullString(objItem.getString(ConstantsKeys.StartLocationKM)),
+                                         Constants.CheckNullString(objItem.getString(ConstantsKeys.EndLocationKM))
                                 );
 
                                 unIdentifiedRecordList.add(model);

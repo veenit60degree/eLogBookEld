@@ -259,6 +259,16 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         viewInspectionBtn.setText(getResources().getString(R.string.view_inspections));
         viewInspectionBtn.setVisibility(View.VISIBLE);
 
+        RelativeLayout canGraphLayout = (RelativeLayout) view.findViewById(R.id.canGraphLayout);
+        ViewGroup.LayoutParams params = canGraphLayout.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        if(global.isTablet(getActivity())){
+            params.height = constants.intToPixel(getActivity(), 170);
+        }else{
+            params.height = constants.intToPixel(getActivity(), 140);
+        }
+        canGraphLayout.setLayoutParams(params);
+
         getBundleData();
         initilizeWebView();
         ReloadWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
@@ -693,8 +703,15 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
         try {
-            inspectionLayHeight  = eventDotETV.getHeight() + 15;
-            int headerViewHeight = eventDotETV.getHeight() + 25;
+            int headerViewHeight = 38;
+            if(global.isTablet(getActivity())){
+                inspectionLayHeight  = eventDotETV.getHeight() + 20;
+                headerViewHeight = eventDotETV.getHeight() + 30;
+            }else{
+                inspectionLayHeight  = eventDotETV.getHeight() + 15;
+                headerViewHeight = eventDotETV.getHeight() + 25;
+            }
+
 
             if (inspectionLayHeight == 0) {
                 if (global.isTablet(getActivity())) {
@@ -707,12 +724,12 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             }
 
 
-            final int DutyStatusListHeight = (inspectionLayHeight) * DutyStatusList.size() + (constants.getDateTitleCount(DutyStatusList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(DutyStatusList));
-            final int LoginLogoutListHeight = (inspectionLayHeight) * LoginLogoutList.size() + (constants.getDateTitleCount(LoginLogoutList) * inspectionLayHeight)+ (headerViewHeight * constants.getListNewDateCount(LoginLogoutList));
-            final int CommentsRemarksListHeight = (inspectionLayHeight) * (CommentsRemarksList.size() +1) ;  //+ (constants.getDateTitleCount(CommentsRemarksList) * inspectionLayHeight)
-            final int CycleOpZoneListHeight = (inspectionLayHeight) * CycleOpZoneList.size() + (constants.getDateTitleCount(CycleOpZoneList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(CycleOpZoneList));
-            final int EnginePowerListHeight = (inspectionLayHeight) * EnginePowerList.size() + (constants.getDateTitleCount(EnginePowerList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(EnginePowerList));
-            final int UnIdenfdVehListHeight = (inspectionLayHeight) * UnAssignedVehicleList.size();
+            final int DutyStatusListHeight = (inspectionLayHeight * DutyStatusList.size()) + (constants.getDateTitleCount(DutyStatusList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(DutyStatusList));
+            final int LoginLogoutListHeight = (inspectionLayHeight * LoginLogoutList.size()) + (constants.getDateTitleCount(LoginLogoutList) * inspectionLayHeight)+ (headerViewHeight * constants.getListNewDateCount(LoginLogoutList));
+            final int CommentsRemarksListHeight = inspectionLayHeight * (CommentsRemarksList.size() +1) ;  //+ (constants.getDateTitleCount(CommentsRemarksList) * inspectionLayHeight)
+            final int CycleOpZoneListHeight = (inspectionLayHeight * CycleOpZoneList.size()) + (constants.getDateTitleCount(CycleOpZoneList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(CycleOpZoneList));
+            final int EnginePowerListHeight = (inspectionLayHeight * EnginePowerList.size()) + (constants.getDateTitleCount(EnginePowerList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(EnginePowerList));
+            final int UnIdenfdVehListHeight = (inspectionLayHeight * UnAssignedVehicleList.size()+1) + headerViewHeight;
 
             new Handler().postDelayed(new Runnable() {
                 @Override

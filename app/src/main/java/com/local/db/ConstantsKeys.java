@@ -408,6 +408,8 @@ public class ConstantsKeys {
     public static String Unidentified                   = "Unidentified";
     public static String CompanyAssigned                = "CompanyAssigned";
     public static String EventList                      = "EventList";
+    public static String StartLocationKM                = "StartLocationKM";
+    public static String EndLocationKM                  = "EndLocationKM";
 
     public static String IsAllowLogReCertification      = "IsAllowLogReCertification";
     public static String IsShowUnidentifiedRecords      = "IsShowUnidentifiedRecords";

@@ -545,6 +545,19 @@ public class Constants {
         return val;
     }
 
+    public String CheckNullBString(String inputValue) {
+        try {
+            if (inputValue.trim().equals("null")) {
+                inputValue = "--";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return inputValue;
+    }
+
+
     public void ClearNotifications(Context context) {
         if (context != null) {
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -2740,66 +2753,66 @@ public class Constants {
                 Date date = format.parse(obj.getString(ConstantsKeys.DateTimeWithMins));
 
                 CanadaDutyStatusModel dutyModel = new CanadaDutyStatusModel(
-                        obj.getString(ConstantsKeys.DateTimeWithMins),
-                        obj.getString(ConstantsKeys.EventUTCTimeStamp),
-                        obj.getString(ConstantsKeys.DriverStatusID),
+                        CheckNullBString(obj.getString(ConstantsKeys.DateTimeWithMins)),
+                        CheckNullBString(obj.getString(ConstantsKeys.EventUTCTimeStamp)),
+                        CheckNullBString(obj.getString(ConstantsKeys.DriverStatusID)),
 
                         obj.getInt(ConstantsKeys.EventType),
                         obj.getInt(ConstantsKeys.EventCode),
-                        obj.getString(ConstantsKeys.DutyMinutes),
+                        CheckNullBString(obj.getString(ConstantsKeys.DutyMinutes)),
 
-                        obj.getString(ConstantsKeys.Annotation),
-                        obj.getString(ConstantsKeys.EventDate),
-                        obj.getString(ConstantsKeys.EventTime),
-                        obj.getString(ConstantsKeys.AccumulatedVehicleMiles),
-                        obj.getString(ConstantsKeys.AccumulatedEngineHours),
-                        obj.getString(ConstantsKeys.TotalVehicleMiles),
-                        obj.getString(ConstantsKeys.TotalEngineHours),
-                        obj.getString(ConstantsKeys.GPSLatitude),
-                        obj.getString(ConstantsKeys.GPSLongitude),
-                        obj.getString(ConstantsKeys.CMVVIN),
-                        obj.getString(ConstantsKeys.CarrierName),
+                        CheckNullBString(obj.getString(ConstantsKeys.Annotation)),
+                        CheckNullBString(obj.getString(ConstantsKeys.EventDate)),
+                        CheckNullBString(obj.getString(ConstantsKeys.EventTime)),
+                        CheckNullBString(obj.getString(ConstantsKeys.AccumulatedVehicleMiles)),
+                        CheckNullBString(obj.getString(ConstantsKeys.AccumulatedEngineHours)),
+                        CheckNullBString(obj.getString(ConstantsKeys.TotalVehicleMiles)),
+                        CheckNullBString(obj.getString(ConstantsKeys.TotalEngineHours)),
+                        CheckNullBString(obj.getString(ConstantsKeys.GPSLatitude)),
+                        CheckNullBString(obj.getString(ConstantsKeys.GPSLongitude)),
+                        CheckNullBString(obj.getString(ConstantsKeys.CMVVIN)),
+                        CheckNullBString(obj.getString(ConstantsKeys.CarrierName)),
 
                         obj.getBoolean(ConstantsKeys.IsMalfunction),
 
-                        obj.getString(ConstantsKeys.OdometerInKm),
-                        obj.getString(ConstantsKeys.strEventType),
-                        obj.getString(ConstantsKeys.Origin),
-                        obj.getString(ConstantsKeys.StartTime),
-                        obj.getString(ConstantsKeys.EndTime),
-                        obj.getString(ConstantsKeys.OBDDeviceDataId),
-                        obj.getString(ConstantsKeys.CurrentObdDeviceDataId),
-                        obj.getString(ConstantsKeys.DriverLogId),
-                        obj.getString(ConstantsKeys.Truck),
-                        obj.getString(ConstantsKeys.Trailor),
-                        obj.getString(ConstantsKeys.Remarks),
-                        obj.getString(ConstantsKeys.DriverId),
+                        CheckNullBString(obj.getString(ConstantsKeys.OdometerInKm)),
+                        CheckNullBString(obj.getString(ConstantsKeys.strEventType)),
+                        CheckNullBString(obj.getString(ConstantsKeys.Origin)),
+                        CheckNullBString(obj.getString(ConstantsKeys.StartTime)),
+                        CheckNullBString(obj.getString(ConstantsKeys.EndTime)),
+                        CheckNullBString(obj.getString(ConstantsKeys.OBDDeviceDataId)),
+                        CheckNullBString(obj.getString(ConstantsKeys.CurrentObdDeviceDataId)),
+                        CheckNullBString(obj.getString(ConstantsKeys.DriverLogId)),
+                        CheckNullBString(obj.getString(ConstantsKeys.Truck)),
+                        CheckNullBString(obj.getString(ConstantsKeys.Trailor)),
+                        CheckNullBString(obj.getString(ConstantsKeys.Remarks)),
+                        CheckNullBString(obj.getString(ConstantsKeys.DriverId)),
 
                         obj.getBoolean(ConstantsKeys.IsPersonal),
                         obj.getBoolean(ConstantsKeys.IsYard),
 
-                        obj.getString(ConstantsKeys.IsStatusAutomatic),
+                        CheckNullBString(obj.getString(ConstantsKeys.IsStatusAutomatic)),
 
-                        obj.getString(ConstantsKeys.CurrentCycleId),
+                        CheckNullBString(obj.getString(ConstantsKeys.CurrentCycleId)),
                         obj.getInt(ConstantsKeys.SequenceNumber),
 
-                        obj.getString(ConstantsKeys.TotalVehicleKM),
-                        obj.getString(ConstantsKeys.AdditionalInfo),
-                        obj.getString(ConstantsKeys.EditedById),
-                        obj.getString(ConstantsKeys.UserName),
+                        CheckNullBString(obj.getString(ConstantsKeys.TotalVehicleKM)),
+                        CheckNullBString(obj.getString(ConstantsKeys.AdditionalInfo)),
+                        CheckNullBString(obj.getString(ConstantsKeys.EditedById)),
+                        CheckNullBString(obj.getString(ConstantsKeys.UserName)),
 
-                        obj.getString(ConstantsKeys.RecordStatus),
+                        CheckNullBString(obj.getString(ConstantsKeys.RecordStatus)),
 
-                        obj.getString(ConstantsKeys.DistanceSinceLastValidCord),
-                        obj.getString(ConstantsKeys.RecordOrigin),
-                        obj.getString(ConstantsKeys.DistanceInKM),
-                        obj.getString(ConstantsKeys.HexaSeqNumber),
-                        obj.getString(ConstantsKeys.OrderBy),
-                        obj.getString(ConstantsKeys.OnDutyHours),
-                        obj.getString(ConstantsKeys.OffDutyHours),
-                        obj.getString(ConstantsKeys.TruckEquipmentNo),
-                        obj.getString(ConstantsKeys.WorkShiftStart),
-                        obj.getString(ConstantsKeys.WorkShiftEnd),
+                        CheckNullBString(obj.getString(ConstantsKeys.DistanceSinceLastValidCord)),
+                        CheckNullBString(obj.getString(ConstantsKeys.RecordOrigin)),
+                        CheckNullBString(obj.getString(ConstantsKeys.DistanceInKM)),
+                        CheckNullBString(obj.getString(ConstantsKeys.HexaSeqNumber)),
+                        CheckNullBString(obj.getString(ConstantsKeys.OrderBy)),
+                        CheckNullBString(obj.getString(ConstantsKeys.OnDutyHours)),
+                        CheckNullBString(obj.getString(ConstantsKeys.OffDutyHours)),
+                        CheckNullBString(obj.getString(ConstantsKeys.TruckEquipmentNo)),
+                        CheckNullBString(obj.getString(ConstantsKeys.WorkShiftStart)),
+                        CheckNullBString(obj.getString(ConstantsKeys.WorkShiftEnd)),
                         date
 
                 );
@@ -2856,26 +2869,26 @@ public class Constants {
             for(int i = 0 ; i< logArray.length() ; i++) {
                 JSONObject obj = (JSONObject)logArray.get(i);
                 UnAssignedVehicleModel dutyModel = new UnAssignedVehicleModel(
-                        obj.getString(ConstantsKeys.UnAssignedVehicleMilesId),
-                        obj.getString(ConstantsKeys.AssignedUnidentifiedRecordsId),
-                        obj.getString(ConstantsKeys.EquipmentNumber),
-                        obj.getString(ConstantsKeys.VIN),
+                        CheckNullBString(obj.getString(ConstantsKeys.UnAssignedVehicleMilesId)),
+                        CheckNullBString(obj.getString(ConstantsKeys.AssignedUnidentifiedRecordsId)),
+                        CheckNullBString(obj.getString(ConstantsKeys.EquipmentNumber)),
+                        CheckNullBString(obj.getString(ConstantsKeys.VIN)),
 
-                        obj.getString(ConstantsKeys.StartOdometer),
-                        obj.getString(ConstantsKeys.EndOdometer),
-                        obj.getString(ConstantsKeys.TotalMiles),
-                        obj.getString(ConstantsKeys.TotalKm),
+                        CheckNullBString(obj.getString(ConstantsKeys.StartOdometer)),
+                        CheckNullBString(obj.getString(ConstantsKeys.EndOdometer)),
+                        CheckNullBString(obj.getString(ConstantsKeys.TotalMiles)),
+                        CheckNullBString(obj.getString(ConstantsKeys.TotalKm)),
 
-                        obj.getString(ConstantsKeys.DriverZoneStartDateTime),
-                        obj.getString(ConstantsKeys.DriverZoneEndDateTime),
-                        obj.getString(ConstantsKeys.StatusId),
+                        CheckNullBString(obj.getString(ConstantsKeys.DriverZoneStartDateTime)),
+                        CheckNullBString(obj.getString(ConstantsKeys.DriverZoneEndDateTime)),
+                        CheckNullBString(obj.getString(ConstantsKeys.StatusId)),
 
                         obj.getBoolean(ConstantsKeys.IsIntermediateLog),
-                        obj.getString(ConstantsKeys.HexaSeqNumber),
+                        CheckNullBString(obj.getString(ConstantsKeys.HexaSeqNumber)),
 
-                        obj.getString(ConstantsKeys.StartLocation),
-                        obj.getString(ConstantsKeys.EndLocation),
-                        obj.getString(ConstantsKeys.DutyStatus)
+                        CheckNullBString(obj.getString(ConstantsKeys.StartLocation)),
+                        CheckNullBString(obj.getString(ConstantsKeys.EndLocation)),
+                        CheckNullBString(obj.getString(ConstantsKeys.DutyStatus))
 
                         );
 
@@ -3428,7 +3441,7 @@ public class Constants {
         if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && SharedPref.isVehicleMoving(context) ){
             isAllowed = false;
         }
-        return true;
+        return isAllowed;
     }
 
     public boolean isObdConnected(Context context){
@@ -3437,7 +3450,7 @@ public class Constants {
             isObdConnected = true;
         }
 
-        return true;
+        return isObdConnected;
     }
 
 

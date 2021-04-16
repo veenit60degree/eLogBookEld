@@ -1087,7 +1087,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
 
 
-        if(isUnidentifiedAllowed() && isUnIdentifiedOccur && isUnIdentifiedAlert && sharedPref.GetNewLoginStatus(getActivity()) == false){
+        if(isUnidentifiedAllowed() && isUnIdentifiedOccur && isUnIdentifiedAlert &&
+                sharedPref.GetNewLoginStatus(getActivity()) == false && sharedPref.IsDOT(getActivity()) == false){
             try {
                 if (confirmationDialog != null && confirmationDialog.isShowing()){
                     //  confirmationDialog.dismiss();
