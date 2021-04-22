@@ -71,9 +71,7 @@ public class SyncWiredObdLog extends AsyncTask<String, String, String> {
             response = client.newCall(request).execute();
             strResponse = response.body().string();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {  }
         return strResponse;
     }
 

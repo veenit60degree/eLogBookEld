@@ -79,7 +79,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	LoginDialog loginDialog;
 	String MainDriverName = "", MainDriverPass = "", CoDriverName = "", CoDriverPass = "";
 	String title                      = "<font color='#1A3561'><b>Alert !!</b></font>";
-	String titleDesc = "<html>You can't switch while <font color='#1A3561'><b>DRIVING</b></font>. Please stop your vehicle first to take this action.</html>";	//Please change your status first to switch with your co-driver.
+	String titleDesc = "<html>You can't switch while vehicle is moving. Please stop your vehicle first to take this action.</html>";	// <font color='#1A3561'><b>DRIVING/PERSONAL USE</b></font>
 	String okText = "<font color='#1A3561' ><b>Ok</b></font>";
 	ProgressDialog dialog;
 	DBHelper dbHelper;
@@ -363,15 +363,22 @@ public class Slidingmenufunctions implements OnClickListener {
 					DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
 					DriverStatus	= hMethod.GetDriverStatus(DriverId, dbHelper);
 
-					if(DriverStatus == DRIVING){
+					//	boolean isMoving = hMethod.isDrivingAllowed(DriverId, dbHelper);
+
+					//if(DriverStatus == DRIVING){
 						if(constants.isObdConnected(context) && sharedPref.isVehicleMoving(context)){
 							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
 						}else{
 							ShowLoginDialog(DriverConst.StatusSingleDriver);
 						}
-					}else{
-						ShowLoginDialog(DriverConst.StatusSingleDriver);
-					}
+				/*	}else{
+						if( sharedPref.isVehicleMoving(context)){
+							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+						}else{
+							ShowLoginDialog(DriverConst.StatusSingleDriver);
+						}
+
+					}*/
 
 
 				}
@@ -384,16 +391,22 @@ public class Slidingmenufunctions implements OnClickListener {
 					DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
 					DriverStatus	= hMethod.GetDriverStatus(DriverId, dbHelper);
 
-					if(DriverStatus == DRIVING){
+				//	boolean isMoving = hMethod.isDrivingAllowed(DriverId, dbHelper);
+
+					//if(DriverStatus == DRIVING){
 						if(constants.isObdConnected(context) && sharedPref.isVehicleMoving(context)){
 							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
 						}else{
 							ShowLoginDialog("co_driver");
 						}
 
-					}else{
-						ShowLoginDialog("co_driver");
-					}
+					/*}else{
+						if( sharedPref.isVehicleMoving(context)){
+							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+						}else{
+							ShowLoginDialog("co_driver");
+						}
+					}*/
 
 				}
 
@@ -700,10 +713,10 @@ public class Slidingmenufunctions implements OnClickListener {
 							MainDriverView(context);
 							ParseLoginDetails.setUserDefault(DriverConst.SingleDriver, context);
 							usernameTV.setText(DriverConst.GetDriverDetails( DriverConst.DriverName, context));
+							sharedPref.setDrivingAllowedStatus(true, "", context);
 
 							RefreshActivity();
 							Globally.hideKeyboardView(context, PasswordEditText);
-
 							Globally.EldScreenToast(usernameTV, "Password confirmed", eldGreenColor );
 						}else{
 							Globally.EldScreenToast(UsernameEditText, "Incorrect Password", eldWarningColor );
@@ -717,8 +730,9 @@ public class Slidingmenufunctions implements OnClickListener {
 							CoDriverView(context, false);
 							ParseLoginDetails.setUserDefault( DriverConst.TeamDriver, context);
 							usernameTV.setText(DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, context));
-							RefreshActivity();
+							sharedPref.setDrivingAllowedStatus(true, "", context);
 
+							RefreshActivity();
 							Globally.EldScreenToast(usernameTV, "Password confirmed", eldGreenColor );
 						}else{
 							Globally.EldScreenToast(UsernameEditText, "Incorrect password", eldWarningColor );

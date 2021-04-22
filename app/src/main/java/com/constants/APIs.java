@@ -118,6 +118,7 @@ public class APIs {
     public static String SAVE_CERTIFY_SIGN_REJECTED_AUDIT   = DOMAIN_URL_ELD + "SaveCertifySignRejectedAudit";
     public static String GET_DRIVER_SETTINGS                = DOMAIN_URL_ELD + "GetDriverSettings";
     public static String GET_DRIVER_DEVICE_ID               = DOMAIN_URL_ELD + "GetDriverDeviceId";
+    public static String UPDATE_DRIVER_ELD_SETTING_NOTIFICATIONS               = DOMAIN_URL_ELD + "UpdateDriverELDSettingNotifications";
 
 
 }

@@ -395,7 +395,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
          //   sharedPref.saveLocMalfunctionOccurStatus(true, global.GetCurrentDateTime(), getApplicationContext());
          //   sharedPref.SetDiagnosticAndMalfunctionSettingsMain(true, true, true, true, getApplicationContext());
 
-       /*        ignitionStatus = "ON"; truckRPM = "700"; speed = 8;
+         /*     ignitionStatus = "ON"; truckRPM = "700"; speed = 10;
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
@@ -483,6 +483,24 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         int timeDuration = 1600;
 
+
+                        boolean isDrivingAllowed = true;
+                        if(sharedPref.isDrivingAllowed(getApplicationContext()) == false && speed >= 8){
+                            final DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
+                            final DateTime savedDateTime  = global.getDateTimeObj(sharedPref.getDrivingAllowedTime(getApplicationContext()), false);
+
+                            if(savedDateTime.toString().length() > 10) {
+                                int timeInSec = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
+                                if (timeInSec > 20) {
+                                    isDrivingAllowed = true;
+                                    sharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
+                                } else {
+                                    isDrivingAllowed = false;
+                                }
+                            }
+                            timeDuration = 5000;
+                        }
+
                         double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
                         if (obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
 
@@ -501,60 +519,61 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 sharedPref.setVehilceMovingStatus(false, getApplicationContext());
                             }
 
-                            if (jobType.equals(global.DRIVING)) {
+                            if(isDrivingAllowed) {
+                                if (jobType.equals(global.DRIVING)) {
 
-                               // timeDuration = 2000;
-                                // if (SpeedCounter == 8) {
+                                    // timeDuration = 2000;
+                                    // if (SpeedCounter == 8) {
 
-                                if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
-                                    // save current HighPrecisionOdometer in DB
-                                    sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-
-                                    if (speed >= 8 && calculatedSpeedFromOdo >= 8) {
-                                        callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-                                    } else if (speed < 8 && calculatedSpeedFromOdo < 8) {
-                                        callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-                                    }
-                                }
-
-
-                            } else if (jobType.equals(global.ON_DUTY)) {
-
-
-                                // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
-                                if (speed >= 8 ) {  // && calculatedSpeedFromOdo >= 8
-                                  //  timeDuration = 2000;
-
-                                    // save current HighPrecisionOdometer locally
-                                    sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-                                    callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-
-                                } else {
-                                  //  timeDuration = 2000;
-                                    // call ELD rule after 1 minute to improve performance
                                     if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
+                                        // save current HighPrecisionOdometer in DB
+                                        sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+
+                                        if (speed >= 8 && calculatedSpeedFromOdo >= 8) {
+                                            callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                        } else if (speed < 8 && calculatedSpeedFromOdo < 8) {
+                                            callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                        }
+                                    }
+
+
+                                } else if (jobType.equals(global.ON_DUTY)) {
+
+
+                                    // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
+                                    if (speed >= 8) {  // && calculatedSpeedFromOdo >= 8
+                                        //  timeDuration = 2000;
+
                                         // save current HighPrecisionOdometer locally
                                         sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
                                         callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+
+                                    } else {
+                                        //  timeDuration = 2000;
+                                        // call ELD rule after 1 minute to improve performance
+                                        if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
+                                            // save current HighPrecisionOdometer locally
+                                            sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+                                            callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                        }
                                     }
-                                }
 
-                            } else {
-
-                                // =================== For OFF Duty & Sleeper case =====================
-                                // save current HighPrecisionOdometer in DB
-                                sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-
-                               // timeDuration = 5000;
-                                if (speed <= 0 && calculatedSpeedFromOdo <= 0) {
-                                    Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
                                 } else {
-                                    if (speed >= 8 && calculatedSpeedFromOdo >= 8) {    //if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
-                                        callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+
+                                    // =================== For OFF Duty & Sleeper case =====================
+                                    // save current HighPrecisionOdometer in DB
+                                    sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+
+                                    // timeDuration = 5000;
+                                    if (speed <= 0 && calculatedSpeedFromOdo <= 0) {
+                                        Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
+                                    } else {
+                                        if (speed >= 8 && calculatedSpeedFromOdo >= 8) {    //if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
+                                            callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                        }
                                     }
                                 }
                             }
-
 
                             checkPositionMalfunction(currentHighPrecisionOdometer, currentLogDate);
 
@@ -884,7 +903,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
 
 
-            Log.d("GpsVehicleSpeed", "---GpsVehicleSpeed: " + GpsVehicleSpeed );
+         //   Log.d("GpsVehicleSpeed", "---GpsVehicleSpeed: " + GpsVehicleSpeed );
            // getLocDegree(location);
 
 /*            final Date date = new Date(location.getTime());
@@ -1910,7 +1929,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         global.LONGITUDE = Globally.CheckLongitudeWithCycle(global.LONGITUDE);
 
         GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
-        Log.d("GpsVehicleSpeed", "---GpsVehicleSpeed: " + GpsVehicleSpeed );
+      //  Log.d("GpsVehicleSpeed", "---GpsVehicleSpeed: " + GpsVehicleSpeed );
 
         int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
         if(ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE){
@@ -2760,6 +2779,19 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
                                         boolean isSuggestedRecall;
                                         boolean IsCycleRequest      =  dataObj.getBoolean(ConstantsKeys.IsCycleRequest);
+                                        boolean IsELDNotification = false;
+                                        String ELDNotification    = dataObj.getString("DriverELDNotificationList");
+
+                                        try{
+                                            JSONArray eldNotArray = new JSONArray(ELDNotification);
+                                            if(eldNotArray.length() > 0){
+                                                IsELDNotification = true;
+                                            }
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+
+                                        sharedPref.SetELDNotification(IsELDNotification, getApplicationContext());
 
                                         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
                                             sharedPref.setEldOccurences(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
@@ -2772,6 +2804,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             sharedPref.SetExemptDriverStatusMain(dataObj.getBoolean(ConstantsKeys.IsExemptDriver), getApplicationContext());
                                             sharedPref.SetNorthCanadaStatusMain(dataObj.getBoolean(ConstantsKeys.IsNorthCanada), getApplicationContext());
                                             sharedPref.SetCycleRequestStatusMain(IsCycleRequest, getApplicationContext());
+
+
                                         }else{
                                             sharedPref.setEldOccurencesCo(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
                                                     dataObj.getBoolean(ConstantsKeys.IsMalfunction),
@@ -2783,14 +2817,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             sharedPref.SetExemptDriverStatusCo(dataObj.getBoolean(ConstantsKeys.IsExemptDriver), getApplicationContext());
                                             sharedPref.SetNorthCanadaStatusCo(dataObj.getBoolean(ConstantsKeys.IsNorthCanada), getApplicationContext());
                                             sharedPref.SetCycleRequestStatusCo(IsCycleRequest, getApplicationContext());
+
                                         }
 
-                                        if ( (isSuggestedEdit && isSuggestedRecall) || IsCycleRequest) {
+
+                                        if ( (isSuggestedEdit && isSuggestedRecall) || IsCycleRequest || IsELDNotification) {
                                             try {
                                                 if(UILApplication.isActivityVisible()) {
                                                     Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
                                                     intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
                                                     intent.putExtra(ConstantsKeys.IsCycleRequest, IsCycleRequest);
+                                                    intent.putExtra(ConstantsKeys.IsELDNotification, IsELDNotification);
+                                                    intent.putExtra(ConstantsKeys.DriverELDNotificationList, ELDNotification);
                                                     LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
                                                 }
                                             } catch (Exception e) {
@@ -2841,7 +2879,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     obdVehicleSpeed = dataObj.getInt("VehicleSpeed");
                                     apiReturnedSpeed = dataObj.getString("VehicleSpeed");
 
-                                    Log.d("GpsVehicleSpeed", "---obdVehicleSpeed: " + obdVehicleSpeed );
+                                 //   Log.d("GpsVehicleSpeed", "---obdVehicleSpeed: " + obdVehicleSpeed );
                                     global.VEHICLE_SPEED = obdVehicleSpeed;
 
                                     if (obdVehicleSpeed != -1) {

@@ -539,7 +539,7 @@ public class SharedPref {
     public static void SetCycleRequestStatusMain( boolean isCycleRequest, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(ConstantsKeys.IsCycleRequest, isCycleRequest);
+        editor.putBoolean(ConstantsKeys.IsCycleRequestMain, isCycleRequest);
         editor.commit();
     }
 
@@ -550,7 +550,7 @@ public class SharedPref {
         boolean isRecord = false;
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            isRecord = preferences.getBoolean(ConstantsKeys.IsCycleRequest, false);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsCycleRequestMain, false);
         }
         return isRecord;
     }
@@ -578,6 +578,50 @@ public class SharedPref {
     }
 
 
+
+
+    // Set ELD Notification Status for main driver -------------------
+    public static void SetELDNotification( boolean isNotification, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsELDNotificationShown, isNotification);
+        editor.commit();
+    }
+
+
+
+    // Get ELD Notification Status for main driver -------------------
+    public static boolean IsELDNotification(Context context) {
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsELDNotificationShown, false);
+        }
+        return isRecord;
+    }
+
+
+
+
+    // Set ELD Notification Alert View Status for main driver -------------------
+    public static void SetELDNotificationAlertViewStatus( boolean IsELDNotificationAlert, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsELDNotificationAlert, IsELDNotificationAlert);
+        editor.commit();
+    }
+
+
+
+    // Get ELD Notification Alert View Status Status for main driver -------------------
+    public static boolean IsELDNotificationAlertShownAlready(Context context) {
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsELDNotificationAlert, false);
+        }
+        return isRecord;
+    }
 
 
 
@@ -1570,13 +1614,53 @@ public class SharedPref {
         return preferences.getBoolean(ConstantsKeys.PersonalUse75Km, true);
     }
 
-    // Save personal use status for 75 km crossing -------------------
+    // Save personal use status, selected or not  -------------------
     public static void setPersonalUse75Km( boolean value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.PersonalUse75Km, value);
         editor.commit();
     }
+
+
+/*
+
+    // Get personal use status, selected or not -------------------
+    public static boolean isPersonalUseSelected( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.PersonalUseSelected, false);
+    }
+
+    // Save personal use status for 75 km crossing -------------------
+    public static void setPersonalUseSelected( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.PersonalUseSelected, value);
+        editor.commit();
+    }
+*/
+
+
+    // Get pDriving Allowing Status -------------------
+    public static boolean isDrivingAllowed( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.DrivingAllowedStatus, true);
+    }
+
+    public static String getDrivingAllowedTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(ConstantsKeys.DrivingAllowedStatusTime, "");
+    }
+
+    // Save Driving Allowing Status with time-------------------
+    public static void setDrivingAllowedStatus( boolean value, String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.DrivingAllowedStatus, value);
+        editor.putString(ConstantsKeys.DrivingAllowedStatusTime, time);
+        editor.commit();
+    }
+
 
 
     // Get Unidentified occure status  -------------------

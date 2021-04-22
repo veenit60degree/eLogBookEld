@@ -1039,6 +1039,25 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
                 }
 
+
+                String DrivingStartTime = "", IsAOBRD = "false", CurrentCycleId = "", isDeferral = "false";
+                if (obj.has(ConstantsKeys.DrivingStartTime)) {
+                    DrivingStartTime = obj.getString(ConstantsKeys.DrivingStartTime);
+                }
+
+                if (obj.has(ConstantsKeys.IsAOBRD)) {
+                    IsAOBRD = obj.getString(ConstantsKeys.IsAOBRD);
+                }
+                if (obj.has(ConstantsKeys.CurrentCycleId)) {
+                    CurrentCycleId = obj.getString(ConstantsKeys.CurrentCycleId);
+                }
+
+                if (obj.has(ConstantsKeys.isDeferral)) {
+                    isDeferral = obj.getString(ConstantsKeys.isDeferral);
+                }
+
+
+
                 EldDataModelNew logModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
                         obj.getString(ConstantsKeys.DriverId),
@@ -1075,8 +1094,12 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         adverseExceptionRemark,
                         editLogReason,
                         LocationType,
-                        IsNorthCanada
-
+                        IsNorthCanada,
+                        DrivingStartTime,
+                        IsAOBRD,
+                        CurrentCycleId,
+                        isDeferral,
+                        ""
                 );
 
                 logList.add(logModel);
@@ -1129,6 +1152,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
             try {
                 JSONObject obj      = (JSONObject)geoData.get(i);
                 String utcDate      = obj.getString(ConstantsKeys.UTCStartDateTime);
+                String DrivingStartTime = obj.getString(ConstantsKeys.StartDateTime);
                 utcDate             = Globally.ConvertDateFormatMMddyyyyHHmm(utcDate);
                 String location     = obj.getString(ConstantsKeys.StartLocation);
                 String[] loc        = location.split(",");
@@ -1276,7 +1300,12 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         adverseExceptionRemark,
                         editLogReason,
                         LocationType,
-                        IsNorthCanada
+                        IsNorthCanada,
+                        DrivingStartTime,
+                        ""+sharedPref.IsAOBRD(getActivity()),
+                        CurrentCycleId,
+                        "false",
+                        ""
                         );
 
                     if(eldModel != null) {

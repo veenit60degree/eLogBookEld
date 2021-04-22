@@ -36,6 +36,7 @@ import com.constants.Slidingmenufunctions;
 import com.constants.UrlResponce;
 import com.constants.Utils;
 import com.custom.dialogs.AppUpdateDialog;
+import com.custom.dialogs.EldNotificationDialog;
 import com.driver.details.DriverConst;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -80,6 +81,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     private BroadcastReceiver mMessageReceiver = null;
     Animation fadeInAnim, fadeOutAnim;
     AppUpdateDialog appUpdateDialog;
+    EldNotificationDialog eldNotificationDialog;
     Utils util;
     String existingAppVersionStr = "";
 
@@ -147,6 +149,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 boolean isFreshLogin        = sharedPref.GetNewLoginStatus(TabAct.this);
                 boolean IsCCMTACertified    = sharedPref.IsCCMTACertified(TabAct.this);
 
+                boolean IsELDNotification   = intent.getBooleanExtra(ConstantsKeys.IsELDNotification, false);
+                String ELDNotification      = intent.getStringExtra(ConstantsKeys.DriverELDNotificationList);
+
                 if(IsCCMTACertified && isSuggestedEdit && isFreshLogin == false){
                     Intent i = new Intent(TabAct.this, SuggestedFragmentActivity.class);
                     i.putExtra(ConstantsKeys.suggested_data, "");
@@ -164,6 +169,23 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                         }
                         sharedPref.SetCycleRequestAlertViewStatus(true, TabAct.this);
 
+                    }else if(IsELDNotification && isFreshLogin == false){
+                        if(sharedPref.IsELDNotificationAlertShownAlready(TabAct.this) == false){
+                            try {
+                                if (eldNotificationDialog != null && eldNotificationDialog.isShowing()) {
+                                    eldNotificationDialog.dismiss();
+                                }
+
+                                eldNotificationDialog = new EldNotificationDialog(TabAct.this, ELDNotification, true );
+                                eldNotificationDialog.show();
+
+                            } catch (final IllegalArgumentException e) {
+                                e.printStackTrace();
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        sharedPref.SetELDNotificationAlertViewStatus(true, TabAct.this);
                     }
                 }
 

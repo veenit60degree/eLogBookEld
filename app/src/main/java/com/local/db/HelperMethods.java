@@ -113,30 +113,95 @@ public class HelperMethods {
     }
 
 
-    public boolean isDrivingAllowed(Context context, Globally Global, String selectedDriverId, DBHelper dbHelper){
+    public boolean isDrivingAllowedWithCoDriver(Context context, Globally Global, String selectedDriverId, boolean isDriveChanging, DBHelper dbHelper){
         boolean isDrivingAllowed = true;
+        boolean isPC75KmCrossed = SharedPref.isPersonalUse75KmCrossed(context);
 
-        if (Global.isSingleDriver(context)) {
+        int SelectedDriverStatus = 1;
+        boolean isSelectedDriverPersonalUse = false;
+        boolean isSelectedDriverYardMove = false;
 
-        }else {
-            String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
-            String CotDriverId = "";
-
-            if(selectedDriverId.equals(MainDriverId)){
-                CotDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
-            }else{
-                CotDriverId = MainDriverId;
-            }
-
-            int status = GetDriverStatus(Integer.valueOf(CotDriverId), dbHelper);
-
-            if(status == Constants.DRIVING){
-                isDrivingAllowed = false;
-            }
+        ArrayList<String> selectedDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
+        if(selectedDriverInfo.size() > 2) {
+            SelectedDriverStatus = Integer.valueOf(selectedDriverInfo.get(0));
+            isSelectedDriverPersonalUse = Boolean.parseBoolean(selectedDriverInfo.get(1));
+            isSelectedDriverYardMove = Boolean.parseBoolean(selectedDriverInfo.get(2));
 
         }
 
+        if (Global.isSingleDriver(context)) {
+
+            if(isSelectedDriverPersonalUse && isPC75KmCrossed == false){
+                isDrivingAllowed = false;
+            }
+
+        }else{
+
+            if ((SelectedDriverStatus == Constants.DRIVING || isSelectedDriverPersonalUse || isSelectedDriverYardMove) && isDriveChanging == false ) {
+                if(isPC75KmCrossed == false)
+                    isDrivingAllowed = false;
+            }else {
+                String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
+                String CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
+
+                if (selectedDriverId.equals(MainDriverId)) {
+                    // get co driver data
+                    selectedDriverId = CoDriverId;
+                } else {
+                    // get main driver data
+                    selectedDriverId = MainDriverId;
+                }
+
+                ArrayList<String> coDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
+                if (coDriverInfo.size() > 2) {
+                    int CoDriverStatus = Integer.valueOf(coDriverInfo.get(0));
+                    boolean isCoDriverPersonalUse = Boolean.parseBoolean(coDriverInfo.get(1));
+                    boolean isCoDriverYardMove = Boolean.parseBoolean(coDriverInfo.get(2));
+                    if (CoDriverStatus == Constants.DRIVING || isCoDriverYardMove || isCoDriverPersonalUse ) {  //&& isPC75KmCrossed == false
+                        isDrivingAllowed = false;
+                    }
+                }
+            }
+        }
+
         return isDrivingAllowed;
+    }
+
+
+
+    public String getCoDriverStatus(Context context, String selectedDriverId, DBHelper dbHelper){
+
+        String status = "Driving";
+        String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
+        String CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
+
+        if (selectedDriverId.equals(MainDriverId)) {
+            // get co driver data
+            selectedDriverId = CoDriverId;
+        } else {
+            // get main driver data
+            selectedDriverId = MainDriverId;
+        }
+
+        ArrayList<String> coDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
+        if (coDriverInfo.size() > 2) {
+            int CoDriverStatus = Integer.valueOf(coDriverInfo.get(0));
+            boolean isCoDriverPersonalUse = Boolean.parseBoolean(coDriverInfo.get(1));
+            boolean isCoDriverYardMove = Boolean.parseBoolean(coDriverInfo.get(2));
+
+            if(CoDriverStatus == Constants.ON_DUTY && isCoDriverYardMove){
+                status = "Yard Move";
+            }else{
+                if(isCoDriverPersonalUse){
+                    status = "Personal Use";
+                }
+            }
+        }
+
+
+
+
+        return status;
     }
 
 
@@ -2538,6 +2603,27 @@ public class HelperMethods {
         return DriverStatus;
     }
 
+    public ArrayList<String> GetDriverStatusWithPCUse(int DriverId, DBHelper dbHelper){
+        ArrayList<String> list = new ArrayList<>();
+        String DriverStatus = "1", Personal = "false", YardMove = "false";
+        try {
+            JSONArray driverLogArray = getSavedLogArray(DriverId, dbHelper);
+            if (driverLogArray.length() > 0) {
+                JSONObject lastJsonItem = (JSONObject) driverLogArray.get(driverLogArray.length() - 1);
+                DriverStatus = lastJsonItem.getString(ConstantsKeys.DriverStatusId);
+                Personal = lastJsonItem.getString(ConstantsKeys.Personal);
+                YardMove = lastJsonItem.getString(ConstantsKeys.YardMove);
+                list.add(DriverStatus);
+                list.add(Personal);
+                list.add(YardMove);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 
     public boolean CanChangeStatus(int JobStatus, JSONArray logArray, Globally Global, boolean IsPersonal){
         boolean CanChange = true;
@@ -3105,6 +3191,7 @@ public class HelperMethods {
         String City = "", State = "", Country = "", AddressLine = "", finalRemarks = "", Remarks = "";
         int DRIVER_JOB_STATUS = 1;
         String currentUTCTime = Global.GetCurrentUTCTime();
+        String CurrentDeviceDate = Global.GetCurrentDateTime();
         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
         String CurrentCycleId   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
         String  MainDriverName = DriverConst.GetDriverDetails(DriverConst.DriverName, context);
@@ -3239,7 +3326,11 @@ public class HelperMethods {
                     AdverseExceptionRemarks,
                     "",
                     LocationType,
-                    String.valueOf(IsNorthCanada)
+                    String.valueOf(IsNorthCanada),
+                    CurrentDeviceDate,
+                    String.valueOf(sharedPref.IsAOBRD(context)),
+                    CurrentCycleId,
+                    "", ""
 
             );
 

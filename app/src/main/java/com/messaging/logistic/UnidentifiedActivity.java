@@ -13,7 +13,7 @@ public class UnidentifiedActivity extends FragmentActivity {
 
 
     FragmentManager fragManager;
-
+    public static boolean isUnIdentifiedRecordClaimed = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

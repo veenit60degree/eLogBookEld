@@ -557,6 +557,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.SetCycleRequestStatusCo(false, getApplicationContext());
 			sharedPref.SetCycleRequestStatusMain(false, getApplicationContext());
 			sharedPref.SetCycleRequestAlertViewStatus(false, getApplicationContext());
+			sharedPref.SetELDNotificationAlertViewStatus(false, getApplicationContext());
+			sharedPref.SetELDNotification(false, getApplicationContext());
+			sharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
 
 		}catch (Exception e){
 			e.printStackTrace();

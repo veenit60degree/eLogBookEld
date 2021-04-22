@@ -421,6 +421,13 @@ public class Constants {
         locationObj.put(ConstantsKeys.LocationType, ListModel.getLocationType());
         locationObj.put(ConstantsKeys.IsNorthCanada, ListModel.getIsNorthCanada());
 
+        locationObj.put(ConstantsKeys.DrivingStartTime, ListModel.getDrivingStartTime());
+        locationObj.put(ConstantsKeys.IsAOBRD, ListModel.getIsAobrd());
+        locationObj.put(ConstantsKeys.CurrentCycleId, ListModel.getCurrentCycleId());
+        locationObj.put(ConstantsKeys.isDeferral, ListModel.getIsDeferral());
+        locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, ListModel.getUnassignedVehicleMilesId());
+
+
         jsonArray.put(locationObj);
     }
 
@@ -480,6 +487,23 @@ public class Constants {
             IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
         }
 
+        String DrivingStartTime = "", IsAOBRD = "false", CurrentCycleId = "", isDeferral = "false";
+        if (obj.has(ConstantsKeys.DrivingStartTime)) {
+            DrivingStartTime = obj.getString(ConstantsKeys.DrivingStartTime);
+        }
+
+        if (obj.has(ConstantsKeys.IsAOBRD)) {
+            IsAOBRD = obj.getString(ConstantsKeys.IsAOBRD);
+        }
+        if (obj.has(ConstantsKeys.CurrentCycleId)) {
+            CurrentCycleId = obj.getString(ConstantsKeys.CurrentCycleId);
+        }
+
+        if (obj.has(ConstantsKeys.isDeferral)) {
+            isDeferral = obj.getString(ConstantsKeys.isDeferral);
+        }
+
+
         locationObj.put(ConstantsKeys.ProjectId, obj.getString(ConstantsKeys.ProjectId));
         locationObj.put(ConstantsKeys.DriverId, obj.getString(ConstantsKeys.DriverId));
         locationObj.put(ConstantsKeys.DriverStatusId, obj.getString(ConstantsKeys.DriverStatusId));
@@ -518,6 +542,12 @@ public class Constants {
         locationObj.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
         locationObj.put(ConstantsKeys.LocationType, LocationType);
         locationObj.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
+
+        locationObj.put(ConstantsKeys.DrivingStartTime, DrivingStartTime);
+        locationObj.put(ConstantsKeys.IsAOBRD, IsAOBRD);
+        locationObj.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
+        locationObj.put(ConstantsKeys.isDeferral, isDeferral);
+        locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, "");
 
 
         return locationObj;
@@ -3435,24 +3465,46 @@ public class Constants {
     }
 
 
-    public boolean isActionAllowed(Context context){
-        boolean isAllowed = true;
-        int ObdStatus = SharedPref.getObdStatus(context);
-        if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && SharedPref.isVehicleMoving(context) ){
-            isAllowed = false;
+    public JSONArray getEldNotificationReadInput(JSONArray dataArray, String DriverId, String DeviceId){
+        JSONArray inputArray = new JSONArray();
+        try {
+            for (int i = 0; i < dataArray.length(); i++) {
+
+                JSONObject obj = (JSONObject) dataArray.get(i);
+                JSONObject inputJson = new JSONObject();
+                inputJson.put(ConstantsKeys.DriverId, DriverId);
+                inputJson.put(ConstantsKeys.DeviceId, DeviceId);
+                inputJson.put(ConstantsKeys.SettingName, obj.getString(ConstantsKeys.SettingName));
+                inputJson.put(ConstantsKeys.ActionDateTime, obj.getString(ConstantsKeys.ActionDateTime));
+
+                inputArray.put(inputJson);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        return isAllowed;
+
+        return inputArray;
     }
 
-    public boolean isObdConnected(Context context){
-        boolean isObdConnected = false;
-        if (SharedPref.getObdStatus(context) == Constants.WIFI_ACTIVE || SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE){
-            isObdConnected = true;
-        }
 
-        return isObdConnected;
+
+    String addZeroForSingle(Globally Global, int min){
+        String hours = "" +Global.HourFromMin(min);
+        if(hours.length() == 1){
+            return "0" + hours ;
+        }else{
+            return hours;
+        }
     }
 
+    String addZeroForMinSingle(Globally Global, int min){
+        String hours = "" +Global.MinFromHourOnly(min);
+        if(hours.length() == 1){
+            return "0" + hours + " Hrs";
+        }else{
+            return hours + " Hrs";
+        }
+    }
 
 
 
@@ -3545,23 +3597,22 @@ public class Constants {
 
 
 
-
-    String addZeroForSingle(Globally Global, int min){
-        String hours = "" +Global.HourFromMin(min);
-        if(hours.length() == 1){
-            return "0" + hours ;
-        }else{
-            return hours;
+    public boolean isActionAllowed(Context context){
+        boolean isAllowed = true;
+        int ObdStatus = SharedPref.getObdStatus(context);
+        if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && SharedPref.isVehicleMoving(context) ){
+            isAllowed = false;
         }
+        return isAllowed;
     }
 
-    String addZeroForMinSingle(Globally Global, int min){
-        String hours = "" +Global.MinFromHourOnly(min);
-        if(hours.length() == 1){
-            return "0" + hours + " Hrs";
-        }else{
-            return hours + " Hrs";
+    public boolean isObdConnected(Context context){
+        boolean isObdConnected = false;
+        if (SharedPref.getObdStatus(context) == Constants.WIFI_ACTIVE || SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE){
+            isObdConnected = true;
         }
+
+        return isObdConnected;
     }
 
     /*public static boolean isTabletDevice(Context activityContext) {

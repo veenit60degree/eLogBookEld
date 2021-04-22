@@ -420,6 +420,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     public void onItemDismiss(int position) {
         driverLogList.remove(position);
         notifyItemRemoved(position);
+        notifyDataSetChanged();
     }
 
 
@@ -650,7 +651,13 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
 
             timerDialog.dismiss();
-            notifyDataSetChanged();
+            notifyItemChanged(position);
+
+            if(EditLogFragment.oDriverLogDetail.size() > position+1 ) {
+                notifyItemChanged(position + 1);
+            }
+
+          //  notifyDataSetChanged();
         }
     }
 

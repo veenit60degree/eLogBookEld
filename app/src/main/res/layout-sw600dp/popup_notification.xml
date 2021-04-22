@@ -51,7 +51,25 @@
         android:paddingRight="@dimen/margin_20"
         android:paddingTop="@dimen/margin_short_9"/>
 
-    <LinearLayout
+
+        <TextView
+            android:id="@+id/notificationDescTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notification"
+            android:textColor="@color/black_hover"
+            android:textSize="@dimen/text_size_17"
+            android:gravity="left"
+            android:layout_marginTop="@dimen/margin_15"
+            android:layout_marginBottom="@dimen/margin_12"
+            android:layout_marginLeft="@dimen/view_height_45"
+            android:visibility="gone"
+
+            />
+
+
+
+        <LinearLayout
         android:id="@+id/layout_dot"
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_35"

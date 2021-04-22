@@ -35,6 +35,7 @@ import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UnidentifiedActivity;
 import com.models.UnIdentifiedRecordModel;
 
 import org.json.JSONArray;
@@ -409,6 +410,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
                         case UnidentifiedRecordFlag:
 
+                            UnidentifiedActivity.isUnIdentifiedRecordClaimed = true;
                             JSONObject dataObj = new JSONObject(obj.getString(ConstantsKeys.Data));
                             JSONArray unidentifiedArray = new JSONArray(dataObj.getString(ConstantsKeys.Unidentified));
                             JSONArray companyAssignedArray = new JSONArray(dataObj.getString(ConstantsKeys.CompanyAssigned));

@@ -44,6 +44,13 @@ public class EldDataModelNew {
     String LocationType;
     String IsNorthCanada;
 
+    String DrivingStartTime;
+    String IsAobrd;
+    String CurrentCycleId;
+    String isDeferral;
+    String UnassignedVehicleMilesId;
+
+
     public EldDataModelNew(String projectId, String driverId, String driverStatusId, String isYard,
                            String isPersonal, String deviceID, String remarks, String utcDateTime,
                            String truckNumber, String trailorNumber, String companyId, String driverName, String city,
@@ -51,7 +58,9 @@ public class EldDataModelNew {
                            String latitude, String longitude, String isStatusAutomatic,
                            String oBDSpeed , String gPSSpeed, String plateNumber, String haulHourException , String isShortHaulUpdate,
                            String decesionSource, String isAdverseExc , String adverseExcRemarks, String editedReason, String locationType,
-                           String isNorthCanada) {
+                           String isNorthCanada, String DrivingStartTime, String IsAobrd,
+                           String CurrentCycleId, String isDeferral, String UnassignedVehicleMilesId
+    ) {
 
         ProjectId           = projectId;
         DriverId            = driverId;
@@ -84,6 +93,13 @@ public class EldDataModelNew {
         EditedReason        = editedReason;
         LocationType        = locationType;
         IsNorthCanada       = isNorthCanada;
+
+        this.DrivingStartTime = DrivingStartTime;
+        this.IsAobrd = IsAobrd;
+        this.CurrentCycleId = CurrentCycleId;
+        this.isDeferral = isDeferral;
+        this.UnassignedVehicleMilesId = UnassignedVehicleMilesId;
+
 
     }
 
@@ -224,5 +240,25 @@ public class EldDataModelNew {
 
     public String getIsNorthCanada() {
         return IsNorthCanada;
+    }
+
+    public String getDrivingStartTime() {
+        return DrivingStartTime;
+    }
+
+    public String getIsAobrd() {
+        return IsAobrd;
+    }
+
+    public String getCurrentCycleId() {
+        return CurrentCycleId;
+    }
+
+    public String getIsDeferral() {
+        return isDeferral;
+    }
+
+    public String getUnassignedVehicleMilesId() {
+        return UnassignedVehicleMilesId;
     }
 }

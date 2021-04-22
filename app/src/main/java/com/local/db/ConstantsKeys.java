@@ -181,6 +181,9 @@ public class ConstantsKeys {
     public static String DeviceMappingId                = "DeviceMappingId";
     public static String IMEINumber                     = "IMEINumber";
     public static String LoginTruckChange               = "LoginTruckChange";
+    public static String IsAOBRD                        = "IsAOBRD";
+    public static String isDeferral                     = "isDeferral";
+    public static String UnassignedVehicleMilesId       = "UnassignedVehicleMilesId";
 
     public static String IsCertifyLog                   = "IsCertifyLog";
     public static String SearchedDate                   = "SearchedDate";
@@ -194,6 +197,8 @@ public class ConstantsKeys {
     public static String ActionTimeZone                 = "ActionTimeZone";
     public static String IsOdometerFromOBD              = "IsOdometerFromOBD";
     public static String GeoData                        = "GeoData";
+    public static String SettingName                    = "SettingName";
+    public static String SettingCurrentValue            = "SettingCurrentValue";
 
     public static String fromDate                       = "fromDate";
     public static String toDate                         = "toDate";
@@ -224,11 +229,14 @@ public class ConstantsKeys {
     public static String CarrierName                    = "CarrierName";
     public static String DecesionSource                 = "DecesionSource";
     public static String PersonalUse75Km                = "PersonalUse75Km";
+    public static String PersonalUseSelected            = "PersonalUseSelected";
     public static String IsAOBRDAutomatic               = "IsAOBRDAutomatic";
     public static String IsAutoDriving                  = "IsAutoDriving";
     public static String IsDrivingShippingAllowed       = "IsDrivingShippingAllowed";
     public static String IsTimestampEnabled             = "IsTimestampEnabled";
     public static String MobileDeviceCurrentDateTime    = "MobileDeviceCurrentDateTime";
+    public static String DrivingAllowedStatus           = "DrivingAllowedStatus";
+    public static String DrivingAllowedStatusTime       = "DrivingAllowedStatusTime";
 
     public static String IsUnidentified                 = "IsUnidentified";
     public static String IsMalfunction                  = "IsMalfunction";
@@ -435,7 +443,13 @@ public class ConstantsKeys {
     public static String IsExemptDriver                 = "IsExemptDriver";
     public static String IsExemptDriverCo               = "IsExemptDriverCo";
     public static String IsCycleRequest                 = "IsCycleRequest";
+    public static String IsCycleRequestMain             = "IsCycleRequestMain";
     public static String IsCycleRequestCo               = "IsCycleRequestCo";
+    public static String IsELDNotificationShown         = "IsELDNotificationShown";
+    public static String DriverELDNotificationList      = "DriverELDNotificationList";
+    public static String IsELDNotification              = "IsELDNotification";
+    public static String IsELDNotificationAlert         = "IsELDNotificationAlert";
+
 
     public static String IsIgnitionOn                   = "IsIgnitionOn";
     public static String GeoLocation                    = "GeoLocation";
