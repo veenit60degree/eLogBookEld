@@ -750,7 +750,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             public void onAnimationEnd(Animation animation) {
                 try {
                     if(getActivity() != null) {
-                        if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE) {
+                        if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED) {
                             connectionStatusAnimation.cancel();
                             connectionStatusImgView.setAlpha(0f);
                         } else {
@@ -1006,14 +1006,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                         switch (sharedPref.getObdStatus(getActivity())) {
 
-                                case Constants.WIRED_ACTIVE:
+                                case Constants.WIRED_CONNECTED:
                                     connectionStatusImgView.setImageResource(R.drawable.obd_active);
                                     if (isToastShowing) {
                                         Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_active), getResources().getColor(R.color.color_eld_theme) );
                                     }
                                     break;
 
-                                case Constants.WIRED_INACTIVE:
+                                case Constants.WIRED_DISCONNECTED:
                                     connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
                                     connectionStatusImgView.startAnimation(connectionStatusAnimation);
 
@@ -1022,14 +1022,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     }
                                     break;
 
-                                case Constants.WIFI_ACTIVE:
+                                case Constants.WIFI_CONNECTED:
                                     connectionStatusImgView.setImageResource(R.drawable.obd_active);
                                     if (isToastShowing) {
                                         Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_active), getResources().getColor(R.color.color_eld_theme) );
                                     }
                                     break;
 
-                                case Constants.WIFI_INACTIVE:
+                                case Constants.WIFI_DISCONNECTED:
                                     connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
                                     connectionStatusImgView.startAnimation(connectionStatusAnimation);
                                     if (isToastShowing) {
@@ -1514,8 +1514,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             sharedPref.isDiagnosticOccur(getActivity()) ||
                              constants.isAllowLocMalfunctionEvent(getActivity()) ||
                     constants.CheckGpsStatus(getActivity()) == false ||
-                            (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_ACTIVE &&
-                                    sharedPref.getObdStatus(getActivity()) != Constants.WIRED_ACTIVE);
+                            (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
+                                    sharedPref.getObdStatus(getActivity()) != Constants.WIRED_CONNECTED);
 
                 }else{
                     isPendingNotifications = isPendingNotifications(DRIVER_JOB_STATUS) ||
@@ -1525,8 +1525,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             sharedPref.isDiagnosticOccurCo(getActivity()) ||
                             constants.CheckGpsStatus(getActivity()) == false ||
                              constants.isAllowLocMalfunctionEvent(getActivity()) ||
-                    (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_ACTIVE &&
-                                    sharedPref.getObdStatus(getActivity()) != Constants.WIRED_ACTIVE);
+                    (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
+                                    sharedPref.getObdStatus(getActivity()) != Constants.WIRED_CONNECTED);
                 }
 
                 if (isPendingNotifications) {
@@ -2596,7 +2596,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         if(constants.CheckGpsStatus(getActivity())) {
             if (DRIVER_JOB_STATUS != DRIVING) {
 
-                String coDriverStatus = hMethods.getCoDriverStatus(getActivity(), DRIVER_ID, dbHelper);
+                String coDriverStatus = hMethods.getCoDriverStatus(getActivity(), DRIVER_ID, Global, dbHelper);
                 boolean isDrivingAllowedWithCo = hMethods.isDrivingAllowedWithCoDriver(getActivity(), Global, DRIVER_ID, true, dbHelper);
                 if(isDrivingAllowedWithCo) {
 
@@ -2713,8 +2713,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             if (DRIVER_JOB_STATUS != OFF_DUTY ||
                     (DRIVER_JOB_STATUS == OFF_DUTY && isPersonal.equals("false"))) {
 
-          /*     if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE ||
-                                sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE) {
+          /*     if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED ||
+                                sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED) {
 */
                     if (hMethods.CanChangeStatus(OFF_DUTY, driverLogArray, Global, true)) {
 
@@ -3590,7 +3590,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray);
                 Reason = "";
                 BackgroundLocationService.IsAutoChange = false;
-                sharedPref.SetTruckIgnitionStatus("ON", "home", Global.getCurrentDate(), getActivity());
+                sharedPref.SetTruckIgnitionStatusForContinue("ON", "home", Global.getCurrentDate(), getActivity());
 
                 // get Obd odometer Data
                 if (!IsAOBRD || IsAOBRDAutomatic) {
@@ -3666,8 +3666,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
     private void checkWiredObdConnectionWithOdometer(){
-        if(sharedPref.GetTruckIgnitionStatus(constants.IgnitionSource, getActivity()).equals(constants.WiredOBD)) {
-            DateTime lastRecordSavedTime = Global.getDateTimeObj(sharedPref.GetTruckIgnitionStatus(constants.LastIgnitionTime,
+        if(sharedPref.GetTruckIgnitionStatusForContinue(constants.IgnitionSource, getActivity()).equals(constants.WiredOBD)) {
+            DateTime lastRecordSavedTime = Global.getDateTimeObj(sharedPref.GetTruckIgnitionStatusForContinue(constants.LastIgnitionTime,
                     getActivity()), false);
             DateTime currentDate = Global.getDateTimeObj(Global.getCurrentDate(), false);
 
@@ -6651,7 +6651,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                     closeDialogs();
 
-                    final String TruckIgnitionStatus = sharedPref.GetTruckIgnitionStatus(constants.TruckIgnitionStatus, getActivity());
+                    final String TruckIgnitionStatus = sharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, getActivity());
 
                     String status = "";
                     if (isYardMove) {
@@ -6672,7 +6672,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     dialog.dismiss();
 
                                     sharedPref.SetTruckStartLoginStatus(false, getActivity());
-                                    sharedPref.SetTruckIgnitionStatus(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
+                                    sharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
                                     CalculateTimeInOffLine(false, false);
 
                                 }
@@ -6685,7 +6685,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                             Log.d("VEHICLE_SPEED", "VEHICLE_SPEED: " + Global.VEHICLE_SPEED);
                             sharedPref.SetTruckStartLoginStatus(false, getActivity());
-                            sharedPref.SetTruckIgnitionStatus(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
+                            sharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
 
                             if (Global.VEHICLE_SPEED < 10) {
                                 SaveOffDutyStatus();

@@ -536,7 +536,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.SetNewLoginStatus(true, getApplicationContext());
 			sharedPref.setLastUsageDataSavedTime("", getApplicationContext());
 			sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
-			sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
+			sharedPref.SaveObdStatus(Constants.NO_CONNECTION,  "", getApplicationContext());
 			sharedPref.setRefreshDataTime("", getApplicationContext());
 			sharedPref.setDayStartOdometer("0", "", getApplicationContext());
 			sharedPref.setCertifyAlertViewTime("", getApplicationContext());

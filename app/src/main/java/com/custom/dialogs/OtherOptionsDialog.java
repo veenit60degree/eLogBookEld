@@ -160,7 +160,7 @@ public class OtherOptionsDialog extends Dialog {
 
                     case 5:
 
-                        if(SharedPref.getObdStatus(getContext()) == Constants.WIFI_INACTIVE || SharedPref.getObdStatus(getContext()) == Constants.WIFI_ACTIVE){
+                        if(SharedPref.getObdStatus(getContext()) == Constants.WIFI_DISCONNECTED || SharedPref.getObdStatus(getContext()) == Constants.WIFI_CONNECTED){
                             getContext().startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
                         }
 

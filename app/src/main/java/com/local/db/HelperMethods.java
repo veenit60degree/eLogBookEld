@@ -169,20 +169,19 @@ public class HelperMethods {
 
 
 
-    public String getCoDriverStatus(Context context, String selectedDriverId, DBHelper dbHelper){
+    public String getCoDriverStatus(Context context, String selectedDriverId, Globally Global, DBHelper dbHelper){
 
         String status = "Driving";
         String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
         String CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
 
-        if (selectedDriverId.equals(MainDriverId)) {
-            // get co driver data
-            selectedDriverId = CoDriverId;
-        } else {
-            // get main driver data
-            selectedDriverId = MainDriverId;
+        if (Global.isSingleDriver(context) == false) {
+            if (selectedDriverId.equals(MainDriverId)) {
+                selectedDriverId = CoDriverId;  // get co driver data
+            } else {
+                selectedDriverId = MainDriverId;     // get main driver data
+            }
         }
-
         ArrayList<String> coDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
         if (coDriverInfo.size() > 2) {
             int CoDriverStatus = Integer.valueOf(coDriverInfo.get(0));

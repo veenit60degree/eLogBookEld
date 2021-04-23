@@ -202,12 +202,19 @@ public class SharedPref {
     }
 
 
+    // Get Obd Status -------------------
+    public static String getObdLastStatusTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ObdStatusTime", "");
+    }
+
 
     // Set Obd Status -------------------
-    public static void SaveObdStatus( int value, Context context) {
+    public static void SaveObdStatus( int value, String time, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("ObdStatus", value);
+        editor.putString("ObdStatusTime", time);
         editor.commit();
     }
 
@@ -1424,7 +1431,7 @@ public class SharedPref {
 
 
     // Set Truck Ignition Status -------------------
-    public static void SetTruckIgnitionStatus( String ignitionStatus, String ignitionSource, String lastIgnitionTime, Context context) {
+    public static void SetTruckIgnitionStatusForContinue( String ignitionStatus, String ignitionSource, String lastIgnitionTime, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.TruckIgnitionStatus, ignitionStatus);
@@ -1436,7 +1443,7 @@ public class SharedPref {
 
 
     // Get Truck Ignition Status -------------------
-    public static String GetTruckIgnitionStatus( String key, Context context) {
+    public static String GetTruckIgnitionStatusForContinue( String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key , "ON");
     }

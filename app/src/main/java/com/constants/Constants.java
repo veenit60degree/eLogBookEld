@@ -171,11 +171,14 @@ public class Constants {
     public static int ConnectionOffline = 5;
     public static int CertifyLog = 101010;      // set this value to differentiate where we go on certify screen
 
-    public static final int WIRED_ACTIVE     = 1001;
-    public static final int WIRED_INACTIVE   = 1002;
-    public static final int WIFI_ACTIVE      = 1003;
-    public static final int WIFI_INACTIVE    = 1004;
-    public static final int NO_CONNECTION    = 1005;
+    public static final int WIRED_CONNECTED     = 1001;
+    public static final int WIRED_DISCONNECTED  = 1002;
+    public static final int WIRED_ERROR         = 1006;
+    public static final int WIRED_IGNITION_OFF  = 1007;
+
+    public static final int WIFI_CONNECTED      = 1003;
+    public static final int WIFI_DISCONNECTED   = 1004;
+    public static final int NO_CONNECTION       = 1005;
 
     public static final int NOTIFICATION      = 0;
     public static final int GPS               = 1;
@@ -364,9 +367,9 @@ public class Constants {
         if(SharedPref.IsCCMTACertified(context))
             optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, SUGGESTED_LOGS, context.getResources().getString(R.string.suggested_logs)));
 
-        if(SharedPref.getObdStatus(context) == Constants.WIFI_ACTIVE ){
+        if(SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED ){
             optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, OBD, context.getResources().getString(R.string.obd_wifi)));
-        }else if(SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE){
+        }else if(SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED){
             optionsList.add(new OtherOptionsModel(R.drawable.wired_status_inactive, OBD, context.getResources().getString(R.string.wired_tablet)));
         }else{
             optionsList.add(new OtherOptionsModel(R.drawable.eld_malfunction, OBD, context.getResources().getString(R.string.obd_not_connected)));
@@ -1281,7 +1284,7 @@ public class Constants {
 
             try {
 
-                if(obdStatus == Constants.WIRED_ACTIVE || obdStatus == WIFI_ACTIVE){
+                if(obdStatus == Constants.WIRED_CONNECTED || obdStatus == WIFI_CONNECTED){
 
                     StringBuilder obdData = obdUtils.getObdLogData(context);
                     String[] fileArray = obdData.toString().split("\n\n");
@@ -1297,7 +1300,7 @@ public class Constants {
                             int secDiff = currentDate.getSecondOfDay() - lastSavedTime.getSecondOfDay();
 
                             if (secDiff <= 60) {   // 1 min diff
-                                if (obdStatus == WIFI_ACTIVE) {
+                                if (obdStatus == WIFI_CONNECTED) {
                                     int wheelSpeed = Integer.valueOf(data.getString(Constants.WheelBasedVehicleSpeed));
                                     int calculatedSpeed = Integer.valueOf(data.getString(Constants.obdCalculatedSpeed));
 
@@ -2945,12 +2948,12 @@ public class Constants {
                               OdometerHelperMethod odometerhMethod, HelperMethods hMethods, DBHelper dbHelper, Context context) {
 
         try {
-            if (SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE || SharedPref.getObdStatus(context) == Constants.WIFI_ACTIVE) {
+            if (SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED) {
                 int lastJobStatus = hMethods.getSecondLastJobStatus(driver18DaysLogArray);
                 int currentJobStatus = Integer.valueOf(DriverStatusId);
 
                 String odometerValue ;
-                if (SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE) {
+                if (SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED) {
                     odometerValue = SharedPref.getWiredObdOdometer(context);
                 } else {
                     odometerValue = SharedPref.GetWifiObdOdometer(context);   // get odometer value from wifi obd
@@ -3045,7 +3048,7 @@ public class Constants {
         boolean isMalfunction = false;
         int ObdStatus = SharedPref.getObdStatus(context);
         try {
-            if (ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) {
+            if (ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) {
                 if (SharedPref.getEcmObdLatitude(context).length() < 4) {
 
                     String currentOdometer = SharedPref.getHighPrecisionOdometer(context);
@@ -3600,7 +3603,7 @@ public class Constants {
     public boolean isActionAllowed(Context context){
         boolean isAllowed = true;
         int ObdStatus = SharedPref.getObdStatus(context);
-        if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && SharedPref.isVehicleMoving(context) ){
+        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) && SharedPref.isVehicleMoving(context) ){
             isAllowed = false;
         }
         return isAllowed;
@@ -3608,12 +3611,13 @@ public class Constants {
 
     public boolean isObdConnected(Context context){
         boolean isObdConnected = false;
-        if (SharedPref.getObdStatus(context) == Constants.WIFI_ACTIVE || SharedPref.getObdStatus(context) == Constants.WIRED_ACTIVE){
+        if (SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED){
             isObdConnected = true;
         }
 
         return isObdConnected;
     }
+
 
     /*public static boolean isTabletDevice(Context activityContext) {
 

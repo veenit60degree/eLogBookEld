@@ -1066,7 +1066,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         String engineHours = sharedPref.getObdEngineHours(getActivity());
         int ObdStatus = SharedPref.getObdStatus(getActivity());
-        if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) && engineHours.length() > 1) {
+        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) && engineHours.length() > 1) {
              EngineHourTV.setText(engineHours);
         }else{
             EngineHourTitle.setVisibility(View.GONE);

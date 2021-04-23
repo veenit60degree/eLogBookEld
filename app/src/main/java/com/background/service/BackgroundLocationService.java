@@ -42,6 +42,7 @@ import com.constants.DriverLogResponse;
 import com.constants.RequestResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
+import com.constants.ShellUtils;
 import com.constants.ShippingPost;
 import com.constants.Slidingmenufunctions;
 import com.constants.SyncDataUpload;
@@ -243,6 +244,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     String ServerPackage = "com.als.obd";
     String ServerService = "com.als.obd.services.MainService";
+    private ShellUtils.CommandResult obdShell;
+
 
     Utils obdUtil;
     private Messenger messenger = null; //used to make an RPC invocation
@@ -326,10 +329,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
 
 
+        checkWiredObdConnection();
+
 //  ------------- Wired OBD ----------
         this.connection = new RemoteServiceConnection();
         this.replyTo = new Messenger(new IncomingHandler());
-        sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
+        sharedPref.SaveObdStatus(sharedPref.getObdStatus(getApplicationContext()), sharedPref.getObdLastStatusTime(getApplicationContext()), getApplicationContext());
 
         BindConnection();
 
@@ -350,6 +355,33 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
 
 
+    }
+
+
+    private void checkWiredObdConnection(){
+
+        boolean isAlsWifiObdConnected   = wifiConfig.IsAlsNetworkConnected(getApplicationContext()); // get ALS Wifi ssid availability
+        int lastObdStatus = sharedPref.getObdStatus(getApplicationContext());
+
+        if(isAlsWifiObdConnected == false && lastObdStatus != Constants.WIFI_CONNECTED) {
+            obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
+            if (obdShell.result == 0) {
+                System.out.println("obd --> cat type --> " + obdShell.successMsg);
+                if (obdShell.successMsg.contains("USB_DCP")) {  // Connected State
+                    sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
+                } else {
+                    // Disconnected State. Save only when last status was not already disconnected
+                    if(lastObdStatus != constants.WIRED_DISCONNECTED) {
+                        sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+                    }
+                }
+            } else {
+                System.out.println("zyz --> cat type failed --> " + obdShell.errorMsg);
+                if( isAlsWifiObdConnected == false || lastObdStatus != Constants.WIFI_CONNECTED) {
+                    sharedPref.SaveObdStatus(Constants.WIRED_ERROR, global.getCurrentDate(), getApplicationContext());
+                }
+            }
+        }
     }
 
 
@@ -404,233 +436,220 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             tempSpeed++;
 */
 
-     /*       if(ignitionCount > 20){
-                ignitionStatus = "OFF";
-                if(ignitionCount > 26){
-                    ignitionStatus = "ON";
-                    ignitionCount = 0;
-                }
-            }
-            ignitionCount++;
+            int OBD_LAST_STATUS = sharedPref.getObdStatus(getApplicationContext());
+            if(OBD_LAST_STATUS != constants.WIRED_DISCONNECTED && OBD_LAST_STATUS != constants.WIRED_ERROR) {
+                if (sharedPref.getVINNumber(getApplicationContext()).length() > 5) {
 
-*/
+                    if (ignitionStatus.equals("ON")) {
 
-            if(sharedPref.getVINNumber( getApplicationContext()).length() > 5) {
-                if (ignitionStatus.equals("ON")) {
-                    global.IS_OBD_IGNITION = true;
-                    saveObdStatus("ON", constants.WiredOBD, global.getCurrentDate(), Constants.WIRED_ACTIVE);
-                } else {
-                    global.IS_OBD_IGNITION = false;
-                    saveObdStatus("OFF", constants.WiredOBD, "", Constants.WIRED_INACTIVE);
-
-                    if (ignitionStatus.equals("--")) {
-                        sharedPref.SaveObdStatus(Constants.NO_CONNECTION, getApplicationContext());
+                        global.IS_OBD_IGNITION = true;
+                        continueStatusPromotForPcYm("ON", constants.WiredOBD, global.getCurrentDate(), Constants.WIRED_CONNECTED);
+                        sharedPref.SaveObdIgnitionStatus(global.IS_OBD_IGNITION, global.getCurrentDate(), speed, getApplicationContext());
                     } else {
-                        sharedPref.SaveObdStatus(Constants.WIRED_INACTIVE, getApplicationContext());
+                        global.IS_OBD_IGNITION = false;
+                        continueStatusPromotForPcYm("OFF", constants.WiredOBD, "", Constants.WIRED_CONNECTED);
 
-                        sharedPref.SaveObdIgnitionStatus(false, global.getCurrentDate(), -1, getApplicationContext());
-                        sharedPref.SetTruckIgnitionStatus("OFF", constants.WiredOBD, "", getApplicationContext());
+                        sharedPref.SaveObdStatus(Constants.WIRED_IGNITION_OFF, global.getCurrentDate(), getApplicationContext());
+
+                        sharedPref.SaveObdIgnitionStatus(global.IS_OBD_IGNITION, global.getCurrentDate(), -1, getApplicationContext());
+                        sharedPref.SetTruckIgnitionStatusForContinue("OFF", constants.WiredOBD, "", getApplicationContext());
+
 
                     }
 
-                }
+                    // ELD calling rule for Wired OBD
+                    try {
+                        if (ignitionStatus.equals("ON") || !truckRPM.equals("0")) {
 
-                // ELD calling rule for Wired OBD
-            /* Timer is calling after 10 sec. SpeedCounter value is 0,10,20,30,40,50,60. It is called 6 times in a minute.
-                    In Driving time it is calling only once in a minute. */
+                            isWiredDataReceived = true;
+                            //  sharedPref.SetConnectionType(constants.ConnectionWired, getApplicationContext());
+                            sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
+                            // saveExecutionTime("Wired");
 
-                try {
-                    if (ignitionStatus.equals("ON") || !truckRPM.equals("0")) {
+                            String jobType = sharedPref.getDriverStatusId("jobType", getApplicationContext());
+                            double intHighPrecisionOdometerInKm = (Double.parseDouble(currentHighPrecisionOdometer) * 0.001);
+                            double obdOdometerDouble = Double.parseDouble(currentHighPrecisionOdometer);
+                            String previousHighPrecisionOdometer = sharedPref.getHighPrecisionOdometer(getApplicationContext());
 
-                        isWiredDataReceived = true;
-                        //  sharedPref.SetConnectionType(constants.ConnectionWired, getApplicationContext());
-                        sharedPref.SaveObdStatus(Constants.WIRED_ACTIVE, getApplicationContext());
-                       // saveExecutionTime("Wired");
+                            // save current odometer for HOS calculation
+                            saveDayStartOdometer(currentHighPrecisionOdometer);
 
-                        String jobType = sharedPref.getDriverStatusId("jobType", getApplicationContext());
-                        double intHighPrecisionOdometerInKm = (Double.parseDouble(currentHighPrecisionOdometer) * 0.001);
-                        double obdOdometerDouble = Double.parseDouble(currentHighPrecisionOdometer);
-                        String previousHighPrecisionOdometer = sharedPref.getHighPrecisionOdometer(getApplicationContext());
+                            String savedDate = sharedPref.getHighPrecesionSavedTime(getApplicationContext());
+                            String currentLogDate = global.GetCurrentDateTime();
 
-                        // save current odometer for HOS calculation
-                        saveDayStartOdometer(currentHighPrecisionOdometer);
-
-                        String savedDate = sharedPref.getHighPrecesionSavedTime(getApplicationContext());
-                        String currentLogDate = global.GetCurrentDateTime();
-
-                        if (savedDate.length() == 0 && obdOdometerDouble > 0) {
-                            // save current HighPrecisionOdometer locally
-                            savedDate = currentLogDate;
-                            sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-                        }
-
-                        double calculatedSpeedFromOdo = 0;
-                        try {
-                            if (getApplicationContext() != null) {
-                                // calculating speed to comparing last saved odometer and current odometer (in meter) with time differencein seconds
-                                calculatedSpeedFromOdo = constants.calculateSpeedFromWiredTabOdometer(savedDate, currentLogDate,
-                                        previousHighPrecisionOdometer, currentHighPrecisionOdometer, global, sharedPref, getApplicationContext());
-
-                                // write wired OBD details in a text file and save into the SD card.
-                                saveObdData(constants.WiredOBD, vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
-                                        currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
-                                        String.valueOf((int) calculatedSpeedFromOdo), obdTripDistance, timeStamp, savedDate);
-
+                            if (savedDate.length() == 0 && obdOdometerDouble > 0) {
+                                // save current HighPrecisionOdometer locally
+                                savedDate = currentLogDate;
+                                sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
 
-                        int timeDuration = 1600;
+                            double calculatedSpeedFromOdo = 0;
+                            try {
+                                if (getApplicationContext() != null) {
+                                    // calculating speed to comparing last saved odometer and current odometer (in meter) with time differencein seconds
+                                    calculatedSpeedFromOdo = constants.calculateSpeedFromWiredTabOdometer(savedDate, currentLogDate,
+                                            previousHighPrecisionOdometer, currentHighPrecisionOdometer, global, sharedPref, getApplicationContext());
 
+                                    // write wired OBD details in a text file and save into the SD card.
+                                    saveObdData(constants.WiredOBD, vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
+                                            currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
+                                            String.valueOf((int) calculatedSpeedFromOdo), obdTripDistance, timeStamp, savedDate);
 
-                        boolean isDrivingAllowed = true;
-                        if(sharedPref.isDrivingAllowed(getApplicationContext()) == false && speed >= 8){
-                            final DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
-                            final DateTime savedDateTime  = global.getDateTimeObj(sharedPref.getDrivingAllowedTime(getApplicationContext()), false);
-
-                            if(savedDateTime.toString().length() > 10) {
-                                int timeInSec = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
-                                if (timeInSec > 20) {
-                                    isDrivingAllowed = true;
-                                    sharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
-                                } else {
-                                    isDrivingAllowed = false;
                                 }
-                            }
-                            timeDuration = 5000;
-                        }
-
-                        double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
-                        if (obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
-
-                            if (calculatedSpeedFromOdo > 0 && speed == 0) {
-                                sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), (int) calculatedSpeedFromOdo, getApplicationContext());
-                            } else {
-                                sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
 
-                            // temp pass for testing now
-                            calculatedSpeedFromOdo = speed;
-
-                            if (speed >= 8) {   // calculatedSpeedFromOdo >= 8 ||
-                                sharedPref.setVehilceMovingStatus(true, getApplicationContext());
-                            } else {
-                                sharedPref.setVehilceMovingStatus(false, getApplicationContext());
-                            }
-
-                            if(isDrivingAllowed) {
-                                if (jobType.equals(global.DRIVING)) {
-
-                                    // timeDuration = 2000;
-                                    // if (SpeedCounter == 8) {
-
-                                    if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
-                                        // save current HighPrecisionOdometer in DB
-                                        sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-
-                                        if (speed >= 8 && calculatedSpeedFromOdo >= 8) {
-                                            callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-                                        } else if (speed < 8 && calculatedSpeedFromOdo < 8) {
-                                            callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-                                        }
-                                    }
+                            int timeDuration = 1600;
 
 
-                                } else if (jobType.equals(global.ON_DUTY)) {
+                            boolean isDrivingAllowed = true;
+                            if (sharedPref.isDrivingAllowed(getApplicationContext()) == false && speed >= 8) {
+                                final DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
+                                final DateTime savedDateTime = global.getDateTimeObj(sharedPref.getDrivingAllowedTime(getApplicationContext()), false);
 
-
-                                    // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
-                                    if (speed >= 8) {  // && calculatedSpeedFromOdo >= 8
-                                        //  timeDuration = 2000;
-
-                                        // save current HighPrecisionOdometer locally
-                                        sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-                                        callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
-
+                                if (savedDateTime.toString().length() > 10) {
+                                    int timeInSec = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
+                                    if (timeInSec > 20) {
+                                        isDrivingAllowed = true;
+                                        sharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
                                     } else {
-                                        //  timeDuration = 2000;
-                                        // call ELD rule after 1 minute to improve performance
+                                        isDrivingAllowed = false;
+                                    }
+                                }
+                                timeDuration = 5000;
+                            }
+
+                            double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
+                            if (obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
+
+                                if (calculatedSpeedFromOdo > 0 && speed == 0) {
+                                    sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), (int) calculatedSpeedFromOdo, getApplicationContext());
+                                } else {
+                                    sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
+                                }
+
+                                // temp pass for testing now
+                                calculatedSpeedFromOdo = speed;
+
+                                if (speed >= 8) {   // calculatedSpeedFromOdo >= 8 ||
+                                    sharedPref.setVehilceMovingStatus(true, getApplicationContext());
+                                } else {
+                                    sharedPref.setVehilceMovingStatus(false, getApplicationContext());
+                                }
+
+                                if (isDrivingAllowed) {
+                                    if (jobType.equals(global.DRIVING)) {
+
+                                        // timeDuration = 2000;
+                                        // if (SpeedCounter == 8) {
+
                                         if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
+                                            // save current HighPrecisionOdometer in DB
+                                            sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+
+                                            if (speed >= 8 && calculatedSpeedFromOdo >= 8) {
+                                                callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                            } else if (speed < 8 && calculatedSpeedFromOdo < 8) {
+                                                callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                            }
+                                        }
+
+
+                                    } else if (jobType.equals(global.ON_DUTY)) {
+
+
+                                        // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
+                                        if (speed >= 8) {  // && calculatedSpeedFromOdo >= 8
+                                            //  timeDuration = 2000;
+
                                             // save current HighPrecisionOdometer locally
                                             sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
                                             callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+
+                                        } else {
+                                            //  timeDuration = 2000;
+                                            // call ELD rule after 1 minute to improve performance
+                                            if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
+                                                // save current HighPrecisionOdometer locally
+                                                sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+                                                callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                            }
                                         }
-                                    }
 
-                                } else {
-
-                                    // =================== For OFF Duty & Sleeper case =====================
-                                    // save current HighPrecisionOdometer in DB
-                                    sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-
-                                    // timeDuration = 5000;
-                                    if (speed <= 0 && calculatedSpeedFromOdo <= 0) {
-                                        Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
                                     } else {
-                                        if (speed >= 8 && calculatedSpeedFromOdo >= 8) {    //if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
-                                            callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+
+                                        // =================== For OFF Duty & Sleeper case =====================
+                                        // save current HighPrecisionOdometer in DB
+                                        sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+
+                                        // timeDuration = 5000;
+                                        if (speed <= 0 && calculatedSpeedFromOdo <= 0) {
+                                            Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
+                                        } else {
+                                            if (speed >= 8 && calculatedSpeedFromOdo >= 8) {    //if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
+                                                callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
+                                            }
                                         }
                                     }
                                 }
+
+                                checkPositionMalfunction(currentHighPrecisionOdometer, currentLogDate);
+
+
+                                if (SpeedCounter == 0 || SpeedCounter == HalfSpeedCounter) {
+                                    resetDataAfterCycleCall(true);
+                                } else {
+                                    resetDataAfterCycleCall(false);
+                                }
+
+                                global.VEHICLE_SPEED = speed;
+
                             }
 
-                            checkPositionMalfunction(currentHighPrecisionOdometer, currentLogDate);
 
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
+                                        StartStopServer(constants.WiredOBD);
+                                    }
+                                }
+                            }, timeDuration);
 
-                            if (SpeedCounter == 0 || SpeedCounter == HalfSpeedCounter) {
-                                resetDataAfterCycleCall(true);
-                            } else {
-                                resetDataAfterCycleCall(false);
-                            }
+                        } else {
 
-                            global.VEHICLE_SPEED = speed;
-
+                            global.VEHICLE_SPEED = -1;
+                            isWiredDataReceived = false;
                         }
-
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        global.IS_OBD_IGNITION = false;
+                        global.VEHICLE_SPEED = -1;
+                        isWiredDataReceived = false;
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_ACTIVE) {
+                                if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
                                     StartStopServer(constants.WiredOBD);
                                 }
                             }
-                        }, timeDuration);
+                        }, 3000);
 
-                    } else {
-
-                        global.VEHICLE_SPEED = -1;
-                        isWiredDataReceived = false;
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    global.IS_OBD_IGNITION = false;
-                    global.VEHICLE_SPEED = -1;
-                    isWiredDataReceived = false;
 
+                } else {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_ACTIVE) {
+                            if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED ) {
                                 StartStopServer(constants.WiredOBD);
                             }
                         }
-                    }, 3000);
-
+                    }, 2000);
                 }
-            }else{
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_ACTIVE ||
-                                SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_INACTIVE) {
-                            StartStopServer(constants.WiredOBD);
-                        }
-                    }
-                }, 2000);
             }
-
         }
     }
 
@@ -896,7 +915,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             // saving location with time info to calculate location mafunction event
             int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
-            if(ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE){
+            if(ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED){
                 saveEcmLocationWithTime(global.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
             }else{
                 saveEcmLocationWithTime(global.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
@@ -1041,21 +1060,22 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     processStartTime = System.currentTimeMillis();
                 }
 
+                checkWiredObdConnection();
+
                 // communicate with wired OBD server app with Message
-                if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_ACTIVE &&
-                        SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_ACTIVE){
+                int getObdLastStatus = SharedPref.getObdStatus(getApplicationContext());
+                if(getObdLastStatus != Constants.WIRED_CONNECTED && getObdLastStatus != Constants.WIFI_CONNECTED){
                     StartStopServer(constants.WiredOBD);
                 }else{
                     int minDiff = constants.minDiff(sharedPref.getHighPrecesionSavedTime(getApplicationContext()), global, getApplicationContext());
                     if(isWiredDataReceived == false && minDiff > 0){
                         StartStopServer(constants.WiredOBD);
                     }else{
-                        if(SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_ACTIVE && minDiff > 1){
+                        if(getObdLastStatus == Constants.WIRED_CONNECTED && minDiff > 1){
                             StartStopServer(constants.WiredOBD);
                         }
                     }
                 }
-
 
 
                 try {
@@ -1906,7 +1926,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             odometer = odo;
         }else{
             int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
-            if(ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE){
+            if(ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED){
                 odometer = sharedPref.getHighPrecisionOdometer(getApplicationContext());
             }
         }
@@ -1932,7 +1952,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
       //  Log.d("GpsVehicleSpeed", "---GpsVehicleSpeed: " + GpsVehicleSpeed );
 
         int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
-        if(ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE){
+        if(ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED){
             saveEcmLocationWithTime(global.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
         }else{
             saveEcmLocationWithTime(global.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
@@ -1981,7 +2001,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     if (message.contains("CAN")) {
 
                         if (message.contains("CAN:UNCONNECTED")) {
-                            sharedPref.SaveObdStatus(Constants.WIFI_INACTIVE, getApplicationContext());
+                            sharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
                             sharedPref.SaveObdIgnitionStatus(false, global.getCurrentDate(), -1, getApplicationContext());
 
                             ignitionStatus = "false";
@@ -2043,9 +2063,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                                 if (ignitionStatus.equals("true")) {    // truckRpmInt > 0
-                                    sharedPref.SaveObdStatus(Constants.WIFI_ACTIVE, getApplicationContext());
+                                    sharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, global.getCurrentDate(), getApplicationContext());
                                     global.IS_OBD_IGNITION = true;
-                                    saveObdStatus("ON", constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_ACTIVE);
+                                    continueStatusPromotForPcYm("ON", constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_CONNECTED);
 
                                     if (WheelBasedVehicleSpeed > 200) {
                                         WheelBasedVehicleSpeed = 0;
@@ -2059,9 +2079,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                                 } else {
-                                    sharedPref.SaveObdStatus(Constants.WIFI_INACTIVE, getApplicationContext());
+                                    sharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
                                     global.IS_OBD_IGNITION = false;
-                                    saveObdStatus(ignitionStatus, constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_INACTIVE);
+                                    continueStatusPromotForPcYm(ignitionStatus, constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_DISCONNECTED);
 
                                     saveDummyData(rawResponse, constants.WifiOBD);
 
@@ -2224,14 +2244,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
             }
 
-
-            /*if(speedCalculated < 5 && speed < 5){
-                if(sharedPref.getLastIgnitionStatus(getApplicationContext()) == true && sharedPref.getLastObdSpeed(getApplicationContext()) < 5)  {
-                    // ignore it
-                }else{
-                    sharedPref.SaveObdIgnitionStatus(true, global.getCurrentDate(), speed, getApplicationContext());
-                }
-            }*/
         }
 
         if(speedCalculated >= 8 || speed >= 8){
@@ -2603,11 +2615,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-    private void saveObdStatus(String obdCurrentIgnition, String type, String time, int obdStatus){
+    private void continueStatusPromotForPcYm(String obdCurrentIgnition, String type, String time, int obdStatus){
 
         try {
 
-         //   if( obdStatus == Constants.WIFI_ACTIVE && obdStatus == Constants.WIRED_ACTIVE ) {
+         //   if( obdStatus == Constants.WIFI_CONNECTED && obdStatus == Constants.WIRED_CONNECTED ) {
              if( obdStatus != Constants.NO_CONNECTION ) {
                 if( EldFragment.driverLogArray.length() > 0) {  //UILApplication.isActivityVisible() &&
                     JSONObject lastJsonItem = (JSONObject) EldFragment.driverLogArray.get(EldFragment.driverLogArray.length() - 1);
@@ -2616,7 +2628,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
 
                     if( (currentJobStatus == constants.OFF_DUTY && isPersonal) || (currentJobStatus == constants.ON_DUTY && isYard) ){
-                        String lastIgnitionStatus = sharedPref.GetTruckIgnitionStatus(constants.TruckIgnitionStatus, getApplicationContext());
+                        String lastIgnitionStatus = sharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, getApplicationContext());
                         if(lastIgnitionStatus.equals("OFF") && obdCurrentIgnition.equals("ON")) {
                             sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
                             try {
@@ -2630,7 +2642,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             }
                         }
 
-                        sharedPref.SetTruckIgnitionStatus(obdCurrentIgnition, type, time, getApplicationContext());
+                        sharedPref.SetTruckIgnitionStatusForContinue(obdCurrentIgnition, type, time, getApplicationContext());
                     }
                 }
 
@@ -2753,18 +2765,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         boolean IsAutoDrive = dataObj.getBoolean("IsAutoOnDutyDriveEnabled");
                                         sharedPref.SetAutoDriveStatus(IsAutoDrive, getApplicationContext());
                                     }
-
-
-                                  //  ignitionStatus = dataObj.getString("EngineStatus");
-
-                               /*     if(ignitionStatus.equals("true")){
-                                        global.IS_OBD_IGNITION = true;
-                                        saveObdStatus("ON", constants.ApiData, global.getCurrentDate(), Constants.NO_CONNECTION);
-                                    }else{
-                                        global.IS_OBD_IGNITION = false;
-                                        saveObdStatus("OFF", constants.ApiData, "", Constants.NO_CONNECTION);
-                                    }
-*/
 
                                     try {
                                         // Save Truck information for manual/auto mode

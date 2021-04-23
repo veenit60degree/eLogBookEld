@@ -696,7 +696,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             if(dayStartSavedDate.length() > 0) {
                 int dayDiff = constants.getDayDiff(dayStartSavedDate, global.getCurrentDate());
                 if (dayDiff == 0) {
-                    if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_ACTIVE || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_ACTIVE) {
+                    if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED) {
                         if (currentOdometerStr.contains(".")) {
                             currentOdometerStr = "" + Double.parseDouble(currentOdometerStr) * 1000;
                         }
@@ -822,7 +822,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     String engineHours = sharedPref.getObdEngineHours(getActivity());
                     if(engineHours.length() > 1) {
                         int ObdStatus = SharedPref.getObdStatus(getActivity());
-                        if((ObdStatus == Constants.WIRED_ACTIVE || ObdStatus == Constants.WIFI_ACTIVE) ){
+                        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) ){
                             engHourTxtView.setText(Html.fromHtml("(<b>Engine Hours: </b>" + engineHours + ")" ));
                         }else{
                             engHourTxtView.setText("");
