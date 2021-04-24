@@ -257,7 +257,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-    int tempOdo = 111510;
+    int tempOdo = 397011;
     int tempSpeed = 0;
     int ignitionCount = 0;
 
@@ -357,34 +357,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     }
 
-
-    private void checkWiredObdConnection(){
-
-        boolean isAlsWifiObdConnected   = wifiConfig.IsAlsNetworkConnected(getApplicationContext()); // get ALS Wifi ssid availability
-        int lastObdStatus = sharedPref.getObdStatus(getApplicationContext());
-
-        if(isAlsWifiObdConnected == false && lastObdStatus != Constants.WIFI_CONNECTED) {
-            obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
-            if (obdShell.result == 0) {
-                System.out.println("obd --> cat type --> " + obdShell.successMsg);
-                if (obdShell.successMsg.contains("USB_DCP")) {  // Connected State
-                    sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
-                } else {
-                    // Disconnected State. Save only when last status was not already disconnected
-                    if(lastObdStatus != constants.WIRED_DISCONNECTED) {
-                        sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
-                    }
-                }
-            } else {
-                System.out.println("zyz --> cat type failed --> " + obdShell.errorMsg);
-                if( isAlsWifiObdConnected == false || lastObdStatus != Constants.WIFI_CONNECTED) {
-                    sharedPref.SaveObdStatus(Constants.WIRED_ERROR, global.getCurrentDate(), getApplicationContext());
-                }
-            }
-        }
-    }
-
-
     //  ------------- Wired OBD data response handler ----------
     private class IncomingHandler extends Handler
     {
@@ -427,17 +399,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
          //   sharedPref.saveLocMalfunctionOccurStatus(true, global.GetCurrentDateTime(), getApplicationContext());
          //   sharedPref.SetDiagnosticAndMalfunctionSettingsMain(true, true, true, true, getApplicationContext());
 
-         /*     ignitionStatus = "ON"; truckRPM = "700"; speed = 10;
+            sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
+              ignitionStatus = "ON"; truckRPM = "700"; speed = 0;
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
               sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
-             // tempOdo = tempOdo+500;
-            tempSpeed++;
-*/
+              tempOdo = tempOdo+5;
+           // tempSpeed++;
+
 
             int OBD_LAST_STATUS = sharedPref.getObdStatus(getApplicationContext());
-            if(OBD_LAST_STATUS != constants.WIRED_DISCONNECTED && OBD_LAST_STATUS != constants.WIRED_ERROR) {
+            if(OBD_LAST_STATUS == constants.WIRED_CONNECTED) {
                 if (sharedPref.getVINNumber(getApplicationContext()).length() > 5) {
 
                     if (ignitionStatus.equals("ON")) {
@@ -502,7 +475,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             int timeDuration = 1600;
 
-
                             boolean isDrivingAllowed = true;
                             if (sharedPref.isDrivingAllowed(getApplicationContext()) == false && speed >= 8) {
                                 final DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
@@ -541,9 +513,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 if (isDrivingAllowed) {
                                     if (jobType.equals(global.DRIVING)) {
 
-                                        // timeDuration = 2000;
-                                        // if (SpeedCounter == 8) {
-
                                         if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
                                             // save current HighPrecisionOdometer in DB
                                             sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
@@ -555,20 +524,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             }
                                         }
 
-
                                     } else if (jobType.equals(global.ON_DUTY)) {
 
 
                                         // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
                                         if (speed >= 8) {  // && calculatedSpeedFromOdo >= 8
-                                            //  timeDuration = 2000;
 
                                             // save current HighPrecisionOdometer locally
                                             sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
                                             callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
 
                                         } else {
-                                            //  timeDuration = 2000;
                                             // call ELD rule after 1 minute to improve performance
                                             if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
                                                 // save current HighPrecisionOdometer locally
@@ -583,9 +549,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         // save current HighPrecisionOdometer in DB
                                         sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                                        // timeDuration = 5000;
                                         if (speed <= 0 && calculatedSpeedFromOdo <= 0) {
-                                            Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
+                                         //   Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
                                         } else {
                                             if (speed >= 8 && calculatedSpeedFromOdo >= 8) {    //if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
                                                 callEldRuleForWired(speed, (int) calculatedSpeedFromOdo);
@@ -594,6 +559,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     }
                                 }
 
+                                // check malfunction if valid position not coming..
                                 checkPositionMalfunction(currentHighPrecisionOdometer, currentLogDate);
 
 
@@ -608,19 +574,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             }
 
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
-                                        StartStopServer(constants.WiredOBD);
-                                    }
-                                }
-                            }, timeDuration);
-
+                            callWiredConnWithTime(timeDuration);
                         } else {
 
                             global.VEHICLE_SPEED = -1;
                             isWiredDataReceived = false;
+                            callWiredConnWithTime(3000);
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -628,30 +588,77 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         global.VEHICLE_SPEED = -1;
                         isWiredDataReceived = false;
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
-                                    StartStopServer(constants.WiredOBD);
-                                }
-                            }
-                        }, 3000);
+                        callWiredConnWithTime(3000);
 
                     }
 
                 } else {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED ) {
-                                StartStopServer(constants.WiredOBD);
-                            }
-                        }
-                    }, 2000);
+                    callWiredConnWithTime(2000);
+                }
+            }else{
+                if(OBD_LAST_STATUS == constants.WIRED_DISCONNECTED ) {
+                    checkWiredConnection();
                 }
             }
         }
     }
+
+
+    void checkWiredConnection(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED ) {
+                    checkWiredObdConnection();
+                }
+            }
+        }, 2000);
+    }
+
+
+    void callWiredConnWithTime(int timeDuration){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
+                    StartStopServer(constants.WiredOBD);
+                }
+            }
+        }, timeDuration);
+
+    }
+
+
+    private void checkWiredObdConnection(){
+
+        boolean isAlsWifiObdConnected   = wifiConfig.IsAlsNetworkConnected(getApplicationContext()); // get ALS Wifi ssid availability
+        int lastObdStatus = sharedPref.getObdStatus(getApplicationContext());
+
+      /*  if(isAlsWifiObdConnected == false && lastObdStatus != Constants.WIFI_CONNECTED) {
+            obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
+            if (obdShell.result == 0) {
+                //System.out.println("obd --> cat type --> " + obdShell.successMsg);
+                if (obdShell.successMsg.contains("USB_DCP")) {  // Connected State
+
+                    if(lastObdStatus != Constants.WIFI_CONNECTED ){
+                        StartStopServer(constants.WiredOBD);
+                    }
+                    sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
+                } else {
+                    // Disconnected State. Save only when last status was not already disconnected
+                    if(lastObdStatus != constants.WIRED_DISCONNECTED) {
+                        sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+                    }
+                }
+            } else {
+                //System.out.println("zyz --> cat type failed --> " + obdShell.errorMsg);
+                if( isAlsWifiObdConnected == false || lastObdStatus != Constants.WIFI_CONNECTED) {
+                    sharedPref.SaveObdStatus(Constants.WIRED_ERROR, global.getCurrentDate(), getApplicationContext());
+                }
+            }
+        }*/
+    }
+
 
 
     private void checkPositionMalfunction(String currentHighPrecisionOdometer, String currentLogDate){
@@ -667,7 +674,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 sharedPref.setMalfCallTime(currentLogDate, getApplicationContext());
 
-                if (constants.CheckGpsStatus(getApplicationContext()) == false) {
+                if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext()) == false) {
                     global.LATITUDE = "0.0";
                     global.LONGITUDE = "0.0";
                     if (sharedPref.getEcmObdLatitude(getApplicationContext()).length() > 4) {
@@ -1095,7 +1102,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 // networkUsage();
 
-                final boolean isGpsEnabled = constants.CheckGpsStatus(getApplicationContext());
+                final boolean isGpsEnabled = constants.CheckGpsStatusToCheckMalfunction(getApplicationContext());
                 if(!isGpsEnabled){
                     GpsVehicleSpeed = -1;
                     global.LATITUDE = "0.0";
@@ -1104,9 +1111,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 boolean isAlsNetworkConnected   = wifiConfig.IsAlsNetworkConnected(getApplicationContext());  // get ALS Wifi ssid availability
                 boolean isWiredObdConnected     = false;
-                if(isBound && ( ignitionStatus.equals("ON") && !truckRPM.equals("0") ) ) {
+                if(sharedPref.getObdStatus(getApplicationContext()) == constants.WIRED_CONNECTED ) {
                     isWiredObdConnected = true;
                 }
+              //  if(isBound && ( ignitionStatus.equals("ON") && !truckRPM.equals("0") ) )
 
 
                 if (SpeedCounter == HalfSpeedCounter || SpeedCounter >= MaxSpeedCounter) {
@@ -1208,7 +1216,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                 // check WIFI connection
-                if( !isWiredObdConnected && (isAlsNetworkConnected && IsOBDPingAllowed )){    // check ALS SSID connection with IsOBDPingAllowed permission
+                if( isWiredObdConnected == false && (isAlsNetworkConnected && IsOBDPingAllowed )){    // check ALS SSID connection with IsOBDPingAllowed permission
 
                     tcpClient.sendMessage("123456,can");
                     sharedPref.SaveConnectionInfo(constants.WifiOBD, Globally.GetCurrentDeviceDate(), getApplicationContext());
@@ -2160,6 +2168,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         Log.d("OBD", ObdRestarted);
                         saveDummyData(ObdRestarted, constants.WifiOBD);
                     } else {
+
+                        if (message.equals(noObd)) {
+                            sharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+                            sharedPref.SaveObdIgnitionStatus(false, global.getCurrentDate(), -1, getApplicationContext());
+                        }
+
                         ignitionStatus = "false";
                         saveDummyData(rawResponse, constants.WifiOBD);
 

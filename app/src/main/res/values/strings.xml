@@ -98,6 +98,7 @@
     <string name="co_driver_username">Username</string>
     <string name="co_driver_pass">Password</string>
     <string name="Comments">Comments</string>
+    <string name="OutputFileComment">Output File Comments</string>
     <string name="inspctr_Comments">Inspector Comments</string>
 
     <string name="No_Trip_Assigned">No record found</string>
@@ -350,34 +351,39 @@
     <string name="current_loc">Current Loc (Lat,Long)</string>
     <string name="comment">Comment</string>
     <string name="date_time">DateTime</string>
+    <string name="PowerUnitNumber">Power Unit Number</string>
+    <string name="VINPowerUnit">VIN (Power Unit)</string>
+    <string name="curr_date_and_time">Current Date &amp; Time</string>
     <string name="date_and_time">Date &amp; Time</string>
     <string name="exempt_driver_status">Exempt Driver Status</string>
     <string name="DriverLicenceNo_jur">Driver Licence No &amp; Jurisdiction</string>
     <string name="truck_tractor_id">Truck/Tractor ID</string>
     <string name="truck_tractor_vin">Truck/Tractor Vin</string>
     <string name="TotalDistance">Total Distance</string>
+    <string name="TotalVehDistance">Total Veh Distance</string>
     <string name="startEnd">(Start-End)</string>StartEnd
     <string name="DistanceToday">Distance Today</string>
-    <string name="CurrentTotalDistance">Current Total Distance</string>
-    <string name="CurrentTotalEngineHr">Current Total Engine Hrs</string>
+    <string name="CurrentTotalDistance">Cur. Total Distance</string>
+    <string name="CurrentTotalEngineHr">Cur. Total Engine Hrs</string>
     <string name="CarrierName">Carrier Name</string>
     <string name="carrier_add">Carrier</string>
     <string name="home_ter_add"> (Home Terminal Add)</string>
-    <string name="carrier_principal_add"> (Principal Place Of Business Add)</string>
+    <string name="add_bracket"> (Add)</string>
+    <string name="carrier_principal_add">Principal Place Of Business</string>
     <string name="CurrentOperatingZone">Current Operating Zone</string>
     <string name="total_hrs">Total Hrs</string>
     <string name="total_hrs_in_work">(In Work Shift)</string>
     <string name="in_cycle">(In Cycle)</string>
     <string name="remaining_hrs">Remaining Hrs</string>
     <string name="off_duty_time_deff">Off Duty Time defferal </string>
-    <string name="date_time_deff">(Day &amp; Time Deff)</string>
+    <string name="date_time_deff">(Status &amp; Time Deff)</string>
     <string name="DataDiagnosticStatus">Data Diagnostic Status</string>
     <string name="UnIdentifiedDrivingRecords">UnIdentified Driving Records</string>
     <string name="MalfunctionStatus">Malfunction Status</string>
-    <string name="ELD_ID">ELD ID</string>
+    <string name="ELD_ID">ELD Identifier</string>
     <string name="ELD_Provider">ELD Provider</string>
-    <string name="ELD_Certification">ELD Certification</string>
-    <string name="ELD_Auth">ELD Authentication</string>
+    <string name="ELD_Certification">ELD Certification ID</string>
+    <string name="ELD_Auth">ELD Authentication ID</string>
     <string name="CanadaELDViewLog">Canada ELD View Log</string>
 
     <string name="Reminder">Reminder !!</string>
@@ -536,6 +542,7 @@
     <string name="bl_or_trip_no">B/L or Trip No. </string>
     <string name="HomeTerminal">  Home Terminal: </string>
     <string name="OfficeAddress"> Office Address: </string>
+    <string name="HomeTer">  Home Terminal</string>
 
     <string name="nm">NM</string>
     <string name="night_mode">Night Mode</string>
@@ -547,6 +554,8 @@
     <string name="State"> State </string>
     <string name="PostalCode">Postal Code </string>
     <string name="SelectState"> Select State </string>
+
+    <string name="Address_bracket"> (Address) </string>
 
     <string name="M">M</string>
     <string name="zero">0</string>
@@ -658,7 +667,9 @@
     <string name="already_uploading">Please wait! Data saving in progress</string>
     <string name="already_refreshed">Please wait. Data is refreshing</string>
     <string name="wired_active">Wired tablet is active</string>
-    <string name="wired_inactive">Wired tablet is not working</string>
+    <string name="wired_inactive">Wired tablet disconnected. Check your cable connection</string>
+    <string name="wired_conn_error">OBD connection error</string>
+    <string name="engine_ign_off_state">Engine ignition in off state</string>
     <string name="wifi">WiFi</string>
     <string name="wired_tablet">Wired Tablet Connected</string>
     <string name="obd_wifi">WiFi OBD Connected</string>
@@ -722,7 +733,10 @@
     <string name="dot_mode_canada">DOT MODE (Canada)</string>
     <string name="data_malfunction">Data recording compliance malfunction detected</string>
     <string name="malfunction">Data Malfunction</string>
-    <string name="malfunction_diag_occur">Malfunction/Diagnostic occur</string>
+    <string name="malfunction_diag_occur">Malfunction &amp; Diagnostic event occurred</string>
+    <string name="malfunction_occur">Malfunction event occurred</string>
+    <string name="diagnostic_occur">Diagnostic event occurred</string>
+
     <string name="want_to_logout">Do you really want to logout ?</string>
     <string name="pending_carrier_edit">You have pending carrier edits that need your approval.</string>
     <string name="Confirmation">Confirmation</string>

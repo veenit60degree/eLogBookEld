@@ -247,7 +247,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_15"
             android:textColor="@color/colorPrimary"
-            android:text="@string/comment"
+            android:text="@string/OutputFileComment"
             android:textStyle="bold"
             android:layout_weight="1"
 
@@ -259,7 +259,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_15"
             android:textColor="@color/colorPrimary"
-            android:text="@string/date_and_time"
+            android:text="@string/curr_date_and_time"
             android:textStyle="bold"
             android:layout_weight="1"
 
@@ -449,6 +449,7 @@
          android:text="@string/DriverLicenceNo_jur"
          android:textStyle="bold"
          android:layout_weight="1"
+         android:paddingRight="@dimen/margin_short_6"
 
          />
 
@@ -540,7 +541,6 @@
             android:orientation="vertical"
             android:visibility="gone"
 
-
             >
 
 
@@ -560,7 +560,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_15"
             android:textColor="@color/colorPrimary"
-            android:text="@string/truck_tractor_id"
+            android:text="@string/PowerUnitNumber"
             android:textStyle="bold"
             android:layout_weight="1"
 
@@ -572,7 +572,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_15"
             android:textColor="@color/colorPrimary"
-            android:text="@string/truck_tractor_vin"
+            android:text="@string/VINPowerUnit"
             android:textStyle="bold"
             android:layout_weight="1"
 
@@ -591,7 +591,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_15"
                 android:textColor="@color/colorPrimary"
-                android:text="@string/TotalDistance"
+                android:text="@string/TotalVehDistance"
                 android:textStyle="bold"
 
 
@@ -794,7 +794,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_15"
                 android:textColor="@color/colorPrimary"
-                android:text="@string/TrailerId"
+                android:text="@string/TrailorNo"
                 android:textStyle="bold"
                 android:layout_weight="1"
 
@@ -826,7 +826,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_15"
                 android:textColor="@color/colorPrimary"
-                android:text="@string/carrier_add"
+                android:text="@string/HomeTer"
                 android:textStyle="bold"
 
 
@@ -838,7 +838,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_10"
                     android:textColor="@color/colorPrimary"
-                    android:text="@string/home_ter_add"
+                    android:text="@string/Address_bracket"
                     android:layout_marginLeft="@dimen/margin_short_3"
 
 
@@ -935,7 +935,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_15"
                     android:textColor="@color/colorPrimary"
-                    android:text="@string/carrier_add"
+                    android:text="@string/carrier_principal_add"
                     android:textStyle="bold"
 
 
@@ -947,7 +947,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_10"
                     android:textColor="@color/colorPrimary"
-                    android:text="@string/carrier_principal_add"
+                    android:text="@string/add_bracket"
                     android:layout_marginLeft="@dimen/margin_short_3"
 
 
@@ -964,7 +964,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_15"
                 android:textColor="@color/colorPrimary"
-                android:text="@string/CurrentOperatingZone"
+                android:text="@string/Operating_zone"
                 android:paddingLeft="@dimen/margin_short_2"
                 android:textStyle="bold"
                 android:layout_weight="1"
@@ -1241,7 +1241,7 @@
                     android:textColor="@color/colorPrimary"
                     android:text="@string/date_time_deff"
                     android:layout_marginLeft="@dimen/margin_short_3"
-
+                    android:singleLine="true"
 
                     />
 

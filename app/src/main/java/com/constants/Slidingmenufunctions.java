@@ -427,12 +427,28 @@ public class Slidingmenufunctions implements OnClickListener {
 		try {
 			//View c = menuListView.getChildAt(0);
 			//int scrolly = -c.getTop() + menuListView.getFirstVisiblePosition() * c.getHeight();
+			//int index = menuListView.getFirstVisiblePosition();
+
+			// save index and top position
 			int index = menuListView.getFirstVisiblePosition();
+			View v = menuListView.getChildAt(0);
+			int top = (v == null) ? 0 : (v.getTop() - menuListView.getPaddingTop());
 
 			menuAdapter = new SlideMenuAdapter(context, TabAct.menuList, DriverType);
 			menuListView.setAdapter(menuAdapter);
 			menuAdapter.notifyDataSetChanged();
+
+			if(index > 5){
+				index = 5;
+			}
+
+			if(top < -25){
+				top = -25;
+			}
+			// restore index and position
+			menuListView.setSelectionFromTop(index, top);
 			menuListView.smoothScrollToPosition(index);
+
 		}catch (Exception e){
 			e.printStackTrace();
 		}

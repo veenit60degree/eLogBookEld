@@ -781,6 +781,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity()) ||
                                 constants.isAllowLocMalfunctionEvent(getActivity()) ) {
                             malfunctionLay.startAnimation(editLogAnimation);
+                            if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity()) == false) {
+                                malfunctionTV.setText(getString(R.string.malfunction_occur));
+                            }else if(sharedPref.isMalfunctionOccur(getActivity()) == false || sharedPref.isDiagnosticOccur(getActivity())){
+                                malfunctionTV.setText(getString(R.string.diagnostic_occur));
+                            }else{
+                                malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
+                            }
                         }else {
                             editLogAnimation.cancel();
                             malfunctionLay.setVisibility(View.GONE);
@@ -999,61 +1006,65 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         try {
             if(getActivity() != null) {
 
-                getActivity().runOnUiThread(new Runnable() {
+                int obdStatus = sharedPref.getObdStatus(getActivity());
+                switch (obdStatus) {
 
-                    @Override
-                    public void run() {
+                    case Constants.WIRED_CONNECTED:
+                        connectionStatusImgView.setImageResource(R.drawable.obd_active);
+                        if (isToastShowing) {
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_active), getResources().getColor(R.color.color_eld_theme) );
+                        }
+                        break;
 
-                        switch (sharedPref.getObdStatus(getActivity())) {
+                    case Constants.WIRED_DISCONNECTED:
+                    case Constants.WIRED_ERROR:
+                    case Constants.WIRED_IGNITION_OFF:
 
-                                case Constants.WIRED_CONNECTED:
-                                    connectionStatusImgView.setImageResource(R.drawable.obd_active);
-                                    if (isToastShowing) {
-                                        Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_active), getResources().getColor(R.color.color_eld_theme) );
-                                    }
-                                    break;
+                        connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
+                        connectionStatusImgView.startAnimation(connectionStatusAnimation);
 
-                                case Constants.WIRED_DISCONNECTED:
-                                    connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
-                                    connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                        if (isToastShowing) {
+                            if(obdStatus == Constants.WIRED_DISCONNECTED)
+                                Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_inactive), getResources().getColor(R.color.colorSleeper) );
+                            else if (obdStatus == Constants.WIRED_ERROR)
+                                Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_conn_error), getResources().getColor(R.color.colorSleeper) );
+                            else
+                                Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.engine_ign_off_state), getResources().getColor(R.color.colorSleeper) );
+                        }
+                        break;
 
-                                    if (isToastShowing) {
-                                         Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_inactive), getResources().getColor(R.color.colorSleeper) );
-                                    }
-                                    break;
 
-                                case Constants.WIFI_CONNECTED:
-                                    connectionStatusImgView.setImageResource(R.drawable.obd_active);
-                                    if (isToastShowing) {
-                                        Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_active), getResources().getColor(R.color.color_eld_theme) );
-                                    }
-                                    break;
+                    case Constants.WIFI_CONNECTED:
+                        connectionStatusImgView.setImageResource(R.drawable.obd_active);
+                        if (isToastShowing) {
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_active), getResources().getColor(R.color.color_eld_theme) );
+                        }
+                        break;
 
-                                case Constants.WIFI_DISCONNECTED:
-                                    connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
-                                    connectionStatusImgView.startAnimation(connectionStatusAnimation);
-                                    if (isToastShowing) {
-                                        Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_inactive), getResources().getColor(R.color.colorSleeper) );
-                                    }
-                                    break;
+                    case Constants.WIFI_DISCONNECTED:
+                        connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
+                        connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                        if (isToastShowing) {
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_inactive), getResources().getColor(R.color.colorSleeper) );
+                        }
+                        break;
 
-                                default:
-                                    connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
-                                    connectionStatusImgView.startAnimation(connectionStatusAnimation);
-                                    if (isToastShowing) {
-                                        Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.obd_data_connection_desc), getResources().getColor(R.color.colorSleeper) );
-                                    }
+                    default:
+                        connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
+                        connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                        if (isToastShowing) {
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.obd_data_connection_desc), getResources().getColor(R.color.colorSleeper) );
+                        }
 
-                                    break;
-                            }
+                        break;
+                }
 
-                    }
-                });
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+
 
     void getExceptionStatus(){
         if(DriverType == Constants.MAIN_DRIVER_TYPE) {

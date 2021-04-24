@@ -307,7 +307,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     remarksDialog.dismiss();
                 }
 
-                remarksDialog = new TrailorDialog(context, Constants.Remarks, isYardMove, remarks, ItemPosition, true, Global.onDutyRemarks, jobStatus, dbHelper, new RemarksListener());
+                remarksDialog = new TrailorDialog(context, Constants.Remarks, isYardMove, remarks, ItemPosition, true,
+                        Global.onDutyRemarks, jobStatus, dbHelper, new RemarksListener());
                 remarksDialog.show();
             }
         } catch (final IllegalArgumentException e) {
@@ -350,9 +351,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 HideKeyboard(CityNameEditText);
                 EldDriverLogModel logModel = LogList.get(position);
 
-                if(JobType == Constants.EditRemarks) {
-
-                }else if (JobType == Constants.EditLocation){
+                if (JobType == Constants.EditLocation){
 
                     logModel.setLocation(City + ", " + State + ", " + Country);
                     LogList.set(position, logModel);

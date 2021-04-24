@@ -2314,7 +2314,6 @@ public class HelperMethods {
     public List<DriverLog> get3DaysLog(int DriverId, DateTime selectedDate, DateTime endUtc, DBHelper dbHelper){
 
         List<DriverLog> driverLogList = new ArrayList<DriverLog>();
-        JSONArray logArray = new JSONArray();
         Cursor rs = dbHelper.getDriverLog(DriverId);
 
         if(rs != null && rs.getCount() > 0) {
@@ -2322,7 +2321,7 @@ public class HelperMethods {
             String logList = rs.getString(rs.getColumnIndex(DBHelper.DRIVER_LOG_LIST));
 
             try {
-                logArray = new JSONArray(logList);
+                JSONArray logArray = new JSONArray(logList);
                 for(int i = logArray.length()-1 ; i >= 0 ; i--){
                     JSONObject json = (JSONObject)logArray.get(i);
                     DateTime startDateTime      = Globally.getDateTimeObj(json.getString(ConstantsKeys.startDateTime), false);

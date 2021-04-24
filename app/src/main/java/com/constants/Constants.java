@@ -1138,8 +1138,22 @@ public class Constants {
             gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
 
+        // gpsStatus
+        return true;
+    }
+
+
+    public boolean CheckGpsStatusToCheckMalfunction(Context context) {
+        LocationManager locationManager;
+        boolean gpsStatus = true;
+        if(context != null) {
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
+
         return gpsStatus;
     }
+
 
 
     public void SaveNotification(int DriverType, String title, String violationReason, String currentDateTime, HelperMethods helperMethods,
@@ -3137,16 +3151,16 @@ public class Constants {
     }
 
 
-    void saveMalfncnStatus(Context context, boolean isDistanceMalfncn){
+    void saveMalfncnStatus(Context context, boolean isDiagnosticOccur){
         if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
             SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(context),
-                    isDistanceMalfncn,
-                    SharedPref.isDiagnosticOccur(context),
+                    SharedPref.isMalfunctionOccur(context),
+                    isDiagnosticOccur,
                     SharedPref.isSuggestedEditOccur(context), context);
         }else{
             SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccur(context),
-                    isDistanceMalfncn,
-                    SharedPref.isDiagnosticOccurCo(context),
+                    SharedPref.isMalfunctionOccurCo(context),
+                    isDiagnosticOccur,
                     SharedPref.isSuggestedEditOccurCo(context), context);
         }
 

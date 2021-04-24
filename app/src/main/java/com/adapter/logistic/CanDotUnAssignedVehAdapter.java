@@ -138,6 +138,8 @@ public class CanDotUnAssignedVehAdapter extends BaseAdapter {
         constants.setMarqueonView(holder.endTimeUnTV);
         constants.setMarqueonView(holder.statusUnTV);
         constants.setMarqueonView(holder.seqNoUnTV);
+        constants.setMarqueonView(holder.startLocUnTV);
+        constants.setMarqueonView(holder.endLocUnTV);
 
         return convertView;
     }

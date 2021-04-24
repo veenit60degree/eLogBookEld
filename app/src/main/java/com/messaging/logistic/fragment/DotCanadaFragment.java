@@ -929,9 +929,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             dateRodsTV.setText(global.ConvertDateFormatddMMMyyyy(dataObj.getString("RecordDate")));
             dayStartTimeTV.setText(dataObj.getString("PeriodStartingTime"));
             timeZoneCTV.setText(dataObj.getString("TimeZone"));
-            currLocCTV.setText(dataObj.getString("CurrentLocation"));
-            //commentCTV.setText(dataObj.getString(""));
-            //dateTimeCTV.setText(Globally.ConvertDateFormatMMddyyyy(dataObj.getString("ShowDate")));
+            currLocCTV.setText(Html.fromHtml(dataObj.getString("CurrentLocation")) );
+            commentCTV.setText(constants.checkNullString(dataObj.getString("OutputFileComment")) );
+            dateTimeCTV.setText(Globally.ConvertDateFormatMMddyyyyHHmm(dataObj.getString("CurrentDate")));
 
             driverNameCTV.setText(dataObj.getString("DriverLastAndFirstName"));
             driverIdCTV.setText(dataObj.getString("DriverLoginId"));
@@ -945,7 +945,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             carrierHomeTerCTV.setText(dataObj.getString("Hometerminal"));
             carrierPrinPlaceCTV.setText(dataObj.getString("OfficeAddress"));
             currOperZoneCTV.setText(dataObj.getString("CurrentOperatingZone"));
-            //curreCycleCTV.setText(dataObj.getString("selectedcycle") + "\n" + dataObj.getString("cycledetail"));
+            curreCycleCTV.setText(dataObj.getString("CurrentCycle"));    // + "\n" + dataObj.getString("cycledetail"));
 
 
 
@@ -1016,7 +1016,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             totalHrsCTV.setText(Globally.FinalValue(TotalHrsInShift));
             totalhrsCycleCTV.setText(Globally.FinalValue(TotalHrsInCycle));
             remainingHourCTV.setText(Globally.FinalValue(RemainingHrsCycle));
-           // offDutyDeffCTV.setText(dataObj.getString(""));
+            offDutyDeffCTV.setText(constants.checkNullString(dataObj.getString("OffDutyTimeDefferal")) );
 
 
             datDiagCTV.setText(dataObj.getString("DataDiagnosticIndicators"));
@@ -1025,9 +1025,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             malfStatusCTV.setText(dataObj.getString("ELDMalfunctionIndicators"));
             eldIdCTV.setText(dataObj.getString("ELDID"));
             eldProviderCTV.setText(dataObj.getString("ELDManufacturer"));
-
-            //eldCerCTV.setText(dataObj.getString(""));
-           // eldAuthCTV.setText(dataObj.getString(""));
+            eldCerCTV.setText(constants.checkNullString(dataObj.getString("ELDCertificationID")) );
+            eldAuthCTV.setText(constants.checkNullString(dataObj.getString("ELDAuthenticationValue")) );
 
         }catch (Exception e){
             e.printStackTrace();
@@ -1084,11 +1083,6 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     TotalSleeperBerthHours  = dataObj.getString("TotalSleeperHours");
                     TotalDrivingHours       = dataObj.getString("TotalDrivingHours");
                     TotalOnDutyHours        = dataObj.getString("TotalOnDutyHours");
-                /*    IsMalfunction           = dataObj.getBoolean("IsMalfunction");
-                    LogSignImage            = dataObj.getString("LogSignImage");
-                    if(LogSignImage.equals("null")){
-                        LogSignImage = "";
-                    }*/
 
                     TotalOffDutyHours      = TotalOffDutyHours.replaceAll("-", "");
                     TotalOnDutyHours       = TotalOnDutyHours.replaceAll("-", "");
