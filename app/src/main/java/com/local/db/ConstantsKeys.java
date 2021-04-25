@@ -98,6 +98,13 @@ public class ConstantsKeys {
     public static String IsManualAppDownload    = "IsManualAppDownload";
     public static String IsDeviceDebugLogEnable = "IsDeviceDebugLogEnable";
 
+    public static String MalCalledLastTime      = "MalCalledLastTime";
+    public static String MalCalledLastOdo       = "MalCalledLastOdo";
+    public static String MalCalledLastEngHr     = "MalCalledLastEngHr";
+    public static String MalCalledLastRpm       = "MalCalledLastRpm";
+    public static String MalCalledLastSpeed     = "MalCalledLastSpeed";
+    public static String MalCalledLastEngIgntn  = "MalCalledLastEngIgntn";
+
 
 
     // --------------------- Shipment params -------------------------

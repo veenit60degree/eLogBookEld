@@ -359,6 +359,9 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
                     SaveAndUploadData(logModel, RecordType, position);
 
+                    // Clear Diagnostic if occured
+
+
                 }else {
                     Global.SaveCurrentCycle(DriverType, Country, "edit_log", context);
                 }
@@ -445,7 +448,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
 
     /*================== Save And Upload Log Record Data ===================*/
-    void SaveAndUploadData( EldDriverLogModel logModel, String RecordType, int ItemPosition){
+    void SaveAndUploadData( EldDriverLogModel logModel, String RecordType){
         String currentUtcDate = Global.GetCurrentDateTime();
         String currentDriverZoneDate = Global.GetCurrentUTCTimeFormat();
 

@@ -4277,11 +4277,17 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             Global.GetCurrentDateTime(), constants.MissingDataElementDiagnostic,
                             getString(R.string.ignore_to_save_loc) + " " + Global.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal)));
 
-                    JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DRIVER_ID), dbHelper);
-                    malArray.put(newOccuredEventObj);
+
+                    // save Occurred Mal/Dia events locally to get details later for clear them
+                    JSONArray malArrayEvent = malfunctionDiagnosticMethod.getSavedMalDiagstcArrayEvents(Integer.parseInt(DRIVER_ID), dbHelper);
+                    malArrayEvent.put(newOccuredEventObj);
+                    malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(Integer.parseInt(DRIVER_ID), dbHelper, malArrayEvent);
 
                     // save Occured event locally until not posted to server
+                    JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DRIVER_ID), dbHelper);
+                    malArray.put(newOccuredEventObj);
                     malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DRIVER_ID), dbHelper, malArray);
+
                     MalfunctionDefinition = constants.ConstLocationMissing;
                 }
 

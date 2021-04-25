@@ -3614,6 +3614,7 @@ public class Constants {
 
 
 
+
     public boolean isActionAllowed(Context context){
         boolean isAllowed = true;
         int ObdStatus = SharedPref.getObdStatus(context);

@@ -700,12 +700,19 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             currentLogDate, constants.PositionComplianceMalfunction,
                             getApplicationContext().getResources().getString(R.string.pos_mal_occured));
 
-                    JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DriverId), dbHelper);
-                    malArray.put(newOccuredEventObj);
+
+                    // save Occurred Mal/Dia events locally to get details later for clear them
+                    JSONArray malArrayEvent = malfunctionDiagnosticMethod.getSavedMalDiagstcArrayEvents(Integer.parseInt(DriverId), dbHelper);
+                    malArrayEvent.put(newOccuredEventObj);
+                    malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(Integer.parseInt(DriverId), dbHelper, malArrayEvent);
+
 
                     // save Occurred event locally until not posted to server
+                    JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DriverId), dbHelper);
+                    malArray.put(newOccuredEventObj);
                     malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DriverId), dbHelper, malArray);
 
+                    // call api
                     SaveMalfnDiagnstcLogToServer(malArray);
 
                 }

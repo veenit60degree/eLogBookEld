@@ -85,4 +85,51 @@ public class MalfunctionDiagnosticMethod {
         return malfnDiagnstcObj;
     }
 
+
+
+
+    // Same data in bottom methods. but difference is we are not clearing records in this table after posted to server.
+    /*-------------------- GET MALFUNCTION & DIAGNOSTIC LOG SAVED Array -------------------- */
+    public JSONArray getSavedMalDiagstcArrayEvents(int DriverId, DBHelper dbHelper){
+
+        JSONArray logArray = new JSONArray();
+        Cursor rs = dbHelper.getMalfunctionDiagnosticLog1(DriverId);
+
+        if(rs != null && rs.getCount() > 0) {
+            rs.moveToFirst();
+            String logList = rs.getString(rs.getColumnIndex(DBHelper.MALFUNCTION_DIANOSTIC_LIST1));
+            try {
+                logArray = new JSONArray(logList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+
+        return logArray;
+
+    }
+
+
+    /*-------------------- MALFUNCTION & DIAGNOSTIC DB Helper -------------------- */
+    public void MalfnDiagnstcLogHelperEvents( int driverId, DBHelper dbHelper, JSONArray eventArray){
+
+        Cursor rs = dbHelper.getMalfunctionDiagnosticLog1(driverId);
+
+        if(rs != null & rs.getCount() > 0) {
+            rs.moveToFirst();
+            dbHelper.UpdateMalfunctionDiagnosticLog1(driverId, eventArray );        // UPDATE MALFUNCTION & DIAGNOSTIC LOG ARRAY
+        }else{
+            dbHelper.InsertMalfncnDiagnosticLog1( driverId, eventArray  );      // INSERT MALFUNCTION & DIAGNOSTIC LOG ARRAY
+        }
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+    }
+
+
+
 }

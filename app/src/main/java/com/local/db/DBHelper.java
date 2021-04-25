@@ -40,6 +40,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_CT_PAT_INSPECTION    = "tbl_ct_pat_inspection";
     public static final String TABLE_CT_PAT_INSP_18DAYS   = "tbl_ct_pat_insp_18days";
     public static final String TABLE_MALFUNCTION_DIANOSTIC= "tbl_mal_diagnostic";
+    public static final String TABLE_MALFUNCTION_DIANOSTIC1= "tbl_mal_diagnostic1";
 
 
     public static final String DRIVER_ID_KEY              = "driver_id";
@@ -66,6 +67,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String CT_PAT_INSPECTION_LIST     = "oDriver_ct_pat_inspection_list";
     public static final String CT_PAT_INSP_18DAYS_LIST    = "oDriver_ct_pat_insp_18days_list";
     public static final String MALFUNCTION_DIANOSTIC_LIST = "oDriver_mal_diagnstc_list";
+    public static final String MALFUNCTION_DIANOSTIC_LIST1 = "oDriver_mal_diagnstc_list1";
 
 
     public DBHelper(Context context) {
@@ -159,6 +161,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 DRIVER_ID_KEY + " INTEGER, " +  MALFUNCTION_DIANOSTIC_LIST + " TEXT )"
         );
 
+        db.execSQL( "CREATE TABLE " + TABLE_MALFUNCTION_DIANOSTIC1 + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  MALFUNCTION_DIANOSTIC_LIST + " TEXT )"
+        );
 
     }
 
@@ -185,6 +190,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CT_PAT_INSPECTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CT_PAT_INSP_18DAYS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALFUNCTION_DIANOSTIC);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALFUNCTION_DIANOSTIC1);
 
         onCreate(db);
     }
@@ -389,6 +395,19 @@ public class DBHelper extends SQLiteOpenHelper {
         );
 
     }
+
+    /* ---------------------- Create malfunction & diagnostic table if not exist.
+        We need this table to record all occurred malfncn to clear the events later, because in upper table we are clearing records after posted to server. -------------------- */
+    public void CreateMalfcnDiagnstcTable1(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL( "CREATE TABLE " + TABLE_MALFUNCTION_DIANOSTIC1 + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  MALFUNCTION_DIANOSTIC_LIST1 + " TEXT )"
+        );
+
+    }
+
+
+
 
 
 
@@ -694,6 +713,19 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ---------------------- Insert malfunction & diagnostic events  Log -------------------- */
+    public boolean InsertMalfncnDiagnosticLog1(int DriverId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(MALFUNCTION_DIANOSTIC_LIST1, String.valueOf(jsonArray));
+
+        db.insert(TABLE_MALFUNCTION_DIANOSTIC1, null, contentValues);
+        return true;
+    }
+
 
 
     //=======================================================================================================================
@@ -988,6 +1020,19 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ---------------------- Update Malfunction & Diagnostic Log -------------------- */
+    public boolean UpdateMalfunctionDiagnosticLog1(int DriverId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(MALFUNCTION_DIANOSTIC_LIST1, String.valueOf(jsonArray));
+
+        db.update(TABLE_MALFUNCTION_DIANOSTIC1, contentValues, DRIVER_ID_KEY + " = ? ", new String[] { Integer.toString(DriverId) } );
+        return true;
+    }
+
 
     //=======================================================================================================================
 
@@ -1171,6 +1216,14 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+
+    /* ---------------------- Get Malfunction & Diagnostic log-------------------- */
+    public Cursor getMalfunctionDiagnosticLog1(int DriverId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_MALFUNCTION_DIANOSTIC1 + " WHERE " +
+                DRIVER_ID_KEY + "=?", new String[]{Integer.toString(DriverId)});
+        return res;
+    }
 
 
     //=======================================================================================================================
@@ -1403,6 +1456,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Delete Malfunction & Diagnostic Log Table -------------------- */
+    public void DeleteMalfunctionDiagnosticTable1() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_MALFUNCTION_DIANOSTIC1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 
 
@@ -1489,6 +1554,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if(!isTableExists(TABLE_MALFUNCTION_DIANOSTIC)) {
             CreateMalfcnDiagnstcTable();
+        }
+
+        if(!isTableExists(TABLE_MALFUNCTION_DIANOSTIC1)) {
+            CreateMalfcnDiagnstcTable1();
         }
 
     }

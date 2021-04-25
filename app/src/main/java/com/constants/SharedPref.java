@@ -2149,6 +2149,43 @@ public class SharedPref {
     }
 
 
+    // Set Malfunction Called Time for Engine Sync -------------------
+    public static void setEngSyncMalCallTime(String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.MalCalledLastTime, savedTime);
+        editor.commit();
+    }
+
+    // Get Malfunction last Called Time for Engine Sync -------------------
+    public static String getEngSyncLastCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(ConstantsKeys.MalCalledLastTime, "");
+    }
+
+
+    // Set Malfunction Called Time for Engine details -------------------
+    public static void saveMalCalledEngineDetails( String MalCalledLastOdo, String MalCalledLastEngHr,
+                                                 String MalCalledLastRpm, String MalCalledLastSpeed,
+                                                   String MalCalledLastEngIgntn, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.MalCalledLastOdo, MalCalledLastOdo);
+        editor.putString(ConstantsKeys.MalCalledLastEngHr, MalCalledLastEngHr);
+        editor.putString(ConstantsKeys.MalCalledLastRpm, MalCalledLastRpm);
+        editor.putString(ConstantsKeys.MalCalledLastSpeed, MalCalledLastSpeed);
+        editor.putString(ConstantsKeys.MalCalledLastEngIgntn, MalCalledLastEngIgntn);
+
+        editor.commit();
+    }
+
+    // Get Malfunction last Called Time for Engine Sync -------------------
+    public static String getEngSyncLastCallDetails(Context context, String key) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "0");
+    }
+
+
 
     // Save Last Called Wired Call Back count
     public static void setLastCalledWiredCallBack(long count, Context context){
