@@ -1970,7 +1970,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                     int diff = hMethods.DayDiff(currentDateTime, selectedDateRecap);
                     LogInfoAdapter = new DriverLogInfoAdapter(getActivity(), DriverLogList, StateArrayList, StateList,
                             DriverType, IsEditLocation, diff, Integer.valueOf(DRIVER_ID), IsCurrentDate,
-                            isExceptionEnabledForDay, dbHelper, hMethods );
+                            isExceptionEnabledForDay, driverLogArray, selectedDateTime , selectedDateTime,
+                            offsetFromUTC, dbHelper, hMethods );
                     certifyLogListView.setAdapter(LogInfoAdapter);
                 }catch (Exception e){  }
 
@@ -2067,7 +2068,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 try{
                     int diff = hMethods.DayDiff(currentDateTime, selectedDateRecap);
                     LogInfoAdapter = new DriverLogInfoAdapter(getActivity(), DriverLogList, StateArrayList, StateList, DriverType,
-                            IsEditLocation, diff, Integer.valueOf(DRIVER_ID), IsCurrentDate, isExceptionEnabledForDay, dbHelper, hMethods );
+                            IsEditLocation, diff, Integer.valueOf(DRIVER_ID), IsCurrentDate, isExceptionEnabledForDay, driverLogArray,
+                            selectedDateTime , selectedDateTime, offsetFromUTC, dbHelper, hMethods );
                     certifyLogListView.setAdapter(LogInfoAdapter);
                 }catch (Exception e){  }
 

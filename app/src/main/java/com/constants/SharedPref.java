@@ -1711,7 +1711,48 @@ public class SharedPref {
     }
 
 
-    // Save alert status settings -------------------
+    // Save Engine sync diagnostic status  -------------------
+    public static void saveEngSyncDiagnstcStatus( boolean IsEngSyncDia, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.EngSyncDiagnstc, IsEngSyncDia);
+
+        editor.commit();
+    }
+
+    // Get Engine sync diagnostic status -------------------
+    public static boolean isEngSyncDiagnstc( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.EngSyncDiagnstc, false);
+        }else {
+            return false;
+        }
+    }
+
+
+    // Save Engine sync Malfunction status  ----------------
+    public static void saveEngSyncMalfunctionStatus( boolean IsEngSyncDia, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.EngSyncMalfunction, IsEngSyncDia);
+
+        editor.commit();
+    }
+
+    // Get Engine sync Malfunction status -------------------
+    public static boolean isEngSyncMalfunction( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.EngSyncMalfunction, false);
+        }else {
+            return false;
+        }
+    }
+
+
+
+    // Save lacation malfunction status  -------------------
     public static void saveLocMalfunctionOccurStatus( boolean IsLocMalfunction, String time, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();

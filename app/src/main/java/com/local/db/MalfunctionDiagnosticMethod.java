@@ -1,7 +1,14 @@
 package com.local.db;
 
+import android.content.Context;
 import android.database.Cursor;
 
+import com.constants.SharedPref;
+import com.messaging.logistic.Globally;
+
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+import org.joda.time.Seconds;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -129,6 +136,193 @@ public class MalfunctionDiagnosticMethod {
             rs.close();
         }
     }
+
+
+    public JSONObject GetJsonForClearDiagnostic(String DriverId, String DeviceId, String eventsList, String Remarks)  {
+
+        JSONObject malfnDiagnstcObj = new JSONObject();
+
+        try {
+            malfnDiagnstcObj.put(ConstantsKeys.DriverId, DriverId);
+            malfnDiagnstcObj.put(ConstantsKeys.DeviceNumber, DeviceId);
+            malfnDiagnstcObj.put(ConstantsKeys.EventList, eventsList);
+            malfnDiagnstcObj.put(ConstantsKeys.Remarks, Remarks);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return malfnDiagnstcObj;
+    }
+
+
+
+
+
+    /*-------------------- MALFUNCTION & DIAGNOSTIC OCCURED TIME LOG DB Helper -------------------- */
+    public void MalDiaOccTimeLogHelper( int driverId, DBHelper dbHelper, JSONArray eventArray){
+
+        Cursor rs = dbHelper.getMalDiaTimeLog(driverId);
+
+        if(rs != null & rs.getCount() > 0) {
+            rs.moveToFirst();
+            dbHelper.UpdateMalDiaOccTimeLog(driverId, eventArray );        // UPDATE MALFUNCTION & DIAGNOSTIC OCC TIME LOG ARRAY
+        }else{
+            dbHelper.InsertMalDiaOccTimeLog( driverId, eventArray  );      // INSERT MALFUNCTION & DIAGNOSTIC OCC TIME LOG ARRAY
+        }
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+    }
+
+
+    /*-------------------- GET MALFUNCTION & DIAGNOSTIC OCCURED TIME LOG -------------------- */
+    public JSONArray getSavedMalDiaTimeLog(int DriverId, DBHelper dbHelper){
+
+        JSONArray logArray = new JSONArray();
+        Cursor rs = dbHelper.getMalDiaTimeLog(DriverId);
+
+        if(rs != null && rs.getCount() > 0) {
+            rs.moveToFirst();
+            String logList = rs.getString(rs.getColumnIndex(DBHelper.MAL_DIA_OCCURRED_TIME_LIST));
+            try {
+                logArray = new JSONArray(logList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+
+        return logArray;
+
+    }
+
+
+    public JSONObject GetJsonForMalDiaOccTime(String DriverId, String VIN, String DisConnectStartTime, String DisConnectEndTime,
+                                              int TotalMin, String status)  {
+
+        JSONObject malfnDiagnstcObj = new JSONObject();
+
+        try {
+            malfnDiagnstcObj.put(ConstantsKeys.DriverId, DriverId);
+            malfnDiagnstcObj.put(ConstantsKeys.VIN, VIN);
+            malfnDiagnstcObj.put(ConstantsKeys.DisConnectStartTime, DisConnectStartTime);
+            malfnDiagnstcObj.put(ConstantsKeys.DisConnectEndTime, DisConnectEndTime);
+            malfnDiagnstcObj.put(ConstantsKeys.TotalMin, TotalMin);
+            malfnDiagnstcObj.put(ConstantsKeys.Status, status);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return malfnDiagnstcObj;
+    }
+
+
+
+    // update occurred event time log array for 1 day only
+    public void updateOccEventTimeLog(DateTime currentTime, String DriverId, String VIN,
+                                      DateTime disConnectStartTime, DateTime disConnectEndTime, String status,
+                                      DBHelper dbHelper){
+        try {
+
+            DateTime oneDayDiffDate = currentTime.minusDays(1);
+            JSONArray updatedTimeArray = new JSONArray();
+            JSONArray lastOccEventTimeArray = getSavedMalDiaTimeLog(Integer.valueOf(DriverId), dbHelper);
+            for (int i = 0; i < lastOccEventTimeArray.length() ; i++) {
+                JSONObject eventObj = (JSONObject) lastOccEventTimeArray.get(i);
+                DateTime selectedDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.DisConnectStartTime), false);
+                if(selectedDateTime.isAfter(oneDayDiffDate)){
+                    updatedTimeArray.put(eventObj);
+                }
+            }
+
+            JSONObject obj;
+            if(status.equals("DisConnected")){
+
+                int timeInMin = Minutes.minutesBetween(disConnectStartTime, currentTime).getMinutes();
+                obj = GetJsonForMalDiaOccTime(DriverId, VIN, disConnectStartTime.toString(), disConnectEndTime.toString(), timeInMin, status);
+
+                updatedTimeArray.put(obj);
+
+            }else{
+                if(updatedTimeArray.length() > 0){
+                    JSONObject lastObj = (JSONObject)updatedTimeArray.get(updatedTimeArray.length()-1);
+                    DateTime disconStartTime = Globally.getDateTimeObj(lastObj.getString(ConstantsKeys.DisConnectStartTime), false);
+                    int timeInMin = Minutes.minutesBetween(disconStartTime, currentTime).getMinutes();
+                    lastObj.put(ConstantsKeys.DisConnectEndTime, currentTime);
+                    lastObj.put(ConstantsKeys.TotalMin, timeInMin);
+                    lastObj.put(ConstantsKeys.Status, "Connected");
+
+
+                    // update time in last item
+                    updatedTimeArray.put(updatedTimeArray.length()-1, lastObj);
+
+                }
+            }
+
+            MalDiaOccTimeLogHelper(Integer.valueOf(DriverId), dbHelper, updatedTimeArray);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public int getTotalEngSyncMissingMin(String DriverId, DBHelper dbHelper){
+        int totalMin = 0;
+
+        try{
+            JSONArray eventArray = getSavedMalDiaTimeLog(Integer.valueOf(DriverId), dbHelper);
+
+            for(int i = 0 ; i < eventArray.length() ; i++){
+                JSONObject eventObj = (JSONObject) eventArray.get(i);
+                if(i == eventArray.length()-1){
+                    DateTime disconStartTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.DisConnectStartTime), false);
+                    DateTime disconEndTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+                    int timeInMin = Minutes.minutesBetween(disconStartTime, disconEndTime).getMinutes();
+                    totalMin = totalMin + timeInMin;
+                }else{
+                    totalMin = totalMin + eventObj.getInt(ConstantsKeys.TotalMin);
+
+
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totalMin;
+    }
+
+
+
+    public boolean isDisconnected(String DriverId, DBHelper dbHelper){
+        try{
+            JSONArray eventArray = getSavedMalDiaTimeLog(Integer.valueOf(DriverId), dbHelper);
+           if(eventArray.length() > 0){
+                JSONObject eventObj = (JSONObject) eventArray.get(eventArray.length()-1);
+                String status = eventObj.getString(ConstantsKeys.Status);
+                if(status.equals("DisConnected")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+               return false;
+           }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
 
 

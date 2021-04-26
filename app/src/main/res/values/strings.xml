@@ -219,15 +219,26 @@
     <string name="view_history">View Log</string>
     <string name="noti_history">Notifications History</string>
     <string name="change">Change</string>
+    <string name="change_bracket">(Change)</string>
     <string name="change_cycle_request">You have cycle change request from </string>
     <string name="want_change_cycle">Do you want to change your cycle from </string>
     <string name="want_change_op_zone">Do you want to change your operating zone from </string>
 
-    <string name="pos_mal_occured">Position malfunction occured</string>
+    <string name="eng_sync_dia_event">Engine sync diagnostic event</string>
+    <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>
+    <string name="missing_event_occured_desc">Missing data element diagnostic occurred</string>
+    <string name="missing_data_element">Missing Data Diagnostic</string>
+    <string name="dia_event_occured">Diagnostic event occurred</string>
+    <string name="eng_sync_dia_occured">Engine sync diagnostic occurred</string>
+    <string name="eng_sync_mal_occured">Engine sync compliance malfunction occurred</string>
+    <string name="pos_mal_occured">Position malfunction occurred</string>
+    <string name="pos_mal_occured_desc">Position malfunction occurred due to location missing.</string>
     <string name="ignore_to_save_loc">Driver ignore to save location in </string>
     <string name="hos_limitation">New HOS Limitations</string>
     <string name="ELDViewLogUs">ELD View Log</string>
     <string name="ELDViewLogCanada">ELD View Log</string>
+    <string name="Connected">Connected</string>
+    <string name="DisConnected">DisConnected</string>
 
     <string name="title_aobrd">HOURS OF SERVICE - AOBRD</string>
     <string name="title_eld">HOURS OF SERVICE - ELD</string>
@@ -733,9 +744,11 @@
     <string name="dot_mode_canada">DOT MODE (Canada)</string>
     <string name="data_malfunction">Data recording compliance malfunction detected</string>
     <string name="malfunction">Data Malfunction</string>
-    <string name="malfunction_diag_occur">Malfunction &amp; Diagnostic event occurred</string>
+    <string name="malfunction_diag_occur">Malfunction &amp; Diagnostic events occurred</string>
     <string name="malfunction_occur">Malfunction event occurred</string>
     <string name="diagnostic_occur">Diagnostic event occurred</string>
+    <string name="malfunction_event">Malfunction event</string>
+    <string name="dia_event">Diagnostic event</string>
 
     <string name="want_to_logout">Do you really want to logout ?</string>
     <string name="pending_carrier_edit">You have pending carrier edits that need your approval.</string>

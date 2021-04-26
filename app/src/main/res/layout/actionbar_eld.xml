@@ -39,6 +39,7 @@
                 android:layout_height="@dimen/view_height_30"
                 android:src="@drawable/slide_menu"
                 android:layout_centerVertical="true"
+
                 />
 
 

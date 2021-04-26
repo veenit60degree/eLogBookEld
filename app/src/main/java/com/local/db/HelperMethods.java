@@ -168,6 +168,39 @@ public class HelperMethods {
     }
 
 
+    public boolean isCoDriverInDrYMPC(Context context, Globally Global, String selectedDriverId,DBHelper dbHelper){
+
+        if (Global.isSingleDriver(context)) {
+            return false;
+        }else{
+
+            String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
+            String CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
+
+            if (selectedDriverId.equals(MainDriverId)) {
+                // get co driver data
+                selectedDriverId = CoDriverId;
+            } else {
+                // get main driver data
+                selectedDriverId = MainDriverId;
+            }
+
+            ArrayList<String> coDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
+            if (coDriverInfo.size() > 2) {
+                int CoDriverStatus = Integer.valueOf(coDriverInfo.get(0));
+                boolean isCoDriverPersonalUse = Boolean.parseBoolean(coDriverInfo.get(1));
+                boolean isCoDriverYardMove = Boolean.parseBoolean(coDriverInfo.get(2));
+                if (CoDriverStatus == Constants.DRIVING || isCoDriverYardMove || isCoDriverPersonalUse ) {
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+
 
     public String getCoDriverStatus(Context context, String selectedDriverId, Globally Global, DBHelper dbHelper){
 
@@ -2311,7 +2344,7 @@ public class HelperMethods {
     }
 
     /*-------------------- GET DRIVER SAVED LOG -------------------- */
-    public List<DriverLog> get3DaysLog(int DriverId, DateTime selectedDate, DateTime endUtc, DBHelper dbHelper){
+    public List<DriverLog> getNumberOffDaysLog(int DriverId, int noOfDays, DateTime selectedDate, DateTime endUtc, DBHelper dbHelper){
 
         List<DriverLog> driverLogList = new ArrayList<DriverLog>();
         Cursor rs = dbHelper.getDriverLog(DriverId);
@@ -2331,7 +2364,7 @@ public class HelperMethods {
                     int DateDiff = DayDiffSplitMethod(selectedDate, startDateTime); //end.getDayOfMonth() - startDateTime.getDayOfMonth();
 
                     if(startDateTime.equals(selectedDate) || startDateTime.isBefore(selectedDate) ) {
-                        if (DateDiff < 3) {
+                        if (DateDiff < noOfDays) {
                             int CurrentCycleId = 1;
                             if (!json.isNull(ConstantsKeys.CurrentCycleId)) {
                                 CurrentCycleId = json.getInt(ConstantsKeys.CurrentCycleId);
@@ -2554,7 +2587,7 @@ public class HelperMethods {
 
         LocalCalls CallDriverRule = new LocalCalls();
 
-        List<DriverLog> oDriverLog3DaysList = get3DaysLog(DriverId, currentDate, currentUTCDate, dbHelper);   // 3 days log list
+        List<DriverLog> oDriverLog3DaysList = getNumberOffDaysLog(DriverId, 3, currentDate, currentUTCDate, dbHelper);   // 3 days log list
         //List<DriverLog> oDriverLogDetail = getSavedLogList(DriverId, currentDate, currentUTCDate, dbHelper);    // temp array
 
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
@@ -2574,7 +2607,7 @@ public class HelperMethods {
                                                       boolean isNorthCanada, int rulesVersion, DBHelper dbHelper){
 
         LocalCalls CallDriverRule = new LocalCalls();
-        List<DriverLog> oDriverLog3DaysList = get3DaysLog(DriverId, currentDate, currentUTCDate, dbHelper);
+        List<DriverLog> oDriverLog3DaysList = getNumberOffDaysLog(DriverId, 3, currentDate, currentUTCDate, dbHelper);
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException,
                 isNorthCanada, rulesVersion, oDriverLog3DaysList);

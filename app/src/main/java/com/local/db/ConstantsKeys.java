@@ -252,6 +252,10 @@ public class ConstantsKeys {
     public static String IsLocMalfunction               = "IsLocMalfunction";
     public static String LocMalfunctionOccurTime        = "LocMalfunctionOccurTime";
 
+    public static String EngSyncDiagnstc                = "EngSyncDiagnstc";
+    public static String EngSyncMalfunction             = "EngSyncMalfunction";
+
+
     public static String IsUnidentifiedCo               = "IsUnidentifiedCo";
     public static String IsMalfunctionCo                = "IsMalfunctionCo";
     public static String IsDiagnosticCo                 = "IsDiagnosticCo";
@@ -404,6 +408,7 @@ public class ConstantsKeys {
     public static String CpuUsage                       = "CpuUsage";
     public static String ExecutionTime                  = "ExecutionTime";
     public static String Date_Time                      = "DateTime";
+    public static String TotalMin                       = "TotalMin";
 
     public static String EquipmentNumber                = "EquipmentNumber";
     public static String TotalKm                        = "TotalKm";
@@ -425,6 +430,9 @@ public class ConstantsKeys {
     public static String EventList                      = "EventList";
     public static String StartLocationKM                = "StartLocationKM";
     public static String EndLocationKM                  = "EndLocationKM";
+
+    public static String DisConnectStartTime            = "DisConnectStartTime";
+    public static String DisConnectEndTime              = "DisConnectEndTime";
 
     public static String IsAllowLogReCertification      = "IsAllowLogReCertification";
     public static String IsShowUnidentifiedRecords      = "IsShowUnidentifiedRecords";

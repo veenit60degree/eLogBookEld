@@ -160,6 +160,10 @@ public class Constants {
     public static String MissingDataElementDiagnostic   = "3";
     public static String ConstLocationMissing           = "LM";
 
+    public static String ConstEngineSyncDiaEvent           = "2";
+    public static String ConstEngineSyncMalEvent           = "E";
+
+
     public static final int MAIN_DRIVER_TYPE    = 0;
     public static final int CO_DRIVER_TYPE      = 1;
 
@@ -2799,6 +2803,11 @@ public class Constants {
                 DateFormat format = new SimpleDateFormat(Globally.DateFormat, Locale.ENGLISH);
                 Date date = format.parse(obj.getString(ConstantsKeys.DateTimeWithMins));
 
+                int seqNumber = 0;
+                if(!obj.isNull(ConstantsKeys.SequenceNumber)){
+                    seqNumber = obj.getInt(ConstantsKeys.SequenceNumber);
+                }
+
                 CanadaDutyStatusModel dutyModel = new CanadaDutyStatusModel(
                         CheckNullBString(obj.getString(ConstantsKeys.DateTimeWithMins)),
                         CheckNullBString(obj.getString(ConstantsKeys.EventUTCTimeStamp)),
@@ -2841,7 +2850,8 @@ public class Constants {
                         CheckNullBString(obj.getString(ConstantsKeys.IsStatusAutomatic)),
 
                         CheckNullBString(obj.getString(ConstantsKeys.CurrentCycleId)),
-                        obj.getInt(ConstantsKeys.SequenceNumber),
+
+                        seqNumber,
 
                         CheckNullBString(obj.getString(ConstantsKeys.TotalVehicleKM)),
                         CheckNullBString(obj.getString(ConstantsKeys.AdditionalInfo)),
@@ -3139,7 +3149,7 @@ public class Constants {
             if(isSaveMalfunctionStatus) {
                 if(isMalfunction == false) {
                     SharedPref.setLocMalfunctionType("", context);
-                    saveMalfncnStatus(context, isDistanceMalfncn);
+                    saveDiagnstcStatus(context, isDistanceMalfncn);
                 }else{
                     saveMalfncnStatus(context, isMalfunction);
                 }
@@ -3151,7 +3161,7 @@ public class Constants {
     }
 
 
-    void saveMalfncnStatus(Context context, boolean isDiagnosticOccur){
+    public void saveDiagnstcStatus(Context context, boolean isDiagnosticOccur){
         if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
             SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(context),
                     SharedPref.isMalfunctionOccur(context),
@@ -3161,6 +3171,21 @@ public class Constants {
             SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccur(context),
                     SharedPref.isMalfunctionOccurCo(context),
                     isDiagnosticOccur,
+                    SharedPref.isSuggestedEditOccurCo(context), context);
+        }
+
+    }
+
+    public void saveMalfncnStatus(Context context, boolean isMalfncnOccur){
+        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+            SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(context),
+                    isMalfncnOccur,
+                    SharedPref.isDiagnosticOccur(context),
+                    SharedPref.isSuggestedEditOccur(context), context);
+        }else{
+            SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccur(context),
+                    isMalfncnOccur,
+                    SharedPref.isDiagnosticOccurCo(context),
                     SharedPref.isSuggestedEditOccurCo(context), context);
         }
 
@@ -3612,6 +3637,21 @@ public class Constants {
 
     }
 
+
+    public boolean isActionAllowedWithCoDriver(Context context, DBHelper dbHelper, HelperMethods hMethods, Globally Global, String DRIVER_ID){
+        boolean isAllowed = true;
+        int ObdStatus = SharedPref.getObdStatus(context);
+        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) && SharedPref.isVehicleMoving(context) ){
+            isAllowed = false;
+        }
+        boolean isCoDriverInDrYMPC = hMethods.isCoDriverInDrYMPC(context, Global, DRIVER_ID, dbHelper);
+
+        if(isCoDriverInDrYMPC && isAllowed == false){
+            isAllowed = true;
+        }
+
+        return isAllowed;
+    }
 
 
 

@@ -26,6 +26,7 @@ import com.constants.SharedPref;
 import com.google.android.material.textfield.TextInputLayout;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.local.db.ShipmentHelperMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -59,11 +60,12 @@ public class TrailorDialog extends Dialog {
     TextView TitleTV, SpinnerTitleTV, recordTitleTV;
     boolean isUpdatedTrailer = false, isEditRemarks , isStart = true, isYardMove;
     int ItemPosition, jobStatus;
-    String spinnerSelection = "";
+    String spinnerSelection = "", DriverId ;
     ShipmentHelperMethod shipmentMethod;
     DBHelper dbHelper;
+    HelperMethods hMethods;
     Constants constants;
-
+    Globally Global;
 
     public TrailorDialog(Context context, String type, boolean isYardmove, String trailor, int position, boolean IsEdit,  List<String> remarkList,
                          int jobStatuss, DBHelper dbHelper, TrailorListener readyListener) {
@@ -77,10 +79,10 @@ public class TrailorDialog extends Dialog {
         this.jobStatus = jobStatuss;
         this.readyListener = readyListener;
         this.dbHelper = dbHelper;
-
         shipmentMethod = new ShipmentHelperMethod();
         constants = new Constants();
-
+        Global  = new Globally();
+        hMethods = new HelperMethods();
     }
 
 
@@ -113,6 +115,8 @@ public class TrailorDialog extends Dialog {
         noTrailerView       = (LinearLayout)findViewById(R.id.noTrailerView);
 
         remarkSpinner       = (Spinner)findViewById(R.id.remarkSpinner);
+
+        DriverId = SharedPref.getDriverId(getContext());
 
         if(type.equals("trailor") || type.equals("trailor_driving")){
             if(type.equals("trailor_driving")){
@@ -338,26 +342,27 @@ public class TrailorDialog extends Dialog {
 
             if(spinnerSelection.equals(getContext().getResources().getString(R.string.YardMove))){
 
-                if (ReasonEditText.getText().toString().trim().length() >= 4 ) {
-
-                    if (constants.isObdConnected(getContext())) {
-
-                        readyListener.JobBtnReady(
-                                Trailer,
-                                spinnerSelection,
-                                type,
-                                isUpdatedTrailer,
-                                ItemPosition,
-                                TrailorNoEditText,
-                                ReasonEditText);
-
-                   }else{
-                        Globally.EldToastWithDuration4Sec(TrailorNoEditText, getContext().getResources().getString(R.string.connect_with_obd_first), getContext().getResources().getColor(R.color.colorVoilation));
+                if (constants.isObdConnected(getContext())) {
+                    if(hMethods.isCoDriverInDrYMPC(getContext(), Global, DriverId, dbHelper)){
+                        String coDriverStatus = hMethods.getCoDriverStatus(getContext(), DriverId, Global, dbHelper);
+                        Global.EldScreenToast(TrailorNoEditText, ConstantsEnum.CO_DRIVING_ALERT + coDriverStatus + ConstantsEnum.CO_DRIVING_ALERT1,
+                                getContext().getResources().getColor(R.color.colorVoilation));
+                    }else {
+                        if (ReasonEditText.getText().toString().trim().length() >= 4) {
+                            readyListener.JobBtnReady(
+                                    Trailer,
+                                    spinnerSelection,
+                                    type,
+                                    isUpdatedTrailer,
+                                    ItemPosition,
+                                    TrailorNoEditText,
+                                    ReasonEditText);
+                         } else {
+                                Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.YARD_MOVE_DESC, getContext().getResources().getColor(R.color.red_eld));
+                         }
                     }
-
-
                 } else {
-                    Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.YARD_MOVE_DESC, getContext().getResources().getColor(R.color.red_eld));
+                    Globally.EldToastWithDuration4Sec(TrailorNoEditText, getContext().getResources().getString(R.string.connect_with_obd_first), getContext().getResources().getColor(R.color.colorVoilation));
                 }
 
             }else{

@@ -29,6 +29,7 @@ import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.custom.dialogs.DriverLocationDialog;
 import com.custom.dialogs.TrailorDialog;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.models.EldDriverLogModel;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
@@ -39,10 +40,12 @@ import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.DriverLogDetailFragment;
 import com.models.DriverLocationModel;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DriverLogInfoAdapter extends BaseAdapter {
@@ -56,8 +59,9 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     TrailorDialog remarksDialog;
     String City = "", State = "", Country = "", DeviceId = "";
     Globally Global;
-    int DriverType = 0, DriverId = 0, DaysDiff = 0, socketTimeout = 30000;
-    final int SaveDriverRecordLog = 1;
+    int DriverType = 0, DriverId = 0, DaysDiff = 0;
+    final int SaveDriverRecordLog   = 1;
+    final int ClearDiagnosticEvents = 2;
     boolean IsEditView, isExceptionEnabled = false;
     ProgressDialog progressDialog;
     SaveDriverLogPost saveDriverLogPost;
@@ -65,15 +69,20 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     DBHelper dbHelper;
     HelperMethods hMethods;
     UpdateLogRecordMethod logRecordMethod;
-    JSONArray finalUpdatedArray;
+    JSONArray finalUpdatedArray, driverLog18DaysArray, selectedArray;
     String RecordType = "";
     String selectedDate = "";
     boolean IsCurrentDate;
+    DateTime currentDateTime, currentUTCTime;
+    int offsetFromUTC;
+    MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
+    JSONArray malfnJsonArray = new JSONArray();
 
     public DriverLogInfoAdapter(Context cxt, List<EldDriverLogModel> logList,  List<String> stateArrayList, List<DriverLocationModel> stateList,
                                 int driverType, boolean isEditView, int daysDiff, int driverId,
-                                boolean isCurrentDate, boolean isExcptnEnabled,
-                                    DBHelper db_helper, HelperMethods h_methods ){
+                                boolean isCurrentDate, boolean isExcptnEnabled, JSONArray driverLog18DaysArray,
+                                DateTime currentDateTime, DateTime currentUTCTime, int offsetFromUTC,
+                                DBHelper db_helper, HelperMethods h_methods ){
 
         this.context        = cxt;
         this.mInflater      = LayoutInflater.from(context);
@@ -86,15 +95,24 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         this.DriverId       = driverId;
         this.IsCurrentDate  = isCurrentDate;
         this.isExceptionEnabled = isExcptnEnabled;
+        this.driverLog18DaysArray = driverLog18DaysArray;
+        this.currentDateTime = currentDateTime;
+        this.currentUTCTime = currentUTCTime;
+        this.offsetFromUTC = offsetFromUTC;
         this.dbHelper       = db_helper;
         this.hMethods       = h_methods;
         Global = new Globally();
+        malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
 
         saveDriverLogPost   = new SaveDriverLogPost(context, saveLogRequestResponse);
         DeviceId            = SharedPref.GetSavedSystemToken(context);
         logRecordMethod     = new UpdateLogRecordMethod();
         progressDialog      = new ProgressDialog(context);
         progressDialog.setMessage("Loading ...");
+
+
+        selectedArray = hMethods.GetSelectedDateArray(driverLog18DaysArray, ""+DriverId, currentDateTime, currentDateTime,
+                currentUTCTime, offsetFromUTC, 2, dbHelper);
 
 
     }
@@ -357,7 +375,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     LogList.set(position, logModel);
                     notifyDataSetChanged();
 
-                    SaveAndUploadData(logModel, RecordType, position);
+                    SaveAndUploadData(logModel, RecordType);
 
                     // Clear Diagnostic if occured
 
@@ -419,7 +437,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     notifyDataSetChanged();
                   //  Global.EldScreenToast(certifyNoTV, "Remarks updated.", context.getResources().getColor(R.color.colorPrimary));
 
-                    SaveAndUploadData(logModel, RecordType, ItemPosition);
+                    SaveAndUploadData(logModel, RecordType);
 
                     try {
                         if (remarksDialog != null && remarksDialog.isShowing())
@@ -491,12 +509,20 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         for(int i = driverLogArray.length()-1 ; i >=0  ; i--){
 
-            try {
+            try {   //2021-04-26T00:09:03
                 JSONObject obj = (JSONObject)driverLogArray.get(i);
                 String compareStartDate = obj.getString(ConstantsKeys.startDateTime);
+                if(compareStartDate.length() > 17) {
+                    compareStartDate = compareStartDate.substring(0, 17)+"00";
+                }
                 if(selectedDate.equals(compareStartDate)){
                     if(RecordType.equals(Constants.Location)) {
+
                         obj.put(ConstantsKeys.StartLocation, logObj.getString(ConstantsKeys.RecordValue));
+
+                        // Check diagnostic event
+                        checkDiagnosticEventsForClear(compareStartDate);
+
                     }else if (RecordType.equals(Constants.Remarks)){
                         obj.put(ConstantsKeys.Remarks, logObj.getString(ConstantsKeys.RecordValue));
                     }
@@ -515,11 +541,56 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         // -------------- Upload data on server --------------
         if(Global.isConnected(context)) {
-            SAVE_DRIVER_RECORD_LOG(finalUpdatedArray, false, false, socketTimeout);
+            SAVE_DRIVER_RECORD_LOG(finalUpdatedArray, false, false, Constants.SocketTimeout20Sec);
         }else{
             Global.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, "Connection unavailable! Your edited " + RecordType + " will be posted to server automatically when your device will be connected with working internet connection.", context.getResources().getColor(R.color.colorVoilation));
         }
     }
+
+
+    void checkDiagnosticEventsForClear(String compareStartDate){
+
+        try {
+            ArrayList<String> eventList = new ArrayList<>();
+            int minDiffPlusMinus = 5;
+            DateTime selectedLogDate = Global.getDateTimeObj(compareStartDate, false);
+            malfnJsonArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArrayEvents(DriverId, dbHelper);
+            for(int i = malfnJsonArray.length()-1 ; i >= 0 ; i--){
+                JSONObject obj = (JSONObject)malfnJsonArray.get(i);
+                DateTime eventDateTime = Global.getDateTimeObj(obj.getString(ConstantsKeys.EventDateTime), false);
+                if(selectedLogDate.equals(eventDateTime) || selectedLogDate.isAfter(eventDateTime.minusMinutes(minDiffPlusMinus)) ||
+                        selectedLogDate.isBefore(eventDateTime.plusMinutes(minDiffPlusMinus)) ){
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        malfnJsonArray.remove(i);
+                    }
+
+                    eventList.add(obj.getString(ConstantsKeys.DiagnosticType));
+
+                }
+            }
+
+            if(eventList.size() > 0){
+                JSONArray eventsArray = new JSONArray();
+                eventsArray.put(malfunctionDiagnosticMethod.GetJsonForClearDiagnostic(""+DriverId, DeviceId, eventList.toString(),
+                        "Auto clear from android"));
+                if(Global.isConnected(context)) {
+                    ClearDiagnosticEvents(eventsArray, false, false, Constants.SocketTimeout10Sec);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    /*================== Clear missing location diagnostic events data  ===================*/
+    void ClearDiagnosticEvents(final JSONArray eventData, final boolean isLoad, final boolean IsRecap, int socketTimeout){
+        progressDialog.show();
+        saveDriverLogPost.PostDriverLogData(eventData, APIs.CLEAR_MALFNCN_DIAGSTC_EVENT, socketTimeout, isLoad, IsRecap, 1, ClearDiagnosticEvents);
+
+    }
+
 
 
     /*================== Upload Driver Updated Log Record Data ===================*/
@@ -545,11 +616,15 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
                 if (obj.getString("Status").equals("true")) {
 
-                    Globally.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, Message , context.getResources().getColor(R.color.colorPrimary));
+                    if(flag == ClearDiagnosticEvents){
+                        // update event array
+                        malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(DriverId, dbHelper, malfnJsonArray);
+                    }else {
+                        Globally.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, Message, context.getResources().getColor(R.color.colorPrimary));
 
-                    // ------------ Clear Log Record File locally ------------
-                    logRecordMethod.UpdateLogRecordHelper( DriverId, dbHelper, new JSONArray());
-
+                        // ------------ Clear Log Record File locally ------------
+                        logRecordMethod.UpdateLogRecordHelper(DriverId, dbHelper, new JSONArray());
+                    }
                 }else{
                     // ------------ Clear Log Record File locally ------------
                     logRecordMethod.UpdateLogRecordHelper( DriverId, dbHelper, new JSONArray());

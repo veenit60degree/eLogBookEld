@@ -40,7 +40,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_CT_PAT_INSPECTION    = "tbl_ct_pat_inspection";
     public static final String TABLE_CT_PAT_INSP_18DAYS   = "tbl_ct_pat_insp_18days";
     public static final String TABLE_MALFUNCTION_DIANOSTIC= "tbl_mal_diagnostic";
-    public static final String TABLE_MALFUNCTION_DIANOSTIC1= "tbl_mal_diagnostic1";
+    public static final String TABLE_MALFUNCTION_DIANOSTIC1= "tbl_mal_diagnostic_one";
+    public static final String TABLE_MAL_DIA_OCCURRED_TIME = "tbl_mal_dia_occurred_time";
 
 
     public static final String DRIVER_ID_KEY              = "driver_id";
@@ -67,7 +68,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String CT_PAT_INSPECTION_LIST     = "oDriver_ct_pat_inspection_list";
     public static final String CT_PAT_INSP_18DAYS_LIST    = "oDriver_ct_pat_insp_18days_list";
     public static final String MALFUNCTION_DIANOSTIC_LIST = "oDriver_mal_diagnstc_list";
-    public static final String MALFUNCTION_DIANOSTIC_LIST1 = "oDriver_mal_diagnstc_list1";
+    public static final String MALFUNCTION_DIANOSTIC_LIST1 = "oDriver_mal_diagnstc_list_one";
+    public static final String MAL_DIA_OCCURRED_TIME_LIST  = "oDriver_mal_diagnstc_occurred_list";
 
 
     public DBHelper(Context context) {
@@ -162,8 +164,14 @@ public class DBHelper extends SQLiteOpenHelper {
         );
 
         db.execSQL( "CREATE TABLE " + TABLE_MALFUNCTION_DIANOSTIC1 + "(" +
-                DRIVER_ID_KEY + " INTEGER, " +  MALFUNCTION_DIANOSTIC_LIST + " TEXT )"
+                DRIVER_ID_KEY + " INTEGER, " +  MALFUNCTION_DIANOSTIC_LIST1 + " TEXT )"
         );
+
+        db.execSQL( "CREATE TABLE " + TABLE_MAL_DIA_OCCURRED_TIME + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  MAL_DIA_OCCURRED_TIME_LIST + " TEXT )"
+        );
+
+
 
     }
 
@@ -191,6 +199,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CT_PAT_INSP_18DAYS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALFUNCTION_DIANOSTIC);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALFUNCTION_DIANOSTIC1);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAL_DIA_OCCURRED_TIME);
 
         onCreate(db);
     }
@@ -407,6 +416,14 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ---------------------- Create malfunction & diagnostic table event occurred time if not exist.*/
+    public void CreateMalDiaOccTimeTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL( "CREATE TABLE " + TABLE_MAL_DIA_OCCURRED_TIME + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  MAL_DIA_OCCURRED_TIME_LIST + " TEXT )"
+        );
+
+    }
 
 
 
@@ -728,6 +745,21 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Insert malfunction & diagnostic events  Log -------------------- */
+    public boolean InsertMalDiaOccTimeLog(int DriverId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(MAL_DIA_OCCURRED_TIME_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_MAL_DIA_OCCURRED_TIME, null, contentValues);
+        return true;
+    }
+
+
+
     //=======================================================================================================================
 
     /* ---------------------- Update Driver Log -------------------- */
@@ -1034,6 +1066,23 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+
+    /* ---------------------- Update Malfunction & Diagnostic Log -------------------- */
+    public boolean UpdateMalDiaOccTimeLog(int DriverId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(MAL_DIA_OCCURRED_TIME_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_MAL_DIA_OCCURRED_TIME, contentValues, DRIVER_ID_KEY + " = ? ", new String[] { Integer.toString(DriverId) } );
+        return true;
+    }
+
+
+
+
     //=======================================================================================================================
 
     /* ---------------------- Get Driver Log -------------------- */
@@ -1224,6 +1273,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 DRIVER_ID_KEY + "=?", new String[]{Integer.toString(DriverId)});
         return res;
     }
+
+
+    /* ---------------------- Get Malfunction & Diagnostic time log-------------------- */
+    public Cursor getMalDiaTimeLog(int DriverId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_MAL_DIA_OCCURRED_TIME + " WHERE " +
+                DRIVER_ID_KEY + "=?", new String[]{Integer.toString(DriverId)});
+        return res;
+    }
+
+
+
+
 
 
     //=======================================================================================================================
@@ -1467,6 +1529,16 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ---------------------- Delete Malfunction & Diagnostic time Log Table -------------------- */
+    public void DeleteMalDiaOccTimeTable() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_MAL_DIA_OCCURRED_TIME);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -1559,6 +1631,11 @@ public class DBHelper extends SQLiteOpenHelper {
         if(!isTableExists(TABLE_MALFUNCTION_DIANOSTIC1)) {
             CreateMalfcnDiagnstcTable1();
         }
+
+        if(!isTableExists(TABLE_MAL_DIA_OCCURRED_TIME)) {
+            CreateMalDiaOccTimeTable();
+        }
+
 
     }
 

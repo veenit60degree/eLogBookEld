@@ -705,11 +705,11 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         try {
             int headerViewHeight = 38;
             if(global.isTablet(getActivity())){
-                inspectionLayHeight  = eventDotETV.getHeight() + 55;
-                headerViewHeight = eventDotETV.getHeight() + 65;
+                inspectionLayHeight  = eventDotETV.getHeight() + 50;
+                headerViewHeight = eventDotETV.getHeight() + 60;
             }else{
-                inspectionLayHeight  = eventDotETV.getHeight() + 45;
-                headerViewHeight = eventDotETV.getHeight() + 50;
+                inspectionLayHeight  = eventDotETV.getHeight() + 40;
+                headerViewHeight = eventDotETV.getHeight() + 40;
             }
 
 

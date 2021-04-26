@@ -411,6 +411,12 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                         Toast.makeText(getActivity(), getString(R.string.RecordClearedSuccessfully), Toast.LENGTH_LONG).show();
                         progressDialog.show();
 
+                        sharedPref.saveEngSyncDiagnstcStatus(false, getActivity());
+                        sharedPref.saveEngSyncMalfunctionStatus(false, getActivity());
+                        constants.saveDiagnstcStatus(getActivity(), false);
+                        constants.saveMalfncnStatus(getActivity(), false);
+
+
                         // call get events api to refresh data
                         invisibleMalfnBtn.performClick();
                     }else{

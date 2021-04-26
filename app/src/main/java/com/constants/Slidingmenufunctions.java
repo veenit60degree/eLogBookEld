@@ -98,6 +98,8 @@ public class Slidingmenufunctions implements OnClickListener {
 	private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
 	RecapViewMethod recapViewMethod;
 	DriverPermissionMethod driverPermissionMethod;
+	Globally Global;
+
 
 	public Slidingmenufunctions() {
 		super();
@@ -109,6 +111,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		this.context = context;
 		this.DriverType	= DriverType;
 
+		Global = new Globally();
 		driverPermissionMethod = new DriverPermissionMethod();
 		recapViewMethod = new RecapViewMethod();
 		eldFragment = new EldFragment();
@@ -167,6 +170,9 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 	void listItemClick(int status){
+
+		boolean isActionAllowedWithCoDriver = constants.isActionAllowedWithCoDriver(context, dbHelper, hMethod, Global, SharedPref.getDriverId(context));
+
 		switch (status){
 
 			case Constants.ELD_HOS:
@@ -175,7 +181,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.PTI_INSPECTION:
-				if(constants.isActionAllowed(context)) {
+				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(4);
 				}else{
 					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
@@ -183,7 +189,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.CT_PAT_INSPECTION:
-				if(constants.isActionAllowed(context)) {
+				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(8);
 				}else{
 					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
@@ -191,7 +197,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.ODOMETER_READING:
-				if(constants.isActionAllowed(context)) {
+				if(isActionAllowedWithCoDriver) {
 					if(!SharedPref.IsOdometerFromOBD(context)) {
 						EldFragment.IsMsgClick = false;
 						TabAct.host.setCurrentTab(5);
@@ -208,7 +214,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.SHIPPING_DOC:
-				if(constants.isActionAllowed(context)) {
+				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(7);
 				}else{
 					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
@@ -220,7 +226,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.UNIDENTIFIED_RECORD:
-				if(constants.isActionAllowed(context)) {
+				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(11);
 				}else{
 					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
@@ -228,7 +234,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.DATA_MALFUNCTION:
-				if(constants.isActionAllowed(context)) {
+				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(12);
 				}else{
 					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
@@ -236,7 +242,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.SETTINGS:
-				if(constants.isActionAllowed(context)) {
+				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(1);
 				}else{
 					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));

@@ -752,9 +752,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     if(getActivity() != null) {
                         if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED) {
                             connectionStatusAnimation.cancel();
-                            connectionStatusImgView.setAlpha(0f);
-                        } else {
                             connectionStatusImgView.setAlpha(1f);
+                        } else {
                             connectionStatusImgView.startAnimation(connectionStatusAnimation);
                         }
                     }
@@ -781,9 +780,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity()) ||
                                 constants.isAllowLocMalfunctionEvent(getActivity()) ) {
                             malfunctionLay.startAnimation(editLogAnimation);
-                            if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity()) == false) {
+                            if(sharedPref.isMalfunctionOccur(getActivity()) && sharedPref.isDiagnosticOccur(getActivity()) == false) {
                                 malfunctionTV.setText(getString(R.string.malfunction_occur));
-                            }else if(sharedPref.isMalfunctionOccur(getActivity()) == false || sharedPref.isDiagnosticOccur(getActivity())){
+                            }else if(sharedPref.isMalfunctionOccur(getActivity()) == false && sharedPref.isDiagnosticOccur(getActivity())){
                                 malfunctionTV.setText(getString(R.string.diagnostic_occur));
                             }else{
                                 malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
@@ -1010,6 +1009,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 switch (obdStatus) {
 
                     case Constants.WIRED_CONNECTED:
+
                         connectionStatusImgView.setImageResource(R.drawable.obd_active);
                         if (isToastShowing) {
                             Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_active), getResources().getColor(R.color.color_eld_theme) );
@@ -2059,7 +2059,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             case R.id.shippingLay:
 
-                if(constants.isActionAllowed(getActivity())){
+                if(constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )){   //constants.isActionAllowed(getActivity())){
                     showShippingDialog(false);
                 } else {
                     Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2070,7 +2070,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             case R.id.odometerLay:
 
                 if(!sharedPref.IsOdometerFromOBD(getActivity())) {
-                    if(constants.isActionAllowed(getActivity())){
+                    if(constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID ) ){  //constants.isActionAllowed(getActivity())){
                         TabAct.host.setCurrentTab(5);
                     } else {
                         Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2081,7 +2081,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             case R.id.truckLay:
 
-                 if(constants.isActionAllowed(getActivity())){
+                 if( constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )){ //   constants.isActionAllowed(getActivity())){
                      if (Global.isConnected(getActivity())) {
                          if (DRIVER_JOB_STATUS == DRIVING) {
                              Global.EldScreenToast(OnDutyBtn, ConstantsEnum.TRUCK_CHANGE, getResources().getColor(R.color.colorVoilation));
@@ -2103,7 +2103,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             case R.id.trailorLayout:
                 try{
                     if(getActivity() != null){
-                      if(constants.isActionAllowed(getActivity())){
+                      if( constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )){//      constants.isActionAllowed(getActivity())){
                         if (Global.isConnected(getActivity())) {
                             if (DRIVER_JOB_STATUS == DRIVING) {
                                 Global.EldScreenToast(OnDutyBtn, ConstantsEnum.TRAILER_CHANGE, getResources().getColor(R.color.colorVoilation));
@@ -2131,7 +2131,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
 
-                    if(constants.isActionAllowed(getActivity())){
+                    if(constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )){   //  constants.isActionAllowed(getActivity())){
                         shareDriverLogDialog();
                     } else {
                         Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2182,7 +2182,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.settingsMenuBtn:
-                if(constants.isActionAllowed(getActivity())) {
+                if(constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID ) ) {  //constants.isActionAllowed(getActivity())
                     TabAct.host.setCurrentTab(1);
                 }else{
                     Global.EldScreenToast(settingsMenuBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2321,7 +2321,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             case R.id.onDutyLay:
                 MalfunctionDefinition = "";
-               if(constants.isActionAllowed(getActivity())){
+                if(constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )){    //constants.isActionAllowed(getActivity())
                     isYardBtnClick = false;
                     OnDutyBtnClick();
                 } else {
@@ -2339,7 +2339,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             case R.id.sleeperDutyLay:
                 MalfunctionDefinition = "";
-                if(constants.isActionAllowed(getActivity())){
+                if(constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )){    //constants.isActionAllowed(getActivity())
                     SleeperBtnClick();
                 } else {
                     Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2349,7 +2349,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             case R.id.offDutyLay:
                 MalfunctionDefinition = "";
-                if(constants.isActionAllowed(getActivity())){
+                boolean isActionAllowedWithCoDr = constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID);
+                if(isActionAllowedWithCoDr){    //constants.isActionAllowed(getActivity())
                     OffDutyBtnClick();
                 } else {
                     Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -4283,12 +4284,18 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     malArrayEvent.put(newOccuredEventObj);
                     malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(Integer.parseInt(DRIVER_ID), dbHelper, malArrayEvent);
 
-                    // save Occured event locally until not posted to server
+                    // save Occurred event locally until not posted to server
                     JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DRIVER_ID), dbHelper);
                     malArray.put(newOccuredEventObj);
                     malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DRIVER_ID), dbHelper, malArray);
 
                     MalfunctionDefinition = constants.ConstLocationMissing;
+
+                    Global.ShowLocalNotification(getActivity(),
+                                                    getResources().getString(R.string.missing_data_element),
+                                                    getResources().getString(R.string.missing_event_occured_desc), 2091);
+
+
                 }
 
                 isLocMalfunction = false;

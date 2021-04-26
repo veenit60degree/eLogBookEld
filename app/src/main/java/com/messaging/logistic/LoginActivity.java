@@ -560,6 +560,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.SetELDNotificationAlertViewStatus(false, getApplicationContext());
 			sharedPref.SetELDNotification(false, getApplicationContext());
 			sharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
+			sharedPref.saveEngSyncDiagnstcStatus(false, getApplicationContext());
+			sharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
+			constants.saveMalfncnStatus(getApplicationContext(), false);
 
 		}catch (Exception e){
 			e.printStackTrace();
