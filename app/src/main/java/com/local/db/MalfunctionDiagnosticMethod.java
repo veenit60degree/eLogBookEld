@@ -3,6 +3,7 @@ package com.local.db;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.constants.Constants;
 import com.constants.SharedPref;
 import com.messaging.logistic.Globally;
 
@@ -203,7 +204,7 @@ public class MalfunctionDiagnosticMethod {
 
 
     public JSONObject GetJsonForMalDiaOccTime(String DriverId, String VIN, String DisConnectStartTime, String DisConnectEndTime,
-                                              int TotalMin, String status)  {
+                                              int TotalMin, String status, String EventType)  {
 
         JSONObject malfnDiagnstcObj = new JSONObject();
 
@@ -214,6 +215,7 @@ public class MalfunctionDiagnosticMethod {
             malfnDiagnstcObj.put(ConstantsKeys.DisConnectEndTime, DisConnectEndTime);
             malfnDiagnstcObj.put(ConstantsKeys.TotalMin, TotalMin);
             malfnDiagnstcObj.put(ConstantsKeys.Status, status);
+            malfnDiagnstcObj.put(ConstantsKeys.EventType, EventType);
 
 
         }catch (Exception e){
@@ -228,25 +230,37 @@ public class MalfunctionDiagnosticMethod {
     // update occurred event time log array for 1 day only
     public void updateOccEventTimeLog(DateTime currentTime, String DriverId, String VIN,
                                       DateTime disConnectStartTime, DateTime disConnectEndTime, String status,
-                                      DBHelper dbHelper){
+                                      String EventType, DBHelper dbHelper, Constants constants,  Context context){
         try {
 
+            boolean isMalEvent = false;
             DateTime oneDayDiffDate = currentTime.minusDays(1);
             JSONArray updatedTimeArray = new JSONArray();
             JSONArray lastOccEventTimeArray = getSavedMalDiaTimeLog(Integer.valueOf(DriverId), dbHelper);
+
+            // add only last 24 hour events in array
             for (int i = 0; i < lastOccEventTimeArray.length() ; i++) {
                 JSONObject eventObj = (JSONObject) lastOccEventTimeArray.get(i);
                 DateTime selectedDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.DisConnectStartTime), false);
                 if(selectedDateTime.isAfter(oneDayDiffDate)){
                     updatedTimeArray.put(eventObj);
+                    if(eventObj.getString(ConstantsKeys.EventType).equals(ConstantsKeys.MalfunctionEngSync)){
+                        isMalEvent = true;
+                    }
                 }
+            }
+
+            // clear engine sync malfunction event if not occured in list
+            if(isMalEvent == false && !EventType.equals(ConstantsKeys.MalfunctionEngSync)){
+                SharedPref.saveEngSyncMalfunctionStatus(false, context);
+               // constants.saveMalfncnStatus(context, false);
             }
 
             JSONObject obj;
             if(status.equals("DisConnected")){
 
                 int timeInMin = Minutes.minutesBetween(disConnectStartTime, currentTime).getMinutes();
-                obj = GetJsonForMalDiaOccTime(DriverId, VIN, disConnectStartTime.toString(), disConnectEndTime.toString(), timeInMin, status);
+                obj = GetJsonForMalDiaOccTime(DriverId, VIN, disConnectStartTime.toString(), disConnectEndTime.toString(), timeInMin, status, EventType);
 
                 updatedTimeArray.put(obj);
 

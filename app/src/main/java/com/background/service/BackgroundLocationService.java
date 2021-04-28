@@ -447,13 +447,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 constants.saveDiagnstcStatus(getApplicationContext(), false);
 
                                 // need to confirm for change malfunction value
-                                sharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
-                                constants.saveMalfncnStatus(getApplicationContext(), false);
+                             //   sharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
+                             //   constants.saveMalfncnStatus(getApplicationContext(), false);
 
                                 DateTime currentTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
                                 malfunctionDiagnosticMethod.updateOccEventTimeLog(currentTime, DriverId,
                                         sharedPref.getVINNumber(getApplicationContext()), currentTime , currentTime,
-                                        getApplicationContext().getResources().getString(R.string.Connected), dbHelper);
+                                        getApplicationContext().getResources().getString(R.string.Connected), ConstantsKeys.DiagnosticEngSync, dbHelper, constants, getApplicationContext());
 
 
                             }
@@ -644,7 +644,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             malfunctionDiagnosticMethod.updateOccEventTimeLog(currentTime, DriverId,
                                     sharedPref.getVINNumber(getApplicationContext()), disconnectTime , currentTime,
-                                    getApplicationContext().getResources().getString(R.string.DisConnected), dbHelper);
+                                    getApplicationContext().getResources().getString(R.string.DisConnected), ConstantsKeys.DiagnosticEngSync, dbHelper, constants, getApplicationContext());
 
 
                             global.ShowLocalNotification(getApplicationContext(),
@@ -668,7 +668,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                     malfunctionDiagnosticMethod.updateOccEventTimeLog(currentTime, DriverId,
                                             sharedPref.getVINNumber(getApplicationContext()), disconnectTime, currentTime,
-                                            getApplicationContext().getResources().getString(R.string.DisConnected), dbHelper);
+                                            getApplicationContext().getResources().getString(R.string.DisConnected), ConstantsKeys.MalfunctionEngSync, dbHelper, constants, getApplicationContext());
 
 
                                     global.ShowLocalNotification(getApplicationContext(),
@@ -1367,7 +1367,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         String SavedLogApi = "";
         if (sharedPref.IsEditedData(getApplicationContext())) {
-            SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG;
+            SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
         } else {
             SavedLogApi = APIs.SAVE_DRIVER_STATUS;
         }
@@ -3572,7 +3572,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             String SavedLogApi = "";
             if (sharedPref.IsEditedData(getApplicationContext())) {
-                SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG;
+                SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
             } else {
                 SavedLogApi = APIs.SAVE_DRIVER_STATUS;
             }

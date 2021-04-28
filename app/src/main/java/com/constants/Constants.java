@@ -3670,7 +3670,7 @@ public class Constants {
             isObdConnected = true;
         }
 
-        return isObdConnected;
+        return true;
     }
 
 

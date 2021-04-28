@@ -666,20 +666,21 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                         //  if (BackgroundLocationService.IsAutoChange) {
                                         BackgroundLocationService.IsAutoChange = true;
-                                        if (isPersonalUse75KmCrossed)
-                                            message = "Duty status switched to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
-                                        else {
-                                            // set value false when status will be changed to driving.
-                                            sharedPref.SetTruckStartLoginStatus(false, context);
-                                            message = " Duty status switched to DRIVING due to not confirming Personal use status.";
-                                        }
 
                                         if (VehicleSpeed >= DrivingSpeedLimit) {
+
                                             if (isPersonalUse75KmCrossed) {
-                                                LastStatus = "_P_From_" + DRIVER_JOB_STATUS;
+                                                LastStatus = "_PU_Crossed75Km";
+                                                message = "Duty status switched to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
+
                                             } else {
                                                 pcYmRemarks = "none";
-                                                LastStatus = "_PcNotConfirmed_From_" + DRIVER_JOB_STATUS;
+                                                LastStatus = "_PU_NotConfirmedAfterLogin" ;
+
+                                                // set value false when status will be changed to driving.
+                                                sharedPref.SetTruckStartLoginStatus(false, context);
+                                                message = " Duty status switched to DRIVING due to not confirming Personal use status.";
+
                                             }
 
                                             CHANGED_STATUS = DRIVING;

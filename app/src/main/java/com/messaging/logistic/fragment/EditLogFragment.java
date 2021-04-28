@@ -225,7 +225,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
 
             if(!isPermissionResponse){
-                editLogProgressBar.setVisibility(View.VISIBLE);
+               // editLogProgressBar.setVisibility(View.VISIBLE);
                 GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
             }
 
@@ -546,10 +546,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                                 JSONObject obj = (JSONObject) tempLogArray.get(i);
                                 // ------------- Add Model in the list -------------
                                 oDriverLogDetail.add(AddLogModelToList(obj,
-                                        obj.getString(ConstantsKeys.startDateTime).toString().substring(0,19),
-                                        obj.getString(ConstantsKeys.utcStartDateTime).toString().substring(0,19),
-                                        obj.getString(ConstantsKeys.endDateTime).toString().substring(0,19),
-                                        obj.getString(ConstantsKeys.utcEndDateTime).toString().substring(0,19), RulesObj , false));
+                                        obj.getString(ConstantsKeys.startDateTime).substring(0,19),
+                                        obj.getString(ConstantsKeys.utcStartDateTime).substring(0,19),
+                                        obj.getString(ConstantsKeys.endDateTime).substring(0,19),
+                                        obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj , false));
 
                                 finalEditingArray.put(obj);
                             }
@@ -818,13 +818,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     }
 
 
-
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void saveEditLogWithReason(String reason){
-        try {
-            tempDriverLogDetail = oDriverLogDetail;
-            if(!IsCurrentDate) {
+    private void addCurrentDateLogWithPrevDay(){
+        try{
+             if(!IsCurrentDate) {
 
                 JSONArray currentLogArray   = hMethods.GetSingleDateArray( driverLogArray, currentDateTime, currentDateTime, currentUTCTime, IsCurrentDate, offsetFromUTC );
 
@@ -890,6 +886,20 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 }
 
             }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void saveEditLogWithReason(String reason){
+        try {
+            tempDriverLogDetail = oDriverLogDetail;
+
+    // ADd current Day log with previous day
+            addCurrentDateLogWithPrevDay();
+
 
             logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail);
             finalEditedLogArray = GetEditDataAsJson(logArray, lastDaySavedLocation, reason);
@@ -1134,7 +1144,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     /* ================== Save Driver Details =================== */
     void SAVE_DRIVER_EDITED_LOG(final JSONArray geoData, final boolean isLoad, final boolean IsRecap, int socketTimeout){
         editLogProgressBar.setVisibility(View.VISIBLE);
-        saveDriverLogPost.PostDriverLogData(geoData, APIs.SAVE_DRIVER_EDIT_LOG, socketTimeout, isLoad, IsRecap, 1, SaveDriverLog);
+        saveDriverLogPost.PostDriverLogData(geoData, APIs.SAVE_DRIVER_EDIT_LOG_NEW, socketTimeout, isLoad, IsRecap, 1, SaveDriverLog);
 
     }
 

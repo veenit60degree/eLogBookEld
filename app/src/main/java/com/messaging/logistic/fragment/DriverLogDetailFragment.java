@@ -1719,11 +1719,11 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                     int DividerHeigh = constants.intToPixel( getActivity(), certifyLogListView.getDividerHeight() );
                     int listSize     = DriverLogList.size() ;
                     if(listSize < 10){
-                        listSize    = listSize + 2;
+                        listSize    = listSize + 3;
                     }else   if(listSize > 20){
-                        listSize = listSize + 4;
+                        listSize = listSize + 5;
                     }else{
-                        listSize = listSize + 1;
+                        listSize = listSize + 2;
                     }
 
                     int DriverLogListHeight      = (certifyLogItemLay.getHeight() + DividerHeigh ) * listSize; //getLayoutParams().height;

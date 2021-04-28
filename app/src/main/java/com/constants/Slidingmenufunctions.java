@@ -554,7 +554,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 			String SavedLogApi = "";
 			if(sharedPref.IsEditedData(context)){
-				SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG;
+				SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
 			}else{
 				SavedLogApi = APIs.SAVE_DRIVER_STATUS;
 			}

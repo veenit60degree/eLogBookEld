@@ -374,6 +374,8 @@ public class ConstantsKeys {
     public static String Data                           = "Data";
     public static String DriverLogDate                  = "DriverLogDate";
     public static String SuggestedEditModel             = "SuggestedEditModel";
+    public static String MalfunctionEngSync             = "SuggestedEditModel";
+    public static String DiagnosticEngSync              = "SuggestedEditModel";
 
 
     // ELD Rule Inputs

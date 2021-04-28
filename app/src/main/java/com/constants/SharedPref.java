@@ -1618,7 +1618,7 @@ public class SharedPref {
     // Get personal use status for 75 km crossing -------------------
     public static boolean isPersonalUse75KmCrossed( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ConstantsKeys.PersonalUse75Km, true);
+        return preferences.getBoolean(ConstantsKeys.PersonalUse75Km, false);
     }
 
     // Save personal use status, selected or not  -------------------

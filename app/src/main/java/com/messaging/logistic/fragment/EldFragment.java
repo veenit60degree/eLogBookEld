@@ -965,6 +965,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         if(isUpdateDriverLog){
             isUpdateDriverLog = false;
             CalculateTimeInOffLine(false, false);
+
+            GetDriversSavedData(false, DriverType);
+             if (Global.isConnected(getActivity())) {
+                 if (DriverJsonArray.length() > 0 && !IsSaveOperationInProgress) {
+                     IsPrePost = false;
+                     if (SaveRequestCount < 2) {
+                         saveInfo("", false, false, false);
+                     }
+                 }
+             }
         }
      //
 
@@ -4949,7 +4959,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         IsSaveOperationInProgress = true;
         String SavedLogApi = "";
         if(sharedPref.IsEditedData(getActivity())){
-            SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG;
+            SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
         }else{
             SavedLogApi = APIs.SAVE_DRIVER_STATUS;
         }
