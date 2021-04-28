@@ -17,7 +17,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 100  //99
-        versionName "3.5.5.20"  //3.5.4
+        versionName "3.5.5.23"  //3.5.4
         // Enabling multidex support.
         multiDexEnabled true
 

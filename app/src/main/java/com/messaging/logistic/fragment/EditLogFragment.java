@@ -897,8 +897,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
         try {
             tempDriverLogDetail = oDriverLogDetail;
 
-    // ADd current Day log with previous day
-            addCurrentDateLogWithPrevDay();
+    // Add current Day log with previous day
+         //   addCurrentDateLogWithPrevDay();
 
 
             logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail);
@@ -916,6 +916,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                // global.EldToastWithDuration(saveBtn, getResources().getString(R.string.edited_log_willbe_saved) , getResources().getColor(R.color.colorPrimary));
                 Globally.EldScreenToast(saveBtn, "Saved data successfully.", getResources().getColor(R.color.colorPrimary));
                 sharedPref.SetEditedLogStatus(true, getActivity());
+
                 SaveDataLocally();
                 UpdateLocalLogWithBackStack(true);
           //  }
@@ -1528,11 +1529,22 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
         try {
             //  Log.d("finalEditedLogArray", "finalEditedLogArray: " + finalEditedLogArray);
             JSONArray editableLogArray = hMethods.GetSameArray(logArrayBeforeSelectedDate);
+
+            // Add prev edited log in array
             for (int i = 0; i < logArray.length(); i++) {
                 JSONObject jsonObj = (JSONObject) logArray.get(i);
                 editableLogArray.put(jsonObj);
             }
 
+            // this loop was call only when previous day log is edited.
+            // In logArrayBeforeSelectedDate logs were before selected date. In upper loop we are adding previous edited log in array and in this loop we are adding current day non-edited log in array
+            if(!IsCurrentDate){
+                JSONArray currentLogArray   = hMethods.GetSingleDateArray( driverLogArray, currentDateTime, currentDateTime, currentUTCTime, IsCurrentDate, offsetFromUTC );
+                for (int i = 0; i < currentLogArray.length(); i++) {
+                    JSONObject jsonObj1 = (JSONObject) currentLogArray.get(i);
+                    editableLogArray.put(jsonObj1);
+                }
+            }
             // ------------ Update log array in local DB ---------
             hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, editableLogArray);
 

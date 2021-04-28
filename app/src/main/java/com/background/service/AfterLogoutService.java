@@ -46,7 +46,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     String TAG_OBD = "OBD Service";
     private static final long TIME_INTERVAL_WIFI  = 10 * 1000;   // 10 sec
-    private static final long TIME_INTERVAL_WIRED = 2 * 1000;   // 3 sec
+    private static final long TIME_INTERVAL_WIRED = 2 * 1000;   // 2 sec
     private static final long TIME_INTERVAL_LIMIT = 70000;
 
     String TAG = "Service";
