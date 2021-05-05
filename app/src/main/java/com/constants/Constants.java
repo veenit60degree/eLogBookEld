@@ -681,7 +681,6 @@ public class Constants {
 
     public double CalculateDistance(double originLat, double originLon, double destLat, double destLon, String unit, int JobStatus) {
         double distance = 0.0;
-
         try {
             double theta = originLon - destLon;
             distance = (Math.sin(deg2rad(originLat)) * Math.sin(deg2rad(destLat)) + Math.cos(deg2rad(originLat)) * Math.cos(deg2rad(destLat)) * Math.cos(deg2rad(theta)));
@@ -694,9 +693,7 @@ public class Constants {
             } else if (unit.equals("M")) {
                 distance = distance * 0.8684;
             }
-
             //  distance = roundDoubleValue(distance, 2);
-
             if (JobStatus == Constants.OFF_DUTY || JobStatus == SLEEPER) {
                 if (distance < 0.11) {   // ignore 100 meter distance
                     distance = 0;
@@ -705,9 +702,9 @@ public class Constants {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return (distance);
     }
+
 
 
     public String correctOBDWrongData(String dataObd) {
@@ -3658,25 +3655,6 @@ public class Constants {
 
 
 
-    void readCsvFile(Context context){
-        String next[] = {};
-        List<String[]> list = new ArrayList<String[]>();
-        try {
-            CSVReader reader = new CSVReader(new InputStreamReader(context.getAssets().open("geoloc.csv")));//Specify asset file name
-            //in open();
-            for(;;) {
-                next = reader.readNext();
-                if(next != null) {
-                    list.add(next);
-                } else {
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.d("list", "list: "+ list.size());
-    }
 
 
     public boolean isActionAllowed(Context context){

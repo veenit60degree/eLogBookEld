@@ -17,6 +17,7 @@ public class EldInfo {
     //http://eld.alsrealtime.com/Home/DriverLogFile
 
     /*----------- Driver Logs ------------- */
+    // http://eld.alsrealtime.com/HOme/DriverlogYear
     // http://develd.alsrealtime.com/Home/DriverLogYearLive/
 
 

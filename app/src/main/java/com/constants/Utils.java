@@ -398,7 +398,7 @@ public class Utils
 
             // Log.d("log size", "log size: " + fileSize);
 
-            if(fileSize > 8 ){
+            if(fileSize >= 20 ){
                 SyncAppUsageLog syncAppUsageLog = new SyncAppUsageLog(context, DriverId, appUsageLog );
                 syncAppUsageLog.execute();
 

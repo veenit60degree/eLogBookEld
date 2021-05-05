@@ -62,7 +62,7 @@ public class UpdateLogRecordMethod {
 
 
     public JSONObject GetUpdateLogRecordJson(EldDriverLogModel model, String DriverId, String DeviceId, String RecordType,
-                                                String EditDateTimeUTC, String EditDateTime) {
+                                                String EditDateTimeUTC, String EditDateTime, String lat, String lon) {
 
 
         JSONObject obj = new JSONObject();
@@ -88,6 +88,8 @@ public class UpdateLogRecordMethod {
 
             obj.put(ConstantsKeys.EditDateTimeUTC , EditDateTimeUTC);
             obj.put(ConstantsKeys.EditDateTime , EditDateTime);
+            obj.put(ConstantsKeys.CrntLat , lat);
+            obj.put(ConstantsKeys.CrntLong , lon);
 
 
         }catch (Exception e){

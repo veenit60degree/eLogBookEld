@@ -253,6 +253,7 @@ public class ConstantsKeys {
     public static String LocMalfunctionOccurTime        = "LocMalfunctionOccurTime";
 
     public static String EngSyncDiagnstc                = "EngSyncDiagnstc";
+    public static String EngSyncDiagnstcCo              = "EngSyncDiagnstcCo";
     public static String EngSyncMalfunction             = "EngSyncMalfunction";
 
 
@@ -350,6 +351,9 @@ public class ConstantsKeys {
     public static String RecordValue                    = "RecordValue";
     public static String EditDateTimeUTC                = "EditDateTimeUTC";
     public static String EditDateTime                   = "EditDateTime";
+
+    public static String CrntLat                        = "CrntLat";
+    public static String CrntLong                       = "CrntLong";
 
     public static String StartDate                      = "StartDate";
     public static String StartLat                       = "StartLat";

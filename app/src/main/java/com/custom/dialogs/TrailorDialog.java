@@ -360,7 +360,7 @@ public class TrailorDialog extends Dialog {
 
             String Trailer = TrailorNoEditText.getText().toString().trim();
 
-            if(spinnerSelection.equals(getContext().getResources().getString(R.string.YardMove))){
+            if(spinnerSelection.equals(getContext().getResources().getString(R.string.YardMove)) ){
 
                 if (constants.isObdConnected(getContext())) {
                     if(hMethods.isCoDriverInDrYMPC(getContext(), Global, DriverId, dbHelper)){

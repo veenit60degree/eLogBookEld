@@ -532,6 +532,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 	private void resetValues(){
 		try {
+			sharedPref.setVINNumber( "", getApplicationContext());
 			sharedPref.SetCycleOfflineDetails("[]", getApplicationContext());
 			sharedPref.SetNewLoginStatus(true, getApplicationContext());
 			sharedPref.setLastUsageDataSavedTime("", getApplicationContext());

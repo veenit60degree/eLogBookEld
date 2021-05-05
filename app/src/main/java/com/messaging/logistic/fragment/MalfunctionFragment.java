@@ -151,18 +151,25 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
     public void onResume() {
         super.onResume();
 
+        DriverId                = sharedPref.getDriverId( getActivity());
         VIN                     = sharedPref.getVINNumber(getActivity());
         Country                 = constants.getCountryName(getActivity());
         OffsetFromUTC           = DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity());
-        CompanyId         = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+        CompanyId               = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
         DateTime currentDate    = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
         ToDateTime              = currentDate.toString().substring(0,10);
-        FromDateTime            = String.valueOf(currentDate.minusDays(7)).substring(0,10);
+        String CurrentCycleId     = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
+
+        if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+            FromDateTime = String.valueOf(currentDate.minusDays(14)).substring(0, 10);  // // in CAN 14+1 days
+        }else{
+            FromDateTime = String.valueOf(currentDate.minusDays(7)).substring(0, 10);   // // in US 7+1 days
+        }
 
         notifyAdapter();
 
         if(Globally.isConnected(getContext())) {
-            GetMalfunctionEvents( VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+            GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
         }else{
             Globally.EldScreenToast(dateActionBarTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
         }
@@ -201,7 +208,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                 break;
 
             case R.id.invisibleMalfnBtn:
-                GetMalfunctionEvents( VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+                GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
                 break;
 
 
@@ -269,10 +276,11 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
     }
 
     /*================== Get Unidentified Records ===================*/
-    void GetMalfunctionEvents(String VIN, final String FromDateTime, final String ToDateTime,
+    void GetMalfunctionEvents(String DriverId, String VIN, final String FromDateTime, final String ToDateTime,
                               final String Country, String OffsetFromUTC, String CompanyId){
 
         params = new HashMap<String, String>();
+        params.put(ConstantsKeys.DriverId, DriverId);
         params.put(ConstantsKeys.VIN, VIN); //4V4NC9EH7GN929538
         params.put(ConstantsKeys.FromDateTime, FromDateTime);
         params.put(ConstantsKeys.ToDateTime, ToDateTime );

@@ -471,7 +471,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         String currentDriverZoneDate = Global.GetCurrentUTCTimeFormat();
 
         JSONObject logObj = logRecordMethod.GetUpdateLogRecordJson(logModel, String.valueOf(DriverId), DeviceId, RecordType,
-                currentUtcDate, currentDriverZoneDate );
+                currentUtcDate, currentDriverZoneDate, Global.LATITUDE, Global.LONGITUDE );
 
         finalUpdatedArray = logRecordMethod.getSavedLogRecordArray(DriverId, dbHelper);
 

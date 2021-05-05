@@ -133,15 +133,20 @@ public class OtherOptionsAdapter extends BaseAdapter {
             case Constants.MALFUNCTION:
                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
                     if (sharedPref.isMalfunctionOccur(context) || sharedPref.isDiagnosticOccur(context)||
-                            sharedPref.isLocMalfunctionOccur(context) ) {
+                            sharedPref.isLocMalfunctionOccur(context) || sharedPref.isEngSyncMalfunction(context) ||
+                            sharedPref.isEngSyncDiagnstc(context) ) {
                         makeViewHighlighed(imgView, titleView, errorView);
+                    }else{
+
                     }
                 }else{
                     if (sharedPref.isMalfunctionOccurCo(context) || sharedPref.isDiagnosticOccurCo(context) ||
-                            sharedPref.isLocMalfunctionOccur(context)) {
+                            sharedPref.isLocMalfunctionOccur(context) || sharedPref.isEngSyncMalfunction(context) ||
+                            sharedPref.isEngSyncDiagnstc(context) ) {
                         makeViewHighlighed(imgView, titleView, errorView);
                     }
                 }
+
                 break;
 
             case Constants.UNIDENTIFIED:

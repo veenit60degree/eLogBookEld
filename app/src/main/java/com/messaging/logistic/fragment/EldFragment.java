@@ -48,6 +48,7 @@ import com.constants.AlertDialogEld;
 import com.constants.AsyncResponse;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
+import com.constants.CsvReader;
 import com.constants.DriverLogResponse;
 import com.constants.GPSRequest;
 import com.constants.InitilizeEldView;
@@ -306,6 +307,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     MyTimerTask timerTask;
     Globally Global;
     SharedPref sharedPref;
+    CsvReader csvReader;
 
     SaveDriverLogPost saveDriverLogPost;
     VolleyRequest GetLogRequest, GetOdometerRequest, GetOdo18DaysRequest, GetLog18DaysRequest, GetOnDutyRequest, GetOBDVehRequest, GetShippingRequest, GetPermissions;
@@ -420,6 +422,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         getDailyOffLeftMinObj = new RulesResponseObject();
         Global = new Globally();
         sharedPref = new SharedPref();
+        csvReader = new CsvReader();
         parseLoginDetails = new ParseLoginDetails();
         eldSharedPref = new EldSingleDriverLogPref();
         coEldSharedPref = new EldCoDriverLogPref();
@@ -1551,8 +1554,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             sharedPref.isMalfunctionOccurCo(getActivity()) ||
                             sharedPref.isDiagnosticOccurCo(getActivity()) ||
                             constants.CheckGpsStatus(getActivity()) == false ||
-                             constants.isAllowLocMalfunctionEvent(getActivity()) ||
-                    (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
+                            constants.isAllowLocMalfunctionEvent(getActivity()) ||
+                            (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
                                     sharedPref.getObdStatus(getActivity()) != Constants.WIRED_CONNECTED);
                 }
 
@@ -2469,7 +2472,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 } else {
                     if (hMethods.CanChangeStatus(OFF_DUTY, driverLogArray, Global, false)) {
                         restartLocationService();
-                        AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
+                       // AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
 
                         // if Odometers are saving through OBD automatically then makes all the condition false to ignore odometer save
                         if(sharedPref.IsOdometerFromOBD(getActivity())) {
@@ -2568,7 +2571,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     if (hMethods.CanChangeStatus(SLEEPER, driverLogArray, Global, false)) {
 
                         restartLocationService();
-                        AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
+                       // AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
 
                         if (IsAOBRD && !IsAOBRDAutomatic) {
                             //  if (Global.isConnected(getActivity())) {
@@ -2697,7 +2700,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 resetCertifyLogDialogTitles();
             } else {
                 restartLocationService();
-                AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
+               // AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
                 if (((DRIVER_JOB_STATUS == OFF_DUTY && !isPersonal.equals("true")) || DRIVER_JOB_STATUS == SLEEPER) &&
                         !isRemainingView) {
 
@@ -2815,7 +2818,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             if (Global.TRAILOR_NUMBER.length() > 0) {
 
                 restartLocationService();
-                AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
+              //  AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
 
                 if ((DRIVER_JOB_STATUS == OFF_DUTY && !isPersonal.equals("true")) || DRIVER_JOB_STATUS == SLEEPER) {
 
@@ -3426,6 +3429,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
 
             try {
+
+                if(AddressLine.length() == 0){
+                    if (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) {
+                        AddressLine = csvReader.getShortestAddress(getActivity());
+                    }else{
+                        AddressLine = Global.LATITUDE + "," + Global.LONGITUDE;
+                    }
+                }
                 // Check violation before save status
                 if (driverStatus.equals(Global.DRIVING) || driverStatus.equals(Global.ON_DUTY)) {
                     JSONArray logArray = constants.AddNewStatusInList("", driverStatus, "", "no_address",
@@ -3714,6 +3725,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     odometerhMethod, hMethods, dbHelper, getActivity());
         }
         sharedPref.setDrivingAllowedStatus(true, "", getActivity());
+        AddressLine = "";
 
     }
 
@@ -6271,7 +6283,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                             if (flag == GetAddFromLatLng) {
                                 EnableJobViews();
-                                AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
+
+                                AddressLine = csvReader.getShortestAddress(getActivity());
 
                                 try {
                                     if (JobStatusInt != 101) {
@@ -6359,7 +6372,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         if (!IsAddressUpdate) {
                             EnableJobViews();
                             Global.LONGITUDE = Global.CheckLongitudeWithCycle(Global.LONGITUDE);
-                            AddressLine = Global.LATITUDE + ", " + Global.LONGITUDE;
+                            AddressLine = csvReader.getShortestAddress(getActivity());
                             progressBar.setVisibility(View.GONE);
                             if (JobStatusInt != 101) {
                                 if (driverLocationDialog != null && DriverLocationDialog.updateViewTV != null) {

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
+import com.constants.CsvReader;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
 import com.messaging.logistic.TabAct;
@@ -53,6 +54,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
     Constants constants;
     SharedPref sharedPref;
+    CsvReader csvReader;
     MainDriverEldPref MainDriverPref;
     CoDriverEldPref CoDriverPref;
     EldSingleDriverLogPref eldSharedPref;
@@ -132,7 +134,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         textToSpeech        = new TextToSpeech(context, this);
         Global              = new Globally();
         constants           = new Constants();
-
+        csvReader           = new CsvReader();
         notificationPref    = new NotificationPref();
         coNotificationPref  = new CoNotificationPref();
 
@@ -1299,6 +1301,12 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         }
         if(City.length() != 0 && State.length() != 0){
             address = City + ", " + State + ", " + Country;
+        }else{
+            if (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) {
+                address = csvReader.getShortestAddress(context);
+            }else{
+                address = Global.LATITUDE + "," + Global.LONGITUDE;
+            }
         }
 
 
