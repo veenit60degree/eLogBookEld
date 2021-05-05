@@ -750,6 +750,8 @@
     <string name="malfunction_event">Malfunction event</string>
     <string name="dia_event">Diagnostic event</string>
 
+    <string name="WantEndYM">Do you want to End Yard Move?"</string>
+    <string name="WantEndPU">Do you want to End Personal Use?"</string>
     <string name="want_to_logout">Do you really want to logout ?</string>
     <string name="pending_carrier_edit">You have pending carrier edits that need your approval.</string>
     <string name="Confirmation">Confirmation</string>

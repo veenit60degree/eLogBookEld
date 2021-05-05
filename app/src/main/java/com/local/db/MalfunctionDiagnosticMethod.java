@@ -318,23 +318,20 @@ public class MalfunctionDiagnosticMethod {
 
 
     public boolean isDisconnected(String DriverId, DBHelper dbHelper){
+        boolean isDisconnected = false;
         try{
             JSONArray eventArray = getSavedMalDiaTimeLog(Integer.valueOf(DriverId), dbHelper);
-           if(eventArray.length() > 0){
+            if(eventArray.length() > 0){
                 JSONObject eventObj = (JSONObject) eventArray.get(eventArray.length()-1);
                 String status = eventObj.getString(ConstantsKeys.Status);
                 if(status.equals("DisConnected")){
-                    return true;
-                }else{
-                    return false;
+                    isDisconnected = true;
                 }
-            }else{
-               return false;
-           }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
-        return false;
+        return isDisconnected;
     }
 
 

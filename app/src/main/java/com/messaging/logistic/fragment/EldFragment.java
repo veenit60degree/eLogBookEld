@@ -44,6 +44,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
+import com.constants.AlertDialogEld;
 import com.constants.AsyncResponse;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
@@ -230,6 +231,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     final int GetRecapViewFlagMain  = 230;
     final int GetRecapViewFlagCo    = 240;
     final int NotReady              = 250;
+   // final int PcEndCnfirmation      = 260;
+   // final int YmEndCnfirmation      = 270;
 
 
     /*-------- DRIVER STATUS ----------*/
@@ -339,6 +342,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     NotificationPref notificationPref;
     CoNotificationPref coNotificationPref;
 
+    AlertDialogEld statusEndConfDialog;
     ConfirmationDialog confirmationDialog;
     AlertDialog alertDialog, inspectDialog;
     ProgressDialog progressDialog;
@@ -444,6 +448,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         GetAddFromLatLngRequest = new VolleyRequestWithoutRetry(getActivity());
         GetRecapView18DaysData  = new VolleyRequest(getActivity());
         notReadyRequest         = new VolleyRequest(getActivity());
+
+        statusEndConfDialog  = new AlertDialogEld(getActivity());
 
         updateReceiver = new ServiceBroadcastReceiver();
         //  SaveLogRequest      = Volley.newRequestQueue(getActivity());
@@ -2272,7 +2278,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                         try {
                             if (DRIVER_JOB_STATUS == ON_DUTY && lastItemJson.getString(ConstantsKeys.YardMove).equals("true")) {
-                                Global.EldScreenToast(OnDutyBtn, getResources().getString(R.string.yard_move_validation), getResources().getColor(R.color.colorVoilation));
+                                //Global.EldScreenToast(OnDutyBtn, getResources().getString(R.string.yard_move_validation), getResources().getColor(R.color.colorVoilation));
+                                if (constants.isObdConnected(getActivity())) {
+                                    statusEndConfDialog.ShowAlertDialog(getString(R.string.Confirmation_suggested), getString(R.string.WantEndYM),
+                                            getString(R.string.yes), getString(R.string.no),
+                                            101, positiveCallBack, negativeCallBack);
+                                }else{
+                                    Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
+                                }
                             } else {
                                 if (constants.isObdConnected(getActivity())) {
                                     isYardBtnClick = true;
@@ -2735,9 +2748,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             if (DRIVER_JOB_STATUS != OFF_DUTY ||
                     (DRIVER_JOB_STATUS == OFF_DUTY && isPersonal.equals("false"))) {
 
-          /*     if (sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED ||
-                                sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED) {
-*/
                     if (hMethods.CanChangeStatus(OFF_DUTY, driverLogArray, Global, true)) {
 
                         restartLocationService();
@@ -2762,9 +2772,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     } else {
                         Global.EldScreenToast(OnDutyBtn, ConstantsEnum.DUPLICATE_JOB_ALERT, getResources().getColor(R.color.colorVoilation));
                     }
-              /* }else{
-                   Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
-               }*/
+            }else{
+
+                if (constants.isObdConnected(getActivity())) {
+                    statusEndConfDialog.ShowAlertDialog(getString(R.string.Confirmation_suggested), getString(R.string.WantEndPU),
+                            getString(R.string.yes),  getString(R.string.no),
+                            101, positiveCallBack, negativeCallBack);
+                }else{
+                    Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
+                }
+
             }
         }else{
             ClearGPSData();
@@ -2773,6 +2790,20 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     }
 
 
+
+    AlertDialogEld.PositiveButtonCallback positiveCallBack = new AlertDialogEld.PositiveButtonCallback() {
+        @Override
+        public void getPositiveClick(int flag) {
+            SaveOffDutyStatus();
+        }
+    };
+
+    AlertDialogEld.NegativeButtonCallBack negativeCallBack = new AlertDialogEld.NegativeButtonCallBack() {
+        @Override
+        public void getNegativeClick(int flag) {
+            Log.d("negativeCallBack", "negativeCallBack: " + flag);
+        }
+    };
 
 
 
@@ -4710,6 +4741,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             if (sharedPref.IsReadViolation(getActivity()) == false && isViolation) {
                 if (!onResume)
                     Global.ShowNotificationWithSound(getActivity(), RulesObj, mNotificationManager);
+            }
+
+            if(RulesObj.getNotificationType() > 0){
+                Global.ShowShiftAlertNotification(getActivity(), RulesObj, mNotificationManager);
             }
 
             SetTextOnView(RulesObj.getViolationReason().trim());

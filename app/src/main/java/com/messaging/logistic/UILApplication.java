@@ -32,12 +32,13 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+//import com.onesignal.OneSignal;
 
 
 public class UILApplication extends Application {
 
 
-
+	private static final String ONESIGNAL_APP_ID = "0067d652-6fd4-4bb8-b951-f7b60573b2bb";
 	boolean IsNewVersion = false;
 	private static boolean activityVisible = true;
 	private boolean isNightModeEnabled = false;
@@ -93,6 +94,13 @@ public class UILApplication extends Application {
 		SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		this.isNightModeEnabled = mPrefs.getBoolean(NIGHT_MODE, false);
 
+		// Enable verbose OneSignal logging to debug issues if needed.
+	/*	OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
+
+		// OneSignal Initialization
+		OneSignal.initWithContext(this);
+		OneSignal.setAppId(ONESIGNAL_APP_ID);
+*/
 		//NetworkUtil util = new NetworkUtil();
 	//	util.isConnected();
 

@@ -1934,6 +1934,16 @@ public class Globally {
 
 
 
+	public static void ShowShiftAlertNotification(Context context, RulesResponseObject RemainingTimeObj, NotificationManagerSmart mNotificationManager){
+
+		int id = RemainingTimeObj.getNotificationType() + 1000;
+		Intent intent = new Intent(context, TabAct.class);   //
+		mNotificationManager.showLocalNotification("ALS",  RemainingTimeObj.getMessage(), id , intent);
+
+	}
+
+
+
 	public static void ShowNotificationWithSound(Context context, String title, String message, NotificationManagerSmart mNotificationManager){
 
 		Intent intent = new Intent(context, TabAct.class);   //

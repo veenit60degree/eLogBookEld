@@ -59,7 +59,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     public static List<SlideMenuModel> menuList = new ArrayList<>();
     public static SlidingMenu smenu;
     public static RelativeLayout sliderLay;
-    public static Button wiredObdDataBtn, dayNightBtn, openUpdateDialogBtn;
+    public static Button speedAlertBtn, dayNightBtn, openUpdateDialogBtn;
     public static boolean isTabActOnCreate = true;
     public static List<VehicleModel> vehicleList = new ArrayList<>();
 
@@ -118,7 +118,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         existingAppVersionStr = "Version - " + Globally.GetAppVersion(this, "VersionName") + "," + getResources().getString(R.string.Powered_by);
 
         tabcontent = (FrameLayout)findViewById(android.R.id.tabcontent);
-        wiredObdDataBtn = (Button)findViewById(R.id.wiredObdDataBtn);
+        speedAlertBtn = (Button)findViewById(R.id.wiredObdDataBtn);
         dayNightBtn = (Button)findViewById(R.id.dayNightBtn);
         openUpdateDialogBtn = (Button)findViewById(R.id.openUpdateDialogBtn);
         noObdConnTV = (TextView)findViewById(R.id.noObdConnTV);
@@ -285,7 +285,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         }
 
 
-        wiredObdDataBtn.setOnClickListener(this);
+        speedAlertBtn.setOnClickListener(this);
         sliderLay.setOnClickListener(this);
         dayNightBtn.setOnClickListener(this);
         openUpdateDialogBtn.setOnClickListener(this);
@@ -501,6 +501,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
             case R.id.wiredObdDataBtn:
                 //  StartStopServer(WifiOBD);
+                Globally.DriverSwitchAlert(TabAct.this,"Alert !!",
+                        "Please change your status to On Duty due to vehicle is not moving", "Ok");
                 break;
 
             case R.id.sliderLay:

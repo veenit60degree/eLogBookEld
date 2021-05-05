@@ -52,6 +52,7 @@ import com.models.RecapSignModel;
 import com.models.SlideMenuModel;
 import com.models.UnAssignedVehicleModel;
 import com.models.UnIdentifiedRecordModel;
+import com.opencsv.CSVReader;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.CoNotificationPref;
 import com.shared.pref.MainDriverEldPref;
@@ -66,7 +67,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -3655,10 +3658,32 @@ public class Constants {
 
 
 
+    void readCsvFile(Context context){
+        String next[] = {};
+        List<String[]> list = new ArrayList<String[]>();
+        try {
+            CSVReader reader = new CSVReader(new InputStreamReader(context.getAssets().open("geoloc.csv")));//Specify asset file name
+            //in open();
+            for(;;) {
+                next = reader.readNext();
+                if(next != null) {
+                    list.add(next);
+                } else {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("list", "list: "+ list.size());
+    }
+
+
     public boolean isActionAllowed(Context context){
         boolean isAllowed = true;
         int ObdStatus = SharedPref.getObdStatus(context);
-        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) && SharedPref.isVehicleMoving(context) ){
+        boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
+        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) && isVehicleMoving ){
             isAllowed = false;
         }
         return isAllowed;

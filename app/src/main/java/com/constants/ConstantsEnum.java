@@ -17,6 +17,7 @@ public class ConstantsEnum {
     public static String CO_DRIVING_ALERT1    = ". Please change his status first.";
     public static String PICK_TRAILER_ALERT   = "Trailer Number to pickup trailer";
     public static String PROPER_REASON_ALERT  = "Enter minimum 4 char for personal use reason";
+    public static String MAX_CHAR_LIMIT       = "Maximum 60 char limit";
     public static String ADVERSE_REASON_ALERT = "Enter minimum 4 char for Adverse Exception reason";
     public static String YARD_MOVE_DESC       = "Enter minimum 4 char for Yard Move description";
     public static String EDIT_REMARKS_DESC    = "Enter minimum 4 char for edit reason";

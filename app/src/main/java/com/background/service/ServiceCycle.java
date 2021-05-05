@@ -10,6 +10,7 @@ import com.constants.Constants;
 import com.constants.ConstantsEnum;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
+import com.messaging.logistic.TabAct;
 import com.models.EldDriverLogModel;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
@@ -485,6 +486,15 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 }
 
                                                 if (ContinueSpeedCounter >= OnDutyInterval) {
+                                                    try {
+                                                        if (UILApplication.isActivityVisible()) {
+                                                            if (BackgroundLocationService.IsAutoChange == false) {
+                                                                TabAct.speedAlertBtn.performClick();
+                                                            }
+                                                        }
+                                                    }catch (Exception e){
+                                                        e.printStackTrace();
+                                                    }
                                                     LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                             driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, isEldToast, IsAOBRDAutoDrive);
@@ -596,7 +606,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 }
 
                                                 if (VehicleSpeed >= DrivingSpeedLimit ) {   //&& isDrivingAllowed
-                                                    pcYmRemarks = "none";
+                                                    pcYmRemarks = "--"; //none
                                                     LastStatus = "_YMNotConfirmed_From_" + DRIVER_JOB_STATUS;
                                                     CHANGED_STATUS = DRIVING;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
@@ -674,7 +684,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 message = "Duty status switched to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
 
                                             } else {
-                                                pcYmRemarks = "none";
+                                                pcYmRemarks = "--"; //none
                                                 LastStatus = "_PU_NotConfirmedAfterLogin" ;
 
                                                 // set value false when status will be changed to driving.

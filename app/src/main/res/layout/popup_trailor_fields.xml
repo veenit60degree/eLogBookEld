@@ -355,7 +355,7 @@
                 android:textSize="@dimen/text_size_16"
                 android:imeOptions="actionDone"
                 android:theme="@style/AppTheme.EditText"
-                android:minLines="2"
+                android:minLines="3"
                 android:maxLines="4"
                 android:maxLength="60"
                 android:padding="@dimen/margin_10"

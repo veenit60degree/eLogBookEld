@@ -6,6 +6,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -118,6 +120,23 @@ public class TrailorDialog extends Dialog {
 
         DriverId = SharedPref.getDriverId(getContext());
 
+        ReasonEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.toString().length() > 60) {
+                    ReasonEditText.setError("Allows 60 characters only");
+                    ReasonEditText.setText(ReasonEditText.getText().toString().substring(0, 59));
+                }else{
+                    ReasonEditText.setError(null);
+                }
+            }
+        });
+
+
         if(type.equals("trailor") || type.equals("trailor_driving")){
             if(type.equals("trailor_driving")){
                 TitleTV.setText("Enter Trailer number before Driving");
@@ -195,6 +214,7 @@ public class TrailorDialog extends Dialog {
                      dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                      remarkSpinner.setAdapter(dataAdapter);
                  }
+
              }
 
         }
@@ -370,7 +390,7 @@ public class TrailorDialog extends Dialog {
 
                 if( type.equals(Constants.Personal) || (isEditRemarks && jobStatus != Constants.ON_DUTY) ) {
 
-                    if (updatedReason.trim().length() >= 4  ) {
+                    if (updatedReason.length() >= 4 &&  updatedReason.length() <= 60) {
 
                         readyListener.JobBtnReady(
                                 Trailer,
@@ -382,11 +402,16 @@ public class TrailorDialog extends Dialog {
                                 ReasonEditText);
 
                     } else {
-                        if( type.equals(Constants.Personal)) {
-                            Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.PROPER_REASON_ALERT, getContext().getResources().getColor(R.color.red_eld));
+                        if(updatedReason.length() < 60){
+                            if( type.equals(Constants.Personal)) {
+                                Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.PROPER_REASON_ALERT, getContext().getResources().getColor(R.color.red_eld));
+                            }else{
+                                Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.EDIT_REMARKS_DESC, getContext().getResources().getColor(R.color.red_eld));
+                            }
                         }else{
-                            Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.EDIT_REMARKS_DESC, getContext().getResources().getColor(R.color.red_eld));
+                            Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.MAX_CHAR_LIMIT, getContext().getResources().getColor(R.color.red_eld));
                         }
+
                     }
 
                 }else {
