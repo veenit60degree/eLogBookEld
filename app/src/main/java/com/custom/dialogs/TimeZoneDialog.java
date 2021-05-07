@@ -73,7 +73,7 @@ public class TimeZoneDialog extends Dialog {
 
         progressD = new ProgressDialog(mContext);
         progressD.setMessage("Loading...");
-        LogoutRequest   = new VolleyRequest(getContext());
+        LogoutRequest   = new VolleyRequest(mContext);
         constant        = new Constants();
         global          = new Globally();
         sharedPref      = new SharedPref();
@@ -84,7 +84,7 @@ public class TimeZoneDialog extends Dialog {
 
         btnUpdateApp = (Button) findViewById(R.id.btnUpdateApp);
 
-        isCurrentTimeBigger = global.isCurrentTimeBigger(getContext());
+        isCurrentTimeBigger = global.isCurrentTimeBigger(mContext);
         logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
 
         if(isTimeZoneValid){
@@ -100,7 +100,7 @@ public class TimeZoneDialog extends Dialog {
 
         btnUpdateApp.setOnClickListener(new ChangeTimeZoneListener());
 
-        if (global.isWifiOrMobileDataEnabled(getContext())) {
+        if (global.isWifiOrMobileDataEnabled(mContext)) {
             GetServerCurrentUtcTime();
         }else{
             if(isCurrentTimeBigger) {
@@ -115,11 +115,11 @@ public class TimeZoneDialog extends Dialog {
         logoutTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (sharedPref.getDriverId(getContext()).length() > 0){
-                    if (global.isWifiOrMobileDataEnabled(getContext())) {
-                        LogoutUser(sharedPref.getDriverId(getContext()));
+                if (sharedPref.getDriverId(mContext).length() > 0){
+                    if (global.isWifiOrMobileDataEnabled(mContext)) {
+                        LogoutUser(sharedPref.getDriverId(mContext));
                     } else {
-                        global.EldScreenToast(logoutTV, global.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorSleeper));
+                        global.EldScreenToast(logoutTV, global.CHECK_INTERNET_MSG, mContext.getResources().getColor(R.color.colorSleeper));
                     }
                 }else {
                     constant.ClearLogoutData(mContext);
@@ -135,7 +135,7 @@ public class TimeZoneDialog extends Dialog {
 
     void HideKeyboard() {
         try {
-            InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         } catch (Exception e) {
         }
@@ -147,7 +147,7 @@ public class TimeZoneDialog extends Dialog {
         public void onClick(View v) {
 
             dismiss();
-            getContext().startActivity(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS));
+            mContext.startActivity(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS));
         }
     }
 
@@ -239,15 +239,18 @@ public class TimeZoneDialog extends Dialog {
         @Override
         public void getError(VolleyError error, int flag) {
             Log.d("onDuty error", "onDuty error: " + error.toString());
-            progressD.dismiss();
-            global.EldScreenToast(recordTitleTV, error.toString(), getContext().getResources().getColor(R.color.red_eld));
 
             if(isCurrentTimeBigger)
                 sharedPref.setCurrentUTCTime( global.GetCurrentUTCTimeFormat() , mContext );
 
             try {
-                if(mContext != null)
+                if(progressD != null)
+                    progressD.dismiss();
+
+                if(mContext != null) {
+                    global.EldScreenToast(recordTitleTV, error.toString(), mContext.getResources().getColor(R.color.red_eld));
                     dismiss();
+                }
             }catch (Exception e){
                 e.printStackTrace();
             }

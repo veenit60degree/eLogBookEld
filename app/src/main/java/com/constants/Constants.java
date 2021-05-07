@@ -186,6 +186,7 @@ public class Constants {
     public static final int WIFI_CONNECTED      = 1003;
     public static final int WIFI_DISCONNECTED   = 1004;
     public static final int NO_CONNECTION       = 1005;
+    public static final int WIFI_IGNITION_OFF   = 1008;
 
     public static final int NOTIFICATION      = 0;
     public static final int GPS               = 1;
@@ -253,9 +254,11 @@ public class Constants {
     public static int EditRemarks        = 101;
     public static int EditLocation       = 102;
     public static int SocketTimeout1Sec  = 1000;   // 1 second
+    public static int SocketTimeout2Sec  = 2000;   // 2 second
     public static int SocketTimeout3Sec  = 3000;   // 3 seconds
     public static int SocketTimeout4Sec  = 4000;   // 3 seconds
     public static int SocketTimeout5Sec  = 5000;   // 5 seconds
+    public static int SocketTimeout8Sec  = 8000;   // 8 seconds
     public static int SocketTimeout10Sec = 10000;   // 10 seconds
     public static int SocketTimeout15Sec = 15000;   // 15 seconds
     public static int SocketTimeout20Sec = 20000;   // 20 seconds
@@ -345,7 +348,7 @@ public class Constants {
             list.add(new SlideMenuModel(UNIDENTIFIED_RECORD, R.drawable.unidentified_menu, context.getResources().getString(R.string.unIdentified_records)));
         }
         if(isMalfunction) {
-            list.add(new SlideMenuModel(DATA_MALFUNCTION, R.drawable.eld_malfunction, context.getResources().getString(R.string.malfunction)));
+            list.add(new SlideMenuModel(DATA_MALFUNCTION, R.drawable.eld_malfunction, context.getResources().getString(R.string.malfunction_and_dia)));
         }
         list.add(new SlideMenuModel(SETTINGS, R.drawable.settings, context.getResources().getString(R.string.action_settings)));
         list.add(new SlideMenuModel(ALS_SUPPORT, R.drawable.als_support, context.getResources().getString(R.string.action_Support)));
@@ -1375,13 +1378,13 @@ public class Constants {
                     e.printStackTrace();
 
                     // save current HighPrecisionOdometer locally
-                    sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
+                    sharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
 
                 }
 
             } else {
                 // save current HighPrecisionOdometer locally
-                sharedPref.setHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
+                sharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
 
             }
         }catch (Exception e){
@@ -2561,15 +2564,20 @@ public class Constants {
         } catch (NumberFormatException e) {
             e.printStackTrace();
             isValid = false;
+        }catch (Exception e){
+            e.printStackTrace();
+            isValid = false;
         }
         return isValid;
     }
 
 
 
-    public JSONObject getMalfunctionDiagnosticArray(
-            String DriverId, String reason, List<MalfunctionHeaderModel> headerList,
-             HashMap<String, List<MalfunctionModel>> malfunctionChildHashMap,
+    public JSONObject getMalfunctionDiagnosticArray(String DriverId, String reason,
+                                                    List<MalfunctionHeaderModel> MalHeaderList,
+                                                    HashMap<String, List<MalfunctionModel>> MalfunctionChildMap,
+                                                    List<MalfunctionHeaderModel> DiaHeaderList,
+                                                    HashMap<String, List<MalfunctionModel>> DiafunctionChildMap,
             Context context){
 
         JSONObject obj = new JSONObject();
@@ -2580,27 +2588,30 @@ public class Constants {
             obj.put(ConstantsKeys.Remarks , reason);
             JSONArray EventsList = new JSONArray();
 
-            for(int i = 0 ; i < headerList.size() ; i++){
-                // If EventCode is valid integer it is Diagnostic other wise Malfunction
-                if(isValidInteger(headerList.get(i).getEventCode() ) ){
-                    // Diagnostic (4 and 5 event code are not eligible for clear)
-                    if(isClearDiagnostic && !headerList.get(i).getEventCode().equals("4") &&
-                            !headerList.get(i).getEventCode().equals("5")){
-                        List<MalfunctionModel> childList = malfunctionChildHashMap.get(headerList.get(i).getEventCode());
-                        for(int j = 0; j < childList.size() ; j++){
-                            EventsList.put(childList.get(j).getId());
-                        }
+            for(int i = 0 ; i < MalHeaderList.size() ; i++){
+                // Malfunction. (S type event code is not eligible for clear)
+                if(isClearMalfunction && MalHeaderList.get(i).getEventCode().equalsIgnoreCase("S")){
+                    List<MalfunctionModel> childList = MalfunctionChildMap.get(MalHeaderList.get(i).getEventCode());
+                    for(int j = 0; j < childList.size() ; j++){
+                        EventsList.put(childList.get(j).getId());
                     }
-                }else{
-                    // Malfunction. (S type event code is not eligible for clear)
-                    if(isClearMalfunction && headerList.get(i).getEventCode().equalsIgnoreCase("S")){
-                        List<MalfunctionModel> childList = malfunctionChildHashMap.get(headerList.get(i).getEventCode());
-                        for(int j = 0; j < childList.size() ; j++){
-                            EventsList.put(childList.get(j).getId());
+                }
+            }
+
+            if(DiaHeaderList != null) {
+                for (int j = 0; j < DiaHeaderList.size(); j++) {
+                    // Diagnostic (4 and 5 event code are not eligible for clear)
+                    if (isClearDiagnostic && !DiaHeaderList.get(j).getEventCode().equals("4") &&
+                            !DiaHeaderList.get(j).getEventCode().equals("5")) {
+                        List<MalfunctionModel> childList = DiafunctionChildMap.get(DiaHeaderList.get(j).getEventCode());
+                        for (int k = 0; k < childList.size(); k++) {
+                            EventsList.put(childList.get(k).getId());
                         }
                     }
                 }
             }
+
+            // add all events id as list in json obj
             obj.put(ConstantsKeys.EventList , EventsList);
 
         }catch (Exception e){
@@ -3445,7 +3456,7 @@ public class Constants {
                 DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
 
                 if(savedDateTime.isAfter(currentDateTime)){
-                    SharedPref.setHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
+                    SharedPref.saveHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
                 }
                 timeInMin = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
 

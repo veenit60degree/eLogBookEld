@@ -43,7 +43,7 @@
         android:text="@string/Status"
         android:gravity="center_horizontal"
         android:layout_weight="0.8"
-
+        android:visibility="gone"
         />
 
 

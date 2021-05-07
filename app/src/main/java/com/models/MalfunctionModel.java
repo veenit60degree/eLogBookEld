@@ -17,11 +17,13 @@ public class MalfunctionModel {
     String ToDateTime;
     String DriverZoneEventDate;
     String SequenceNo;
+    String HexaSequenceNumber;
     String Id;
 
     public MalfunctionModel(String country, String VIN, String companyId, String eventDateTime, String engineHours, String miles,
                             String detectionDataEventCode, String masterDetectionDataEventId, String eventCode, String reason, String malfunctionDefinition,
-                            String fromDateTime, String toDateTime, String driverZoneEventDate, String sequenceNo,String id) {
+                            String fromDateTime, String toDateTime, String driverZoneEventDate, String sequenceNo,
+                            String hexaSequenceNumber, String id) {
         Country = country;
         this.VIN = VIN;
         CompanyId = companyId;
@@ -37,6 +39,7 @@ public class MalfunctionModel {
         ToDateTime = toDateTime;
         DriverZoneEventDate = driverZoneEventDate;
         SequenceNo          = sequenceNo;
+        HexaSequenceNumber  = hexaSequenceNumber;
         Id                  = id;
     }
 
@@ -99,6 +102,12 @@ public class MalfunctionModel {
     public String getSequenceNo() {
         return SequenceNo;
     }
+
+    public String getHexaSequenceNo() {
+        return HexaSequenceNumber;
+    }
+
+
 
     public String getId() {
         return Id;

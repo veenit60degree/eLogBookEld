@@ -1228,6 +1228,19 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     void moveToHosSummary(){
 
+  /*      MalfncnDiagnstcViewPager logFragment = new MalfncnDiagnstcViewPager();
+        Bundle bundle = new Bundle();
+        logFragment.setArguments(bundle);
+
+        FragmentTransaction fragmentTran = getFragmentManager().beginTransaction();
+        fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
+                android.R.anim.fade_in, android.R.anim.fade_out);
+        fragmentTran.replace(R.id.job_fragment, logFragment);
+        fragmentTran.addToBackStack("SuggestedLog");
+        fragmentTran.commit();
+*/
+
+
         // get driver's current cycle id
         GetDriverCycle(DriverType);
 
@@ -1276,6 +1289,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }catch (Exception e){
             e.printStackTrace();
         }
+
     }
 
 
@@ -1473,12 +1487,17 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle extras = intent.getExtras();
-            String state = extras.getString("isUpdate");
+            try{
+                 Bundle extras = intent.getExtras();
+                String state = extras.getString("isUpdate");
 
-            if(state != null && state.equals("true")){
-                invisibleTxtVw.performClick();
+                if(state != null && state.equals("true")){
+                    invisibleTxtVw.performClick();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
+
         }
 
     }
@@ -3286,15 +3305,20 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            boolean IsIgnitionOn = intent.getBooleanExtra(ConstantsKeys.IsIgnitionOn, false);
-            if(IsIgnitionOn){
-                if (sharedPref.GetNewLoginStatus(getActivity()) == false) {
-                    boolean isPopupShown = sharedPref.GetTruckStartLoginStatus(getActivity());
-                    if (isPopupShown && ( isPersonal.equals("true") || (DRIVER_JOB_STATUS == ON_DUTY && isYardMove) ) ) {
-                        YardMovePersonalStatusAlert(isYardMove);
+            try{
+                boolean IsIgnitionOn = intent.getBooleanExtra(ConstantsKeys.IsIgnitionOn, false);
+                if(IsIgnitionOn){
+                    if (sharedPref.GetNewLoginStatus(getActivity()) == false) {
+                        boolean isPopupShown = sharedPref.GetTruckStartLoginStatus(getActivity());
+                        if (isPopupShown && ( isPersonal.equals("true") || (DRIVER_JOB_STATUS == ON_DUTY && isYardMove) ) ) {
+                            YardMovePersonalStatusAlert(isYardMove);
+                        }
                     }
                 }
+            }catch (Exception e){
+                e.printStackTrace();
             }
+
         }
     };
 

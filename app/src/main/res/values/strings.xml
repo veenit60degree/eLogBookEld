@@ -720,6 +720,7 @@
     <string name="Remarks">Remarks: </string>
     <string name="Remarks_simple">Remarks</string>
     <string name="Distance">Distance: </string>
+    <string name="distancee">Distance</string>
     <string name="mileage">Engine Miles: </string>
     <string name="Odometers">Odometer</string>
     <string name="Drivers_Sign">Driver\'s Sign</string>
@@ -744,11 +745,14 @@
     <string name="dot_mode_canada">DOT MODE (Canada)</string>
     <string name="data_malfunction">Data recording compliance malfunction detected</string>
     <string name="malfunction">Data Malfunction</string>
+    <string name="malfunction_and_dia">Data Malfunction &amp; Diagnostic</string>
     <string name="malfunction_diag_occur">Malfunction &amp; Diagnostic events occurred</string>
     <string name="malfunction_occur">Malfunction event occurred</string>
     <string name="diagnostic_occur">Diagnostic event occurred</string>
     <string name="malfunction_event">Malfunction event</string>
     <string name="dia_event">Diagnostic event</string>
+    <string name="malfunction_events">Malfunction Events</string>
+    <string name="dia_events">Diagnostic Events</string>
 
     <string name="WantEndYM">Do you want to End Yard Move?"</string>
     <string name="WantEndPU">Do you want to End Personal Use?"</string>

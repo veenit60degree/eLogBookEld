@@ -93,6 +93,11 @@ public class SyncWiredObdLog extends AsyncTask<String, String, String> {
                         syncingFile.delete();
 
                 }
+            }else{
+                /* ------------ Delete posted files from local after successfully posted to server --------------- */
+                if(syncingFile != null && syncingFile.exists())
+                    syncingFile.delete();
+
             }
 
         }catch (Exception e){

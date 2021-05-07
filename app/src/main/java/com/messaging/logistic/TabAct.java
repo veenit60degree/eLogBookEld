@@ -1,10 +1,12 @@
 package com.messaging.logistic;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -12,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -85,6 +88,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     Utils util;
     String existingAppVersionStr = "";
 
+    AlertDialog alertDialog;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +136,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         fadeInAnim.setDuration(2000);
         fadeOutAnim.setDuration(2000);
 
+
+        initilizeAlertDialog();
         getMenuList(false);
 
         TabDeclaration();
@@ -318,6 +326,18 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     }
 
 
+    private void initilizeAlertDialog(){
+        alertDialog = new AlertDialog.Builder(TabAct.this).create();
+        alertDialog.setTitle(Html.fromHtml("Alert !!"));
+        alertDialog.setMessage(Html.fromHtml("Please change your status to On Duty due to vehicle is not moving"));
+        alertDialog.setButton(Html.fromHtml("Ok"), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+
     private void TabDeclaration() {
 
         /* Friend_list */
@@ -501,8 +521,21 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
             case R.id.wiredObdDataBtn:
                 //  StartStopServer(WifiOBD);
-                Globally.DriverSwitchAlert(TabAct.this,"Alert !!",
+              /*  Globally.DriverSwitchAlert(TabAct.this,"Alert !!",
                         "Please change your status to On Duty due to vehicle is not moving", "Ok");
+*/
+
+                if(alertDialog != null) {
+                    if(alertDialog.isShowing()){
+                        alertDialog.dismiss();
+                    }else {
+                        if(BackgroundLocationService.IsAutoChange == false)
+                            alertDialog.show();
+                    }
+                }
+
+
+
                 break;
 
             case R.id.sliderLay:

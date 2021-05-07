@@ -5,9 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+
+import androidx.preference.PreferenceManager;
 
 import java.util.HashMap;
 

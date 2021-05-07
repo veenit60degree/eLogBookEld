@@ -23,7 +23,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;

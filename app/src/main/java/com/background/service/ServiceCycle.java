@@ -490,9 +490,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 if (ContinueSpeedCounter >= OnDutyInterval) {
                                                     try {
                                                         if (UILApplication.isActivityVisible()) {
-                                                            if (BackgroundLocationService.IsAutoChange == false) {
-                                                                TabAct.speedAlertBtn.performClick();
-                                                            }
+                                                            TabAct.speedAlertBtn.performClick();
                                                         }
                                                     }catch (Exception e){
                                                         e.printStackTrace();

@@ -115,7 +115,7 @@ public class HelperMethods {
 
     public boolean isDrivingAllowedWithCoDriver(Context context, Globally Global, String selectedDriverId, boolean isDriveChanging, DBHelper dbHelper){
         boolean isDrivingAllowed = true;
-        boolean isPC75KmCrossed = SharedPref.isPersonalUse75KmCrossed(context);
+       // boolean isPC75KmCrossed = SharedPref.isPersonalUse75KmCrossed(context);
 
         int SelectedDriverStatus = 1;
         boolean isSelectedDriverPersonalUse = false;
@@ -129,17 +129,17 @@ public class HelperMethods {
 
         }
 
-        if (Global.isSingleDriver(context)) {
+        if (Global.isSingleDriver(context) == false) {
 
-            if(isSelectedDriverPersonalUse && isPC75KmCrossed == false){
+           /* if(isSelectedDriverPersonalUse && isPC75KmCrossed == false){
                 isDrivingAllowed = false;
             }
 
-        }else{
+        }else{*/
 
             if ((SelectedDriverStatus == Constants.DRIVING || isSelectedDriverPersonalUse || isSelectedDriverYardMove) && isDriveChanging == false ) {
-                if(isPC75KmCrossed == false)
-                    isDrivingAllowed = false;
+               // if(isPC75KmCrossed == false)
+                 //   isDrivingAllowed = false;
             }else {
                 String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
                 String CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
@@ -407,6 +407,31 @@ public class HelperMethods {
                     isPCYM = ConstantsKeys.Personal;
                 }else if(lastStatus == Constants.ON_DUTY && YardMove){
                     isPCYM = ConstantsKeys.YardMove;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isPCYM;
+    }
+
+
+    public boolean isPCYM(JSONArray array){
+        boolean isPCYM = false;
+        try {
+
+            if(array != null && array.length() >= 0) {
+
+                JSONObject lastJob = GetLastJsonFromArray(array);
+                int lastStatus = lastJob.getInt(ConstantsKeys.DriverStatusId);
+                boolean YardMove = lastJob.getBoolean(ConstantsKeys.YardMove);
+                boolean Personal = lastJob.getBoolean(ConstantsKeys.Personal);
+
+                if(lastStatus == Constants.OFF_DUTY && Personal){
+                    isPCYM = true;
+                }else if(lastStatus == Constants.ON_DUTY && YardMove){
+                    isPCYM = true;
                 }
             }
         }catch (Exception e){

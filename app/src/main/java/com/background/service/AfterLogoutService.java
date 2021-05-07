@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.constants.ShellUtils;
 import com.constants.TcpClient;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
@@ -89,6 +90,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         this.connection = new RemoteServiceConnection();
         this.replyTo = new Messenger(new IncomingHandler());
         BindConnection();
+        checkWiredObdConnection();
 
         mTimer.schedule(timerTask, TIME_INTERVAL_WIFI, TIME_INTERVAL_WIFI);
 
@@ -119,45 +121,54 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
 
             try {
-                if (ignitionStatus.equals("ON") || !truckRPM.equals("0")) {
-                    sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", getApplicationContext());
-                    if(speed > 8 && lastVehSpeed > 8){
-                        sharedPref.setLoginAllowedStatus(false, getApplicationContext());
+                if(sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
 
-                        long count = sharedPref.getLastCalledWiredCallBack(getApplicationContext());
-                        if(count == 0) {
-                            sharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
-                            Globally.PlaySound(getApplicationContext());
-                            Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
-                            SpeakOutMsg(AlertMsgSpeech);
+                    if (ignitionStatus.equals("ON") && !truckRPM.equals("0")) {
+                        sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", getApplicationContext());
+                        if (speed > 8 && lastVehSpeed > 8) {
+                            sharedPref.setLoginAllowedStatus(false, getApplicationContext());
+
+                            long count = sharedPref.getLastCalledWiredCallBack(getApplicationContext());
+                            if (count == 0) {
+                                sharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
+                                Globally.PlaySound(getApplicationContext());
+                                Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
+                                SpeakOutMsg(AlertMsgSpeech);
+                            }
+
+                            if (count >= TIME_INTERVAL_LIMIT) {
+                                // reset call back count
+                                count = 0;
+                            }
+
+                            // save count --------------
+                            sharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
+                            // Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed, 203040);
+                        } else {
+                            sharedPref.setLoginAllowedStatus(true, getApplicationContext());
                         }
+                        lastVehSpeed = speed;
 
-                        if(count >= TIME_INTERVAL_LIMIT){
-                            // reset call back count
-                            count = 0;
-                        }
+                        CallWired(TIME_INTERVAL_WIRED);
 
-                        // save count --------------
-                        sharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
-                       // Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed, 203040);
-                    }else{
+                    } else {
+                        lastVehSpeed = -1;
                         sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+                        if (sharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED ||
+                                sharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
+                            sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
+                            CallWired(TIME_INTERVAL_WIFI);
+                        }
+
                     }
-                    lastVehSpeed = speed;
-
-                    CallWired(TIME_INTERVAL_WIRED);
-
                 }else{
                     lastVehSpeed = -1;
-
-                    if(sharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED ||
-                            sharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
-                        sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
-                        CallWired(TIME_INTERVAL_WIFI);
-                    }
+                    sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                    sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
+                    CallWired(Constants.SocketTimeout5Sec);
 
                 }
-
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -176,6 +187,25 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             }, time);
         }
     }
+
+    private void checkWiredObdConnection(){
+
+        ShellUtils.CommandResult obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
+
+        if (obdShell.result == 0) {
+            if (obdShell.successMsg.contains("USB_DCP")) {
+                // Connected State
+                sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", getApplicationContext());
+            } else {
+                // Disconnected State. Save only when last status was not already disconnected
+                sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
+            }
+        } else {
+            // Error
+        }
+
+    }
+
 
     private void checkWifiOBDConnection(){
 
@@ -227,6 +257,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 StopService();
 
             }else{
+
+                checkWiredObdConnection();
 
                 // communicate with wired OBD server app with Message
                 if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED &&
@@ -427,6 +459,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                     lastVehSpeed = WheelBasedVehicleSpeed;
                                 } else {
                                     if(sharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
+                                        sharedPref.setLoginAllowedStatus(true, getApplicationContext());
                                         sharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED,  "", getApplicationContext());
                                     }
                                     lastVehSpeed = -1;

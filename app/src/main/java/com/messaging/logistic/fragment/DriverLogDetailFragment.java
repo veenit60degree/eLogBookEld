@@ -2626,11 +2626,11 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
-         params.put(ConstantsKeys.VIN, VIN );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.VIN, VIN );
         params.put(ConstantsKeys.CreatedDate, CreatedDate);
         params.put(ConstantsKeys.IsCertifyLog, "true");
-         params.put(ConstantsKeys.CompanyId, CompanyId );
+        params.put(ConstantsKeys.CompanyId, CompanyId );
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER, params, GetOdometer,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);

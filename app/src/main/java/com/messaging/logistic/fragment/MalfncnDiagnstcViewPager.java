@@ -3,10 +3,6 @@ package com.messaging.logistic.fragment;
 import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-
 import android.text.Html;
 import android.util.Log;
 import android.view.InflateException;
@@ -18,7 +14,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
 import com.adapter.logistic.MalfunctionAdapter;
+import com.adapter.logistic.TabLayoutAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
@@ -29,6 +31,7 @@ import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.MalfunctionDialog;
 import com.driver.details.DriverConst;
+import com.google.android.material.tabs.TabLayout;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -45,25 +48,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MalfunctionFragment extends Fragment implements View.OnClickListener {
+public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickListener {
 
     View rootView;
-    SharedPref sharedPref;
-    ExpandableListView malfunctionExpListView;
-    TextView EldTitleTV, noDataEldTV, dateActionBarTV;
+    CardView cancelCertifyBtn, confirmCertifyBtn;
+    TextView confirmCertifyTV, EldTitleTV;
+    TabLayout tabLayout;
+    TabLayoutAdapter tabAdapter;
+    ViewPager MalDiaViewPager;
     RelativeLayout rightMenuBtn, eldMenuLay;
+
+    MalfunctionEventFragment malfunctionEventFragment;
+    DiagnosticEventFragment diagnosticEventFragment;
+    static TextView noRecordMalTV, noRecordDiaTV;
+    static ExpandableListView malfunctionExpandList, diagnosticExpandList;
+
+    SharedPref sharedPref;
     String DriverId = "", DeviceId = "", VIN = "", FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId;
     Map<String, String> params;
     VolleyRequest GetMalfunctionEvents;
+
     List<MalfunctionModel> malfunctionChildList = new ArrayList<>();
     List<MalfunctionHeaderModel> malfunctionHeaderList = new ArrayList<>();
     private HashMap<String, List<MalfunctionModel>> malfunctionChildHashMap = new HashMap<>();
+
+    List<MalfunctionHeaderModel> diagnosticHeaderList = new ArrayList<>();
+    private HashMap<String, List<MalfunctionModel>> diagnosticChildHashMap = new HashMap<>();
+
+
     public static TextView invisibleMalfnBtn;
-    MalfunctionAdapter malfunctionAdapter;
     MalfunctionDialog malfunctionDialog;
     SaveLogJsonObj clearRecordPost;
     ProgressDialog progressDialog;
     Constants constants;
+
+    private int[] tabIcons = {
+            R.drawable.original_log_icon,
+            R.drawable.original_log_icon
+    };
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,75 +99,56 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                 parent.removeView(rootView);
         }
         try {
-            rootView = inflater.inflate(R.layout.fragment_malfunction, container, false);
-            rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            rootView = inflater.inflate(R.layout.activity_edit_log_compare, container, false);
+            rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         } catch (InflateException e) {
             e.printStackTrace();
         }
-
 
         initView(rootView);
 
         return rootView;
     }
 
-
-    void initView(View view) {
+    void initView(View rootView) {
 
         GetMalfunctionEvents  = new VolleyRequest(getActivity());
         clearRecordPost   = new SaveLogJsonObj(getActivity(), apiResponse );
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading ...");
 
-        constants  = new Constants();
-        sharedPref = new SharedPref();
-        malfunctionExpListView = (ExpandableListView) view.findViewById(R.id.malfunctionExpandList);
-        noDataEldTV = (TextView) view.findViewById(R.id.noRecordTV);
-        EldTitleTV = (TextView) view.findViewById(R.id.EldTitleTV);
-        dateActionBarTV = (TextView) view.findViewById(R.id.dateActionBarTV);
-        invisibleMalfnBtn = (TextView)view.findViewById(R.id.invisibleMalfnBtn);
+        constants           = new Constants();
+        sharedPref          = new SharedPref();
 
-        rightMenuBtn = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
-        eldMenuLay   = (RelativeLayout) view.findViewById(R.id.eldMenuLay);
+        cancelCertifyBtn    = (CardView)rootView.findViewById(R.id.cancelCertifyBtn);
+        confirmCertifyBtn   = (CardView)rootView.findViewById(R.id.confirmCertifyBtn);
+
+        confirmCertifyTV    = (TextView)rootView.findViewById(R.id.confirmCertifyTV);
+        EldTitleTV          = (TextView) rootView.findViewById(R.id.EldTitleTV);
+        invisibleMalfnBtn   = (TextView)rootView.findViewById(R.id.invisibleMalfnDiaBtn);
+
+        rightMenuBtn = (RelativeLayout) rootView.findViewById(R.id.rightMenuBtn);
+        eldMenuLay   = (RelativeLayout) rootView.findViewById(R.id.eldMenuLay);
+
+        malfunctionEventFragment = new MalfunctionEventFragment();
+        diagnosticEventFragment = new DiagnosticEventFragment();
+        tabLayout = (TabLayout) rootView.findViewById(R.id.tab_layout);
+        MalDiaViewPager  = (ViewPager) rootView.findViewById(R.id.editedLogPager);
+
+        rightMenuBtn.setVisibility(View.GONE);
 
         DriverId = sharedPref.getDriverId( getActivity());
         DeviceId = sharedPref.GetSavedSystemToken(getActivity());
 
-        rightMenuBtn.setVisibility(View.GONE);
-        dateActionBarTV.setVisibility(View.VISIBLE);
-        dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+        EldTitleTV.setText(getResources().getString(R.string.malfunction_and_dia));
+        confirmCertifyTV.setText(getString(R.string.ClearAll));
+        setPagerAdapter(0);
 
-        //"<html>  <u>Logout</u> </html>"
-        EldTitleTV.setText(getResources().getString(R.string.malfunction));
-        dateActionBarTV.setText(Html.fromHtml("<b><u>" + getString(R.string.ClearAll) + "</u></b>"));
-
-        malfunctionExpListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                switch (groupPosition) {
-                    case 0:
-                        Log.d(">>>", "" + groupPosition);
-                        break;
-                    case 1:
-                        Log.d(">>>", "" + groupPosition);
-                        break;
-                    case 2:
-                        Log.d(">>>", "" + groupPosition);
-                        break;
-                    case 3:
-                        Log.d(">>>", "" + groupPosition);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        checkLocMalfunction();
-
-        dateActionBarTV.setOnClickListener(this);
+        cancelCertifyBtn.setVisibility(View.GONE);
+        confirmCertifyBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
         invisibleMalfnBtn.setOnClickListener(this);
+
     }
 
 
@@ -166,40 +171,95 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
             FromDateTime = String.valueOf(currentDate.minusDays(7)).substring(0, 10);   // // in US 7+1 days
         }
 
-        notifyAdapter();
-
         if(Globally.isConnected(getContext())) {
             GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
         }else{
-            Globally.EldScreenToast(dateActionBarTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            setPagerAdapter(0);
+            Globally.EldScreenToast(confirmCertifyTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
         }
 
 
     }
 
+    // Add Fragments to Tabs ViewPager for each Tabs
+    private void setPagerAdapter(int position){
+
+        tabAdapter = new TabLayoutAdapter(getChildFragmentManager(), getActivity());
+        tabAdapter.addFragment(malfunctionEventFragment, getString(R.string.malfunction_events), tabIcons[0]);
+        tabAdapter.addFragment(diagnosticEventFragment, getString(R.string.dia_events), tabIcons[1]);
+        MalDiaViewPager.setAdapter(tabAdapter);
+        tabLayout.setupWithViewPager(MalDiaViewPager);
+
+        MalDiaViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+            @Override
+            public void onPageSelected(int position) {
+                highLightCurrentTab(position);
+                refreshAdapterOnPageChange(position);
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        highLightCurrentTab(position);
+        refreshAdapterOnPageChange(position);
+    }
+
+
+    private void highLightCurrentTab(int position) {
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            assert tab != null;
+            tab.setCustomView(null);
+            tab.setCustomView(tabAdapter.getTabView(i));
+        }
+        TabLayout.Tab currentTab = tabLayout.getTabAt(position);
+        assert currentTab != null;
+        currentTab.setCustomView(null);
+        currentTab.setCustomView(tabAdapter.getSelectedTabView(position));
+
+    }
+
+
+    private void refreshAdapterOnPageChange(int position){
+        if(position == 0){
+            // notify malfunction adapter
+            if(noRecordMalTV != null) {
+                notifyMalfunctionAdapter(noRecordMalTV, malfunctionExpandList,
+                        malfunctionHeaderList, malfunctionChildHashMap);
+            }
+        }else{
+            // notify diagnostic adapter
+            if(noRecordDiaTV != null) {
+                notifyMalfunctionAdapter(noRecordDiaTV, diagnosticExpandList,
+                        diagnosticHeaderList, diagnosticChildHashMap);
+            }
+        }
+
+    }
+
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
+    public void onClick(View v) {
 
-            case R.id.dateActionBarTV:
-                Log.d("ClearAllClickEvent", "ClearAllClickEvent");
-
-
+        switch (v.getId()){
+            case R.id.confirmCertifyBtn:
                 if (malfunctionDialog != null && malfunctionDialog.isShowing())
                     malfunctionDialog.dismiss();
 
                 if(Globally.isConnected(getContext())) {
-                    if(malfunctionHeaderList.size() > 0) {
+                    if(malfunctionHeaderList.size() > 0 || diagnosticHeaderList.size() > 0) {
                         malfunctionDialog = new MalfunctionDialog(getActivity(), new ArrayList<MalfunctionModel>(),
                                 new MalfunctionDiagnosticListener());
                         malfunctionDialog.show();
                     }else{
-                        Globally.EldScreenToast(dateActionBarTV, getString(R.string.no_malfunction_diagnostc_records), getResources().getColor(R.color.colorVoilation));
+                        Globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_diagnostc_records), getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
-                    Globally.EldScreenToast(dateActionBarTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                    Globally.EldScreenToast(confirmCertifyTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                 }
-
 
                 break;
 
@@ -207,10 +267,9 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                 TabAct.sliderLay.performClick();
                 break;
 
-            case R.id.invisibleMalfnBtn:
+            case R.id.invisibleMalfnDiaBtn:
                 GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
                 break;
-
 
         }
     }
@@ -227,7 +286,8 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
             try {
                 // get events data for clear
                 JSONObject clearEventObj = constants.getMalfunctionDiagnosticArray(DriverId, reason,
-                        malfunctionHeaderList, malfunctionChildHashMap, null, null, getActivity());
+                        malfunctionHeaderList, malfunctionChildHashMap, diagnosticHeaderList,
+                        diagnosticChildHashMap, getActivity());
 
                 JSONArray eventId = new JSONArray(clearEventObj.getString(ConstantsKeys.EventList));
                 if (eventId.length() > 0) {
@@ -235,12 +295,12 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                     clearRecordPost.SaveLogJsonObj(clearEventObj, APIs.CLEAR_MALFNCN_DIAGSTC_EVENT, Constants.SocketTimeout30Sec, true, false, 0, 101);
                 }else{
                     if(SharedPref.IsClearDiagnostic(getActivity()) && SharedPref.IsClearMalfunction(getActivity())){
-                        Globally.EldScreenToast(dateActionBarTV, getString(R.string.no_malfunction_diagnostc_valid), getResources().getColor(R.color.colorVoilation));
+                        Globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_diagnostc_valid), getResources().getColor(R.color.colorVoilation));
                     }else{
                         if(SharedPref.IsClearDiagnostic(getActivity())){
-                            Globally.EldScreenToast(dateActionBarTV, getString(R.string.no_diagnostic_records), getResources().getColor(R.color.colorVoilation));
+                            Globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_diagnostic_records), getResources().getColor(R.color.colorVoilation));
                         }else{
-                            Globally.EldScreenToast(dateActionBarTV, getString(R.string.no_malfunction_records), getResources().getColor(R.color.colorVoilation));
+                            Globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_records), getResources().getColor(R.color.colorVoilation));
                         }
                     }
 
@@ -250,6 +310,89 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
             }
         }
     }
+
+
+
+
+    public static class MalfunctionEventFragment extends Fragment{
+
+        View rootViewMal;
+        RelativeLayout malfunctionActionBar;
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+            if (rootViewMal != null) {
+                ViewGroup parent = (ViewGroup) rootViewMal.getParent();
+                if (parent != null)
+                    parent.removeView(rootViewMal);
+            }
+            try {
+                rootViewMal = inflater.inflate(R.layout.fragment_malfunction, container, false);
+                rootViewMal.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            } catch (InflateException e) {
+                e.printStackTrace();
+            }
+
+
+            initView(rootViewMal);
+
+            return rootViewMal;
+        }
+
+
+        void initView(View view) {
+
+            malfunctionActionBar    = (RelativeLayout)view.findViewById(R.id.malfunctionActionBar);
+            malfunctionExpandList   = (ExpandableListView)view.findViewById(R.id.malfunctionExpandList);
+            noRecordMalTV           = (TextView)view.findViewById(R.id.noRecordTV);
+
+            malfunctionActionBar.setVisibility(View.GONE);
+        }
+
+    }
+
+    public static class DiagnosticEventFragment extends Fragment{
+
+        View rootViewDia;
+        RelativeLayout malfunctionActionBar;
+
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+            if (rootViewDia != null) {
+                ViewGroup parent = (ViewGroup) rootViewDia.getParent();
+                if (parent != null)
+                    parent.removeView(rootViewDia);
+            }
+            try {
+                rootViewDia = inflater.inflate(R.layout.fragment_malfunction, container, false);
+                rootViewDia.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            } catch (InflateException e) {
+                e.printStackTrace();
+            }
+
+
+            initView(rootViewDia);
+
+            return rootViewDia;
+        }
+
+
+        void initView(View view) {
+
+            malfunctionActionBar    = (RelativeLayout)view.findViewById(R.id.malfunctionActionBar);
+            diagnosticExpandList    = (ExpandableListView)view.findViewById(R.id.malfunctionExpandList);
+            noRecordDiaTV              = (TextView)view.findViewById(R.id.noRecordTV);
+
+            malfunctionActionBar.setVisibility(View.GONE);
+        }
+
+    }
+
 
 
     void checkLocMalfunction(){
@@ -314,6 +457,8 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                     JSONArray malfunctionArray = new JSONArray(obj.getString(ConstantsKeys.Data));
                     malfunctionHeaderList = new ArrayList<>();
                     malfunctionChildHashMap = new HashMap<>();
+                    diagnosticHeaderList = new ArrayList<>();
+                    diagnosticChildHashMap = new HashMap<>();
 
                     checkLocMalfunction();
 
@@ -327,8 +472,6 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                                 mainObj.getString(ConstantsKeys.Definition)
 
                         );
-                        // add data in header list
-                        malfunctionHeaderList.add(headerModel);
 
 
                         // Child array loop event
@@ -363,19 +506,31 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                             malfunctionChildList.add(malfunctionModel);
                         }
 
-                        // Add both list (Header/CHild) in hash map type list
-                        malfunctionChildHashMap.put(mainObj.getString(ConstantsKeys.EventCode), malfunctionChildList);
+                        boolean isDiagnostic = constants.isValidInteger( mainObj.getString(ConstantsKeys.EventCode));
+
+                        // add data in header list
+                        if(isDiagnostic ){   // Valid integer is Diagnostic
+                            diagnosticHeaderList.add(headerModel);
+                            diagnosticChildHashMap.put(mainObj.getString(ConstantsKeys.EventCode), malfunctionChildList);
+
+                        }else{ // InValid integer is Malfunction
+                            malfunctionHeaderList.add(headerModel);
+                            malfunctionChildHashMap.put(mainObj.getString(ConstantsKeys.EventCode), malfunctionChildList);
+
+                        }
+
+
 
                     }
 
-
-
-                    notifyAdapter();
+                    setPagerAdapter(MalDiaViewPager.getCurrentItem());
 
                 } else {
                     malfunctionHeaderList = new ArrayList<>();
                     malfunctionChildList = new ArrayList<>();
                     malfunctionChildHashMap = new HashMap<>();
+                    diagnosticHeaderList = new ArrayList<>();
+                    diagnosticChildHashMap = new HashMap<>();
 
                     checkLocMalfunction();
                 }
@@ -464,9 +619,11 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
 
 
 
-    private void notifyAdapter(){
+    private void notifyMalfunctionAdapter(TextView noDataEldTV, ExpandableListView listView,
+                                          List<MalfunctionHeaderModel> headerList,
+                                          HashMap<String, List<MalfunctionModel>> childHashMap ){
 
-        if(malfunctionChildHashMap.size() > 0){
+        if(childHashMap.size() > 0){
             noDataEldTV.setVisibility(View.GONE);
         }else{
             noDataEldTV.setVisibility(View.VISIBLE);
@@ -485,17 +642,15 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         }
 
         try {
-            malfunctionAdapter = new MalfunctionAdapter(getActivity(), DriverId, malfunctionHeaderList, malfunctionChildHashMap);
-            malfunctionExpListView.setAdapter(malfunctionAdapter);
-           // malfunctionAdapter.notifyDataSetChanged();
+            MalfunctionAdapter adapter = new MalfunctionAdapter(getActivity(), DriverId, headerList, childHashMap);
+            listView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         }catch (Exception e){
             e.printStackTrace();
         }
 
 
     }
-
-
 
 
 

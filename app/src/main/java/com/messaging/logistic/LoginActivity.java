@@ -551,7 +551,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.setDriverStatusId("jobType", "", getApplicationContext());
 			sharedPref.setVehilceMovingStatus(false, getApplicationContext());
 			sharedPref.SetObdEngineHours("0", getApplicationContext());
-			sharedPref.setHighPrecisionOdometer("", "", getApplicationContext());
+			sharedPref.saveHighPrecisionOdometer("", "", getApplicationContext());
 			sharedPref.setEcmObdLocationWithTime("0", "0", "0", "", getApplicationContext());
 			sharedPref.setLocMalfunctionType("", getApplicationContext());
 			sharedPref.saveLocMalfunctionOccurStatus(false, "", getApplicationContext());
@@ -575,6 +575,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				   final String CoDriverPassword, final String TeamDriverType, final String OSType,
 				   final String DeviceSimInfo, final String Sim2) {
 
+		//    sharedPref.setLoginAllowedStatus(true, getApplicationContext());
 
 		if(sharedPref.isLoginAllowed(LoginActivity.this)) {
 

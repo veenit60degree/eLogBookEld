@@ -28,6 +28,7 @@ import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.fragment.MalfncnDiagnstcViewPager;
 import com.messaging.logistic.fragment.MalfunctionFragment;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
@@ -108,12 +109,16 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             timeMalTxtVw.setText( "");
         }
 
-        statusMalTxtVw.setText(childData.getMalfunctionDefinition());
+       // statusMalTxtVw.setText(childData.getMalfunctionDefinition());
         engHoursMalTxtVw.setText(childData.getEngineHours());
-        seqIdMalTxtVw.setText(childData.getSequenceNo());
         originMalTxtVw.setText("");
         originMalTxtVw.setVisibility(View.GONE);
 
+        if(childData.getHexaSequenceNo().length() > 0){
+            seqIdMalTxtVw.setText(childData.getHexaSequenceNo());
+        }else{
+            seqIdMalTxtVw.setText(childData.getSequenceNo());
+        }
         if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
             double miles = Double.parseDouble(childData.getMiles());
             String milesInKm = constants.Convert2DecimalPlacesDouble(constants.milesToKm(miles));
@@ -315,14 +320,14 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
     private void setViewTextColorWithStyle(TextView timeMalTxtVw, TextView statusMalTxtVw, TextView vehMilesMalTxtVw,
                                   TextView engHoursMalTxtVw, TextView seqIdMalTxtVw, TextView originMalTxtVw){
         timeMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white )); //blue_button
-        statusMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
+       // statusMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
         vehMilesMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
         engHoursMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
         seqIdMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
         originMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
 
         timeMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
-        statusMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
+      //  statusMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         vehMilesMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         engHoursMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         seqIdMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
@@ -383,15 +388,16 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
 
 
                     if(message.equals("Record Clear Successfully")) {
-                        Globally.EldScreenToast(MalfunctionFragment.invisibleMalfnBtn,  _context.getResources().getString(R.string.RecordClearedSuccessfully),
+                        Globally.EldScreenToast( MalfncnDiagnstcViewPager.invisibleMalfnBtn,  _context.getResources().getString(R.string.RecordClearedSuccessfully),
                                 _context.getResources().getColor(R.color.color_eld_theme));
 
-                        _listDataHeader.remove(selectedPos);
-                        _listDataChild.remove(selectedPos);
+                     //   _listDataHeader.remove(selectedPos);
+                     //   _listDataChild.remove(selectedPos);
 
-                        notifyDataSetChanged();
+                     //   notifyDataSetChanged();
 
-                        MalfunctionFragment.invisibleMalfnBtn.performClick();
+                       // MalfunctionFragment.invisibleMalfnBtn.performClick();
+                        MalfncnDiagnstcViewPager.invisibleMalfnBtn.performClick();
                     }else{
                         Globally.EldScreenToast(MalfunctionFragment.invisibleMalfnBtn, message,
                                 _context.getResources().getColor(R.color.colorVoilation));

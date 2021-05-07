@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;

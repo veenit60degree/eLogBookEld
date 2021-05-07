@@ -327,13 +327,11 @@ public class OdometerHelperMethod {
 
 
                         } else {
-                            if (!obj.getString(ConstantsKeys.EndOdometer).equalsIgnoreCase("null")
-                                    && !obj.getString(ConstantsKeys.EndOdometer).equals("")) {
+                            String endOdoStr = obj.getString(ConstantsKeys.EndOdometer);
+                            if (!endOdoStr.equalsIgnoreCase("null") && endOdoStr.length() > 0 && StartOdometer.length() > 0) {
+
                                 startOdo = Float.parseFloat(StartOdometer);
-                                String endOdoStr = obj.getString(ConstantsKeys.EndOdometer);
-                                if(endOdoStr.length() > 0) {
-                                    endOdo = Float.parseFloat(endOdoStr);
-                                }
+                                endOdo = Float.parseFloat(endOdoStr);
                                 TotalKM = endOdo - startOdo;
                                 TotalMiles = convertKmsToMiles(TotalKM);
 
@@ -431,8 +429,9 @@ public class OdometerHelperMethod {
         try {
             for(int i = 0 ; i < array.length() ; i++){
                 JSONObject obj = (JSONObject) array.get(i);
-                if(! obj.getString(ConstantsKeys.TotalKM).equalsIgnoreCase("null"))
-                    km = km + Float.parseFloat(obj.getString(ConstantsKeys.TotalKM));
+                String TotalKM = obj.getString(ConstantsKeys.TotalKM);
+                if(!TotalKM.equalsIgnoreCase("null") && TotalKM.length() > 0)
+                    km = km + Float.parseFloat(TotalKM);
             }
         } catch (Exception e) {
             e.printStackTrace();

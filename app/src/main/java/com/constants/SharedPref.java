@@ -2,7 +2,8 @@ package com.constants;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
@@ -220,6 +221,7 @@ public class SharedPref {
 
 
 
+/*
     // Get Obd Status -------------------
     public static boolean getLastIgnitionStatus( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -247,6 +249,7 @@ public class SharedPref {
         editor.putInt("obdCurrentSpeed_", speed);
         editor.commit();
     }
+*/
 
 
 
@@ -2155,7 +2158,7 @@ public class SharedPref {
 
 
     // Set High Precision Odometer value  -------------------
-    public static void setHighPrecisionOdometer( String odometer, String savedTime, Context context) {
+    public static void saveHighPrecisionOdometer( String odometer, String savedTime, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("highPrecisionOdometer", odometer);

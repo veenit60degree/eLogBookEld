@@ -92,12 +92,8 @@ public class SyncAppUsageLog extends AsyncTask<String, String, String> {
                         appUsageFile.delete();
 
                 }
-            }else{
-                /* ------------ Delete posted files from local after successfully posted to server --------------- */
-                if (appUsageFile != null && appUsageFile.exists())
-                    appUsageFile.delete();
-
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }

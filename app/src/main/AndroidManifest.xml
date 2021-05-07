@@ -134,6 +134,7 @@
         <activity android:name=".BlankActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.Transparent"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             >
 
 

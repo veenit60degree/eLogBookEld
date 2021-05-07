@@ -697,7 +697,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="@dimen/margin_short_5"
-                            android:text="@string/hos_driver_miles"
+                            android:text="@string/distancee"
                             android:textColor="@color/black_hos"
                             android:textSize="@dimen/text_size_20"
                             android:paddingRight="@dimen/margin_short_5"

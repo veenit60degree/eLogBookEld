@@ -3,15 +3,14 @@ package com.wifi.settings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Handler;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 import org.json.JSONObject;
 

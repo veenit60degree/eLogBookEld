@@ -286,6 +286,7 @@ public class ConstantsKeys {
     public static String ToDateTime                     = "ToDateTime";
     public static String DriverZoneEventDate            = "DriverZoneEventDate";
     public static String SEQUENCE_NO                    = "SEQUENCE_NO";
+    public static String HEXA_SEQUENCE_NUMBER           = "HexaSequenceNumber";
     public static String Id                             = "Id";
 
     public static String ArrivalSealNumber              = "ArrivalSealNumber";

@@ -1,6 +1,7 @@
 package com.constants;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 
 import com.messaging.logistic.Globally;
@@ -52,36 +53,41 @@ public class CsvReader {
 
     public String getShortestAddress(Context context){
 
-        if(canadaLocationList.size() == 0){
-            canadaLocationList = getCanadaLocationList(context);
-        }
-
-        CanadaLocModel dataModel = null;
-        double distance = 0;
-        if(canadaLocationList.size() > 1) {
-            for (int i = 1; i < canadaLocationList.size() ; i++){
-
-                double selectedLat = Double.parseDouble(canadaLocationList.get(i).getLatitude());
-                double selectedLong = Double.parseDouble(canadaLocationList.get(i).getLongitude());
-                if(i == 1){
-                    dataModel = canadaLocationList.get(i);
-                    distance = CalculateDistanceInCanada(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE),
-                                    selectedLat, selectedLong);
-                }else{
-                    double distanceCalculated = CalculateDistanceInCanada(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE),
-                                                    selectedLat, selectedLong);
-                    if(distanceCalculated < distance){
-                        dataModel = canadaLocationList.get(i);
-                        distance = distanceCalculated;
-                    }
-                }
-
+        String finalAddress = "";
+        if(Globally.LATITUDE.length() > 4) {
+            if (canadaLocationList.size() == 0) {
+                canadaLocationList = getCanadaLocationList(context);
             }
-        }
 
-        String stateName = GetStateByName(dataModel.getState());
-        DecimalFormat dec = new DecimalFormat("0.0");
-        String finalAddress = dec.format(distance) + " mi from " + dataModel.getGeographicalName() + " " + stateName ;
+            CanadaLocModel dataModel = null;
+            double distance = 0;
+            if (canadaLocationList.size() > 1) {
+                for (int i = 1; i < canadaLocationList.size(); i++) {
+
+                    double selectedLat = Double.parseDouble(canadaLocationList.get(i).getLatitude());
+                    double selectedLong = Double.parseDouble(canadaLocationList.get(i).getLongitude());
+                    if (i == 1) {
+                        dataModel = canadaLocationList.get(i);
+                        distance = CalculateDistanceInCanada(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE),
+                                selectedLat, selectedLong);
+                    } else {
+                        double distanceCalculated = CalculateDistanceInCanada(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE),
+                                selectedLat, selectedLong);
+                        if (distanceCalculated < distance) {
+                            dataModel = canadaLocationList.get(i);
+                            distance = distanceCalculated;
+                        }
+                    }
+
+                }
+            }
+
+            String stateName = GetStateByName(dataModel.getState());
+            String degree = getLocationInDegree(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE));
+            DecimalFormat dec = new DecimalFormat("0.0");
+            //String finalAddress = dec.format(distance) + " mi from " + dataModel.getGeographicalName() + " " + stateName ;
+            finalAddress = dec.format(distance) + " mi " + degree + " " + stateName + " " + dataModel.getGeographicalName();
+        }
 
         return finalAddress;
     }
@@ -337,6 +343,61 @@ public class CsvReader {
     }
 
 
+    String getLocationInDegree(double latitude, double longitude) {
+        try {
+            int latSeconds = (int) Math.round(latitude * 3600);
+            int latDegrees = latSeconds / 3600;
+            int longSeconds = (int) Math.round(longitude * 3600);
+            int longDegrees = longSeconds / 3600;
+            String latDegree = latDegrees >= 0 ? "N" : "S";
+            String lonDegrees = longDegrees >= 0 ? "E" : "W";
+            String deg =  latDegree+ lonDegrees;
+
+            return deg ;
+        } catch (Exception e) {
+            return "" ;
+        }
+    }
+
+
+
+ /*   void getLocDegree(Location location){
+        String strLongitude = location.convert(location.getLongitude(), location.FORMAT_SECONDS);
+        String strLatitude = location.convert(location.getLatitude(), location.FORMAT_SECONDS);
+        Log.d("Location", "---strLongitude: " + strLongitude );
+        Log.d("Location", "---strLatitude: " + strLatitude );
+        getFormattedLocationInDegree(location.getLatitude(), location.getLongitude());
+    }
+
+    String getFormattedLocationInDegree(double latitude, double longitude) {
+        try {
+            int latSeconds = (int) Math.round(latitude * 3600);
+            int latDegrees = latSeconds / 3600;
+            latSeconds = Math.abs(latSeconds % 3600);
+            int latMinutes = latSeconds / 60;
+            latSeconds %= 60;
+
+            int longSeconds = (int) Math.round(longitude * 3600);
+            int longDegrees = longSeconds / 3600;
+            longSeconds = Math.abs(longSeconds % 3600);
+            int longMinutes = longSeconds / 60;
+            longSeconds %= 60;
+            String latDegree = latDegrees >= 0 ? "N" : "S";
+            String lonDegrees = longDegrees >= 0 ? "E" : "W";
+
+            String degFormat = Math.abs(latDegrees) + "°" + latMinutes + "'" + latSeconds
+                    + "\"" + latDegree +" "+ Math.abs(longDegrees) + "°" + longMinutes
+                    + "'" + longSeconds + "\"" + lonDegrees;
+            Log.d("LocationDegreeF", "---degFormat: " + degFormat );
+
+            return degFormat ;
+        } catch (Exception e) {
+            return ""+ String.format("%8.5f", latitude) + "  "
+                    + String.format("%8.5f", longitude) ;
+        }
+    }
+
+*/
     private class CanadaLocModel{
 
         String GeographicalName;

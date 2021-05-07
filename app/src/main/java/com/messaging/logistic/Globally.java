@@ -212,7 +212,7 @@ public class Globally {
 			e.printStackTrace();
 			return false;
 		}
-		return true;	//return false
+		return false;
 	}
 
 

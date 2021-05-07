@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.messaging.logistic.fragment.MalfncnDiagnstcViewPager;
 import com.messaging.logistic.fragment.MalfunctionFragment;
 
 public class MalfunctionActivity extends FragmentActivity {
@@ -19,7 +20,7 @@ public class MalfunctionActivity extends FragmentActivity {
         setContentView(R.layout.frame_layout);
 
 
-        MalfunctionFragment fragment = new MalfunctionFragment();
+        MalfncnDiagnstcViewPager fragment = new MalfncnDiagnstcViewPager(); //MalfunctionFragment
         fragManager = getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();
         fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
