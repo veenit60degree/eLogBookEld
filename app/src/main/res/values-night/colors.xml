@@ -38,7 +38,7 @@
     <color name="bluee_login">#4E4E4E</color>
     <color name="app_color">#333232</color>   <!--000000-->
     <color name="white">#333232</color>
-    <color name="white_hover">#5F6168</color>
+    <color name="white_hover">#a8a8a8</color>   <!--5F6168-->
     <color name="whiteee">#ffffff</color>
     <color name="white_theme">#808080</color>
     <color name="black">#000000</color>
@@ -61,14 +61,14 @@
     <color name="black_download">#333232</color>
     <color name="unselect_button">#4E4E4E</color>
     <color name="blue_text">#ffffff</color>
-    <color name="color_eld_theme">#1A3561</color>          <!--333232-->
+    <color name="color_eld_theme">#67A7D8</color>          <!--333232-->
     <color name="color_eld_theme_one">#1A3561</color>
     <color name="color_eld_hover_theme">#333232</color>     <!--008000-->
     <color name="gray_default">#808080</color>  <!--C9C8C6-->
     <color name="gray_hover">#6F6F6F</color>
     <color name="gray_background">#808080</color>
     <color name="shadow">#30000000</color>
-    <color name="eld_gray_bg">#6F6F6F</color>
+    <color name="eld_gray_bg">#ffffff</color>   <!--6F6F6F-->
     <color name="eld_gray_bg_theme">#30000000</color>
     <color name="color_eld_bg">#4E4E4E</color>  <!--1A3561-->
     <color name="red_eld">#CD2329</color>

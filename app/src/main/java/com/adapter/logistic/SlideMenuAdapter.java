@@ -103,8 +103,8 @@ public class SlideMenuAdapter extends BaseAdapter {
             int currentTab = TabAct.host.getCurrentTab();
             if (currentTab == menuList.get(position).getStatus()) {
                 holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.white_hover));
-                holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.color_eld_theme), android.graphics.PorterDuff.Mode.MULTIPLY);
-                holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
+                holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.color_eld_theme_one), android.graphics.PorterDuff.Mode.MULTIPLY);
+                holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.color_eld_theme_one));
             } else {
                 holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
                 holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.slide_menu_default), android.graphics.PorterDuff.Mode.MULTIPLY);

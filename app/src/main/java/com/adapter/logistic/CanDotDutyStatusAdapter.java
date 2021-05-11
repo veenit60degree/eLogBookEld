@@ -93,7 +93,7 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
         }
 
 
-        holder.dutyStatusDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+        holder.dutyStatusDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String EventDateTime = itemsList.get(position).getDateTimeWithMins();
         try {

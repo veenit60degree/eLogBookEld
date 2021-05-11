@@ -89,7 +89,7 @@ public class CanDotUnAssignedVehAdapter extends BaseAdapter {
 
 
 
-        holder.unidentifiedVehDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+        holder.unidentifiedVehDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         holder.truckNoUnTV.setText( itemsList.get(position).getEquipmentNumber());
         holder.vinUnLay.setText( itemsList.get(position).getVIN());

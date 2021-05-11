@@ -89,7 +89,7 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
 
 
 
-        holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+        holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String EventDateTime = itemsList.get(position).getDateTimeWithMins();
         try {

@@ -399,17 +399,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
             // ---------------- temp data ---------------------
-             ignitionStatus = "ON"; truckRPM = "700"; speed = 0;
+            /* ignitionStatus = "ON"; truckRPM = "700"; speed = 0;
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
               sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
             tempOdo = tempOdo + 500;
-                /*if(sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
+                *//*if(sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
                     sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
-                }*/
+                }*//*
             sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
-
+*/
 
             int OBD_LAST_STATUS = sharedPref.getObdStatus(getApplicationContext());
             if(OBD_LAST_STATUS == constants.WIRED_CONNECTED) {
@@ -753,7 +753,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         int lastObdStatus = sharedPref.getObdStatus(getApplicationContext());
         obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
 
-      /*  if (obdShell.result == 0) {
+        if (obdShell.result == 0) {
             //System.out.println("obd --> cat type --> " + obdShell.successMsg);
             if (obdShell.successMsg.contains("USB_DCP")) {  // Connected State
                   if(lastObdStatus != Constants.WIRED_CONNECTED ){
@@ -779,7 +779,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
 
         }
-*/
+
     }
 
 

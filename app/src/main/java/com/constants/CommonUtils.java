@@ -68,14 +68,17 @@ public class CommonUtils {
 				SingleDriverMenuWidth = 275;
 				DualDriverMenuWidth   = 295;
 			}else{
-				SingleDriverMenuWidth = 310;
-				DualDriverMenuWidth   = 335;
+				SingleDriverMenuWidth = 470;
+				DualDriverMenuWidth   = 540;
 			}
 
 			// this check is for special device resolution (Chinese tablet)
 			if(metrics.widthPixels == 1280 && metrics.heightPixels == 800){
 				SingleDriverMenuWidth = 500;
 				DualDriverMenuWidth   = 580;
+			}else if(metrics.widthPixels > 2200 && metrics.heightPixels >= 1080){
+				SingleDriverMenuWidth = 980;
+				DualDriverMenuWidth   = 1050;
 			}
 
 			if(SharedPref.getDriverType(mContext).equals(DriverConst.SingleDriver)) {

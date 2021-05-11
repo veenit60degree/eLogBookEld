@@ -90,7 +90,7 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
 
 
 
-        holder.logInOutDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+        holder.logInOutDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String EventDateTime = itemsList.get(position).getDateTimeWithMins();
         try {

@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_75"
-        android:background="@color/white"
+        android:background="@color/whiteee"
         android:paddingRight="@dimen/margin_20"
         android:layout_marginBottom="@dimen/margin_short_3"
 

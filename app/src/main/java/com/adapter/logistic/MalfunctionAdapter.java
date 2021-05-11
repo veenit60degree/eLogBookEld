@@ -131,7 +131,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).size() -1 ) {
             malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
         }else{
-            malfunctionChildLay.setBackgroundColor(Color.WHITE);
+            malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
         }
 
         return convertView;
@@ -218,7 +218,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         }
 
         holder.malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.blue_button));
-        holder.malfunctionChildMainLay.setBackgroundColor(_context.getResources().getColor(R.color.white));
+        holder.malfunctionChildMainLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
 
         int sizePadding =  constants.intToPixel(_context, 5);
         int sizeMargin =  constants.intToPixel(_context, 10);
@@ -319,12 +319,12 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
 
     private void setViewTextColorWithStyle(TextView timeMalTxtVw, TextView statusMalTxtVw, TextView vehMilesMalTxtVw,
                                   TextView engHoursMalTxtVw, TextView seqIdMalTxtVw, TextView originMalTxtVw){
-        timeMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white )); //blue_button
-       // statusMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
-        vehMilesMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
-        engHoursMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
-        seqIdMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
-        originMalTxtVw.setTextColor(_context.getResources().getColor(R.color.white));
+        timeMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee )); //blue_button
+       // statusMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
+        vehMilesMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
+        engHoursMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
+        seqIdMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
+        originMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
 
         timeMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
       //  statusMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);

@@ -90,7 +90,7 @@ public class CanDotCycleOpZoneAdapter extends BaseAdapter {
 
 
 
-        holder.addHrsDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+        holder.addHrsDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String EventDateTime = itemsList.get(position).getDateTimeWithMins();
         try {
