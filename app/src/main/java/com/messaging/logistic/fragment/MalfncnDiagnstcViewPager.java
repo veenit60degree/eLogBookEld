@@ -52,7 +52,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
     View rootView;
     CardView cancelCertifyBtn, confirmCertifyBtn;
-    TextView confirmCertifyTV, EldTitleTV;
+    TextView confirmCertifyTV, EldTitleTV, dateActionBarTV;
     TabLayout tabLayout;
     TabLayoutAdapter tabAdapter;
     ViewPager MalDiaViewPager;
@@ -126,6 +126,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         confirmCertifyTV    = (TextView)rootView.findViewById(R.id.confirmCertifyTV);
         EldTitleTV          = (TextView) rootView.findViewById(R.id.EldTitleTV);
         invisibleMalfnBtn   = (TextView)rootView.findViewById(R.id.invisibleMalfnDiaBtn);
+        dateActionBarTV     = (TextView)rootView.findViewById(R.id.dateActionBarTV);
 
         rightMenuBtn = (RelativeLayout) rootView.findViewById(R.id.rightMenuBtn);
         eldMenuLay   = (RelativeLayout) rootView.findViewById(R.id.eldMenuLay);
@@ -140,6 +141,9 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         DriverId = sharedPref.getDriverId( getActivity());
         DeviceId = sharedPref.GetSavedSystemToken(getActivity());
 
+        dateActionBarTV.setVisibility(View.VISIBLE);
+        dateActionBarTV.setBackgroundResource(R.drawable.transparent);
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
         EldTitleTV.setText(getResources().getString(R.string.malfunction_and_dia));
         confirmCertifyTV.setText(getString(R.string.ClearAll));
         setPagerAdapter(0);
@@ -148,6 +152,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         confirmCertifyBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
         invisibleMalfnBtn.setOnClickListener(this);
+        dateActionBarTV.setOnClickListener(this);
 
     }
 
@@ -170,6 +175,13 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         }else{
             FromDateTime = String.valueOf(currentDate.minusDays(7)).substring(0, 10);   // // in US 7+1 days
         }
+
+        if(sharedPref.IsAOBRD(getActivity())){
+            dateActionBarTV.setText(Html.fromHtml("<b><u>AOBRD</u></b>"));
+        }else{
+            dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
+        }
+
 
         if(Globally.isConnected(getContext())) {
             GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
@@ -270,6 +282,11 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             case R.id.invisibleMalfnDiaBtn:
                 GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
                 break;
+
+            case R.id.dateActionBarTV:
+                TabAct.host.setCurrentTab(0);
+                break;
+
 
         }
     }

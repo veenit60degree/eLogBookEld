@@ -132,7 +132,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         rightMenuBtn.setVisibility(View.GONE);
         dateActionBarTV.setVisibility(View.VISIBLE);
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
 
         EldTitleTV.setText(getResources().getString(R.string.unIdentified_records));

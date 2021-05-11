@@ -19,7 +19,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 100  //99
-        versionName "3.5.5.30"  //3.5.4
+        versionName "3.5.5.31"  //3.5.4
         // Enabling multidex support.
         multiDexEnabled true
 
@@ -63,8 +63,7 @@ dependencies {
     implementation project(':SlidingLibrary')
     implementation project(':ink')
     implementation project(':CircleProgressView')
-
-
+    implementation project(path: ':searchablespinner')
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
@@ -103,4 +102,5 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.1'
    // implementation 'com.onesignal:OneSignal:[4.0.0, 4.99.99]'
 
+    implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 }

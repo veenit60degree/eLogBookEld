@@ -163,7 +163,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         dateActionBarTV.setVisibility(View.VISIBLE);
         EldTitleTV.setText(getResources().getString(R.string.NotificationsHistory));
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
         dateActionBarTV.setText(Html.fromHtml("<b><u>" + getString(R.string.DeleteAll) + "</u></b>"));
 
         // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {

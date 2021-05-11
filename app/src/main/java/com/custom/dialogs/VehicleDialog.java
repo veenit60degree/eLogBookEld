@@ -6,6 +6,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -17,9 +19,14 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.androidtrip.plugins.searchablespinner.SearchableSpinner;
+import com.androidtrip.plugins.searchablespinner.interfaces.IStatusListener;
+import com.androidtrip.plugins.searchablespinner.interfaces.OnItemSelectedListener;
+import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.VehicleModel;
+import com.searchable.spinner.SearchArrayListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +38,16 @@ public class VehicleDialog extends Dialog {
         public void ChangeVehicleReady(String Title, int position);
     }
 
+    Constants constants;
     List<VehicleModel> truckList;
     private VehicleListener readyListener;
-    EditText TrailorNoEditText;
-    Button btnLoadingJob, btnCancelLoadingJob;
-    Spinner remarkSpinner;
+    Button btnSaveVehList, btnCancelLoadingJob;
+    SearchableSpinner updateVehSearchableSpinner;
     String Truck, Title = "";
-    TextView TitleTV, SpinnerTitleTV;
+    TextView TitleVehTV, updateVehTitleTV, logoutVehTV;
     int SelectedPosition = 0, SetSpinnerPosition = 0;
+    private SearchArrayListAdapter mSimpleArrayListAdapter;
+
 
     public VehicleDialog(Context context, String truck, List<VehicleModel> remarkList, VehicleListener readyListener) {
         super(context);
@@ -53,23 +62,36 @@ public class VehicleDialog extends Dialog {
         super.onCreate(savedInstanceState);
         getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        setContentView(R.layout.popup_trailor_fields);
+        setContentView(R.layout.popup_vehicle_list);
          setCancelable(false);
 
-        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        constants = new Constants();
+
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(getWindow().getAttributes());
+        if(Globally.isTablet(getContext())) {
+            lp.width = constants.intToPixel(getContext(), 650);
+        }else{
+            lp.width = constants.intToPixel(getContext(), 550);
+        }
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.gravity = Gravity.CENTER;
+        getWindow().setAttributes(lp);
 
 
-        TrailorNoEditText = (EditText) findViewById(R.id.TrailorNoEditText);
-        TrailorNoEditText.setVisibility(View.GONE);
 
-        btnLoadingJob = (Button) findViewById(R.id.btnLoadingJob);
-        btnCancelLoadingJob = (Button) findViewById(R.id.btnCancelLoadingJob);
+        btnSaveVehList = (Button) findViewById(R.id.btnSaveVehList);
+        btnCancelLoadingJob = (Button) findViewById(R.id.btnCancelChngeVehJob);
 
-        TitleTV = (TextView) findViewById(R.id.TitleTV);
-        SpinnerTitleTV = (TextView) findViewById(R.id.SpinnerTitleTV);
-        remarkSpinner = (Spinner) findViewById(R.id.remarkSpinner);
+        TitleVehTV = (TextView) findViewById(R.id.TitleVehTV);
+        updateVehTitleTV = (TextView) findViewById(R.id.updateVehTitleTV);
+        logoutVehTV = (TextView) findViewById(R.id.logoutVehTV);
+        updateVehSearchableSpinner = (SearchableSpinner) findViewById(R.id.searchableSpinner);
 
+        btnCancelLoadingJob.setVisibility(View.VISIBLE);
+        logoutVehTV.setVisibility(View.GONE);
         Title = "Vehicles";
 
         if (truckList.size() > 0) {
@@ -83,50 +105,62 @@ public class VehicleDialog extends Dialog {
 
             // Creating adapter for spinner
             if(EquipmentList.size() > 0) {
-                ArrayAdapter dataAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, EquipmentList);
-                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                remarkSpinner.setAdapter(dataAdapter);
-                remarkSpinner.setSelection(SetSpinnerPosition);
+
+                mSimpleArrayListAdapter = new SearchArrayListAdapter(getContext(), EquipmentList);
+                updateVehSearchableSpinner.setAdapter(mSimpleArrayListAdapter);
+                updateVehSearchableSpinner.setOnItemSelectedListener(mOnItemSelectedListener);
+                updateVehSearchableSpinner.setSelectedItem(SetSpinnerPosition + 1);
+
+                updateVehSearchableSpinner.setStatusListener(new IStatusListener() {
+                    @Override
+                    public void spinnerIsOpening() {
+                        //mSearchableSpinner1.hideEdit();
+                        //mSearchableSpinner2.hideEdit();
+
+                    }
+
+                    @Override
+                    public void spinnerIsClosing() {
+
+                    }
+                });
+
             }else {
-                SpinnerTitleTV.setVisibility(View.INVISIBLE);
-                remarkSpinner.setVisibility(View.INVISIBLE);
+                updateVehTitleTV.setVisibility(View.INVISIBLE);
+                updateVehSearchableSpinner.setVisibility(View.INVISIBLE);
                 if(Truck.trim().length() == 0) {
                     Title = "We can't see any truck attached with you. Please contact with your support team.";
                 }
 
                 btnCancelLoadingJob.setVisibility(View.INVISIBLE);
-                btnLoadingJob.setText("Ok");
+                btnSaveVehList.setText("Ok");
             }
         }
 
 
-        remarkSpinner.setVisibility(View.VISIBLE);
-        SpinnerTitleTV.setVisibility(View.VISIBLE);
+        updateVehSearchableSpinner.setVisibility(View.VISIBLE);
+        updateVehTitleTV.setVisibility(View.VISIBLE);
 
 
-        btnLoadingJob.setText("Save");
-        TitleTV.setText(Title);
-        SpinnerTitleTV.setText("Select truck from list to change.");
+        TitleVehTV.setText(Title);
+        updateVehTitleTV.setText("Select truck from list to change.");
 
 
 
         // Spinner click listener
-        remarkSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+       /* remarkSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
                // String item = parent.getItemAtPosition(position).toString();
                 SelectedPosition = position;
-
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
-        });
+        });*/
 
-        btnLoadingJob.setOnClickListener(new VehicleFieldListener());
+        btnSaveVehList.setOnClickListener(new VehicleFieldListener());
         btnCancelLoadingJob.setOnClickListener(new CancelBtnListener());
 
         HideKeyboard();
@@ -142,13 +176,29 @@ public class VehicleDialog extends Dialog {
     }
 
 
+    private OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(View view, int position, long id) {
+            Log.d("onItemSelected", "onItemSelected: " + position);
+            SelectedPosition = position;
+           // saveBtnJob.setBackgroundResource(R.drawable.green_selector);
+        }
+
+        @Override
+        public void onNothingSelected() {
+            Log.d("onNothingSelected", "onNothingSelected" );
+           // saveBtnJob.setBackgroundResource(R.drawable.gray_selector);
+        }
+    };
+
+
     private class VehicleFieldListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if(SelectedPosition > 0) {
                 readyListener.ChangeVehicleReady(Title, SelectedPosition);
             }else{
-                Globally.EldScreenToast(btnLoadingJob, "Please select truck to change.", getContext().getResources().getColor(R.color.colorVoilation));
+                Globally.EldScreenToast(btnSaveVehList, "Please select truck to change.", getContext().getResources().getColor(R.color.colorVoilation));
             }
         }
     }
@@ -157,7 +207,6 @@ public class VehicleDialog extends Dialog {
     private class CancelBtnListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-
             dismiss();
         }
     }

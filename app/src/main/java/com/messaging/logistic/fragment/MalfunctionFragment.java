@@ -112,7 +112,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         rightMenuBtn.setVisibility(View.GONE);
         dateActionBarTV.setVisibility(View.VISIBLE);
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
         //"<html>  <u>Logout</u> </html>"
         EldTitleTV.setText(getResources().getString(R.string.malfunction));

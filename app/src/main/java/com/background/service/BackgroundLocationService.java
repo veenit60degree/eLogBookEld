@@ -261,7 +261,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-    int tempOdo = 20015;
+    int tempOdo = 50015;
     int tempSpeed = 0;
     int ignitionCount = 0;
 
@@ -367,7 +367,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         @Override
         public void handleMessage(Message msg)
         {
-            isWiredObdRespond = true;
             final Bundle bundle = msg.getData();
 
             String currentHighPrecisionOdometer = "0", timeStamp = "--", vin = "--";
@@ -400,20 +399,21 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
             // ---------------- temp data ---------------------
-           /*   ignitionStatus = "ON"; truckRPM = "700"; speed = 32;
+             ignitionStatus = "ON"; truckRPM = "700"; speed = 0;
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
               currentHighPrecisionOdometer = obdOdometer;
               sharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
-              //  if(sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
-               //     sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
-               // }
+            tempOdo = tempOdo + 500;
+                /*if(sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
+                    sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+                }*/
             sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
-*/
+
 
             int OBD_LAST_STATUS = sharedPref.getObdStatus(getApplicationContext());
             if(OBD_LAST_STATUS == constants.WIRED_CONNECTED) {
-
+                isWiredObdRespond = true;
                 if (sharedPref.getVINNumber(getApplicationContext()).length() > 5) {
 
                     // ELD rule calling for Wired OBD
@@ -538,12 +538,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 }
 
             }else{
-
+                isWiredObdRespond = true;
                 // check in wire disconnect case but device is also not connected with ALS/OBD wifi ssid
                 if(OBD_LAST_STATUS == constants.WIRED_DISCONNECTED &&
                         wifiConfig.IsAlsNetworkConnected(getApplicationContext()) == false) {
-
-                    callWiredConnWithTime(4000);
 
                     try {
                         DateTime disconnectTime = global.getDateTimeObj(sharedPref.getObdLastStatusTime(getApplicationContext()), false);
@@ -567,10 +565,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             sharedPref.getVINNumber(getApplicationContext()), disconnectTime, currentTime,
                                             getApplicationContext().getResources().getString(R.string.DisConnected), ConstantsKeys.DiagnosticEngSync, dbHelper, constants, getApplicationContext());
 
-
                                     global.ShowLocalNotification(getApplicationContext(),
                                             getApplicationContext().getResources().getString(R.string.dia_event),
                                             getApplicationContext().getResources().getString(R.string.eng_sync_dia_occured_desc), 2090);
+                                    Globally.PlaySound(getApplicationContext());
 
                                     constants.saveAppUsageLog("WiredCallback Wire Disconnected. EngSyncDiaOccurred- " + timeInSec,  false, false, obdUtil);
 
@@ -595,7 +593,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                             global.ShowLocalNotification(getApplicationContext(),
                                                     getApplicationContext().getResources().getString(R.string.malfunction_event),
-                                                    getApplicationContext().getResources().getString(R.string.eng_sync_mal_occured), 2090);
+                                                    getApplicationContext().getResources().getString(R.string.eng_sync_mal_occured), 2091);
+
+                                            Globally.PlaySound(getApplicationContext());
 
                                             constants.saveAppUsageLog("WiredCallback Wire Disconnected. EngSyncMalOccurred- " + totalEngSyncMissingMin,  false, false, obdUtil);
 
@@ -615,10 +615,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-
+                    callWiredConnWithTime(4000);
+                }else {
+                    if (OBD_LAST_STATUS != constants.WIFI_CONNECTED) {
+                        callWiredConnWithTime(4000);
+                    }
                 }
-
-
             }
 
 
@@ -751,7 +753,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         int lastObdStatus = sharedPref.getObdStatus(getApplicationContext());
         obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
 
-        if (obdShell.result == 0) {
+      /*  if (obdShell.result == 0) {
             //System.out.println("obd --> cat type --> " + obdShell.successMsg);
             if (obdShell.successMsg.contains("USB_DCP")) {  // Connected State
                   if(lastObdStatus != Constants.WIRED_CONNECTED ){
@@ -777,7 +779,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
 
         }
-
+*/
     }
 
 
@@ -819,7 +821,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             getApplicationContext().getResources().getString(R.string.pos_mal_occured),
                             getApplicationContext().getResources().getString(R.string.pos_mal_occured_desc), 2091);
 
-
+                    Globally.PlaySound(getApplicationContext());
                 }
             }
 
@@ -3418,7 +3420,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     case SaveDriverLog:
 
-                        constants.ClearNotifications(getApplicationContext());
+                    //    constants.ClearNotifications(getApplicationContext());
                         // ------------ Clear Driver Log Record File locally ------------
                         logRecordMethod.UpdateLogRecordHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
 

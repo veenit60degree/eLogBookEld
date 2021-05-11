@@ -115,7 +115,7 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
         dateActionBarTV.setVisibility(View.VISIBLE);
         notiHistoryRecyclerView.setVisibility(View.GONE);
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
 
         EldTitleTV.setText(getResources().getString(R.string.ShippingDetails));

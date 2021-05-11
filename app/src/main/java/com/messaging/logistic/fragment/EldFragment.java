@@ -936,6 +936,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
 
+
         if ( !isSavedTimeZoneCorrect || !IsValidTime ) {
             showTimeZoneAlert(isConnected, isSavedTimeZoneCorrect, IsValidTime);
         } else {
@@ -950,8 +951,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
 
+
         //---------------- temp delete last item code ---------------
-      /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+/*
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               try {
                     driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                     driverLogArray.remove(driverLogArray.length()-1);
@@ -962,6 +965,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     driverLogArray = new JSONArray();
                 }
             }
+
 */
 
 
@@ -3403,12 +3407,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     void VehicleBtnClick(String Title, final int position) {
 
-        TruckListPosition = position;
+        TruckListPosition = position - 1;
 
         if (sharedPref.getDriverType(getContext()).equals(DriverConst.TeamDriver)) {
-            SaveVehicleNumber(position, MainDriverId, CoDriverId, DriverCompanyId, LoginTruckChange, true);
+            SaveVehicleNumber(TruckListPosition, MainDriverId, CoDriverId, DriverCompanyId, LoginTruckChange, true);
         } else {
-            SaveVehicleNumber(position, DRIVER_ID, "0", DriverCompanyId, LoginTruckChange, true);
+            SaveVehicleNumber(TruckListPosition, DRIVER_ID, "0", DriverCompanyId, LoginTruckChange, true);
         }
 
     }
@@ -5397,7 +5401,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             switch (flag) {
 
                 case MainDriverLog:
-                    constants.ClearNotifications(getActivity() );
+                  //  constants.ClearNotifications(getActivity() );
                     Log.d("Response ", "---Response Save: " + response);
                     IsSaveOperationInProgress = false;
                     progressD.dismiss();
@@ -5493,7 +5497,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 case CoDriverLog:
                     IsSaveOperationInProgress = false;
 
-                    constants.ClearNotifications(getActivity() );
+             //      constants.ClearNotifications(getActivity() );
                     try {
                         EnableJobViews();
                         obj = new JSONObject(response);
@@ -5741,12 +5745,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             JSONArray vehicleJsonArray = new JSONArray(obj.getString("Data"));
 
                             // Add Spinner title
-                            VehicleModel vehicleModel = new VehicleModel("", "Select", "", "", "", "", "");
-                            TabAct.vehicleList.add(vehicleModel);
+                          //  VehicleModel vehicleModel = new VehicleModel("", "Select", "", "", "", "", "");
+                           // TabAct.vehicleList.add(vehicleModel);
 
                             for (int i = 0; i < vehicleJsonArray.length(); i++) {
                                 JSONObject resultJson = (JSONObject) vehicleJsonArray.get(i);
-                                vehicleModel = new VehicleModel(
+                                VehicleModel vehicleModel = new VehicleModel(
                                         resultJson.getString("VehicleId"),
                                         resultJson.getString("EquipmentNumber"),
                                         resultJson.getString("PlateNumber"),

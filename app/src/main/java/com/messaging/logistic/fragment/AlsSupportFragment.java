@@ -82,7 +82,7 @@ public class AlsSupportFragment extends Fragment {
         dateActionBarTV.setVisibility(View.VISIBLE);
         rightMenuBtn.setVisibility(View.GONE);
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
 
         actionBarMenuLay.setOnClickListener(new View.OnClickListener() {

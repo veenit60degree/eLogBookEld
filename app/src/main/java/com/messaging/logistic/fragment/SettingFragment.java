@@ -274,7 +274,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         settingSpinImgVw.setImageResource(R.drawable.sync_settings);
         dateActionBarTV.setVisibility(View.VISIBLE);
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
         //  haulExceptionLay.setVisibility(View.GONE);
         //  haulExcptnTxtVw.setVisibility(View.GONE);

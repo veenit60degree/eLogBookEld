@@ -58,7 +58,7 @@ public class TermsConditionsActivity extends FragmentActivity {
 
             dateActionBarTV.setVisibility(View.VISIBLE);
             dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-            dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+            dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
         }
 

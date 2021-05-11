@@ -601,7 +601,7 @@ public class Constants {
     }
 
 
-    public void ClearNotifications(Context context) {
+    public static void ClearNotifications(Context context) {
         if (context != null) {
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             nm.cancelAll();
@@ -3098,7 +3098,7 @@ public class Constants {
                             DateTime currentTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
                             int minDiff = Minutes.minutesBetween(malfunctionOccurTime, currentTime).getMinutes();  // Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
 
-                            if (minDiff >= 60) {
+                            if (minDiff >= 30) {   //temp value 30 for testing. After 60 min it will become e type on loc mal
                                 SharedPref.setLocMalfunctionType("e", context);
                             } else {
                                 if (odometerDistance >= 8) {

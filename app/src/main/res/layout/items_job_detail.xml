@@ -2,42 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
-    
 
-    
-    <RelativeLayout 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-     >
-    
-        
-        
-        <TextView 
-            android:id="@+id/jobTypeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="cxfdschdbckdsbcu"
-            android:paddingTop="5dp"
-            android:paddingBottom="3dp"
-            android:textSize="17sp"
-            android:textColor="@color/black"
-            android:layout_alignParentLeft="true"
-            />
-        
-    
-              <TextView 
-            android:id="@+id/jobNameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="cxfdschdbckdsbcu"
-            android:textSize="13sp"
-            android:textColor="@color/black"
-            android:layout_below="@+id/jobTypeTextView"
-            android:layout_alignParentLeft="true"
-            />
-        
-              
-        </RelativeLayout>
-    
+
+
+    <TextView
+        android:id="@+id/jobTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="cxfdschdbckdsbcu"
+        android:paddingTop="@dimen/margin_short_5"
+        android:paddingBottom="@dimen/margin_short_5"
+        android:paddingLeft="@dimen/margin_22"
+        android:textSize="@dimen/text_size_16"
+        android:textColor="@color/gray_unidenfied"
+        android:layout_alignParentLeft="true"
+        />
+
+
 </RelativeLayout>

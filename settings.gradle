@@ -1,3 +1,4 @@
+include ':searchablespinner'
 include ':SlidingLibrary'
 include ':CircleProgressView'
 include ':ink'

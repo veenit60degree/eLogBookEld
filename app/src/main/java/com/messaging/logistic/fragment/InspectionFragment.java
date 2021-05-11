@@ -244,7 +244,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         dateActionBarTV.setText(Html.fromHtml("<b><u>" + getResources().getString(R.string.view_inspections) + "</u></b>"));
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
         locInspectionTV.setThreshold(3);
         SelectedDatee = Globally.GetCurrentDeviceDate();

@@ -752,7 +752,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
 
     private void ClearCount(){
-        constants.ClearNotifications(context);
+      //  constants.ClearNotifications(context);
         BackgroundLocationService.IsAutoChange = false;
     }
 

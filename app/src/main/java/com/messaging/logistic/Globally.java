@@ -2082,6 +2082,8 @@ public class Globally {
 			sharedPref.setLastCalledWiredCallBack(0, c);
 
 			ClearSqliteDB(c);
+
+			Constants.ClearNotifications(c);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

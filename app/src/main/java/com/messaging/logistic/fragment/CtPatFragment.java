@@ -200,7 +200,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
         actionBarRightBtn.setText(Html.fromHtml("<b><u>" + getResources().getString(R.string.view_ct_pat) + "</u></b>"));
         actionBarRightBtn.setBackgroundResource(R.drawable.transparent);
-        actionBarRightBtn.setTextColor(getResources().getColor(R.color.colorPrimary));
+        actionBarRightBtn.setTextColor(getResources().getColor(R.color.whiteee));
 
         try{
 

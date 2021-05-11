@@ -142,7 +142,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         dateActionBarTV.setVisibility(View.VISIBLE);
 
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
-        dateActionBarTV.setTextColor(getResources().getColor(R.color.colorPrimary));
+        dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
 
         InputFilter[] FilterArray = new InputFilter[1];

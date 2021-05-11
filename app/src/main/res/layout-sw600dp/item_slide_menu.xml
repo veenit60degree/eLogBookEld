@@ -33,7 +33,7 @@
             android:layout_marginLeft="@dimen/margin_18"
             android:text="@string/noti_history"
             android:textColor="@color/gray_unidenfied"
-            android:textSize="@dimen/text_size_19" />
+            android:textSize="@dimen/text_size_18" />
 
 
 

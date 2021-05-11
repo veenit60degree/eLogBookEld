@@ -33,6 +33,7 @@
     <string name="cancel_edit_record">Reject records !!</string>
     <string name="cancel_edit_record_desc">Do you want to reject edited records ?</string>
     <string name="edit_log_request">Edit Log Request</string>
+    <string name="select_truck_from_list">Select the truck from list</string>
 
     <string name="preTripIns">Pre-Trip Inspection</string>
     <string name="postTripIns">Post-Trip Inspection</string>
@@ -486,6 +487,7 @@
     <string name="temp_time">0 hr 0 m</string>
     <string name="temp_duration">0 hr 0 m Left</string>
     <string name="SelectDate">Select Date</string>
+    <string name="Select">Select</string>
     <string name="welcome_to_als_realtime">Welcome to ALS Realtime</string>
     <string name="MainDriver">Main Driver</string>
 
@@ -608,6 +610,7 @@
     <string name="reason">Reason</string>
     <string name="SelectRemark">Select Reason</string>
     <string name="current_version">Current Version : </string>
+    <string name="select_truck_to_changee">Select truck from list to change</string>
 
     <string name="signature"              >Signature</string>
     <string name="Recap"                  >Recap</string>
