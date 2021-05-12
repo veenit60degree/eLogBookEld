@@ -90,7 +90,9 @@ public class OtherOptionsDialog extends Dialog {
 
         boolean isAllowMalfunction = false;
         boolean isAllowUnIdentified = false;
+
         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+
             if(SharedPref.IsAllowMalfunction(getContext()) || SharedPref.IsAllowDiagnostic(getContext())){
                 isAllowMalfunction = true;
             }

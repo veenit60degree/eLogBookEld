@@ -114,6 +114,8 @@
                         android:hint="@string/search"
                         android:textSize="18sp"
                         android:maxLines="1"
+                        android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:paddingStart="10dp"
                         android:paddingEnd="8dp" />
 

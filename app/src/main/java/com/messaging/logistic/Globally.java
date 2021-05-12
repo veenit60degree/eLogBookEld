@@ -1625,8 +1625,8 @@ public class Globally {
 		return hours;
 	}
 
-	public static int MinFromHourOnly(int min){
-		int minutes = min % 60;
+	public static int MinFromHourOnly(int hour){
+		int minutes = hour % 60;
 		return minutes;
 	}
 

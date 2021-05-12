@@ -230,7 +230,7 @@ public class MalfunctionDiagnosticMethod {
     // update occurred event time log array for 1 day only
     public void updateOccEventTimeLog(DateTime currentTime, String DriverId, String VIN,
                                       DateTime disConnectStartTime, DateTime disConnectEndTime, String status,
-                                      String EventType, DBHelper dbHelper, Constants constants,  Context context){
+                                      String EventType, DBHelper dbHelper,  Context context){
         try {
 
             boolean isMalEvent = false;
@@ -287,6 +287,33 @@ public class MalfunctionDiagnosticMethod {
             e.printStackTrace();
         }
     }
+
+
+    public int getTotalPowerComplianceMin(String DriverId, DBHelper dbHelper){
+        int totalMin = 0;
+
+        try{
+            JSONArray eventArray = getSavedMalDiaTimeLog(Integer.valueOf(DriverId), dbHelper);
+
+            for(int i = 0 ; i < eventArray.length() ; i++){
+                JSONObject eventObj = (JSONObject) eventArray.get(i);
+                if(eventObj.getString(ConstantsKeys.Status).equals("PwrComplianceEvent")){
+                    if(i == eventArray.length()-1){
+                        DateTime disconStartTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.DisConnectStartTime), false);
+                        DateTime disconEndTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+                        int timeInMin = Minutes.minutesBetween(disconStartTime, disconEndTime).getMinutes();
+                        totalMin = totalMin + timeInMin;
+                    }else{
+                        totalMin = totalMin + eventObj.getInt(ConstantsKeys.TotalMin);
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totalMin;
+    }
+
 
 
     public int getTotalEngSyncMissingMin(String DriverId, DBHelper dbHelper){

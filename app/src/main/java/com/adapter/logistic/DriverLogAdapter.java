@@ -410,8 +410,8 @@ public class DriverLogAdapter extends BaseAdapter {
         return hours;
     }
 
-    int MinFromHourOnly(int min){
-        int minutes = min % 60;
+    int MinFromHourOnly(int hour){
+        int minutes = hour % 60;
         return minutes;
     }
 

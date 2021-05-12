@@ -146,7 +146,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
         EldTitleTV.setText(getResources().getString(R.string.malfunction_and_dia));
         confirmCertifyTV.setText(getString(R.string.ClearAll));
-        setPagerAdapter(0);
+        setPagerAdapter(0, false);
 
         cancelCertifyBtn.setVisibility(View.GONE);
         confirmCertifyBtn.setOnClickListener(this);
@@ -186,7 +186,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         if(Globally.isConnected(getContext())) {
             GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
         }else{
-            setPagerAdapter(0);
+            setPagerAdapter(0, false);
             Globally.EldScreenToast(confirmCertifyTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
         }
 
@@ -194,30 +194,39 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     }
 
     // Add Fragments to Tabs ViewPager for each Tabs
-    private void setPagerAdapter(int position){
+    private void setPagerAdapter(int position, final boolean isUpdateFromApi){
 
-        tabAdapter = new TabLayoutAdapter(getChildFragmentManager(), getActivity());
-        tabAdapter.addFragment(malfunctionEventFragment, getString(R.string.malfunction_events), tabIcons[0]);
-        tabAdapter.addFragment(diagnosticEventFragment, getString(R.string.dia_events), tabIcons[1]);
-        MalDiaViewPager.setAdapter(tabAdapter);
-        tabLayout.setupWithViewPager(MalDiaViewPager);
+        try {
+            tabAdapter = new TabLayoutAdapter(getChildFragmentManager(), getActivity());
+            tabAdapter.addFragment(malfunctionEventFragment, getString(R.string.malfunction_events), tabIcons[0]);
+            tabAdapter.addFragment(diagnosticEventFragment, getString(R.string.dia_events), tabIcons[1]);
+            MalDiaViewPager.setAdapter(tabAdapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        MalDiaViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-            @Override
-            public void onPageSelected(int position) {
-                highLightCurrentTab(position);
-                refreshAdapterOnPageChange(position);
-            }
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
+        try {
+            tabLayout.setupWithViewPager(MalDiaViewPager);
+            MalDiaViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                }
+                @Override
+                public void onPageSelected(int position) {
+                    highLightCurrentTab(position);
+                    refreshAdapterOnPageChange(position, isUpdateFromApi);
+                }
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            });
 
-        highLightCurrentTab(position);
-        refreshAdapterOnPageChange(position);
+            highLightCurrentTab(position);
+            refreshAdapterOnPageChange(position, isUpdateFromApi);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -236,22 +245,80 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     }
 
 
-    private void refreshAdapterOnPageChange(int position){
+    private void refreshAdapterOnPageChange(int position, boolean isUpdateFromApi){
         if(position == 0){
             // notify malfunction adapter
             if(noRecordMalTV != null) {
                 notifyMalfunctionAdapter(noRecordMalTV, malfunctionExpandList,
-                        malfunctionHeaderList, malfunctionChildHashMap);
+                        malfunctionHeaderList, malfunctionChildHashMap, isUpdateFromApi, true);
             }
         }else{
             // notify diagnostic adapter
             if(noRecordDiaTV != null) {
                 notifyMalfunctionAdapter(noRecordDiaTV, diagnosticExpandList,
-                        diagnosticHeaderList, diagnosticChildHashMap);
+                        diagnosticHeaderList, diagnosticChildHashMap, isUpdateFromApi, false);
+            }
+        }
+
+        updateMalDiagnostic(malfunctionHeaderList, true, isUpdateFromApi);
+        updateMalDiagnostic(diagnosticHeaderList, false, isUpdateFromApi);
+    }
+
+
+    void updateMalDiagnostic(List<MalfunctionHeaderModel> headerList, boolean isMalfunctionUpdate, boolean isUpdateFromApi){
+        boolean isMalfunction = false;
+        boolean isDiagnostic = false;
+
+        if(headerList.size() > 0){
+            if(isMalfunctionUpdate){
+                if(headerList.size() > 0){
+                    isMalfunction = true;
+                }
+            }else{
+                if(headerList.size() > 0){
+                    isDiagnostic = true;
+                }
+            }
+
+        }else{
+            if(isUpdateFromApi) {
+                if (isMalfunctionUpdate) {
+                    sharedPref.saveEngSyncMalfunctionStatus(false, getActivity());
+                } else {
+                    sharedPref.saveEngSyncDiagnstcStatus(false, getActivity());
+                }
+            }
+        }
+
+
+        if(isUpdateFromApi) {
+
+            if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                if(isMalfunctionUpdate){
+                    isDiagnostic = sharedPref.isDiagnosticOccur(getActivity());
+                }else{
+                    isMalfunction = sharedPref.isMalfunctionOccur(getActivity());
+                }
+                sharedPref.setEldOccurences(sharedPref.isUnidentifiedOccur(getActivity()),
+                        isMalfunction,
+                        isDiagnostic,
+                        sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+            } else {
+                if(isMalfunctionUpdate){
+                    isDiagnostic = sharedPref.isDiagnosticOccurCo(getActivity());
+                }else{
+                    isMalfunction = sharedPref.isMalfunctionOccurCo(getActivity());
+                }
+                sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccur(getActivity()),
+                        isMalfunction,
+                        isDiagnostic,
+                        sharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
             }
         }
 
     }
+
+
 
     @Override
     public void onClick(View v) {
@@ -540,8 +607,6 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                     }
 
-                    setPagerAdapter(MalDiaViewPager.getCurrentItem());
-
                 } else {
                     malfunctionHeaderList = new ArrayList<>();
                     malfunctionChildList = new ArrayList<>();
@@ -551,6 +616,9 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                     checkLocMalfunction();
                 }
+
+                setPagerAdapter(MalDiaViewPager.getCurrentItem(), true);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -638,24 +706,13 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
     private void notifyMalfunctionAdapter(TextView noDataEldTV, ExpandableListView listView,
                                           List<MalfunctionHeaderModel> headerList,
-                                          HashMap<String, List<MalfunctionModel>> childHashMap ){
+                                          HashMap<String, List<MalfunctionModel>> childHashMap,
+                                          boolean isUpdateFromApi, boolean isMalfunctionUpdate){
 
         if(childHashMap.size() > 0){
             noDataEldTV.setVisibility(View.GONE);
         }else{
             noDataEldTV.setVisibility(View.VISIBLE);
-            if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-                sharedPref.setEldOccurences(sharedPref.isUnidentifiedOccur(getActivity()),
-                        false,
-                        false,
-                        sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
-            }else{
-                sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccur(getActivity()),
-                        false,
-                        false,
-                        sharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
-            }
-
         }
 
         try {

@@ -361,7 +361,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             City = city;
 
             if (spinnerItemPos < StateList.size() && JobType != Constants.EditRemarks) {
-                State = StateList.get(spinnerItemPos).getState();
+                State = StateList.get(spinnerItemPos).getStateCode();
                 Country = StateList.get(spinnerItemPos).getCountry();
             }
 
@@ -371,7 +371,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
                 if (JobType == Constants.EditLocation){
 
-                    logModel.setLocation(City + ", " + State + ", " + Country);
+                    logModel.setLocation(City + "; " + State + "; " + Country);
                     LogList.set(position, logModel);
                     notifyDataSetChanged();
 
@@ -518,7 +518,9 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 if(selectedDate.equals(compareStartDate)){
                     if(RecordType.equals(Constants.Location)) {
 
-                        obj.put(ConstantsKeys.StartLocation, logObj.getString(ConstantsKeys.RecordValue));
+                        String location = logObj.getString(ConstantsKeys.RecordValue).replaceAll(";", ",");
+
+                        obj.put(ConstantsKeys.StartLocation, location);
 
                         // Check diagnostic event
                         checkDiagnosticEventsForClear(compareStartDate);

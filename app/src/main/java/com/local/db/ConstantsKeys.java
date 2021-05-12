@@ -255,6 +255,9 @@ public class ConstantsKeys {
     public static String EngSyncDiagnstc                = "EngSyncDiagnstc";
     public static String EngSyncDiagnstcCo              = "EngSyncDiagnstcCo";
     public static String EngSyncMalfunction             = "EngSyncMalfunction";
+    public static String PowerDiagnstc                  = "PowerDiagnstc";
+    public static String PowerMalfunction               = "PowerMalfunction";
+    public static String PowerMalfunctionTimeOcc        = "PowerMalfunctionTimeOcc";
 
 
     public static String IsUnidentifiedCo               = "IsUnidentifiedCo";
@@ -395,6 +398,7 @@ public class ConstantsKeys {
     public static String ViolationTest                  = "ViolationTest";
     public static String ELDCycleFile                   = "ELDCycleFile";
     public static String ALS_OBD_LOG                    = "als_obd_log";
+    public static String SERVER_OBD_LOG                 = "obd_server_log";
     public static String APP_USAGE_LOG                  = "app_usage_log";
     public static String EXECUTION_TIME_LOG             = "execution_time_Log";
     public static String WIRED_OBD_SERVER_LOG           = "obd_server_log";

@@ -1433,7 +1433,27 @@ public class SharedPref {
     }
 
 
-    // Set Truck Ignition Status -------------------
+    public static void SetTruckIgnitionStatus( String ignitionStatus, String ignitionSource, String lastIgnitionTime,
+                                               String EngineHourMalDia, String OdometerMalDia, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.TruckIgnitionStatusMalDia, ignitionStatus);
+        editor.putString(Constants.IgnitionSourceMalDia, ignitionSource);
+        editor.putString(Constants.IgnitionTimeMalDia, lastIgnitionTime);
+        editor.putString(Constants.EngineHourMalDia, EngineHourMalDia);
+        editor.putString(Constants.OdometerMalDia, OdometerMalDia);
+
+        editor.commit();
+    }
+
+
+    // Get Truck ignition Status -------------------
+    public static String GetTruckIgnitionStatus( String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "");
+    }
+
+    // Set Truck Ignition Status for continue status -------------------
     public static void SetTruckIgnitionStatusForContinue( String ignitionStatus, String ignitionSource, String lastIgnitionTime, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -1733,6 +1753,36 @@ public class SharedPref {
         }
     }
 
+
+
+    // Save Power Malfunction status  -------------------
+    public static void savePowerMalfunctionStatus( boolean IsEngSyncDia, String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.PowerMalfunction, IsEngSyncDia);
+        editor.putString(ConstantsKeys.PowerMalfunctionTimeOcc, time);
+        editor.commit();
+    }
+
+    // Get power Malfunction status -------------------
+    public static boolean isPowerMalfunction( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.PowerMalfunction, false);
+        }else {
+            return false;
+        }
+    }
+
+    // Get power Malfunction occurred time  -------------------
+    public static String getPowerMalOccTime( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.PowerMalfunctionTimeOcc, "");
+        }else {
+            return "";
+        }
+    }
 
 
 

@@ -786,12 +786,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 try {
                     if (getActivity() != null) {
-                        if(sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity()) ||
-                                constants.isAllowLocMalfunctionEvent(getActivity()) ) {
+                        boolean isMal = sharedPref.isMalfunctionOccur(getActivity());
+                        boolean isDia = sharedPref.isDiagnosticOccur(getActivity());
+                        boolean isLocMal = constants.isAllowLocMalfunctionEvent(getActivity());
+
+                        if(isMal || isDia || isLocMal || sharedPref.isEngSyncMalfunction(getActivity()) ||
+                                sharedPref.isEngSyncDiagnstc(getActivity()) ) {
                             malfunctionLay.startAnimation(editLogAnimation);
-                            if(sharedPref.isMalfunctionOccur(getActivity()) && sharedPref.isDiagnosticOccur(getActivity()) == false) {
+                            if(isMal && isDia == false) {
                                 malfunctionTV.setText(getString(R.string.malfunction_occur));
-                            }else if(sharedPref.isMalfunctionOccur(getActivity()) == false && sharedPref.isDiagnosticOccur(getActivity())){
+                            }else if(isMal == false && isDia){
                                 malfunctionTV.setText(getString(R.string.diagnostic_occur));
                             }else{
                                 malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
@@ -1560,11 +1564,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             if (getActivity() != null) {
                 boolean isPendingNotifications = false;
                 if(DriverType == Constants.MAIN_DRIVER_TYPE){
+                    boolean isMal = sharedPref.isMalfunctionOccur(getActivity());
+                    boolean isDia = sharedPref.isDiagnosticOccur(getActivity());
                     isPendingNotifications = isPendingNotifications(DRIVER_JOB_STATUS) ||
                             sharedPref.isSuggestedEditOccur(getActivity()) ||
                             sharedPref.isUnidentifiedOccur(getActivity()) ||
-                            sharedPref.isMalfunctionOccur(getActivity()) ||
-                            sharedPref.isDiagnosticOccur(getActivity()) ||
+                            isMal ||
+                            isDia ||
                              constants.isAllowLocMalfunctionEvent(getActivity()) ||
                     constants.CheckGpsStatus(getActivity()) == false ||
                             (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
@@ -1588,8 +1594,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     otherOptionBadgeView.setVisibility(View.GONE);
                 }
 
-                if (sharedPref.isMalfunctionOccur(getActivity()) || sharedPref.isDiagnosticOccur(getActivity()) ||
-                         constants.isAllowLocMalfunctionEvent(getActivity()) ) {
+                boolean isMal = sharedPref.isMalfunctionOccur(getActivity());
+                boolean isDia = sharedPref.isDiagnosticOccur(getActivity());
+                boolean isLocMal = constants.isAllowLocMalfunctionEvent(getActivity());
+
+                if (isMal || isDia || isLocMal ) {
                     malfunctionLay.setVisibility(View.VISIBLE);
                     malfunctionLay.startAnimation(editLogAnimation);
                 } else {
@@ -6087,9 +6096,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     sharedPref.SetExemptDriverStatusMain(isExemptDriver, getActivity());
                                     sharedPref.SetCycleRequestStatusMain(IsCycleRequest, getActivity());
 
+                                    boolean isMal = sharedPref.isMalfunctionOccur(getActivity());
+                                    boolean isDia = sharedPref.isDiagnosticOccur(getActivity());
                                     sharedPref.setEldOccurences(IsUnidentified,
-                                            sharedPref.isMalfunctionOccur(getActivity()) ,
-                                            sharedPref.isDiagnosticOccur(getActivity()),
+                                            isMal, isDia,
                                             sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
 
 
@@ -6380,6 +6390,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     break;
 
                 case UpdateObdVeh:
+
 
                     String Message = error.toString();
                     if(Message.contains("timeout")){

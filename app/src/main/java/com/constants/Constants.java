@@ -35,6 +35,7 @@ import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.local.db.OdometerHelperMethod;
 import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
@@ -158,13 +159,17 @@ public class Constants {
     public static String ApiData = "api_data";
     public static String OfflineData = "offline_data";
     public static String DataMalfunction = "Data_Malfunction";
+    public static String DiagnosticEvent = "Diagnostic";
+    public static String MalfunctionEvent = "Malfunction";
 
     public static String PositionComplianceMalfunction  = "L";
     public static String MissingDataElementDiagnostic   = "3";
     public static String ConstLocationMissing           = "LM";
+    public static String PowerComplianceMalfunction     = "P";
+    public static String PowerDataDiagnostic            = "1";
 
-    public static String ConstEngineSyncDiaEvent           = "2";
-    public static String ConstEngineSyncMalEvent           = "E";
+    public static String ConstEngineSyncDiaEvent        = "2";
+    public static String ConstEngineSyncMalEvent        = "E";
 
 
     public static final int MAIN_DRIVER_TYPE    = 0;
@@ -198,6 +203,13 @@ public class Constants {
     public static String TruckIgnitionStatus = "TruckIgnitionStatus";
     public static String IgnitionSource = "IgnitionSource";
     public static String LastIgnitionTime = "LastIgnitionTime";
+
+
+    public static String TruckIgnitionStatusMalDia = "TruckIgnitionStatusMalDia";
+    public static String IgnitionSourceMalDia = "IgnitionSourceMalDia";
+    public static String IgnitionTimeMalDia = "LastIgnitionTimeMalDia";
+    public static String EngineHourMalDia = "EngineHourMalDia";
+    public static String OdometerMalDia = "OdometerMalDia";
 
     public static String CONNECTION_TYPE = "connection_type";
     public static String LAST_SAVED_TIME = "last_saved_time";
@@ -2572,6 +2584,21 @@ public class Constants {
     }
 
 
+    public boolean isValidFloat(String text){
+        boolean isValid = false;
+        try {
+            float num = Float.parseFloat(text);
+            Log.i("",num+" is a number");
+            isValid = true;
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            isValid = false;
+        }catch (Exception e){
+            e.printStackTrace();
+            isValid = false;
+        }
+        return isValid;
+    }
 
     public JSONObject getMalfunctionDiagnosticArray(String DriverId, String reason,
                                                     List<MalfunctionHeaderModel> MalHeaderList,
@@ -3072,6 +3099,109 @@ public class Constants {
             return (SharedPref.IsAllowMalfunctionCo(context) || SharedPref.IsAllowDiagnosticCo(context)) && SharedPref.isLocMalfunctionOccur(context) ;
         }
     }
+
+
+
+    // ------------- Check Power Diagnostic/Malfunction status ---------------
+    public String isPowerDiaMalOccurred(String currentHighPrecisionOdometer, String ignitionStatus,
+                                         String obdEngineHours, String DriverId, Globally global,
+                                         MalfunctionDiagnosticMethod malfunctionDiagnosticMethod,
+                                         Context context, DBHelper dbHelper){
+
+        String eventStatus = "";
+
+        try {
+            String lastIgnitionStatus = SharedPref.GetTruckIgnitionStatus(Constants.TruckIgnitionStatusMalDia, context);
+            if (lastIgnitionStatus.equals("OFF")) {
+                boolean isCurrentEngHourGreater = false;
+                boolean isOdometerDiffValid = false;
+                String lastSavedTime = SharedPref.GetTruckIgnitionStatus(Constants.IgnitionTimeMalDia, context);
+                if (lastSavedTime.length() > 10) {
+                    String lastOdometer = SharedPref.GetTruckIgnitionStatus(Constants.OdometerMalDia, context);
+                    String lastEngineHour = SharedPref.GetTruckIgnitionStatus(Constants.EngineHourMalDia, context);
+
+                    int minDiff = minDiff(lastSavedTime, global, context);
+                    if (minDiff > 0) {
+                        if (isValidFloat(lastEngineHour) && isValidFloat(obdEngineHours)) {
+
+                            int lastEngineHourInt = global.MinFromHourOnly(Math.round(Float.parseFloat(lastEngineHour)));
+                            int currEngineHourInt = global.MinFromHourOnly(Math.round(Float.parseFloat(obdEngineHours)));
+                            if (currEngineHourInt > lastEngineHourInt) {
+                                isCurrentEngHourGreater = true;
+                            }
+                        }
+
+                        if (isValidFloat(currentHighPrecisionOdometer) && isValidFloat(lastOdometer)) {
+                            float odoDiff = Float.parseFloat(meterToKm(currentHighPrecisionOdometer)) - Float.parseFloat(meterToKm(lastOdometer));
+                            if (odoDiff >= 2) {
+                                isOdometerDiffValid = true;
+                            }
+                        }
+
+                        if (isCurrentEngHourGreater || isOdometerDiffValid) {
+
+                            int earlierEventTime = malfunctionDiagnosticMethod.getTotalPowerComplianceMin(DriverId, dbHelper);
+                            int totalMinDia = minDiff + earlierEventTime;
+                            DateTime currentTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
+                            DateTime lastSavedDateTime = global.getDateTimeObj(lastSavedTime, false);
+
+                            malfunctionDiagnosticMethod.updateOccEventTimeLog(currentTime, DriverId,
+                                    SharedPref.getVINNumber(context), lastSavedDateTime, currentTime,
+                                    context.getResources().getString(R.string.PwrComplianceEvent), ConstantsKeys.PowerDiagnstc,
+                                    dbHelper, context);
+
+
+                            if (totalMinDia >= 10) {  // malfunction event time is 30 min
+
+                                if (SharedPref.isPowerMalfunction(context)) {
+                                    int dayDiff = getDayDiff(SharedPref.getPowerMalOccTime(context), global.GetCurrentDateTime());
+                                    if (dayDiff > 0) {
+                                        eventStatus = MalfunctionEvent;
+                                        Globally.PlaySound(context);
+                                        global.ShowLocalNotification(context,
+                                                context.getResources().getString(R.string.malfunction_events),
+                                                context.getResources().getString(R.string.power_comp_mal_occured), 2093);
+
+                                        // Save power mal status with updated time
+                                        SharedPref.savePowerMalfunctionStatus(true, global.GetCurrentDateTime(), context);
+
+                                    }
+                                } else {
+                                    eventStatus = MalfunctionEvent;
+                                    Globally.PlaySound(context);
+                                    global.ShowLocalNotification(context,
+                                            context.getResources().getString(R.string.malfunction_events),
+                                            context.getResources().getString(R.string.power_comp_mal_occured), 2093);
+
+                                    // Save power mal status with updated time
+                                    SharedPref.savePowerMalfunctionStatus(true, global.GetCurrentDateTime(), context);
+
+                                }
+
+
+                            } else {
+                                eventStatus = DiagnosticEvent;
+                                Globally.PlaySound(context);
+                                global.ShowLocalNotification(context,
+                                        context.getResources().getString(R.string.dia_event),
+                                        context.getResources().getString(R.string.power_dia_occured), 2092);
+
+                            }
+
+                            // save updated values with truck ignition status
+                            SharedPref.SetTruckIgnitionStatus(ignitionStatus, WiredOBD, global.getCurrentDate(), obdEngineHours, currentHighPrecisionOdometer, context);
+                        }
+                    }
+
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return eventStatus;
+    }
+
 
 
     // ------------- Malfunction status ---------------

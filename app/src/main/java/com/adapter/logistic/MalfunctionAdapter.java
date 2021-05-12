@@ -390,21 +390,14 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                     if(message.equals("Record Clear Successfully")) {
                         Globally.EldScreenToast( MalfncnDiagnstcViewPager.invisibleMalfnBtn,  _context.getResources().getString(R.string.RecordClearedSuccessfully),
                                 _context.getResources().getColor(R.color.color_eld_theme));
-
-                     //   _listDataHeader.remove(selectedPos);
-                     //   _listDataChild.remove(selectedPos);
-
-                     //   notifyDataSetChanged();
-
-                       // MalfunctionFragment.invisibleMalfnBtn.performClick();
                         MalfncnDiagnstcViewPager.invisibleMalfnBtn.performClick();
                     }else{
-                        Globally.EldScreenToast(MalfunctionFragment.invisibleMalfnBtn, message,
+                        Globally.EldScreenToast(MalfncnDiagnstcViewPager.invisibleMalfnBtn, message,
                                 _context.getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     // {"Status":false,"Message":"Failed..","Data":null}
-                    Globally.EldScreenToast(MalfunctionFragment.invisibleMalfnBtn, message,
+                    Globally.EldScreenToast(MalfncnDiagnstcViewPager.invisibleMalfnBtn, message,
                             _context.getResources().getColor(R.color.colorVoilation));
 
                 }

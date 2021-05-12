@@ -441,6 +441,18 @@ public class Utils
         return fileSize;
     }
 
+    public void deleteServerObdLog() {
+        try{
+            File wiredObdLog = Globally.GetWiredLogFile(context, ConstantsKeys.SERVER_OBD_LOG, "txt");
+            if (wiredObdLog != null && wiredObdLog.isFile()) {
+                wiredObdLog.delete();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
 
     public void deleteWiredObdLog() {
         try{

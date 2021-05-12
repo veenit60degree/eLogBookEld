@@ -603,6 +603,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				}
 				startService(serviceIntent);
 
+				// delete previous obd server logs
+				obdUtil.deleteServerObdLog();
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
