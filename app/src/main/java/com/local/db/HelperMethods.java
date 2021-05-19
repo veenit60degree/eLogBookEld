@@ -2960,7 +2960,7 @@ public class HelperMethods {
                         logModel.getMalfunctionDefinition(),
                         logModel.IsNorthCanada()
                 );
-
+                obj.put(ConstantsKeys.isNewRecord, logModel.IsNewRecord());
                 array.put(obj);
             }catch (Exception e){
                 e.printStackTrace();
@@ -3096,7 +3096,7 @@ public class HelperMethods {
             driverLogModel.setLocationType(LocationType);
             driverLogModel.setMalfunctionDefinition(MalfunctionDefinition);
             driverLogModel.setNorthCanadaStatus(IsNorthCanada);
-
+            driverLogModel.setNewRecordStatus(IsNewLogAdded);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -3386,7 +3386,7 @@ public class HelperMethods {
                     CurrentDeviceDate,
                     String.valueOf(sharedPref.IsAOBRD(context)),
                     CurrentCycleId,
-                    "", ""
+                    "", "", "false"
 
             );
 

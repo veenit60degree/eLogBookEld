@@ -49,6 +49,7 @@ public class EldDataModelNew {
     String CurrentCycleId;
     String isDeferral;
     String UnassignedVehicleMilesId;
+    String isNewRecord;
 
 
     public EldDataModelNew(String projectId, String driverId, String driverStatusId, String isYard,
@@ -59,7 +60,8 @@ public class EldDataModelNew {
                            String oBDSpeed , String gPSSpeed, String plateNumber, String haulHourException , String isShortHaulUpdate,
                            String decesionSource, String isAdverseExc , String adverseExcRemarks, String editedReason, String locationType,
                            String isNorthCanada, String DrivingStartTime, String IsAobrd,
-                           String CurrentCycleId, String isDeferral, String UnassignedVehicleMilesId
+                           String CurrentCycleId, String isDeferral, String UnassignedVehicleMilesId,
+                           String isNewRecord
     ) {
 
         ProjectId           = projectId;
@@ -99,7 +101,7 @@ public class EldDataModelNew {
         this.CurrentCycleId = CurrentCycleId;
         this.isDeferral = isDeferral;
         this.UnassignedVehicleMilesId = UnassignedVehicleMilesId;
-
+        this.isNewRecord            = isNewRecord;
 
     }
 
@@ -261,4 +263,9 @@ public class EldDataModelNew {
     public String getUnassignedVehicleMilesId() {
         return UnassignedVehicleMilesId;
     }
+
+    public String getNewRecordStatus() {
+        return isNewRecord;
+    }
+
 }

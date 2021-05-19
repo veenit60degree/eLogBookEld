@@ -324,7 +324,7 @@ public class Globally {
 	public static void SnackBarViolation(View v, final String message, final Context context) {
 
 		try {
-			final Snackbar mSnackBar = Snackbar.make(v, message, Snackbar.LENGTH_LONG);
+			final Snackbar mSnackBar = Snackbar.make(v, message.replaceAll(";", ".  "), Snackbar.LENGTH_LONG);
 			View view = mSnackBar.getView();
 			FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
 			params.gravity = Gravity.TOP;
@@ -336,7 +336,8 @@ public class Globally {
 			mSnackBar.setAction("READ", new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					ReadViolationDialog(message, context);
+					String violationMsg = message.replaceAll(";", "<br />");
+					ReadViolationDialog(violationMsg, context);
 						mSnackBar.dismiss();
 
 				}

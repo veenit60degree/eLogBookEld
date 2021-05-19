@@ -309,7 +309,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 }else{
                     isMalfunction = sharedPref.isMalfunctionOccurCo(getActivity());
                 }
-                sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccur(getActivity()),
+                sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccurCo(getActivity()),
                         isMalfunction,
                         isDiagnostic,
                         sharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());

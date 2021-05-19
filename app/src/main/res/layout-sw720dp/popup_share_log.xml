@@ -586,6 +586,7 @@
                         android:hint="@string/inspctr_Comments"
                         android:textColor="@color/black"
                         android:minLines="2"
+                        android:maxLength="60"
                         android:gravity="left|top"
                         android:padding="@dimen/margin_14"
                         android:textSize="@dimen/text_size_22"

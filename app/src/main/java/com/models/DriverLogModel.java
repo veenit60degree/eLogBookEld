@@ -46,6 +46,8 @@ public class DriverLogModel {
     private String LocationType;
     private String MalfunctionDefinition;
     private boolean IsNorthCanada;
+    private boolean isNewRecord;
+
 
     public DriverLogModel() {
     }
@@ -88,6 +90,7 @@ public class DriverLogModel {
         this.LocationType = logModel.getLocationType();
         this.MalfunctionDefinition = logModel.getMalfunctionDefinition();
         this.IsNorthCanada = logModel.IsNorthCanada();
+        this.isNewRecord    = logModel.IsNewRecord();
     }
 
     public void setDriverLogId(long driverLogId) {
@@ -407,7 +410,13 @@ public class DriverLogModel {
         IsNorthCanada = isNorthCanada;
     }
 
+    public boolean IsNewRecord() {
+        return isNewRecord;
+    }
 
+    public void setNewRecordStatus(boolean IsNewRecord) {
+        isNewRecord = IsNewRecord;
+    }
 
 
 

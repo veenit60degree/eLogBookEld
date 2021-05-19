@@ -120,7 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/gray_background"
+            android:background="@color/gray_background_one"
             android:layout_marginBottom="@dimen/margin_10"
             android:layout_marginTop="@dimen/margin_short_5"
             >
@@ -265,7 +265,7 @@
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/margin_short_6"
                 android:paddingRight="@dimen/margin_short_6"
-                android:background="@color/gray_background"
+                android:background="@color/gray_background_one"
 
                 >
 
@@ -475,7 +475,7 @@
             android:id="@+id/truckTrailerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray_background"
+            android:background="@color/gray_background_one"
             android:layout_marginBottom="@dimen/margin_10"
             >
 
@@ -565,7 +565,7 @@
             android:id="@+id/trailerGridLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray_background"
+            android:background="@color/gray_background_one"
 
             >
 

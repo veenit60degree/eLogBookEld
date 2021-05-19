@@ -59,7 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/view_height_48"
                     android:text="@string/main_driver_title"
-                    android:textColor="@color/bluee_login"
+                    android:textColor="@color/bluee_login_one"
                     android:textSize="@dimen/text_size_20"
                     android:background="@drawable/login_driver_btn_selector"
                     android:textAllCaps="false"

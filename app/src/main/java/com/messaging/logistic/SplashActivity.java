@@ -482,24 +482,19 @@ public class SplashActivity extends Activity implements
 
 
     void MoveToNextScreen(String screen){
+
+        constants.checkBleConnection();
+
         /*========= Call main Service to start obd server service =============*/
         Constants.isEldHome = false;
         Intent intent;
-      //  Intent serviceIntent;
 
         if(screen.equals("home")) {
             intent = new Intent(SplashActivity.this, TabAct.class);
-         //  serviceIntent = new Intent(SplashActivity.this, BackgroundLocationService.class);
         }else {
             intent = new Intent(SplashActivity.this, LoginActivity.class);
-          //  serviceIntent = new Intent(SplashActivity.this, AfterLogoutService.class);
         }
 
-        // start ELD services
-    /*    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        }  startService(serviceIntent);
-*/
         // call home/login activity
         intent.putExtra("user_type", "splash");
         startActivity(intent);

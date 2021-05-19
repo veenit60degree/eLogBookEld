@@ -177,6 +177,14 @@
 
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray_background_one"
+                android:layout_marginRight="@dimen/margin_15"
+                android:layout_marginLeft="@dimen/margin_15"
+
+                >
 
             <GridView
                 android:id="@+id/ctPatTruckGridVw"
@@ -188,7 +196,7 @@
 
                 />
 
-
+            </LinearLayout>
 
 
 
@@ -224,6 +232,14 @@
 
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray_background_one"
+                android:layout_marginRight="@dimen/margin_15"
+                android:layout_marginLeft="@dimen/margin_15"
+
+                >
 
             <GridView
                 android:id="@+id/ctPatTrailerGridVw"
@@ -235,6 +251,7 @@
 
                 />
 
+            </LinearLayout>
 
             <View
                 android:id="@+id/trailerCtPatView"

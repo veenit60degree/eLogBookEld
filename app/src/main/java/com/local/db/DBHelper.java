@@ -42,6 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_MALFUNCTION_DIANOSTIC= "tbl_mal_diagnostic";
     public static final String TABLE_MALFUNCTION_DIANOSTIC1= "tbl_mal_diagnostic_one";
     public static final String TABLE_MAL_DIA_OCCURRED_TIME = "tbl_mal_dia_occurred_time";
+    public static final String TABLE_POWER_COMP_MAL_DIA    = "tbl_power_comp_mal_dia";
 
 
     public static final String DRIVER_ID_KEY              = "driver_id";
@@ -70,6 +71,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String MALFUNCTION_DIANOSTIC_LIST = "oDriver_mal_diagnstc_list";
     public static final String MALFUNCTION_DIANOSTIC_LIST1 = "oDriver_mal_diagnstc_list_one";
     public static final String MAL_DIA_OCCURRED_TIME_LIST  = "oDriver_mal_diagnstc_occurred_list";
+    public static final String POWER_COMP_MAL_DIA_LIST     = "oDriver_power_comp_mal_dia_list";
 
 
     public DBHelper(Context context) {
@@ -171,6 +173,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 DRIVER_ID_KEY + " INTEGER, " +  MAL_DIA_OCCURRED_TIME_LIST + " TEXT )"
         );
 
+        db.execSQL( "CREATE TABLE " + TABLE_POWER_COMP_MAL_DIA + "(" +
+                PROJECT_ID_KEY + " INTEGER, " +  POWER_COMP_MAL_DIA_LIST + " TEXT )"
+        );
 
 
     }
@@ -200,6 +205,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALFUNCTION_DIANOSTIC);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALFUNCTION_DIANOSTIC1);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAL_DIA_OCCURRED_TIME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_POWER_COMP_MAL_DIA);
 
         onCreate(db);
     }
@@ -416,11 +422,20 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    /* ---------------------- Create malfunction & diagnostic table event occurred time if not exist.*/
+    /* -- Create malfunction & diagnostic table event occurred time if not exist.*/
     public void CreateMalDiaOccTimeTable(){
         SQLiteDatabase db = this.getReadableDatabase();
         db.execSQL( "CREATE TABLE " + TABLE_MAL_DIA_OCCURRED_TIME + "(" +
                 DRIVER_ID_KEY + " INTEGER, " +  MAL_DIA_OCCURRED_TIME_LIST + " TEXT )"
+        );
+
+    }
+
+    /*  Create power compliance malfunction & diagnostic table event occurred time if not exist.*/
+    public void CreatePowerComplianceTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL( "CREATE TABLE " + TABLE_POWER_COMP_MAL_DIA + "(" +
+                PROJECT_ID_KEY + " INTEGER, " +  POWER_COMP_MAL_DIA_LIST + " TEXT )"
         );
 
     }
@@ -759,6 +774,23 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ---------------------- Insert Power Compliance events  Log -------------------- */
+    public boolean InsertPowerComplianceLog(int ProjectId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PROJECT_ID_KEY, ProjectId);
+        contentValues.put(POWER_COMP_MAL_DIA_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_POWER_COMP_MAL_DIA, null, contentValues);
+        return true;
+    }
+
+
+
+
+
 
     //=======================================================================================================================
 
@@ -1081,6 +1113,21 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ---------------------- Update Power Compliance Log -------------------- */
+    public boolean UpdatePowerComplianceLog(int ProjectId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PROJECT_ID_KEY, ProjectId);
+        contentValues.put(POWER_COMP_MAL_DIA_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_POWER_COMP_MAL_DIA, contentValues, PROJECT_ID_KEY + " = ? ", new String[] { Integer.toString(ProjectId) } );
+        return true;
+    }
+
+
+
 
 
     //=======================================================================================================================
@@ -1283,6 +1330,14 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+
+    /* ---------------------- Get Power Compliance logs-------------------- */
+    public Cursor getPowerComplianceLog(int ProjectId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_POWER_COMP_MAL_DIA + " WHERE " +
+                PROJECT_ID_KEY + "=?", new String[]{Integer.toString(ProjectId)});
+        return res;
+    }
 
 
 
@@ -1529,11 +1584,22 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    /* ---------------------- Delete Malfunction & Diagnostic time Log Table -------------------- */
+    /* ------ Delete Malfunction & Diagnostic time Log Table ------ */
     public void DeleteMalDiaOccTimeTable() {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             db.execSQL("DELETE FROM "+ TABLE_MAL_DIA_OCCURRED_TIME);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    /* ----- Delete Power Compliance Log Table ------ */
+    public void DeletePowerComplianceTable() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_POWER_COMP_MAL_DIA);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1634,6 +1700,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if(!isTableExists(TABLE_MAL_DIA_OCCURRED_TIME)) {
             CreateMalDiaOccTimeTable();
+        }
+
+        if(!isTableExists(TABLE_POWER_COMP_MAL_DIA)) {
+            CreatePowerComplianceTable();
         }
 
 

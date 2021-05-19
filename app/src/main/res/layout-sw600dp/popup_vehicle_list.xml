@@ -93,6 +93,7 @@
             app:BordersSize="@dimen/margin_short_1"
             app:RevealEmptyText="@string/Select"
             app:ShowBorders="true"
+            app:RevealViewBackgroundColor="@color/white"
             android:background="@drawable/edtittext_border"
             app:SpinnerExpandHeight="@dimen/view_height_250"
 

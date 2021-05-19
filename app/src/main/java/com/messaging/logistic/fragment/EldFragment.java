@@ -795,9 +795,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             malfunctionLay.startAnimation(editLogAnimation);
                             if(isMal && isDia == false) {
                                 malfunctionTV.setText(getString(R.string.malfunction_occur));
+                                malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
                             }else if(isMal == false && isDia){
                                 malfunctionTV.setText(getString(R.string.diagnostic_occur));
+                                malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
                             }else{
+                                malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
                                 malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
                             }
                         }else {
@@ -1125,7 +1128,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             excpnEnabledTxtVw.setVisibility(View.GONE);
         }
 
-        if(isUnIdentifiedOccur || isHaulExcptn || isAdverseExcptn){
+        boolean isMalfunction = SharedPref.isMalfunctionOccur(getActivity()) || SharedPref.isDiagnosticOccur(getActivity())||
+                SharedPref.isLocMalfunctionOccur(getActivity()) || SharedPref.isEngSyncMalfunction(getActivity()) ||
+                SharedPref.isEngSyncDiagnstc(getActivity());
+        if(isUnIdentifiedOccur || isHaulExcptn || isAdverseExcptn || isMalfunction){
             eldMenuErrorImgVw.setVisibility(View.VISIBLE);
         }else{
             eldMenuErrorImgVw.setVisibility(View.GONE);
@@ -1655,6 +1661,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             dateTv.setText( month_name + " " + SelectedDate.substring(3, 5 )  );   //+ " " + SelectedDate.substring(6, SelectedDate.length())
 
             DeviceTimeZone = TimeZone.getDefault().getDisplayName();
+            IsNorthCanada  =  sharedPref.IsNorthCanada(getActivity());
 
             try {
                 if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
@@ -1663,7 +1670,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     SavedUsaCycle = DriverConst.GetDriverSettings(DriverConst.USACycleName, getActivity());
                     DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
                     Global.TRUCK_NUMBER = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
-                    IsNorthCanada  =  sharedPref.IsNorthCanadaMain(getActivity());
 
                     DRIVER_ID = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
                     sharedPref.setDriverId(DRIVER_ID, getActivity());
@@ -1679,7 +1685,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     SavedUsaCycle = DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleName, getActivity());
                     DriverCompanyId = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, getActivity());
                     Global.TRUCK_NUMBER = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
-                    IsNorthCanada  =  sharedPref.IsNorthCanadaCo(getActivity());
 
                     DRIVER_ID = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
                     sharedPref.setDriverId(DRIVER_ID, getActivity());
@@ -1759,7 +1764,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
 
             remainingTimeTopTV.setText(Html.fromHtml("Cycle time left <b>" + Global.FinalValue(LeftWeekOnDutyHoursInt) + "</b>" ));
-            currentCycleTxtView.setText(CurrentCycle);
+            if (CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) && sharedPref.IsNorthCanada(getActivity())) {
+                currentCycleTxtView.setText(CurrentCycle + " (N)");
+            }else{
+                currentCycleTxtView.setText(CurrentCycle);
+            }
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -3594,7 +3605,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         CurrentDeviceDate,
                         String.valueOf(IsAOBRD),
                         CurrentCycleId,
-                        "", ""
+                        "", "", "false"
 
                 );
 
@@ -4037,8 +4048,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                         if (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) {
                                             Country = "USA";
                                             // Make Operating Zone default value for south canada in US
-                                            sharedPref.SetNorthCanadaStatusMain(false, getActivity());
-                                            sharedPref.SetNorthCanadaStatusMain(false, getActivity());
+                                            sharedPref.SetNorthCanadaStatus(false, getActivity());
                                         } else {
                                             Country = "CANADA";
                                         }
@@ -4124,7 +4134,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         }
                     } else {
                         ReasonEditText.requestFocus();
-                        Global.EldScreenToast(TrailorNoEditText, "Enter reason to save the sleeper status.", getResources().getColor(R.color.colorSleeper));
+                        Global.EldScreenToast(TrailorNoEditText, "Enter reason to save the status.", getResources().getColor(R.color.colorSleeper));
                     }
 
                 } else if (type.equals(Constants.Personal)) {
@@ -4768,13 +4778,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 setExceptionView();
 
-           /*     if(RulesObj.getViolationReason().contains(ConstantsEnum.CANADA_MINIMUM_OFFDUTY_HOURS_VIOLATION)){
-                    TotalOffDutyHoursInt =  (int) RemainingTimeObj.getOffDutyUsedMinutes();
-                    TotalSleeperBerthHoursInt =  (int) RemainingTimeObj.getSleeperUsedMinutes();
-
-                }
-*/
-
             } catch (Exception e) {
                 LeftWeekOnDutyHoursInt = 0;
                 e.printStackTrace();
@@ -4831,7 +4834,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    void SetTextOnView(String msg) {
+    void SetTextOnView(String ViolatioMsg) {
         String TotalSleeper     = Global.FinalValue(TotalSleeperBerthHoursInt);
         String TotalOffDuty     = Global.FinalValue(TotalOffDutyHoursInt);
         String TotalOnDuty      = Global.FinalValue(TotalOnDutyHoursInt);
@@ -4854,10 +4857,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             jobTimeTxtVw.setText(TotalDriving);
             jobTimeRemngTxtVw.setText(LeftDriving);
 
-            if (isViolation && msg.length() > 0) {
-                if (!ViolationsReason.equals(msg) || sharedPref.IsReadViolation(getActivity()) == false) {
+            if (isViolation && ViolatioMsg.length() > 0) {
+                if (!ViolationsReason.equals(ViolatioMsg) || sharedPref.IsReadViolation(getActivity()) == false) {
                     sharedPref.SetIsReadViolation(false, getActivity());
-                    Global.SnackBarViolation(StatusMainView, msg, getActivity());
+                    Global.SnackBarViolation(StatusMainView, ViolatioMsg, getActivity());
                 }
             }
 
@@ -4865,10 +4868,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             jobTimeTxtVw.setText(TotalOnDuty);
             jobTimeRemngTxtVw.setText(LeftOnDuty);
 
-            if (isViolation && msg.length() > 0) {
-                if (!ViolationsReason.equals(msg) || sharedPref.IsReadViolation(getActivity()) == false) {
+            if (isViolation && ViolatioMsg.length() > 0) {
+                if (!ViolationsReason.equals(ViolatioMsg) || sharedPref.IsReadViolation(getActivity()) == false) {
                     sharedPref.SetIsReadViolation(false, getActivity());
-                    Global.SnackBarViolation(StatusMainView, msg, getActivity());
+                    Global.SnackBarViolation(StatusMainView, ViolatioMsg, getActivity());
                 }
             }
 
@@ -4878,7 +4881,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             jobTimeTxtVw.setText(TotalOffDuty);
         }
         remainingTimeTopTV.setText(Html.fromHtml("Cycle time left <b>" + LeftCycleTime + "</b>"));
-        currentCycleTxtView.setText(CurrentCycle);
+        if (CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) && sharedPref.IsNorthCanada(getActivity())) {
+            currentCycleTxtView.setText(CurrentCycle + " (N)");
+        }else{
+            currentCycleTxtView.setText(CurrentCycle);
+        }
     }
 
 
@@ -5478,7 +5485,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                      }
 
                                      try {
-                                         if (Message.equals("Device Logout")) { //&& DriverJsonArray.length() <= 1
+                                         if (Message.equals("Device Logout")) {
                                              if (DriverJsonArray.length() > 0) {
                                                  SyncUserData();
                                              } else {
@@ -5720,13 +5727,23 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         try {
                             JSONArray remarkArray = new JSONArray(obj.getString("Data"));
                             Global.onDutyRemarks = new ArrayList<String>();
+                            onDutyRemarkList    = new ArrayList<>();
 
                             for (int i = 0; i < remarkArray.length(); i++) {
                                 JSONObject resultJson = (JSONObject) remarkArray.get(i);
-                                Global.onDutyRemarks.add(resultJson.getString("OnDutyRemarks"));
-                                onDutyRemarkList.add(resultJson.getString("OnDutyRemarks"));
+                                String remarks = resultJson.getString("OnDutyRemarks");
+                                Global.onDutyRemarks.add(remarks);
+                                onDutyRemarkList.add(remarks);
                             }
 
+                            if(onDutyRemarkList.size() > 1){
+                                if(onDutyRemarkList.get(0).equals("Border Crossing") && onDutyRemarkList.get(1).equals("Brake Check")){
+                                    onDutyRemarkList.set(0, "Brake Check");
+                                    onDutyRemarkList.set(1, "Border Crossing");
+                                    Global.onDutyRemarks.set(0, "Brake Check");
+                                    Global.onDutyRemarks.set(1, "Border Crossing");
+                                }
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -6088,11 +6105,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     e.printStackTrace();
                                 }
                                 sharedPref.SetELDNotification(IsELDNotification, getActivity());
+                                sharedPref.SetNorthCanadaStatus(IsNorthCanada, getActivity());
+                                sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getActivity());
+
 
                                 if(DRIVER_ID.equals(MainDriverId)) {    // Update permissions for main driver
                                     sharedPref.SetCertifcnUnIdenfdSettings(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, context);
                                     sharedPref.SetDiagnosticAndMalfunctionSettingsMain(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, context);
-                                    sharedPref.SetNorthCanadaStatusMain(IsNorthCanada, getActivity());
                                     sharedPref.SetExemptDriverStatusMain(isExemptDriver, getActivity());
                                     sharedPref.SetCycleRequestStatusMain(IsCycleRequest, getActivity());
 
@@ -6106,7 +6125,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 }else{                                  // Update permissions for Co driver
                                     sharedPref.SetCertifcnUnIdenfdSettingsCo(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, context);
                                     sharedPref.SetDiagnosticAndMalfunctionSettingsCo(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, context);
-                                    sharedPref.SetNorthCanadaStatusCo(IsNorthCanada, getActivity());
                                     sharedPref.SetExemptDriverStatusCo(isExemptDriver, getActivity());
                                     sharedPref.SetCycleRequestStatusCo(IsCycleRequest, getActivity());
 

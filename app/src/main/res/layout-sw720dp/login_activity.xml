@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/mainLoginLayout"
-    android:background="@color/white_theme"
+    android:background="@color/whiteee"
 
     >
     
@@ -30,7 +30,7 @@
             android:id="@+id/loginScrollChildLay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite"
+            android:background="@color/whiteee"
 
             >
 

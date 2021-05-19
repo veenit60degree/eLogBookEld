@@ -64,38 +64,6 @@ public class MalfunctionDiagnosticMethod {
 
 
 
-
-    public JSONObject GetJsonFromList(String DriverId, String DeviceId, String VIN, String UnitNo, String CompanyId,
-                                      String EngineHours, String StartOdometer, String EndOdometer, String EventDateTime,
-                                      String DiagnosticType, String MalfunctionDefinition )  {
-
-        JSONObject malfnDiagnstcObj = new JSONObject();
-
-        try {
-            malfnDiagnstcObj.put(ConstantsKeys.DriverId, DriverId);
-            malfnDiagnstcObj.put(ConstantsKeys.DeviceNumber, DeviceId);
-
-            malfnDiagnstcObj.put(ConstantsKeys.VIN, VIN);
-            malfnDiagnstcObj.put(ConstantsKeys.UnitNo, UnitNo);
-            malfnDiagnstcObj.put(ConstantsKeys.CompanyId, CompanyId);
-
-            malfnDiagnstcObj.put(ConstantsKeys.EngineHours, EngineHours);
-            malfnDiagnstcObj.put(ConstantsKeys.StartOdometer, StartOdometer);
-            malfnDiagnstcObj.put(ConstantsKeys.EndOdometer, EndOdometer );
-            malfnDiagnstcObj.put(ConstantsKeys.EventDateTime, EventDateTime);
-            malfnDiagnstcObj.put(ConstantsKeys.DiagnosticType, DiagnosticType );
-            malfnDiagnstcObj.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return malfnDiagnstcObj;
-    }
-
-
-
-
     // Same data in bottom methods. but difference is we are not clearing records in this table after posted to server.
     /*-------------------- GET MALFUNCTION & DIAGNOSTIC LOG SAVED Array -------------------- */
     public JSONArray getSavedMalDiagstcArrayEvents(int DriverId, DBHelper dbHelper){
@@ -137,6 +105,39 @@ public class MalfunctionDiagnosticMethod {
             rs.close();
         }
     }
+
+
+
+
+
+    public JSONObject GetJsonFromList(String DriverId, String DeviceId, String VIN, String UnitNo, String CompanyId,
+                                      String EngineHours, String StartOdometer, String EndOdometer, String EventDateTime,
+                                      String DiagnosticType, String MalfunctionDefinition )  {
+
+        JSONObject malfnDiagnstcObj = new JSONObject();
+
+        try {
+            malfnDiagnstcObj.put(ConstantsKeys.DriverId, DriverId);
+            malfnDiagnstcObj.put(ConstantsKeys.DeviceNumber, DeviceId);
+
+            malfnDiagnstcObj.put(ConstantsKeys.VIN, VIN);
+            malfnDiagnstcObj.put(ConstantsKeys.UnitNo, UnitNo);
+            malfnDiagnstcObj.put(ConstantsKeys.CompanyId, CompanyId);
+
+            malfnDiagnstcObj.put(ConstantsKeys.EngineHours, EngineHours);
+            malfnDiagnstcObj.put(ConstantsKeys.StartOdometer, StartOdometer);
+            malfnDiagnstcObj.put(ConstantsKeys.EndOdometer, EndOdometer );
+            malfnDiagnstcObj.put(ConstantsKeys.EventDateTime, EventDateTime);
+            malfnDiagnstcObj.put(ConstantsKeys.DiagnosticType, DiagnosticType );
+            malfnDiagnstcObj.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return malfnDiagnstcObj;
+    }
+
 
 
     public JSONObject GetJsonForClearDiagnostic(String DriverId, String DeviceId, String eventsList, String Remarks)  {
@@ -273,7 +274,6 @@ public class MalfunctionDiagnosticMethod {
                     lastObj.put(ConstantsKeys.TotalMin, timeInMin);
                     lastObj.put(ConstantsKeys.Status, "Connected");
 
-
                     // update time in last item
                     updatedTimeArray.put(updatedTimeArray.length()-1, lastObj);
 
@@ -287,33 +287,6 @@ public class MalfunctionDiagnosticMethod {
             e.printStackTrace();
         }
     }
-
-
-    public int getTotalPowerComplianceMin(String DriverId, DBHelper dbHelper){
-        int totalMin = 0;
-
-        try{
-            JSONArray eventArray = getSavedMalDiaTimeLog(Integer.valueOf(DriverId), dbHelper);
-
-            for(int i = 0 ; i < eventArray.length() ; i++){
-                JSONObject eventObj = (JSONObject) eventArray.get(i);
-                if(eventObj.getString(ConstantsKeys.Status).equals("PwrComplianceEvent")){
-                    if(i == eventArray.length()-1){
-                        DateTime disconStartTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.DisConnectStartTime), false);
-                        DateTime disconEndTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
-                        int timeInMin = Minutes.minutesBetween(disconStartTime, disconEndTime).getMinutes();
-                        totalMin = totalMin + timeInMin;
-                    }else{
-                        totalMin = totalMin + eventObj.getInt(ConstantsKeys.TotalMin);
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return totalMin;
-    }
-
 
 
     public int getTotalEngSyncMissingMin(String DriverId, DBHelper dbHelper){
@@ -359,6 +332,114 @@ public class MalfunctionDiagnosticMethod {
             e.printStackTrace();
         }
         return isDisconnected;
+    }
+
+
+
+
+    /*-------------------- GET POWER COMPLIANCE MALFUNCTION & DIAGNOSTIC LOG SAVED Array -------------------- */
+    public JSONArray getSavedPowerCompArray(int ProjectId, DBHelper dbHelper){
+
+        JSONArray logArray = new JSONArray();
+        Cursor rs = dbHelper.getPowerComplianceLog(ProjectId);
+
+        if(rs != null && rs.getCount() > 0) {
+            rs.moveToFirst();
+            String logList = rs.getString(rs.getColumnIndex(DBHelper.POWER_COMP_MAL_DIA_LIST));
+            try {
+                logArray = new JSONArray(logList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+
+        return logArray;
+
+    }
+
+
+    /*-------------------- MALFUNCTION & DIAGNOSTIC DB Helper -------------------- */
+    public void PowerComplianceLogHelper( int driverId, DBHelper dbHelper, JSONArray eventArray){
+
+        Cursor rs = dbHelper.getMalfunctionDiagnosticLog(driverId);
+
+        if(rs != null & rs.getCount() > 0) {
+            rs.moveToFirst();
+            dbHelper.UpdateMalfunctionDiagnosticLog(driverId, eventArray );        // UPDATE MALFUNCTION & DIAGNOSTIC LOG ARRAY
+        }else{
+            dbHelper.InsertMalfncnDiagnosticLog( driverId, eventArray  );      // INSERT MALFUNCTION & DIAGNOSTIC LOG ARRAY
+        }
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+    }
+
+
+    // update poser compliance occurred event time log array for 1 day only
+    public void updatePowerOccEventLog(DateTime currentTime, DBHelper dbHelper){
+        try {
+
+            DateTime oneDayDiffDate = currentTime.minusDays(1);
+            JSONArray updatedTimeArray = new JSONArray();
+            JSONArray lastOccEventTimeArray = getSavedPowerCompArray(Integer.valueOf(Globally.PROJECT_ID), dbHelper);
+
+            // add only last 24 hour events in array
+            for (int i = 0; i < lastOccEventTimeArray.length() ; i++) {
+                JSONObject eventObj = (JSONObject) lastOccEventTimeArray.get(i);
+                DateTime selectedDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.DisConnectStartTime), false);
+                if(selectedDateTime.isAfter(oneDayDiffDate)){
+                    updatedTimeArray.put(eventObj);
+                }
+            }
+
+            if(updatedTimeArray.length() > 0){
+                JSONObject lastObj = (JSONObject)updatedTimeArray.get(updatedTimeArray.length()-1);
+                DateTime disconStartTime = Globally.getDateTimeObj(lastObj.getString(ConstantsKeys.DisConnectStartTime), false);
+                int timeInMin = Minutes.minutesBetween(disconStartTime, currentTime).getMinutes();
+                lastObj.put(ConstantsKeys.DisConnectEndTime, currentTime);
+                lastObj.put(ConstantsKeys.TotalMin, timeInMin);
+                lastObj.put(ConstantsKeys.Status, "Connected");
+
+                // update time in last item
+                updatedTimeArray.put(updatedTimeArray.length()-1, lastObj);
+
+            }
+
+            PowerComplianceLogHelper(Integer.valueOf(Globally.PROJECT_ID), dbHelper, updatedTimeArray);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public int getTotalPowerComplianceMin(DBHelper dbHelper){
+        int totalMin = 0;
+
+        try{
+            JSONArray eventArray = getSavedPowerCompArray(Integer.valueOf(Globally.PROJECT_ID), dbHelper);
+
+            for(int i = 0 ; i < eventArray.length() ; i++){
+                JSONObject eventObj = (JSONObject) eventArray.get(i);
+              //  if(eventObj.getString(ConstantsKeys.Status).equals("PwrComplianceEvent")){
+                    if(i == eventArray.length()-1){
+                        DateTime disconStartTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.DisConnectStartTime), false);
+                        DateTime disconEndTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+                        int timeInMin = Minutes.minutesBetween(disconStartTime, disconEndTime).getMinutes();
+                        totalMin = totalMin + timeInMin;
+                    }else{
+                        totalMin = totalMin + eventObj.getInt(ConstantsKeys.TotalMin);
+                    }
+               // }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totalMin;
     }
 
 

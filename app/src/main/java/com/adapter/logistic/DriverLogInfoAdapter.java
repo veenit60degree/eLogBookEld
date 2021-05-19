@@ -78,6 +78,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
     JSONArray malfnJsonArray = new JSONArray();
 
+
     public DriverLogInfoAdapter(Context cxt, List<EldDriverLogModel> logList,  List<String> stateArrayList, List<DriverLocationModel> stateList,
                                 int driverType, boolean isEditView, int daysDiff, int driverId,
                                 boolean isCurrentDate, boolean isExcptnEnabled, JSONArray driverLog18DaysArray,
@@ -372,10 +373,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 if (JobType == Constants.EditLocation){
 
                     logModel.setLocation(City + "; " + State + "; " + Country);
-                    LogList.set(position, logModel);
-                    notifyDataSetChanged();
-
-                    SaveAndUploadData(logModel, RecordType);
+                    SaveAndUploadData(logModel, RecordType, position);
 
                     // Clear Diagnostic if occured
 
@@ -437,7 +435,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     notifyDataSetChanged();
                   //  Global.EldScreenToast(certifyNoTV, "Remarks updated.", context.getResources().getColor(R.color.colorPrimary));
 
-                    SaveAndUploadData(logModel, RecordType);
+                    SaveAndUploadData(logModel, RecordType, ItemPosition);
 
                     try {
                         if (remarksDialog != null && remarksDialog.isShowing())
@@ -466,7 +464,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
 
     /*================== Save And Upload Log Record Data ===================*/
-    void SaveAndUploadData( EldDriverLogModel logModel, String RecordType){
+    void SaveAndUploadData( EldDriverLogModel logModel, String RecordType, int position){
         String currentUtcDate = Global.GetCurrentDateTime();
         String currentDriverZoneDate = Global.GetCurrentUTCTimeFormat();
 
@@ -507,6 +505,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         JSONArray driverLogArray          = hMethods.getSavedLogArray(DriverId, dbHelper);
 
+        String location = "", remarks = "";
         for(int i = driverLogArray.length()-1 ; i >=0  ; i--){
 
             try {   //2021-04-26T00:09:03
@@ -517,16 +516,15 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 }
                 if(selectedDate.equals(compareStartDate)){
                     if(RecordType.equals(Constants.Location)) {
-
-                        String location = logObj.getString(ConstantsKeys.RecordValue).replaceAll(";", ",");
-
+                        location = logObj.getString(ConstantsKeys.RecordValue).replaceAll(";", ",");
                         obj.put(ConstantsKeys.StartLocation, location);
 
                         // Check diagnostic event
                         checkDiagnosticEventsForClear(compareStartDate);
 
                     }else if (RecordType.equals(Constants.Remarks)){
-                        obj.put(ConstantsKeys.Remarks, logObj.getString(ConstantsKeys.RecordValue));
+                        remarks = logObj.getString(ConstantsKeys.RecordValue);
+                        obj.put(ConstantsKeys.Remarks, remarks);
                     }
                     driverLogArray.put(i, obj);
                     break;
@@ -540,6 +538,15 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         // Update 18 Days Array.....
         hMethods.DriverLogHelper( DriverId, dbHelper, driverLogArray);
+
+        if(RecordType.equals(Constants.Location)) {
+            logModel.setLocation(location);
+            LogList.set(position, logModel);
+        }else{
+            logModel.setRemarks(remarks);
+            LogList.set(position, logModel);
+        }
+        notifyDataSetChanged();
 
         // -------------- Upload data on server --------------
         if(Global.isConnected(context)) {

@@ -36,6 +36,7 @@
     <color name="hos_remaining">#6F6F6F</color>
     <color name="bluee_login_hover">#333232</color>
     <color name="bluee_login">#4E4E4E</color>
+    <color name="bluee_login_one">#ffffff</color>
     <color name="app_color">#333232</color>   <!--000000-->
     <color name="white">#333232</color>
     <color name="white_hover">#a8a8a8</color>   <!--5F6168-->
@@ -67,8 +68,10 @@
     <color name="gray_default">#808080</color>  <!--C9C8C6-->
     <color name="gray_hover">#6F6F6F</color>
     <color name="gray_background">#808080</color>
+    <color name="gray_background_one">#30000000</color>
     <color name="shadow">#30000000</color>
-    <color name="eld_gray_bg">#ffffff</color>   <!--6F6F6F-->
+    <color name="eld_gray_bg">#ffffff</color>   <!---->
+    <color name="eld_gray_bg1">#30000000</color>
     <color name="eld_gray_bg_theme">#30000000</color>
     <color name="color_eld_bg">#4E4E4E</color>  <!--1A3561-->
     <color name="red_eld">#CD2329</color>
@@ -137,7 +140,7 @@
 
     <color name="green_transparent_background">#99ffffff</color>
 
-    <color name="text_forgot">#ffffff</color>
+    <color name="text_forgot">#808080</color>   <!--ffffff-->
 
     <color name="slider_background">#ffffff</color>
 

@@ -228,17 +228,17 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                // editLogProgressBar.setVisibility(View.VISIBLE);
                 GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
             }
+            isNorthCanada   =  sharedPref.IsNorthCanada(getActivity());
 
             if(DriverType == Constants.MAIN_DRIVER_TYPE){
                 IsSingleDriver = true;
                 isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
                 isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
-                isNorthCanada   =  sharedPref.IsNorthCanadaMain(getActivity());
+
             }else{
                 IsSingleDriver = false;
                 isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
                 isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
-                isNorthCanada   =  sharedPref.IsNorthCanadaCo(getActivity());
             }
 
 
@@ -530,11 +530,14 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                                 if(elapsedTime == -1 ) {
                                     JSONObject obj = (JSONObject) tempLogArray.get(i);
                                     // ------------- Add Model in the list -------------
-                                    oDriverLogDetail.add(AddLogModelToList(obj,
-                                            obj.getString(ConstantsKeys.startDateTime).toString().substring(0,19),
-                                            obj.getString(ConstantsKeys.utcStartDateTime).toString().substring(0,19),
-                                            obj.getString(ConstantsKeys.endDateTime).toString().substring(0,19),
-                                            obj.getString(ConstantsKeys.utcEndDateTime).toString().substring(0,19), RulesObj, false ));
+                                    DriverLogModel model = AddLogModelToList(obj,
+                                            obj.getString(ConstantsKeys.startDateTime).substring(0,19),
+                                            obj.getString(ConstantsKeys.utcStartDateTime).substring(0,19),
+                                            obj.getString(ConstantsKeys.endDateTime).substring(0,19),
+                                            obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj, false );
+                                    model.setNewRecordStatus(isNewRecord(logObj));
+
+                                    oDriverLogDetail.add(model);
 
                                     finalEditingArray.put(obj);
 
@@ -545,11 +548,13 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                             } else {
                                 JSONObject obj = (JSONObject) tempLogArray.get(i);
                                 // ------------- Add Model in the list -------------
-                                oDriverLogDetail.add(AddLogModelToList(obj,
+                                DriverLogModel model = AddLogModelToList(obj,
                                         obj.getString(ConstantsKeys.startDateTime).substring(0,19),
                                         obj.getString(ConstantsKeys.utcStartDateTime).substring(0,19),
                                         obj.getString(ConstantsKeys.endDateTime).substring(0,19),
-                                        obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj , false));
+                                        obj.getString(ConstantsKeys.utcEndDateTime).substring(0,19), RulesObj , false);
+                                model.setNewRecordStatus(isNewRecord(logObj));
+                                oDriverLogDetail.add(model);
 
                                 finalEditingArray.put(obj);
                             }
@@ -564,11 +569,13 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                             obj.put(ConstantsKeys.ViolationReason, "");
                             obj.put(ConstantsKeys.IsViolation, false);
 
-                            oDriverLogDetail.add(AddLogModelToList(obj,
+                            DriverLogModel model = AddLogModelToList(obj,
                                     obj.getString(ConstantsKeys.startDateTime).toString().substring(0,19),
                                     obj.getString(ConstantsKeys.utcStartDateTime).toString().substring(0,19),
                                     obj.getString(ConstantsKeys.endDateTime).toString().substring(0,19),
-                                    obj.getString(ConstantsKeys.utcEndDateTime).toString().substring(0,19), RulesObj , false));
+                                    obj.getString(ConstantsKeys.utcEndDateTime).toString().substring(0,19), RulesObj , false);
+                            model.setNewRecordStatus(isNewRecord(logObj));
+                            oDriverLogDetail.add(model);
 
                             finalEditingArray.put(obj);
                         }
@@ -612,6 +619,17 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
         }
 
+    }
+
+
+    private boolean isNewRecord(JSONObject obj){
+        boolean isNewRecord = false;
+        try {
+            if (obj.has(ConstantsKeys.isNewRecord) && obj.getString(ConstantsKeys.isNewRecord).length() > 0) {
+                isNewRecord = obj.getBoolean(ConstantsKeys.isNewRecord);
+            }
+        }catch (Exception e){}
+        return isNewRecord;
     }
 
 
@@ -734,38 +752,13 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-/*
-    void DeleteItemWithPermission(int itemPosition, boolean isPermit, String status){
-
-        if(isPermit){
-            logArray.remove(itemPosition);
-            oDriverLogDetail.remove(itemPosition);
-            global.EldScreenToast(eldMenuBtn, "Deleted", getResources().getColor(R.color.colorSleeper));
-        }else{
-            global.EldScreenToast(eldMenuBtn, "You don't have permission to edit/delete " + status + " status.", getResources().getColor(R.color.colorSleeper));
-        }
-    }
-
-*/
-
-
-
-    //     DeleteItemWithPermission( itemPosition, IsOnDutyPermission, "On Duty");
-
-
-
-
     /*================== Signature Listener ====================*/
     public class EditLogPreviewListener implements EditLogPreviewDialog.EditLogPreviewListener {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public void EditPreviewReady() {
 
-
-                previewDialog.dismiss();
-
-
+            previewDialog.dismiss();
 
             editLogRemarksDialog = new EditLogRemarksDialog(getActivity(), new RemarksListener());
             editLogRemarksDialog.show();
@@ -904,22 +897,27 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
             logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail);
             finalEditedLogArray = GetEditDataAsJson(logArray, lastDaySavedLocation, reason);
 
-         //   updateLocalLog();
+            Globally.EldScreenToast(saveBtn, "Saved data successfully.", getResources().getColor(R.color.colorPrimary));
+            sharedPref.SetEditedLogStatus(true, getActivity());
 
+            SaveDataLocally();
+            UpdateLocalLogWithBackStack(true);
+
+
+         //   updateLocalLog();
            // JSONArray finalJobsArray =  finalPostedArray(previousDateJobs, finalEditedLogArray, reason);
             //  SaveDriverCycle(finalJobsArray);
 
           /*  if(global.isConnected(getActivity())) {
                 int socketTimeout = 30000;   //30 seconds
                 SAVE_DRIVER_EDITED_LOG(finalJobsArray, false, false, socketTimeout);
-            }else{*/
-               // global.EldToastWithDuration(saveBtn, getResources().getString(R.string.edited_log_willbe_saved) , getResources().getColor(R.color.colorPrimary));
+            }else{
                 Globally.EldScreenToast(saveBtn, "Saved data successfully.", getResources().getColor(R.color.colorPrimary));
                 sharedPref.SetEditedLogStatus(true, getActivity());
 
                 SaveDataLocally();
                 UpdateLocalLogWithBackStack(true);
-          //  }
+            }*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1052,6 +1050,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
 
                 String DrivingStartTime = "", IsAOBRD = "false", CurrentCycleId = "", isDeferral = "false";
+                String isNewRecord = "false";
                 if (obj.has(ConstantsKeys.DrivingStartTime)) {
                     DrivingStartTime = obj.getString(ConstantsKeys.DrivingStartTime);
                 }
@@ -1067,6 +1066,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     isDeferral = obj.getString(ConstantsKeys.isDeferral);
                 }
 
+                if (obj.has(ConstantsKeys.isNewRecord)) {
+                    isNewRecord = obj.getString(ConstantsKeys.isNewRecord);
+                }
 
 
                 EldDataModelNew logModel = new EldDataModelNew(
@@ -1110,7 +1112,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         IsAOBRD,
                         CurrentCycleId,
                         isDeferral,
-                        ""
+                        "",
+                        isNewRecord
                 );
 
                 logList.add(logModel);
@@ -1182,6 +1185,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 String remarks = "";
                 String LocationType = "";
                 String IsNorthCanada = "false";
+                String isNewRecord = "false";
 
                 int locLength = loc.length - 1;
                 City = "";
@@ -1273,8 +1277,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
                 }
 
-                remarks = obj.getString(ConstantsKeys.Remarks);
+                if(obj.has(ConstantsKeys.isNewRecord)){
+                    isNewRecord = obj.getString(ConstantsKeys.isNewRecord);
+                }
 
+                remarks = obj.getString(ConstantsKeys.Remarks);
 
                 EldDataModelNew eldModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1316,7 +1323,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         ""+sharedPref.IsAOBRD(getActivity()),
                         CurrentCycleId,
                         "false",
-                        ""
+                        "",
+                        isNewRecord
                         );
 
                     if(eldModel != null) {

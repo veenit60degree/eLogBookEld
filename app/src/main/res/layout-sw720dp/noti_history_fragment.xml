@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_below="@+id/eldActionBar"
-        android:background="@color/eld_gray_bg"
+        android:background="@color/eld_gray_bg1"
         >
 
 
@@ -42,7 +42,7 @@
             android:button="@drawable/unidentified_checkbox_drawable"
             android:textSize="@dimen/text_size_27"
             android:layout_marginLeft="@dimen/view_height_55"
-            android:textColor="@color/gray_text1"
+            android:textColor="@color/gray_text2"
             android:padding="@dimen/margin_short_7"
             android:layout_alignParentBottom="true"
             android:text="@string/select_all"

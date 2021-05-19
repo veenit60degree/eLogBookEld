@@ -228,10 +228,11 @@ public class EldNotificationDialog extends Dialog  {
                           boolean IsCycleRequest = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsCycleRequest);
                           boolean IsUnidentified = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsUnidentified);
 
+                          SharedPref.SetNorthCanadaStatus(IsNorthCanada, getContext());
+
                           if (DriverId.equals(MainDriverId)) {    // Update permissions for main driver
                               SharedPref.SetCertifcnUnIdenfdSettings(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, getContext());
                               SharedPref.SetDiagnosticAndMalfunctionSettingsMain(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, getContext());
-                              SharedPref.SetNorthCanadaStatusMain(IsNorthCanada, getContext());
                               SharedPref.SetExemptDriverStatusMain(isExemptDriver, getContext());
                               SharedPref.SetCycleRequestStatusMain(IsCycleRequest, getContext());
 
@@ -244,7 +245,6 @@ public class EldNotificationDialog extends Dialog  {
                           } else {                                  // Update permissions for Co driver
                               SharedPref.SetCertifcnUnIdenfdSettingsCo(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, getContext());
                               SharedPref.SetDiagnosticAndMalfunctionSettingsCo(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, getContext());
-                              SharedPref.SetNorthCanadaStatusCo(IsNorthCanada, getContext());
                               SharedPref.SetExemptDriverStatusCo(isExemptDriver, getContext());
                               SharedPref.SetCycleRequestStatusCo(IsCycleRequest, getContext());
 

@@ -610,6 +610,7 @@
                     android:hint="@string/inspctr_Comments"
                     android:textColor="@color/black"
                     android:minLines="2"
+                    android:maxLength="60"
                     android:gravity="left|top"
                     android:paddingTop="@dimen/margin_short_6"
                     android:paddingBottom="@dimen/margin_short_6"

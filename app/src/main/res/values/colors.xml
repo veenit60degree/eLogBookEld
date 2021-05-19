@@ -40,6 +40,7 @@
     <color name="hos_remaining">#6F6F6F</color>
     <color name="bluee_login_hover">#199cdd</color>
     <color name="bluee_login">#67A7D8</color>
+    <color name="bluee_login_one">#67A7D8</color>
     <color name="app_color">#ffffff</color>   <!--000000-->
     <color name="white">#ffffff</color>
     <color name="whiteee">#ffffff</color>
@@ -51,6 +52,10 @@
     <color name="black_unidenfied">#464951</color>
     <color name="gray_unidenfied">#87888D</color>
     <color name="slide_menu_default">#A1A0A0</color>
+
+    <color name="tint_disabled">#919090</color>
+
+
 
     <color name="gray_hos">#5F6168</color>
     <color name="hos_progress_bg">#E6E6E6</color>
@@ -78,8 +83,10 @@
     <color name="gray_default">#EDEEEE</color>  <!--C9C8C6-->
     <color name="gray_hover">#ABAAAB</color>
     <color name="gray_background">#E2E2E2</color>
+    <color name="gray_background_one">#E2E2E2</color>
     <color name="shadow">#30a8a8a8</color>
     <color name="eld_gray_bg">#EEEEEE</color>
+    <color name="eld_gray_bg1">#EEEEEE</color>
     <color name="eld_gray_bg_theme">#EEEEEE</color>
     <color name="color_eld_bg">#67A7D8</color>  <!--1A3561-->
     <color name="red_eld">#CD2329</color>

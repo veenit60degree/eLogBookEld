@@ -44,16 +44,18 @@ public class Utils
 
     public String createLogFile()
     {
-        File file = getAlsLogFilePath(context, ConstantsKeys.ALS_OBD_LOG); //new File("sdcard/obd_log.txt");
-        if (!file.exists())
-        {
-            try
-            {
-                file.createNewFile();
-            } catch (Exception e)
-            {
-                e.printStackTrace();
+        File file = new File("");
+        try {
+            file = getAlsLogFilePath(context, ConstantsKeys.ALS_OBD_LOG); //new File("sdcard/obd_log.txt");
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return file.getPath();
     }
@@ -61,33 +63,41 @@ public class Utils
 
     public String createAppUsageLogFile()
     {
-        File file = getAlsLogFilePath(context, ConstantsKeys.APP_USAGE_LOG);
-        if (!file.exists())
-        {
-            try
-            {
-                file.createNewFile();
-            } catch (Exception e)
-            {
-                e.printStackTrace();
+        File file = new File("");
+        try {
+            file = getAlsLogFilePath(context, ConstantsKeys.APP_USAGE_LOG);
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
         return file.getPath();
     }
 
 
     public String createExecTimeLogFile()
     {
-        File file = getAlsLogFilePath(context, ConstantsKeys.EXECUTION_TIME_LOG);
-        if (!file.exists())
-        {
-            try
+        File file = new File("");
+        try {
+            file = getAlsLogFilePath(context, ConstantsKeys.EXECUTION_TIME_LOG);
+            if (!file.exists())
             {
-                file.createNewFile();
-            } catch (Exception e)
-            {
-                e.printStackTrace();
+                try
+                {
+                    file.createNewFile();
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return file.getPath();
     }

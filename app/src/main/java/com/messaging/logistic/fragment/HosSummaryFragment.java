@@ -244,15 +244,14 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         setMarqueText(hosDistanceTV);
         setMarqueText(vinNumberTxtView);
         setMarqueText(engHourTxtView);
+        isNorthCanada  =  sharedPref.IsNorthCanada(getActivity());
 
         if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
             isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
-            isNorthCanada  =  sharedPref.IsNorthCanadaMain(getActivity());
         }else{
             isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
             isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
-            isNorthCanada  =  sharedPref.IsNorthCanadaCo(getActivity());
         }
 
         editLogAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
@@ -506,7 +505,14 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             if(arr.length > 0){
                 String[] cycleHourArr = arr[1].split("/");
                 if(cycleHourArr.length > 0){
-                    TotalCycleHour = Integer.valueOf(cycleHourArr[0]) * 60 ;
+                    if (CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) && sharedPref.IsNorthCanada(getActivity())) {
+                        hosCurrentCycleTV.setText(CurrentCycle + " (North)");
+                        TotalCycleHour = 80 * 60 ;
+                    }else{
+                        hosCurrentCycleTV.setText(CurrentCycle);
+                        TotalCycleHour = Integer.valueOf(cycleHourArr[0]) * 60 ;
+                    }
+
                     int leftCycle = TotalCycleHour - LeftCycleHoursInt;
 
                     cycleUsedTimeTV.setText(Html.fromHtml(getHtmlText("U " + global.FinalValue(leftCycle), "R " + global.FinalValue(LeftCycleHoursInt))));
@@ -523,7 +529,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     }
                 }
             }
-            hosCurrentCycleTV.setText(CurrentCycle);
+
         }
 
 
@@ -696,7 +702,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             if(dayStartSavedDate.length() > 0) {
                 int dayDiff = constants.getDayDiff(dayStartSavedDate, global.getCurrentDate());
                 if (dayDiff == 0) {
-                    if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED) {
+                    if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED
+                            || sharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED) {
                         if (currentOdometerStr.contains(".")) {
                             currentOdometerStr = "" + Double.parseDouble(currentOdometerStr) * 1000;
                         }
@@ -822,7 +829,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     String engineHours = sharedPref.getObdEngineHours(getActivity());
                     if(engineHours.length() > 1) {
                         int ObdStatus = SharedPref.getObdStatus(getActivity());
-                        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) ){
+                        if(ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED || ObdStatus == Constants.BLE_CONNECTED ){
                             engHourTxtView.setText(Html.fromHtml("(<b>Engine Hours: </b>" + engineHours + ")" ));
                         }else{
                             engHourTxtView.setText("");

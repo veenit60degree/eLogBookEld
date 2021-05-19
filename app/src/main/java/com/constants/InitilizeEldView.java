@@ -264,8 +264,8 @@ public class InitilizeEldView {
 
     public void AddTempRemark() {
         Globally.onDutyRemarks = new ArrayList<String>();
-        Globally.onDutyRemarks.add("Border Crossing");
         Globally.onDutyRemarks.add("Brake Checks");
+        Globally.onDutyRemarks.add("Border Crossing");
         Globally.onDutyRemarks.add("Equipment Wash");
         Globally.onDutyRemarks.add("Fueling");
         Globally.onDutyRemarks.add("Load Check");

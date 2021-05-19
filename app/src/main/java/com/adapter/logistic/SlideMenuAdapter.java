@@ -142,12 +142,15 @@ public class SlideMenuAdapter extends BaseAdapter {
 
 
             if (menuList.get(position).getStatus() == Constants.DATA_MALFUNCTION) {
-                if (SharedPref.isMalfunctionOccur(context) || SharedPref.isDiagnosticOccur(context) ||
-                        SharedPref.isLocMalfunctionOccur(context)) {
-                    holder.menuErrorImgView.setVisibility(View.VISIBLE);
+
+                if (SharedPref.isMalfunctionOccur(context) || SharedPref.isDiagnosticOccur(context)||
+                        SharedPref.isLocMalfunctionOccur(context) || SharedPref.isEngSyncMalfunction(context) ||
+                        SharedPref.isEngSyncDiagnstc(context) ) {
+                      holder.menuErrorImgView.setVisibility(View.VISIBLE);
                 } else {
                     holder.menuErrorImgView.setVisibility(View.GONE);
                 }
+
             }
 
             if (menuList.get(position).getStatus() == Constants.UNIDENTIFIED_RECORD) {

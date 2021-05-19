@@ -224,19 +224,18 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             } else {
                 isSingleDriver = false;
             }
+            isNorthCanada  =  sharedPref.IsNorthCanada(context);
 
             if(sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
                 DriverType = Constants.MAIN_DRIVER_TYPE;     // Single Driver Type and Position is 0
                 CurrentCycleId  = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
                 isHaulExcptn    = sharedPref.get16hrHaulExcptn(context);
                 isAdverseExcptn = sharedPref.getAdverseExcptn(context);
-                isNorthCanada  =  sharedPref.IsNorthCanadaMain(context);
             } else {                // If Current driver is Co Driver
                 DriverType = Constants.CO_DRIVER_TYPE;
                 CurrentCycleId  = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, context);
                 isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(context);
                 isAdverseExcptn = sharedPref.getAdverseExcptnCo(context);
-                isNorthCanada  =  sharedPref.IsNorthCanadaCo(context);
             }
 
             if(CurrentCycleId.equalsIgnoreCase("null") || CurrentCycleId.equalsIgnoreCase("-1")
@@ -1201,7 +1200,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         CurrentDeviceDate,
                         String.valueOf(sharedPref.IsAOBRD(context)),
                         CurrentCycleId,
-                        "", ""
+                        "", "", "false"
 
 
 

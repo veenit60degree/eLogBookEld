@@ -549,7 +549,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             // operating_zone  us_cycle   can_cycle
             SavedCycleType = type;
             if(type.equals("operating_zone")){
-                if(sharedPref.IsNorthCanadaMain(getActivity())) {
+                if(sharedPref.IsNorthCanada(getActivity())) {
                     IsSouthCanada = "true";
                    // sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneNorth), getActivity());
                 }else{
@@ -778,7 +778,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         CanCycleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(CanCycleAdapter);
         spinner.setSelection(indexPosition);
-        view.setText(spinnerArray.get(indexPosition));
+        if (spinnerArray.get(indexPosition).equals(Globally.CANADA_CYCLE_1_NAME) && sharedPref.IsNorthCanada(getActivity())) {
+            view.setText(spinnerArray.get(indexPosition) + " (N)");
+        }else{
+            view.setText(spinnerArray.get(indexPosition));
+        }
     }
 
 
@@ -1557,18 +1561,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                         if(IsSouthCanada.equals("true")) {
                            // sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneSouth), getActivity());
-                            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                                sharedPref.SetNorthCanadaStatusMain(false, getActivity());
-                            }else{
-                                sharedPref.SetNorthCanadaStatusCo(false, getActivity());
-                            }
+                            sharedPref.SetNorthCanadaStatus(false, getActivity());
                         }else{
                             //sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneNorth), getActivity());
-                            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                                sharedPref.SetNorthCanadaStatusMain(true, getActivity());
-                            }else{
-                                sharedPref.SetNorthCanadaStatusCo(true, getActivity());
-                            }
+                            sharedPref.SetNorthCanadaStatus(true, getActivity());
                         }
 
                         getSavedCycleData();
@@ -1712,7 +1708,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
             TruckNumber    = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
             DriverTimeZone = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
-            isNorthCanada  =  sharedPref.IsNorthCanadaMain(getActivity());
         }else{
             DriverType = Constants.CO_DRIVER_TYPE;
             SavedPosition  = 1;
@@ -1722,9 +1717,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
             TruckNumber    = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
             DriverTimeZone = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
-            isNorthCanada  =  sharedPref.IsNorthCanadaCo(getActivity());
         }
 
+        isNorthCanada  =  sharedPref.IsNorthCanada(getActivity());
         if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ){
             caCurrentCycleTV.setVisibility(View.VISIBLE);
             usCurrentCycleTV.setVisibility(View.GONE);

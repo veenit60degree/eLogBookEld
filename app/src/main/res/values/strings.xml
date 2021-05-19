@@ -690,6 +690,7 @@
     <string name="wifi">WiFi</string>
     <string name="wired_tablet">Wired Tablet Connected</string>
     <string name="obd_wifi">WiFi OBD Connected</string>
+    <string name="obd_ble">Bluetooth OBD Connected</string>
     <string name="obd_not_connected">OBD not connected</string>
     <string name="wifi_active">WIFI OBD is connected</string>
     <string name="wifi_inactive">WIFI OBD is not working</string>
@@ -751,6 +752,8 @@
     <string name="dot_mode_canada">DOT MODE (Canada)</string>
     <string name="data_malfunction">Data recording compliance malfunction detected</string>
     <string name="malfunction">Data Malfunction</string>
+    <string name="malf_and_dia">Malfunction &amp; Dia..</string>
+    <string name="malf_and_diagnostic">Malfunction &amp; Diagnostic</string>
     <string name="malfunction_and_dia">Data Malfunction &amp; Diagnostic</string>
     <string name="malfunction_diag_occur">Malfunction &amp; Diagnostic events occurred</string>
     <string name="malfunction_occur">Malfunction event occurred</string>
@@ -807,6 +810,7 @@
     <string name="sign_record">Certification Records</string>
 
 
+    <string name="please_open_blue">Please turn on Bluetooth first</string>
 
     <string name="claim_successfully">Claim successfully</string>
     <string name="reject_successfully">Reject successfully</string>

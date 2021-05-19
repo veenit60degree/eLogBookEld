@@ -107,6 +107,7 @@
             android:gravity="center_horizontal"
             app:BoarderColor="@android:color/darker_gray"
             app:BordersSize="@dimen/margin_short_1"
+            app:RevealViewBackgroundColor="@color/white"
             app:RevealEmptyText="@string/Select"
             app:ShowBorders="true"
             android:background="@drawable/edtittext_border"

@@ -196,6 +196,7 @@ public class SharedPref {
     }
 
 
+
     // Get Obd Status -------------------
     public static int getObdStatus( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -209,6 +210,35 @@ public class SharedPref {
         return preferences.getString("ObdStatusTime", "");
     }
 
+    // Get Obd Status -------------------
+    public static String getObdSourceName( Context context) {
+        String source = "";
+       switch (getObdStatus(context)){
+           case Constants.WIRED_CONNECTED:
+           case Constants.WIRED_DISCONNECTED:
+           case Constants.WIRED_IGNITION_OFF:
+
+               source = Constants.WiredOBD;
+
+            break;
+
+           case Constants.WIFI_CONNECTED:
+           case Constants.WIFI_DISCONNECTED:
+
+               source = Constants.WifiOBD;
+
+            break;
+
+           case Constants.BLE_CONNECTED:
+           case Constants.BLE_DISCONNECTED:
+
+               source = Constants.BleObd;
+
+            break;
+
+       }
+        return source;
+    }
 
     // Set Obd Status -------------------
     public static void SaveObdStatus( int value, String time, Context context) {
@@ -428,7 +458,7 @@ public class SharedPref {
 
 
     // Set North Canada Status for main driver -------------------
-    public static void SetNorthCanadaStatusMain( boolean IsNorthCanada, Context context) {
+    public static void SetNorthCanadaStatus( boolean IsNorthCanada, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsNorthCanada, IsNorthCanada);
@@ -438,7 +468,7 @@ public class SharedPref {
 
 
     // Get North Canada Status for main driver -------------------
-    public static boolean IsNorthCanadaMain(Context context) {
+    public static boolean IsNorthCanada(Context context) {
 
         boolean isRecord = false;
         if(context != null) {
@@ -450,27 +480,24 @@ public class SharedPref {
 
 
 
-    // Set North Canada Status for co driver -------------------
-    public static void SetNorthCanadaStatusCo( boolean IsNorthCanada, Context context) {
+    // Set Obd Preference for to use obd -------------------
+    public static void SetObdPreference( int ObdPreference, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(ConstantsKeys.IsNorthCanadaCo, IsNorthCanada);
+        editor.putInt(ConstantsKeys.ObdPreference, ObdPreference);
         editor.commit();
     }
 
 
 
-    // Get North Canada Status for co driver -------------------
-    public static boolean IsNorthCanadaCo(Context context) {
-
-        boolean isRecord = false;
+    // Get Obd Preference for to use obd -------------------
+    public static int getObdPreference(Context context) {
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            isRecord = preferences.getBoolean(ConstantsKeys.IsNorthCanadaCo, false);
+            return preferences.getInt(ConstantsKeys.ObdPreference, Constants.OBD_PREF_WIFI);
         }
-        return isRecord;
+        return Constants.OBD_PREF_WIFI;
     }
-
 
 
 

@@ -476,7 +476,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                         false,
                         sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
             }else{
-                sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccur(getActivity()),
+                sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccurCo(getActivity()),
                         false,
                         false,
                         sharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());

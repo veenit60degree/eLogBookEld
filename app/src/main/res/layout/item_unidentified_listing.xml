@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/temp_uniden"
-            android:textColor="@color/greyText"
+            android:textColor="@color/gray_text2"
             android:textSize="@dimen/text_size_15"
             android:layout_below="@+id/unIdenDistanceTV"
             android:paddingTop="@dimen/margin_short_1"

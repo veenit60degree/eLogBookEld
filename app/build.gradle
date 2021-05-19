@@ -18,8 +18,8 @@ android {
         applicationId "com.messaging.logistic"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 100  //99
-        versionName "3.5.5.32"  //3.5.4
+        versionCode 101  //99
+        versionName "3.5.7"  //3.5.4
         // Enabling multidex support.
         multiDexEnabled true
 
@@ -64,6 +64,7 @@ dependencies {
     implementation project(':ink')
     implementation project(':CircleProgressView')
     implementation project(path: ':searchablespinner')
+    implementation project(':FastBleLib')
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'

@@ -999,7 +999,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         IsAOBRD                 = sharedPref.IsAOBRD(getActivity());
 
         TruckNo             = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
-
+        isNorthCanada       =  sharedPref.IsNorthCanada(getActivity());
         if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             certifyDriverNameTV.setText(MainDriverName);
 
@@ -1008,7 +1008,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             OfficeAddress       = DriverConst.GetDriverDetails(DriverConst.CarrierAddress, getActivity());
             Carrier             = DriverConst.GetDriverDetails(DriverConst.Carrier, getActivity());
             CountryCycle        = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
-            isNorthCanada       =  sharedPref.IsNorthCanadaMain(getActivity());
         } else {
             certifyDriverNameTV.setText(CoDriverName);
 
@@ -1017,7 +1016,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             OfficeAddress       = DriverConst.GetCoDriverDetails(DriverConst.CoCarrierAddress, getActivity());
             Carrier             = DriverConst.GetCoDriverDetails(DriverConst.CoCarrier, getActivity());
             CountryCycle        = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycle, getActivity());
-            isNorthCanada       =  sharedPref.IsNorthCanadaMain(getActivity());
         }
 
         if(CountryCycle.equalsIgnoreCase("null"))
@@ -1066,7 +1064,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         String engineHours = sharedPref.getObdEngineHours(getActivity());
         int ObdStatus = SharedPref.getObdStatus(getActivity());
-        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) && engineHours.length() > 1) {
+        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
+                || ObdStatus == Constants.BLE_CONNECTED) && engineHours.length() > 1) {
              EngineHourTV.setText(engineHours);
         }else{
             EngineHourTitle.setVisibility(View.GONE);

@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -94,6 +95,10 @@ public class Constants {
     public static String LON_KEY = "lon";
     public static String LOC_SAVED_TIME_KEY = "saved_time_key";
 
+    public static int OBD_PREF_WIFI     = 1;
+    public static int OBD_PREF_WIRED    = 2;
+    public static int OBD_PREF_BLE      = 3;
+
     public static boolean IsAlreadyViolation = false;
     public static boolean IsHomePageOnCreate;
 
@@ -155,7 +160,7 @@ public class Constants {
 
     public static String WiredOBD = "wired_obd";
     public static String WifiOBD = "wifi_obd";
-    public static String Bluetooth = "bluetooth_obd";
+    public static String BleObd = "bluetooth_obd";
     public static String ApiData = "api_data";
     public static String OfflineData = "offline_data";
     public static String DataMalfunction = "Data_Malfunction";
@@ -192,6 +197,10 @@ public class Constants {
     public static final int WIFI_DISCONNECTED   = 1004;
     public static final int NO_CONNECTION       = 1005;
     public static final int WIFI_IGNITION_OFF   = 1008;
+
+    public static final int BLE_CONNECTED       = 1009;
+    public static final int BLE_DISCONNECTED    = 1010;
+
 
     public static final int NOTIFICATION      = 0;
     public static final int GPS               = 1;
@@ -360,7 +369,7 @@ public class Constants {
             list.add(new SlideMenuModel(UNIDENTIFIED_RECORD, R.drawable.unidentified_menu, context.getResources().getString(R.string.unIdentified_records)));
         }
         if(isMalfunction) {
-            list.add(new SlideMenuModel(DATA_MALFUNCTION, R.drawable.eld_malfunction, context.getResources().getString(R.string.malfunction_and_dia)));
+            list.add(new SlideMenuModel(DATA_MALFUNCTION, R.drawable.eld_malfunction, context.getResources().getString(R.string.malf_and_diagnostic)));
         }
         list.add(new SlideMenuModel(SETTINGS, R.drawable.settings, context.getResources().getString(R.string.action_settings)));
         list.add(new SlideMenuModel(ALS_SUPPORT, R.drawable.als_support, context.getResources().getString(R.string.action_Support)));
@@ -379,7 +388,7 @@ public class Constants {
         optionsList.add(new OtherOptionsModel(R.drawable.gps_other, GPS, context.getResources().getString(R.string.gps)));
 
         if(isAllowMalfunction)
-            optionsList.add(new OtherOptionsModel(R.drawable.malfunction_other, MALFUNCTION, context.getResources().getString(R.string.malfunction)));
+            optionsList.add(new OtherOptionsModel(R.drawable.malfunction_other, MALFUNCTION, context.getResources().getString(R.string.malf_and_dia)));
         //if(SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context))
 
         if(isAllowUnIdentified)
@@ -393,6 +402,8 @@ public class Constants {
             optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, OBD, context.getResources().getString(R.string.obd_wifi)));
         }else if(SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED){
             optionsList.add(new OtherOptionsModel(R.drawable.wired_status_inactive, OBD, context.getResources().getString(R.string.wired_tablet)));
+        }else if(SharedPref.getObdStatus(context) == Constants.BLE_CONNECTED){
+            optionsList.add(new OtherOptionsModel(R.drawable.ble_ic, OBD, context.getResources().getString(R.string.obd_ble)));
         }else{
             optionsList.add(new OtherOptionsModel(R.drawable.eld_malfunction, OBD, context.getResources().getString(R.string.obd_not_connected)));
         }
@@ -451,7 +462,7 @@ public class Constants {
         locationObj.put(ConstantsKeys.CurrentCycleId, ListModel.getCurrentCycleId());
         locationObj.put(ConstantsKeys.isDeferral, ListModel.getIsDeferral());
         locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, ListModel.getUnassignedVehicleMilesId());
-
+        locationObj.put(ConstantsKeys.isNewRecord, ListModel.getNewRecordStatus());
 
         jsonArray.put(locationObj);
     }
@@ -1317,7 +1328,9 @@ public class Constants {
 
             try {
 
-                if(obdStatus == Constants.WIRED_CONNECTED || obdStatus == WIFI_CONNECTED){
+                if(obdStatus == Constants.WIRED_CONNECTED ||
+                        obdStatus == WIFI_CONNECTED ||
+                        obdStatus == Constants.BLE_CONNECTED){
 
                     StringBuilder obdData = obdUtils.getObdLogData(context);
                     String[] fileArray = obdData.toString().split("\n\n");
@@ -3010,12 +3023,15 @@ public class Constants {
                               OdometerHelperMethod odometerhMethod, HelperMethods hMethods, DBHelper dbHelper, Context context) {
 
         try {
-            if (SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED) {
+             int ObdStatus = SharedPref.getObdStatus(context);
+            if (ObdStatus == Constants.WIRED_CONNECTED ||
+                    ObdStatus == Constants.WIFI_CONNECTED ||
+                    ObdStatus == Constants.BLE_CONNECTED) {
                 int lastJobStatus = hMethods.getSecondLastJobStatus(driver18DaysLogArray);
                 int currentJobStatus = Integer.valueOf(DriverStatusId);
 
                 String odometerValue ;
-                if (SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED) {
+                if (ObdStatus == Constants.WIRED_CONNECTED) {
                     odometerValue = SharedPref.getWiredObdOdometer(context);
                 } else {
                     odometerValue = SharedPref.GetWifiObdOdometer(context);   // get odometer value from wifi obd
@@ -3140,18 +3156,19 @@ public class Constants {
 
                         if (isCurrentEngHourGreater || isOdometerDiffValid) {
 
-                            int earlierEventTime = malfunctionDiagnosticMethod.getTotalPowerComplianceMin(DriverId, dbHelper);
+                            int earlierEventTime = malfunctionDiagnosticMethod.getTotalPowerComplianceMin(dbHelper);
                             int totalMinDia = minDiff + earlierEventTime;
                             DateTime currentTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
-                            DateTime lastSavedDateTime = global.getDateTimeObj(lastSavedTime, false);
 
-                            malfunctionDiagnosticMethod.updateOccEventTimeLog(currentTime, DriverId,
+                            // DateTime lastSavedDateTime = global.getDateTimeObj(lastSavedTime, false);
+                            /*malfunctionDiagnosticMethod.updateOccEventTimeLog(currentTime, DriverId,
                                     SharedPref.getVINNumber(context), lastSavedDateTime, currentTime,
                                     context.getResources().getString(R.string.PwrComplianceEvent), ConstantsKeys.PowerDiagnstc,
-                                    dbHelper, context);
+                                    dbHelper, context);*/
 
+                            malfunctionDiagnosticMethod.updatePowerOccEventLog(currentTime, dbHelper);
 
-                            if (totalMinDia >= 10) {  // malfunction event time is 30 min
+                            if (totalMinDia >= 20) {  // malfunction event time is 30 min
 
                                 if (SharedPref.isPowerMalfunction(context)) {
                                     int dayDiff = getDayDiff(SharedPref.getPowerMalOccTime(context), global.GetCurrentDateTime());
@@ -3186,11 +3203,14 @@ public class Constants {
                                         context.getResources().getString(R.string.dia_event),
                                         context.getResources().getString(R.string.power_dia_occured), 2092);
 
+                                SharedPref.savePowerMalfunctionStatus(false, global.GetCurrentDateTime(), context);
                             }
 
                             // save updated values with truck ignition status
                             SharedPref.SetTruckIgnitionStatus(ignitionStatus, WiredOBD, global.getCurrentDate(), obdEngineHours, currentHighPrecisionOdometer, context);
                         }
+                    }else{
+                        SharedPref.savePowerMalfunctionStatus(false, global.GetCurrentDateTime(), context);
                     }
 
                 }
@@ -3213,7 +3233,10 @@ public class Constants {
         boolean isMalfunction = false;
         int ObdStatus = SharedPref.getObdStatus(context);
         try {
-            if (ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) {
+            if (ObdStatus == Constants.WIRED_CONNECTED ||
+                    ObdStatus == Constants.WIFI_CONNECTED ||
+                    ObdStatus == Constants.BLE_CONNECTED) {
+
                 if (SharedPref.getEcmObdLatitude(context).length() < 4) {
 
                     String currentOdometer = SharedPref.getHighPrecisionOdometer(context);
@@ -3309,7 +3332,7 @@ public class Constants {
                     isDiagnosticOccur,
                     SharedPref.isSuggestedEditOccur(context), context);
         }else{
-            SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccur(context),
+            SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccurCo(context),
                     SharedPref.isMalfunctionOccurCo(context),
                     isDiagnosticOccur,
                     SharedPref.isSuggestedEditOccurCo(context), context);
@@ -3324,7 +3347,7 @@ public class Constants {
                     SharedPref.isDiagnosticOccur(context),
                     SharedPref.isSuggestedEditOccur(context), context);
         }else{
-            SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccur(context),
+            SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccurCo(context),
                     isMalfncnOccur,
                     SharedPref.isDiagnosticOccurCo(context),
                     SharedPref.isSuggestedEditOccurCo(context), context);
@@ -3720,11 +3743,7 @@ public class Constants {
         if(OperatingZoneChange){
             IsNorthCanada = isNorth;
         }else {
-            if (sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-                IsNorthCanada = sharedPref.IsNorthCanadaMain(context);
-            } else {
-                IsNorthCanada = sharedPref.IsNorthCanadaCo(context);
-            }
+            IsNorthCanada = sharedPref.IsNorthCanada(context);
         }
 
 
@@ -3782,7 +3801,10 @@ public class Constants {
     public boolean isActionAllowedWithCoDriver(Context context, DBHelper dbHelper, HelperMethods hMethods, Globally Global, String DRIVER_ID){
         boolean isAllowed = true;
         int ObdStatus = SharedPref.getObdStatus(context);
-        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) && SharedPref.isVehicleMoving(context) ){
+        if((ObdStatus == Constants.WIRED_CONNECTED ||
+                ObdStatus == Constants.WIFI_CONNECTED ||
+                ObdStatus == Constants.BLE_CONNECTED) &&
+                SharedPref.isVehicleMoving(context) ){
             isAllowed = false;
         }
         boolean isCoDriverInDrYMPC = hMethods.isCoDriverInDrYMPC(context, Global, DRIVER_ID, dbHelper);
@@ -3802,7 +3824,8 @@ public class Constants {
         boolean isAllowed = true;
         int ObdStatus = SharedPref.getObdStatus(context);
         boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
-        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED) && isVehicleMoving ){
+        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
+                || ObdStatus == Constants.BLE_CONNECTED) && isVehicleMoving ){
             isAllowed = false;
         }
         return isAllowed;
@@ -3810,34 +3833,25 @@ public class Constants {
 
     public boolean isObdConnected(Context context){
         boolean isObdConnected = false;
-        if (SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED){
+        if (SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED
+                || SharedPref.getObdStatus(context) == Constants.BLE_CONNECTED){
             isObdConnected = true;
         }
 
-        return isObdConnected;
+        return true;
     }
 
 
-    /*public static boolean isTabletDevice(Context activityContext) {
+    public void checkBleConnection(){
 
-        boolean device_large = ((activityContext.getResources().getConfiguration().screenLayout &
-                Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE);
-        DisplayMetrics metrics = new DisplayMetrics();
-        Activity activity = (Activity) activityContext;
-
-
-            Display display = ((Activity)context).WindowManager.DefaultDisplay;
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            display.GetMetrics(displayMetrics);
-
-            var wInches = displayMetrics.WidthPixels / (double)displayMetrics.DensityDpi;
-            var hInches = displayMetrics.HeightPixels / (double)displayMetrics.DensityDpi;
-
-            double screenDiagonal = Math.Sqrt(Math.Pow(wInches, 2) + Math.Pow(hInches, 2));
-            return (screenDiagonal >= 7.0);
-
-
-
-    }*/
+        try {
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (!bluetoothAdapter.isEnabled()) {
+                bluetoothAdapter.enable();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 }

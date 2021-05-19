@@ -17,6 +17,7 @@ public class ConstantsKeys {
     public static String utcEndDateTime     = "UTCEndDateTime";
 
     public static String totalMin           = "TotalHours";
+    public static String isNewRecord        = "isNewRecord";
 
     public static String TotalHours         = "TotalHours";
     public static String Duration           = "Duration";
@@ -475,6 +476,7 @@ public class ConstantsKeys {
     public static String DriverELDNotificationList      = "DriverELDNotificationList";
     public static String IsELDNotification              = "IsELDNotification";
     public static String IsELDNotificationAlert         = "IsELDNotificationAlert";
+    public static String ObdPreference                  = "ObdPreference";
 
 
     public static String IsIgnitionOn                   = "IsIgnitionOn";

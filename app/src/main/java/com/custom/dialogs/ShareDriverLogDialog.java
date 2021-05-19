@@ -10,7 +10,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -200,6 +202,25 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         ArrayAdapter countryAdapter = new ArrayAdapter(getContext(), R.layout.item_editlog_spinner, R.id.editlogSpinTV,
                 getContext().getResources().getStringArray(R.array.country_array));
         countrySpinner.setAdapter(countryAdapter);
+
+
+
+        inspCmntEditTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.toString().trim().length() > 60) {
+                    inspCmntEditTxt.setError("Allows 60 characters only");
+                    inspCmntEditTxt.setText(inspCmntEditTxt.getText().toString().substring(0, 59));
+                }else{
+                    inspCmntEditTxt.setError(null);
+                }
+            }
+        });
+
 
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -618,12 +639,16 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             if (endDateTv.getText().toString().length() > 0) {
                 HideKeyboard();
                 if (EndDate.after(StartDate) || EndDate.equals(StartDate)) {
-
-                    SendDriverLog(DRIVER_ID, DeviceId, startDateTv.getText().toString(),
-                            endDateTv.getText().toString(), email, inspCmntEditTxt.getText().toString(),
-                            MailCheck, ServiceCheck, LATITUDE, LONGITUDE,
-                            SharedPref.getTimeZone(getContext()));
-
+                    String insComments = inspCmntEditTxt.getText().toString().trim();
+                    if(insComments.length() <= 60) {
+                        SendDriverLog(DRIVER_ID, DeviceId, startDateTv.getText().toString(),
+                                endDateTv.getText().toString(), email, insComments,
+                                MailCheck, ServiceCheck, LATITUDE, LONGITUDE,
+                                SharedPref.getTimeZone(getContext()));
+                    }else {
+                        Globally.EldScreenToast(shareDriverLogBtn, "Allows 60 characters only", getContext().getResources().getColor(R.color.colorVoilation));
+                        inspCmntEditTxt.setError("Allows 60 characters only");
+                    }
                 } else {
                     Globally.EldScreenToast(shareDriverLogBtn, "(To Date) should be greater then (From Date).", getContext().getResources().getColor(R.color.colorVoilation));
                 }
