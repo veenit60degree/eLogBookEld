@@ -339,6 +339,12 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
 
     @Override
     public int compareTo(CanadaDutyStatusModel canadaDutyStatusModel) {
-        return getDateTime().compareTo(canadaDutyStatusModel.getDateTime());
+        if(getDateTime().equals(canadaDutyStatusModel.getDateTime())){
+            return getHexaSeqNumber().compareTo(canadaDutyStatusModel.getHexaSeqNumber());
+        }else{
+            return getDateTime().compareTo(canadaDutyStatusModel.getDateTime());
+        }
     }
+
+
 }

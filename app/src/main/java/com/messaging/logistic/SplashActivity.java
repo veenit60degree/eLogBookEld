@@ -483,7 +483,7 @@ public class SplashActivity extends Activity implements
 
     void MoveToNextScreen(String screen){
 
-        constants.checkBleConnection();
+       // constants.checkBleConnection();
 
         /*========= Call main Service to start obd server service =============*/
         Constants.isEldHome = false;

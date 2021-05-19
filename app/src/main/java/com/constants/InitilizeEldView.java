@@ -252,7 +252,9 @@ public class InitilizeEldView {
 
         if(IsPersonalAllowed) {
             personalUseBtn.setTextColor(Color.parseColor(EldThemeColor));
+           // personalUseBtn.setText("PC End");
         }else{
+         //   personalUseBtn.setText("PC Start");
             personalUseBtn.setTextColor(Color.parseColor("#ABAAAB"));
         }
 

@@ -902,17 +902,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         BluetoothManager manager = BleUtil.getManager(this);
         if (manager != null) {
             mBTAdapter = manager.getAdapter();
+
         }
         if (mBTAdapter == null) {
            // Toast.makeText(this, R.string.bt_unavailable, Toast.LENGTH_SHORT).show();
             return;
+        }else {
+            if (!mBTAdapter.isEnabled()) {
+                mBTAdapter.enable();
+                //return;
+            }
         }
-
-        if (!mBTAdapter.isEnabled()) {
-           // Toast.makeText(this, R.string.bt_disabled, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
 
         BleManager.getInstance().init(getApplication());
         BleManager.getInstance()
@@ -968,6 +968,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             connect(bleDevice);
                             BleManager.getInstance().cancelScan();
+                        }
+                    }else{
+                        if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                            sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
                         }
                     }
                 }catch (Exception e){

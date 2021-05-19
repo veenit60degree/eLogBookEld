@@ -21,9 +21,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            card_view:cardBackgroundColor="@color/white_hover"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            card_view:cardBackgroundColor="@color/white_hoverrrrr"
             card_view:cardCornerRadius="2dp"
             card_view:cardElevation="0dp">
 

@@ -25,6 +25,7 @@ import com.androidtrip.plugins.searchablespinner.interfaces.OnItemSelectedListen
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.TabAct;
 import com.models.VehicleModel;
 import com.searchable.spinner.SearchArrayListAdapter;
 
@@ -45,7 +46,7 @@ public class VehicleDialog extends Dialog {
     SearchableSpinner updateVehSearchableSpinner;
     String Truck, Title = "";
     TextView TitleVehTV, updateVehTitleTV, logoutVehTV;
-    int SelectedPosition = 0, SetSpinnerPosition = 0;
+    int SelectedPosition = -1, SetSpinnerPosition = 0;
     private SearchArrayListAdapter mSimpleArrayListAdapter;
 
 
@@ -182,6 +183,17 @@ public class VehicleDialog extends Dialog {
             Log.d("onItemSelected", "onItemSelected: " + position);
             SelectedPosition = position;
            // saveBtnJob.setBackgroundResource(R.drawable.green_selector);
+            Object object = updateVehSearchableSpinner.getSelectedItem();
+            if(object != null) {
+                for (int i = 0; i < truckList.size(); i++) {
+                    if (object.toString().equals(truckList.get(i).getEquipmentNumber())) {
+                        SelectedPosition = i;
+                        break;
+                    }
+                }
+            }else{
+                SelectedPosition = -1;
+            }
         }
 
         @Override
@@ -195,7 +207,8 @@ public class VehicleDialog extends Dialog {
     private class VehicleFieldListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            if(SelectedPosition > 0) {
+
+            if(SelectedPosition >= 0) {
                 readyListener.ChangeVehicleReady(Title, SelectedPosition);
             }else{
                 Globally.EldScreenToast(btnSaveVehList, "Please select truck to change.", getContext().getResources().getColor(R.color.colorVoilation));

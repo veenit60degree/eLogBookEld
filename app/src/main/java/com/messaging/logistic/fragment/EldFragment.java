@@ -16,6 +16,8 @@ import android.os.Handler;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -254,6 +256,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     final int PERSONAL_DRIVING = 13;
     final int PERSONAL_ON_DUTY = 14;
     int AFTER_PERSONAL_JOB = 0;
+    int PC_END = 1010;
+    int YM_END = 1020;
 
 
     int SaveRequestCount = 0;
@@ -1034,7 +1038,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         try {
             if(getActivity() != null) {
-
+               // connectionStatusImgView.clearColorFilter();
+               // ImageViewCompat.setImageTintList(connectionStatusImgView, null);
+                connectionStatusImgView.setColorFilter(null);
                 int obdStatus = sharedPref.getObdStatus(getActivity());
                 switch (obdStatus) {
 
@@ -1078,6 +1084,24 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_inactive), getResources().getColor(R.color.colorSleeper) );
                         }
                         break;
+
+                    case Constants.BLE_CONNECTED:
+                        connectionStatusImgView.setImageResource(R.drawable.ble_ic);
+                        connectionStatusImgView.setColorFilter(getResources().getColor(R.color.colorPrimary));
+                        if (isToastShowing) {
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.ble_active), getResources().getColor(R.color.color_eld_theme) );
+                        }
+                        break;
+
+                    case Constants.BLE_DISCONNECTED:
+                        connectionStatusImgView.setImageResource(R.drawable.ble_ic);
+                        connectionStatusImgView.setColorFilter(getResources().getColor(R.color.spinner_blue));
+                        connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                        if (isToastShowing) {
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.ble_inactive), getResources().getColor(R.color.colorSleeper) );
+                        }
+                        break;
+
 
                     default:
                         connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
@@ -1129,8 +1153,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
 
         boolean isMalfunction = SharedPref.isMalfunctionOccur(getActivity()) || SharedPref.isDiagnosticOccur(getActivity())||
-                SharedPref.isLocMalfunctionOccur(getActivity()) || SharedPref.isEngSyncMalfunction(getActivity()) ||
-                SharedPref.isEngSyncDiagnstc(getActivity());
+                SharedPref.isUnidentifiedOccur(getActivity());
         if(isUnIdentifiedOccur || isHaulExcptn || isAdverseExcptn || isMalfunction){
             eldMenuErrorImgVw.setVisibility(View.VISIBLE);
         }else{
@@ -1879,11 +1902,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed);
                 initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed);
                 if (IsPersonal.equals("false")) {
+                    personalUseBtn.setText(getString(R.string.pc_start));
                     initilizeEldView.ActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, false);
                 } else {
                     initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed);
                     personalUseBtn.setBackgroundResource(R.drawable.eld_blue_new_selector);
                     personalUseBtn.setTextColor(Color.WHITE);
+                    personalUseBtn.setText(getString(R.string.pc_end));
                 }
 
 
@@ -2052,6 +2077,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     void setYardMoveView(){
         if(isYardMove){
+            yardMoveBtn.setText(getString(R.string.ym_end));
             if (isViolation) {
                 yardMoveBtn.setBackgroundResource(R.drawable.red_default);
             }else{
@@ -2059,7 +2085,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
             yardMoveBtn.setTextColor(getResources().getColor(R.color.whiteee));
         }else{
-
+            yardMoveBtn.setText(getString(R.string.ym_start));
             if (sharedPref.IsYardMoveAllowed(getActivity())) {
                 yardMoveBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
             } else {
@@ -2328,7 +2354,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 if (constants.isObdConnected(getActivity())) {
                                     statusEndConfDialog.ShowAlertDialog(getString(R.string.Confirmation_suggested), getString(R.string.WantEndYM),
                                             getString(R.string.yes), getString(R.string.no),
-                                            101, positiveCallBack, negativeCallBack);
+                                            YM_END, positiveCallBack, negativeCallBack);
                                 }else{
                                     Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
                                 }
@@ -2823,7 +2849,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 if (constants.isObdConnected(getActivity())) {
                     statusEndConfDialog.ShowAlertDialog(getString(R.string.Confirmation_suggested), getString(R.string.WantEndPU),
                             getString(R.string.yes),  getString(R.string.no),
-                            101, positiveCallBack, negativeCallBack);
+                            PC_END, positiveCallBack, negativeCallBack);
                 }else{
                     Global.EldToastWithDuration4Sec(OnDutyBtn, getResources().getString(R.string.connect_with_obd_first), getResources().getColor(R.color.colorVoilation));
                 }
@@ -2840,7 +2866,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     AlertDialogEld.PositiveButtonCallback positiveCallBack = new AlertDialogEld.PositiveButtonCallback() {
         @Override
         public void getPositiveClick(int flag) {
-            SaveOffDutyStatus();
+
+            if(flag == PC_END){
+                SaveOffDutyStatus();
+            }else{
+                Reason = "Yard Move End";
+                isYardMove = false;
+                SaveDriverJob(Global.ON_DUTY);
+            }
+
+
         }
     };
 
@@ -3427,7 +3462,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     void VehicleBtnClick(String Title, final int position) {
 
-        TruckListPosition = position - 1;
+        TruckListPosition = position ;  //- 1
 
         if (sharedPref.getDriverType(getContext()).equals(DriverConst.TeamDriver)) {
             SaveVehicleNumber(TruckListPosition, MainDriverId, CoDriverId, DriverCompanyId, LoginTruckChange, true);
@@ -6093,6 +6128,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 boolean IsCycleRequest      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsCycleRequest);
                                 boolean IsUnidentified      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsUnidentified);
 
+                                if(dataJObject.has(ConstantsKeys.ObdPreference)) {
+                                    sharedPref.SetObdPreference(dataJObject.getInt(ConstantsKeys.ObdPreference), getActivity());
+                                }
+
                                 boolean IsELDNotification = false;
                                 String ELDNotification    = dataObj.getString("DriverELDNotificationList");
 
@@ -6106,7 +6145,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 }
                                 sharedPref.SetELDNotification(IsELDNotification, getActivity());
                                 sharedPref.SetNorthCanadaStatus(IsNorthCanada, getActivity());
-                                sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getActivity());
 
 
                                 if(DRIVER_ID.equals(MainDriverId)) {    // Update permissions for main driver

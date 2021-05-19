@@ -221,7 +221,13 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 }
             });
 
-            highLightCurrentTab(position);
+            if(malfunctionHeaderList.size() == 0 && diagnosticHeaderList.size() > 0){
+                highLightCurrentTab(1);
+            }else if(malfunctionHeaderList.size() > 0 && diagnosticHeaderList.size() == 0){
+                highLightCurrentTab(0);
+            }else {
+                highLightCurrentTab(position);
+            }
             refreshAdapterOnPageChange(position, isUpdateFromApi);
 
         }catch (Exception e){

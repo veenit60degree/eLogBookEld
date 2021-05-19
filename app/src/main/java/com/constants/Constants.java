@@ -3838,7 +3838,7 @@ public class Constants {
             isObdConnected = true;
         }
 
-        return true;
+        return isObdConnected;
     }
 
 

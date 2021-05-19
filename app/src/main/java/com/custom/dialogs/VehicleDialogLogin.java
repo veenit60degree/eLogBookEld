@@ -60,7 +60,7 @@ public class VehicleDialogLogin  extends Dialog {
 
     String Truck, Title = "", CoDriverId = "", CompanyId = "";
     TextView TitleTV, logoutTruckPopupTV;
-    int SelectedPosition = 0;  //, SetSpinnerPosition = 0;
+    int SelectedPosition = -1;  //, SetSpinnerPosition = 0;
     boolean isContinue = false;
     Activity activity;
     Constants constant;
@@ -220,7 +220,21 @@ public class VehicleDialogLogin  extends Dialog {
         public void onItemSelected(View view, int position, long id) {
            Log.d("onItemSelected", "onItemSelected: " + position);
             SelectedPosition = position;
-            saveBtnJob.setBackgroundResource(R.drawable.green_selector);
+
+            Object object = searchableSpinner.getSelectedItem();
+            if(object != null) {
+                for (int i = 0; i < truckList.size(); i++) {
+                    if (object.toString().equals(truckList.get(i).getEquipmentNumber())) {
+                        SelectedPosition = i;
+                        break;
+                    }
+                }
+                saveBtnJob.setBackgroundResource(R.drawable.green_selector);
+            }else{
+                SelectedPosition = -1;
+                saveBtnJob.setBackgroundResource(R.drawable.gray_selector);
+            }
+
         }
 
         @Override
@@ -258,7 +272,8 @@ public class VehicleDialogLogin  extends Dialog {
                 LogoutUser();
                 activity.finish();
             } else {
-                if (SelectedPosition > 0) {
+
+                if (SelectedPosition >= 0) {
                     readyListener.ChangeVehicleReady(Title, SelectedPosition, saveBtnJob);
                 } else {
                     Globally.EldScreenToast(saveBtnJob, "Please select truck to save.", getContext().getResources().getColor(R.color.colorVoilation));

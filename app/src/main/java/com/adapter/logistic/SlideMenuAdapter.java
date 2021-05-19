@@ -160,6 +160,26 @@ public class SlideMenuAdapter extends BaseAdapter {
                     holder.menuErrorImgView.setVisibility(View.GONE);
                 }
             }
+
+            if (menuList.get(position).getStatus() == Constants.SETTINGS) {
+                boolean isHaulExcptn ;
+                boolean isAdverseExcptn;
+                if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                    isHaulExcptn        = SharedPref.get16hrHaulExcptn(context);
+                    isAdverseExcptn     = SharedPref.getAdverseExcptn(context);
+                }else{
+                    isHaulExcptn        = SharedPref.get16hrHaulExcptnCo(context);
+                    isAdverseExcptn     = SharedPref.getAdverseExcptnCo(context);
+                }
+
+                if(isHaulExcptn || isAdverseExcptn){
+                    holder.menuErrorImgView.setVisibility(View.VISIBLE);
+                }else {
+                    holder.menuErrorImgView.setVisibility(View.GONE);
+                }
+            }
+
+
         }
 
         return convertView;

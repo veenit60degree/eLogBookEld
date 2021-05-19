@@ -528,6 +528,11 @@
     <string name="hos_violation_apprch">HOS violation approaching</string>
 
 
+    <string name="pc_start">PC Start</string>
+    <string name="pc_end">PC End</string>
+    <string name="ym_start">YM Start</string>
+    <string name="ym_end">YM End</string>
+
     <string name="pre_trip_unloading">Pre-Trip + unloading</string>
     <string name="pre_trip">Pre-Trip</string>
     <string name="post_trip">Post Trip</string>
@@ -694,6 +699,8 @@
     <string name="obd_not_connected">OBD not connected</string>
     <string name="wifi_active">WIFI OBD is connected</string>
     <string name="wifi_inactive">WIFI OBD is not working</string>
+    <string name="ble_active">Bluetooth OBD is connected</string>
+    <string name="ble_inactive">Bluetooth OBD is not working</string>
     <string name="obd_data_connection_desc">Kindly connect with OBD via Wifi or Cable connection</string>
 
     <string name="current_version_dummy">Current Version : 3.3.1</string>
