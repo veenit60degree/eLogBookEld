@@ -3813,7 +3813,7 @@ public class Constants {
             isAllowed = true;
         }
 
-        return isAllowed;
+        return true;
     }
 
 
@@ -3828,7 +3828,7 @@ public class Constants {
                 || ObdStatus == Constants.BLE_CONNECTED) && isVehicleMoving ){
             isAllowed = false;
         }
-        return isAllowed;
+        return true;
     }
 
     public boolean isObdConnected(Context context){
@@ -3838,7 +3838,7 @@ public class Constants {
             isObdConnected = true;
         }
 
-        return isObdConnected;
+        return true;
     }
 
 

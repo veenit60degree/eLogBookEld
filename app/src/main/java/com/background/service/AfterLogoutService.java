@@ -2,21 +2,42 @@ package com.background.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.speech.tts.TextToSpeech;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
+import com.ble.comm.Observer;
+import com.ble.comm.ObserverManager;
+import com.ble.util.BleUtil;
+import com.clj.fastble.BleManager;
+import com.clj.fastble.callback.BleGattCallback;
+import com.clj.fastble.callback.BleNotifyCallback;
+import com.clj.fastble.callback.BleReadCallback;
+import com.clj.fastble.callback.BleScanCallback;
+import com.clj.fastble.callback.BleWriteCallback;
+import com.clj.fastble.data.BleDevice;
+import com.clj.fastble.exception.BleException;
+import com.clj.fastble.scan.BleScanRuleConfig;
+import com.clj.fastble.utils.HexUtil;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.ShellUtils;
@@ -28,15 +49,18 @@ import com.wifi.settings.WiFiConfig;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import dal.tables.OBDDeviceData;
 import obdDecoder.Decoder;
 
 
-public class AfterLogoutService extends Service implements TextToSpeech.OnInitListener{
+public class AfterLogoutService extends Service implements TextToSpeech.OnInitListener, Observer {
 
     String ServerPackage = "com.als.obd";
     String ServerService = "com.als.obd.services.MainService";
@@ -68,6 +92,24 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private Handler mHandler = new Handler();
     NotificationManagerSmart mNotificationManager;
     boolean isWiredCallBackCalled = false;
+
+    private static final String TAG_BLE = "BleService";
+    private static final String TAG_BLE_CONNECT = "BleConnect";
+    private static final String TAG_BLE_OPERATION = "BleOperation";
+    boolean mIsScanning = false;
+    boolean isBleObdRespond = false;
+
+    private BluetoothAdapter mBTAdapter;
+    boolean isManualDisconnected = false;
+    BleDevice bleDevice;
+    private BluetoothGattService bluetoothGattService;
+    private BluetoothGattCharacteristic characteristic;
+    List<BluetoothGattService> bluetoothGattServices = new ArrayList<>();
+    List<BluetoothGattCharacteristic> characteristicList = new ArrayList<>();
+
+    String name = "";
+    String mac = "";
+
 
 
     @SuppressLint("RestrictedApi")
@@ -120,60 +162,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             // ---------------- temp data ---------------------CalculateCycleTime
             //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
 
-            try {
-                if(sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
-
-                    if (ignitionStatus.equals("ON") && !truckRPM.equals("0")) {
-                        sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", getApplicationContext());
-                        if (speed > 8 && lastVehSpeed > 8) {
-                            sharedPref.setLoginAllowedStatus(false, getApplicationContext());
-
-                            long count = sharedPref.getLastCalledWiredCallBack(getApplicationContext());
-                            if (count == 0) {
-                                sharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
-                                Globally.PlaySound(getApplicationContext());
-                                Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
-                                SpeakOutMsg(AlertMsgSpeech);
-                            }
-
-                            if (count >= TIME_INTERVAL_LIMIT) {
-                                // reset call back count
-                                count = 0;
-                            }
-
-                            // save count --------------
-                            sharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
-                            // Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", "OBD Speed: " + speed, 203040);
-                        } else {
-                            sharedPref.setLoginAllowedStatus(true, getApplicationContext());
-                        }
-                        lastVehSpeed = speed;
-
-                        CallWired(TIME_INTERVAL_WIRED);
-
-                    } else {
-                        lastVehSpeed = -1;
-                        sharedPref.setLoginAllowedStatus(true, getApplicationContext());
-
-                        if (sharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED ||
-                                sharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
-                            sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
-                            CallWired(TIME_INTERVAL_WIFI);
-                        }
-
-                    }
-                }else{
-                    lastVehSpeed = -1;
-                    sharedPref.setLoginAllowedStatus(true, getApplicationContext());
-                    sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
-                    CallWired(Constants.SocketTimeout5Sec);
-
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            checkObdDataWithRule(speed);
         }
     }
+
 
 
     private void CallWired(long time){
@@ -229,13 +221,87 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
 
+    private void checkObdDataWithRule(int speed){
+        try {
+            if(sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED ||
+                    sharedPref.getObdStatus(getApplicationContext()) == Constants.BLE_CONNECTED) {
+
+                if (ignitionStatus.equals("ON") && !truckRPM.equals("0")) {
+                    sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", getApplicationContext());
+                    if (speed > 8 && lastVehSpeed > 8) {
+                        sharedPref.setLoginAllowedStatus(false, getApplicationContext());
+
+                        long count = sharedPref.getLastCalledWiredCallBack(getApplicationContext());
+                        if (count == 0) {
+                            sharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
+                            Globally.PlaySound(getApplicationContext());
+                            Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
+                            SpeakOutMsg(AlertMsgSpeech);
+                        }
+
+                        if (count >= TIME_INTERVAL_LIMIT) {
+                            // reset call back count
+                            count = 0;
+                        }
+
+                        // save count --------------
+                        sharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
+                    } else {
+                        sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                    }
+                    lastVehSpeed = speed;
+
+                    // ping wired server to get data
+                    if( sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED &&
+                            sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
+                        CallWired(TIME_INTERVAL_WIRED);
+                    }
+
+                } else {
+                    lastVehSpeed = -1;
+                    sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+                    if( sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
+                        if (sharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED ||
+                                sharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
+                            sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
+                            CallWired(TIME_INTERVAL_WIFI);
+                        }
+                    }
+                }
+            }else{
+                lastVehSpeed = -1;
+                sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+                if( sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
+                    sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
+                    CallWired(Constants.SocketTimeout5Sec);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.i("service", "---------onStartCommand Service");
 
-        StartStopServer(constants.WiredOBD);
-        checkWifiOBDConnection();
+        if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+            if(isBleObdRespond == false) {
+                bleInit();
+                checkPermissions();
+            }
+        }else if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+            StartStopServer(constants.WiredOBD);
+        }else{
+            checkWifiOBDConnection();
+        }
+
+
 
         //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
         return START_STICKY;
@@ -247,6 +313,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private Timer mTimer;
 
     TimerTask timerTask = new TimerTask() {
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
         @Override
         public void run() {
             Log.e(TAG, "-----Running Logout timerTask");
@@ -258,19 +325,24 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             }else{
 
-                checkWiredObdConnection();
-
                 // communicate with wired OBD server app with Message
-                if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED &&
-                        SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED){
-                    StartStopServer(constants.WiredOBD);
-                }else{
-                    if(isWiredCallBackCalled == false){
-                        StartStopServer(constants.WiredOBD);
+                if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                    if(isBleObdRespond == false) {
+                        bleInit();
+                        checkPermissions();
                     }
+                }else if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+                    if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED ){
+                        StartStopServer(constants.WiredOBD);
+                    }else{
+                        if(isWiredCallBackCalled == false){
+                            StartStopServer(constants.WiredOBD);
+                        }
+                    }
+                }else{
+                    checkWifiOBDConnection();
                 }
 
-                checkWifiOBDConnection();
             }
 
         }
@@ -482,6 +554,460 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         }
     };
+
+
+
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void bleInit() {
+        // BLE check
+        if (!BleUtil.isBLESupported(this)) {
+            // Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // BT check
+        BluetoothManager manager = BleUtil.getManager(this);
+        if (manager != null) {
+            mBTAdapter = manager.getAdapter();
+
+        }
+        if (mBTAdapter == null) {
+            // Toast.makeText(this, R.string.bt_unavailable, Toast.LENGTH_SHORT).show();
+            return;
+        }else {
+            if (!mBTAdapter.isEnabled()) {
+                mBTAdapter.enable();
+                //return;
+            }
+        }
+
+        BleManager.getInstance().init(getApplication());
+        BleManager.getInstance()
+                .enableLog(true)
+                .setReConnectCount(1, 10000)
+                .setConnectOverTime(25000)
+                .setOperateTimeout(10000);
+    }
+
+
+    private void checkPermissions() {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!bluetoothAdapter.isEnabled()) {
+            //Toast.makeText(this, getString(R.string.please_open_blue), Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
+            // if(bleDevice.getName() != null && bleDevice.getName().contains("ALSELD")) {
+            if(!mIsScanning && !BleManager.getInstance().isConnected(bleDevice)) {
+                startScan();
+            }
+        }
+    }
+
+
+    private void startScan() {
+        BleManager.getInstance().scan(new BleScanCallback() {
+            @Override
+            public void onScanStarted(boolean success) {
+                mIsScanning = true;
+                isBleObdRespond = false;
+            }
+
+            @Override
+            public void onLeScan(BleDevice bleDevice) {
+                super.onLeScan(bleDevice);
+            }
+
+            @Override
+            public void onScanning(BleDevice bleDevice) {
+
+                try{
+                    if(bleDevice.getName() != null) {
+                        if (bleDevice.getName().contains("ALSELD") || bleDevice.getName().contains("SMBLE")) {
+                            Log.d("getName", "getName: " + bleDevice.getName());
+                            connect(bleDevice);
+                            BleManager.getInstance().cancelScan();
+                        }
+                    }else{
+                        if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                            sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onScanFinished(List<BleDevice> scanResultList) {
+                mIsScanning = false;
+            }
+        });
+    }
+
+
+
+    private void connect(final BleDevice bleDevice) {
+        BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
+            @Override
+            public void onStartConnect() {
+                Log.d(TAG_BLE_CONNECT, "onStartConnect");
+            }
+
+            @Override
+            public void onConnectFail(BleDevice bleDevice, BleException exception) {
+                Log.d(TAG_BLE_CONNECT, "onConnectFail");
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+            @Override
+            public void onConnectSuccess(BleDevice blueToothDevice, BluetoothGatt gatt, int status) {
+                Log.d(TAG_BLE_CONNECT, "Connected Successfully");
+                if (BleManager.getInstance().isConnected(bleDevice)) {
+
+                    isManualDisconnected = false;
+                    setDisconnectType(isManualDisconnected);
+
+                    setBleDevice(blueToothDevice);
+                    addObserver(blueToothDevice);
+                    name = bleDevice.getName();
+                    mac  = bleDevice.getMac();
+
+                    bluetoothGattServices = new ArrayList<>();
+                    for (BluetoothGattService service : gatt.getServices()) {
+                        bluetoothGattServices.add(service);
+                    }
+
+                    if(bluetoothGattServices.size() > 2) {
+                        sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+
+                        BluetoothGattService service = bluetoothGattServices.get(2);
+                        setBluetoothGattService(service);
+                        writeData();
+                    }
+
+                }
+
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
+
+                Log.d(TAG_BLE_CONNECT, "onDisConnected");
+                if (!isActiveDisConnected) {
+                    ObserverManager.getInstance().notifyObserver(bleDevice);
+                }
+
+                if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                    sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+                }
+
+                if(!isManualDisconnected()) {
+                    setScanRule("", "", "", false);
+                    startScan();
+                }
+
+            }
+        });
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public void getCharacteristicListData() {
+        BluetoothGattService service = getBluetoothGattService();
+        characteristicList = new ArrayList<>();
+        if(service != null) {
+            for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+                characteristicList.add(characteristic);
+            }
+        }
+    }
+
+    private BluetoothGattCharacteristic getBluetoothGattCharacteristic(int maxlength, int PROPERTY){
+        BluetoothGattCharacteristic characteristic = null;
+        if(characteristicList.size() > maxlength) {
+            characteristic = characteristicList.get(maxlength);
+            if (PROPERTY > 0) {
+                setCharacteristic(characteristic);
+            }
+        }
+        return characteristic;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void writeData(){
+
+        getCharacteristicListData();
+
+        BluetoothGattCharacteristic characteristic  = getBluetoothGattCharacteristic(0, BluetoothGattCharacteristic.PROPERTY_WRITE);
+
+        if(characteristic != null) {
+            String writeValue = "";
+            String uuidName = bleDevice.getName();
+            final String requestData = "request:{source_id:" + uuidName + ",events:[{5B6A,0,0,000000,000000,000000000000,1111,0,0,0,0,,0,0,0,0,0,0,0,57,79}]}";    //{5B6A,0,0,000000,000000,000000000000,1111,0,0,,0,0,0,0,0,0,0,57,79}]
+
+            writeValue = BleUtil.convertStringToHex(requestData);
+            writeValue = writeValue.replaceAll(" ", "");
+            byte[] bytes = BleUtil.invertStringToBytes(writeValue);
+
+            BleManager.getInstance().write(
+                    bleDevice,
+                    characteristic.getService().getUuid().toString(),
+                    characteristic.getUuid().toString(),
+                    bytes, // by,
+                    new BleWriteCallback() {
+
+                        @Override
+                        public void onWriteSuccess(final int current, final int total, final byte[] justWrite) {
+                            Log.d(TAG_BLE_OPERATION, "onWriteSuccess");
+                            // read ble data after write success
+                            readData();
+
+                        }
+
+                        @Override
+                        public void onWriteFailure(final BleException exception) {
+                            Log.d(TAG_BLE_OPERATION, "onWriteFailure");
+                            mIsScanning = false;
+                        }
+                    });
+        }
+
+    }
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void readData(){
+
+        BluetoothGattCharacteristic characteristic = getBluetoothGattCharacteristic(1, BluetoothGattCharacteristic.PROPERTY_READ);
+
+        if (characteristic != null) {
+            BleManager.getInstance().read(
+                    bleDevice,
+                    characteristic.getService().getUuid().toString(),
+                    characteristic.getUuid().toString(),
+                    new BleReadCallback() {
+
+                        @Override
+                        public void onReadSuccess(final byte[] data) {
+                            Log.d(TAG_BLE_OPERATION, "onReadSuccess");
+                            notifyData();
+                        }
+
+                        @Override
+                        public void onReadFailure(final BleException exception) {
+                            Log.d(TAG_BLE_OPERATION, "onReadFailure");
+                            mIsScanning = false;
+                        }
+                    });
+        }
+    }
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void notifyData(){
+
+        final BluetoothGattCharacteristic characteristic = getBluetoothGattCharacteristic(1, BluetoothGattCharacteristic.PROPERTY_NOTIFY);
+
+        if (characteristic != null) {
+            BleManager.getInstance().notify(
+                    bleDevice,
+                    characteristic.getService().getUuid().toString(),
+                    characteristic.getUuid().toString(),
+                    false,
+                    new BleNotifyCallback() {
+
+                        @Override
+                        public void onNotifySuccess() {
+                            Log.d(TAG_BLE_OPERATION, "onNotifySuccess");
+
+                            String data = HexUtil.formatHexString(characteristic.getValue(), true);
+                            Log.d("Notify Success Data", "data: " + data);
+                            sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+
+                        }
+
+                        @Override
+                        public void onNotifyFailure(final BleException exception) {
+
+                            Log.d(TAG_BLE_OPERATION, "onReadFailure: " + exception.toString());
+                            mIsScanning = false;
+                            isBleObdRespond = false;
+
+                            if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                                sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+                            }
+
+                        }
+
+                        @Override
+                        public void onCharacteristicChanged(byte[] data) {
+                            if(characteristic.getValue().length > 50) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+                                    String[] decodedArray = BleUtil.decodeDataChange(characteristic);
+
+                                    if(decodedArray != null && decodedArray.length >= 20){
+                                        isBleObdRespond = true;
+                                        int VehicleSpeed = Integer.valueOf(decodedArray[7]);
+                                        truckRPM = decodedArray[8];
+
+                                        if(Integer.valueOf(truckRPM) > 0){
+                                            ignitionStatus = "ON";
+                                        }else{
+                                            ignitionStatus = "OFF";
+                                        }
+
+                                        checkObdDataWithRule(VehicleSpeed);
+                                    }
+
+
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
+
+    private void addObserver(BleDevice blueToothDevice){
+        bleDevice = blueToothDevice;
+
+        if (bleDevice == null) {
+            return;
+        }
+
+        ObserverManager.getInstance().addObserver(this);
+    }
+
+
+    private void setScanRule(String uuid, String displayName, String mac, boolean isAutoConnect) {
+        String[] uuids;
+        String str_uuid = uuid;
+        if (TextUtils.isEmpty(str_uuid)) {
+            uuids = null;
+        } else {
+            uuids = str_uuid.split(",");
+        }
+        UUID[] serviceUuids = null;
+        if (uuids != null && uuids.length > 0) {
+            serviceUuids = new UUID[uuids.length];
+            for (int i = 0; i < uuids.length; i++) {
+                String name = uuids[i];
+                String[] components = name.split("-");
+                if (components.length != 5) {
+                    serviceUuids[i] = null;
+                } else {
+                    serviceUuids[i] = UUID.fromString(uuids[i]);
+                }
+            }
+        }
+
+        String[] names;
+        String str_name = displayName;
+        if (TextUtils.isEmpty(str_name)) {
+            names = null;
+        } else {
+            names = str_name.split(",");
+        }
+
+        BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
+                .setServiceUuids(serviceUuids)      // Only scan the equipment of the specified service, optional
+                .setDeviceName(true, names)   // Only scan devices with specified broadcast name, optional
+                .setDeviceMac(mac)                  // Only scan devices of specified mac, optional
+                .setAutoConnect(isAutoConnect)      // AutoConnect parameter when connecting, optional, default false
+                .setScanTimeOut(10000)              // Scan timeout time, optional, default 10 seconds
+                .build();
+        BleManager.getInstance().initScanRule(scanRuleConfig);
+    }
+
+    @Override
+    public void disConnected(BleDevice bleDevice) {
+        if (bleDevice != null && bleDevice != null && bleDevice.getKey().equals(bleDevice.getKey())) {
+            mIsScanning = false;
+            isBleObdRespond = false;
+            Log.d(TAG_BLE_CONNECT, "Observer disConnected");
+
+            if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+            }
+        }
+    }
+
+    public boolean isBleConnected(){
+        getBleDevice();
+        return BleManager.getInstance().isConnected(bleDevice);
+    }
+
+    public void setDisconnectType(boolean isManual) {
+        this.isManualDisconnected = isManual;
+    }
+
+    public boolean isManualDisconnected() {
+        return isManualDisconnected;
+    }
+
+
+
+    public void setBleDevice(BleDevice bleDevice) {
+        this.bleDevice = bleDevice;
+    }
+
+    public BleDevice getBleDevice() {
+        return bleDevice;
+    }
+    public BluetoothGattService getBluetoothGattService() {
+        return bluetoothGattService;
+    }
+
+    public void setBluetoothGattService(BluetoothGattService bluetoothGattService) {
+        this.bluetoothGattService = bluetoothGattService;
+    }
+
+    public BluetoothGattCharacteristic getCharacteristic() {
+        return characteristic;
+    }
+
+    public void setCharacteristic(BluetoothGattCharacteristic characteristic) {
+        this.characteristic = characteristic;
+    }
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public void stopService(BleDevice bleDevice, BluetoothGattCharacteristic characteristic){
+        if(bleDevice != null){
+            if(BleManager.getInstance().isConnected(bleDevice)) {
+
+                BleManager.getInstance().stopNotify(
+                        bleDevice,
+                        characteristic.getService().getUuid().toString(),
+                        characteristic.getUuid().toString());
+
+                isManualDisconnected = true;
+                setDisconnectType(isManualDisconnected);
+                BleManager.getInstance().clearCharacterCallback(bleDevice);
+                ObserverManager.getInstance().deleteObserver(this);
+                BleManager.getInstance().disconnect(bleDevice);
+                //  BleManager.getInstance().disconnectAllDevice();
+                BleManager.getInstance().destroy();
+
+                // stopSelf();
+            }
+
+        }
+
+    }
+
+
 
 
 

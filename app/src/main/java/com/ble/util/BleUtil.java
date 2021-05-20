@@ -81,7 +81,7 @@ public class BleUtil {
 
         String[] arrayData = null;
         byte[] data = characteristic.getValue();
-        String str = null;
+        String str = "";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             str = new String(data, StandardCharsets.UTF_8);
         }

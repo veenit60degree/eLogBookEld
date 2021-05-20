@@ -5996,6 +5996,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             Global.EldScreenToast(OnDutyBtn, "Updated successfully.", getResources().getColor(R.color.colorPrimary));
                         }
 
+                        GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
 
                         if (sharedPref.getDriverType(getContext()).equals(DriverConst.TeamDriver)) {
                             /*Save Trip Details */

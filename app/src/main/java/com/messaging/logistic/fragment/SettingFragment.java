@@ -55,6 +55,7 @@ import com.constants.VolleyRequest;
 import com.custom.dialogs.AdverseRemarksDialog;
 import com.custom.dialogs.ChangeCycleDialog;
 import com.custom.dialogs.ConfirmationDialog;
+import com.custom.dialogs.ObdDataInfoDialog;
 import com.models.CycleModel;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
@@ -444,6 +445,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
         }
 
+        dateActionBarTV.setText("Obd Info");
 
         global.hideSoftKeyboard(getActivity());
         getInstalledAppDetail();
@@ -867,8 +869,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 break;
 
             case R.id.dateActionBarTV:
-                TabAct.host.setCurrentTab(0);
-                // dateActionBarTV.setVisibility(View.INVISIBLE);
+               // TabAct.host.setCurrentTab(0);
+
+                ObdDataInfoDialog dialog = new ObdDataInfoDialog(getActivity());
+                dialog.show();
+
                 break;
 
 

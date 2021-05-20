@@ -427,7 +427,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     currentHighPrecisionOdometer = bundle.getString(constants.OBD_HighPrecisionOdometer);
                 }
 
-
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -439,6 +438,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
     private void obdCallBackObservable(int speed, String vin, String timeStamp, String[] obdDataArray){
+
+        int OBD_LAST_STATUS = sharedPref.getObdStatus(getApplicationContext());
+        String last_obs_source_name = sharedPref.getObdSourceName(getApplicationContext());
 
         try {
             if(obdDataArray != null) {
@@ -460,6 +462,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
                 }else{
                     ignitionStatus = "OFF";
+                }
+            }else{
+                if(OBD_LAST_STATUS == constants.BLE_CONNECTED) {
+                    constants.saveAppUsageLog("BleCallback: Array null" ,  false, false, obdUtil);
+                    truckRPM = "-1";
+                    obdOdometer = "001";
+                    obdEngineHours = "002";
+                    speed = -11;
+                    vin = "null";
                 }
             }
 
@@ -489,8 +500,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
 */
 
-        int OBD_LAST_STATUS = sharedPref.getObdStatus(getApplicationContext());
-        String last_obs_source_name = sharedPref.getObdSourceName(getApplicationContext());
         if(OBD_LAST_STATUS == constants.WIRED_CONNECTED || OBD_LAST_STATUS == constants.BLE_CONNECTED) {
             isWiredObdRespond = true;
             if (sharedPref.getVINNumber(getApplicationContext()).length() > 5) {
@@ -945,6 +954,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             public void onScanStarted(boolean success) {
                 mIsScanning = true;
                 isBleObdRespond = false;
+
+                constants.saveAppUsageLog("BleCallback: ScanStarted" ,  false, false, obdUtil);
                // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     //sendBroadCast("Scan Started", "", bleDevice, getCharacteristic());
                // }
@@ -982,7 +993,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             @Override
             public void onScanFinished(List<BleDevice> scanResultList) {
                 mIsScanning = false;
-
              /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     try {
                         if (bleDevice != null) {
@@ -1015,6 +1025,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
                 Log.d(TAG_BLE_CONNECT, "onConnectFail");
+                constants.saveAppUsageLog("BleCallback: ConnectFail" ,  false, false, obdUtil);
+
                // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
                         sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
@@ -1045,6 +1057,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
 
                     if(bluetoothGattServices.size() > 2) {
+                        constants.saveAppUsageLog("BleCallback: ConnectSuccess" ,  false, false, obdUtil);
 
                         sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
 
@@ -1062,6 +1075,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
 
                 Log.d(TAG_BLE_CONNECT, "onDisConnected");
+                constants.saveAppUsageLog("BleCallback: DisConnected" ,  false, false, obdUtil);
 
                 if (!isActiveDisConnected) {
                     ObserverManager.getInstance().notifyObserver(bleDevice);
@@ -1131,6 +1145,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         @Override
                         public void onWriteSuccess(final int current, final int total, final byte[] justWrite) {
                             Log.d(TAG_BLE_OPERATION, "onWriteSuccess");
+                            constants.saveAppUsageLog("BleCallback: WriteSuccess" ,  false, false, obdUtil);
+
                             // read ble data after write success
                             readData();
 
@@ -1139,6 +1155,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         @Override
                         public void onWriteFailure(final BleException exception) {
                             Log.d(TAG_BLE_OPERATION, "onWriteFailure");
+                            constants.saveAppUsageLog("BleCallback: WriteFailure" ,  false, false, obdUtil);
+
                             mIsScanning = false;
                           //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 /*if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
@@ -1169,6 +1187,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         @Override
                         public void onReadSuccess(final byte[] data) {
                             Log.d(TAG_BLE_OPERATION, "onReadSuccess");
+                            constants.saveAppUsageLog("BleCallback: ReadSuccess" ,  false, false, obdUtil);
+
                             notifyData();
 
                         }
@@ -1176,6 +1196,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         @Override
                         public void onReadFailure(final BleException exception) {
                             Log.d(TAG_BLE_OPERATION, "onReadFailure");
+                            constants.saveAppUsageLog("BleCallback: ReadFailure" ,  false, false, obdUtil);
+
+
                             mIsScanning = false;
 
                            // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -1210,6 +1233,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             String data = HexUtil.formatHexString(characteristic.getValue(), true);
                             Log.d("Notify Success Data", "data: " + data);
+                            constants.saveAppUsageLog("BleCallback: NotifySuccess" ,  false, false, obdUtil);
 
                             sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
 
@@ -1221,6 +1245,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             Log.d(TAG_BLE_OPERATION, "onReadFailure: " + exception.toString());
                             mIsScanning = false;
                             isBleObdRespond = false;
+                            constants.saveAppUsageLog("BleCallback: NotifyFailure" ,  false, false, obdUtil);
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 //sendBroadCast("Notify Failure", "", bleDevice, getCharacteristic());
@@ -1238,7 +1263,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                     String[] decodedArray = BleUtil.decodeDataChange(characteristic);
 
-                                    if(decodedArray != null && decodedArray.length > 20){
+                                    if(decodedArray != null && decodedArray.length >= 20){
+                                        if(isBleObdRespond == false){
+                                            constants.saveAppUsageLog("BleCallback: Notify Data Changed" ,  false, false, obdUtil);
+                                        }
+
                                         isBleObdRespond = true;
                                         int VehicleSpeed = Integer.valueOf(decodedArray[7]);
                                         String VehicleVIN = decodedArray[11];
@@ -1817,10 +1846,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 // communicate with wired OBD server if not connected
                 if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
                     if(!isWiredObdRespond) {
+                        constants.saveAppUsageLog("WiredCallback: StartStopServer in Timer" ,  false, false, obdUtil);
                         StartStopServer(constants.WiredOBD);
                     }
-                }else {
+                }else if (sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE ){
                     if(isBleObdRespond == false) {
+                        constants.saveAppUsageLog("WiredCallback: Start Bluetooth in Timer" ,  false, false, obdUtil);
                         bleInit();
                         checkPermissions();
                     }

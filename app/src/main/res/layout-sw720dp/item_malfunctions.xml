@@ -8,27 +8,27 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/margin_10"
-        android:paddingBottom="@dimen/margin_10"
-        android:paddingLeft="@dimen/margin_12"
-        android:paddingRight="@dimen/margin_12"
+        android:paddingTop="@dimen/margin_13"
+        android:paddingBottom="@dimen/margin_13"
+        android:paddingLeft="@dimen/margin_18"
+        android:paddingRight="@dimen/margin_18"
         android:background="@color/whiteee"
 
         >
 
 
 
-    <TextView
-        android:id="@+id/malfDefTxtView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="hello"
-        android:textSize="@dimen/text_size_16"
-        android:textColor="@color/black"
-        android:paddingLeft="@dimen/margin_short_5"
-        android:paddingTop="@dimen/margin_short_5"
+        <TextView
+            android:id="@+id/malfDefTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="hello"
+            android:textSize="@dimen/text_size_18"
+            android:textColor="@color/black"
+            android:paddingLeft="@dimen/margin_12"
+            android:paddingTop="@dimen/margin_12"
 
-        />
+            />
 
 
         <TextView
@@ -39,8 +39,8 @@
             android:textColor="@color/black"
             android:layout_alignParentRight="true"
             android:textStyle="bold"
-            android:padding="@dimen/margin_short_5"
-            android:textSize="@dimen/text_size_17"
+            android:padding="@dimen/margin_12"
+            android:textSize="@dimen/text_size_21"
 
             />
 
