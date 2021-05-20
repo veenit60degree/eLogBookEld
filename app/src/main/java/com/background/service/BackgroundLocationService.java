@@ -313,6 +313,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @SuppressLint("RestrictedApi")
     @Override
     public void onCreate() {
@@ -388,6 +389,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         sharedPref.SaveObdStatus(sharedPref.getObdStatus(getApplicationContext()), sharedPref.getObdLastStatusTime(getApplicationContext()), getApplicationContext());
 
         BindConnection();
+        bleInit();
+
+        if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+            if(isBleObdRespond == false) {
+                checkPermissionsBeforeScanBle();
+            }
+        }
 
         try{
             //  ------------- OBD Log write initilization----------
@@ -926,21 +934,20 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         BleManager.getInstance().init(getApplication());
         BleManager.getInstance()
                 .enableLog(true)
-                .setReConnectCount(1, 10000)
-                .setConnectOverTime(25000)
-                .setOperateTimeout(10000);
+                .setReConnectCount(3, 6000)
+                .setConnectOverTime(20000)
+                .setOperateTimeout(6000);
+
     }
 
 
-    private void checkPermissions() {
+    private void checkPermissionsBeforeScanBle() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
-            //Toast.makeText(this, getString(R.string.please_open_blue), Toast.LENGTH_LONG).show();
-            return;
+            bluetoothAdapter.enable();
         }
 
         if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
-            // if(bleDevice.getName() != null && bleDevice.getName().contains("ALSELD")) {
             if(!mIsScanning && !BleManager.getInstance().isConnected(bleDevice)) {
                 startScan();
             }
@@ -1725,8 +1732,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
             if(isBleObdRespond == false) {
-                bleInit();
-                checkPermissions();
+                checkPermissionsBeforeScanBle();
             }
         }else{
             StartStopServer(constants.WiredOBD);
@@ -1853,7 +1859,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     if(isBleObdRespond == false) {
                         constants.saveAppUsageLog("WiredCallback: Start Bluetooth in Timer" ,  false, false, obdUtil);
                         bleInit();
-                        checkPermissions();
+                        checkPermissionsBeforeScanBle();
                     }
                 }
 
@@ -2369,11 +2375,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
 
             //  ------------- Wired OBD ----------
-            if(isBound){
-                StartStopServer("stop");
-                this.unbindService(connection);
-                isBound = false;
+            if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                stopService(bleDevice, characteristic);
+            }else {
+                if(isBound){
+                    StartStopServer("stop");
+                    this.unbindService(connection);
+                    isBound = false;
+                }
             }
+
+
+
 
         }
 

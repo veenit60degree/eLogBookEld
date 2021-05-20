@@ -112,6 +112,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @SuppressLint("RestrictedApi")
     @Override
     public void onCreate() {
@@ -132,7 +133,17 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         this.connection = new RemoteServiceConnection();
         this.replyTo = new Messenger(new IncomingHandler());
         BindConnection();
-        checkWiredObdConnection();
+        bleInit();
+
+        if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+            if(isBleObdRespond == false) {
+                checkPermissionsBeforeScanBle();
+            }
+        }else{
+            checkWiredObdConnection();
+        }
+
+
 
         mTimer.schedule(timerTask, TIME_INTERVAL_WIFI, TIME_INTERVAL_WIFI);
 
@@ -285,6 +296,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -292,8 +304,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
             if(isBleObdRespond == false) {
-                bleInit();
-                checkPermissions();
+                checkPermissionsBeforeScanBle();
             }
         }else if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
             StartStopServer(constants.WiredOBD);
@@ -328,8 +339,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 // communicate with wired OBD server app with Message
                 if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                     if(isBleObdRespond == false) {
-                        bleInit();
-                        checkPermissions();
+                        checkPermissionsBeforeScanBle();
                     }
                 }else if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
                     if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED ){
@@ -562,49 +572,55 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void bleInit() {
-        // BLE check
-        if (!BleUtil.isBLESupported(this)) {
-            // Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // BT check
-        BluetoothManager manager = BleUtil.getManager(this);
-        if (manager != null) {
-            mBTAdapter = manager.getAdapter();
-
-        }
-        if (mBTAdapter == null) {
-            // Toast.makeText(this, R.string.bt_unavailable, Toast.LENGTH_SHORT).show();
-            return;
-        }else {
-            if (!mBTAdapter.isEnabled()) {
-                mBTAdapter.enable();
-                //return;
+        try {
+            // BLE check
+            if (!BleUtil.isBLESupported(this)) {
+                return;
             }
-        }
 
-        BleManager.getInstance().init(getApplication());
-        BleManager.getInstance()
-                .enableLog(true)
-                .setReConnectCount(1, 10000)
-                .setConnectOverTime(25000)
-                .setOperateTimeout(10000);
+            // BT check
+            BluetoothManager manager = BleUtil.getManager(this);
+            if (manager != null) {
+                mBTAdapter = manager.getAdapter();
+
+            }
+            if (mBTAdapter == null) {
+                return;
+            } else {
+                if (!mBTAdapter.isEnabled()) {
+                    mBTAdapter.enable();
+                }
+            }
+
+            BleManager.getInstance().init(getApplication());
+            BleManager.getInstance()
+                    .enableLog(true)
+                    .setReConnectCount(3, 6000)
+                    .setConnectOverTime(20000)
+                    .setOperateTimeout(6000);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
-    private void checkPermissions() {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!bluetoothAdapter.isEnabled()) {
-            //Toast.makeText(this, getString(R.string.please_open_blue), Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
-            // if(bleDevice.getName() != null && bleDevice.getName().contains("ALSELD")) {
-            if(!mIsScanning && !BleManager.getInstance().isConnected(bleDevice)) {
-                startScan();
+    private void checkPermissionsBeforeScanBle() {
+        try {
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (!bluetoothAdapter.isEnabled()) {
+                bluetoothAdapter.enable();
+                // return;
             }
+
+            if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
+                // if(bleDevice.getName() != null && bleDevice.getName().contains("ALSELD")) {
+                if (!mIsScanning && !BleManager.getInstance().isConnected(bleDevice)) {
+                    startScan();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -1011,6 +1027,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void onDestroy() {
 
         if(!isStopService) {
@@ -1021,12 +1038,19 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         }else{
             Log.d(TAG, "Service stopped");
 
-            //  ------------- Wired OBD ----------
-            if(isBound){
-                StartStopServer("stop");
-                this.unbindService(connection);
-                isBound = false;
+            if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                //  ------------- BLE OBD ----------
+                stopService(bleDevice, characteristic);
+            }else {
+                //  ------------- Wired OBD ----------
+                if(isBound){
+                    StartStopServer("stop");
+                    this.unbindService(connection);
+                    isBound = false;
+                }
             }
+
+
 
         }
 
