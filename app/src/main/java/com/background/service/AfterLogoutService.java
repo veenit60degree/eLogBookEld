@@ -93,14 +93,20 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     NotificationManagerSmart mNotificationManager;
     boolean isWiredCallBackCalled = false;
 
+    private static final String SERVICE_UUID = "00001000-0000-1000-8000-00805f9b34fb";
+    private static final String CHARACTER_WRITE_UUID = "00001001-0000-1000-8000-00805f9b34fb";
+    private static final String CHARACTER_NOTIFY_UUID = "00001002-0000-1000-8000-00805f9b34fb";
+
     private static final String TAG_BLE = "BleService";
     private static final String TAG_BLE_CONNECT = "BleConnect";
     private static final String TAG_BLE_OPERATION = "BleOperation";
     boolean mIsScanning = false;
     boolean isBleObdRespond = false;
+    boolean isManualDisconnected = false;
+    int writeFailureCount = 0;
+    int isScanningCount = 0;
 
     private BluetoothAdapter mBTAdapter;
-    boolean isManualDisconnected = false;
     BleDevice bleDevice;
     private BluetoothGattService bluetoothGattService;
     private BluetoothGattCharacteristic characteristic;
@@ -133,11 +139,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         this.connection = new RemoteServiceConnection();
         this.replyTo = new Messenger(new IncomingHandler());
         BindConnection();
-        bleInit();
 
         if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
             if(isBleObdRespond == false) {
-                checkPermissionsBeforeScanBle();
+                bleInit(false);
             }
         }else{
             checkWiredObdConnection();
@@ -571,7 +576,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void bleInit() {
+    private void bleInit(boolean isPermissionCalled) {
         try {
             // BLE check
             if (!BleUtil.isBLESupported(this)) {
@@ -589,36 +594,73 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             } else {
                 if (!mBTAdapter.isEnabled()) {
                     mBTAdapter.enable();
+                    if(isPermissionCalled) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                initilizeBle();
+                            }
+                        }, 4000);
+                    }
+
+                }else{
+                    if(isPermissionCalled) {
+                        initilizeBle();
+                    }
                 }
             }
-
-            BleManager.getInstance().init(getApplication());
-            BleManager.getInstance()
-                    .enableLog(true)
-                    .setReConnectCount(3, 6000)
-                    .setConnectOverTime(20000)
-                    .setOperateTimeout(6000);
 
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
+    private void initilizeBle(){
+        BleManager.getInstance().init(getApplication());
+        BleManager.getInstance()
+                .enableLog(true)
+                .setReConnectCount(3, 5000)
+                .setConnectOverTime(20000)
+                .setOperateTimeout(10000);
+    }
+
+
 
     private void checkPermissionsBeforeScanBle() {
         try {
-            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            if (!bluetoothAdapter.isEnabled()) {
-                bluetoothAdapter.enable();
-                // return;
-            }
 
-            if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
-                // if(bleDevice.getName() != null && bleDevice.getName().contains("ALSELD")) {
-                if (!mIsScanning && !BleManager.getInstance().isConnected(bleDevice)) {
-                    startScan();
+
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            boolean isconnected = BleManager.getInstance().isConnected(bleDevice);
+            if (!bluetoothAdapter.isEnabled()) {
+
+                bluetoothAdapter.enable();
+                try {
+                    Thread.sleep(4000);
+                    BleManager.getInstance().disconnectAllDevice();
+                    ObserverManager.getInstance().notifyObserver(bleDevice);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }else{
+                if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
+                    if (!mIsScanning && !isconnected) {
+                        startScan();
+                    }
+
+                    if(isScanningCount > 6){
+
+                        if(mIsScanning){
+                            BleManager.getInstance().cancelScan();
+                            mIsScanning = false;
+                            isScanningCount = 0;
+                        }
+
+                    }
+                    isScanningCount++;
                 }
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -626,6 +668,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
     private void startScan() {
+        isScanningCount = 0;
         BleManager.getInstance().scan(new BleScanCallback() {
             @Override
             public void onScanStarted(boolean success) {
@@ -677,6 +720,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
                 Log.d(TAG_BLE_CONNECT, "onConnectFail");
+
+                isBleObdRespond = false;
+                ObserverManager.getInstance().notifyObserver(bleDevice);
+
             }
 
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -692,6 +739,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     addObserver(blueToothDevice);
                     name = bleDevice.getName();
                     mac  = bleDevice.getMac();
+
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                        gatt.requestMtu(512);
+//                    }
 
                     bluetoothGattServices = new ArrayList<>();
                     for (BluetoothGattService service : gatt.getServices()) {
@@ -715,17 +766,12 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
 
                 Log.d(TAG_BLE_CONNECT, "onDisConnected");
-                if (!isActiveDisConnected) {
-                    ObserverManager.getInstance().notifyObserver(bleDevice);
-                }
+
+                ObserverManager.getInstance().notifyObserver(bleDevice);
+                stopService(bleDevice,getCharacteristic());
 
                 if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
                     sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
-                }
-
-                if(!isManualDisconnected()) {
-                    setScanRule("", "", "", false);
-                    startScan();
                 }
 
             }
@@ -774,8 +820,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             BleManager.getInstance().write(
                     bleDevice,
-                    characteristic.getService().getUuid().toString(),
-                    characteristic.getUuid().toString(),
+                    SERVICE_UUID/*characteristic.getService().getUuid().toString()*/,
+                    CHARACTER_WRITE_UUID/*characteristic.getUuid().toString()*/,
                     bytes, // by,
                     new BleWriteCallback() {
 
@@ -783,7 +829,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                         public void onWriteSuccess(final int current, final int total, final byte[] justWrite) {
                             Log.d(TAG_BLE_OPERATION, "onWriteSuccess");
                             // read ble data after write success
-                            readData();
+                            if (current == total) {
+                                readData();
+                            }
 
                         }
 
@@ -791,6 +839,12 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                         public void onWriteFailure(final BleException exception) {
                             Log.d(TAG_BLE_OPERATION, "onWriteFailure");
                             mIsScanning = false;
+                            isBleObdRespond = false;
+
+                            ObserverManager.getInstance().notifyObserver(bleDevice);
+                            stopService(bleDevice,getCharacteristic());
+                            writeFailureCount++;
+
                         }
                     });
         }
@@ -807,8 +861,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         if (characteristic != null) {
             BleManager.getInstance().read(
                     bleDevice,
-                    characteristic.getService().getUuid().toString(),
-                    characteristic.getUuid().toString(),
+                    SERVICE_UUID/*characteristic.getService().getUuid().toString()*/,
+                    CHARACTER_NOTIFY_UUID/*characteristic.getUuid().toString()*/,
                     new BleReadCallback() {
 
                         @Override
@@ -836,8 +890,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         if (characteristic != null) {
             BleManager.getInstance().notify(
                     bleDevice,
-                    characteristic.getService().getUuid().toString(),
-                    characteristic.getUuid().toString(),
+                    SERVICE_UUID/*characteristic.getService().getUuid().toString()*/,
+                    CHARACTER_NOTIFY_UUID/*characteristic.getUuid().toString()*/,
                     false,
                     new BleNotifyCallback() {
 
@@ -872,7 +926,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                     String[] decodedArray = BleUtil.decodeDataChange(characteristic);
 
                                     if(decodedArray != null && decodedArray.length >= 20){
-                                        isBleObdRespond = true;
                                         int VehicleSpeed = Integer.valueOf(decodedArray[7]);
                                         truckRPM = decodedArray[8];
 
@@ -905,9 +958,14 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     }
 
 
-    private void setScanRule(String uuid, String displayName, String mac, boolean isAutoConnect) {
+    private void setScanRule() {
+           /* String uuid = "";
+        String displayName = "";
+        String mac = "";
+        boolean isAutoConnect = false;*/
+
         String[] uuids;
-        String str_uuid = uuid;
+        String str_uuid = "";
         if (TextUtils.isEmpty(str_uuid)) {
             uuids = null;
         } else {
@@ -928,7 +986,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         }
 
         String[] names;
-        String str_name = displayName;
+        String str_name = "";
         if (TextUtils.isEmpty(str_name)) {
             names = null;
         } else {
@@ -939,7 +997,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 .setServiceUuids(serviceUuids)      // Only scan the equipment of the specified service, optional
                 .setDeviceName(true, names)   // Only scan devices with specified broadcast name, optional
                 .setDeviceMac(mac)                  // Only scan devices of specified mac, optional
-                .setAutoConnect(isAutoConnect)      // AutoConnect parameter when connecting, optional, default false
+                .setAutoConnect(false)      // AutoConnect parameter when connecting, optional, default false
                 .setScanTimeOut(10000)              // Scan timeout time, optional, default 10 seconds
                 .build();
         BleManager.getInstance().initScanRule(scanRuleConfig);
@@ -952,9 +1010,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             isBleObdRespond = false;
             Log.d(TAG_BLE_CONNECT, "Observer disConnected");
 
+          /*  if (BleManager.getInstance().isConnected(bleDevice)) {
+                BleManager.getInstance().disconnect(bleDevice);
+            }
+
             if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
                 sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
-            }
+            }*/
         }
     }
 
@@ -1003,17 +1065,25 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         if(bleDevice != null){
             if(BleManager.getInstance().isConnected(bleDevice)) {
 
+                String character = "";
+                if(writeFailureCount > 1){
+                    character = CHARACTER_NOTIFY_UUID;
+                }else{
+                    character = CHARACTER_WRITE_UUID;
+                }
+                Log.e("Character:",""+getCharacteristic().getUuid().toString());
+
                 BleManager.getInstance().stopNotify(
                         bleDevice,
                         characteristic.getService().getUuid().toString(),
-                        characteristic.getUuid().toString());
+                        character);
 
                 isManualDisconnected = true;
                 setDisconnectType(isManualDisconnected);
                 BleManager.getInstance().clearCharacterCallback(bleDevice);
                 ObserverManager.getInstance().deleteObserver(this);
                 BleManager.getInstance().disconnect(bleDevice);
-                //  BleManager.getInstance().disconnectAllDevice();
+               // BleManager.getInstance().disconnectAllDevice();
                 BleManager.getInstance().destroy();
 
                 // stopSelf();

@@ -28,6 +28,7 @@ import androidx.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;
 
+import com.google.android.gms.security.ProviderInstaller;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -83,7 +84,6 @@ public class UILApplication extends Application {
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder(old)
 				.permitDiskWrites()
 				.build());
-		//doCorrectStuffThatWritesToDisk();
 		StrictMode.setThreadPolicy(old);
 
 		initImageLoader(getApplicationContext());
@@ -229,6 +229,13 @@ public class UILApplication extends Application {
 
 
 
+	private void updateAndroidSecurityProvider() {
+		try {
+			ProviderInstaller.installIfNeeded(this);
+		} catch (Exception e) {
+			e.getMessage();
+		}
+	}
 
 }
 

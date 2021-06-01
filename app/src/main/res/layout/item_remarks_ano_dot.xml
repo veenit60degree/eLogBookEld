@@ -43,21 +43,7 @@
 
         />
 
-    <TextView
-        android:id="@+id/usernameDotTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/UsernameOriginator"
-        android:textStyle="bold"
-        android:paddingLeft="@dimen/margin_short_2"
-        android:paddingRight="@dimen/margin_short_2"
-        android:textSize="@dimen/text_size_14"
-        android:gravity="center_horizontal"
-        android:textColor="@color/color_eld_theme"
-        android:layout_weight="1"
-        android:maxLines="2"
 
-        />
 
     <TextView
         android:id="@+id/sqNoRemDotTV"
@@ -91,6 +77,55 @@
 
         />
 
+
+    <TextView
+        android:id="@+id/editDateCmntDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/editDate"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/text_size_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+        android:maxLines="2"
+
+        />
+
+    <TextView
+        android:id="@+id/editTimeCmntDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/editTime"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/text_size_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+        android:maxLines="2"
+
+        />
+
+
+    <TextView
+        android:id="@+id/usernameDotTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/UsernameOriginator"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short_2"
+        android:paddingRight="@dimen/margin_short_2"
+        android:textSize="@dimen/text_size_14"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_eld_theme"
+        android:layout_weight="1"
+        android:maxLines="2"
+
+        />
 
 
 </LinearLayout>

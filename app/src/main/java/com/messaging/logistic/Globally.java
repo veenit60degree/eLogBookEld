@@ -99,6 +99,7 @@ public class Globally {
 	public static String DateFormatLocal			= "yyyy'-'MM'-'dd HH':'mm':'ss";
 	public static String DateTimeFormat 			= "yyMMddHHmm";
 	public static String DateFormatMMddyyyy			= "MM/dd/yyyy";
+	public static String DateFormatMMddyy			= "MM/dd/yy";
 	static String DateFormatMMddyyyyHHss			= "MM/dd/yyyy HH:mm:ss";
 	public static String DateFormatHalf 			= "yyyy'-'MM'-'dd";
 	public static String DateFormatMMddyyyyHyphen 	= "MM'-'dd'-'yyyy";
@@ -694,6 +695,21 @@ public class Globally {
 		return str;
 	}
 
+	public static String ConvertDateFormatMMddyy(String time) {
+		SimpleDateFormat inputFormat = new SimpleDateFormat(DateFormat);
+		SimpleDateFormat outputFormat = new SimpleDateFormat(DateFormatMMddyy);
+
+		Date date = null;
+		String str = "";
+
+		try {
+			date = inputFormat.parse(time);
+			str = outputFormat.format(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return str;
+	}
 
 	// Convert default DateTime format to MM/dd/yyyy date format
 	public static String ConvertDateFormatddMMMyyyy(String time) {
@@ -1346,7 +1362,7 @@ public class Globally {
 	}
 
 
-	public static File GetSavedFile(Context context, String filePath, String extension) {
+	public static File GetSavedFile(Context context, String fileName, String extension) {
 		// External sdcard location	Environment.getExternalStorageDirectory()
 		File mediaStorageDir = new File(context.getExternalFilesDir(null),"Logistic");
 		// Create the storage directory if it does not exist
@@ -1357,7 +1373,7 @@ public class Globally {
 			}
 		}
 
-		File mediaFile = new File(mediaStorageDir.getPath() + File.separator + filePath + "." + extension);
+		File mediaFile = new File(mediaStorageDir.getPath() + File.separator + fileName + "." + extension);
 		//Log.d("fileeee", "fileeeee: " + mediaFile);
 
 		return mediaFile;

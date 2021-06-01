@@ -186,7 +186,25 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         if(Globally.isConnected(getContext())) {
             GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
         }else{
-            setPagerAdapter(0, false);
+
+            boolean isDiagnostic;
+            boolean isMalfunction;
+            if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                 isDiagnostic = sharedPref.isDiagnosticOccur(getActivity());
+                 isMalfunction = sharedPref.isMalfunctionOccur(getActivity());
+
+            } else {
+                 isDiagnostic = sharedPref.isDiagnosticOccurCo(getActivity());
+                 isMalfunction = sharedPref.isMalfunctionOccurCo(getActivity());
+            }
+
+            if(isDiagnostic && !isMalfunction ){
+                setPagerAdapter(1, false);
+            }else{
+                setPagerAdapter(0, false);
+            }
+
+
             Globally.EldScreenToast(confirmCertifyTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
         }
 
@@ -221,11 +239,15 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 }
             });
 
-            if(malfunctionHeaderList.size() == 0 && diagnosticHeaderList.size() > 0){
-                highLightCurrentTab(1);
-            }else if(malfunctionHeaderList.size() > 0 && diagnosticHeaderList.size() == 0){
-                highLightCurrentTab(0);
-            }else {
+            if(isUpdateFromApi) {
+                if (malfunctionHeaderList.size() == 0 && diagnosticHeaderList.size() > 0) {
+                    highLightCurrentTab(1);
+                } else if (malfunctionHeaderList.size() > 0 && diagnosticHeaderList.size() == 0) {
+                    highLightCurrentTab(0);
+                } else {
+                    highLightCurrentTab(position);
+                }
+            }else{
                 highLightCurrentTab(position);
             }
             refreshAdapterOnPageChange(position, isUpdateFromApi);
@@ -247,7 +269,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         assert currentTab != null;
         currentTab.setCustomView(null);
         currentTab.setCustomView(tabAdapter.getSelectedTabView(position));
-
+        MalDiaViewPager.setCurrentItem(position);
     }
 
 

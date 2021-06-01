@@ -232,6 +232,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                             countryFlagImgView.setImageResource(R.drawable.no_flag);
                             usaView();
                             selectedCountry = "Select";
+                            fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.eld_govt_logs));
                             break;
 
                         case 1:

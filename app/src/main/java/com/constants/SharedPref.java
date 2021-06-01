@@ -173,6 +173,37 @@ public class SharedPref {
     }
 
 
+    // Get bluetooth ping status -------------------
+    public static String isBlePing(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("IsBlePing", "");
+    }
+
+
+    // Set bluetooth ping status  -------------------
+    public static void SetBlePingStatus( String status, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("IsBlePing", status);
+        editor.commit();
+    }
+
+
+  /*  // Get OBD Screen status -------------------
+    public static boolean isOBDScreen(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("isOBDScreen", false);
+    }
+
+
+    // Set OBD Screen status  -------------------
+    public static void SetOBDScreenStatus( boolean date, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isOBDScreen", date);
+        editor.commit();
+    }*/
+
     // Get auto drive status -------------------
     public static boolean isOBDPingAllowed(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

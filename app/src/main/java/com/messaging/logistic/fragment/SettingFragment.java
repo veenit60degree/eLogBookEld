@@ -935,15 +935,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
             case R.id.obdDiagnoseBtn:
 
-               /* ObdDiagnoseFragment obdDiagnoseFragment = new ObdDiagnoseFragment();
+                ObdDiagnoseFragment obdDiagnoseFragment = new ObdDiagnoseFragment();
                 MoveFragment(obdDiagnoseFragment);
-*/
-                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
+
+             /*   if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
                     ObdDiagnoseFragment obdDiagnoseFragment = new ObdDiagnoseFragment();
                     MoveFragment(obdDiagnoseFragment);
                 }else{
                     global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
-                }
+                }*/
 
                 break;
 

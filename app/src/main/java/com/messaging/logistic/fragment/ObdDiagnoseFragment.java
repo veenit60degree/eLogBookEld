@@ -1,11 +1,19 @@
 package com.messaging.logistic.fragment;
 
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.text.Html;
 import android.util.Log;
 import android.view.InflateException;
@@ -21,7 +29,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.background.service.BackgroundLocationService;
+import com.clj.fastble.data.BleDevice;
 import com.constants.Constants;
+import com.constants.SharedPref;
 import com.constants.TcpClient;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -30,6 +41,7 @@ import com.wifi.settings.WiFiConfig;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import dal.tables.OBDDeviceData;
@@ -38,7 +50,7 @@ import obdDecoder.Decoder;
 public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListener{
 
     View rootView;
-    TextView odometerTxtView, gpsTxtView, simInfoTxtView, resetObdTxtView, obdDataTxtView, EldTitleTV, responseRawTxtView;
+    TextView bleObdTxtView, odometerTxtView, gpsTxtView, simInfoTxtView, resetObdTxtView, obdDataTxtView, EldTitleTV, responseRawTxtView;
     RelativeLayout rightMenuBtn;
     RelativeLayout eldMenuLay;
     ImageView eldMenuBtn;
@@ -65,6 +77,11 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     String closeFont = "</font>";
     Button button2;
     EditText field1;
+
+   // BleDevice bleDevice = null;
+    BackgroundLocationService bleService;
+    //BluetoothGattCharacteristic characteristic;
+    ProgressBar loaderProgress;
 
 
     @Override
@@ -98,6 +115,8 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         wifiConfig      = new WiFiConfig();
         constants       = new Constants();
 
+        loaderProgress  = (ProgressBar)v.findViewById(R.id.loaderProgress);
+        bleObdTxtView   = (TextView) v.findViewById(R.id.bleObdTxtView);
         odometerTxtView = (TextView) v.findViewById(R.id.odometerTxtView);
         gpsTxtView      = (TextView) v.findViewById(R.id.gpsTxtView);
         simInfoTxtView  = (TextView) v.findViewById(R.id.simInfoTxtView);
@@ -123,6 +142,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
       //  responseRawTxtView.setVisibility(View.GONE);
 
         obdDataTxtView.setOnClickListener(this);
+        bleObdTxtView.setOnClickListener(this);
         odometerTxtView.setOnClickListener(this);
         gpsTxtView.setOnClickListener(this);
         simInfoTxtView.setOnClickListener(this);
@@ -133,10 +153,88 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     }
 
 
+    void scanBtnClick(){
+        if(bleObdTxtView.getText().toString().contains(getString(R.string.start_scan)) ){
+            loaderProgress.setVisibility(View.VISIBLE);
+            bleObdTxtView.setText(getString(R.string.scanning));
+            SharedPref.SetBlePingStatus("start", getActivity());
+
+        }else{
+            bleObdTxtView.setText(getString(R.string.start_scan) + " - Ble OBD");
+            obdDataTxtView.setText("");
+            SharedPref.SetBlePingStatus("stop", getActivity());
+
+        }
+
+        Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getActivity().startForegroundService(serviceIntent);
+        }
+        getActivity().startService(serviceIntent);
+
+    }
+
+
+    private BroadcastReceiver progressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            loaderProgress.setVisibility(View.GONE);
+            String data = intent.getStringExtra("decoded_data");
+           // bleDevice   = intent.getParcelableExtra("BleDevice");
+            //characteristic= intent.getParcelableExtra("characteristic");
+
+            obdDataTxtView.setText(Html.fromHtml(data));
+
+            if(data.length() > 20){
+                if(data.contains("Exception")){
+                    bleObdTxtView.setText(getString(R.string.start_scan) + " - Ble OBD");
+                }else {
+                    bleObdTxtView.setText(getString(R.string.connected) + " - Ble OBD");
+                }
+            }else{
+                bleObdTxtView.setText(getString(R.string.start_scan) + " - Ble OBD");
+            }
+        }
+    };
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       // SharedPref.SetOBDScreenStatus(true, getActivity());
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter("ble_changed_data"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+      //  SharedPref.SetOBDScreenStatus(false, getActivity());
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(progressReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
     @Override
     public void onClick(View v) {
 
         switch (v.getId()){
+
+            case R.id.bleObdTxtView:
+                if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_BLE) {
+                    if (constants.CheckGpsStatusToCheckMalfunction(getActivity())) {
+                        scanBtnClick();
+                    } else {
+                        Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
+                    }
+                }else{
+                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.chanage_obd_pref_sett_ble), getResources().getColor(R.color.colorVoilation));
+                }
+                break;
 
             case R.id.button2:
 
@@ -158,10 +256,14 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
 
             case R.id.obdDataTxtView:
-                if(clickBtnFlag == SIMFlag) {
-                    if(simNumber.trim().length() > 0) {
-                        constants.CopyString(getActivity(), simNumber);
+                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
+                    if (clickBtnFlag == SIMFlag) {
+                        if (simNumber.trim().length() > 0) {
+                            constants.CopyString(getActivity(), simNumber);
+                        }
                     }
+                }else{
+                    Globally.EldScreenToast(obdDataTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                 }
                 break;
 

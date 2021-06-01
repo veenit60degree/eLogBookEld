@@ -471,8 +471,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         if(Globally.isWifiOrMobileDataEnabled(TabAct.this)){
             Constants.IsAlsServerResponding = true;
-        }else{
-            Constants.IsAlsServerResponding = false;
         }
 
         UILApplication.activityResumed();

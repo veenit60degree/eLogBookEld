@@ -73,6 +73,8 @@ public class CanDotRemarksAdapter extends BaseAdapter {
             holder.usernameDotTV        = (TextView) convertView.findViewById(R.id.usernameDotTV);
             holder.sqNoRemDotTV         = (TextView) convertView.findViewById(R.id.sqNoRemDotTV);
             holder.commAnotnDotTV       = (TextView) convertView.findViewById(R.id.commAnotnDotTV);
+            holder.editDateCmntDotTV       = (TextView) convertView.findViewById(R.id.editDateCmntDotTV);
+            holder.editTimeCmntDotTV       = (TextView) convertView.findViewById(R.id.editTimeCmntDotTV);
 
             convertView.setTag(holder);
         } else {
@@ -97,6 +99,11 @@ public class CanDotRemarksAdapter extends BaseAdapter {
         holder.sqNoRemDotTV.setText(""+itemsList.get(position).getHexaSeqNumber());
         holder.commAnotnDotTV.setText(constants.checkNullString(itemsList.get(position).getRemarks()));
 
+        String editTime = itemsList.get(position).getEditDateTime();
+        holder.editDateCmntDotTV.setText(Globally.ConvertDateFormatMMddyy(editTime));
+        if(editTime.length() > 11){
+            holder.editTimeCmntDotTV.setText(editTime.substring(11, editTime.length()));
+        }
         // Set text style normal
         constants.setTextStyleNormal(holder.dateRemarksDotTV);
         constants.setTextStyleNormal(holder.timeDotTV);
@@ -104,6 +111,9 @@ public class CanDotRemarksAdapter extends BaseAdapter {
 
         constants.setTextStyleNormal(holder.sqNoRemDotTV);
         constants.setTextStyleNormal(holder.commAnotnDotTV);
+        constants.setTextStyleNormal(holder.editDateCmntDotTV);
+        constants.setTextStyleNormal(holder.editTimeCmntDotTV);
+
 
         // set Marque on view
         constants.setMarqueonView(holder.dateRemarksDotTV);
@@ -111,7 +121,8 @@ public class CanDotRemarksAdapter extends BaseAdapter {
         constants.setMarqueonView(holder.usernameDotTV);
         constants.setMarqueonView(holder.sqNoRemDotTV);
         constants.setMarqueonView(holder.commAnotnDotTV);
-
+        constants.setMarqueonView(holder.editDateCmntDotTV);
+        constants.setMarqueonView(holder.editTimeCmntDotTV);
 
         return convertView;
     }
@@ -119,6 +130,7 @@ public class CanDotRemarksAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView dateRemarksDotTV, timeDotTV, usernameDotTV, sqNoRemDotTV, commAnotnDotTV  ;
+        TextView editDateCmntDotTV, editTimeCmntDotTV;
         LinearLayout remarksAnoDotLay;
     }
 

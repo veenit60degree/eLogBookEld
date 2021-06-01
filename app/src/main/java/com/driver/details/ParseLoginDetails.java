@@ -192,7 +192,7 @@ public class ParseLoginDetails {
                     }
                 }
 
-               /* if(!dataObj.isNull("DriverTripDetail")) {
+                if(!dataObj.isNull("DriverTripDetail")) {
                     JSONObject DriverTripDetail = new JSONObject(dataObj.getString("DriverTripDetail"));
                     ParseDriverTripDetail(DriverTripDetail, resultCount, context);
                 }
@@ -202,12 +202,12 @@ public class ParseLoginDetails {
                     ParseDriverLogDetail(DriverLogDetail, resultCount, context);
                     SharedPref.SetIsAOBRD(DriverLogDetail.getBoolean("IsAOBRD"), context);
 
-                    if(!DriverLogDetail.isNull("DriverLog")) {
+                  /*  if(!DriverLogDetail.isNull("DriverLog")) {
                         JSONArray driverLogJsonArray = new JSONArray(DriverLogDetail.getString("DriverLog"));
                         ParseDriverLogArray(driverLogJsonArray, resultCount, context);
-                    }
+                    }*/
                 }
-*/
+
 
 
                 if(dataObj.has("DriverPermission")) {
@@ -632,7 +632,7 @@ public class ParseLoginDetails {
             Globally.SECOND_DRIVER_NAME = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, context);
             SharedPref.setCurrentDriverType(DriverConst.StatusSingleDriver, context);      /*Set Driver name*/
 
-            //Globally.setTrailorNumber( DriverConst.GetDriverTripDetails(DriverConst.Trailor, context), context);
+
 
         }else{
         /*=============================== SAVE CO DRIVER DATA ======================================*/

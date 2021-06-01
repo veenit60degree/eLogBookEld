@@ -868,11 +868,11 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
                     ParseGraphData(dotLogArray);
 
-                    if(IsMalfunction){
+               /*     if(IsMalfunction){
                         dotMalfunctionTV.setVisibility(View.VISIBLE);
                     }else{
                         dotMalfunctionTV.setVisibility(View.GONE);
-                    }
+                    }*/
 
                 }catch (Exception e){
                     e.printStackTrace();

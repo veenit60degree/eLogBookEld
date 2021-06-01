@@ -153,7 +153,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_15"
             android:textColor="@color/colorPrimary"
-            android:text="@string/time_zone"
+            android:text="@string/time_zone_utc"
             android:textStyle="bold"
             android:layout_weight="1"
 

@@ -40,6 +40,36 @@
             android:background="@color/gray_updated_theme_color"
             >
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/bleObdTxtView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/connect_ble_obd"
+                android:textColor="@color/bluee_login"
+                android:textSize="@dimen/text_size_23"
+                android:padding="@dimen/margin_19"
+                android:textStyle="bold"
+
+
+                />
+
+                <ProgressBar
+                    android:id="@+id/loaderProgress"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="60dp"
+                    android:layout_centerVertical="true"
+                 android:visibility="gone"
+                    />
+
+            </RelativeLayout>
+
+
             <TextView
                 android:id="@+id/odometerTxtView"
                 android:layout_width="match_parent"

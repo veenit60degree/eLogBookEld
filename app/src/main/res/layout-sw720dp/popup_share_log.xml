@@ -83,7 +83,7 @@
                             android:id="@+id/fmcsaLogTxtVw"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/fmcsaLogs"
+                            android:text="@string/eld_govt_logs"
                             android:textStyle="bold"
                             android:textColor="@color/whiteee"
                             android:textSize="@dimen/text_size_24"

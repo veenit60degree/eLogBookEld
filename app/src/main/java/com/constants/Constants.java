@@ -2921,7 +2921,8 @@ public class Constants {
                         CheckNullBString(obj.getString(ConstantsKeys.TruckEquipmentNo)),
                         CheckNullBString(obj.getString(ConstantsKeys.WorkShiftStart)),
                         CheckNullBString(obj.getString(ConstantsKeys.WorkShiftEnd)),
-                        date
+                        date,
+                        CheckNullBString(obj.getString(ConstantsKeys.EditDateTime))
 
                 );
 

@@ -633,17 +633,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         });
 
 
-
-
-
-       /* RelativeLayout graphLayout = (RelativeLayout)view.findViewById(R.id.graphLayout);
-        graphLayout.setOnClickListener(new DoubleClickListener() {
-            @Override
-            public void onDoubleClick() {
-                //  Log.d("onDoubleClick", "onDoubleClick");
-            }
-        });*/
-
         eldMenuLay.setOnClickListener(this);
         signLay.setOnClickListener(this);
         saveSignatureBtn.setOnClickListener(this);
@@ -3382,10 +3371,11 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             public void run() {
                 String data = ConstantHtml.GraphHtml + htmlAppendedText + closeTag;
                 graphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
+                graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, constants.dpToPx(getActivity(), 155)) );
             }
         }, 500);
 
-
+/*
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -3393,20 +3383,21 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 final int height = graphWebView.getHeight();
 
                 if(width < 400){
-                    graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT) );
+                    graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, constants.dpToPx(getActivity(), 140)) );
                 }else{
                     if(height == 0){
                         if(Globally.isTablet(getActivity())){
-                            graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(width, constants.dpToPx(getActivity(), 150) ) );
+                            graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, constants.dpToPx(getActivity(), 148) ) );
                         }else{
-                            graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(width, constants.dpToPx(getActivity(), 118) ));
+                            graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(width, constants.dpToPx(getActivity(), 148) ));
                         }
 
                     }
                 }
             }
         }, 700);
-
+        */
+        
 
     }
 

@@ -1113,7 +1113,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:minWidth="@dimen/view_height_700"
-            android:minHeight="@dimen/view_height_140"
+            android:minHeight="@dimen/view_height_170"
             >
 
             <WebView
@@ -1121,7 +1121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:minWidth="@dimen/view_height_700"
-                android:minHeight="@dimen/view_height_140"
+                android:minHeight="@dimen/view_height_170"
                 android:layout_marginTop="@dimen/margin_short_4"
                 android:fillViewport="true"
 

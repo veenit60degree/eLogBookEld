@@ -595,8 +595,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             dayNightButton.setImageResource(R.drawable.night_mode);
 
 
-        malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
-        settingsMenuBtn.setVisibility(View.VISIBLE);
         titleDesc = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.certify_previous_days_log) + " </html></font>";
         okText = "<font color='#1A3561'><b>" + getResources().getString(R.string.ok) + "</b></font>";
 
@@ -902,7 +900,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         if(sharedPref.IsOdometerFromOBD(getActivity())) {
             odometerLay.setVisibility(View.INVISIBLE);
         }
-
+        settingsMenuBtn.setVisibility(View.VISIBLE);
         setExceptionView();
         setObdStatus(false);
 
@@ -1601,9 +1599,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             isMal ||
                             isDia ||
                              constants.isAllowLocMalfunctionEvent(getActivity()) ||
-                    constants.CheckGpsStatus(getActivity()) == false ||
-                            (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
-                                    sharedPref.getObdStatus(getActivity()) != Constants.WIRED_CONNECTED);
+                    constants.CheckGpsStatus(getActivity()) == false;
+
+                         /*   || (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
+                            sharedPref.getObdStatus(getActivity()) != Constants.WIRED_CONNECTED)
+                           */
 
                 }else{
                     isPendingNotifications = isPendingNotifications(DRIVER_JOB_STATUS) ||
@@ -1612,9 +1612,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             sharedPref.isMalfunctionOccurCo(getActivity()) ||
                             sharedPref.isDiagnosticOccurCo(getActivity()) ||
                             constants.CheckGpsStatus(getActivity()) == false ||
-                            constants.isAllowLocMalfunctionEvent(getActivity()) ||
-                            (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
-                                    sharedPref.getObdStatus(getActivity()) != Constants.WIRED_CONNECTED);
+                            constants.isAllowLocMalfunctionEvent(getActivity()) ;
+
+                  /*  || (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
+                            sharedPref.getObdStatus(getActivity()) != Constants.WIRED_CONNECTED)
+                         */
                 }
 
                 if (isPendingNotifications) {
@@ -2512,6 +2514,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 if(!IsRefreshedClick)
                     loadingSpinEldIV.stopAnimation();
                 Global.EldScreenToast(OnDutyBtn, getString(R.string.already_refreshed), getResources().getColor(R.color.colorSleeper));
+                sharedPref.setRefreshDataTime(Global.GetCurrentUTCTimeFormat(), getActivity());
             }
 
         } else {
@@ -2870,8 +2873,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             if(flag == PC_END){
                 SaveOffDutyStatus();
             }else{
-                Reason = "Yard Move End";
+                Reason = "Other";   //Yard Move End
                 isYardMove = false;
+                isYardBtnClick = false;
                 SaveDriverJob(Global.ON_DUTY);
             }
 
@@ -3352,6 +3356,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         super.onPause();
         Constants.IS_ACTIVE_ELD = false;
         exceptionFaceView.cancel();
+        malfunctionTV.setText("");
+        settingsMenuBtn.setVisibility(View.GONE);
+
         clearTimer();
 
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(progressReceiver);
@@ -3522,7 +3529,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 }
                 // Check violation before save status
                 if (driverStatus.equals(Global.DRIVING) || driverStatus.equals(Global.ON_DUTY)) {
-                    JSONArray logArray = constants.AddNewStatusInList("", driverStatus, "", "no_address",
+                    JSONArray logArray = constants.AddNewStatusInList(
+                            "", driverStatus, "", "no_address",
                             DRIVER_ID, City, State, Country, AddressLine,
                             CurrentCycleId, Reason, isPersonal, isViolation,
                             "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),

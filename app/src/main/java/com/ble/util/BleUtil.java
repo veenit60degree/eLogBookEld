@@ -98,4 +98,61 @@ public class BleUtil {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public static String decodeDataChange(BluetoothGattCharacteristic characteristic, String name, String mac){
+
+        String decodedData = "";
+        byte[] data = characteristic.getValue();
+        String str = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            str = new String(data, StandardCharsets.UTF_8);
+        }
+        String[] array = str.split("events:");
+        if (array != null) {
+            if (array.length >= 1) {
+                String finalData = array[1];
+                String splitData = finalData.replaceAll("\\[", "").replaceAll("\\]", "").
+                        replaceAll("\\{", "").replaceAll("\\}", "");
+                String[] arrayData = splitData.split("[,]");
+                if (arrayData.length > 20) {
+                    String date = arrayData[3];
+                    String finalDate = date.substring(0, 2) + "-" + date.substring(2, 4) + "-" + date.substring(4, 6);
+                    String time = arrayData[4];
+                    String finalTime = time.substring(0, 2) + ":" + time.substring(2, 4) + ":" + time.substring(4, 6);
+                    String accDateTime = arrayData[5];
+                    String finalaccDateTime = accDateTime.substring(0, 2) + "-" + accDateTime.substring(2, 4) + "-" + accDateTime.substring(4, 6) + " " + accDateTime.substring(6, 8) + ":" + accDateTime.substring(8, 10) + ":" + accDateTime.substring(10, 12);
+                    decodedData = "<b>Device Name:</b> " + name + "<br/>" +
+                            "<b>MAC Address:</b> " + mac + "<br/><br/>" +
+                            "<b>Sequence Id:</b> " + arrayData[0] + "<br/>" +
+                            "<b>Event Type:</b> " + arrayData[1] + "<br/>" +
+                            "<b>Event Code:</b> " + arrayData[2] + "<br/>" +
+                            "<b>Date:</b> " + finalDate + "<br/>" +
+                            "<b>Time:</b> " + finalTime + "<br/>" +
+                            "<b>Latest ACC ON time:</b> " + finalaccDateTime + "<br/>" +
+                            "<b>Event Data:</b> " + arrayData[6] +
+                            "<b><br/>" + "Vehicle Speed:</b> " + arrayData[7] + "<br/>" +
+                            "<b>Engine Speed:</b> " + arrayData[8] + "<br/>" +
+
+                            "<b><br/>" + "Odometer:</b> " + arrayData[9] + "<br/>" +
+                            "<b>Engine Hours:</b> " + arrayData[10] + "<br/>" +
+                            "<b>VIN Number:</b> " + arrayData[11] + "<br/>" +
+                            "<b>Latitude:</b> " + arrayData[12] + "<br/>" +
+                            "<b>Longitude:</b> " + arrayData[13] + "<br/>" +
+                            "<b>Distance since Last located:</b> " + arrayData[14] + "<br/>" +
+                            "<b>Malfunction Indicator Status:</b> " + arrayData[15] + "<br/>" +
+                            "<b>Diagnostic Event Indicator Status:</b> " + arrayData[16] + "<br/>" +
+                            "<b>Driver ID:</b> " + arrayData[17] + "<br/>" +
+                            "<b>Version:</b>" + arrayData[18] + "<br/>" +
+                            "<b>Event Checksum:</b> " + arrayData[19] + "<br/>" +
+                            "<b>Event Data Checksum:</b>" + arrayData[20];
+
+                }
+            }
+        }
+
+
+        return decodedData;
+    }
+
+
 }

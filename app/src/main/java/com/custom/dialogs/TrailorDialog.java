@@ -358,143 +358,152 @@ public class TrailorDialog extends Dialog {
         @Override
         public void onClick(View v) {
 
+            boolean isAllowed = true;
             String Trailer = TrailorNoEditText.getText().toString().trim();
+            if(noTrailerView.getVisibility() == View.VISIBLE && radioEnterTrailer.isChecked() && Trailer.length() == 0){
+                isAllowed = false;
+            }
 
-            if(spinnerSelection.equals(getContext().getResources().getString(R.string.YardMove)) ){
+            if(isAllowed) {
+                if (spinnerSelection.equals(getContext().getResources().getString(R.string.YardMove))) {
 
-                if (constants.isObdConnected(getContext())) {
-                    if(hMethods.isCoDriverInDrYMPC(getContext(), Global, DriverId, dbHelper)){
-                        String coDriverStatus = hMethods.getCoDriverStatus(getContext(), DriverId, Global, dbHelper);
-                        Global.EldScreenToast(TrailorNoEditText, ConstantsEnum.CO_DRIVING_ALERT + coDriverStatus + ConstantsEnum.CO_DRIVING_ALERT1,
-                                getContext().getResources().getColor(R.color.colorVoilation));
-                    }else {
-                        if (ReasonEditText.getText().toString().trim().length() >= 4) {
+                    if (constants.isObdConnected(getContext())) {
+                        if (hMethods.isCoDriverInDrYMPC(getContext(), Global, DriverId, dbHelper)) {
+                            String coDriverStatus = hMethods.getCoDriverStatus(getContext(), DriverId, Global, dbHelper);
+                            Global.EldScreenToast(TrailorNoEditText, ConstantsEnum.CO_DRIVING_ALERT + coDriverStatus + ConstantsEnum.CO_DRIVING_ALERT1,
+                                    getContext().getResources().getColor(R.color.colorVoilation));
+                        } else {
+                            if (ReasonEditText.getText().toString().trim().length() >= 4) {
+                                readyListener.JobBtnReady(
+                                        Trailer,
+                                        spinnerSelection,
+                                        type,
+                                        isUpdatedTrailer,
+                                        ItemPosition,
+                                        TrailorNoEditText,
+                                        ReasonEditText);
+                            } else {
+                                Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.YARD_MOVE_DESC, getContext().getResources().getColor(R.color.red_eld));
+                            }
+                        }
+                    } else {
+                        Globally.EldToastWithDuration4Sec(TrailorNoEditText, getContext().getResources().getString(R.string.connect_with_obd_first), getContext().getResources().getColor(R.color.colorVoilation));
+                    }
+
+                } else {
+                    String updatedReason = ReasonEditText.getText().toString().trim();
+
+                    if (type.equals(Constants.Personal) || (isEditRemarks && jobStatus != Constants.ON_DUTY)) {
+
+                        if (updatedReason.length() >= 4 && updatedReason.length() <= 60) {
+
                             readyListener.JobBtnReady(
                                     Trailer,
-                                    spinnerSelection,
+                                    updatedReason,
                                     type,
                                     isUpdatedTrailer,
                                     ItemPosition,
                                     TrailorNoEditText,
                                     ReasonEditText);
-                         } else {
-                                Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.YARD_MOVE_DESC, getContext().getResources().getColor(R.color.red_eld));
-                         }
-                    }
-                } else {
-                    Globally.EldToastWithDuration4Sec(TrailorNoEditText, getContext().getResources().getString(R.string.connect_with_obd_first), getContext().getResources().getColor(R.color.colorVoilation));
-                }
 
-            }else{
-                String updatedReason = ReasonEditText.getText().toString().trim();
-
-                if( type.equals(Constants.Personal) || (isEditRemarks && jobStatus != Constants.ON_DUTY) ) {
-
-                    if (updatedReason.length() >= 4 &&  updatedReason.length() <= 60) {
-
-                        readyListener.JobBtnReady(
-                                Trailer,
-                                updatedReason,
-                                type,
-                                isUpdatedTrailer,
-                                ItemPosition,
-                                TrailorNoEditText,
-                                ReasonEditText);
-
-                    } else {
-                        if(updatedReason.length() < 60){
-                            if( type.equals(Constants.Personal)) {
-                                Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.PROPER_REASON_ALERT, getContext().getResources().getColor(R.color.red_eld));
-                            }else{
-                                Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.EDIT_REMARKS_DESC, getContext().getResources().getColor(R.color.red_eld));
+                        } else {
+                            if (updatedReason.length() < 60) {
+                                if (type.equals(Constants.Personal)) {
+                                    Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.PROPER_REASON_ALERT, getContext().getResources().getColor(R.color.red_eld));
+                                } else {
+                                    Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.EDIT_REMARKS_DESC, getContext().getResources().getColor(R.color.red_eld));
+                                }
+                            } else {
+                                Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.MAX_CHAR_LIMIT, getContext().getResources().getColor(R.color.red_eld));
                             }
-                        }else{
-                            Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.MAX_CHAR_LIMIT, getContext().getResources().getColor(R.color.red_eld));
+
                         }
 
-                    }
-
-                }else {
-                    if (isEditRemarks && Trailor.equalsIgnoreCase(updatedReason)) {
-                        dismiss();
                     } else {
+                        if (isEditRemarks && Trailor.equalsIgnoreCase(updatedReason)) {
+                            dismiss();
+                        } else {
 
-                        if (updatedReason.equals("Trailer Drop") && (Trailor.length() == 0 || Trailor.equals(getContext().getResources().getString(R.string.no_trailer)))) {
-                            Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.NO_TRAILER_ALERT, getContext().getResources().getColor(R.color.red_eld));
+                            if (updatedReason.equals("Trailer Drop") && (Trailor.length() == 0 || Trailor.equals(getContext().getResources().getString(R.string.no_trailer)))) {
+                                Globally.EldScreenToast(TrailorNoEditText, ConstantsEnum.NO_TRAILER_ALERT, getContext().getResources().getColor(R.color.red_eld));
 
-                        } else if ((updatedReason.equals("Trailer Pickup") && Trailer.length() == 0) ||
-                                (updatedReason.equals("Trailer Pickup") && Trailor.equals(Trailer))) {
-                            String msg = "";
-                            if (Trailer.length() == 0) {
-                                msg = "Please enter " + ConstantsEnum.PICK_TRAILER_ALERT;
-                            } else {
-                                msg = "Please enter updated " + ConstantsEnum.PICK_TRAILER_ALERT;
-                            }
-                            Globally.EldScreenToast(TrailorNoEditText, msg, getContext().getResources().getColor(R.color.red_eld));
+                            } else if ((updatedReason.equals("Trailer Pickup") && Trailer.length() == 0) ||
+                                    (updatedReason.equals("Trailer Pickup") && Trailor.equals(Trailer))) {
+                                String msg = "";
+                                if (Trailer.length() == 0) {
+                                    msg = "Please enter " + ConstantsEnum.PICK_TRAILER_ALERT;
+                                } else {
+                                    msg = "Please enter updated " + ConstantsEnum.PICK_TRAILER_ALERT;
+                                }
+                                Globally.EldScreenToast(TrailorNoEditText, msg, getContext().getResources().getColor(R.color.red_eld));
 
-                            radioEnterTrailer.performClick();
+                                radioEnterTrailer.performClick();
 
-                        } else if (updatedReason.equals(getContext().getResources().getString(R.string.loading)) && SharedPref.IsDrivingShippingAllowed(getContext())) {
+                            } else if (updatedReason.equals(getContext().getResources().getString(R.string.loading)) && SharedPref.IsDrivingShippingAllowed(getContext())) {
 
-                            JSONArray shipment18DaysJsonArray = shipmentMethod.getShipment18DaysArray(Integer.valueOf(SharedPref.getDriverId(getContext())), dbHelper);
-                            String shippingDocumentNumber = "", toAddress = "";
-                            if (shipment18DaysJsonArray.length() > 0) {
-                                try {
-                                    JSONObject obj = shipmentMethod.GetLastJsonObject(shipment18DaysJsonArray, 0);
-                                    shippingDocumentNumber = obj.getString(ConstantsKeys.ShippingDocumentNumber);
-                                    toAddress = obj.getString(ConstantsKeys.ShipperPostalCode);
+                                JSONArray shipment18DaysJsonArray = shipmentMethod.getShipment18DaysArray(Integer.valueOf(SharedPref.getDriverId(getContext())), dbHelper);
+                                String shippingDocumentNumber = "", toAddress = "";
+                                if (shipment18DaysJsonArray.length() > 0) {
+                                    try {
+                                        JSONObject obj = shipmentMethod.GetLastJsonObject(shipment18DaysJsonArray, 0);
+                                        shippingDocumentNumber = obj.getString(ConstantsKeys.ShippingDocumentNumber);
+                                        toAddress = obj.getString(ConstantsKeys.ShipperPostalCode);
 
-                                    if (shippingDocumentNumber.equals(getContext().getResources().getString(R.string.Empty)) ||
-                                            shippingDocumentNumber.trim().length() == 0 ||
-                                            toAddress.trim().length() == 0) {
-                                        Globally.EldScreenToast(TrailorNoEditText, "Update your shipping detail first", getContext().getResources().getColor(R.color.colorVoilation));
-                                    } else {
-                                        readyListener.JobBtnReady(
-                                                Trailer,
-                                                updatedReason,
-                                                type,
-                                                isUpdatedTrailer,
-                                                ItemPosition,
-                                                TrailorNoEditText,
-                                                ReasonEditText);
+                                        if (shippingDocumentNumber.equals(getContext().getResources().getString(R.string.Empty)) ||
+                                                shippingDocumentNumber.trim().length() == 0 ||
+                                                toAddress.trim().length() == 0) {
+                                            Globally.EldScreenToast(TrailorNoEditText, "Update your shipping detail first", getContext().getResources().getColor(R.color.colorVoilation));
+                                        } else {
+                                            readyListener.JobBtnReady(
+                                                    Trailer,
+                                                    updatedReason,
+                                                    type,
+                                                    isUpdatedTrailer,
+                                                    ItemPosition,
+                                                    TrailorNoEditText,
+                                                    ReasonEditText);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+
+                                } else {
+                                    readyListener.JobBtnReady(
+                                            Trailer,
+                                            updatedReason,
+                                            type,
+                                            isUpdatedTrailer,
+                                            ItemPosition,
+                                            TrailorNoEditText,
+                                            ReasonEditText);
                                 }
 
                             } else {
-                                readyListener.JobBtnReady(
-                                        Trailer,
-                                        updatedReason,
-                                        type,
-                                        isUpdatedTrailer,
-                                        ItemPosition,
-                                        TrailorNoEditText,
-                                        ReasonEditText);
-                            }
+                                if (radioNoTrailer.isChecked()) {
+                                    Trailer = Constants.NoTrailer;
+                                }
 
-                        } else {
-                            if (radioNoTrailer.isChecked()) {
-                                Trailer = Constants.NoTrailer;
-                            }
-
-                            if(type.equals("trailor_driving") && Trailer.length() == 0){
-                                Globally.EldScreenToast(TrailorNoEditText, "Enter trailer number", getContext().getResources().getColor(R.color.colorVoilation));
-                            }else {
-                                readyListener.JobBtnReady(
-                                        Trailer,
-                                        updatedReason,
-                                        type,
-                                        isUpdatedTrailer,
-                                        ItemPosition,
-                                        TrailorNoEditText,
-                                        ReasonEditText);
+                                if (type.equals("trailor_driving") && Trailer.length() == 0) {
+                                    Globally.EldScreenToast(TrailorNoEditText, "Enter trailer number", getContext().getResources().getColor(R.color.colorVoilation));
+                                } else {
+                                    readyListener.JobBtnReady(
+                                            Trailer,
+                                            updatedReason,
+                                            type,
+                                            isUpdatedTrailer,
+                                            ItemPosition,
+                                            TrailorNoEditText,
+                                            ReasonEditText);
+                                }
                             }
                         }
                     }
                 }
+            }else{
+                noTrailerView.requestFocus();
+                Global.EldScreenToast(TrailorNoEditText, getContext().getResources().getString(R.string.enter_trailer_number),
+                        getContext().getResources().getColor(R.color.colorVoilation));
             }
-
 
         }
     }

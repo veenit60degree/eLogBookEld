@@ -140,12 +140,17 @@
     <string name="desc">Descriptions</string>
     <string name="enter_remarks">Enter Remarks</string>
 
+    <string name="ble_not_supported">BLE not supported on this device</string>
+    <string name="bt_unavailable">Bluetooth unavailable</string>
+    <string name="bt_disabled">Bluetooth disabled, turn on and restart</string>
+
     <string name="OperatingZoneSouth">South of latitude 60°N in Canada</string>
     <string name="OperatingZoneNorth">North of latitude 60°N in Canada</string>
     <string name="OperatingZoneUS">United States"</string>
 
     <string name="cycle">Cycle:</string>
     <string name="time_zone">Time Zone </string>
+    <string name="time_zone_utc">UTC Time Zone Offset (HH:MM)</string>
     <string name="Operating_zone">Operating Zone </string>
     <string name="take_16_hour_exc">16 Hour Short Haul Exception </string>
     <string name="adverse_excp">Adverse Exception </string>
@@ -327,6 +332,8 @@
     <string name="HrsTotal">Hrs Total</string>
     <string name="next">Next</string>
     <string name="agree">Agree</string>
+    <string name="editDate">Edit Date (MM-DD-YY)</string>
+    <string name="editTime">Edit Time (HH-MM-SS)</string>
     <string name="get_started">Get Started</string>
 
 
@@ -525,6 +532,7 @@
     <string name="EditShippingInfo">Edit Shipping Info</string>
     <string name="pdfLogs">PDF LOGS</string>
     <string name="fmcsaLogs">FMCSA LOGS</string>
+    <string name="govtLogs">GOVT LOGS</string>
     <string name="hos_violation_apprch">HOS violation approaching</string>
 
 
@@ -700,7 +708,7 @@
     <string name="wifi_active">WIFI OBD is connected</string>
     <string name="wifi_inactive">WIFI OBD is not working</string>
     <string name="ble_active">Bluetooth OBD is connected</string>
-    <string name="ble_inactive">Bluetooth OBD is not working</string>
+    <string name="ble_inactive">Bluetooth OBD is not connected</string>
     <string name="obd_data_connection_desc">Kindly connect with OBD via Wifi or Cable connection</string>
 
     <string name="current_version_dummy">Current Version : 3.3.1</string>
@@ -750,10 +758,11 @@
     <string name="no_location">No Location</string>
     <string name="Distance_miles">Distance (Miles) </string>
     <string name="Distance_km">Distance (KM) </string>
-    <string name="odometer_details">Odometer Details</string>
-    <string name="gps_details">Gps Details</string>
-    <string name="sim_info">Sim Info</string>
-    <string name="reset_obd">Reset OBD</string>
+    <string name="connect_ble_obd">Connect Bluetooth OBD</string>
+    <string name="odometer_details">Odometer Details (WIFI OBD)</string>
+    <string name="gps_details">Gps Details (WIFI OBD)</string>
+    <string name="sim_info">Sim Info (WIFI OBD)</string>
+    <string name="reset_obd">Reset WIFI OBD</string>
     <string name="No_data_found">No data found</string>
     <string name="dot_mode_us">DOT MODE (US)</string>
     <string name="dot_mode_canada">DOT MODE (Canada)</string>
@@ -769,6 +778,13 @@
     <string name="dia_event">Diagnostic event</string>
     <string name="malfunction_events">Malfunction Events</string>
     <string name="dia_events">Diagnostic Events</string>
+
+    <string name="connect">Connect</string>
+    <string name="connected">Connected</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="scanning">Scanning</string>
+    <string name="start_scan">Start scanning</string>
+    <string name="stop_scan">Stop scanning</string>
 
     <string name="WantEndYM">Do you want to End Yard Move?"</string>
     <string name="WantEndPU">Do you want to End Personal Use?"</string>
@@ -831,6 +847,7 @@
     <string name="als_alert">ALS Alert: </string>
     <string name="gps_alert">Please turn on your location services</string>
     <string name="gps">GPS</string>
+    <string name="chanage_obd_pref_sett_ble">Change your truck OBD preferences settings for bluetooth first</string>
     <string name="screen_reset">Screen Reset</string>
     <string name="shipping_info_alert">Add shipping informations before driving</string>
 
