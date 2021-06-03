@@ -295,6 +295,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     boolean isExemptDriver = false;
     boolean IsNorthCanada = false;
 
+    public static boolean IsTruckChange = false;
     public static boolean IsPrePost = false;
     public static boolean IsStartReading = false;
     public static boolean IsMsgClick = false;
@@ -616,11 +617,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         /*========= Start Service =============*/
         Constants.isEldHome = false;
-        Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getActivity().startForegroundService(serviceIntent);
-        }
-        getActivity().startService(serviceIntent);
+        startService();
 
 
         IsDOT = sharedPref.IsDOT(getActivity());
@@ -1181,29 +1178,33 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     void showTimeZoneAlert(boolean isConnected, boolean isTimeZoneValid, boolean isTimeValid){
         try {
-            if(getActivity() != null) {
-                if (DRIVER_ID.length() > 0) {
+
+            if (DRIVER_ID.length() > 0) {
 
                     if (sharedPref.GetNewLoginStatus(getActivity())) {
                         loadOnCreateView(isConnected);
                     }
 
-                    try {
-                        if (timeZoneDialog != null && timeZoneDialog.isShowing()) {
-                            timeZoneDialog.dismiss();
-                        }
+                    if(getActivity() != null) {
+                        try {
+                            if (timeZoneDialog != null && timeZoneDialog.isShowing()) {
+                                timeZoneDialog.dismiss();
+                            }
 
-                        timeZoneDialog = new TimeZoneDialog(getActivity(), isTimeZoneValid, isTimeValid);
-                        timeZoneDialog.show();
-                    } catch (final IllegalArgumentException e) {
-                        e.printStackTrace();
-                    } catch (final Exception e) {
-                        e.printStackTrace();
+                            timeZoneDialog = new TimeZoneDialog(getActivity(), isTimeZoneValid, isTimeValid);
+                            timeZoneDialog.show();
+
+                        } catch (final IllegalArgumentException e) {
+                            e.printStackTrace();
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     LogoutUser();
                 }
-            }
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -2102,11 +2103,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         if(getActivity() != null) {
             if (!IsAOBRD || IsAOBRDAutomatic) {
                 Constants.isEldHome = false;
-                Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    getActivity().startForegroundService(Globally.serviceIntent);
-                }
-                getActivity().startService(Globally.serviceIntent);
+                startService();
             }
 
             try {
@@ -2960,14 +2957,17 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     private void restartLocationService(){
         if (Global.LATITUDE.equals("0.0") || Global.LATITUDE.equals("") ){
             Constants.isEldHome = false;
-            Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                getActivity().startForegroundService(Globally.serviceIntent);
-            }
-            getActivity().startService(Globally.serviceIntent);
+            startService();
         }
     }
 
+    private void startService(){
+       Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getActivity().startForegroundService(serviceIntent);
+        }
+        getActivity().startService(serviceIntent);
+    }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -5947,15 +5947,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
                         if (sharedPref.GetNewLoginStatus(getActivity())) {
-                            sharedPref.SetNewLoginStatus(false, getActivity());
-
                             Constants.isEldHome = true;
-                            Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-                            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                getActivity().startForegroundService(serviceIntent);
-                            }
-                            getActivity().startService(serviceIntent);
 
+                            sharedPref.SetNewLoginStatus(false, getActivity());
 
                             String updatePopupDate = sharedPref.GetUpdateAppDialogTime(getActivity());
                             if(!updatePopupDate.equals(SelectedDate)){
@@ -5999,11 +5993,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             if(isExemptDriver){
                                 Globally.DriverSwitchAlert(getActivity(), getString(R.string.exempt_reminder_desc), "", getString(R.string.ok));
                             }
-
                         } else {
+
                             Global.EldScreenToast(OnDutyBtn, "Updated successfully.", getResources().getColor(R.color.colorPrimary));
                         }
 
+                        IsTruckChange = true;
                         GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
 
                         if (sharedPref.getDriverType(getContext()).equals(DriverConst.TeamDriver)) {
@@ -6137,8 +6132,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 boolean IsCycleRequest      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsCycleRequest);
                                 boolean IsUnidentified      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsUnidentified);
 
-                                if(dataJObject.has(ConstantsKeys.ObdPreference)) {
+                                if(dataJObject.has(ConstantsKeys.ObdPreference) && !dataJObject.isNull(ConstantsKeys.ObdPreference) ) {
                                     sharedPref.SetObdPreference(dataJObject.getInt(ConstantsKeys.ObdPreference), getActivity());
+                                }
+
+                                if(IsTruckChange){
+                                    startService();
                                 }
 
                                 boolean IsELDNotification = false;

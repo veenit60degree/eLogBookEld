@@ -563,6 +563,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
 			sharedPref.saveEngSyncDiagnstcStatus(false, getApplicationContext());
 			sharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
+			sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getApplicationContext());
 			constants.saveMalfncnStatus(getApplicationContext(), false);
 
 		}catch (Exception e){

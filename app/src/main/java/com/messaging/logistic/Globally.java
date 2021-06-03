@@ -2097,6 +2097,7 @@ public class Globally {
 			sharedPref.SetTruckStartLoginStatus(true, c);
 			sharedPref.SetUpdateAppDialogTime("", c);
 			sharedPref.setLastCalledWiredCallBack(0, c);
+			sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, c);
 
 			ClearSqliteDB(c);
 

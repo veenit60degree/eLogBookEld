@@ -123,7 +123,7 @@ public class VehicleDialogLogin  extends Dialog {
         progressD.setCancelable(false);
         saveBtnJob.setBackgroundResource(R.drawable.gray_selector);
 
-        if (truckList.size() <= 1) {
+        if (truckList.size() < 1) {
             saveBtnJob.setText("Ok");
         } else {
             searchableSpinner.setVisibility(View.VISIBLE);
@@ -131,14 +131,14 @@ public class VehicleDialogLogin  extends Dialog {
 
         Title = "Please select the truck from list.";
         TitleTV.setText(Title);
-        if (truckList.size() > 1) {
+        if (truckList.size() > 0) {
             ArrayList<String> EquipmentList = new ArrayList<String>();
             for (int i = 0; i < truckList.size(); i++) {
                 EquipmentList.add(truckList.get(i).getEquipmentNumber());
             }
 
             // Creating adapter for spinner
-            if (EquipmentList.size() > 1) {
+            if (EquipmentList.size() > 0) {
             /*    ArrayAdapter dataAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, EquipmentList);
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 remarkSpinner.setAdapter(dataAdapter);*/
