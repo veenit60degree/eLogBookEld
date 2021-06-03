@@ -58,7 +58,6 @@ dependencies {
 
     implementation files('libs/Rules.jar')
     implementation files('libs/OBDJAR.jar')
-    //implementation files('libs/universal-image-loader-1.9.5')
 
     implementation project(':SlidingLibrary')
     implementation project(':ink')

@@ -400,6 +400,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
             bleInit(false);
+
+            if(!BleManager.getInstance().isConnected(bleDevice)){
+                if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                    sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+                }
+            }
         }
 
         try{
@@ -1302,15 +1308,20 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                 String[] decodedArray = BleUtil.decodeDataChange(characteristic);
 
-                                if(decodedArray != null && decodedArray.length >= 20){
+                                if(decodedArray != null && decodedArray.length >= 11){  //20
                                     if(isBleObdRespond == false){
                                         sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
                                         constants.saveAppUsageLog("BleCallback: Notify Data Changed" ,  false, false, obdUtil);
                                     }
 
                                     isBleObdRespond = true;
-                                    int VehicleSpeed = Integer.valueOf(decodedArray[7]);
-                                    String VehicleVIN = decodedArray[11];
+                                   /* int VehicleSpeed = Integer.valueOf(decodedArray[7]);
+                                    String VehicleVIN = decodedArray[10];
+*/
+                                    // temp value assigned. updated firmware position in upper comment section
+                                    int VehicleSpeed = 0;
+                                    String VehicleVIN = decodedArray[8];
+
 
                                     sendBroadCast(BleUtil.decodeDataChange(characteristic, bleDevice.getName(), bleDevice.getMac()));
                                     obdCallBackObservable(VehicleSpeed, VehicleVIN, global.GetCurrentDateTime(), decodedArray);

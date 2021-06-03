@@ -23,6 +23,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -81,11 +82,12 @@ public class BleUtil {
 
         String[] arrayData = null;
         byte[] data = characteristic.getValue();
-        String str = "";
+        String utfData = "";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            str = new String(data, StandardCharsets.UTF_8);
+            utfData = new String(data, StandardCharsets.UTF_8);
+            //utfData = new String(data, Charset.forName("UTF-8"));
         }
-        String[] array = str.split("events:");
+        String[] array = utfData.split("events:");
         if (array != null) {
             if (array.length > 1) {
                 String finalData = array[1];
@@ -109,7 +111,7 @@ public class BleUtil {
         }
         String[] array = str.split("events:");
         if (array != null) {
-            if (array.length >= 1) {
+            if (array.length > 1) {
                 String finalData = array[1];
                 String splitData = finalData.replaceAll("\\[", "").replaceAll("\\]", "").
                         replaceAll("\\{", "").replaceAll("\\}", "");
@@ -129,11 +131,10 @@ public class BleUtil {
                             "<b>Date:</b> " + finalDate + "<br/>" +
                             "<b>Time:</b> " + finalTime + "<br/>" +
                             "<b>Latest ACC ON time:</b> " + finalaccDateTime + "<br/>" +
-                            "<b>Event Data:</b> " + arrayData[6] +
-                            "<b><br/>" + "Vehicle Speed:</b> " + arrayData[7] + "<br/>" +
+                            "<b>Event Data:</b> " + arrayData[6] + "<br/>" +
+                            "<b>Vehicle Speed:</b> " + arrayData[7] + "<br/>" +
                             "<b>Engine Speed:</b> " + arrayData[8] + "<br/>" +
-
-                            "<b><br/>" + "Odometer:</b> " + arrayData[9] + "<br/>" +
+                            "<b>Odometer:</b> " + arrayData[9] + "<br/>" +
                             "<b>Engine Hours:</b> " + arrayData[10] + "<br/>" +
                             "<b>VIN Number:</b> " + arrayData[11] + "<br/>" +
                             "<b>Latitude:</b> " + arrayData[12] + "<br/>" +
