@@ -182,11 +182,15 @@ public class TimeZoneDialog extends Dialog {
         @Override
         public void getResponse(String response, int flag) {
 
-            progressD.dismiss();
             Log.d("response", " logout response: " + response);
-            String status = "";
 
             try {
+                if(getContext() != null) {
+                    progressD.dismiss();
+                }
+
+                String status = "";
+
                 JSONObject obj = new JSONObject(response);
                 status = obj.getString("Status");
 
@@ -195,7 +199,9 @@ public class TimeZoneDialog extends Dialog {
                     switch (flag){
                         case LogoutUser:
                             constant.ClearLogoutData(mContext);
-                            dismiss();
+                            if(mContext != null) {
+                                dismiss();
+                            }
                             break;
 
                         case CheckConnection:
@@ -204,7 +210,7 @@ public class TimeZoneDialog extends Dialog {
                             sharedPref.setCurrentUTCTime( obj.getString("Data") , mContext );
                             boolean isCorrectTime = global.isCorrectTime(mContext);
 
-                            if( isCorrectTime && isTimeZoneValid){
+                            if( isCorrectTime && isTimeZoneValid && mContext != null){
                                 dismiss();
                             }
 
@@ -217,13 +223,15 @@ public class TimeZoneDialog extends Dialog {
                     if(obj.getString("Message").equals("Device Logout")) {
 
                         constant.ClearLogoutData(mContext);
-                        dismiss();
-
+                        if(mContext != null) {
+                            dismiss();
+                        }
                     }else{
                         if(isCurrentTimeBigger)
                             sharedPref.setCurrentUTCTime( global.GetCurrentUTCTimeFormat() , mContext );
-
-                        dismiss();
+                        if(mContext != null) {
+                            dismiss();
+                        }
                     }
                 }
 
@@ -240,15 +248,17 @@ public class TimeZoneDialog extends Dialog {
         public void getError(VolleyError error, int flag) {
             Log.d("onDuty error", "onDuty error: " + error.toString());
 
-            if(isCurrentTimeBigger)
-                sharedPref.setCurrentUTCTime( global.GetCurrentUTCTimeFormat() , mContext );
-
             try {
-                if(progressD != null)
-                    progressD.dismiss();
+                if(isCurrentTimeBigger)
+                    sharedPref.setCurrentUTCTime( global.GetCurrentUTCTimeFormat() , mContext );
 
-                if(mContext != null) {
+                if(getContext() != null) {
+                    if(progressD != null)
+                        progressD.dismiss();
+
+
                     global.EldScreenToast(recordTitleTV, error.toString(), mContext.getResources().getColor(R.color.red_eld));
+
                     dismiss();
                 }
             }catch (Exception e){

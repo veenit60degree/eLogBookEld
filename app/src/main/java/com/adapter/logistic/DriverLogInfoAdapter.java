@@ -373,7 +373,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 if (JobType == Constants.EditLocation){
 
                     logModel.setLocation(City + "; " + State + "; " + Country);
-                    SaveAndUploadData(logModel, RecordType, position);
+                    SaveAndUploadData(logModel, RecordType, position, "","");
 
                     // Clear Diagnostic if occured
 
@@ -425,17 +425,25 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         }
 
         @Override
-        public void JobBtnReady(String TrailorNo, String remarks, String type, boolean isUpdatedTrailer, int ItemPosition, EditText TrailorNoEditText, EditText ReasonEditText) {
+        public void JobBtnReady(String TrailorNo, String remarks, String type, boolean isUpdatedTrailer,
+                                int ItemPosition, EditText TrailorNoEditText, EditText ReasonEditText) {
 
                 if (remarks.length() > 0) {
                     HideKeyboard(ReasonEditText);
                     EldDriverLogModel logModel = LogList.get(ItemPosition);
                     logModel.setRemarks(remarks);
+
+                    if (RecordType.equals(Constants.Remarks)){
+                        if(remarks.equals("Yard Move")){
+                            logModel.setRemarks(remarks + " - " + ReasonEditText.getText().toString() );
+                        }
+                    }
+
                     LogList.set(ItemPosition, logModel);
                     notifyDataSetChanged();
                   //  Global.EldScreenToast(certifyNoTV, "Remarks updated.", context.getResources().getColor(R.color.colorPrimary));
 
-                    SaveAndUploadData(logModel, RecordType, ItemPosition);
+                    SaveAndUploadData(logModel, RecordType, ItemPosition, remarks, ReasonEditText.getText().toString());
 
                     try {
                         if (remarksDialog != null && remarksDialog.isShowing())
@@ -464,7 +472,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
 
     /*================== Save And Upload Log Record Data ===================*/
-    void SaveAndUploadData( EldDriverLogModel logModel, String RecordType, int position){
+    void SaveAndUploadData( EldDriverLogModel logModel, String RecordType, int position, String onDutyRemarks, String ReasonDesc){
         String currentUtcDate = Global.GetCurrentDateTime();
         String currentDriverZoneDate = Global.GetCurrentUTCTimeFormat();
 
@@ -505,14 +513,17 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         JSONArray driverLogArray          = hMethods.getSavedLogArray(DriverId, dbHelper);
 
-        String location = "", remarks = "";
+        String location = "";
         for(int i = driverLogArray.length()-1 ; i >=0  ; i--){
 
             try {   //2021-04-26T00:09:03
                 JSONObject obj = (JSONObject)driverLogArray.get(i);
                 String compareStartDate = obj.getString(ConstantsKeys.startDateTime);
-                if(compareStartDate.length() > 17) {
-                    compareStartDate = compareStartDate.substring(0, 17)+"00";
+                String selectedDateSec = selectedDate.substring(17, selectedDate.length());
+                if(selectedDateSec.equals("00")) {
+                    if (compareStartDate.length() > 17) {
+                        compareStartDate = compareStartDate.substring(0, 17) + "00";
+                    }
                 }
                 if(selectedDate.equals(compareStartDate)){
                     if(RecordType.equals(Constants.Location)) {
@@ -523,8 +534,12 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                         checkDiagnosticEventsForClear(compareStartDate);
 
                     }else if (RecordType.equals(Constants.Remarks)){
-                        remarks = logObj.getString(ConstantsKeys.RecordValue);
-                        obj.put(ConstantsKeys.Remarks, remarks);
+
+                        if(onDutyRemarks.equals("Yard Move")){
+                            obj.put(ConstantsKeys.YardMove, true);
+                            onDutyRemarks = ReasonDesc;
+                        }
+                        obj.put(ConstantsKeys.Remarks, ReasonDesc);
                     }
                     driverLogArray.put(i, obj);
                     break;
@@ -543,7 +558,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             logModel.setLocation(location);
             LogList.set(position, logModel);
         }else{
-            logModel.setRemarks(remarks);
+            logModel.setRemarks(onDutyRemarks);
             LogList.set(position, logModel);
         }
         notifyDataSetChanged();

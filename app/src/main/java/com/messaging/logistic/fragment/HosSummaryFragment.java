@@ -181,7 +181,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         hMethods                = new HelperMethods();
         dbHelper                = new DBHelper(getActivity());
         localCalls              = new LocalCalls();
-        driverPermissionMethod = new DriverPermissionMethod();
+        driverPermissionMethod  = new DriverPermissionMethod();
 
         GetAddFromLatLngRequest = new VolleyRequestWithoutRetry(getActivity());
         GetMilesRequest         = new VolleyRequestWithoutRetry(getActivity());
@@ -236,14 +236,6 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         shiftCircularView       = (CircleProgressView)v.findViewById(R.id.shiftCircularView);
         currentStatusCircularView   = (CircleProgressView)v.findViewById(R.id.statusCircularView);
 
-        eldMenuBtn.setImageResource(R.drawable.back_btn);
-        EldTitleTV.setText(getResources().getString(R.string.summary));
-        // rightMenuBtn.setVisibility(View.INVISIBLE);
-
-        setMarqueText(hosLocationTV);
-        setMarqueText(hosDistanceTV);
-        setMarqueText(vinNumberTxtView);
-        setMarqueText(engHourTxtView);
         isNorthCanada  =  sharedPref.IsNorthCanada(getActivity());
 
         if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
@@ -296,54 +288,68 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         }
 
 
-        if(sharedPref.getDriverStatusId("jobType", getActivity()).trim().equals(Globally.OFF_DUTY) ||
-                sharedPref.getDriverStatusId("jobType", getActivity()).trim().equals(Globally.SLEEPER)){
-            availableHourBtnTV.setVisibility(View.VISIBLE);
-        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                eldMenuBtn.setImageResource(R.drawable.back_btn);
+                EldTitleTV.setText(getResources().getString(R.string.summary));
+                // rightMenuBtn.setVisibility(View.INVISIBLE);
 
-        malfunctionImgView.setVisibility(View.VISIBLE);
-        String status = initilizeEldView.getCurrentStatus(DRIVER_JOB_STATUS, isPersonal);
-        statusHosTV.setText(status);
+                setMarqueText(hosLocationTV);
+                setMarqueText(hosDistanceTV);
+                setMarqueText(vinNumberTxtView);
+                setMarqueText(engHourTxtView);
 
-        breakCircularView.setSeekModeEnabled(false);
-        shiftCircularView.setSeekModeEnabled(false);
-        currentStatusCircularView.setSeekModeEnabled(false);
-        cycleCircularView.setSeekModeEnabled(false);
+                if(sharedPref.getDriverStatusId("jobType", getActivity()).trim().equals(Globally.OFF_DUTY) ||
+                        sharedPref.getDriverStatusId("jobType", getActivity()).trim().equals(Globally.SLEEPER)){
+                    availableHourBtnTV.setVisibility(View.VISIBLE);
+                }
 
-        if(sharedPref.getVehicleVin(getActivity()).length() > 3 && !sharedPref.getVehicleVin(getActivity()).contains("u0000")){
-            vin = "(<b>VIN: </b>" + sharedPref.getVehicleVin(getActivity())+ ")";   // getting from OBD directly (Cuurent VIN)
-        }else{
-            vin = "(<b>VIN: </b>" + sharedPref.getVINNumber(getActivity()) + ")";   // getting from truck selection when user select Truck and getting its VIN
-        }
-        vinNumberTxtView.setText(Html.fromHtml( vin) );
+                malfunctionImgView.setVisibility(View.VISIBLE);
+                String status = initilizeEldView.getCurrentStatus(DRIVER_JOB_STATUS, isPersonal);
+                statusHosTV.setText(status);
 
-        CycleTimeCalculation(true);
+                breakCircularView.setSeekModeEnabled(false);
+                shiftCircularView.setSeekModeEnabled(false);
+                currentStatusCircularView.setSeekModeEnabled(false);
+                cycleCircularView.setSeekModeEnabled(false);
 
-        setDataOnStatusView(DRIVER_JOB_STATUS);
-        getCycleHours();
-        setBreakProgress();
-        // Shift value settings
-        setProgressbarValues(shiftCircularView, shiftUsedTimeTV, UsedShiftHoursInt, LeftShiftHoursInt);
-        setProgressViolationColor(shiftCircularView, LeftShiftHoursInt);
+                if(sharedPref.getVehicleVin(getActivity()).length() > 3 && !sharedPref.getVehicleVin(getActivity()).contains("u0000")){
+                    vin = "(<b>VIN: </b>" + sharedPref.getVehicleVin(getActivity())+ ")";   // getting from OBD directly (Cuurent VIN)
+                }else{
+                    vin = "(<b>VIN: </b>" + sharedPref.getVINNumber(getActivity()) + ")";   // getting from truck selection when user select Truck and getting its VIN
+                }
+                vinNumberTxtView.setText(Html.fromHtml( vin) );
+
+                CycleTimeCalculation(true);
+
+                setDataOnStatusView(DRIVER_JOB_STATUS);
+                getCycleHours();
+                setBreakProgress();
+                // Shift value settings
+                setProgressbarValues(shiftCircularView, shiftUsedTimeTV, UsedShiftHoursInt, LeftShiftHoursInt);
+                setProgressViolationColor(shiftCircularView, LeftShiftHoursInt);
 
 //UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES
-        if (UILApplication.getInstance().isNightModeEnabled()) {
-            nextBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
-            hosCycleCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
-            hosShiftCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
-            hosStatusCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
-            hosDistanceCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
-            hosLocationCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
-            hosMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
+                if (UILApplication.getInstance().isNightModeEnabled()) {
+                    nextBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
+                    hosCycleCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
+                    hosShiftCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
+                    hosStatusCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
+                    hosDistanceCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
+                    hosLocationCardView.setCardBackgroundColor(getResources().getColor(R.color.gray_hover));
+                    hosMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
+                }
 
 
-        }
+                if (constants.IsSendLog(DriverId, driverPermissionMethod, dbHelper) == false) {
+                    sendLogHosBtn.setCardBackgroundColor(getResources().getColor(R.color.silver));
+                }
 
 
-        if (constants.IsSendLog(DriverId, driverPermissionMethod, dbHelper) == false) {
-             sendLogHosBtn.setCardBackgroundColor(getResources().getColor(R.color.silver));
+            }
+        });
 
-        }
 
 
         editLogAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -902,7 +908,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
             case R.id.eldMenuLay:
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
 
                 break;
 
@@ -1101,8 +1107,10 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             }else{
                 if(flag == GetMiles){
                     if(isRefreshBtnClicked){
-                        global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
-                                getResources().getColor(R.color.colorSleeper));
+                        if(getActivity() != null) {
+                            global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
+                                    getActivity().getResources().getColor(R.color.colorSleeper));
+                        }
                     }
                 }
             }

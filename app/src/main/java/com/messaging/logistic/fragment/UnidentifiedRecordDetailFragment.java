@@ -220,7 +220,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         switch (view.getId()){
 
             case R.id.eldMenuLay:
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
                 break;
 
             case R.id.rejectRecordBtn:
@@ -385,7 +385,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
                     }
 
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
 
                 }else{
                     // {"Status":false,"Message":"Failed..","Data":null}

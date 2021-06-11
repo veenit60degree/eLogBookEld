@@ -16,20 +16,23 @@ public class CertifyLogMethod {
         JSONArray logArray = new JSONArray();
         Cursor rs = dbHelper.getShippingLog(DriverId);
 
-        if (rs != null && rs.getCount() > 0) {
-            rs.moveToFirst();
-            String logList = rs.getString(rs.getColumnIndex(DBHelper.SHIPPING_LOG_LIST));
-            try {
-                logArray = new JSONArray(logList);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        try {
+            if (rs != null && rs.getCount() > 0) {
+                rs.moveToFirst();
+                String logList = rs.getString(rs.getColumnIndex(DBHelper.SHIPPING_LOG_LIST));
+                try {
+                    logArray = new JSONArray(logList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        if (!rs.isClosed()) {
-            rs.close();
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
         return logArray;
 
     }
@@ -38,15 +41,18 @@ public class CertifyLogMethod {
     public void CertifyLogHelper(int driverId, DBHelper dbHelper, JSONArray array) {
 
         Cursor rs = dbHelper.getShippingLog(driverId);
-
-        if (rs != null & rs.getCount() > 0) {
-            rs.moveToFirst();
-            dbHelper.UpdateShippingLog(driverId, array);     // UPDATE Shipping Log
-        } else {
-            dbHelper.InsertShippingLog(driverId, array);       // INSERT Shipping Log
-        }
-        if (!rs.isClosed()) {
-            rs.close();
+        try {
+            if (rs != null & rs.getCount() > 0) {
+                rs.moveToFirst();
+                dbHelper.UpdateShippingLog(driverId, array);     // UPDATE Shipping Log
+            } else {
+                dbHelper.InsertShippingLog(driverId, array);       // INSERT Shipping Log
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

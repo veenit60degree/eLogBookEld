@@ -91,7 +91,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     Spinner countrySpinner;
     AutoCompleteTextView locLogAutoComplete;
     TextView startDateTv ,endDateTv, fmcsaDescTV, fmcsaLogTxtVw, pdfLogTxtVw, dataTransTxtView;
-    LinearLayout emailLogLay, logBtnLay, shareLogMainLay, shareLogChildLay, shareServiceDialog, countryLayout;
+    LinearLayout emailLogLay, logBtnLay, shareLogMainLay, shareLogChildLay, shareServiceDialog, countryLayout, inspectorCommentLay;
     RelativeLayout sharedLocLay, AobrdSharedLocLay;
     String selectedDateView = "", email = "";
     FragmentActivity activity;
@@ -181,6 +181,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         shareLogChildLay    = (LinearLayout)findViewById(R.id.shareLogChildLay);
         shareServiceDialog  = (LinearLayout)findViewById(R.id.shareServiceDialog);
         countryLayout       = (LinearLayout)findViewById(R.id.countryLayout);
+        inspectorCommentLay = (LinearLayout)findViewById(R.id.inspectorCommentLay);
 
         fmcsaLogBtn         = (RelativeLayout) findViewById(R.id.fmcsaLogBtn);
         pdfLogBtn           = (RelativeLayout)findViewById(R.id.pdfLogBtn);
@@ -191,7 +192,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         sendLogScrollView   = (ScrollView)findViewById(R.id.sendLogScrollView);
 
         locLogAutoComplete.setThreshold(3);
-      //  countryLayout.setVisibility(View.GONE);
+        inspectorCommentLay.setVisibility(View.VISIBLE);
 
         if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
             MaxDays = UsaMaxDays;
@@ -558,6 +559,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 }else{
                     fmcsaDescTV.setVisibility(View.VISIBLE);
                 }
+                inspectorCommentLay.setVisibility(View.VISIBLE);
 
                 break;
 
@@ -572,6 +574,9 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 fmcsaDescTV.setVisibility(View.GONE);
                 fmcsaLogTxtVw.setTextColor(getContext().getResources().getColor(R.color.hos_remaining));
                 pdfLogTxtVw.setTextColor(getContext().getResources().getColor(R.color.whiteee));
+
+                inspectorCommentLay.setVisibility(View.GONE);
+                inspCmntEditTxt.setText("");
 
                 break;
 

@@ -361,10 +361,10 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
         switch (v.getId()){
 
             case R.id.eldMenuLay:
-                Log.d("count", "stack_count: " + getFragmentManager().getBackStackEntryCount());
+                Log.d("count", "stack_count: " + getParentFragmentManager().getBackStackEntryCount());
 
-                if(getFragmentManager().getBackStackEntryCount() > 1) {
-                    getFragmentManager().popBackStack();
+                if(getParentFragmentManager().getBackStackEntryCount() > 1) {
+                    getParentFragmentManager().popBackStack();
                 }else{
                     TabAct.host.setCurrentTab(0);
                 }

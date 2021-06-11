@@ -243,6 +243,7 @@
     <string name="pos_mal_occured_desc">Position malfunction occurred due to location missing.</string>
     <string name="ignore_to_save_loc">Driver ignore to save location in </string>
     <string name="hos_limitation">New HOS Limitations</string>
+    <string name="hos_limitation_old">Old HOS Limitations</string>
     <string name="ELDViewLogUs">ELD View Log</string>
     <string name="ELDViewLogCanada">ELD View Log</string>
     <string name="Connected">Connected</string>
@@ -473,6 +474,7 @@
 
     <string name="save_location">Save Location</string>
     <string name="save">Save</string>
+    <string name="save_and_certify">Save &amp; Certify</string>
     <string name="certified">Certified</string>
     <string name="uncertified">Uncertified</string>
     <string name="certify">Certify</string>
@@ -794,6 +796,10 @@
     <string name="cycle_change_request">Cycle Change Request</string>
     <string name="not_able_to_select">Not able to select</string>
     <string name="Confirmation_suggested">Confirmation !!</string>
+    <string name="operating_zone_change">Operating Zone Change !!</string>
+    <string name="cycle_change">Cycle Change !!</string>
+    <string name="us_cycle_change">US Cycle Change !!</string>
+    <string name="canada_cycle_change">Canada Cycle Change !!</string>
     <string name="found_local_data">We found some local data in your App which need to save on server. Please try after some time</string>
     <string name="enter_reason">Edit log reason</string>
     <string name="available_hour_summary">Available Hours Summary</string>

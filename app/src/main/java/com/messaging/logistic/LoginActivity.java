@@ -262,19 +262,24 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 
 	public boolean isStorageGrantedForUtil() {
-		if (Build.VERSION.SDK_INT >= 23) {
-			if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-					== PackageManager.PERMISSION_GRANTED) {
+		try {
+			if (Build.VERSION.SDK_INT >= 23) {
+				if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+					return true;
+				} else {
+					Log.v("TAG", "Permission is revoked");
+					ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
+					return false;
+				}
+			} else { //permission is automatically granted on sdk<23 upon installation
+				Log.v("TAG", "Permission is granted");
 				return true;
-			} else {
-				Log.v("TAG", "Permission is revoked");
-				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
-				return false;
 			}
-		} else { //permission is automatically granted on sdk<23 upon installation
-			Log.v("TAG", "Permission is granted");
-			return true;
+		}catch (Exception e){
+			e.printStackTrace();
+			return false;
 		}
+
 
 	}
 
@@ -373,7 +378,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 						e.printStackTrace();
 					}
 				}else{
-					isStorageGrantedForUtil();
+					//isStorageGrantedForUtil();
 				}
 				break;
 
@@ -382,6 +387,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
 					requestPermissionPhone();
+				}else{
+					login();
 				}
 				break;
 
@@ -437,12 +444,15 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		loginBtn.setEnabled(true);
 
 		/*========= Start Logout Service to check truck is moving in logout=============*/
-		Intent serviceIntent = new Intent(this, AfterLogoutService.class);
-		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			startForegroundService(serviceIntent);
+		try {
+			Intent serviceIntent = new Intent(LoginActivity.this, AfterLogoutService.class);
+			if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				startForegroundService(serviceIntent);
+			}
+			startService(serviceIntent);
+		}catch (Exception e){
+			e.printStackTrace();
 		}
-		startService(serviceIntent);
-
 
 
 	}
@@ -563,7 +573,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			sharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
 			sharedPref.saveEngSyncDiagnstcStatus(false, getApplicationContext());
 			sharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
-			sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getApplicationContext());
+			//sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getApplicationContext());
 			constants.saveMalfncnStatus(getApplicationContext(), false);
 
 		}catch (Exception e){

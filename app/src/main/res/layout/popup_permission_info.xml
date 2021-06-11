@@ -16,25 +16,26 @@
         app:cardBackgroundColor="@color/whiteee"
         app:cardElevation="@dimen/margin_short_2"
         app:cardUseCompatPadding="true"
-        android:layout_marginTop="@dimen/view_height_40"
-        android:layout_marginBottom="@dimen/view_height_40"
+        android:layout_marginTop="@dimen/margin_15"
+        android:layout_marginBottom="@dimen/margin_15"
         android:layout_marginLeft="@dimen/view_height_80"
         android:layout_marginRight="@dimen/view_height_80"
 
 
         >
 
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/margin_15"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/margin_14"
 
             >
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/permissionInfoPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
         />
@@ -108,6 +109,8 @@
 
 
         </RelativeLayout>
+
+
     </androidx.cardview.widget.CardView>
 
 

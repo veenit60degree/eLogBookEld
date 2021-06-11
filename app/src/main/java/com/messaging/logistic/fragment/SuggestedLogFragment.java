@@ -360,7 +360,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
                     getActivity().finish();
                 }else {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                 }
 
                 break;
@@ -1025,7 +1025,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
         if(SuggestedFragmentActivity.dataArray.length() > 0){
             Toast.makeText(getActivity(), Message, Toast.LENGTH_SHORT).show();
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }else{
              finishActivityWithViewUpdate();
              EldFragment.refreshLogBtn.performClick();
@@ -1172,7 +1172,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             try {
 
                 if(getActivity() != null) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                 }
             }catch (Exception e){
                 e.printStackTrace();

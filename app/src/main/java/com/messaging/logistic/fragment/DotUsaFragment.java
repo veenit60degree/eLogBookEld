@@ -415,7 +415,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
     void moveToDotMode(String date, String dayName, String dayFullName, String dayShortName, String cycle){
 
-        getFragmentManager().popBackStackImmediate();
+        getParentFragmentManager().popBackStackImmediate();
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         Fragment dotFragment = new DotCanadaFragment();
@@ -896,19 +896,26 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void getError(VolleyError error, int flag) {
-            dotProgressBar.setVisibility(View.GONE);
-            Globally.EldScreenToast(eldMenuLay, "Error", getResources().getColor(R.color.colorVoilation));
-            htmlAppendedText    = "";
-            TotalOnDutyHours         = "00:00";
-            TotalDrivingHours        = "00:00";
-            TotalOffDutyHours        = "00:00";
-            TotalSleeperBerthHours   = "00:00";
+            Log.d("error", ">>error: " + error);
+
+            if(getActivity() != null) {
+                try {
+                    dotProgressBar.setVisibility(View.GONE);
+                    Globally.EldScreenToast(eldMenuLay, "Error", getResources().getColor(R.color.colorVoilation));
+                    htmlAppendedText = "";
+                    TotalOnDutyHours = "00:00";
+                    TotalDrivingHours = "00:00";
+                    TotalOffDutyHours = "00:00";
+                    TotalSleeperBerthHours = "00:00";
 
 
-            String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
-            ReloadWebView(CloseTag);
-            Globally.EldScreenToast(eldMenuLay, "Error", getResources().getColor(R.color.colorVoilation));
-            Log.d("error", ">>error: " +error);
+                    String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
+                    ReloadWebView(CloseTag);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
         }
     };
 
@@ -919,22 +926,23 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             for(int i = 0; i < array.length() ; i++){
                 JSONObject obj = (JSONObject)array.get(i);
                 String time = obj.getString("DateTimeWithMins");
-                DotDataModel dotLogItem = new DotDataModel(
-
-                        obj.getString("strEventType"),
-                        time,
-                        time,
-                        obj.getBoolean("IsMalfunction"),
-
-                        time.substring(11, 16), obj.getString("Annotation"),
-                        obj.getString("OdometerInKm"),
-                        obj.getString("TotalVehicleMiles"),
-                        obj.getString("OdometerInKm").trim(),
-                        obj.getString("TotalVehicleMiles").trim(),
-                        obj.getString("TotalEngineHours"),
-                        obj.getString("strEventType"),
-                        obj.getString("Origin" ) );
-                dotLogList.add(dotLogItem);
+                if(time.length() > 16) {
+                    DotDataModel dotLogItem = new DotDataModel(
+                            constants.checkNullString(obj.getString("strEventType")),
+                            time,
+                            time,
+                            obj.getBoolean("IsMalfunction"),
+                            time.substring(11, 16),
+                            constants.checkNullString(obj.getString("Annotation")),
+                            constants.checkNullString(obj.getString("OdometerInKm")),
+                            constants.checkNullString(obj.getString("TotalVehicleMiles")),
+                            constants.checkNullString(obj.getString("OdometerInKm")),
+                            constants.checkNullString(obj.getString("TotalVehicleMiles")),
+                            constants.checkNullString(obj.getString("TotalEngineHours")),
+                            constants.checkNullString(obj.getString("strEventType")),
+                            constants.checkNullString(obj.getString("Origin")));
+                    dotLogList.add(dotLogItem);
+                }
             }
 
 

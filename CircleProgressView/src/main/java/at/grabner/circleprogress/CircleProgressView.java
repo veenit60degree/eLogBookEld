@@ -876,25 +876,35 @@ public class CircleProgressView extends View {
      */
     public void setValue(float _value) {
         // round to block
-        if (mShowBlock && mRoundToBlock) {
-            float value_per_block = mMaxValue / (float) mBlockCount;
-            _value = Math.round(_value / value_per_block) * value_per_block;
+        try {
+            if (mShowBlock && mRoundToBlock) {
+                float value_per_block = mMaxValue / (float) mBlockCount;
+                _value = Math.round(_value / value_per_block) * value_per_block;
 
-        } else if (mRoundToWholeNumber) { // round to whole number
-            _value = Math.round(_value);
+            } else if (mRoundToWholeNumber) { // round to whole number
+                _value = Math.round(_value);
+            }
+
+            // respect min and max values allowed
+            _value = Math.max(mMinValueAllowed, _value);
+
+            if (mMaxValueAllowed >= 0)
+                _value = Math.min(mMaxValueAllowed, _value);
+
+            Message msg = new Message();
+            msg.what = AnimationMsg.SET_VALUE.ordinal();
+            msg.obj = new float[]{_value, _value};
+            mAnimationHandler.sendMessage(msg);
+            try {
+                // delay for 600 milli seconds
+                Thread.sleep(600);
+            } catch (Throwable t) {
+                Log.d(TAG, "Throwable Error caused by Thread.Sleep()");
+            }
+            triggerOnProgressChanged(_value);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        // respect min and max values allowed
-        _value = Math.max(mMinValueAllowed, _value);
-
-        if (mMaxValueAllowed >= 0)
-            _value = Math.min(mMaxValueAllowed, _value);
-
-        Message msg = new Message();
-        msg.what = AnimationMsg.SET_VALUE.ordinal();
-        msg.obj = new float[]{_value, _value};
-        mAnimationHandler.sendMessage(msg);
-        triggerOnProgressChanged(_value);
     }
 
     /**
@@ -927,26 +937,37 @@ public class CircleProgressView extends View {
      */
     public void setValueAnimated(float _valueFrom, float _valueTo, long _animationDuration) {
         // round to block
-        if (mShowBlock && mRoundToBlock) {
-            float value_per_block = mMaxValue / (float) mBlockCount;
-            _valueTo = Math.round(_valueTo / value_per_block) * value_per_block;
+        try {
+            if (mShowBlock && mRoundToBlock) {
+                float value_per_block = mMaxValue / (float) mBlockCount;
+                _valueTo = Math.round(_valueTo / value_per_block) * value_per_block;
 
-        } else if (mRoundToWholeNumber) {
-            _valueTo = Math.round(_valueTo);
+            } else if (mRoundToWholeNumber) {
+                _valueTo = Math.round(_valueTo);
+            }
+
+            // respect min and max values allowed
+            _valueTo = Math.max(mMinValueAllowed, _valueTo);
+
+            if (mMaxValueAllowed >= 0)
+                _valueTo = Math.min(mMaxValueAllowed, _valueTo);
+
+            mAnimationDuration = _animationDuration;
+            Message msg = new Message();
+            msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
+            msg.obj = new float[]{_valueFrom, _valueTo};
+            mAnimationHandler.sendMessage(msg);
+            try {
+                // delay for 600 milli seconds
+                Thread.sleep(600);
+            } catch (Throwable t) {
+                Log.d(TAG, "Throwable Error caused by Thread.Sleep()");
+            }
+
+            triggerOnProgressChanged(_valueTo);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        // respect min and max values allowed
-        _valueTo = Math.max(mMinValueAllowed, _valueTo);
-
-        if (mMaxValueAllowed >= 0)
-            _valueTo = Math.min(mMaxValueAllowed, _valueTo);
-
-        mAnimationDuration = _animationDuration;
-        Message msg = new Message();
-        msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
-        msg.obj = new float[]{_valueFrom, _valueTo};
-        mAnimationHandler.sendMessage(msg);
-        triggerOnProgressChanged(_valueTo);
     }
 
 

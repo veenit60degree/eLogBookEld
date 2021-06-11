@@ -112,6 +112,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     List<TimeZoneModel> TimeZoneList;
     ScrollView settingsScrollView;
 
+    CheckConnectivity checkConnectivity;
     ParseLoginDetails SaveSettingDetails;
     CaCyclePrefManager caPrefManager;
     USCyclePrefManager usPrefmanager;
@@ -141,13 +142,13 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     AdverseRemarksDialog adverseRemarksDialog;
     CheckConnectivity connectivityTask;
     File syncingFile = new File("");
+    File coDriverSyncFile = new File("");
     File DriverLogFile = new File("");
     File cycleUpdationRecordFile = new File("");
 
     private String url = "", ApkFilePath = "", existingApkFilePath = "";
     String VersionCode = "", VersionName = "", ExistingApkVersionCode = "", ExistingApkVersionName = "";
     CircularProgressBar downloadProgressBar;
-    JSONArray savedSyncedArray = new JSONArray();
     VolleyRequest GetAppUpdateRequest, GetDriverLogPostPermission, getCycleChangeApproval, ChangeCycleRequest, OperatingZoneRequest ;
     final int GetAppUpdate  = 1, DriverLogPermission = 2, CycleChangeApproval = 3, ChangeCycle = 4, OperatingZone = 5;
     int DriverType = 0;
@@ -173,7 +174,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     boolean isHaulExcptn = false;
     boolean isAdverseExcptn = false;
-
+    boolean isCoDriverSync = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -219,6 +220,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         syncingMethod               = new SyncingMethod();
         constant                    = new Constants();
 
+        checkConnectivity           = new CheckConnectivity(getActivity());
         coCAPrefManager             = new CoCAPref();
         coUSPrefmanager             = new CoUSPref();
         coTimePrefManager           = new CoTimeZonePref();
@@ -781,9 +783,18 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         spinner.setAdapter(CanCycleAdapter);
         spinner.setSelection(indexPosition);
         if (spinnerArray.get(indexPosition).equals(Globally.CANADA_CYCLE_1_NAME) && sharedPref.IsNorthCanada(getActivity())) {
-            view.setText(spinnerArray.get(indexPosition) + " (N)");
+            view.setText( "Cycle 1 (80/7) (N)");
         }else{
-            view.setText(spinnerArray.get(indexPosition));
+            if(spinnerArray.get(indexPosition).contains("C")) {
+                if (spinnerArray.get(indexPosition).equals(Globally.CANADA_CYCLE_1_NAME)){
+                    view.setText( "Cycle 1 (70/7)");
+                }else{
+                    view.setText( "Cycle 2 (120/14)");
+                }
+               // view.setText(Globally.CANADA_SOUTH_OPERATION_NAME + spinnerArray.get(indexPosition) + ")");
+            }else {
+                view.setText(spinnerArray.get(indexPosition));
+            }
         }
     }
 
@@ -840,7 +851,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     private void SyncData(){
         //  Log.d("GetCycleDetails", "cycle Detail Array: " + sharedPref.GetCycleDetails(getActivity()));
 
-        savedSyncedArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DriverId), dbHelper);
+        JSONArray savedSyncedArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DriverId), dbHelper);
 
         if(savedSyncedArray.length() > 0) {
             syncingFile = global.SaveFileInSDCard("Sync_", savedSyncedArray.toString(), false, getActivity());
@@ -858,6 +869,21 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     }
 
 
+    private void SyncCoDriverData(String CoDriverId){
+
+        JSONArray syncArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(CoDriverId), dbHelper);
+        if(syncArray.length() > 0) {
+            coDriverSyncFile = global.SaveFileInSDCard("Sync_", syncArray.toString(), false, getActivity());
+
+            // Sync driver log API data to server with SAVE_LOG_TEXT_FILE (SAVE sync data service)
+            SyncDataUpload syncDataUpload = new SyncDataUpload(getActivity(), CoDriverId, coDriverSyncFile,
+                    null, null, false, asyncResponse );
+            syncDataUpload.execute();
+        }
+
+
+
+    }
 
     @Override
     public void onClick(View v) {
@@ -887,8 +913,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
             case R.id.checkInternetBtn:
                 progressDialog.show();
-                CheckConnectivity CheckConnectivity = new CheckConnectivity(getActivity());
-                CheckConnectivity.ConnectivityRequest(CheckInternetConnection, ConnectivityInterface);
+                //CheckConnectivity CheckConnectivity = new CheckConnectivity(getActivity());
+                checkConnectivity.ConnectivityRequest(CheckInternetConnection, ConnectivityInterface);
 
                 break;
 
@@ -1638,32 +1664,61 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     String msgTxt = "Data syncing is completed" ;
 
                     /* ------------ Delete posted files from local after successfully posted to server --------------- */
-                    if(syncingFile != null && syncingFile.exists()) {
-                        syncingFile.delete();
-                        syncingFile = null;
-                    }
-
-                    if(IsLogPermission) {
-                        if (DriverLogFile != null && DriverLogFile.exists()) {
-                            DriverLogFile.delete();
-                            DriverLogFile = null;
-                            msgTxt = "Data syncing is completed with violation log file";
+                    if(isCoDriverSync == false) {
+                        if (syncingFile != null && syncingFile.exists()) {
+                            syncingFile.delete();
+                            syncingFile = null;
                         }
 
-                        if (cycleUpdationRecordFile != null && cycleUpdationRecordFile.exists()) {
-                            cycleUpdationRecordFile.delete();
-                            sharedPref.SetCycleOfflineDetails("[]", getActivity() );
-                            cycleUpdationRecordFile = null;
+                        if (IsLogPermission) {
+                            if (DriverLogFile != null && DriverLogFile.exists()) {
+                                DriverLogFile.delete();
+                                DriverLogFile = null;
+                                msgTxt = "Data syncing is completed with violation log file";
+                            }
+
+                            if (cycleUpdationRecordFile != null && cycleUpdationRecordFile.exists()) {
+                                cycleUpdationRecordFile.delete();
+                                sharedPref.SetCycleOfflineDetails("[]", getActivity());
+                                cycleUpdationRecordFile = null;
+                            }
+
+                        }
+                        /* -------------------------------------------------------------------------------------------------- */
+
+                        IsLogPermission = false;
+                        ClearDriverUnSavedlog();
+
+                        syncingMethod.SyncingLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+                        global.EldScreenToast(SettingSaveBtn, msgTxt, getResources().getColor(R.color.colorPrimary));
+                    }else{
+                        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
+                            // when main driver is selected, clear co driver data
+                            CoDriverPref.ClearLocFromList(getActivity());
+                        }else{
+                            // clear main driver data
+                            MainDriverPref.ClearLocFromList(getActivity());
+                        }
+
+                        if (coDriverSyncFile != null && coDriverSyncFile.exists()) {
+                            coDriverSyncFile.delete();
+                            coDriverSyncFile = null;
                         }
 
                     }
-                    /* -------------------------------------------------------------------------------------------------- */
 
-                    IsLogPermission = false;
-                    ClearDriverUnSavedlog();
+                    if(global.isSingleDriver(getActivity()) == false && isCoDriverSync == false){
+                        String CoDriverId = "";
+                        if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+                            CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+                        }else{
+                            CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+                        }
 
-                    syncingMethod.SyncingLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
-                    global.EldScreenToast(SettingSaveBtn, msgTxt , getResources().getColor(R.color.colorPrimary));
+                        isCoDriverSync = true;
+                        SyncCoDriverData(CoDriverId);
+
+                    }
 
                 }else {
                     if(syncingFile != null && syncingFile.exists())

@@ -289,9 +289,11 @@
             >    </activity>
 
 
-        <service android:name="com.background.service.BackgroundLocationService" />
-        <service android:name="com.background.service.AfterLogoutService" />
+        <service android:name="com.background.service.BackgroundLocationService"
+            android:exported="true" />
 
+        <service android:name="com.background.service.AfterLogoutService"
+            android:exported="true" />
 
         <service
             android:name="com.constants.DownloadAppService"
@@ -301,6 +303,9 @@
             android:name="com.constants.DownloadPdf"
             android:exported="false" />
 
+        <service
+            android:name="com.background.service.LocationService"
+            android:exported="false" />
 
 
 

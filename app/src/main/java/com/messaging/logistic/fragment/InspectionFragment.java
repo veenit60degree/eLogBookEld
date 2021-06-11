@@ -1599,7 +1599,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                                 public void run() {
                                     TabAct.host.setCurrentTab(0);
                                 }
-                            }, 1200);
+                            }, 1300);
                         }
                     }else{
                         saveInspectionBtn.setEnabled(true);

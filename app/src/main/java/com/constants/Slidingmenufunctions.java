@@ -74,6 +74,10 @@ public class Slidingmenufunctions implements OnClickListener {
 	private TextView appVersionHome;
 	ListView menuListView;
 
+	JSONArray mainDriverArray = new JSONArray();
+	JSONArray coDriverArray = new JSONArray();
+	final int MainDriver = 101;
+	final int CoDriver = 102;
 	public static LinearLayout driversLayout;
 	public static Button MainDriverBtn, CoDriverBtn;
 	LoginDialog loginDialog;
@@ -536,19 +540,39 @@ public class Slidingmenufunctions implements OnClickListener {
 			if (context != null) {
 				dialog.show();
 
-				JSONArray driverLogArray = GetDriversSavedData();
-				if (driverLogArray.length() == 0) {
-					LogoutUser(SharedPref.getDriverId(context));
-				} else {
-					SaveDataToServer(driverLogArray);
+				if(global.isSingleDriver(context)) {
+					JSONArray driverArray = GetDriversSavedData(true);
+					if (driverArray.length() == 0) {
+						LogoutUser(SharedPref.getDriverId(context));
+					} else {
+						SaveDataToServer(driverArray, MainDriver);
+					}
+				}else{
+					//boolean isMainDriver = SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver);
+					mainDriverArray = GetDriversSavedData(true);
+					coDriverArray = GetDriversSavedData(false);
+
+					if (mainDriverArray.length() == 0 && coDriverArray.length() == 0) {
+						LogoutUser(SharedPref.getDriverId(context));
+					}else{
+						if(mainDriverArray.length() > 0){
+							SaveDataToServer(mainDriverArray, MainDriver);
+						}else{
+							SaveDataToServer(coDriverArray, CoDriver);
+						}
+					}
 
 				}
+
+
+
+
 			}
 		}else{
 			Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
 		}
 	}
-	private void SaveDataToServer(JSONArray DriverLogArray){
+	private void SaveDataToServer(JSONArray DriverLogArray, int DriverType){
 
 		if(DriverLogArray.length() > 0) {
 
@@ -563,7 +587,8 @@ public class Slidingmenufunctions implements OnClickListener {
 			if(DriverLogArray.length() > 10 ){
 				socketTimeout = constants.SocketTimeout20Sec;  //20 seconds
 			}
-			saveDriverLogPost.PostDriverLogData(DriverLogArray, SavedLogApi, socketTimeout, false, false, 0, 101);
+			saveDriverLogPost.PostDriverLogData(DriverLogArray, SavedLogApi, socketTimeout, false,
+					false, DriverType, 101);
 
 		}else{
 			LogoutUser(SharedPref.getDriverId(context));
@@ -576,12 +601,12 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 	/*===== Get Driver Jobs in Array List======= */
-	private JSONArray GetDriversSavedData() {
+	private JSONArray GetDriversSavedData(boolean isMainDriver) {
 		int listSize = 0;
 		JSONArray DriverJsonArray = new JSONArray();
 		List<EldDataModelNew> tempList = new ArrayList<EldDataModelNew>();
 
-		if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+		if(isMainDriver) {
 			try {
 				listSize = MainDriverPref.LoadSavedLoc(context).size();
 				tempList = MainDriverPref.LoadSavedLoc(context);
@@ -623,7 +648,21 @@ public class Slidingmenufunctions implements OnClickListener {
 		@Override
 		public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
 
-			LogoutUser(SharedPref.getDriverId(context));
+			if(global.isSingleDriver(context)) {
+				LogoutUser(SharedPref.getDriverId(context));
+			}else{
+				if(DriverType == MainDriver){
+					if(coDriverArray.length() > 0){
+						SaveDataToServer(coDriverArray, CoDriver);
+					}else{
+						LogoutUser(SharedPref.getDriverId(context));
+					}
+				}else{
+					LogoutUser(SharedPref.getDriverId(context));
+				}
+			}
+
+
 		}
 
 		@Override

@@ -155,6 +155,8 @@ public class Globally {
 	public static String USA_WORKING_6_DAYS_NAME              = "U 60/7";
 	public static String USA_WORKING_7_DAYS_NAME              = "U 70/8";
 
+	public static String CANADA_SOUTH_OPERATION_NAME          = "Canada South 60°N (";
+	public static String CANADA_NORTH_OPERATION_NAME          = "Canada North 60°N (";
 
 	public static String TRUCK_NUMBER                   	  = "--";
 	public static String TRAILOR_NUMBER                   	  = "--";
@@ -2097,7 +2099,7 @@ public class Globally {
 			sharedPref.SetTruckStartLoginStatus(true, c);
 			sharedPref.SetUpdateAppDialogTime("", c);
 			sharedPref.setLastCalledWiredCallBack(0, c);
-			sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, c);
+			//sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, c);
 
 			ClearSqliteDB(c);
 

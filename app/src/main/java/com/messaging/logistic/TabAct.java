@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.os.PowerManager;
 import android.text.Html;
 import android.util.Log;
@@ -27,8 +28,11 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.background.service.BackgroundLocationService;
 import com.constants.CheckIsUpdateReady;
 import com.constants.CommonUtils;
@@ -56,6 +60,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
     //TabHost.TabSpec chat_spec;
+    public static RequestQueue requestQueue;
+    public static RequestQueue alsConnRequestQueue;
     public static TabHost host;
     FrameLayout tabcontent;
     Constants constants;
@@ -85,11 +91,16 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     Animation fadeInAnim, fadeOutAnim;
     AppUpdateDialog appUpdateDialog;
     EldNotificationDialog eldNotificationDialog;
-    Utils util;
+   // Utils util;
     String existingAppVersionStr = "";
 
     AlertDialog alertDialog;
 
+
+   /* @Override
+    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,12 +115,12 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         setContentView(R.layout.chat_friend_list);
 
-        util = new Utils(this);
-        sharedPref    = new SharedPref();
-        dbHelper      = new DBHelper(this);
-        hMethods      = new HelperMethods();
-        constants     = new Constants();
-
+        sharedPref          = new SharedPref();
+        dbHelper            = new DBHelper(this);
+        hMethods            = new HelperMethods();
+        constants           = new Constants();
+        requestQueue        = Volley.newRequestQueue(this);
+        alsConnRequestQueue = Volley.newRequestQueue(this);
         Constants.isEldHome = true;
         Intent serviceIntent = new Intent(TabAct.this, BackgroundLocationService.class);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -142,11 +153,13 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         TabDeclaration();
 
-        try {
+      /*  try {
+            //  ------------- Log write initilization----------
+            util = new Utils(getApplicationContext());
             util.createAppUsageLogFile();
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
 
         mMessageReceiver = new BroadcastReceiver() {
             @Override
@@ -501,7 +514,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         Globally.IS_LOGOUT = false;
 
         // save app display status log
-        constants.saveAppUsageLog(ConstantsEnum.StatusBackground, false, false, util);
+       // constants.saveAppUsageLog(ConstantsEnum.StatusBackground, false, false, util);
 
         try{
             if(wl != null)

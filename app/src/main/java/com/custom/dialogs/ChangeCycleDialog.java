@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
@@ -25,7 +26,8 @@ public class ChangeCycleDialog extends Dialog {
 
     }
 
-    private TextView changeCycleTitleTV, changeCycleDescTV, changedCycleRuleTxtVw, changedCycleRuleDescVw;
+    private TextView changeCycleTitleTV, changeCycleDescTV, changedCycleRuleDescVw, oldCycleRuleDescVw;
+    LinearLayout cycleRuleLay;
     private Button btnChangeCycle, cancelPopupButton;
     private String type, currentCycle, changedCycleId, currentOpZone;
     private ChangeCycleListener changeCycleListener;
@@ -64,9 +66,9 @@ public class ChangeCycleDialog extends Dialog {
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(getWindow().getAttributes());
         if(Globally.isTablet(getContext())) {
-            lp.width = constants.intToPixel(getContext(), 500);
+            lp.width = constants.intToPixel(getContext(), 650);
         }else{
-            lp.width = constants.intToPixel(getContext(), 400);
+            lp.width = constants.intToPixel(getContext(), 550);
         }
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         lp.gravity = Gravity.CENTER;
@@ -76,64 +78,74 @@ public class ChangeCycleDialog extends Dialog {
 
         changeCycleTitleTV      = (TextView) findViewById(R.id.changeTitleView);
         changeCycleDescTV       = (TextView)findViewById(R.id.titleDescView);
-        changedCycleRuleTxtVw   = (TextView)findViewById(R.id.changedCycleRuleTxtVw);
         changedCycleRuleDescVw  = (TextView)findViewById(R.id.changedCycleRuleDescVw);
-
+        oldCycleRuleDescVw      = (TextView)findViewById(R.id.oldCycleRuleDescVw);
 
         btnChangeCycle          = (Button)findViewById(R.id.confirmPopupButton);
         cancelPopupButton       = (Button)findViewById(R.id.cancelPopupButton);
+        cycleRuleLay            = (LinearLayout) findViewById(R.id.cycleRuleLay);
 
-        changedCycleRuleTxtVw.setVisibility(View.VISIBLE);
-        changedCycleRuleDescVw.setVisibility(View.VISIBLE);
+        cycleRuleLay.setVisibility(View.VISIBLE);
 
         btnChangeCycle.setText(getContext().getString(R.string.change));
        // cancelPopupButton.setText(getContext().getString(R.string.no));
-        changeCycleTitleTV.setText(getContext().getString(R.string.Confirmation_suggested));
 
         changeCycleDescTV.setTextColor(getContext().getResources().getColor(R.color.black_hover));
         cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.black_hover));
 
         boolean OperatingZoneChange = false;
+        boolean OperatingZoneChangeOld = true;
         boolean isNorth = false;
+        boolean isNorthOldValue = false;
 
         if(type.equals("us_cycle")){
-          //  changeCycleTitleTV.setText(getContext().getString(R.string.canada_cycle));
+            changeCycleTitleTV.setText(getContext().getString(R.string.us_cycle_change));
             if(currentCycle.equals(Globally.USA_WORKING_6_DAYS)){
                 changedCycleId = Globally.USA_WORKING_7_DAYS;
-                changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_cycle) + " <b>" +  Globally.USA_WORKING_6_DAYS_NAME + "</b> to <b>" + Globally.USA_WORKING_7_DAYS_NAME  + "</b> ?")  );
+                changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_cycle) + " <b>" +
+                        Globally.USA_WORKING_6_DAYS_NAME + "</b> to <b>" + Globally.USA_WORKING_7_DAYS_NAME  + "</b> ?")  );
             }else {
                 changedCycleId = Globally.USA_WORKING_6_DAYS;
-                changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_cycle) + " <b>" + Globally.USA_WORKING_7_DAYS_NAME + "</b> to <b>" + Globally.USA_WORKING_6_DAYS_NAME  + "</b> ?") );
+                changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_cycle) + " <b>" +
+                        Globally.USA_WORKING_7_DAYS_NAME + "</b> to <b>" + Globally.USA_WORKING_6_DAYS_NAME  + "</b> ?") );
             }
         }else if(type.equals("can_cycle")){
-          //  changeCycleTitleTV.setText(getContext().getString(R.string.usa_cycle));
+            changeCycleTitleTV.setText(getContext().getString(R.string.canada_cycle_change));
+            String cycleName = "";
+            if(sharedPref.IsNorthCanada(getContext())){
+                cycleName = "Cycle 1 (80/7) (N)";
+            } else{
+                cycleName = "Cycle 1 (70/7)";
+            }
             if(currentCycle.equals(Globally.CANADA_CYCLE_1)){
                 changedCycleId = Globally.CANADA_CYCLE_2;
-                changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_cycle) + " <b>" + Globally.CANADA_CYCLE_1_NAME + "</b> to <b>" + Globally.CANADA_CYCLE_2_NAME  + "</b> ?") );
+
+                changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_cycle) + " <b>" +
+                        cycleName + "</b> to <b>" + "Cycle 2 (120/14)</b> ?") );
             }else {
                 changedCycleId = Globally.CANADA_CYCLE_1;
-                changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_cycle) + " <b>" + Globally.CANADA_CYCLE_2_NAME + "</b> to <b>" + Globally.CANADA_CYCLE_1_NAME   + "</b> ?"));
+
+                changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_cycle) + " <b>" +
+                          "Cycle 2 (120/14)</b> to <b>" + cycleName  + "</b> ?") );
             }
         }else if(type.equals("operating_zone")){
             OperatingZoneChange = true;
+            OperatingZoneChangeOld = false;
             changedCycleId = currentCycle;
-          /*  if(currentCycle.equals(Globally.CANADA_CYCLE_1)){
-                changedCycleId = Globally.CANADA_CYCLE_2;
-            }else {
-                changedCycleId = Globally.CANADA_CYCLE_1;
-            }
-*/
+            changeCycleTitleTV.setText(getContext().getString(R.string.operating_zone_change));
+
             if(currentOpZone.equals(getContext().getResources().getString(R.string.OperatingZoneSouth))){
                 isNorth = true;
+                isNorthOldValue = false;
                 changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_op_zone) + " <b>" + getContext().getString(R.string.OperatingZoneSouth) + "</b> to <b>" + getContext().getString(R.string.OperatingZoneNorth) + "</b>"));
             }else{
                 isNorth = false;
+                isNorthOldValue = true;
                 changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_op_zone) + " <b>" + getContext().getString(R.string.OperatingZoneNorth) + "</b> to <b>" + getContext().getString(R.string.OperatingZoneSouth) + "</b>") );
             }
 
-           // changeCycleTitleTV.setText(getContext().getString(R.string.Operating_zone));
-
         }else{
+            changeCycleTitleTV.setText(getContext().getString(R.string.cycle_change));
             if(currentCycle.equals(Globally.CANADA_CYCLE_1) || currentCycle.equals(Globally.CANADA_CYCLE_2) ){
                 changeCycleDescTV.setText(Html.fromHtml(getContext().getString(R.string.want_change_cycle) + " <b>Canada</b> to <b>USA</b> ?") );
             }else{
@@ -142,9 +154,14 @@ public class ChangeCycleDialog extends Dialog {
         }
 
 
-        String cycleCalculatedData = constants.CalculateCycleTimeData(getContext(), sharedPref.getDriverId( getContext()), OperatingZoneChange, isNorth,
+        String changedCycleCalculatedData = constants.CalculateCycleTimeData(getContext(), sharedPref.getDriverId( getContext()), OperatingZoneChange, isNorth,
                                         changedCycleId, Global, sharedPref, hMethods, dbHelper);
-        changedCycleRuleDescVw.setText(Html.fromHtml(cycleCalculatedData) );
+        changedCycleRuleDescVw.setText(Html.fromHtml(changedCycleCalculatedData) );
+
+        String oldCycleCalculatedData = constants.CalculateCycleTimeData(getContext(), sharedPref.getDriverId( getContext()), OperatingZoneChangeOld, isNorthOldValue,
+                currentCycle, Global, sharedPref, hMethods, dbHelper);
+        oldCycleRuleDescVw.setText(Html.fromHtml(oldCycleCalculatedData));
+
 
         cancelPopupButton.setOnClickListener(new View.OnClickListener() {
             @Override

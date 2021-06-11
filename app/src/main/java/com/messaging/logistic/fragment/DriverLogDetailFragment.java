@@ -207,7 +207,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     boolean IsAOBRD         = false;
     boolean UpdateRecap     = false;
     boolean isOldRecord     = false;
-    boolean isDOT           = false;
+   // boolean isDOT           = false;
     boolean isNorthCanada   = false;
 
     boolean nextPrevBtnClicked      = false;
@@ -422,7 +422,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         eldWarningColor         = getActivity().getResources().getColor(R.color.colorVoilation);
 
-        isDOT                   = sharedPref.IsDOT(getActivity());
+      //  isDOT                   = sharedPref.IsDOT(getActivity());
 
         if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             DriverType = Constants.MAIN_DRIVER_TYPE;
@@ -447,27 +447,30 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         crossVerifyRecapData();
 
 
+        try {
 
-                dayRecapTV.setTypeface(dayRecapTV.getTypeface(), Typeface.BOLD);
-                dateRecapTV.setTypeface(dateRecapTV.getTypeface(), Typeface.BOLD);
-                hourRecapTV.setTypeface(hourRecapTV.getTypeface(), Typeface.BOLD);
-                RecapViewHeight     = dayRecapTV.getLayoutParams().height;
-                certifyExcptnTV.setVisibility(View.VISIBLE);
+            dayRecapTV.setTypeface(dayRecapTV.getTypeface(), Typeface.BOLD);
+            dateRecapTV.setTypeface(dateRecapTV.getTypeface(), Typeface.BOLD);
+            hourRecapTV.setTypeface(hourRecapTV.getTypeface(), Typeface.BOLD);
+            RecapViewHeight = dayRecapTV.getLayoutParams().height;
+            certifyExcptnTV.setVisibility(View.VISIBLE);
 
-                if(LogDate.split("/").length > 1) {
-                    EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
-                }else{
-                    EldTitleTV.setText(LogDate);
-                }
-                signImageView.setBackgroundDrawable(null);
-                signImageView.setImageResource(R.drawable.transparent);
-
+            if (LogDate.split("/").length > 1) {
+                EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
+            } else {
+                EldTitleTV.setText(LogDate);
+            }
+            signImageView.setBackground(null);
+            signImageView.setImageResource(R.drawable.transparent);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
 
         if(CurrentCycleId.equalsIgnoreCase("null"))
             CurrentCycleId = Globally.CANADA_CYCLE_1;
 
-        if(isDOT) {
+      /*  if(isDOT) {
             certifyDateTV.setText(getResources().getString(R.string.Send_Log));
 
             if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
@@ -477,7 +480,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             }
 
 
-        }else{
+        }else{*/
 
             if(isSignPending){
                 certifyErrorImgView.setVisibility(View.VISIBLE);
@@ -535,7 +538,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             if(SelectedDayOfMonth == constants.CertifyLog){
                 openSignRecordDialog(false);
             }
-        }
+       // }
 
         getPermissionWithView();
 
@@ -967,13 +970,13 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 EldTitleTV.setText(MonthShortName + " " + dateArray[1] + " ( " + DayName + " )");
             }
 
-            if(!isDOT) {
+           // if(!isDOT) {
                 if(LogDate.length() > 3) {
                     certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length()));
                 }else{
                     certifyDateTV.setText(MonthFullName + " " + LogDate);
                 }
-            }
+           // }
 
         }
 
@@ -1015,17 +1018,17 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }
 
 
-        if(isDOT){    // DOT mode Enabled
+        /*if(isDOT){    // DOT mode Enabled
             dailyLogTV.setText("DOT Mode");
             dateActionBarTV.setText(getString(R.string.ViewInspections));
             dateActionBarTV.setVisibility(View.VISIBLE);
-        }else{
+        }else{*/
            // dateActionBarTV.setText(getString(R.string.sign_record));
             if(isCertifyLog){
                 dailyLogTV.setText("Daily Certify Log");
             }
 
-        }
+        //}
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -1156,7 +1159,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             File f = new File(imagePath);
             if (isCertifySignExist) {
                 String signBtnTxt = saveSignatureBtn.getText().toString();
-                if (f.exists() && signBtnTxt.equals(getString(R.string.save))) {
+                if (f.exists() && signBtnTxt.equals(getString(R.string.save_and_certify))) {
                     SaveDriverSignArray();
                 } else {
                     ContinueWithoutSignDialog();
@@ -1236,27 +1239,27 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 break;
 
             case R.id.eldMenuLay:
-                if(isDOT) {    // DOT mode Enabled
+                /*if(isDOT) {    // DOT mode Enabled
                     EldActivity.DOTButton.performClick();
                 }else{
-                    getFragmentManager().popBackStack();
-                }
-                // EldFragment.resetTimerBtn.performClick();
+                    getParentFragmentManager().popBackStack();
+                }*/
+                getParentFragmentManager().popBackStack();
                 break;
 
             case R.id.certifyDateTV:
 
-                if(isDOT){
+                /*if(isDOT){
                     shareDriverLogDialog();
-                }
+                }*/
 
                 break;
 
             case R.id.dateActionBarTV:
 
-                if(isDOT) {
+                /*if(isDOT) {
                     MoveFragment(LogDate);
-                }
+                }*/
 
                 break;
 
@@ -1923,9 +1926,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                     }else{
                         IsCurrentDate = false;
 
-                        if(isDOT) {
+                        /*if(isDOT) {
                             nextDateBtn.setVisibility(View.VISIBLE);
-                        }
+                        }*/
                     }
                 }
 
@@ -2246,15 +2249,15 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 int VerticalLineY = constants.VerticalLine(DRIVER_JOB_STATUS);
 
                 if(hLineX2 > hLineX1) {
-                   /* boolean isDottedLine = false;
+                    boolean isDottedLine = false;
                     if(YardMove || isPersonal){
                         isDottedLine = true;
-                    }*/
+                    }
 
                     if (OldStatus != -1) {
-                        DrawGraph(hLineX1, hLineX2, VerticalLineX, VerticalLineY, isViolation);
+                        DrawGraph(hLineX1, hLineX2, VerticalLineX, VerticalLineY, isViolation, isDottedLine);
                     } else {
-                        DrawGraph(hLineX1, hLineX2, VerticalLineY, VerticalLineY, isViolation);
+                        DrawGraph(hLineX1, hLineX2, VerticalLineY, VerticalLineY, isViolation, isDottedLine);
                     }
                 }
                 OldStatus   =   DRIVER_JOB_STATUS;
@@ -2284,17 +2287,24 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     }
 
 
-    void DrawGraph(int hLineX1, int hLineX2, int vLineY1, int vLineY2, boolean isViolation){
-        if(isViolation && !isDOT){
+    void DrawGraph(int hLineX1, int hLineX2, int vLineY1, int vLineY2, boolean isViolation, boolean isDottedLine){
+        if(isViolation ){   //&& !isDOT
             htmlAppendedText = htmlAppendedText + ViolationLine +
                     constants.AddHorizontalLine(hLineX1, hLineX2, vLineY2) +
                     constants.AddVerticalLineViolation(hLineX1, vLineY1, vLineY2) +
                     "                  </g>\n";
         }else {
-            htmlAppendedText = htmlAppendedText + DefaultLine +
-                    constants.AddHorizontalLine(hLineX1, hLineX2, vLineY2) +
-                    constants.AddVerticalLine(hLineX1, vLineY1, vLineY2) +
-                    "                  </g>\n";
+            if(isDottedLine){
+                htmlAppendedText = htmlAppendedText + DefaultLine +
+                        constants.AddHorizontalDottedLine(hLineX1, hLineX2, vLineY2) +
+                        constants.AddVerticalLine(hLineX1, vLineY1, vLineY2) +
+                        "                  </g>\n";
+            }else {
+                htmlAppendedText = htmlAppendedText + DefaultLine +
+                        constants.AddHorizontalLine(hLineX1, hLineX2, vLineY2) +
+                        constants.AddVerticalLine(hLineX1, vLineY1, vLineY2) +
+                        "                  </g>\n";
+            }
         }
     }
 
@@ -2387,10 +2397,10 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                     if (IsSigned) {
                         SignatureMainLay.setVisibility(View.VISIBLE);
                         signLogTitle2.setVisibility(View.GONE);
-                        signImageView.setBackgroundDrawable(null);
+                        signImageView.setBackground(null);
                         signImageView.setImageResource(R.drawable.transparent);
                         imagePath = constants.GetSignatureBitmap(inkView, signImageView, getActivity());
-                        saveSignatureBtn.setText(getString(R.string.save));
+                        saveSignatureBtn.setText(getString(R.string.save_and_certify));
 
                         driverLogScrollView.post(new Runnable() {
                             @Override
@@ -2403,7 +2413,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                     } else {
                         imagePath = "";
-                        signImageView.setBackgroundDrawable(null);
+                        signImageView.setBackground(null);
                         signImageView.setImageResource(R.drawable.sign_here);
                         saveSignatureBtn.setText(getString(R.string.certify));
                         signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
@@ -2456,12 +2466,12 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
         }
 
-        if(!isDOT) {
+       // if(!isDOT) {
             if(LogDate.length() > 3)
                 certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length()));
             else
                 certifyDateTV.setText(MonthFullName + " " + LogDate);
-        }
+       // }
 
         LogSignImage = ""; LogSignImageInByte = "";
 
@@ -2481,65 +2491,62 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     }
 
     void CheckSignatureVisibilityStatus(JSONArray LogJsonArray){
-        isCertifySignExist  = constants.isCertifySignExist(recapViewMethod, DRIVER_ID, dbHelper);
-        if (!LogDate.equals(CurrentDate) && LogJsonArray.length() > 0) {
+        try {
+            isCertifySignExist = constants.isCertifySignExist(recapViewMethod, DRIVER_ID, dbHelper);
+            if (!LogDate.equals(CurrentDate) && LogJsonArray.length() > 0) {
 
-            if(isCertifySignExist){
-                SignatureMainLay.setVisibility(View.GONE);
-                signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
-                saveSignatureBtn.setText(getString(R.string.certify));
-            }else {
-                SignatureMainLay.setVisibility(View.VISIBLE);
-                signLogTitle2.setVisibility(View.GONE);
-                saveSignatureBtn.setText(getString(R.string.save));
-            }
-
-            if(LogSignImage.length() > 0 || LogSignImageInByte.length() > 0){
-                saveSignatureBtn.setVisibility(View.GONE);
-                signLogTitle2.setVisibility(View.GONE);
-                SignatureMainLay.setVisibility(View.VISIBLE);
-            }else {
-
-                signImageView.setBackgroundDrawable(null);
-                signImageView.setImageResource(R.drawable.sign_here);
-                saveSignatureBtn.setVisibility(View.VISIBLE);
-                if(isCertifySignExist) {
-                    SignatureMainLay.setVisibility(View.GONE);
-                }
-            }
-        } else {
-            if(DriverPermitMaxDays == 0 ){
-
-                if(isCertifySignExist){
+                if (isCertifySignExist) {
                     SignatureMainLay.setVisibility(View.GONE);
                     signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
                     saveSignatureBtn.setText(getString(R.string.certify));
-                }else {
+                } else {
                     SignatureMainLay.setVisibility(View.VISIBLE);
                     signLogTitle2.setVisibility(View.GONE);
-                    saveSignatureBtn.setText(getString(R.string.save));
+                    saveSignatureBtn.setText(getString(R.string.save_and_certify));
                 }
 
-                saveSignatureBtn.setVisibility(View.VISIBLE);
-                if(LogSignImage.length() == 0 && LogSignImageInByte.length() == 0 ){
+                if (LogSignImage.length() > 0 || LogSignImageInByte.length() > 0) {
+                    saveSignatureBtn.setVisibility(View.GONE);
+                    signLogTitle2.setVisibility(View.GONE);
+                    SignatureMainLay.setVisibility(View.VISIBLE);
+                } else {
 
-                    signImageView.setBackgroundDrawable(null);
+                    signImageView.setBackground(null);
                     signImageView.setImageResource(R.drawable.sign_here);
+                    saveSignatureBtn.setVisibility(View.VISIBLE);
+                    if (isCertifySignExist) {
+                        SignatureMainLay.setVisibility(View.GONE);
+                    }
+                }
+            } else {
+                if (DriverPermitMaxDays == 0) {
+
+                    if (isCertifySignExist) {
+                        SignatureMainLay.setVisibility(View.GONE);
+                        signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
+                        saveSignatureBtn.setText(getString(R.string.certify));
+                    } else {
+                        SignatureMainLay.setVisibility(View.VISIBLE);
+                        signLogTitle2.setVisibility(View.GONE);
+                        saveSignatureBtn.setText(getString(R.string.save_and_certify));
+                    }
+
+                    saveSignatureBtn.setVisibility(View.VISIBLE);
+                    if (LogSignImage.length() == 0 && LogSignImageInByte.length() == 0) {
+
+                        signImageView.setBackground(null);
+                        signImageView.setImageResource(R.drawable.sign_here);
+                    }
+
+                } else {
+                    SignatureMainLay.setVisibility(View.GONE);
+                    saveSignatureBtn.setVisibility(View.GONE);
                 }
 
-            }else{
-                SignatureMainLay.setVisibility(View.GONE);
-                saveSignatureBtn.setVisibility(View.GONE);
             }
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        if(!isCertifyLog) {
-           // signLay.setEnabled(false);
-           // saveSignatureBtn.setVisibility(View.GONE);
-
-        }
-
     }
 
 
@@ -2664,8 +2671,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.ProjectId, ProjectId);
-         params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.ProjectId, ProjectId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
         params.put(ConstantsKeys.ELDSearchDate, date);
         params.put(ConstantsKeys.TeamDriverType, TeamDriverType);
 
@@ -2679,7 +2686,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
         params.put(ConstantsKeys.ShippingDocDate, ShippingDocDate);
 
         GetShippingRequest.executeRequest(Request.Method.POST, APIs.GET_SHIPPING_INFO_OFFLINE , params, flag,
@@ -2740,66 +2747,69 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     private void SaveDriverSignArray(){
         isLoadImageCalled = false;
 
-        if(IsContinueWithSign){
+        try {
+            if (IsContinueWithSign) {
 
-            String lastSignature = constants.getLastSignature(recapViewMethod, DRIVER_ID, dbHelper);
-            saveByteSignLocally(lastSignature);
-            loadByteImage(lastSignature);
-            LogSignImageInByte = lastSignature;
-            isLoadImageCalled = true;
+                String lastSignature = constants.getLastSignature(recapViewMethod, DRIVER_ID, dbHelper);
+                saveByteSignLocally(lastSignature);
+                loadByteImage(lastSignature);
+                LogSignImageInByte = lastSignature;
+                isLoadImageCalled = true;
 
-            if(Globally.isConnected(getActivity()) ){
-                progressDialog.show();
-                saveSignatureBtn.setEnabled(false);
-                saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec,
-                        true, false, DriverType, SaveCertifyLog);
-            }else{
-                saveSignatureBtn.setVisibility(View.GONE);
-                SignatureMainLay.setVisibility(View.VISIBLE);
-                signLogTitle2.setVisibility(View.GONE);
-                global.EldToastWithDuration(TabAct.sliderLay, getResources().getString(R.string.certify_log_offline_saved), getResources().getColor(R.color.colorSleeper) );
-
-                if(isCertifyViewAgain){
-                    isCertifyViewAgain = false;
-                    GetRecapViewOffLineData();
-                    loadByteImageWithHandler();
-                }
-            }
-            IsContinueWithSign = false;
-            saveSignatureBtn.setText(getString(R.string.certify));
-
-        }else{
-            File f = new File(imagePath);
-            if (f.exists() ) {
-
-                // Convert image file into bytes
-                LogSignImageInByte = global.ConvertImageToByteAsString(imagePath);
-                saveByteSignLocally(LogSignImageInByte);
-
-                if(Globally.isConnected(getActivity()) ){
+                if (Globally.isConnected(getActivity())) {
                     progressDialog.show();
                     saveSignatureBtn.setEnabled(false);
-                    saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec, true, false, DriverType, SaveCertifyLog);
-                }else{
+                    saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec,
+                            true, false, DriverType, SaveCertifyLog);
+                } else {
                     saveSignatureBtn.setVisibility(View.GONE);
                     SignatureMainLay.setVisibility(View.VISIBLE);
                     signLogTitle2.setVisibility(View.GONE);
-                    global.EldToastWithDuration(TabAct.sliderLay, getResources().getString(R.string.certify_log_offline_saved), getResources().getColor(R.color.colorSleeper) );
+                    global.EldToastWithDuration(TabAct.sliderLay, getResources().getString(R.string.certify_log_offline_saved), getResources().getColor(R.color.colorSleeper));
+
+                    if (isCertifyViewAgain) {
+                        isCertifyViewAgain = false;
+                        GetRecapViewOffLineData();
+                        loadByteImageWithHandler();
+                    }
                 }
-                imagePath = "";
+                IsContinueWithSign = false;
                 saveSignatureBtn.setText(getString(R.string.certify));
 
-            }else{
-                signImageView.setBackgroundDrawable(null);
-                signImageView.setImageResource(R.drawable.sign_here);
-                imagePath = "";
-                global.EldScreenToast(eldMenuBtn , getResources().getString(R.string.sign_not_valid), getResources().getColor(R.color.colorVoilation));
+            } else {
+                File f = new File(imagePath);
+                if (f.exists()) {
+
+                    // Convert image file into bytes
+                    LogSignImageInByte = global.ConvertImageToByteAsString(imagePath);
+                    saveByteSignLocally(LogSignImageInByte);
+
+                    if (Globally.isConnected(getActivity())) {
+                        progressDialog.show();
+                        saveSignatureBtn.setEnabled(false);
+                        saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec, true, false, DriverType, SaveCertifyLog);
+                    } else {
+                        saveSignatureBtn.setVisibility(View.GONE);
+                        SignatureMainLay.setVisibility(View.VISIBLE);
+                        signLogTitle2.setVisibility(View.GONE);
+                        global.EldToastWithDuration(TabAct.sliderLay, getResources().getString(R.string.certify_log_offline_saved), getResources().getColor(R.color.colorSleeper));
+                    }
+                    imagePath = "";
+                    saveSignatureBtn.setText(getString(R.string.certify));
+
+                } else {
+                    signImageView.setBackground(null);
+                    signImageView.setImageResource(R.drawable.sign_here);
+                    imagePath = "";
+                    global.EldScreenToast(eldMenuBtn, getResources().getString(R.string.sign_not_valid), getResources().getColor(R.color.colorVoilation));
+                }
             }
+
+            refreshPendingSignView();
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-
-        refreshPendingSignView();
-
     }
 
 
@@ -3500,8 +3510,13 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
     void loadByteImage(String LogSignImageInByte){
         isCertifyViewAgain = false;
-        signImageView.setBackgroundDrawable(null);
-        signImageView.setImageResource(R.drawable.transparent);
+
+        try {
+            signImageView.setBackground(null);
+            signImageView.setImageResource(R.drawable.transparent);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             if (LogSignImageInByte.length() > 0) {

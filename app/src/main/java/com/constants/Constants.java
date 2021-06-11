@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
@@ -3785,8 +3786,8 @@ public class Constants {
             finalCycleData = "<font color='#3F88C5'>" +
                     "<b>Cycle &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> :&nbsp;&nbsp; " + CycleRemaining + "<br/>" +
                     "<b>Driving  &nbsp;&nbsp;</b>&nbsp;:&nbsp;&nbsp; " + DriveRemaining + "<br/>" +
-                    "<b>OnDuty   &nbsp;&nbsp;</b>&nbsp:&nbsp        " + OnDutyRemaining   + "<br/>" +
-                    "<b>Shift    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>&nbsp;:&nbsp  " + ShiftRemaining+ " </font>" ;
+                    "<b>OnDuty  &nbsp;</b>&nbsp:&nbsp &nbsp;        " + OnDutyRemaining   + "<br/>" +
+                    "<b>Shift    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>&nbsp;:&nbsp &nbsp;  " + ShiftRemaining+ " </font>" ;
 
            // txtView.setText(Html.fromHtml(finalCycleData) );
 

@@ -45,6 +45,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.background.service.BackgroundLocationService;
+import com.background.service.LocationService;
 import com.constants.APIs;
 import com.constants.AlertDialogEld;
 import com.constants.AsyncResponse;
@@ -625,7 +626,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         if(IsDOT){
             dotWithData();
         }else {
-            // -------------------------- CALL API --------------------------
+            // -------------------------- CALL API --------bluetooth------------------
              if(TabAct.isTabActOnCreate) {
                  constants.IS_ELD_ON_CREATE = true;
                  TabAct.vehicleList = new ArrayList<VehicleModel>();
@@ -1033,24 +1034,36 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         try {
             if(getActivity() != null) {
-               // connectionStatusImgView.clearColorFilter();
-               // ImageViewCompat.setImageTintList(connectionStatusImgView, null);
-                connectionStatusImgView.setColorFilter(null);
-                int obdStatus = sharedPref.getObdStatus(getActivity());
-                switch (obdStatus) {
+                getActivity().runOnUiThread(new Runnable() {
 
-                    case Constants.WIRED_CONNECTED:
+                    @Override
+                    public void run() {
+                        connectionStatusImgView.setColorFilter(null);
+                        int obdStatus       = sharedPref.getObdStatus(getActivity());
+                        int obdPreference   = sharedPref.getObdPreference(getActivity());
 
+                        if(obdPreference == Constants.OBD_PREF_BLE){
+                    if(obdStatus == Constants.BLE_CONNECTED){
+                        connectionStatusImgView.setImageResource(R.drawable.ble_ic);
+                        connectionStatusImgView.setColorFilter(getResources().getColor(R.color.colorPrimary));
+                        if (isToastShowing) {
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.ble_active), getResources().getColor(R.color.color_eld_theme) );
+                        }
+                    }else{
+                        connectionStatusImgView.setImageResource(R.drawable.ble_ic);
+                        connectionStatusImgView.setColorFilter(getResources().getColor(R.color.spinner_blue));
+                        connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                        if (isToastShowing) {
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.ble_inactive), getResources().getColor(R.color.colorSleeper) );
+                        }
+                    }
+                }else if(obdPreference == Constants.OBD_PREF_WIRED){
+                    if(obdStatus == Constants.WIRED_CONNECTED){
                         connectionStatusImgView.setImageResource(R.drawable.obd_active);
                         if (isToastShowing) {
                             Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wired_active), getResources().getColor(R.color.color_eld_theme) );
                         }
-                        break;
-
-                    case Constants.WIRED_DISCONNECTED:
-                    case Constants.WIRED_ERROR:
-                    case Constants.WIRED_IGNITION_OFF:
-
+                    }else{
                         connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
                         connectionStatusImgView.startAnimation(connectionStatusAnimation);
 
@@ -1062,52 +1075,29 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             else
                                 Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.engine_ign_off_state), getResources().getColor(R.color.colorSleeper) );
                         }
-                        break;
-
-
-                    case Constants.WIFI_CONNECTED:
+                    }
+                }else{
+                    if(obdStatus ==  Constants.WIFI_CONNECTED) {
                         connectionStatusImgView.setImageResource(R.drawable.obd_active);
                         if (isToastShowing) {
-                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_active), getResources().getColor(R.color.color_eld_theme) );
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_active), getResources().getColor(R.color.color_eld_theme));
                         }
-                        break;
-
-                    case Constants.WIFI_DISCONNECTED:
+                    }else if(obdStatus ==  Constants.WIFI_DISCONNECTED) {
                         connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
                         connectionStatusImgView.startAnimation(connectionStatusAnimation);
                         if (isToastShowing) {
-                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_inactive), getResources().getColor(R.color.colorSleeper) );
+                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_inactive), getResources().getColor(R.color.colorSleeper));
                         }
-                        break;
-
-                    case Constants.BLE_CONNECTED:
-                        connectionStatusImgView.setImageResource(R.drawable.ble_ic);
-                        connectionStatusImgView.setColorFilter(getResources().getColor(R.color.colorPrimary));
-                        if (isToastShowing) {
-                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.ble_active), getResources().getColor(R.color.color_eld_theme) );
-                        }
-                        break;
-
-                    case Constants.BLE_DISCONNECTED:
-                        connectionStatusImgView.setImageResource(R.drawable.ble_ic);
-                        connectionStatusImgView.setColorFilter(getResources().getColor(R.color.spinner_blue));
-                        connectionStatusImgView.startAnimation(connectionStatusAnimation);
-                        if (isToastShowing) {
-                            Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.ble_inactive), getResources().getColor(R.color.colorSleeper) );
-                        }
-                        break;
-
-
-                    default:
+                    }else{
                         connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
                         connectionStatusImgView.startAnimation(connectionStatusAnimation);
                         if (isToastShowing) {
                             Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.obd_data_connection_desc), getResources().getColor(R.color.colorSleeper) );
                         }
-
-                        break;
+                    }
                 }
-
+                    }
+                });
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1268,7 +1258,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         Bundle bundle = new Bundle();
         logFragment.setArguments(bundle);
 
-        FragmentTransaction fragmentTran = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTran = getParentFragmentManager().beginTransaction();
         fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, logFragment);
@@ -2967,6 +2957,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             getActivity().startForegroundService(serviceIntent);
         }
         getActivity().startService(serviceIntent);
+
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -3724,7 +3715,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             dbHelper);
 
 
-                    // Write violated file in storage
+                    // Write violation file in storage
                     constants.writeViolationFile(currentDateTime, currentUTCDateTime, Integer.valueOf(DRIVER_ID), CurrentCycleId, offsetFromUTC, isSingleDriver,
                             DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, ViolationReason, hMethods, dbHelper, getActivity());
 
@@ -4160,7 +4151,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 try {
                                     if (trailerDialog != null && trailerDialog.isShowing())
                                         trailerDialog.dismiss();
-
 
                                     // call lat long API
                                     IsAddressUpdate = true;
@@ -4747,7 +4737,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         getExceptionStatus();
         if(!CurrentCycleId.equals("") && !CurrentCycleId.equals("-1")) {
 
-
             int rulesVersion = sharedPref.GetRulesVersion(getActivity());
             oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                     offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
@@ -4967,115 +4956,120 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     void SAVE_LOG_RESPONSE_PROCESS(boolean isLoad, final boolean IsRecap) {
-        EnableJobViews();
 
-        if (!IsTrailorUpdate) {
-            if (isLoad) {
-                String msg;
-                String status = sharedPref.getDriverStatusId("jobType", getActivity());
-                if (status.equalsIgnoreCase("null") || status.equals(""))
-                    status = "1";
+        try {
+            EnableJobViews();
+            if (!IsTrailorUpdate) {
+                if (isLoad) {
+                    String msg;
+                    String status = sharedPref.getDriverStatusId("jobType", getActivity());
+                    if (status.equalsIgnoreCase("null") || status.equals(""))
+                        status = "1";
 
-                if (status.equals(Global.OFF_DUTY)) {
-                    City = "";
-                    if (isPersonal.equals("true")) {
-                        msg = "You have selected truck for Personal Use";
-                        sharedPref.setVINNumber(VIN_NUMBER, getActivity());
-                        Global.EldScreenToast(OnDutyBtn, msg, getResources().getColor(R.color.color_eld_theme));
-                        Global.OdometerDialog(getActivity(), "Please Enter Odometer Reading.", true, PERSONAL, personalUseBtn, alertDialog);
+                    if (status.equals(Global.OFF_DUTY)) {
+                        City = "";
+                        if (isPersonal.equals("true")) {
+                            msg = "You have selected truck for Personal Use";
+                            sharedPref.setVINNumber(VIN_NUMBER, getActivity());
+                            Global.EldScreenToast(OnDutyBtn, msg, getResources().getColor(R.color.color_eld_theme));
+                            Global.OdometerDialog(getActivity(), "Please Enter Odometer Reading.", true, PERSONAL, personalUseBtn, alertDialog);
 
-                        // save app display status log
-                        if(sharedPref.IsOdometerFromOBD(getActivity())) {
-                            constants.saveAppUsageLog(ConstantsEnum.StatusPuAuto,  true, false, obdUtil);
-                        }else {
-                            constants.saveAppUsageLog(ConstantsEnum.StatusPuMannual, true, true, obdUtil);
+                            // save app display status log
+                            if (sharedPref.IsOdometerFromOBD(getActivity())) {
+                                constants.saveAppUsageLog(ConstantsEnum.StatusPuAuto, true, false, obdUtil);
+                            } else {
+                                constants.saveAppUsageLog(ConstantsEnum.StatusPuMannual, true, true, obdUtil);
+                            }
+                        } else {
+                            msg = "You are now Off DUTY";
+                            isPersonalOld = "false";
+
+                            if (oldStatusView == DRIVING) {
+                                if (!sharedPref.IsOdometerFromOBD(getActivity())) {
+                                    IsOdometerReading = true;
+                                    odometerLay.startAnimation(OdometerFaceView);
+                                }
+                            }
+                            Global.EldScreenToast(OnDutyBtn, msg, getResources().getColor(R.color.color_eld_theme));
+
+
                         }
-                    } else {
-                        msg = "You are now Off DUTY";
-                        isPersonalOld = "false";
+                    } else if (status.equals(Global.SLEEPER)) {
+                        City = "";
+                        msg = "Your job status is SLEEPER.";
+                        Global.EldScreenToast(OnDutyBtn, msg, getResources().getColor(R.color.color_eld_theme));
 
                         if (oldStatusView == DRIVING) {
-                            if(!sharedPref.IsOdometerFromOBD(getActivity())) {
+                            if (!sharedPref.IsOdometerFromOBD(getActivity())) {
                                 IsOdometerReading = true;
                                 odometerLay.startAnimation(OdometerFaceView);
                             }
                         }
+
+                        isPersonalOld = "false";
+                    } else if (status.equals(Global.DRIVING)) {
+                        City = "";
+                        msg = "You are now DRIVING.";
                         Global.EldScreenToast(OnDutyBtn, msg, getResources().getColor(R.color.color_eld_theme));
 
-
-                    }
-                } else if (status.equals(Global.SLEEPER)) {
-                    City = "";
-                    msg = "Your job status is SLEEPER.";
-                    Global.EldScreenToast(OnDutyBtn, msg, getResources().getColor(R.color.color_eld_theme));
-
-                    if (oldStatusView == DRIVING) {
-                        if(!sharedPref.IsOdometerFromOBD(getActivity())) {
+                        if (!sharedPref.IsOdometerFromOBD(getActivity())) {
+                            IsOdometerReading = true;
+                            odometerLay.startAnimation(OdometerFaceView);
+                        }
+                        isPersonalOld = "false";
+                    } else {
+                        msg = "You are now ON DUTY but not driving.";
+                        Global.EldScreenToast(OnDutyBtn, msg, getResources().getColor(R.color.color_eld_theme));
+                        isPersonalOld = "false";
+                        if (!sharedPref.IsOdometerFromOBD(getActivity())) {
                             IsOdometerReading = true;
                             odometerLay.startAnimation(OdometerFaceView);
                         }
                     }
 
-                    isPersonalOld = "false";
-                } else if (status.equals(Global.DRIVING)) {
-                    City = "";
-                    msg = "You are now DRIVING.";
-                    Global.EldScreenToast(OnDutyBtn, msg, getResources().getColor(R.color.color_eld_theme));
-
-                    if(!sharedPref.IsOdometerFromOBD(getActivity())) {
-                        IsOdometerReading = true;
-                        odometerLay.startAnimation(OdometerFaceView);
-                    }
-                    isPersonalOld = "false";
-                } else {
-                    msg = "You are now ON DUTY but not driving.";
-                    Global.EldScreenToast(OnDutyBtn, msg, getResources().getColor(R.color.color_eld_theme));
-                    isPersonalOld = "false";
-                    if(!sharedPref.IsOdometerFromOBD(getActivity())) {
-                        IsOdometerReading = true;
-                        odometerLay.startAnimation(OdometerFaceView);
-                    }
                 }
 
-            }
+                oldStatusView = SWITCH_VIEW;
+                SetJobButtonView(SWITCH_VIEW, isViolation, isPersonal);
+                strCurrentDate = Global.getCurrentDate();
+                SelectedDate = Global.GetCurrentDeviceDate();
 
-            oldStatusView = SWITCH_VIEW;
-            SetJobButtonView(SWITCH_VIEW, isViolation, isPersonal);
-            strCurrentDate = Global.getCurrentDate();
-            SelectedDate = Global.GetCurrentDeviceDate();
-
-            if (sharedPref.getDriverStatusId("jobType", getActivity()).equals(Global.ON_DUTY) && IsPrePost) {
-                if(TrailorNumber.length() > 0) {
-                    if (!constants.IS_TRAILER_INSPECT) {
-                        if (ptiSelectedtxt.contains( getResources().getString(R.string.pre_trip_unloading)) ){
-                            showShippingDialog(true);
-                        }
-                    }
-                }
-            }
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (sharedPref.getDriverStatusId("jobType", getActivity()).equals(Global.ON_DUTY) && IsPrePost) {
-                        if(TrailorNumber.length() > 0) {
-                            if (constants.IS_TRAILER_INSPECT) {
-                                IsPrePost = false;
-                                Global.InspectTrailerDialog(getActivity(), "Trailer Inspection !!", "You need to inspect your updated trailer.", inspectDialog);
-                            } else {
-                                TabAct.host.setCurrentTab(4);
+                if (sharedPref.getDriverStatusId("jobType", getActivity()).equals(Global.ON_DUTY) && IsPrePost) {
+                    if (TrailorNumber.length() > 0) {
+                        if (!constants.IS_TRAILER_INSPECT) {
+                            if (ptiSelectedtxt.contains(getResources().getString(R.string.pre_trip_unloading))) {
+                                showShippingDialog(true);
                             }
                         }
-                    } else {
-                        IsLogShown = false;
-                        IsRecapShown = IsRecap;
-                        // GET_DRIVER_DETAILS(Global.PROJECT_ID, DRIVER_ID, SelectedDate);
-                        CalculateTimeInOffLine(false, false);
                     }
                 }
-            }, 500);
 
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (sharedPref.getDriverStatusId("jobType", getActivity()).equals(Global.ON_DUTY) && IsPrePost) {
+                            if (TrailorNumber.length() > 0) {
+                                if (constants.IS_TRAILER_INSPECT) {
+                                    IsPrePost = false;
+                                    Global.InspectTrailerDialog(getActivity(), "Trailer Inspection !!", "You need to inspect your updated trailer.", inspectDialog);
+                                } else {
+                                    TabAct.host.setCurrentTab(4);
+                                }
+                            }
+                        } else {
+                            IsLogShown = false;
+                            IsRecapShown = IsRecap;
+                            // GET_DRIVER_DETAILS(Global.PROJECT_ID, DRIVER_ID, SelectedDate);
+                            CalculateTimeInOffLine(false, false);
+                        }
+                    }
+                }, 500);
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
 
@@ -6134,10 +6128,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                 if(dataJObject.has(ConstantsKeys.ObdPreference) && !dataJObject.isNull(ConstantsKeys.ObdPreference) ) {
                                     sharedPref.SetObdPreference(dataJObject.getInt(ConstantsKeys.ObdPreference), getActivity());
+                                }else{
+                                    sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getActivity());
                                 }
 
                                 if(IsTruckChange){
                                     startService();
+                                    setObdStatus(false);
                                 }
 
                                 boolean IsELDNotification = false;

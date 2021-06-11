@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/dot_titles_bg">
+    android:background="@color/whiteee"
+
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,6 +42,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/dotActionBar"
+            android:background="@color/whiteee"
+
             >
 
             <LinearLayout
@@ -47,6 +51,8 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="@dimen/margin_10"
+                android:background="@color/dot_titles_bg"
+
                 >
 
                 <RelativeLayout

@@ -288,7 +288,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             GetDriverDotDetails(DriverId, LogDate);
 
         }else{
-            Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            Globally.EldScreenToast(dateRodsTV, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             //webViewErrorDisplay();
         }
 
@@ -492,7 +492,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
         }
 
-        getFragmentManager().popBackStackImmediate();
+        getParentFragmentManager().popBackStackImmediate();
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
 
@@ -563,7 +563,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         }else{
             LogDate = selectedDate;
-            Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            Globally.EldScreenToast(dateRodsTV, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             //webViewErrorDisplay();
         }
 
@@ -614,7 +614,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 GetDriverDotDetails(DriverId, LogDate);
 
             }else{
-                Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                Globally.EldScreenToast(dateRodsTV, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             }
 
         }
@@ -1042,15 +1042,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         @Override
         public void getResponse(String response, int flag) {
 
-            canDotProgressBar.setVisibility(View.GONE);
-
-            //  {"Status":false,"Message":"Device id is wrong","Data":false}
-
             String status = "", Message = "";
             JSONObject dataObj = null;
             try {
-               // Utils obdUtils = new Utils(getActivity());
-              //  String dataa = obdUtils.getFileContent("/storage/emulated/0/Android/data/com.messaging.logistic/files/Logistic/AlsLog/can_dot_response.txt");
 
                 JSONObject obj = new JSONObject(response);
 
@@ -1059,70 +1053,75 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 if (!obj.isNull("Data")) {
                     dataObj = new JSONObject(obj.getString("Data"));
                 }
-
-            } catch (JSONException e) {
+                canDotProgressBar.setVisibility(View.GONE);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            if (status.equalsIgnoreCase("true")) {
+            try {
+                if (status.equalsIgnoreCase("true")) {
 
-                LogSignImage = "";
-                TotalOnDutyHours         = "00:00";
-                TotalDrivingHours        = "00:00";
-                TotalOffDutyHours        = "00:00";
-                TotalSleeperBerthHours   = "00:00";
+                    LogSignImage = "";
+                    TotalOnDutyHours         = "00:00";
+                    TotalDrivingHours        = "00:00";
+                    TotalOffDutyHours        = "00:00";
+                    TotalSleeperBerthHours   = "00:00";
 
-                DutyStatusList = new ArrayList();
-                LoginLogoutList = new ArrayList();
-                CommentsRemarksList = new ArrayList();
-                CycleOpZoneList = new ArrayList();
-                EnginePowerList = new ArrayList();
+                    DutyStatusList = new ArrayList();
+                    LoginLogoutList = new ArrayList();
+                    CommentsRemarksList = new ArrayList();
+                    CycleOpZoneList = new ArrayList();
+                    EnginePowerList = new ArrayList();
 
 
-                try {
-                    TotalOffDutyHours       = dataObj.getString("TotalOffDutyHours");
-                    TotalSleeperBerthHours  = dataObj.getString("TotalSleeperHours");
-                    TotalDrivingHours       = dataObj.getString("TotalDrivingHours");
-                    TotalOnDutyHours        = dataObj.getString("TotalOnDutyHours");
+                    try {
+                        TotalOffDutyHours       = dataObj.getString("TotalOffDutyHours");
+                        TotalSleeperBerthHours  = dataObj.getString("TotalSleeperHours");
+                        TotalDrivingHours       = dataObj.getString("TotalDrivingHours");
+                        TotalOnDutyHours        = dataObj.getString("TotalOnDutyHours");
 
-                    TotalOffDutyHours      = TotalOffDutyHours.replaceAll("-", "");
-                    TotalOnDutyHours       = TotalOnDutyHours.replaceAll("-", "");
-                    TotalDrivingHours      = TotalDrivingHours.replaceAll("-", "");
-                    TotalSleeperBerthHours = TotalSleeperBerthHours.replaceAll("-", "");
+                        TotalOffDutyHours      = TotalOffDutyHours.replaceAll("-", "");
+                        TotalOnDutyHours       = TotalOnDutyHours.replaceAll("-", "");
+                        TotalDrivingHours      = TotalDrivingHours.replaceAll("-", "");
+                        TotalSleeperBerthHours = TotalSleeperBerthHours.replaceAll("-", "");
 
-                    JSONArray dotLogArray = new JSONArray(dataObj.getString("graphRecordList"));
-                    ParseGraphData(dotLogArray);
+                        JSONArray dotLogArray = new JSONArray(dataObj.getString("graphRecordList"));
+                        ParseGraphData(dotLogArray);
 
-                    JSONArray dutyStatusArray = new JSONArray(dataObj.getString(ConstantsKeys.dutyStatusChangesList));
-                    JSONArray loginLogoutArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutList));
-                    JSONArray ChangeInDriversCycleList = new JSONArray(dataObj.getString(ConstantsKeys.ChangeInDriversCycleList));
-                    JSONArray commentsRemarksArray = new JSONArray(dataObj.getString(ConstantsKeys.commentsRemarksList));
-                    JSONArray enginePowerArray = new JSONArray(dataObj.getString(ConstantsKeys.enginePowerUpAndShutDownList));
-                    JSONArray unIdentifiedVehArray = new JSONArray(dataObj.getString(ConstantsKeys.UnAssignedVehicleMilesList));
+                        JSONArray dutyStatusArray = new JSONArray(dataObj.getString(ConstantsKeys.dutyStatusChangesList));
+                        JSONArray loginLogoutArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutList));
+                        JSONArray ChangeInDriversCycleList = new JSONArray(dataObj.getString(ConstantsKeys.ChangeInDriversCycleList));
+                        JSONArray commentsRemarksArray = new JSONArray(dataObj.getString(ConstantsKeys.commentsRemarksList));
+                        JSONArray enginePowerArray = new JSONArray(dataObj.getString(ConstantsKeys.enginePowerUpAndShutDownList));
+                        JSONArray unIdentifiedVehArray = new JSONArray(dataObj.getString(ConstantsKeys.UnAssignedVehicleMilesList));
 
-                    DutyStatusList =   constants.parseCanadaDotInList(dutyStatusArray, true);
-                    LoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray, true);
-                    CommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray, false);
-                    CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList, true);
-                    EnginePowerList = constants.parseCanadaDotInList(enginePowerArray, true);
+                        DutyStatusList =   constants.parseCanadaDotInList(dutyStatusArray, true);
+                        LoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray, true);
+                        CommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray, false);
+                        CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList, true);
+                        EnginePowerList = constants.parseCanadaDotInList(enginePowerArray, true);
 
-                    UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
+                        UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
 
-                    setdataOnAdapter();
-                    setDataOnTextView(dataObj);
+                        setdataOnAdapter();
+                        setDataOnTextView(dataObj);
 
-                }catch (Exception e){
-                    e.printStackTrace();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+
+                }else{
+                    htmlAppendedText    = "";
+
+                    String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
+                    ReloadWebView(CloseTag);
+
+                    Globally.EldScreenToast(dateRodsTV, Message, getResources().getColor(R.color.colorVoilation));
+
                 }
-
-
-            }else{
-                htmlAppendedText    = "";
-
-                String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
-                ReloadWebView(CloseTag);
-
-                Globally.EldScreenToast(eldMenuLay, Message, getResources().getColor(R.color.colorVoilation));
-
+             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     };
@@ -1132,19 +1131,24 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         @Override
         public void getError(VolleyError error, int flag) {
-            canDotProgressBar.setVisibility(View.GONE);
-            Globally.EldScreenToast(eldMenuLay, "Error", getResources().getColor(R.color.colorVoilation));
-            htmlAppendedText    = "";
-            TotalOnDutyHours         = "00:00";
-            TotalDrivingHours        = "00:00";
-            TotalOffDutyHours        = "00:00";
-            TotalSleeperBerthHours   = "00:00";
+            if(getActivity() != null) {
+                try {
+                    Log.d("error", ">>error: " + error);
+                    canDotProgressBar.setVisibility(View.GONE);
+                    Globally.EldScreenToast(dateRodsTV, "Error", getResources().getColor(R.color.colorVoilation));
+                    htmlAppendedText = "";
+                    TotalOnDutyHours = "00:00";
+                    TotalDrivingHours = "00:00";
+                    TotalOffDutyHours = "00:00";
+                    TotalSleeperBerthHours = "00:00";
 
 
-            String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
-            ReloadWebView(CloseTag);
-            Globally.EldScreenToast(eldMenuLay, "Error", getResources().getColor(R.color.colorVoilation));
-            Log.d("error", ">>error: " +error);
+                    String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
+                    ReloadWebView(CloseTag);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
     };
 

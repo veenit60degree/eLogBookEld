@@ -57,7 +57,7 @@ public class TcpClient {
 
             try {
                 socket.connect(address, 1700);
-                socket.setSoTimeout(1500);
+                socket.setSoTimeout(1700);
             } catch (IOException e) {
                 Log.e("socket","socket Invalid connection");
               //  e.printStackTrace();
@@ -115,7 +115,7 @@ public class TcpClient {
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
-            if(response != null) {
+            if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP && response != null) {
                 try {
                     mMessageListener.messageReceived(response);
                 }catch (Exception e){

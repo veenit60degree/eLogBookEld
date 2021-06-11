@@ -201,7 +201,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                 break;
 
             case R.id.eldMenuLay:
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
                 break;
 
             case R.id.previousDate:

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/dot_titles_bg"
+    android:background="@color/whiteee"
 
     >
 
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/canadaDotActionBar"
-
+        android:background="@color/dot_titles_bg"
 
         >
 
@@ -31,9 +31,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginLeft="@dimen/margin_17"
-        android:layout_marginRight="@dimen/margin_17"
-
+        android:paddingRight="@dimen/margin_17"
+        android:paddingLeft="@dimen/margin_17"
+        android:background="@color/dot_titles_bg"
 
         >
 

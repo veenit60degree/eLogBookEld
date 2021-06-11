@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/whiteee"
+
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/dot_titles_bg"
+
         >
 
 
@@ -35,7 +40,7 @@
             />
 
 
-        <com.constants.ZoomScrollViewwww
+        <com.constants.ScrollViewExt
             android:id="@+id/dotScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,6 +54,8 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="@dimen/margin_10"
+                android:background="@color/dot_titles_bg"
+
                 >
 
 
@@ -1387,7 +1394,7 @@
 
 
             </LinearLayout>
-        </com.constants.ZoomScrollViewwww>
+        </com.constants.ScrollViewExt>
 
 
 

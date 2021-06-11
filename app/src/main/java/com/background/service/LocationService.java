@@ -36,16 +36,18 @@ public class LocationService extends Service {
         intent = new Intent(BROADCAST_ACTION);
     }
 
-    @SuppressLint("MissingPermission")
     @Override
-    public void onStart(Intent intent, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+           // return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 5, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 5, listener);
+
+        return START_STICKY;
     }
 
     @Override
@@ -139,7 +141,7 @@ public class LocationService extends Service {
 
         public void onLocationChanged(final Location loc)
         {
-            Log.i("Location", "Location changed");
+            Log.i("onLocationChanged", "Location: " + loc.getLatitude());
             if(isBetterLocation(loc, previousBestLocation)) {
                 loc.getLatitude();
                 loc.getLongitude();

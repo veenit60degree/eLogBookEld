@@ -94,7 +94,7 @@ public class PdfWebViewFragment extends Fragment { //implements OnPageChangeList
         eldMenuLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         });
 

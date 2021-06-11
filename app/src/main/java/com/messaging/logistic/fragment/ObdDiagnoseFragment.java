@@ -336,7 +336,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 break;
 
             case R.id.eldMenuLay:
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
                 break;
         }
     }

@@ -26,20 +26,23 @@ public class InspectionMethod {
         JSONArray logArray = new JSONArray();
         Cursor rs = dbHelper.getInspection18Days(DriverId);
 
-        if(rs != null && rs.getCount() > 0) {
-            rs.moveToFirst();
-            String logList = rs.getString(rs.getColumnIndex(DBHelper.INSPECTION_18DAYS_LIST));
-            try {
-                logArray = new JSONArray(logList);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        try {
+            if (rs != null && rs.getCount() > 0) {
+                rs.moveToFirst();
+                String logList = rs.getString(rs.getColumnIndex(DBHelper.INSPECTION_18DAYS_LIST));
+                try {
+                    logArray = new JSONArray(logList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        if (!rs.isClosed()) {
-            rs.close();
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
         return logArray;
 
     }
@@ -47,16 +50,19 @@ public class InspectionMethod {
     /*-------------------- Inspection 18 Days DB Helper -------------------- */
     public void DriverInspectionHelper( int driverId, DBHelper dbHelper, JSONArray inspectArray){
 
-        Cursor rs = dbHelper.getInspection18Days(driverId);
-
-        if(rs != null & rs.getCount() > 0) {
-            rs.moveToFirst();
-            dbHelper.UpdateInspection18Days(driverId, inspectArray );        // UPDATE DRIVER INSPECTION ARRAY
-        }else{
-            dbHelper.InsertInspection18Days( driverId, inspectArray  );      // INSERT DRIVER INSPECTION ARRAY
-        }
-        if (!rs.isClosed()) {
-            rs.close();
+        try {
+            Cursor rs = dbHelper.getInspection18Days(driverId);
+            if(rs != null & rs.getCount() > 0) {
+                rs.moveToFirst();
+                dbHelper.UpdateInspection18Days(driverId, inspectArray );        // UPDATE DRIVER INSPECTION ARRAY
+            }else{
+                dbHelper.InsertInspection18Days( driverId, inspectArray  );      // INSERT DRIVER INSPECTION ARRAY
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -71,20 +77,23 @@ public class InspectionMethod {
         JSONArray logArray = new JSONArray();
         Cursor rs = dbHelper.getOfflineInspection(DriverId);
 
-        if(rs != null && rs.getCount() > 0) {
-            rs.moveToFirst();
-            String logList = rs.getString(rs.getColumnIndex(DBHelper.INSPECTION_OFFLINE_LIST));
-            try {
-                logArray = new JSONArray(logList);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        try {
+            if (rs != null && rs.getCount() > 0) {
+                rs.moveToFirst();
+                String logList = rs.getString(rs.getColumnIndex(DBHelper.INSPECTION_OFFLINE_LIST));
+                try {
+                    logArray = new JSONArray(logList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        if (!rs.isClosed()) {
-            rs.close();
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
         return logArray;
 
     }

@@ -124,7 +124,7 @@ public class CtPatDetailInspection extends Fragment {
         eldMenuLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         });
 

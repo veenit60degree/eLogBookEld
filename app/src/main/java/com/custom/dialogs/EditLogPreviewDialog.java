@@ -89,7 +89,11 @@ public class EditLogPreviewDialog extends Dialog {
     private class EditPreviewListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            try {
                 readyListener.EditPreviewReady();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 

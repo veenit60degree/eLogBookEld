@@ -90,41 +90,42 @@ public class DatePickerDialog extends Dialog {
         JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(DRIVER_ID, dbHelper);
         IsDot                   = SharedPref.IsDOT(getContext());
 
-        int selectedYear    = Integer.parseInt(SelectedDate.substring(6, SelectedDate.length()));
-        int selectedMonth   = Integer.parseInt(SelectedDate.substring(0, 2));
-        int selectedDay     = Integer.parseInt(SelectedDate.substring(3, 5));
+        if(SelectedDate.length() > 6) {
+            int selectedYear = Integer.parseInt(SelectedDate.substring(6, SelectedDate.length()));
+            int selectedMonth = Integer.parseInt(SelectedDate.substring(0, 2));
+            int selectedDay = Integer.parseInt(SelectedDate.substring(3, 5));
 
-        String currentDate = Globally.GetCurrentDeviceDate() + " 23:59:59";
-        Date Maxdate = Globally.ParseDate(currentDate);
-        long maxDate = Maxdate.getTime();
-         datePicker.setMaxDate(maxDate);             // Till current date
+            String currentDate = Globally.GetCurrentDeviceDate() + " 23:59:59";
+            Date Maxdate = Globally.ParseDate(currentDate);
+            long maxDate = Maxdate.getTime();
+            datePicker.setMaxDate(maxDate);             // Till current date
 
-        String[] cycleArray = CurrentCycleId.split(",");
-        if(cycleArray.length > 1){
-            CurrentCycleId = cycleArray[0];
+            String[] cycleArray = CurrentCycleId.split(",");
+            if (cycleArray.length > 1) {
+                CurrentCycleId = cycleArray[0];
 
-            if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)){
-                DriverPermitMaxDays = 14;
-            }else{
-                DriverPermitMaxDays = 7;
+                if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+                    DriverPermitMaxDays = 14;
+                } else {
+                    DriverPermitMaxDays = 7;
+                }
+
+            } else {
+                DriverPermitMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, IsDot);
             }
 
-        }else{
-            DriverPermitMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, IsDot);
+            if (DriverPermitMaxDays < 0) {
+                DriverPermitMaxDays = 0;
+            }
+
+
+            calendar.add(Calendar.DAY_OF_MONTH, -DriverPermitMaxDays);
+            Date mindate = calendar.getTime();
+            datePicker.setMinDate(mindate.getTime());
+
+            // Calendar.MONTH start from 0, so that we are subtracting month value with -1
+            datePicker.updateDate(selectedYear, selectedMonth - 1, selectedDay);    // yy mm dd
         }
-
-        if(DriverPermitMaxDays < 0 ){
-            DriverPermitMaxDays = 0;
-        }
-
-
-
-        calendar.add(Calendar.DAY_OF_MONTH, -DriverPermitMaxDays);
-        Date mindate = calendar.getTime();
-        datePicker.setMinDate(mindate.getTime());
-
-        // Calendar.MONTH start from 0, so that we are subtracting month value with -1
-        datePicker.updateDate(selectedYear, selectedMonth-1, selectedDay);    // yy mm dd
 
         setDateJob = (Button)findViewById(R.id.setDate);
         setDateJob.setText("Show Details");

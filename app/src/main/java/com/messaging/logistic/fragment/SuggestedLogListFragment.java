@@ -141,7 +141,7 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
                 bundle.putString(ConstantsKeys.Date,  date);
                 logFragment.setArguments(bundle);
 
-                fragManager = getFragmentManager();
+                fragManager = getParentFragmentManager();
                 FragmentTransaction fragmentTran = fragManager.beginTransaction();
                 fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                         android.R.anim.fade_in, android.R.anim.fade_out);

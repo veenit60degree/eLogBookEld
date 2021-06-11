@@ -302,20 +302,23 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
     private void setRecyclerAdapter(){
 
-        driverLogRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        driverLogRecyclerView.setLayoutManager(mLayoutManager);
+        try {
+            driverLogRecyclerView.setHasFixedSize(true);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            driverLogRecyclerView.setLayoutManager(mLayoutManager);
 
-        editLogRecyclerAdapter = new EditLogRecyclerViewAdapter(getActivity(), driverLogRecyclerView, oDriverLogDetail, selectedDateFormat, offsetFromUTC,
-                logPermissionObj, driverPermissionMethod, hMethods,  IsCurrentDate,this );
+            editLogRecyclerAdapter = new EditLogRecyclerViewAdapter(getActivity(), driverLogRecyclerView, oDriverLogDetail, selectedDateFormat, offsetFromUTC,
+                    logPermissionObj, driverPermissionMethod, hMethods, IsCurrentDate, this);
 
-        ItemTouchHelper.Callback callback = new EditItemTouchHelperCallback(editLogRecyclerAdapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(driverLogRecyclerView);
+            ItemTouchHelper.Callback callback = new EditItemTouchHelperCallback(editLogRecyclerAdapter);
+            mItemTouchHelper = new ItemTouchHelper(callback);
+            mItemTouchHelper.attachToRecyclerView(driverLogRecyclerView);
 
-        driverLogRecyclerView.setAdapter(editLogRecyclerAdapter);
+            driverLogRecyclerView.setAdapter(editLogRecyclerAdapter);
 
-
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -401,11 +404,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
             case R.id.eldMenuLay:
                 Constants.IsEdiLogBackStack = true;
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
                 break ;
 
         /*    case R.id.cancelBtn:
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
                 break ;*/
 
             case R.id.addBtn:
@@ -591,27 +594,32 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 //LoadAdapterOnListView();
                 setRecyclerAdapter();
 
-                new Handler().postDelayed(new Runnable() {
-                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-                    @Override
-                    public void run() {
-                        if(IsWrongDateEditLog){
-                            global.EldScreenToast(eldMenuBtn, violationMsg, getResources().getColor(R.color.colorVoilation));
-
-                        }else {
-                            if(logArray.length() > 0) {
-                                previewDialog = new EditLogPreviewDialog(getActivity(), logArray, new EditLogPreviewListener());
-                                previewDialog.show();
-                            }else{
-                                global.EldScreenToast(eldMenuBtn, "You don't have any log to preview.", getResources().getColor(R.color.colorVoilation));
+                try {
+                    new Handler().postDelayed(new Runnable() {
+                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                        @Override
+                        public void run() {
+                            if (getActivity() != null) {
+                                if (IsWrongDateEditLog) {
+                                    global.EldScreenToast(eldMenuBtn, violationMsg, getResources().getColor(R.color.colorVoilation));
+                                } else {
+                                    if (logArray.length() > 0) {
+                                        previewDialog = new EditLogPreviewDialog(getActivity(), logArray, new EditLogPreviewListener());
+                                        previewDialog.show();
+                                    } else {
+                                        global.EldScreenToast(eldMenuBtn, "You don't have any log to preview.", getResources().getColor(R.color.colorVoilation));
+                                    }
+                                }
                             }
+
+                            saveBtn.setEnabled(true);
+
                         }
+                    }, 300);
 
-                        saveBtn.setEnabled(true);
-                    }
-                }, 300);
-
-
+                }catch (Exception e){
+                e.printStackTrace();
+                }
 
 
                 break ;
@@ -758,11 +766,14 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
         @Override
         public void EditPreviewReady() {
 
-            previewDialog.dismiss();
+            try {
+                previewDialog.dismiss();
 
-            editLogRemarksDialog = new EditLogRemarksDialog(getActivity(), new RemarksListener());
-            editLogRemarksDialog.show();
-
+                editLogRemarksDialog = new EditLogRemarksDialog(getActivity(), new RemarksListener());
+                editLogRemarksDialog.show();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
     }
@@ -781,8 +792,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     editLogRemarksDialog.dismiss();
 
                 if(logArray.length() > 0) {
-                    previewDialog = new EditLogPreviewDialog(getActivity(), logArray, new EditLogPreviewListener());
-                    previewDialog.show();
+                    if(getActivity() != null) {
+                        previewDialog = new EditLogPreviewDialog(getActivity(), logArray, new EditLogPreviewListener());
+                        previewDialog.show();
+                    }
                 }
 
             }catch (Exception e){
@@ -1572,7 +1585,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 @Override
                 public void run() {
                     if(isBackStack) {
-                        getFragmentManager().popBackStack();
+                        getParentFragmentManager().popBackStack();
                     }else {
                         RefreshTempAdapter();
                     }

@@ -111,7 +111,7 @@ public class ObdConfigFragment  extends Fragment implements View.OnClickListener
                 break;
 
             case R.id.eldMenuLay:
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
                 break;
 
 

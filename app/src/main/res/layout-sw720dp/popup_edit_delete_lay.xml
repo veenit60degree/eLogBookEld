@@ -60,42 +60,113 @@
                 android:layout_marginLeft="@dimen/margin_25"
                 android:layout_marginRight="@dimen/margin_25"
                 android:layout_marginTop="@dimen/view_height_30"
-                android:textColor="@color/text_forgot"
+                android:textColor="@color/app_colorPrimaryy"
                 android:layout_below="@+id/changeTitleView"
                 />
 
 
-            <TextView
-                android:id="@+id/changedCycleRuleTxtVw"
-                android:layout_width="wrap_content"
+
+
+
+            <LinearLayout
+                android:id="@+id/cycleRuleLay"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/chaged_cycle_rule"
-                android:layout_centerHorizontal="true"
-                android:textSize="@dimen/text_size_22"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="@dimen/margin_10"
-                android:textColor="@color/text_forgot"
-                android:textStyle="bold"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_20"
                 android:visibility="gone"
 
-                />
+                >
 
-            <TextView
-                android:id="@+id/changedCycleRuleDescVw"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="@string/hos_limitation"
-                android:layout_centerHorizontal="true"
-                android:textSize="@dimen/text_size_20"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="10dp"
-                android:textColor="@color/colorPrimary"
-                android:visibility="gone"
-                />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    >
+
+
+                    <TextView
+                        android:id="@+id/oldCycleRuleTxtVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hos_limitation_old"
+                        android:textSize="@dimen/text_size_21"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_marginRight="@dimen/margin_10"
+                        android:textColor="@color/app_colorPrimaryy"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+
+                        />
+                    <!--USA Cycle: 25:20\nCANADA Cycle: 25:20-->
+                    <TextView
+                        android:id="@+id/oldCycleRuleDescVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="left"
+                        android:text="@string/hos_limitation"
+                        android:textSize="@dimen/text_size_19"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_marginRight="@dimen/margin_10"
+                        android:layout_marginBottom="@dimen/margin_12"
+                        android:textColor="@color/colorPrimary"
+
+                        />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="@dimen/margin_short_1"
+                    android:layout_height="match_parent"
+                    android:background="@color/edit_gray_border"
+                    />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    >
+
+                    <TextView
+                        android:id="@+id/changedCycleRuleTxtVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hos_limitation"
+                        android:textSize="@dimen/text_size_21"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_marginRight="@dimen/margin_15"
+                        android:textColor="@color/app_colorPrimaryy"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+                        />
+
+                    <TextView
+                        android:id="@+id/changedCycleRuleDescVw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="left"
+                        android:text="@string/hos_limitation"
+                        android:textSize="@dimen/text_size_19"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_marginRight="@dimen/margin_15"
+                        android:layout_marginBottom="@dimen/margin_12"
+                        android:textColor="@color/colorPrimary"
+
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+
+
 
 
         </LinearLayout>

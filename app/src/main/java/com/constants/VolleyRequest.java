@@ -10,6 +10,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.messaging.logistic.TabAct;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class VolleyRequest {
     final String contentType = "application/x-www-form-urlencoded";  //"application/json; charset=utf-8";
     Context context;
-    RequestQueue requestQueue;
+   // RequestQueue requestQueue;
 
     public VolleyRequest(Context context) {
         this.context = context;
@@ -31,8 +32,8 @@ public class VolleyRequest {
     public void executeRequest(int method, final String JsonURL, final Map<String, String> params,
                                final int flag, int socketTimeout, final VolleyCallback callback, final VolleyErrorCall ErrorCallback) {
 
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(context);
+        if (TabAct.requestQueue == null) {
+            TabAct.requestQueue = Volley.newRequestQueue(context);
         }
 
 
@@ -65,7 +66,7 @@ public class VolleyRequest {
 
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         postRequest.setRetryPolicy(policy);
-        requestQueue.add(postRequest);
+        TabAct.requestQueue.add(postRequest);
 
     }
 

@@ -452,18 +452,18 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                         boolean isApplicable = false;
 
                                         if (connectionType == constants.API) {
-                                            if (VehicleSpeed <= OnDutySpeedLimit && GPSVehicleSpeed <= OnDutySpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
+                                            if (VehicleSpeed <= OnDutySpeedLimit ) {    //&& GPSVehicleSpeed <= OnDutySpeedLimit
                                                 isApplicable = true;
                                             }
                                         } else if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
-                                            if (OBDVehicleSpeed <= OnDutySpeedLimit && GPSVehicleSpeed <= OnDutySpeedLimit) {
+                                            if (OBDVehicleSpeed <= OnDutySpeedLimit ) { //&& GPSVehicleSpeed <= OnDutySpeedLimit
                                                 isApplicable = true;
                                             }
-                                        } else {
+                                        } /*else {
                                             if (GPSVehicleSpeed <= OnDutySpeedLimit) {
                                                 isApplicable = true;
                                             }
-                                        }
+                                        }*/
 
 
                                         if (isApplicable) {

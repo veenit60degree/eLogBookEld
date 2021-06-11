@@ -30,10 +30,11 @@ public class CheckConnectivity {
 
 
     private ConnectivityInterface mListener;
-
+    VolleyRequestWithoutRetry checkAlsConnection ;
 
     public CheckConnectivity(Context cxt) {
         this.context = cxt;
+        checkAlsConnection = new VolleyRequestWithoutRetry(context);
     }
 
 
@@ -44,7 +45,7 @@ public class CheckConnectivity {
         InternetConnection = isNetworkConnected(context);
 
         if (InternetConnection) {
-            CheckInternet();
+            CheckInternet(checkAlsConnection);
         } else {
             mListener.IsConnected(InternetConnection, Flag);
         }
@@ -59,10 +60,10 @@ public class CheckConnectivity {
 
 
     // ------------ Check Available Internet it is working or not with Socket --------------
-    void CheckInternet() {
-        VolleyRequestWithoutRetry GetOnDutyRequest = new VolleyRequestWithoutRetry(context);
+    void CheckInternet(VolleyRequestWithoutRetry checkAlsConnection) {
+       // VolleyRequestWithoutRetry checkAlsConnection = new VolleyRequestWithoutRetry(context);
         Map<String, String> params = new HashMap<String, String>();
-        GetOnDutyRequest.executeRequest(Request.Method.GET, APIs.CHECK_CONNECTION, params, 1,
+        checkAlsConnection.executeRequest(Request.Method.GET, APIs.CHECK_CONNECTION, params, 1,
                 Constants.SocketTimeout5Sec, ResponseCallBack, ErrorCallBack);
     }
 

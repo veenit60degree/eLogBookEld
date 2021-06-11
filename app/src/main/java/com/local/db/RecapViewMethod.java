@@ -27,21 +27,23 @@ public class RecapViewMethod {
 
         JSONArray logArray = new JSONArray();
         Cursor rs = dbHelper.getRecap18DaysDetails(DriverId);
-
-        if(rs != null && rs.getCount() > 0) {
-            rs.moveToFirst();
-            String logList = rs.getString(rs.getColumnIndex(DBHelper.RECAP_DATA_18DAYS_LIST));
-            try {
-                logArray = new JSONArray(logList);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        try {
+            if (rs != null && rs.getCount() > 0) {
+                rs.moveToFirst();
+                String logList = rs.getString(rs.getColumnIndex(DBHelper.RECAP_DATA_18DAYS_LIST));
+                try {
+                    logArray = new JSONArray(logList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        if (!rs.isClosed()) {
-            rs.close();
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-
         return logArray;
 
     }
@@ -52,14 +54,18 @@ public class RecapViewMethod {
 
         Cursor rs = dbHelper.getRecap18DaysDetails(driverId);
 
-        if(rs != null & rs.getCount() > 0) {
-            rs.moveToFirst();
-            dbHelper.UpdateRecap18DaysDetails(driverId, recapViewArray );        // UPDATE RECAP/VIEW LOG ARRAY
-        }else{
-            dbHelper.InsertRecap18DaysDetails( driverId, recapViewArray  );      // INSERT RECAP/VIEW LOG ARRAY
-        }
-        if (!rs.isClosed()) {
-            rs.close();
+        try {
+            if (rs != null & rs.getCount() > 0) {
+                rs.moveToFirst();
+                dbHelper.UpdateRecap18DaysDetails(driverId, recapViewArray);        // UPDATE RECAP/VIEW LOG ARRAY
+            } else {
+                dbHelper.InsertRecap18DaysDetails(driverId, recapViewArray);      // INSERT RECAP/VIEW LOG ARRAY
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
