@@ -187,19 +187,21 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     private void initListControls() {
 
         try {
-            global.getBundle      = this.getArguments();
-            selectedDateTime        = new DateTime(global.getDateTimeObj(global.getBundle.getString("selectedDate"), false));
-            selectedUtcTime         = new DateTime(global.getDateTimeObj(global.getBundle.getString("selectedUtcDate"), false));
-            DeviceId                = global.bundle.getString("device_id");
-            VehicleId               = global.bundle.getString("vehicle_id");
+            Bundle getBundle        = this.getArguments();
+            if(getBundle != null) {
+                selectedDateTime = new DateTime(global.getDateTimeObj(getBundle.getString("selectedDate"), false));
+                selectedUtcTime = new DateTime(global.getDateTimeObj(getBundle.getString("selectedUtcDate"), false));
+                DeviceId = getBundle.getString("device_id");
+                VehicleId = getBundle.getString("vehicle_id");
 
-            offsetFromUTC           = global.getBundle.getInt("offsetFromUTC");
-            isPermissionResponse    = global.getBundle.getBoolean("permission_response");
-            IsCurrentDate           = global.getBundle.getBoolean("isCurrentDate");
-            logPermissionObj        = new JSONObject(global.getBundle.getString("permissions"));
-            CurrentCycleId          = global.getBundle.getString("cycleId");
-            DriverType              = global.getBundle.getInt("driver_type");
-
+                offsetFromUTC = getBundle.getInt("offsetFromUTC");
+                isPermissionResponse = getBundle.getBoolean("permission_response");
+                IsCurrentDate = getBundle.getBoolean("isCurrentDate");
+                logPermissionObj = new JSONObject(getBundle.getString("permissions"));
+                CurrentCycleId = getBundle.getString("cycleId");
+                DriverType = getBundle.getInt("driver_type");
+                getBundle.clear();
+            }
 
             selectedDateFormat      = selectedDateTime.toString().substring(0,10);
             DRIVER_ID               = sharedPref.getDriverId( getActivity());

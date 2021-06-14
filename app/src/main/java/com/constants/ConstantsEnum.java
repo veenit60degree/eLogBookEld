@@ -33,8 +33,8 @@ public class ConstantsEnum {
     public static String No_TRAILER_ALERT     = "You can not select (Trailer Drop) reason when there is no trailer attached";
     public static String No_PICKUP_ALERT      = ". So can not pick another trailer. You can change your trailer with (Trailer Switch) option";  //
     public static String ALREADY_ATTACHED     = "You already have a trailer";
-    public static String TRUCK_CHANGE         = "Sorry, you can not change the truck while driving";
-    public static String TRAILER_CHANGE       = "Sorry, you can not change the trailer while driving";
+    public static String TRUCK_CHANGE         = "Sorry, you can't change the truck while driving or vehicle is moving";
+    public static String TRAILER_CHANGE       = "Sorry, you can't change the trailer while driving or vehicle is moving";
     public static String HOS_NOT_REFRESHED    = "ELD Cycle/Shift time is updated but driver miles and locations can not not updated due to network issue";
     public static String UPDATED              = "HOS view updated";
 

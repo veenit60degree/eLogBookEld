@@ -292,10 +292,15 @@ public class Slidingmenufunctions implements OnClickListener {
 	}
 
 	boolean isSignPending(){
-		JSONObject logPermissionObj       = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(SharedPref.getDriverId(context)), dbHelper);
-		boolean isSignPending             = constants.GetCertifyLogSignStatus(recapViewMethod, SharedPref.getDriverId(context), dbHelper, global.GetCurrentDeviceDate(),
-												DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context), logPermissionObj);
-		return isSignPending;
+		if(SharedPref.getDriverId(context).trim().length() > 0) {
+			JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(SharedPref.getDriverId(context)), dbHelper);
+			boolean isSignPending = constants.GetCertifyLogSignStatus(recapViewMethod, SharedPref.getDriverId(context), dbHelper, global.GetCurrentDeviceDate(),
+					DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context), logPermissionObj);
+			return isSignPending;
+		}else{
+			return false;
+		}
+
 	}
 
 
@@ -370,9 +375,10 @@ public class Slidingmenufunctions implements OnClickListener {
 			case R.id.MainDriverBtn:
 
 				if(!SharedPref.getCurrentDriverType(context).equals("main_driver")) {
-					DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
-					DriverStatus	= hMethod.GetDriverStatus(DriverId, dbHelper);
-
+					if(SharedPref.getDriverId(context).trim().length() > 0) {
+						DriverId = Integer.valueOf(SharedPref.getDriverId(context));
+						DriverStatus = hMethod.GetDriverStatus(DriverId, dbHelper);
+					}
 					//	boolean isMoving = hMethod.isDrivingAllowed(DriverId, dbHelper);
 
 					//if(DriverStatus == DRIVING){
@@ -398,9 +404,10 @@ public class Slidingmenufunctions implements OnClickListener {
 
 			case R.id.CoDriverBtn:
 				if(!SharedPref.getCurrentDriverType(context).equals("co_driver")) {
-					DriverId   		= Integer.valueOf(SharedPref.getDriverId(context) );
-					DriverStatus	= hMethod.GetDriverStatus(DriverId, dbHelper);
-
+					if(SharedPref.getDriverId(context).trim().length() > 0) {
+						DriverId = Integer.valueOf(SharedPref.getDriverId(context));
+						DriverStatus = hMethod.GetDriverStatus(DriverId, dbHelper);
+					}
 				//	boolean isMoving = hMethod.isDrivingAllowed(DriverId, dbHelper);
 
 					//if(DriverStatus == DRIVING){
@@ -534,44 +541,48 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 	private void callLogoutApi(){
-		if(Globally.isWifiOrMobileDataEnabled(context) ) {
-
-			DriverId = Integer.valueOf(SharedPref.getDriverId(context));
+		try {
 			if (context != null) {
-				dialog.show();
+				if (Globally.isWifiOrMobileDataEnabled(context)) {
+					dialog.show();
 
-				if(global.isSingleDriver(context)) {
-					JSONArray driverArray = GetDriversSavedData(true);
-					if (driverArray.length() == 0) {
-						LogoutUser(SharedPref.getDriverId(context));
-					} else {
-						SaveDataToServer(driverArray, MainDriver);
+					if (SharedPref.getDriverId(context).trim().length() > 0) {
+						DriverId = Integer.valueOf(SharedPref.getDriverId(context));
 					}
-				}else{
-					//boolean isMainDriver = SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver);
-					mainDriverArray = GetDriversSavedData(true);
-					coDriverArray = GetDriversSavedData(false);
 
-					if (mainDriverArray.length() == 0 && coDriverArray.length() == 0) {
-						LogoutUser(SharedPref.getDriverId(context));
-					}else{
-						if(mainDriverArray.length() > 0){
-							SaveDataToServer(mainDriverArray, MainDriver);
-						}else{
-							SaveDataToServer(coDriverArray, CoDriver);
+					if (global.isSingleDriver(context)) {
+						JSONArray driverArray = GetDriversSavedData(true);
+						if (driverArray.length() == 0) {
+							LogoutUser(SharedPref.getDriverId(context));
+						} else {
+							SaveDataToServer(driverArray, MainDriver);
+						}
+					} else {
+						//boolean isMainDriver = SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver);
+						mainDriverArray = GetDriversSavedData(true);
+						coDriverArray = GetDriversSavedData(false);
+
+						if (mainDriverArray.length() == 0 && coDriverArray.length() == 0) {
+							LogoutUser(SharedPref.getDriverId(context));
+						} else {
+							if (mainDriverArray.length() > 0) {
+								SaveDataToServer(mainDriverArray, MainDriver);
+							} else {
+								SaveDataToServer(coDriverArray, CoDriver);
+							}
 						}
 					}
 
+				} else {
+					Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
 				}
-
-
-
-
 			}
-		}else{
-			Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 	}
+
+
 	private void SaveDataToServer(JSONArray DriverLogArray, int DriverType){
 
 		if(DriverLogArray.length() > 0) {

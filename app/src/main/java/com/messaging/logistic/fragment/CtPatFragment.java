@@ -328,14 +328,19 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                 AffixedSealPersonName = affixedSealEditTxt.getText().toString().trim();
                 VerificationPersonName = verifiedSealEditTxt.getText().toString().trim();
 
-                if(ArrivalSealNumber.length() > 0 || DepartureSealNumber.length() > 0) {
-                    SaveInspectionOfflineWithAPI();
+                if(constant.isActionAllowed(getContext())) {
+                    if (ArrivalSealNumber.length() > 0 || DepartureSealNumber.length() > 0) {
+                        SaveInspectionOfflineWithAPI();
+                    } else {
+                        //  inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
+                        // cityEditText.requestFocus();
+                        Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.arrival_departure_seal_number),
+                                getResources().getColor(R.color.colorVoilation));
+                    }
                 }else{
-                    //  inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
-                    // cityEditText.requestFocus();
-                    Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.arrival_departure_seal_number), getResources().getColor(R.color.colorVoilation));
+                    Globally.EldScreenToast(ctPatInspectionBtn, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
                 }
-
 
                 break;
 
@@ -385,10 +390,11 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
     private void MoveFragment(String date ){
         InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
-        Globally.bundle.putString("date", date);
-        Globally.bundle.putString("inspection_type", "ct_pat");
+        Bundle bundle = new Bundle();
+        bundle.putString("date", date);
+        bundle.putString("inspection_type", "ct_pat");
 
-        savedInspectionFragment.setArguments(Globally.bundle);
+        savedInspectionFragment.setArguments(bundle);
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();

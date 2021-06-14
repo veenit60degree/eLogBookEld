@@ -453,6 +453,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }catch (Exception e){
                 e.printStackTrace();
             }
+            bundle.clear();
 
             obdCallBackObservable(speed, vin, timeStamp, null);
 
@@ -859,13 +860,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     void callWiredConnWithTime(int timeDuration){
         try {
-            if (sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        StartStopServer(constants.WiredOBD);
-                    }
-                }, timeDuration);
+            if (sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
+                if (!sharedPref.getUserName(getApplicationContext()).equals("") &&
+                        !sharedPref.getPassword(getApplicationContext()).equals("") &&
+                            getApplicationContext() != null) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            StartStopServer(constants.WiredOBD);
+                        }
+                    }, timeDuration);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1006,6 +1011,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     sendBroadCast("Scan Started");
                     constants.saveAppUsageLog("BleCallback: ScanStarted", false, false, obdUtil);
                 }else{
+                    sendBroadCast("Scanning");
                     mIsScanning = false;
                     bleInit();
                 }
@@ -1313,10 +1319,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         public void onCharacteristicChanged(byte[] data) {
                             Log.d("onCharacteristicChanged", "onCharacteristicChanged" );
 
+
                             if(characteristic.getValue().length > 50) {
-
+                                // temp data
+                              /*  if(isBleObdRespond == false){
+                                    sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
+                                    constants.saveAppUsageLog("BleCallback: Notify Data Changed" ,  false, false, obdUtil);
+                                }
+                                sendBroadCast( "Name: " + bleDevice.getName()+ ", Mac: "+ bleDevice.getMac());
+*/
                                 String[] decodedArray = BleUtil.decodeDataChange(characteristic);
-
                                 if(decodedArray != null && decodedArray.length >= 20){  //11
                                     if(isBleObdRespond == false){
                                         sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
@@ -1778,7 +1790,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 } else if(bleStatus.equals("stop")) {
                     // stop ble communication
                     stopService(bleDevice, getCharacteristic());
-
+                    isBleObdRespond = false;
+                    sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+                    constants.saveAppUsageLog("BleCallback: "+getResources().getString(R.string.ble_disconnected_by_user) ,  false, false, obdUtil);
+                   // sendBroadCast(getResources().getString(R.string.ble_disconnected_by_user));
                 }
             }
             SharedPref.SetBlePingStatus("", getApplicationContext());
@@ -1803,7 +1818,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         UpdateOfflineDriverLog(DriverId, CoDriverId, DeviceId, VIN,
                                 String.valueOf(GpsVehicleSpeed),
                                 String.valueOf(obdVehicleSpeed),
-                                constants.CheckGpsStatus(getApplicationContext()));
+                                constants.CheckGpsStatusToCheckMalfunction(getApplicationContext()));
 
 
                         if (sharedPref.GetNewLoginStatus(getApplicationContext())) {
@@ -2469,8 +2484,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         params.put(ConstantsKeys.obdSpeed, obdSpeed);
         params.put(ConstantsKeys.isGpsEnabled, String.valueOf(isGpsEnabled) );
 
-        UpdateUserStatusVolley.executeRequest(Request.Method.POST, APIs.UPDATE_OFF_LINE_DRIVER_LOG , params, UpdateOffLineStatus,
-                Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
+        UpdateUserStatusVolley.executeRequest(Request.Method.POST, APIs.UPDATE_OFF_LINE_DRIVER_LOG , params,
+                UpdateOffLineStatus, Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
     }
 
 
@@ -4344,6 +4359,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             //Make the invocation
                             messenger.send(msg1);
+                           // bundle.clear();
 
                         } catch (Exception rme) {
                             Log.d(TAG_OBD, "Invocation Failed!!");

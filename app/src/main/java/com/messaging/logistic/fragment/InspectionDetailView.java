@@ -158,6 +158,7 @@ public class    InspectionDetailView  extends Fragment {
 
         Bundle getBundle  = this.getArguments();
         int position  = getBundle.getInt("position");
+        getBundle.clear();
 
         DriverId            = SharedPref.getDriverId( getActivity());
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());

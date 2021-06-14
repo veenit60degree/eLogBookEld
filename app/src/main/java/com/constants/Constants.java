@@ -17,6 +17,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
@@ -1175,17 +1176,27 @@ public class Constants {
 
 
     public boolean CheckGpsStatusToCheckMalfunction(Context context) {
-        LocationManager locationManager;
-        boolean gpsStatus = true;
         if(context != null) {
-            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            boolean gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+           // turnGPSOn(context);
+            return gpsStatus;
+        }else{
+            return true;
         }
 
-        return gpsStatus;
     }
 
-
+    private void turnGPSOn(Context context){
+        String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+        if(!provider.contains("gps")){
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings","com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            context.sendBroadcast(poke);
+        }
+    }
 
     public void SaveNotification(int DriverType, String title, String violationReason, String currentDateTime, HelperMethods helperMethods,
                                  NotificationPref notificationPref, CoNotificationPref coNotificationPref, Context context) {
@@ -2588,7 +2599,8 @@ public class Constants {
             Log.i("",num+" is a number");
             isValid = true;
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
+            Log.e("NumberFormatException", "NumberFormatException: " +text );
             isValid = false;
         }catch (Exception e){
             e.printStackTrace();

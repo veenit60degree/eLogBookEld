@@ -54,6 +54,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     String DriverId = "", DriverStatusId = "", AssignedRecordsId = "", unAssignedVehicleMilesId = "",  DriverName = "";
     boolean isCompanyAssigned = false;
     ProgressDialog progressDialog;
+    Constants constant;
 
 
     @Override
@@ -81,6 +82,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
     void initView(View view) {
 
+        constant = new Constants();
         claimRejectRecordPost   = new SaveDriverLogPost(getActivity(), apiResponse );
         rightMenuBtn = (RelativeLayout)view.findViewById(R.id.rightMenuBtn);
         eldMenuLay = (RelativeLayout)view.findViewById(R.id.eldMenuLay);
@@ -151,27 +153,34 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
     private void getData(){
 
-       String StartOdometer = "", EndOdometer, StartDateTime, EndDateTime, StartLocation, EndLocation, TotalMiles, TotalKm;
+       String StartOdometer = "", EndOdometer = "", StartDateTime = "", EndDateTime = "",
+               StartLocation = "", EndLocation = "", StartLocationKM = "", EndLocationKM = "",
+               TotalMiles = "", TotalKm = "";
 
         Bundle getBundle        = this.getArguments();
-        DriverId = getBundle.getString(ConstantsKeys.DriverId);
-        DriverName = getBundle.getString(ConstantsKeys.UserName);
-        DriverStatusId = getBundle.getString(ConstantsKeys.DriverStatusId);
-        unAssignedVehicleMilesId = getBundle.getString(ConstantsKeys.UnAssignedVehicleMilesId);
-        AssignedRecordsId = getBundle.getString(ConstantsKeys.AssignedUnidentifiedRecordsId);
+        if(getBundle != null) {
+            DriverId = getBundle.getString(ConstantsKeys.DriverId);
+            DriverName = getBundle.getString(ConstantsKeys.UserName);
+            DriverStatusId = getBundle.getString(ConstantsKeys.DriverStatusId);
+            unAssignedVehicleMilesId = getBundle.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+            AssignedRecordsId = getBundle.getString(ConstantsKeys.AssignedUnidentifiedRecordsId);
 
-        isCompanyAssigned = getBundle.getBoolean(ConstantsKeys.CompanyAssigned);
+            isCompanyAssigned = getBundle.getBoolean(ConstantsKeys.CompanyAssigned);
 
 
-        StartOdometer = getBundle.getString(ConstantsKeys.StartOdometer);
-        EndOdometer = getBundle.getString(ConstantsKeys.EndOdometer);
-        StartDateTime = getBundle.getString(ConstantsKeys.StartDateTime);
-        EndDateTime = getBundle.getString(ConstantsKeys.EndDateTime);
-        StartLocation = getBundle.getString(ConstantsKeys.StartLocation);
-        EndLocation = getBundle.getString(ConstantsKeys.EndLocation);
-        TotalMiles = getBundle.getString(ConstantsKeys.TotalMiles);
-        TotalKm     = getBundle.getString(ConstantsKeys.TotalKM);
+            StartOdometer = getBundle.getString(ConstantsKeys.StartOdometer);
+            EndOdometer = getBundle.getString(ConstantsKeys.EndOdometer);
+            StartDateTime = getBundle.getString(ConstantsKeys.StartDateTime);
+            EndDateTime = getBundle.getString(ConstantsKeys.EndDateTime);
+            StartLocation = getBundle.getString(ConstantsKeys.StartLocation);
+            EndLocation = getBundle.getString(ConstantsKeys.EndLocation);
+            StartLocationKM = getBundle.getString(ConstantsKeys.StartLocationKM);
+            EndLocationKM = getBundle.getString(ConstantsKeys.EndLocationKM);
 
+            TotalMiles = getBundle.getString(ConstantsKeys.TotalMiles);
+            TotalKm = getBundle.getString(ConstantsKeys.TotalKM);
+            getBundle.clear();
+        }
         String startTime = getTime(StartDateTime);
         String endTime = getTime(EndDateTime);
 
@@ -199,8 +208,8 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
             totalKmLabelTV.setText(getString(R.string.total_km));
             totalKmTxtVw.setText(TotalKm);
 
-            startLocTxtVw.setText(getBundle.getString(ConstantsKeys.StartLocationKM));
-            endLocTxtVw.setText(getBundle.getString(ConstantsKeys.EndLocationKM));
+            startLocTxtVw.setText(StartLocationKM);
+            endLocTxtVw.setText(EndLocationKM);
 
 
         }
@@ -231,9 +240,13 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                     if (remarksDialog != null && remarksDialog.isShowing())
                         remarksDialog.dismiss();
 
-                    remarksDialog = new AdverseRemarksDialog(getActivity(), false, false, isCompanyAssigned, new RemarksListener());
-                    remarksDialog.show();
-
+                    if(constant.isActionAllowed(getContext())) {
+                        remarksDialog = new AdverseRemarksDialog(getActivity(), false, false, isCompanyAssigned, new RemarksListener());
+                        remarksDialog.show();
+                    }else{
+                        Globally.EldScreenToast(rejectRecordBtn, getString(R.string.stop_vehicle_alert),
+                                getResources().getColor(R.color.colorVoilation));
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -245,25 +258,29 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
             case R.id.claimRecordBtn:
 
-
-                int radioButtonID   = unIdentifyRadGroup.getCheckedRadioButtonId();
-                View radioButton    = unIdentifyRadGroup.findViewById(radioButtonID);
-                int idx             = unIdentifyRadGroup.indexOfChild(radioButton);
-
-                DriverStatusId = Constants.getDriverStatus(idx);
-
                 try {
+                    if(constant.isActionAllowed(getContext())) {
+                        int radioButtonID   = unIdentifyRadGroup.getCheckedRadioButtonId();
+                        View radioButton    = unIdentifyRadGroup.findViewById(radioButtonID);
+                        int idx             = unIdentifyRadGroup.indexOfChild(radioButton);
 
-                    if (idx != -1){
-                        remarksDialog = new AdverseRemarksDialog(getActivity(), false, true, isCompanyAssigned, new RemarksListener());
-                        remarksDialog.show();
+                        DriverStatusId = Constants.getDriverStatus(idx);
+                        if (idx != -1){
+                            remarksDialog = new AdverseRemarksDialog(getActivity(), false, true, isCompanyAssigned, new RemarksListener());
+                            remarksDialog.show();
+                        }else{
+                            Globally.EldScreenToast(TabAct.sliderLay, getResources().getString(R.string.select_status_first),
+                                    getResources().getColor(R.color.colorVoilation));
+                        }
+
                     }else{
-                        Globally.EldScreenToast(TabAct.sliderLay, getResources().getString(R.string.select_status_first),
+                        Globally.EldScreenToast(rejectRecordBtn, getString(R.string.stop_vehicle_alert),
                                 getResources().getColor(R.color.colorVoilation));
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+               } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                 break;
 

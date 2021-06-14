@@ -341,14 +341,16 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             DriverId               = sharedPref.getDriverId( getActivity());
 
             Bundle getBundle = this.getArguments();
-            LogDate = getBundle.getString("date");
-            DayName = getBundle.getString("day_name");
-            MonthFullName = getBundle.getString("month_full_name");
-            MonthShortName = getBundle.getString("month_short_name");
-            CurrentCycleId = getBundle.getString("cycle");
-            SelectedDayOfMonth = getBundle.getInt("day_of_month");
-            CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
-
+            if(getBundle != null) {
+                LogDate = getBundle.getString("date");
+                DayName = getBundle.getString("day_name");
+                MonthFullName = getBundle.getString("month_full_name");
+                MonthShortName = getBundle.getString("month_short_name");
+                CurrentCycleId = getBundle.getString("cycle");
+                SelectedDayOfMonth = getBundle.getInt("day_of_month");
+                CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
+                getBundle.clear();
+            }
             CurrentDate = global.GetCurrentDeviceDate();
 
             try {
@@ -497,13 +499,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
 
         Fragment dotFragment = new DotUsaFragment();
-        Globally.bundle.putString("date", date);
-        Globally.bundle.putString("day_name", dayName);
-        Globally.bundle.putString("month_full_name", dayFullName);
-        Globally.bundle.putString("month_short_name", dayShortName);
-        Globally.bundle.putString("cycle", CurrentCycleId);
-
-        dotFragment.setArguments(Globally.bundle);
+        Bundle bundle = new Bundle();
+        bundle.putString("date", date);
+        bundle.putString("day_name", dayName);
+        bundle.putString("month_full_name", dayFullName);
+        bundle.putString("month_short_name", dayShortName);
+        bundle.putString("cycle", CurrentCycleId);
+        dotFragment.setArguments(bundle);
 
         FragmentTransaction fragmentTran = fragManager.beginTransaction();
         fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
@@ -572,10 +574,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     private void MoveFragment(String date ){
         InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
-        Globally.bundle.putString("date", date);
-        Globally.bundle.putString("inspection_type", "pti");
-
-        savedInspectionFragment.setArguments(Globally.bundle);
+        Bundle bundle = new Bundle();
+        bundle.putString("date", date);
+        bundle.putString("inspection_type", "pti");
+        savedInspectionFragment.setArguments(bundle);
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();

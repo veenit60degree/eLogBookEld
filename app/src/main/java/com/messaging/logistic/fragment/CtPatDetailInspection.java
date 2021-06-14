@@ -158,6 +158,7 @@ public class CtPatDetailInspection extends Fragment {
     private void getDataOnView(){
         Bundle getBundle  = this.getArguments();
         int position  = getBundle.getInt("position");
+        getBundle.clear();
 
         CtPatInspectionModel savedInspectionModel = InspectionsHistoryFragment.savedCtPatInspectionList.get(position);
 

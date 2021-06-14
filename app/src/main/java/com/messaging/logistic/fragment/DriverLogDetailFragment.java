@@ -50,7 +50,6 @@ import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.ConstantHtml;
 import com.constants.Constants;
-import com.constants.DoubleClickListener;
 import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.ScrollViewExt;
@@ -140,7 +139,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     TextView certifyDistanceTV, certifyCarrierTV, certifyVehicleTV, certifyTrailerTV, certifyMainOfficeTV,
             certifyHomeTV, certifyFromTV, certifyToTV, certifyRemarksTV, shipperNameTV, blNumberTV, commodityRecapTV;
     TextView totalCycleHrsTV, leftCycleTV, HrsAvailTV, HrsWorkedTV, hourAvailableTomoTV; // startReadingTV, endReadingTV, distanceReadingTV, vehicleReadingTV;
-    TextView dayRecapTV, dateRecapTV, hourRecapTV, certifyLocView, certifyEldView, totalDisOdoTV, totalMilesOdoTV, dailyLogTV;
+    TextView dayRecapTV, dateRecapTV, hourRecapTV, certifyLocView, certifyEldView, totalDisOdoTV, totalMilesOdoTV;
     TextView dateActionBarTV, plateNoTV, vinNumberTV, certifyExcptnTV, signLogTitle2;
     int RecapViewHeight = 0, odometerLayHeight = 0, shippingLayHeight = 0;
 
@@ -173,7 +172,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     final int SaveCertifyLog        = 10;
     final int GetReCertifyRecords   = 11;
 
-    int displayHeight   = 0;
+    //int displayHeight   = 0;
     int displayWidth    = 0;
 
     int hLineX1         = 0;
@@ -202,7 +201,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     String colorVoilation = "#C92627";
 
     boolean isViolation     = false;
-    boolean isCertifyLog    = false;
+  //  boolean isCertifyLog    = false;
     boolean isSignPending   = false;
     boolean IsAOBRD         = false;
     boolean UpdateRecap     = false;
@@ -254,7 +253,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
     ScrollViewExt driverLogScrollView;
     JSONObject logPermissionObj = new JSONObject();
-    JSONArray driverLogArray,  selectedArray,  Shipping18DaysArray, odometer18DaysArray, recap18DaysArray, CertifyLogArray;
+    JSONArray driverLogArray = new JSONArray();
+    JSONArray selectedArray,  Shipping18DaysArray, odometer18DaysArray, recap18DaysArray, CertifyLogArray;
     SaveDriverLogPost saveCertifyLogPost;
     DateTime currentDateTime, selectedDateTime, selectedUtcTime, selectedDateRecap;
     Globally global;
@@ -340,7 +340,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         recapItemLay                = (RelativeLayout)view.findViewById(R.id.recapItemLay);
         viewDetailMaiLay            = (RelativeLayout)view.findViewById(R.id.viewDetailMaiLay);
 
-        dailyLogTV                  = (TextView)view.findViewById(R.id.dailyLogTV);
         totalDisOdoTV               = (TextView)view.findViewById(R.id.totalDisOdoTV);
         totalMilesOdoTV             = (TextView)view.findViewById(R.id.totalMilesOdoTV);
         certifyEldView              = (TextView)view.findViewById(R.id.certifyEldView);
@@ -399,22 +398,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         GetReCertifyRequest     = new VolleyRequest(getActivity());
 
         Constants.IS_ACTIVE_ELD = false;
-        Bundle getBundle        = this.getArguments();
-        LogDate                 = getBundle.getString("date");
-        DayName                 = getBundle.getString("day_name");
-        MonthFullName           = getBundle.getString("month_full_name");
-        MonthShortName          = getBundle.getString("month_short_name");
-        SelectedDayOfMonth      = getBundle.getInt("day_of_month");
-        isCertifyLog            = getBundle.getBoolean("is_certify");
-        isSignPending           = getBundle.getBoolean("signStatus");
-        VIN_NUMBER              = getBundle.getString("vin");
-        offsetFromUTC           = getBundle.getInt("offset");
-
-        LeftWeekOnDutyHoursInt  = getBundle.getString("LeftWeekOnDuty");
-        LeftDayOnDutyHoursInt   = getBundle.getString("LeftDayOnDuty");
-        LeftDayDrivingHoursInt  = getBundle.getString("LeftDayDriving");
-        CurrentCycleId          = getBundle.getString("cycle");
-        VehicleId               = getBundle.getString("VehicleId");
+        getBundleData();
 
         CurrentDateDefault      = Globally.GetCurrentDeviceDateDefault() + "T00:00:00";
         CurrentDate             = Globally.GetCurrentDeviceDate();
@@ -592,7 +576,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             @Override
             public boolean onDoubleTap(MotionEvent e) {
 
-                if(isCertifyLog) {
+              //  if(isCertifyLog) {
                     if(IsEditBtnVisible){
                         IsEditBtnVisible = false;
                         editLogBtn.setVisibility(View.GONE);
@@ -614,7 +598,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                             editLogBtn.setVisibility(View.GONE);
                         }
                     }
-                }
+              //  }
 
                 return true;
             }
@@ -673,6 +657,31 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     }
 
 
+    void getBundleData(){
+        try{
+            Bundle getBundle        = this.getArguments();
+            if(getBundle != null) {
+                LogDate = getBundle.getString("date");
+                DayName = getBundle.getString("day_name");
+                MonthFullName = getBundle.getString("month_full_name");
+                MonthShortName = getBundle.getString("month_short_name");
+                SelectedDayOfMonth = getBundle.getInt("day_of_month");
+                //  isCertifyLog            = getBundle.getBoolean("is_certify");
+                isSignPending = getBundle.getBoolean("signStatus");
+                VIN_NUMBER = getBundle.getString("vin");
+                offsetFromUTC = getBundle.getInt("offset");
+
+                LeftWeekOnDutyHoursInt = getBundle.getString("LeftWeekOnDuty");
+                LeftDayOnDutyHoursInt = getBundle.getString("LeftDayOnDuty");
+                LeftDayDrivingHoursInt = getBundle.getString("LeftDayDriving");
+                CurrentCycleId = getBundle.getString("cycle");
+                VehicleId = getBundle.getString("VehicleId");
+                driverLogArray = new JSONArray(getBundle.getString("driverLogArray"));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     void GetShipmentDetails(){
 
         JSONObject dataObj = null;
@@ -942,47 +951,35 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         global.hideSoftKeyboard(getActivity());
 
         if(EldFragment.isUpdateDriverLog){
-
             LogDate                 = Constants.LogDate;
             DayName                 = Constants.DayName;
             MonthFullName           = Constants.MonthFullName;
             MonthShortName          = Constants.MonthShortName;
-
-          //  EldFragment.isUpdateDriverLog = false;
-          //  progressBarDriverLog.setVisibility(View.VISIBLE);
-           // GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
-
+            driverLogArray          = new JSONArray();
         }else{
-
             if(Constants.IsEdiLogBackStack) {
                 Constants.IsEdiLogBackStack = false;
                 LogDate = Constants.LogDate;
                 DayName = Constants.DayName;
                 MonthFullName = Constants.MonthFullName;
                 MonthShortName = Constants.MonthShortName;
+                driverLogArray = new JSONArray();
             }
         }
 
         String[] dateArray = LogDate.split("/");
+        if(dateArray.length > 1) {
+            EldTitleTV.setText(MonthShortName + " " + dateArray[1] + " ( " + DayName + " )");
+        }
 
-        if(dateArray.length > 0) {
-            if(dateArray.length > 1) {
-                EldTitleTV.setText(MonthShortName + " " + dateArray[1] + " ( " + DayName + " )");
-            }
-
-           // if(!isDOT) {
-                if(LogDate.length() > 3) {
-                    certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length()));
-                }else{
-                    certifyDateTV.setText(MonthFullName + " " + LogDate);
-                }
-           // }
-
+        if(LogDate.length() > 3) {
+            certifyDateTV.setText(MonthFullName + " " + LogDate.substring(3, LogDate.length()));
+        }else{
+            certifyDateTV.setText(MonthFullName + " " + LogDate);
         }
 
 
         DeviceId                = sharedPref.GetSavedSystemToken(getActivity());
-
         DRIVER_ID               = sharedPref.getDriverId( getActivity());
         MainDriverName          = DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
 
@@ -1010,41 +1007,30 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             CountryCycle        = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycle, getActivity());
         }
 
-        if(CountryCycle.equalsIgnoreCase("null"))
-            CountryCycle = "";
-
         if(IsAOBRD){
-            certifyEldView.setText("AOBRD");
+            certifyEldView.setText(getString(R.string.aobrd));
         }
-
-
-        /*if(isDOT){    // DOT mode Enabled
-            dailyLogTV.setText("DOT Mode");
-            dateActionBarTV.setText(getString(R.string.ViewInspections));
-            dateActionBarTV.setVisibility(View.VISIBLE);
-        }else{*/
-           // dateActionBarTV.setText(getString(R.string.sign_record));
-            if(isCertifyLog){
-                dailyLogTV.setText("Daily Certify Log");
-            }
-
-        //}
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        displayHeight = displayMetrics.heightPixels;
+       // displayHeight = displayMetrics.heightPixels;
         displayWidth = displayMetrics.widthPixels;
 
         CheckSelectedDateTime();
 
-        driverLogArray      = new JSONArray();
         selectedArray       = new JSONArray();
         Shipping18DaysArray = new JSONArray();
-        driverLogArray      = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
-        selectedArray       = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate, offsetFromUTC );
-        recap18DaysArray    = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
 
-        TrailerNo           = recapViewMethod.getTrailerNumberFromArray(recap18DaysArray, LogDate);
+        try {
+            if (driverLogArray.length() == 0) {
+                driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
+            }
+            selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate, offsetFromUTC);
+            recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
+            TrailerNo = recapViewMethod.getTrailerNumberFromArray(recap18DaysArray, LogDate);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         certifyCycleTV.setText(CountryCycle);
         certifyCarrierTV.setText(Carrier);
@@ -1063,7 +1049,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             EngineHourTitle.setVisibility(View.GONE);
         }
 
-        if(Globally.isConnected(getActivity()) && isCertifyLog){
+        if(Globally.isConnected(getActivity())){
             GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
         }
 
@@ -1076,10 +1062,10 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 EditDaysCount = logPermissionObj.getInt(ConstantsKeys.EditDays);
             }
 
-            if (isCertifyLog) {
+          //  if (isCertifyLog) {
                 isTrueAnyPermission = driverPermissionMethod.isTrueAnyPermission(logPermissionObj);
                 IsEditLocation = driverPermissionMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.LocationKey);
-            }
+           // }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1192,22 +1178,32 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 break;
 
             case R.id.saveSignatureBtn:
-                isSaveCertifyClicked = true;
-                certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener() );
-                certifyConfirmationDialog.show();
-
+                if(constants.isActionAllowed(getActivity())) {
+                    isSaveCertifyClicked = true;
+                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener());
+                    certifyConfirmationDialog.show();
+                }else{
+                     Globally.EldScreenToast(saveSignatureBtn, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
+                }
                 break;
 
 
             case R.id.editLogBtn:
 
-                String driverType = "";
-                if(DriverType == Constants.MAIN_DRIVER_TYPE){
-                    driverType = DriverConst.StatusSingleDriver;
-                }else {
-                    driverType = DriverConst.StatusTeamDriver;
+                if(constants.isActionAllowed(getActivity())) {
+                    String driverType = "";
+                    if(DriverType == Constants.MAIN_DRIVER_TYPE){
+                        driverType = DriverConst.StatusSingleDriver;
+                    }else {
+                        driverType = DriverConst.StatusTeamDriver;
+                    }
+                    ConfirmLoginDialog(driverType);
+
+                }else{
+                    Globally.EldScreenToast(saveSignatureBtn, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
                 }
-                ConfirmLoginDialog(driverType);
 
                 break;
 
@@ -1918,19 +1914,15 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 }
 
 
-                if(isCertifyLog) {
+               // if(isCertifyLog) {
                     int diff = hMethods.DayDiff(currentDateTime, selectedDateRecap);
                     if(diff == 0){
                         IsCurrentDate = true;
                         nextDateBtn.setVisibility(View.GONE);
                     }else{
                         IsCurrentDate = false;
-
-                        /*if(isDOT) {
-                            nextDateBtn.setVisibility(View.VISIBLE);
-                        }*/
                     }
-                }
+              //  }
 
 
                 if(  LogDate.equals(CurrentDate) ) {    //DayStartLat != 0.0 && CurrentLat != 0.0 &&
@@ -1958,7 +1950,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 }
 
                 try{
-                    int diff = hMethods.DayDiff(currentDateTime, selectedDateRecap);
+                   // int diff = hMethods.DayDiff(currentDateTime, selectedDateRecap);
                     LogInfoAdapter = new DriverLogInfoAdapter(getActivity(), DriverLogList, StateArrayList, StateList,
                             DriverType, IsEditLocation, diff, Integer.valueOf(DRIVER_ID), IsCurrentDate,
                             isExceptionEnabledForDay, driverLogArray, selectedDateTime , selectedDateTime,
@@ -2570,10 +2562,11 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
     private void MoveFragment(String date ){
         InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
-        Globally.bundle.putString("date", date);
-        Globally.bundle.putString("inspection_type", "pti");
+        Bundle bundle = new Bundle();
+        bundle.putString("date", date);
+        bundle.putString("inspection_type", "pti");
 
-        savedInspectionFragment.setArguments(Globally.bundle);
+        savedInspectionFragment.setArguments(bundle);
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();
@@ -2870,31 +2863,29 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
     void MoveToEditPage(){
         if (isTrueAnyPermission) {
-            IsEditBtnVisible        = false;
-            Constants.LogDate           = LogDate;
-            Constants.DayName           = DayName;
-            Constants.MonthFullName     = MonthFullName;
-            Constants.MonthShortName    = MonthShortName;
+            IsEditBtnVisible = false;
+            Constants.LogDate = LogDate;
+            Constants.DayName = DayName;
+            Constants.MonthFullName = MonthFullName;
+            Constants.MonthShortName = MonthShortName;
 
             FragmentManager fragManager = getActivity().getSupportFragmentManager();
             EditLogFragment editLogFragment = new EditLogFragment();   //EditLogFragment
+            Bundle bundle = new Bundle();
+            bundle.putString("screen_type", "edit_log");
+            bundle.putString("link", "");
+            bundle.putString("device_id", DeviceId);
+            bundle.putString("vehicle_id", VehicleId);
+            bundle.putString("cycleId", CurrentCycleId);
+            bundle.putInt("driver_type", DriverType);
 
-            Globally.bundle.putString("screen_type", "edit_log");
-            Globally.bundle.putString("link", "");
-            Globally.bundle.putString("device_id", DeviceId);
-            Globally.bundle.putString("vehicle_id", VehicleId);
-            Globally.bundle.putString("cycleId", CurrentCycleId);
-            Globally.bundle.putInt("driver_type", DriverType);
-
-            Globally.bundle.putString("selectedDate", selectedDateRecap.toString());    //Globally.GetCurrentDateTime()
-            Globally.bundle.putString("selectedUtcDate", Globally.getDateTimeObj(selectedDateRecap.minusHours(offsetFromUTC).toString(), false).toString());
-            Globally.bundle.putInt("offsetFromUTC", offsetFromUTC);
-            Globally.bundle.putString("permissions", logPermissionObj.toString());
-            Globally.bundle.putBoolean("permission_response", isPermissionResponse);
-            Globally.bundle.putBoolean("isCurrentDate", IsCurrentDate);
-
-
-            editLogFragment.setArguments(Globally.bundle);
+            bundle.putString("selectedDate", selectedDateRecap.toString());    //Globally.GetCurrentDateTime()
+            bundle.putString("selectedUtcDate", Globally.getDateTimeObj(selectedDateRecap.minusHours(offsetFromUTC).toString(), false).toString());
+            bundle.putInt("offsetFromUTC", offsetFromUTC);
+            bundle.putString("permissions", logPermissionObj.toString());
+            bundle.putBoolean("permission_response", isPermissionResponse);
+            bundle.putBoolean("isCurrentDate", IsCurrentDate);
+            editLogFragment.setArguments(bundle);
 
             FragmentTransaction fragmentTran = fragManager.beginTransaction();
             fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
@@ -2902,10 +2893,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             fragmentTran.replace(R.id.job_fragment, editLogFragment);
             fragmentTran.addToBackStack(null);
             fragmentTran.commit();
-        }else{
-            global.EldScreenToast(eldMenuBtn, "You don't have edit permission to edit your log. Please contact to your company." , Color.parseColor(colorVoilation));
+        } else {
+            global.EldScreenToast(eldMenuBtn, "You don't have edit permission to edit your log. Please contact to your company.", Color.parseColor(colorVoilation));
         }
-
 
     }
 
@@ -3384,30 +3374,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, constants.dpToPx(getActivity(), 155)) );
             }
         }, 500);
-
-/*
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final int width = graphWebView.getWidth();
-                final int height = graphWebView.getHeight();
-
-                if(width < 400){
-                    graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, constants.dpToPx(getActivity(), 140)) );
-                }else{
-                    if(height == 0){
-                        if(Globally.isTablet(getActivity())){
-                            graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, constants.dpToPx(getActivity(), 148) ) );
-                        }else{
-                            graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(width, constants.dpToPx(getActivity(), 148) ));
-                        }
-
-                    }
-                }
-            }
-        }, 700);
-        */
-        
 
     }
 

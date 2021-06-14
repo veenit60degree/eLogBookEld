@@ -257,11 +257,15 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
        // CheckSelectedDateTime(currentDateTime, LogDate);
 
+        String date = "";
         Bundle getBundle        = this.getArguments();
-        editedData              = getBundle.getString(ConstantsKeys.suggested_data);
-        String date             = getBundle.getString(ConstantsKeys.Date);
-        LogDate                 = Globally.ConvertDateFormatMMddyyyy(date);
+        if(getBundle != null) {
+            editedData = getBundle.getString(ConstantsKeys.suggested_data);
+            date = getBundle.getString(ConstantsKeys.Date);
+            getBundle.clear();
+        }
 
+        LogDate = Globally.ConvertDateFormatMMddyyyy(date);
         CheckSelectedDateTime(Globally.getDateTimeObj(date, false), LogDate);
 
         if(editedData.length() > 0){
@@ -366,22 +370,31 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.confirmCertifyBtn:
-
-                certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener() );
-                certifyConfirmationDialog.show();
-
+                if(constants.isActionAllowed(getActivity())) {
+                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener());
+                    certifyConfirmationDialog.show();
+                }else{
+                    Globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
+                }
                 break;
 
             case R.id.cancelCertifyBtn:
-                if(globally.isConnected(getActivity())){
-                    confirmationDialog.ShowAlertDialog(getString(R.string.cancel_edit_record), getString(R.string.cancel_edit_record_desc),
-                            getString(R.string.yes), getString(R.string.no),
-                            101, positiveCallBack, negativeCallBack);
 
-
+                if(constants.isActionAllowed(getActivity())) {
+                    if(globally.isConnected(getActivity())){
+                        confirmationDialog.ShowAlertDialog(getString(R.string.cancel_edit_record), getString(R.string.cancel_edit_record_desc),
+                                getString(R.string.yes), getString(R.string.no),
+                                101, positiveCallBack, negativeCallBack);
+                    }else{
+                        globally.EldScreenToast(confirmCertifyBtn, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                    }
                 }else{
-                    globally.EldScreenToast(confirmCertifyBtn, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                    Globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
                 }
+
+
                 break;
 
         }

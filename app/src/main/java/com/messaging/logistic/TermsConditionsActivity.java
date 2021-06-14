@@ -55,7 +55,6 @@ public class TermsConditionsActivity extends FragmentActivity {
 
         }else{
             isLoggedIn = true;
-
             dateActionBarTV.setVisibility(View.VISIBLE);
             dateActionBarTV.setBackgroundResource(R.drawable.transparent);
             dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
@@ -68,25 +67,12 @@ public class TermsConditionsActivity extends FragmentActivity {
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setSupportZoom(true);
 
-       /* webSettings.setAllowFileAccess(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setAllowContentAccess(true);
-        webSettings.setAllowFileAccessFromFileURLs(true);
-        webSettings.setAllowUniversalAccessFromFileURLs(true);
 
-        termsCondWebView.setWebViewClient(new WebViewClient());
-        termsCondWebView.setWebChromeClient(new WebChromeClient());
-        termsCondWebView.addJavascriptInterface( new WebAppInterface(), "Android");
-
-        termsCondWebView.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url) {
-                termsCondProgressBar.setVisibility(View.GONE);
-            }
-
-        });*/
-
-        termsCondWebView.loadUrl(URl);
-
+        try {
+            termsCondWebView.loadUrl(URl);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         eldMenuLay.setOnClickListener(new View.OnClickListener() {
             @Override

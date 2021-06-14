@@ -607,13 +607,13 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				constants.saveLoginDetails(username, OSType, DeviceSimInfo, ImeiNumber, obdUtil);
 
 				/*========= Call main Service to start obd server service =============*/
-				Constants.isEldHome = false;
+		/*		Constants.isEldHome = false;
 				Intent serviceIntent = new Intent(LoginActivity.this, BackgroundLocationService.class);
 				if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					startForegroundService(serviceIntent);
 				}
 				startService(serviceIntent);
-
+*/
 				// delete previous obd server logs
 				obdUtil.deleteServerObdLog();
 

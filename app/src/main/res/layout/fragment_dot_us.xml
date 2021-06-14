@@ -1347,13 +1347,15 @@
                         android:textSize="@dimen/text_size_15"
                         android:layout_marginLeft="@dimen/margin_25"
                         android:layout_marginTop="@dimen/margin_28"
+                        android:layout_toLeftOf="@+id/signLay"
                         />
 
                     <RelativeLayout
                         android:id="@+id/signLay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/signTitle"
+                        android:layout_alignParentRight="true"
+
                         >
 
 

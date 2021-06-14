@@ -267,15 +267,19 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             public void onClick(View view) {
                 Log.d("ClickEvent", "Clear Btn click Event");
 
-                if (malfunctionDialog != null && malfunctionDialog.isShowing())
-                    malfunctionDialog.dismiss();
+                if(constants.isActionAllowed(_context)) {
+                    if (malfunctionDialog != null && malfunctionDialog.isShowing())
+                        malfunctionDialog.dismiss();
 
-                selectedPos = groupPosition;
-                malfunctionDialog = new MalfunctionDialog(_context,
-                        _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()) ,
-                        new MalfunctionDiagnosticListener());
-                malfunctionDialog.show();
-
+                    selectedPos = groupPosition;
+                    malfunctionDialog = new MalfunctionDialog(_context,
+                            _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()),
+                            new MalfunctionDiagnosticListener());
+                    malfunctionDialog.show();
+                }else{
+                    Globally.EldScreenToast(view, _context.getResources().getString(R.string.stop_vehicle_alert),
+                            _context.getResources().getColor(R.color.colorVoilation));
+                }
 
             }
         });

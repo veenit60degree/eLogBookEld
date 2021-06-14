@@ -154,24 +154,21 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
 
     void scanBtnClick(){
-        if(bleObdTxtView.getText().toString().contains(getString(R.string.start_scan)) ){
+        int bleStatus = SharedPref.getObdStatus(getActivity());
+        if(bleStatus == Constants.BLE_CONNECTED){
+            stopBleObdData();
+        }else {
+
             loaderProgress.setVisibility(View.VISIBLE);
-            bleObdTxtView.setText(getString(R.string.scanning));
+            bleObdTxtView.setText(getString(R.string.start_scan));
             SharedPref.SetBlePingStatus("start", getActivity());
 
-        }else{
-            bleObdTxtView.setText(getString(R.string.start_scan) + " - Ble OBD");
-            obdDataTxtView.setText("");
-            SharedPref.SetBlePingStatus("stop", getActivity());
-
+            Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                getActivity().startForegroundService(serviceIntent);
+            }
+            getActivity().startService(serviceIntent);
         }
-
-        Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getActivity().startForegroundService(serviceIntent);
-        }
-        getActivity().startService(serviceIntent);
-
     }
 
 
@@ -186,15 +183,22 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
             obdDataTxtView.setText(Html.fromHtml(data));
 
-            if(data.length() > 20){
+            if(SharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED){
+                bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
+            }else{
+                bleObdTxtView.setText(getString(R.string.scanning) + " (Ble OBD)");
+            }
+
+            /*if(data.length() > 20){
                 if(data.contains("Exception")){
                     bleObdTxtView.setText(getString(R.string.start_scan) + " - Ble OBD");
                 }else {
                     bleObdTxtView.setText(getString(R.string.connected) + " - Ble OBD");
                 }
             }else{
-                bleObdTxtView.setText(getString(R.string.start_scan) + " - Ble OBD");
-            }
+
+
+            }*/
         }
     };
 
@@ -362,6 +366,50 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                             }else{
                                 Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                             }
+                        }
+                    });
+
+            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            saveJobAlertDialog = alertDialogBuilder.create();
+            vectorDialogs.add(saveJobAlertDialog);
+            saveJobAlertDialog.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+    public void stopBleObdData(){
+
+        try {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setTitle("Restart BLE OBD !!");
+            alertDialogBuilder.setMessage("Do you really want to restart BLE OBD device?");
+
+            alertDialogBuilder.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+
+                            bleObdTxtView.setText(getString(R.string.disconnected) + " (Ble OBD)");
+                            obdDataTxtView.setText("");
+                            SharedPref.SetBlePingStatus("stop", getActivity());
+
+                            Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                getActivity().startForegroundService(serviceIntent);
+                            }
+                            getActivity().startService(serviceIntent);
+
                         }
                     });
 

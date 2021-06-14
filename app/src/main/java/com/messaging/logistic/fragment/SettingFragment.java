@@ -987,11 +987,18 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             case R.id.caCycleTV:
 
                 if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
-                    if(isSleepOffDuty()) {
-                        changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
+
+                    if(constants.isActionAllowed(getActivity())) {
+                        if(isSleepOffDuty()) {
+                            changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
+                        }else{
+                            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
+                        }
                     }else{
-                        global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
+                        Globally.EldScreenToast(caCycleTV, getString(R.string.stop_vehicle_alert),
+                                getResources().getColor(R.color.colorVoilation));
                     }
+
                 }
 
 
@@ -1002,11 +1009,18 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             case R.id.usCycleTV:
 
                     if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
-                        if(isSleepOffDuty()) {
-                            changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
+
+                        if(constants.isActionAllowed(getActivity())) {
+                            if(isSleepOffDuty()) {
+                                changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
+                            }else{
+                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
+                            }
                         }else{
-                            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
+                            Globally.EldScreenToast(caCycleTV, getString(R.string.stop_vehicle_alert),
+                                    getResources().getColor(R.color.colorVoilation));
                         }
+
                     }
 
 
@@ -1016,10 +1030,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             case R.id.operatingZoneTV:
 
                     if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
-                        if(isSleepOffDuty() == false) {
-                            changeCycleZoneDialog("operating_zone", CurrentCycleId, operatingZoneTV.getText().toString());
+                        if(constants.isActionAllowed(getActivity())) {
+                            if(isSleepOffDuty() == false) {
+                                changeCycleZoneDialog("operating_zone", CurrentCycleId, operatingZoneTV.getText().toString());
+                            }else{
+                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.op_zone_change_check), getResources().getColor(R.color.colorPrimary));
+                            }
                         }else{
-                            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.op_zone_change_check), getResources().getColor(R.color.colorPrimary));
+                            Globally.EldScreenToast(caCycleTV, getString(R.string.stop_vehicle_alert),
+                                    getResources().getColor(R.color.colorVoilation));
                         }
                     }
 

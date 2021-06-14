@@ -143,9 +143,13 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         DeviceId            = sharedPref.GetSavedSystemToken(getActivity());
         isDOT               = sharedPref.IsDOT(getActivity());
 
-        Globally.getBundle  = this.getArguments();
-        InspectionDateTime  = Globally.getBundle.getString("date");
-        inspectionType      = Globally.getBundle.getString("inspection_type");
+        Bundle getBundle  = this.getArguments();
+        if(getBundle != null) {
+            InspectionDateTime = getBundle.getString("date");
+            inspectionType = getBundle.getString("inspection_type");
+            getBundle.clear();
+        }
+
         dateActionBarTV.setText(InspectionDateTime);
 
         CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
@@ -279,16 +283,16 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
     private void MoveFragment(int position){
         InspectionDetailView savedInspectionFragment = new InspectionDetailView();
         CtPatDetailInspection ctPatDetailInspectionFragment = new CtPatDetailInspection();
-
+        Bundle bundle = new Bundle();
         try {
-            Globally.bundle.putString("selectedObj", selectedDateArray.get(position).toString());
+            bundle.putString("selectedObj", selectedDateArray.get(position).toString());
         }catch (Exception e){
             e.printStackTrace();
         }
-        Globally.bundle.putInt("position", position);
+        bundle.putInt("position", position);
 
-        savedInspectionFragment.setArguments(Globally.bundle);
-        ctPatDetailInspectionFragment.setArguments(Globally.bundle);
+        savedInspectionFragment.setArguments(bundle);
+        ctPatDetailInspectionFragment.setArguments(bundle);
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();

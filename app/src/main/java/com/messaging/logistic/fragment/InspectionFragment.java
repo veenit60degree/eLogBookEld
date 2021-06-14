@@ -148,6 +148,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     JSONArray inspectionUnPostedArray = new JSONArray();
     SaveDriverLogPost saveInspectionPost;
     SharedPref sharedPref;
+    Constants constants;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -166,6 +168,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     void initView(View view) {
 
         sharedPref = new SharedPref();
+        constants = new Constants();
         hMethods = new HelperMethods();
         inspectionMethod = new InspectionMethod();
         shipmentHelperMethod = new ShipmentHelperMethod();
@@ -521,12 +524,18 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 if (CurrentJobStatus.equals(Globally.DRIVING )) {
                     Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.TRAILER_CHANGE , getResources().getColor(R.color.colorVoilation));
                 }else {
-                    if (Globally.isConnected(getActivity())) {
-                        dialog = new TrailorDialog(getActivity(), "trailor", false, Globally.TRAILOR_NUMBER, 0, false, Globally.onDutyRemarks, 0, dbHelper, new TrailorListener());
-                        dialog.show();
-                    } else {
-                        Globally.EldScreenToast(saveInspectionBtn, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+
+                    if(constants.isActionAllowed(getContext())) {
+                        if (Globally.isConnected(getActivity())) {
+                            dialog = new TrailorDialog(getActivity(), "trailor", false, Globally.TRAILOR_NUMBER, 0, false, Globally.onDutyRemarks, 0, dbHelper, new TrailorListener());
+                            dialog.show();
+                        } else {
+                            Globally.EldScreenToast(saveInspectionBtn, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                        }
+                    }else{
+                        Globally.EldScreenToast(saveInspectionBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                     }
+
                 }
 
                 break;
@@ -539,12 +548,16 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 if (CurrentJobStatus.equals(Globally.DRIVING )) {
                     Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.TRUCK_CHANGE, getResources().getColor(R.color.colorVoilation));
                 }else {
-                    if (Globally.isConnected(getActivity())) {
-                        inspectionTruckLay.setEnabled(false);
-                        inspectionProgressBar.setVisibility(View.VISIBLE);
-                        GetOBDAssignedVehicles(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId, CompanyId, VIN_NUMBER);
-                    } else {
-                        Globally.EldScreenToast(saveInspectionBtn, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                    if(constants.isActionAllowed(getContext())) {
+                        if (Globally.isConnected(getActivity())) {
+                            inspectionTruckLay.setEnabled(false);
+                            inspectionProgressBar.setVisibility(View.VISIBLE);
+                            GetOBDAssignedVehicles(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId, CompanyId, VIN_NUMBER);
+                        } else {
+                            Globally.EldScreenToast(saveInspectionBtn, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                        }
+                    }else{
+                        Globally.EldScreenToast(saveInspectionBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                     }
                 }
 
@@ -660,18 +673,15 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             case R.id.saveInspectionBtn:
 
-                // if(Globally.isConnected(getActivity()) ) {
-                if(Globally.TRAILOR_NUMBER.length() > 0 || Globally.TRUCK_NUMBER.length() > 0) {
-
-                    CheckInspectionValidation();
-
+                if(constants.isActionAllowed(getContext())) {
+                    if(Globally.TRAILOR_NUMBER.length() > 0 || Globally.TRUCK_NUMBER.length() > 0) {
+                        CheckInspectionValidation();
+                    }else{
+                        Globally.EldScreenToast(saveInspectionBtn, "Please update your Truck or Trailer number before save the inspections." , getResources().getColor(R.color.colorVoilation));
+                    }
                 }else{
-                    Globally.EldScreenToast(saveInspectionBtn, "Please update your Truck or Trailer number before save the inspections." , getResources().getColor(R.color.colorVoilation));
+                    Globally.EldScreenToast(saveInspectionBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                 }
-                /*}else{
-                    Globally.EldScreenToast(saveInspectionBtn, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
-                }*/
-
 
                 break;
 
@@ -916,10 +926,10 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     private void MoveFragment(String date ){
         InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
-        Globally.bundle.putString("date", date);
-        Globally.bundle.putString("inspection_type", "pti");
-
-        savedInspectionFragment.setArguments(Globally.bundle);
+        Bundle bundle = new Bundle();
+        bundle.putString("date", date);
+        bundle.putString("inspection_type", "pti");
+        savedInspectionFragment.setArguments(bundle);
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();

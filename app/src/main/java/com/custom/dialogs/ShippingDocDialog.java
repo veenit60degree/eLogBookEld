@@ -233,107 +233,105 @@ public class ShippingDocDialog extends Dialog {
         public void onClick(View v) {
             HideKeyboard();
 
-            String tempShipperNumber       = shipperNoEditText.getText().toString().trim();
-            String tempShipperName         = shipperNameEditText.getText().toString().trim();
-            String tempFromAddress         = FromEditText.getText().toString().trim();
-            String tempToAddress           = ToEditText.getText().toString().trim();
-            String tempCommodity           = commodityEditText.getText().toString().trim();
+            if(constant.isActionAllowed(getContext())) {
 
-            if(IsShippingCleared) {
-                if (tempShipperNumber.equals(getContext().getResources().getString(R.string.Empty))) {
-                    //tempShipperNumber = "";
-                    if (tempToAddress.length() > 0)
-                        tempFromAddress = tempToAddress;
+                String tempShipperNumber       = shipperNoEditText.getText().toString().trim();
+                String tempShipperName         = shipperNameEditText.getText().toString().trim();
+                String tempFromAddress         = FromEditText.getText().toString().trim();
+                String tempToAddress           = ToEditText.getText().toString().trim();
+                String tempCommodity           = commodityEditText.getText().toString().trim();
+
+                if(IsShippingCleared) {
+                    if (tempShipperNumber.equals(getContext().getResources().getString(R.string.Empty))) {
+                        if (tempToAddress.length() > 0)
+                            tempFromAddress = tempToAddress;
+                    }
                 }
-            }
 
+                if ( tempShipperNumber.equals("") || tempFromAddress.equals("") ) {
 
+                    if(tempShipperNumber.equals("")){
+                        shipperNoEditText.requestFocus();
+                        global.EldScreenToast(shippingDocSaveBtn, "Enter B/L or Trip number.", Color.parseColor(ToastColor));
+                    }else if(tempFromAddress.equals("")){
+                        FromEditText.requestFocus();
+                        global.EldScreenToast(shippingDocSaveBtn, "Enter (From) address", Color.parseColor(ToastColor));
+                    }
 
-            if ( tempShipperNumber.equals("") || tempFromAddress.equals("") ) { //|| tempShipperNumber.equals("Empty") )||  tempToAddress.equals("")
+                }else{
 
-                if(tempShipperNumber.equals("")){
-                    shipperNoEditText.requestFocus();
-                    global.EldScreenToast(shippingDocSaveBtn, "Enter B/L or Trip number.", Color.parseColor(ToastColor));
-                }else if(tempFromAddress.equals("")){
-                    FromEditText.requestFocus();
-                    global.EldScreenToast(shippingDocSaveBtn, "Enter (From) address", Color.parseColor(ToastColor));
-                }/*else if(tempToAddress.equals("")){
-                    ToEditText.requestFocus();
-                    global.EldScreenToast(shippingDocSaveBtn, "Enter (To) address", Color.parseColor(ToastColor));
-                }*/
+                    if (tempShipperNumber.length() > 0 ) {      //|| (tempShipperName.length() > 0 && tempCommodity.length() > 0)
+                        if (tempShipperNumber.equals(ShipperNumber) &&
+                                tempCommodity.equals(Commodity) &&
+                                tempShipperName.equals(ShipperName) &&
+                                tempFromAddress.equals(FromAddress) &&
+                                tempToAddress.equals(ToAddress)) {
 
+                            dismiss();
 
-            }else{
+                        } else {
 
-                if (tempShipperNumber.length() > 0 ) {      //|| (tempShipperName.length() > 0 && tempCommodity.length() > 0)
-                    if (tempShipperNumber.equals(ShipperNumber) &&
-                            tempCommodity.equals(Commodity) &&
-                            tempShipperName.equals(ShipperName) &&
-                            tempFromAddress.equals(FromAddress) &&
-                            tempToAddress.equals(ToAddress)) {
+                            ShipperNumber = shipperNoEditText.getText().toString().trim();
+                            ShipperName = shipperNameEditText.getText().toString().trim();
+                            FromAddress = FromEditText.getText().toString().trim();
+                            ToAddress = ToEditText.getText().toString().trim();
+                            Commodity = commodityEditText.getText().toString().trim();
 
-                        dismiss();
-
+                            if(SharedPref.IsDrivingShippingAllowed(getContext())) {
+                                if (ToAddress.length() > 0) {
+                                    CallApiToSaveShipping(false);
+                                } else {
+                                    ToEditText.requestFocus();
+                                    global.EldScreenToast(shippingDocSaveBtn, "Enter (To) address", Color.parseColor(ToastColor));
+                                }
+                            }else{
+                                CallApiToSaveShipping(false);
+                            }
+                        }
                     } else {
 
-                        ShipperNumber = shipperNoEditText.getText().toString().trim();
-                        ShipperName = shipperNameEditText.getText().toString().trim();
-                        FromAddress = FromEditText.getText().toString().trim();
-                        ToAddress = ToEditText.getText().toString().trim();
-                        Commodity = commodityEditText.getText().toString().trim();
+                       // if (tempShipperNumber.length() == 0 && tempShipperName.length() == 0 && tempCommodity.length() == 0) {
+                            global.EldScreenToast(shippingDocSaveBtn, "Enter BL/Trip Number to save shipping information", Color.parseColor(ToastColor));   //or Shipper Name and Commodity
+                       /* } else if (tempShipperName.length() == 0 || tempCommodity.length() == 0) {
+                            global.EldScreenToast(shippingDocSaveBtn, "Enter Shipper Name and Commodity to save shipping information", Color.parseColor(ToastColor));
+                        }*/
 
-                        if(SharedPref.IsDrivingShippingAllowed(getContext())) {
-                            if (ToAddress.length() > 0) {
-                                CallApiToSaveShipping(false);
-                            } else {
-                                ToEditText.requestFocus();
-                                global.EldScreenToast(shippingDocSaveBtn, "Enter (To) address", Color.parseColor(ToastColor));
-                            }
-                        }else{
-                            CallApiToSaveShipping(false);
-                        }
                     }
-                } else {
-
-                   // if (tempShipperNumber.length() == 0 && tempShipperName.length() == 0 && tempCommodity.length() == 0) {
-                        global.EldScreenToast(shippingDocSaveBtn, "Enter BL/Trip Number to save shipping information", Color.parseColor(ToastColor));   //or Shipper Name and Commodity
-                   /* } else if (tempShipperName.length() == 0 || tempCommodity.length() == 0) {
-                        global.EldScreenToast(shippingDocSaveBtn, "Enter Shipper Name and Commodity to save shipping information", Color.parseColor(ToastColor));
-                    }*/
-
                 }
+
+            }else{
+                global.EldScreenToast(shippingDocSaveBtn,  getContext().getResources().getString(R.string.stop_vehicle_alert),
+                        Color.parseColor(ToastColor));
             }
-
-
-
         }
     }
 
 
     private void CallApiToSaveShipping(boolean IsUnloadingSaved) {
 
-        if (IsSingleDriver.equals(DriverConst.TeamDriver)) {
+            if (IsSingleDriver.equals(DriverConst.TeamDriver)) {
 
-            AddDataInDB(MainDriverId, CoDriverId, IsUnloadingSaved);
+                AddDataInDB(MainDriverId, CoDriverId, IsUnloadingSaved);
 
-            if(global.isConnected(getContext())) {
-                progressDialog.show();
-                //POST data to server
-                postRequest.PostListingData(shipmentJsonArray, APIs.SAVE_SHIPPING_DOC_NUMBER, Save18DaysList);
-            }else{
-                DismissDialog(Msg);
+                if (global.isConnected(getContext())) {
+                    progressDialog.show();
+                    //POST data to server
+                    postRequest.PostListingData(shipmentJsonArray, APIs.SAVE_SHIPPING_DOC_NUMBER, Save18DaysList);
+                } else {
+                    DismissDialog(Msg);
+                }
+
+            } else {
+                AddDataInDB(DriverId, "", IsUnloadingSaved);
+                if (global.isConnected(getContext())) {
+                    progressDialog.show();
+                    //POST data to server
+                    postRequest.PostListingData(shipmentJsonArray, APIs.SAVE_SHIPPING_DOC_NUMBER, Save18DaysList);
+                } else {
+                    DismissDialog(Msg);
+                }
             }
 
-        } else {
-            AddDataInDB(DriverId, "", IsUnloadingSaved);
-            if(global.isConnected(getContext())) {
-                progressDialog.show();
-                //POST data to server
-                postRequest.PostListingData(shipmentJsonArray, APIs.SAVE_SHIPPING_DOC_NUMBER, Save18DaysList);
-            }else{
-                DismissDialog(Msg);
-            }
-        }
     }
 
 

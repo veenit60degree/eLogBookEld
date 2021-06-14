@@ -68,6 +68,7 @@ public class BleConnector {
                                 notifyCallback.onNotifyFailure(new GattException(status));
                             }
                         }
+                        //bundle.clear();
                         break;
                     }
 
@@ -78,6 +79,7 @@ public class BleConnector {
                         if (notifyCallback != null) {
                             notifyCallback.onCharacteristicChanged(value);
                         }
+                       // bundle.clear();
                         break;
                     }
 
@@ -101,6 +103,7 @@ public class BleConnector {
                                 indicateCallback.onIndicateFailure(new GattException(status));
                             }
                         }
+                        //bundle.clear();
                         break;
                     }
 
@@ -111,6 +114,7 @@ public class BleConnector {
                         if (indicateCallback != null) {
                             indicateCallback.onCharacteristicChanged(value);
                         }
+                        // bundle.clear();
                         break;
                     }
 
@@ -136,6 +140,7 @@ public class BleConnector {
                                 writeCallback.onWriteFailure(new GattException(status));
                             }
                         }
+                        // bundle.clear();
                         break;
                     }
 
@@ -160,6 +165,7 @@ public class BleConnector {
                                 readCallback.onReadFailure(new GattException(status));
                             }
                         }
+                        // bundle.clear();
                         break;
                     }
 
@@ -184,6 +190,7 @@ public class BleConnector {
                                 rssiCallback.onRssiFailure(new GattException(status));
                             }
                         }
+                        // bundle.clear();
                         break;
                     }
 
@@ -208,6 +215,7 @@ public class BleConnector {
                                 mtuChangedCallback.onSetMTUFailure(new GattException(status));
                             }
                         }
+                        // bundle.clear();
                         break;
                     }
                 }

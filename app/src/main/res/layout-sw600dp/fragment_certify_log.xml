@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_20"
-                android:text="@string/Drivers_daily_Log"
+                android:text="@string/DailyCertifyLog"
                 android:textStyle="bold"
                 android:textAllCaps="true"
                 android:layout_centerHorizontal="true"

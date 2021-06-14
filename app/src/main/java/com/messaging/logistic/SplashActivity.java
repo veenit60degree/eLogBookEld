@@ -7,30 +7,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.background.service.AfterLogoutService;
-import com.background.service.BackgroundLocationService;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+
 import com.constants.Constants;
 import com.constants.SharedPref;
-import com.custom.dialogs.ConfirmationDialog;
 import com.custom.dialogs.PermissionInfoDialog;
-import com.custom.dialogs.ShareDriverLogDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -42,7 +36,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.wifi.settings.WiFiConfig;
 
 public class SplashActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -279,11 +272,11 @@ public class SplashActivity extends Activity implements
             // TODO: Consider calling
             return;
         }
-        boolean isGps = constants.CheckGpsStatus(SplashActivity.this);
+        boolean isGps = constants.CheckGpsStatusToCheckMalfunction(SplashActivity.this);
         if(isGps){
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     UPDATE_INTERVAL_IN_MILLISECONDS,
-                    10, locationListenerGPS);
+                    200, locationListenerGPS);
             Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(loc != null){
                 global.LATITUDE = "" +loc.getLatitude();
@@ -355,15 +348,17 @@ public class SplashActivity extends Activity implements
                 Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to" +
                         "upgrade location settings ");
 
+              //  CheckUserCredientials();
+              //  Toast.makeText(getApplicationContext(), getString(R.string.open_gps_location), Toast.LENGTH_LONG).show();
                 try {
-                    // Show the dialog by calling startResolutionForResult(), and check the result
-                    // in onActivityResult().
+                    // Show the dialog by calling startResolutionForResult(), and check the result  in onActivityResult().
                     status.startResolutionForResult(SplashActivity.this, REQUEST_CHECK_SETTINGS);
                 } catch (IntentSender.SendIntentException e) {
                     Log.i(TAG, "PendingIntent unable to execute request.");
                 }
 
                 break;
+
             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                 Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog " +
                         "not created.");
@@ -548,9 +543,9 @@ public class SplashActivity extends Activity implements
 
         // Sets the fastest rate for active location updates. This interval is exact, and your
         // application will never receive updates faster than this value.
-        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
 
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
     }
 
 
@@ -575,6 +570,9 @@ public class SplashActivity extends Activity implements
     @Override
     public void onLocationChanged(Location location) {
         Log.d("location", "location " + location);
+        global.LATITUDE = "" +location.getLatitude();
+        global.LONGITUDE = "" +location.getLongitude();
+        global.LONGITUDE = Globally.CheckLongitudeWithCycle(global.LONGITUDE);
     }
 
 

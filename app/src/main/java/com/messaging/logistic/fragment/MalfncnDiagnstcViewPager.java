@@ -358,9 +358,14 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                 if(Globally.isConnected(getContext())) {
                     if(malfunctionHeaderList.size() > 0 || diagnosticHeaderList.size() > 0) {
-                        malfunctionDialog = new MalfunctionDialog(getActivity(), new ArrayList<MalfunctionModel>(),
-                                new MalfunctionDiagnosticListener());
-                        malfunctionDialog.show();
+                        if(constants.isActionAllowed(getContext())) {
+                            malfunctionDialog = new MalfunctionDialog(getActivity(), new ArrayList<MalfunctionModel>(),
+                                    new MalfunctionDiagnosticListener());
+                            malfunctionDialog.show();
+                        }else{
+                            Globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
+                                    getResources().getColor(R.color.colorVoilation));
+                        }
                     }else{
                         Globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_diagnostc_records), getResources().getColor(R.color.colorVoilation));
                     }

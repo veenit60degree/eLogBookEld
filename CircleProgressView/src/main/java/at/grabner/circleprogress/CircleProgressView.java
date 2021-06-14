@@ -895,12 +895,12 @@ public class CircleProgressView extends View {
             msg.what = AnimationMsg.SET_VALUE.ordinal();
             msg.obj = new float[]{_value, _value};
             mAnimationHandler.sendMessage(msg);
-            try {
+          /*  try {
                 // delay for 600 milli seconds
-                Thread.sleep(600);
+                Thread.sleep(50);
             } catch (Throwable t) {
                 Log.d(TAG, "Throwable Error caused by Thread.Sleep()");
-            }
+            }*/
             triggerOnProgressChanged(_value);
         }catch (Exception e){
             e.printStackTrace();
@@ -957,12 +957,12 @@ public class CircleProgressView extends View {
             msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
             msg.obj = new float[]{_valueFrom, _valueTo};
             mAnimationHandler.sendMessage(msg);
-            try {
+          /*  try {
                 // delay for 600 milli seconds
-                Thread.sleep(600);
+                Thread.sleep(50);
             } catch (Throwable t) {
                 Log.d(TAG, "Throwable Error caused by Thread.Sleep()");
-            }
+            }*/
 
             triggerOnProgressChanged(_valueTo);
         }catch (Exception e){

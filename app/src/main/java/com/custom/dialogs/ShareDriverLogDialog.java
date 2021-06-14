@@ -111,6 +111,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     Spinner stateSharedSpinner;
     ScrollView sendLogScrollView;
     VolleyRequest GetAddFromLatLngRequest;
+    Constants constant;
 
 
     public ShareDriverLogDialog(Context context, FragmentActivity activity, String dRIVER_ID,
@@ -143,6 +144,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         format = new SimpleDateFormat("MM/dd/yyyy");
         EndDate = new Date();
         StartDate = new Date();
+        constant  = new Constants();
 
         GetAddFromLatLngRequest = new VolleyRequest(getContext());
 
@@ -422,51 +424,56 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     private class ShareBtnClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            City  = cityShareEditText.getText().toString().trim();
-            String MailCheck    = String.valueOf(checkboxEmail.isChecked());
-            String ServiceCheck = String.valueOf(checkboxService.isChecked());
 
-            email               = amountEditText.getText().toString().trim();
-            canSelectedEmail    = canEmailEditText.getText().toString().trim();
+            if(constant.isActionAllowed(getContext())) {
+                City = cityShareEditText.getText().toString().trim();
+                String MailCheck = String.valueOf(checkboxEmail.isChecked());
+                String ServiceCheck = String.valueOf(checkboxService.isChecked());
 
-            if(selectedCountry.equals("Select")){
-                sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
-                Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.select_country), getContext().getResources().getColor(R.color.colorVoilation));
-            }else {
-                if (Globally.isConnected(getContext())) {
-                    if (emailLogLay.getVisibility() == View.VISIBLE) {
-                        if (isValidEmailPattern(amountEditText)) {
-                            CheckValdation0(MailCheck, ServiceCheck);
-                        } else {
-                            sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
-                            amountEditText.requestFocus();
-                            Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
-                        }
-                    } else {
-                        if (selectedCountry.equals("CAN")){
-                            if(isValidEmailPattern(canEmailEditText)){
-                                ServiceCheck = "false";
-                                CheckValdation0(MailCheck, ServiceCheck);
-                            }else{
-                                sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
-                                canEmailEditText.requestFocus();
-                                Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
-                            }
-                        }else {
-                            if (checkboxEmail.isChecked() || checkboxService.isChecked()) {
+                email = amountEditText.getText().toString().trim();
+                canSelectedEmail = canEmailEditText.getText().toString().trim();
+
+                if (selectedCountry.equals("Select")) {
+                    sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
+                    Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.select_country), getContext().getResources().getColor(R.color.colorVoilation));
+                } else {
+                    if (Globally.isConnected(getContext())) {
+                        if (emailLogLay.getVisibility() == View.VISIBLE) {
+                            if (isValidEmailPattern(amountEditText)) {
                                 CheckValdation0(MailCheck, ServiceCheck);
                             } else {
                                 sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
-                                Globally.EldScreenToast(shareDriverLogBtn, "Please select Web Service or Email", getContext().getResources().getColor(R.color.colorVoilation));
+                                amountEditText.requestFocus();
+                                Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
+                            }
+                        } else {
+                            if (selectedCountry.equals("CAN")) {
+                                if (isValidEmailPattern(canEmailEditText)) {
+                                    ServiceCheck = "false";
+                                    CheckValdation0(MailCheck, ServiceCheck);
+                                } else {
+                                    sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
+                                    canEmailEditText.requestFocus();
+                                    Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
+                                }
+                            } else {
+                                if (checkboxEmail.isChecked() || checkboxService.isChecked()) {
+                                    CheckValdation0(MailCheck, ServiceCheck);
+                                } else {
+                                    sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
+                                    Globally.EldScreenToast(shareDriverLogBtn, "Please select Web Service or Email", getContext().getResources().getColor(R.color.colorVoilation));
+                                }
                             }
                         }
+
+                    } else {
+                        Globally.EldScreenToast(shareDriverLogBtn, Globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorVoilation));
                     }
-
-                } else {
-                    Globally.EldScreenToast(shareDriverLogBtn, Globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorVoilation));
                 }
+            }else{
+                Globally.EldScreenToast(shareDriverLogBtn,  getContext().getResources().getString(R.string.stop_vehicle_alert),
+                       getContext().getResources().getColor(R.color.colorVoilation));
             }
-
         }
     }
 

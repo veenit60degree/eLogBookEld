@@ -140,6 +140,7 @@
     <string name="desc">Descriptions</string>
     <string name="enter_remarks">Enter Remarks</string>
 
+    <string name="ble_disconnected_by_user">BLE Disconnected by user</string>
     <string name="ble_not_supported">BLE not supported on this device</string>
     <string name="bt_unavailable">Bluetooth unavailable</string>
     <string name="bt_disabled">Bluetooth disabled, turn on and restart</string>
@@ -784,6 +785,7 @@
     <string name="connect">Connect</string>
     <string name="connected">Connected</string>
     <string name="disconnect">Disconnect</string>
+    <string name="disconnected">Disconnected</string>
     <string name="scanning">Scanning</string>
     <string name="start_scan">Start scanning</string>
     <string name="stop_scan">Stop scanning</string>
@@ -832,6 +834,7 @@
     <string name="approve">Approve</string>
     <string name="details">Details</string>
     <string name="aobrd">AOBRD</string>
+    <string name="DailyCertifyLog">Daily Certify Log</string>
     <string name="eld">ELD</string>
     <string name="clear">Clear</string>
 
@@ -840,6 +843,7 @@
 
 
     <string name="please_open_blue">Please turn on Bluetooth first</string>
+    <string name="open_gps_location">Please turn on your GPS location for better solution.</string>
 
     <string name="claim_successfully">Claim successfully</string>
     <string name="reject_successfully">Reject successfully</string>

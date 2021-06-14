@@ -2,6 +2,7 @@ package com.constants;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -123,29 +124,31 @@ public class InitilizeEldView {
                               boolean isCertifyLog, String VIN_NUMBER, int offsetFromUTC,
                              String LeftWeekOnDutyHoursInt, String LeftDayOnDutyHoursInt,
                              String LeftDayDrivingHoursInt, String cycle, String VehicleId,
-                             boolean isSignPending, boolean isFragmentAdd, FragmentManager fragManager){
+                             boolean isSignPending, boolean isFragmentAdd, FragmentManager fragManager, String driverLogArray){
 
         Constants.IS_ACTIVE_ELD = false;
 
         try {
             DriverLogDetailFragment detailFragment = new DriverLogDetailFragment();
-            Globally.bundle.putString("date", date);
-            Globally.bundle.putString("day_name", dayName);
-            Globally.bundle.putString("month_full_name", dayFullName);
-            Globally.bundle.putString("month_short_name", dayShortName);
-            Globally.bundle.putInt("day_of_month", dayOfMonth);
-            Globally.bundle.putBoolean("is_certify", isCertifyLog);
-            Globally.bundle.putString("vin", VIN_NUMBER);
+            Bundle bundle = new Bundle();
+            bundle.putString("date", date);
+            bundle.putString("day_name", dayName);
+            bundle.putString("month_full_name", dayFullName);
+            bundle.putString("month_short_name", dayShortName);
+            bundle.putInt("day_of_month", dayOfMonth);
+            bundle.putBoolean("is_certify", isCertifyLog);
+            bundle.putString("vin", VIN_NUMBER);
+            bundle.putString("driverLogArray", driverLogArray);
 
-            Globally.bundle.putInt("offset", offsetFromUTC);
-            Globally.bundle.putString("LeftWeekOnDuty", LeftWeekOnDutyHoursInt);
-            Globally.bundle.putString("LeftDayOnDuty", LeftDayOnDutyHoursInt);
-            Globally.bundle.putString("LeftDayDriving", LeftDayDrivingHoursInt);
-            Globally.bundle.putString("cycle", cycle);
-            Globally.bundle.putString("VehicleId", VehicleId);
-            Globally.bundle.putBoolean("signStatus", isSignPending);
+            bundle.putInt("offset", offsetFromUTC);
+            bundle.putString("LeftWeekOnDuty", LeftWeekOnDutyHoursInt);
+            bundle.putString("LeftDayOnDuty", LeftDayOnDutyHoursInt);
+            bundle.putString("LeftDayDriving", LeftDayDrivingHoursInt);
+            bundle.putString("cycle", cycle);
+            bundle.putString("VehicleId", VehicleId);
+            bundle.putBoolean("signStatus", isSignPending);
 
-            detailFragment.setArguments(Globally.bundle);
+            detailFragment.setArguments(bundle);
 
             FragmentTransaction fragmentTran = fragManager.beginTransaction();
             fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,

@@ -249,42 +249,17 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         editLogAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
         editLogAnimation.setDuration(1500);
 
-        Bundle bundle          = this.getArguments();
-        DRIVER_JOB_STATUS      = bundle.getInt("current_status");
-        LeftCycleHoursInt      = bundle.getInt("left_cycle");
-        LeftOnDutyHoursInt     = bundle.getInt("left_onduty");
-        LeftDrivingHoursInt    = bundle.getInt("left_driving");
-        UsedOnDutyHoursInt     = bundle.getInt("total_onduty");
-        UsedDrivingHoursInt    = bundle.getInt("total_driving");
-        UsedOffDutyHoursInt    = bundle.getInt("total_offduty");
-        UsedSleeperHoursInt    = bundle.getInt("total_sleeper");
-        UsedShiftHoursInt      = bundle.getInt("shift_used");
-        LeftShiftHoursInt      = bundle.getInt("shift_remain");
-        offsetFromUTC          = bundle.getInt("offsetFromUTC");
-
-        minOffDutyUsedHours        = bundle.getInt("offDuty_used_hours");
-        isMinOffDutyHoursSatisfied = bundle.getBoolean("is_offDuty_hr_satisfied");
-
-
-        DriverId               = bundle.getString("DriverId");
-        DeviceId               = bundle.getString("DeviceId");
-        CycleId                = bundle.getString("CycleId");
-        isPersonal             = bundle.getString("isPersonal");
-        CurrentCycle           = bundle.getString("cycle");
-
-        IsAOBRDAutomatic       = bundle.getBoolean("IsAOBRDAutomatic");
-        isSingleDriver         = bundle.getBoolean("isSingleDriver");
-
+        getBundleData();
 
         try {
             StateArrayList     =  sharedPref.getStatesInList(getActivity());
             StatePrefManager statePrefManager  = new StatePrefManager();
             StateList          = statePrefManager.GetState(getActivity());
-            driverLogArray     = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+            //driverLogArray     = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
 
         } catch (Exception e) {
             e.printStackTrace();
-            driverLogArray = new JSONArray();
+           // driverLogArray = new JSONArray();
         }
 
 
@@ -374,6 +349,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
 
+
         eldMenuLay.setOnClickListener(this);
         sendLogHosBtn.setOnClickListener(this);
         rightMenuBtn.setOnClickListener(this);
@@ -382,6 +358,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         hosDistanceCardView.setOnClickListener(this);
         hosLocationCardView.setOnClickListener(this);
 
+        EldFragment.summaryBtn.setEnabled(true);
     }
 
 
@@ -408,6 +385,43 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         clearTimer();
 
+    }
+
+
+    void getBundleData(){
+        try {
+            Bundle bundle = this.getArguments();
+            if(bundle != null) {
+                DRIVER_JOB_STATUS = bundle.getInt("current_status");
+                LeftCycleHoursInt = bundle.getInt("left_cycle");
+                LeftOnDutyHoursInt = bundle.getInt("left_onduty");
+                LeftDrivingHoursInt = bundle.getInt("left_driving");
+                UsedOnDutyHoursInt = bundle.getInt("total_onduty");
+                UsedDrivingHoursInt = bundle.getInt("total_driving");
+                UsedOffDutyHoursInt = bundle.getInt("total_offduty");
+                UsedSleeperHoursInt = bundle.getInt("total_sleeper");
+                UsedShiftHoursInt = bundle.getInt("shift_used");
+                LeftShiftHoursInt = bundle.getInt("shift_remain");
+                offsetFromUTC = bundle.getInt("offsetFromUTC");
+
+                minOffDutyUsedHours = bundle.getInt("offDuty_used_hours");
+                isMinOffDutyHoursSatisfied = bundle.getBoolean("is_offDuty_hr_satisfied");
+
+                DriverId = bundle.getString("DriverId");
+                DeviceId = bundle.getString("DeviceId");
+                CycleId = bundle.getString("CycleId");
+                isPersonal = bundle.getString("isPersonal");
+                CurrentCycle = bundle.getString("cycle");
+                driverLogArray = new JSONArray(bundle.getString("driverLogArray"));
+                // currentDayArray= new JSONArray(bundle.getString("driverLogArray"));
+
+                IsAOBRDAutomatic = bundle.getBoolean("IsAOBRDAutomatic");
+                isSingleDriver = bundle.getBoolean("isSingleDriver");
+                bundle.clear();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -590,78 +604,81 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
     private void setDataOnStatusView(int status){
-        String text = "";
 
-        switch (status){
+        if(getActivity() != null) {
+            switch (status) {
 
-            case OFF_DUTY:
-            case SLEEPER:
+                case OFF_DUTY:
+                case SLEEPER:
 
-                setSBOffView((int)usedAndRemainingTimeSB.getSleeperBirthMinutes(), (int)usedAndRemainingTimeSB.getSleeperUsedMinutes());
-
-                break;
-
-
-            case DRIVING:
-
-                setShiftEndTime();
-
-                hosStatusImgVw.setImageResource(R.drawable.hos_driving);
-
-                //set gradient color to circular progress view
-                if(LeftDrivingHoursInt <= 0) {
-                    currentStatusCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
-                    statusInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
-                }else{
-                    currentStatusCircularView.setBarColor(getResources().getColor(R.color.hos_current_status), getResources().getColor(R.color.colorVoilation));
-                    statusInfoTV.setTextColor(getResources().getColor(R.color.hos_current_status));
-                }
-
-                // Driving value settings
-                setProgressbarValues(currentStatusCircularView, statusUsedTimeTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
-
-                break;
+                    if (usedAndRemainingTimeSB != null) {
+                        setSBOffView((int) usedAndRemainingTimeSB.getSleeperBirthMinutes(), (int) usedAndRemainingTimeSB.getSleeperUsedMinutes());
+                    }
+                    break;
 
 
-            case ON_DUTY:
+                case DRIVING:
 
-                setShiftEndTime();
+                    setShiftEndTime();
 
-                hosStatusImgVw.setImageResource(R.drawable.hos_status);
+                    hosStatusImgVw.setImageResource(R.drawable.hos_driving);
 
-                //set gradient color to circular progress view
-                if(LeftOnDutyHoursInt <= 0) {
-                    currentStatusCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
-                    statusInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
-                }else{
-                    currentStatusCircularView.setBarColor(getResources().getColor(R.color.hos_current_status), getResources().getColor(R.color.colorVoilation));
-                }
+                    //set gradient color to circular progress view
+                    if (LeftDrivingHoursInt <= 0) {
+                        currentStatusCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
+                        statusInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+                    } else {
+                        currentStatusCircularView.setBarColor(getResources().getColor(R.color.hos_current_status), getResources().getColor(R.color.colorVoilation));
+                        statusInfoTV.setTextColor(getResources().getColor(R.color.hos_current_status));
+                    }
 
-                // OnDuty value settings
-                setProgressbarValues(currentStatusCircularView, statusUsedTimeTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
+                    // Driving value settings
+                    setProgressbarValues(currentStatusCircularView, statusUsedTimeTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
 
-                break;
+                    break;
+
+
+                case ON_DUTY:
+
+                    setShiftEndTime();
+
+                    hosStatusImgVw.setImageResource(R.drawable.hos_status);
+
+                    //set gradient color to circular progress view
+                    if (LeftOnDutyHoursInt <= 0) {
+                        currentStatusCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
+                        statusInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+                    } else {
+                        currentStatusCircularView.setBarColor(getResources().getColor(R.color.hos_current_status), getResources().getColor(R.color.colorVoilation));
+                    }
+
+                    // OnDuty value settings
+                    setProgressbarValues(currentStatusCircularView, statusUsedTimeTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
+
+                    break;
+
+            }
 
         }
-
-
 
     }
 
 
     void setShiftEndTime(){
-        if(LeftShiftHoursInt > 0 ) {
-            shiftInfoTV.setVisibility(View.VISIBLE);
-            shiftInfoTV.setTextColor(getResources().getColor(R.color.black_semi));
-            DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
-            DateTime endShiftDateTime = currentDateTime.plusMinutes(LeftShiftHoursInt);
-            String endDate = global.convertUSTtoMM_dd_yyyy_hh_mm(endShiftDateTime.toString());
-            Log.d("date", "converted Date: " + endDate);
-            shiftInfoTV.setText(Html.fromHtml("&nbsp; &nbsp; <b>Shift Ends At </b> <br/>" + endDate) );
-        }else{
-            shiftInfoTV.setText(shiftViolationReson.toLowerCase());
-            shiftInfoTV.setVisibility(View.VISIBLE);
-            shiftInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+        if(getActivity() != null) {
+            if (LeftShiftHoursInt > 0) {
+                shiftInfoTV.setVisibility(View.VISIBLE);
+                shiftInfoTV.setTextColor(getResources().getColor(R.color.black_semi));
+                DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
+                DateTime endShiftDateTime = currentDateTime.plusMinutes(LeftShiftHoursInt);
+                String endDate = global.convertUSTtoMM_dd_yyyy_hh_mm(endShiftDateTime.toString());
+                Log.d("date", "converted Date: " + endDate);
+                shiftInfoTV.setText(Html.fromHtml("&nbsp; &nbsp; <b>Shift Ends At </b> <br/>" + endDate));
+            } else {
+                shiftInfoTV.setText(shiftViolationReson.toLowerCase());
+                shiftInfoTV.setVisibility(View.VISIBLE);
+                shiftInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+            }
         }
     }
 

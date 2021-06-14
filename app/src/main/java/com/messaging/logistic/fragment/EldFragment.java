@@ -152,9 +152,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     Button sendReportBtn, yardMoveBtn, personalUseBtn;
     RelativeLayout certifyLogBtn;
     public static Button refreshLogBtn, moveToCertifyPopUpBtn;
+    public static TextView summaryBtn;
     int DRIVER_JOB_STATUS = 1, SWITCH_VIEW = 1, oldStatusView = 0, DriverType = 0;
     TextView dateTv, nameTv, jobTypeTxtVw, perDayTxtVw, jobTimeTxtVw, jobTimeRemngTxtVw, EldTitleTV,
-            timeRemainingTxtVw, invisibleTxtVw, viewHistoryBtn, summaryBtn;
+            timeRemainingTxtVw, invisibleTxtVw, viewHistoryBtn;
     TextView tractorTv, trailorTv, coDriverTv, otherOptionBadgeView;
     TextView onDutyViolationTV, drivingViolationTV, sleeperViolationTV, offDutyViolationTV;
     TextView onDutyTimeTxtVw, drivingTimeTxtVw, sleeperTimeTxtVw, offDutyTimeTxtVw;
@@ -206,6 +207,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     List<String> onDutyRemarkList = new ArrayList<String>();
 
     public static JSONArray DriverJsonArray = new JSONArray();
+    JSONArray currentDayArray = new JSONArray();
     int listSize = 0;
 
     EldSingleDriverLogPref eldSharedPref;
@@ -784,33 +786,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onAnimationEnd(Animation animation) {
 
-                try {
-                    if (getActivity() != null) {
-                        boolean isMal = sharedPref.isMalfunctionOccur(getActivity());
-                        boolean isDia = sharedPref.isDiagnosticOccur(getActivity());
-                        boolean isLocMal = constants.isAllowLocMalfunctionEvent(getActivity());
-
-                        if(isMal || isDia || isLocMal || sharedPref.isEngSyncMalfunction(getActivity()) ||
-                                sharedPref.isEngSyncDiagnstc(getActivity()) ) {
-                            malfunctionLay.startAnimation(editLogAnimation);
-                            if(isMal && isDia == false) {
-                                malfunctionTV.setText(getString(R.string.malfunction_occur));
-                                malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
-                            }else if(isMal == false && isDia){
-                                malfunctionTV.setText(getString(R.string.diagnostic_occur));
-                                malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
-                            }else{
-                                malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
-                                malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
-                            }
-                        }else {
-                            editLogAnimation.cancel();
-                            malfunctionLay.setVisibility(View.GONE);
-                        }
-                    }
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
+                setMalfnDiagnEventInfo();
 
             }
 
@@ -1001,6 +977,38 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter(ConstantsKeys.IsIgnitionOn));
 
 
+    }
+
+
+    void setMalfnDiagnEventInfo(){
+        try {
+            if (getActivity() != null) {
+                boolean isMal = sharedPref.isMalfunctionOccur(getActivity());
+                boolean isDia = sharedPref.isDiagnosticOccur(getActivity());
+                boolean isLocMal = constants.isAllowLocMalfunctionEvent(getActivity());
+
+                if(isMal || isDia || isLocMal || sharedPref.isEngSyncMalfunction(getActivity()) ||
+                        sharedPref.isEngSyncDiagnstc(getActivity()) ) {
+                    malfunctionLay.setVisibility(View.VISIBLE);
+                    malfunctionLay.startAnimation(editLogAnimation);
+                    if(isMal && isDia == false) {
+                        malfunctionTV.setText(getString(R.string.malfunction_occur));
+                        malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
+                    }else if(isMal == false && isDia){
+                        malfunctionTV.setText(getString(R.string.diagnostic_occur));
+                        malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
+                    }else{
+                        malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
+                        malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
+                    }
+                }else {
+                    editLogAnimation.cancel();
+                    malfunctionLay.setVisibility(View.GONE);
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -1234,13 +1242,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }else {
             dotFragment = new DotUsaFragment();
         }
-        Globally.bundle.putString("date", date);
-        Globally.bundle.putString("day_name", dayName);
-        Globally.bundle.putString("month_full_name", dayFullName);
-        Globally.bundle.putString("month_short_name", dayShortName);
-        Globally.bundle.putString("cycle", cycle);
+        Bundle bundle = new Bundle();
+        bundle.putString("date", date);
+        bundle.putString("day_name", dayName);
+        bundle.putString("month_full_name", dayFullName);
+        bundle.putString("month_short_name", dayShortName);
+        bundle.putString("cycle", cycle);
 
-        dotFragment.setArguments(Globally.bundle);
+        dotFragment.setArguments(bundle);
 
         FragmentTransaction fragmentTran = fragManager.beginTransaction();
         fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
@@ -1254,19 +1263,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     void moveToHosSummary(){
 
-  /*      MalfncnDiagnstcViewPager logFragment = new MalfncnDiagnstcViewPager();
-        Bundle bundle = new Bundle();
-        logFragment.setArguments(bundle);
-
-        FragmentTransaction fragmentTran = getParentFragmentManager().beginTransaction();
-        fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
-                android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTran.replace(R.id.job_fragment, logFragment);
-        fragmentTran.addToBackStack("SuggestedLog");
-        fragmentTran.commit();
-*/
-
-
         // get driver's current cycle id
         GetDriverCycle(DriverType);
 
@@ -1278,6 +1274,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             bundle.putString("DriverId", DRIVER_ID);
             bundle.putString("DeviceId", DeviceId);
             bundle.putString("CycleId", CurrentCycleId);
+            bundle.putString("driverLogArray", driverLogArray.toString());
+           // bundle.putString("currentDayArray", currentDayArray.toString());
 
             bundle.putString("cycle", CurrentCycle);
             bundle.putString("break_used", CurrentCycle);
@@ -1590,7 +1588,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             isMal ||
                             isDia ||
                              constants.isAllowLocMalfunctionEvent(getActivity()) ||
-                    constants.CheckGpsStatus(getActivity()) == false;
+                    constants.CheckGpsStatusToCheckMalfunction(getActivity()) == false;
 
                          /*   || (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
                             sharedPref.getObdStatus(getActivity()) != Constants.WIRED_CONNECTED)
@@ -1602,7 +1600,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             sharedPref.isUnidentifiedOccurCo(getActivity()) ||
                             sharedPref.isMalfunctionOccurCo(getActivity()) ||
                             sharedPref.isDiagnosticOccurCo(getActivity()) ||
-                            constants.CheckGpsStatus(getActivity()) == false ||
+                            constants.CheckGpsStatusToCheckMalfunction(getActivity()) == false ||
                             constants.isAllowLocMalfunctionEvent(getActivity()) ;
 
                   /*  || (sharedPref.getObdStatus(getActivity()) != Constants.WIFI_CONNECTED &&
@@ -1616,17 +1614,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     otherOptionBadgeView.setVisibility(View.GONE);
                 }
 
-                boolean isMal = sharedPref.isMalfunctionOccur(getActivity());
-                boolean isDia = sharedPref.isDiagnosticOccur(getActivity());
-                boolean isLocMal = constants.isAllowLocMalfunctionEvent(getActivity());
+                setMalfnDiagnEventInfo();
 
-                if (isMal || isDia || isLocMal ) {
-                    malfunctionLay.setVisibility(View.VISIBLE);
-                    malfunctionLay.startAnimation(editLogAnimation);
-                } else {
-                    editLogAnimation.cancel();
-                    malfunctionLay.setVisibility(View.GONE);
-                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -2121,9 +2110,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.summaryBtn:
-                /*if(!sharedPref.IsOdometerFromOBD(getActivity())) {
-                    TabAct.host.setCurrentTab(5);
-                }*/
+                summaryBtn.setEnabled(false);
                 moveToHosSummary();
 
                 break;
@@ -2158,9 +2145,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             case R.id.truckLay:
 
-                 if( constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )){ //   constants.isActionAllowed(getActivity())){
+                 if(constants.isActionAllowed(getActivity())){ //    constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )
                      if (Global.isConnected(getActivity())) {
-                         if (DRIVER_JOB_STATUS == DRIVING) {
+                         if (DRIVER_JOB_STATUS == DRIVING ) {
                              Global.EldScreenToast(OnDutyBtn, ConstantsEnum.TRUCK_CHANGE, getResources().getColor(R.color.colorVoilation));
                          } else {
                              IsVehicleDialogShown = true;
@@ -2180,9 +2167,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             case R.id.trailorLayout:
                 try{
                     if(getActivity() != null){
-                      if( constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )){//      constants.isActionAllowed(getActivity())){
+                      if(constants.isActionAllowed(getActivity()) ){    //constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )
                         if (Global.isConnected(getActivity())) {
-                            if (DRIVER_JOB_STATUS == DRIVING) {
+                            if (DRIVER_JOB_STATUS == DRIVING ) {
                                 Global.EldScreenToast(OnDutyBtn, ConstantsEnum.TRAILER_CHANGE, getResources().getColor(R.color.colorVoilation));
                             } else {
                                 trailerDialog = new TrailorDialog(getActivity(), "trailor", false, TrailorNumber, 0, false,
@@ -2274,7 +2261,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     }
                     boolean isPendingNotifications = isPendingNotifications(DRIVER_JOB_STATUS);
                     otherOptionsDialog = new OtherOptionsDialog(getActivity(), isPendingNotifications, pendingNotificationCount,
-                            constants.CheckGpsStatus(getActivity()), DriverType);
+                            constants.CheckGpsStatusToCheckMalfunction(getActivity()), DriverType);
                     otherOptionsDialog.show();
                 } catch (final IllegalArgumentException e) {
                     e.printStackTrace();
@@ -3866,8 +3853,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
         }else{
             if(isSignPending && !isOnCreate){
-                JSONArray selectedArray = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime, true, offsetFromUTC);
-                if (selectedArray.length() <= 1 && isNewDateStart) {
+               // JSONArray selectedArray = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime, true, offsetFromUTC);
+                if (currentDayArray.length() <= 1 && isNewDateStart) {
                     titleDesc                 = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.certify_previous_days_log_ask_popup) + " </html> </font>";
                     isNewDateStart            = false;
                     isCertifySignaturePending = true;
@@ -3929,7 +3916,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 FragmentManager fragManager = getActivity().getSupportFragmentManager();
                 initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, dayOfMonth, isCertifyLog,
                         VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
-                        Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), isFragmentAdd, fragManager);
+                        Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId,
+                        isCertifySignPending(false ), isFragmentAdd, fragManager, driverLogArray.toString());
             } catch (final Exception e) {
                 e.printStackTrace();
             }
@@ -4587,7 +4575,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
                 JSONArray selectedArray = new JSONArray();
-                JSONArray currentDayArray = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime, true, offsetFromUTC);
+                currentDayArray = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime, true, offsetFromUTC);
 
                 JSONObject lastJsonItem = new JSONObject();
 
@@ -4620,8 +4608,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         // save updated log array into the database
                         hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray); // saving in db after updating the array
 
-                        JSONArray currentDayArrayy = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime, true, offsetFromUTC);
-                        if ( currentDayArrayy.length() == 0 ) {
+                        currentDayArray = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime, true, offsetFromUTC);
+                        if ( currentDayArray.length() == 0 ) {
                             isArrayNull = true;
                         }else{
                             isArrayNull = false;
@@ -6811,12 +6799,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 MonthFullName = dateMonth[0];
                 MonthShortName = dateMonth[1];
                 dayOfTheWeek = dateMonth[2];
-
             }
 
             initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, constants.CertifyLog, isCertifyLog,
                     VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
-                    Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId, isCertifySignPending(false ), isFragmentAdd, fragManager);
+                    Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId,
+                    isCertifySignPending(false ), isFragmentAdd, fragManager, driverLogArray.toString());
         } catch (final Exception e) {
             e.printStackTrace();
         }

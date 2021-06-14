@@ -302,63 +302,76 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
             case R.id.saveReadingBtn:
 
                 try {
-                    if (IsEditOdometer.equals("false")) {
-                        if (ReadingType.equals("end")) {
-                            StartOdometer = "";
-                            EndOdometer = odometerEditTxt.getText().toString().trim();
-                        } else {
-
-                            StartOdometer = odometerEditTxt.getText().toString().trim();
-                            EndOdometer = "";
-                        }
-                    } else {
-                        StartOdometer = odometerEditTxt.getText().toString().trim();
-                        EndOdometer = endOdometerEditTxt.getText().toString().trim();
-                    }
-
-
-                    if (odometerEditTxt.getText().toString().trim().length() > 0) {
-                        SelectedDate = Global.GetCurrentDeviceDateTime();
+                    if(constant.isActionAllowed(getContext())) {
                         if (IsEditOdometer.equals("false")) {
-
-                            String manualInputOdometer = odometerEditTxt.getText().toString().trim();
-                            if (manualInputOdometer.contains(".")) {
-                                manualInputOdometer = manualInputOdometer.split(".")[0];
-                            }
-
                             if (ReadingType.equals("end")) {
-
-                                EndOdoInt = Long.parseLong(manualInputOdometer);
-
-                                if (EndOdoInt > StartOdoInt) {
-                                    saveReadingBtn.setEnabled(false);
-                                    odoProgressBar.setVisibility(View.VISIBLE);
-
-                                    // Call API with working internet
-                                    SAVE_ODOMETER();
-                                } else {
-                                    endOdometerEditTxt.requestFocus();
-                                    Globally.EldScreenToast(saveReadingBtn, "End Odometer reading should be greater then Start Odometer reading", getResources().getColor(R.color.colorVoilation));
-                                }
+                                StartOdometer = "";
+                                EndOdometer = odometerEditTxt.getText().toString().trim();
                             } else {
 
-                                StartOdoInt = Long.parseLong(manualInputOdometer);
-                                if (StartOdoInt >= EndOdoInt) {
-                                    saveReadingBtn.setEnabled(false);
-                                    odoProgressBar.setVisibility(View.VISIBLE);
-
-                                    // Call API with working internet
-                                    SAVE_ODOMETER();
-                                } else {
-                                    endOdometerEditTxt.requestFocus();
-                                    Globally.EldScreenToast(saveReadingBtn, "Start Odometer reading should be greater then previous End Odometer reading", getResources().getColor(R.color.colorVoilation));
-                                }
+                                StartOdometer = odometerEditTxt.getText().toString().trim();
+                                EndOdometer = "";
                             }
-
                         } else {
-                            if (Global.isConnected(getActivity())) {
-                                if (EndOdometer.length() > 0) {
-                                    if (Integer.valueOf(EndOdometer) > Integer.valueOf(StartOdometer)) {
+                            StartOdometer = odometerEditTxt.getText().toString().trim();
+                            EndOdometer = endOdometerEditTxt.getText().toString().trim();
+                        }
+
+
+                        if (odometerEditTxt.getText().toString().trim().length() > 0) {
+                            SelectedDate = Global.GetCurrentDeviceDateTime();
+                            if (IsEditOdometer.equals("false")) {
+
+                                String manualInputOdometer = odometerEditTxt.getText().toString().trim();
+                                if (manualInputOdometer.contains(".")) {
+                                    manualInputOdometer = manualInputOdometer.split(".")[0];
+                                }
+
+                                if (ReadingType.equals("end")) {
+
+                                    EndOdoInt = Long.parseLong(manualInputOdometer);
+
+                                    if (EndOdoInt > StartOdoInt) {
+                                        saveReadingBtn.setEnabled(false);
+                                        odoProgressBar.setVisibility(View.VISIBLE);
+
+                                        // Call API with working internet
+                                        SAVE_ODOMETER();
+                                    } else {
+                                        endOdometerEditTxt.requestFocus();
+                                        Globally.EldScreenToast(saveReadingBtn, "End Odometer reading should be greater then Start Odometer reading", getResources().getColor(R.color.colorVoilation));
+                                    }
+                                } else {
+
+                                    StartOdoInt = Long.parseLong(manualInputOdometer);
+                                    if (StartOdoInt >= EndOdoInt) {
+                                        saveReadingBtn.setEnabled(false);
+                                        odoProgressBar.setVisibility(View.VISIBLE);
+
+                                        // Call API with working internet
+                                        SAVE_ODOMETER();
+                                    } else {
+                                        endOdometerEditTxt.requestFocus();
+                                        Globally.EldScreenToast(saveReadingBtn, "Start Odometer reading should be greater then previous End Odometer reading", getResources().getColor(R.color.colorVoilation));
+                                    }
+                                }
+
+                            } else {
+                                if (Global.isConnected(getActivity())) {
+                                    if (EndOdometer.length() > 0) {
+                                        if (Integer.valueOf(EndOdometer) > Integer.valueOf(StartOdometer)) {
+                                            saveReadingBtn.setEnabled(false);
+                                            odoProgressBar.setVisibility(View.VISIBLE);
+
+                                            // Call API with working internet
+                                            SaveOdometerReading(DRIVER_ID, DeviceId, VIN_NUMBER, StartOdometer, EndOdometer, DistanceType,
+                                                    SelectedDate, IsEditOdometer, TruckOdometerId);
+                                            // SAVE_ODOMETER();
+                                        } else {
+                                            endOdometerEditTxt.requestFocus();
+                                            Globally.EldScreenToast(saveReadingBtn, "End Odometer reading should be greater then Start Odometer reading", getResources().getColor(R.color.colorVoilation));
+                                        }
+                                    } else {
                                         saveReadingBtn.setEnabled(false);
                                         odoProgressBar.setVisibility(View.VISIBLE);
 
@@ -366,29 +379,20 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
                                         SaveOdometerReading(DRIVER_ID, DeviceId, VIN_NUMBER, StartOdometer, EndOdometer, DistanceType,
                                                 SelectedDate, IsEditOdometer, TruckOdometerId);
                                         // SAVE_ODOMETER();
-                                    } else {
-                                        endOdometerEditTxt.requestFocus();
-                                        Globally.EldScreenToast(saveReadingBtn, "End Odometer reading should be greater then Start Odometer reading", getResources().getColor(R.color.colorVoilation));
                                     }
                                 } else {
-                                    saveReadingBtn.setEnabled(false);
-                                    odoProgressBar.setVisibility(View.VISIBLE);
-
-                                    // Call API with working internet
-                                    SaveOdometerReading(DRIVER_ID, DeviceId, VIN_NUMBER, StartOdometer, EndOdometer, DistanceType,
-                                            SelectedDate, IsEditOdometer, TruckOdometerId);
-                                    // SAVE_ODOMETER();
+                                    Globally.EldScreenToast(saveReadingBtn, "Edit odometer is only available in online mode.", getResources().getColor(R.color.colorVoilation));
                                 }
-                            } else {
-                                Globally.EldScreenToast(saveReadingBtn, "Edit odometer is only available in online mode.", getResources().getColor(R.color.colorVoilation));
+
                             }
-
+                        } else {
+                            Globally.EldScreenToast(saveReadingBtn, "Please enter your odometer reading", getResources().getColor(R.color.colorVoilation));
+                            odometerEditTxt.requestFocus();
                         }
-                    } else {
-                        Globally.EldScreenToast(saveReadingBtn, "Please enter your odometer reading", getResources().getColor(R.color.colorVoilation));
-                        odometerEditTxt.requestFocus();
+                    }else{
+                        Globally.EldScreenToast(saveReadingBtn, getString(R.string.stop_vehicle_alert),
+                                getResources().getColor(R.color.colorVoilation));
                     }
-
                 }catch (Exception e){
                     e.printStackTrace();
                 }

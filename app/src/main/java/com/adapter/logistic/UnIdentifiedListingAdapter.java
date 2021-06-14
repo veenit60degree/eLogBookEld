@@ -1,6 +1,7 @@
 package com.adapter.logistic;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -197,26 +198,27 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
             String StartLocationkm, String EndLocationKm
     ){
         UnidentifiedRecordDetailFragment detailFragment = new UnidentifiedRecordDetailFragment();
-        Globally.bundle.putString(ConstantsKeys.DriverId, DriverId);
-        Globally.bundle.putString(ConstantsKeys.UserName , DriverName);
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantsKeys.DriverId, DriverId);
+        bundle.putString(ConstantsKeys.UserName , DriverName);
 
-        Globally.bundle.putString(ConstantsKeys.DriverStatusId , DriverStatusId);
-        Globally.bundle.putString(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
-        Globally.bundle.putString(ConstantsKeys.AssignedUnidentifiedRecordsId, AssignedUnidentifiedRecordsId);
-        Globally.bundle.putBoolean(ConstantsKeys.CompanyAssigned, IsCompanyAssigned);
+        bundle.putString(ConstantsKeys.DriverStatusId , DriverStatusId);
+        bundle.putString(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
+        bundle.putString(ConstantsKeys.AssignedUnidentifiedRecordsId, AssignedUnidentifiedRecordsId);
+        bundle.putBoolean(ConstantsKeys.CompanyAssigned, IsCompanyAssigned);
 
-        Globally.bundle.putString(ConstantsKeys.StartOdometer, StartOdometer);
-        Globally.bundle.putString(ConstantsKeys.EndOdometer, EndOdometer);
-        Globally.bundle.putString(ConstantsKeys.StartDateTime, StartDateTime);
-        Globally.bundle.putString(ConstantsKeys.EndDateTime, EndDateTime);
-        Globally.bundle.putString(ConstantsKeys.StartLocation, StartLocation);
-        Globally.bundle.putString(ConstantsKeys.EndLocation, EndLocation);
-        Globally.bundle.putString(ConstantsKeys.TotalMiles, TotalMiles);
-        Globally.bundle.putString(ConstantsKeys.TotalKM, TotalKM);
-        Globally.bundle.putString(ConstantsKeys.StartLocationKM, StartLocationkm);
-        Globally.bundle.putString(ConstantsKeys.EndLocationKM, EndLocationKm);
+        bundle.putString(ConstantsKeys.StartOdometer, StartOdometer);
+        bundle.putString(ConstantsKeys.EndOdometer, EndOdometer);
+        bundle.putString(ConstantsKeys.StartDateTime, StartDateTime);
+        bundle.putString(ConstantsKeys.EndDateTime, EndDateTime);
+        bundle.putString(ConstantsKeys.StartLocation, StartLocation);
+        bundle.putString(ConstantsKeys.EndLocation, EndLocation);
+        bundle.putString(ConstantsKeys.TotalMiles, TotalMiles);
+        bundle.putString(ConstantsKeys.TotalKM, TotalKM);
+        bundle.putString(ConstantsKeys.StartLocationKM, StartLocationkm);
+        bundle.putString(ConstantsKeys.EndLocationKM, EndLocationKm);
 
-        detailFragment.setArguments(Globally.bundle);
+        detailFragment.setArguments(bundle);
 
         FragmentManager fragManager = fragment.getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();

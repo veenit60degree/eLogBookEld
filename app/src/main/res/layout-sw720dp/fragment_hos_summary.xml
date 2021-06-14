@@ -8,6 +8,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/hos_summary_bg"
+    android:clickable="true"
+
+
+
     >
 
     <include

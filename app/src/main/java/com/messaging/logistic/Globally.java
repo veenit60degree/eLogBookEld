@@ -176,8 +176,8 @@ public class Globally {
 
 	public static List<String> onDutyRemarks = new ArrayList<String>();
 
-	public static Bundle bundle = new Bundle();
-	public static Bundle getBundle;
+	//public static Bundle bundle = new Bundle();
+	//public static Bundle getBundle;
 
 	public static int[] NOTIFICATIONS_ID = {
 			0,
