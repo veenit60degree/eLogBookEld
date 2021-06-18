@@ -2484,34 +2484,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
     void CheckSignatureVisibilityStatus(JSONArray LogJsonArray){
         try {
-            isCertifySignExist = constants.isCertifySignExist(recapViewMethod, DRIVER_ID, dbHelper);
-            if (!LogDate.equals(CurrentDate) && LogJsonArray.length() > 0) {
-
-                if (isCertifySignExist) {
-                    SignatureMainLay.setVisibility(View.GONE);
-                    signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
-                    saveSignatureBtn.setText(getString(R.string.certify));
-                } else {
-                    SignatureMainLay.setVisibility(View.VISIBLE);
-                    signLogTitle2.setVisibility(View.GONE);
-                    saveSignatureBtn.setText(getString(R.string.save_and_certify));
-                }
-
-                if (LogSignImage.length() > 0 || LogSignImageInByte.length() > 0) {
-                    saveSignatureBtn.setVisibility(View.GONE);
-                    signLogTitle2.setVisibility(View.GONE);
-                    SignatureMainLay.setVisibility(View.VISIBLE);
-                } else {
-
-                    signImageView.setBackground(null);
-                    signImageView.setImageResource(R.drawable.sign_here);
-                    saveSignatureBtn.setVisibility(View.VISIBLE);
-                    if (isCertifySignExist) {
-                        SignatureMainLay.setVisibility(View.GONE);
-                    }
-                }
-            } else {
-                if (DriverPermitMaxDays == 0) {
+            if(getActivity() != null) {
+                isCertifySignExist = constants.isCertifySignExist(recapViewMethod, DRIVER_ID, dbHelper);
+                if (!LogDate.equals(CurrentDate) && LogJsonArray.length() > 0) {
 
                     if (isCertifySignExist) {
                         SignatureMainLay.setVisibility(View.GONE);
@@ -2523,18 +2498,45 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                         saveSignatureBtn.setText(getString(R.string.save_and_certify));
                     }
 
-                    saveSignatureBtn.setVisibility(View.VISIBLE);
-                    if (LogSignImage.length() == 0 && LogSignImageInByte.length() == 0) {
+                    if (LogSignImage.length() > 0 || LogSignImageInByte.length() > 0) {
+                        saveSignatureBtn.setVisibility(View.GONE);
+                        signLogTitle2.setVisibility(View.GONE);
+                        SignatureMainLay.setVisibility(View.VISIBLE);
+                    } else {
 
                         signImageView.setBackground(null);
                         signImageView.setImageResource(R.drawable.sign_here);
+                        saveSignatureBtn.setVisibility(View.VISIBLE);
+                        if (isCertifySignExist) {
+                            SignatureMainLay.setVisibility(View.GONE);
+                        }
+                    }
+                } else {
+                    if (DriverPermitMaxDays == 0) {
+
+                        if (isCertifySignExist) {
+                            SignatureMainLay.setVisibility(View.GONE);
+                            signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
+                            saveSignatureBtn.setText(getString(R.string.certify));
+                        } else {
+                            SignatureMainLay.setVisibility(View.VISIBLE);
+                            signLogTitle2.setVisibility(View.GONE);
+                            saveSignatureBtn.setText(getString(R.string.save_and_certify));
+                        }
+
+                        saveSignatureBtn.setVisibility(View.VISIBLE);
+                        if (LogSignImage.length() == 0 && LogSignImageInByte.length() == 0) {
+
+                            signImageView.setBackground(null);
+                            signImageView.setImageResource(R.drawable.sign_here);
+                        }
+
+                    } else {
+                        SignatureMainLay.setVisibility(View.GONE);
+                        saveSignatureBtn.setVisibility(View.GONE);
                     }
 
-                } else {
-                    SignatureMainLay.setVisibility(View.GONE);
-                    saveSignatureBtn.setVisibility(View.GONE);
                 }
-
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -3363,7 +3365,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     }
 
     void ReloadWebView(final String closeTag){
-        graphWebView.clearCache(true);
         graphWebView.loadData("", "text/html; charset=UTF-8", null );
 
         new Handler().postDelayed(new Runnable() {

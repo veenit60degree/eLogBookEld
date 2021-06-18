@@ -18,7 +18,7 @@
         android:layout_width="@dimen/view_height_35"
         android:layout_height="@dimen/view_height_35"
         android:layout_gravity="center_vertical"
-        android:tint="@color/tint_disabled"
+        android:tint="@color/colorPrimary"
 
         />
 
@@ -31,7 +31,7 @@
         android:layout_marginLeft="@dimen/margin_15"
         android:textSize="@dimen/text_size_22"
         android:textStyle="bold"
-        android:textColor="@color/gray_other_feature"
+        android:textColor="@color/colorPrimary"
         android:singleLine="true"
         android:text="sdg dh fghfg gh"
         />
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textSize="@dimen/text_size_13"
+            android:textSize="@dimen/text_size_12"
             android:padding="@dimen/margin_short_1"
             android:textColor="@color/white"
             android:gravity="center"

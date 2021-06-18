@@ -105,33 +105,31 @@ public class Utils
 
     public void writeToLogFile(String value)
     {
-        if(LogFilePath.length() == 0){
-            LogFilePath            = getAlsLogFilePath(context, ConstantsKeys.ALS_OBD_LOG).toString();
-        }
+        try {
+            if (LogFilePath == null || LogFilePath.length() == 0) {
+                LogFilePath = getAlsLogFilePath(context, ConstantsKeys.ALS_OBD_LOG).toString();
+            }
 
-        File LogFile = new File(LogFilePath);
-        if (!LogFile.exists())
-        { //Create if it isn't exist
-            try
-            {
-                LogFile.createNewFile();
-            } catch (Exception e)
-            {
+            File LogFile = new File(LogFilePath);
+            if (!LogFile.exists()) { //Create if it isn't exist
+                try {
+                    LogFile.createNewFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                FileOutputStream fos = new FileOutputStream(LogFile, true);
+                // String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
+                value = "\n\n" + value;    //" + date + "
+                fos.write(value.getBytes());
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        try
-        {
-            FileOutputStream fos = new FileOutputStream(LogFile, true);
-           // String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
-            value = "\n\n"  + value;    //" + date + "
-            fos.write(value.getBytes());
-            fos.close();
-        } catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -140,80 +138,75 @@ public class Utils
 
     public void writeAppUsageLogFile(String value)
     {
-        if(AppUsageLogFilePath.length() == 0) {
-            AppUsageLogFilePath = getAlsLogFilePath(context, ConstantsKeys.APP_USAGE_LOG).toString();
-        }
+        try {
+            if (AppUsageLogFilePath == null || AppUsageLogFilePath.length() == 0) {
+                AppUsageLogFilePath = getAlsLogFilePath(context, ConstantsKeys.APP_USAGE_LOG).toString();
+            }
 
-        File LogFile = new File(AppUsageLogFilePath);
-        if (!LogFile.exists())
-        { //Create if it isn't exist
-            try
-            {
-                LogFile.createNewFile();
-            } catch (Exception e)
-            {
+            File LogFile = new File(AppUsageLogFilePath);
+            if (!LogFile.exists()) { //Create if it isn't exist
+                try {
+                    LogFile.createNewFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                FileOutputStream fos = new FileOutputStream(LogFile, true);
+                // String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
+                value = "\n\n" + value;    //" + date + "
+                fos.write(value.getBytes());
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        try
-        {
-            FileOutputStream fos = new FileOutputStream(LogFile, true);
-            // String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
-            value = "\n\n"  + value;    //" + date + "
-            fos.write(value.getBytes());
-            fos.close();
-        } catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
 
     public void writeExectnTimeLogFile(long ExecutionTime, String usedMemory, String type)
     {
-        if(AppExectnTimeLogPath.length() == 0) {
-            AppExectnTimeLogPath = getAlsLogFilePath(context, ConstantsKeys.EXECUTION_TIME_LOG).toString();
-        }
+        try {
+            if (AppExectnTimeLogPath == null || AppExectnTimeLogPath.length() == 0) {
+                AppExectnTimeLogPath = getAlsLogFilePath(context, ConstantsKeys.EXECUTION_TIME_LOG).toString();
+            }
 
-        File LogFile = new File(AppExectnTimeLogPath);
-        if (!LogFile.exists())
-        { //Create if it isn't exist
-            try
-            {
-                LogFile.createNewFile();
-            } catch (Exception e)
-            {
+            File LogFile = new File(AppExectnTimeLogPath);
+            if (!LogFile.exists()) { //Create if it isn't exist
+                try {
+                    LogFile.createNewFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            JSONObject obj = new JSONObject();
+            try {
+
+                obj.put(ConstantsKeys.Type, type);
+                obj.put(ConstantsKeys.MemoryUsage, usedMemory);
+                obj.put(ConstantsKeys.ExecutionTime, ExecutionTime + " ms");
+                String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
+                obj.put(ConstantsKeys.Date_Time, dateTime);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-
-        JSONObject obj = new JSONObject();
-        try{
-
-            obj.put(ConstantsKeys.Type, type);
-            obj.put(ConstantsKeys.MemoryUsage, usedMemory);
-            obj.put(ConstantsKeys.ExecutionTime, ExecutionTime + " ms");
-            String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
-            obj.put(ConstantsKeys.Date_Time, dateTime);
+            try {
+                FileOutputStream fos = new FileOutputStream(LogFile, true);
+                String value = "\n\n" + obj.toString();
+                fos.write(value.getBytes());
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
-        try
-        {
-            FileOutputStream fos = new FileOutputStream(LogFile, true);
-            String value = "\n\n"  + obj.toString();
-            fos.write(value.getBytes());
-            fos.close();
-        } catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
 
     }
 

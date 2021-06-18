@@ -171,8 +171,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         setMarqueOnView(holder.certifyLocationTV);
 
         final int JobStatus = LogItem.getDriverStatusId();
-        boolean IsPersonal = LogItem.isPersonal();
-        SetTextDataInView(holder,  LogItem, Globally.JobStatus(JobStatus, LogItem.isPersonal()),  String.valueOf(position + 1)+ "." );
+        SetTextDataInView(holder,  LogItem, Global.JobStatus(JobStatus, LogItem.isPersonal()),  String.valueOf(position + 1)+ "." );
 
         if(isExceptionEnabled) {
             setMarqueOnView(holder.certifyExcptnTV);
@@ -278,8 +277,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
     private void SetTextDataInView(ViewHolder holder,  EldDriverLogModel LogItem, String status, String position){
 
-        String StartTime = "00:00";
-        StartTime = Globally.ConvertToTimeFormat(LogItem.getStartDateTime(), Globally.DateFormatWithMillSec);
+        String StartTime = Global.ConvertToTimeFormat(LogItem.getStartDateTime(), Global.DateFormatWithMillSec);
         holder.certifyNoTV.setText(position);
         holder.certifyStatusTV.setText(status);
         holder.certifyStartTimeTV.setText(StartTime);
@@ -372,7 +370,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
                 if (JobType == Constants.EditLocation){
 
-                    logModel.setLocation(City + "; " + State + "; " + Country);
+                    logModel.setLocation(City + "; " + State ); //+ "; " + Country
                     SaveAndUploadData(logModel, RecordType, position, "","");
 
                     // Clear Diagnostic if occured
@@ -644,7 +642,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                         // update event array
                         malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(DriverId, dbHelper, malfnJsonArray);
                     }else {
-                        Globally.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, Message, context.getResources().getColor(R.color.colorPrimary));
+                        Global.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, Message, context.getResources().getColor(R.color.colorPrimary));
 
                         // ------------ Clear Log Record File locally ------------
                         logRecordMethod.UpdateLogRecordHelper(DriverId, dbHelper, new JSONArray());
@@ -652,7 +650,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 }else{
                     // ------------ Clear Log Record File locally ------------
                     logRecordMethod.UpdateLogRecordHelper( DriverId, dbHelper, new JSONArray());
-                    Globally.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, Message , context.getResources().getColor(R.color.colorVoilation));
+                    Global.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, Message , context.getResources().getColor(R.color.colorVoilation));
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -665,7 +663,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
             Log.d("errorrr ", ">>>error dialog: " );
-            Globally.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, "Data updated successfully." , context.getResources().getColor(R.color.colorPrimary));
+            Global.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, "Data updated successfully." , context.getResources().getColor(R.color.colorPrimary));
             progressDialog.dismiss();
 
 

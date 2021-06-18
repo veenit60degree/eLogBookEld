@@ -749,7 +749,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         try {
 
             calculateLocalOdometersDistance();
-            hosLocationTV.setText(global.LATITUDE + ", "+ global.LONGITUDE);
+            hosLocationTV.setText(Globally.LATITUDE + ", "+ Globally.LONGITUDE);
 
             if (isUpdateUI && global.isConnected(getActivity())) {
                 GetAddFromLatLng();
@@ -999,8 +999,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     void GetAddFromLatLng() {
 
         Map<String, String> params = new HashMap<String, String>();
-         params.put(ConstantsKeys.Latitude, global.LATITUDE);
-         params.put(ConstantsKeys.Longitude, global.LONGITUDE);
+         params.put(ConstantsKeys.Latitude, Globally.LATITUDE);
+         params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
         params.put(ConstantsKeys.IsAOBRDAutomatic, String.valueOf(IsAOBRDAutomatic));
 
         GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, GetAddFromLatLng,
@@ -1058,80 +1058,84 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 obj = new JSONObject(response);
                 status = obj.getString("Status");
             } catch (JSONException e) {
+                e.printStackTrace();
             }
-            loadingSpinEldIV.stopAnimation();
 
-            if (status.equalsIgnoreCase("true")) {
+            try {
+                if (getActivity() != null) {
+                    loadingSpinEldIV.stopAnimation();
+                    if (status.equalsIgnoreCase("true")) {
 
-                switch (flag) {
+                        switch (flag) {
 
-                    case GetAddFromLatLng:
-                        if (!obj.isNull("Data")) {
-                            try {
+                            case GetAddFromLatLng:
+                                if (!obj.isNull("Data")) {
+                                    try {
 
-                                JSONObject dataJObject = new JSONObject(obj.getString("Data"));
-                                //String Country     = dataJObject.getString(ConstantsKeys.Country);
-                                String AddressLine = dataJObject.getString(ConstantsKeys.Location) ;   //+ ", " + Country
+                                        JSONObject dataJObject = new JSONObject(obj.getString("Data"));
+                                        //String Country     = dataJObject.getString(ConstantsKeys.Country);
+                                        String AddressLine = dataJObject.getString(ConstantsKeys.Location);   //+ ", " + Country
 
-                                if(AddressLine.length() > 0 && !AddressLine.equals("null")) {
-                                    hosLocationTV.setText(AddressLine);
-                                }else{
-                                    hosLocationTV.setText(global.LATITUDE + ", "+ global.LONGITUDE);
+                                        if (AddressLine.length() > 0 && !AddressLine.equals("null")) {
+                                            hosLocationTV.setText(AddressLine);
+                                        } else {
+                                            hosLocationTV.setText(Globally.LATITUDE + ", " + Globally.LONGITUDE);
+                                        }
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
 
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                                break;
+
+                            case GetMiles:
+                                Log.d("getMiles", "response: " + response);
 
 
-                        break;
+                                try {
 
-                    case GetMiles:
-                        Log.d("getMiles", "response: " + response);
-
-
-                        try {
-
-                            if(isRefreshBtnClicked){
-                                global.EldScreenToast(loadingSpinEldIV, ConstantsEnum.UPDATED, getResources().getColor(R.color.colorPrimary));
-                            }
-                            if (!obj.isNull("Data")) {
-                                JSONObject dataObj = new JSONObject(obj.getString("Data"));
-                                String Miles = dataObj.getString("Miles");
-                                String StartOdometer = dataObj.getString("StartOdometer");
-                                String EndOdometer = dataObj.getString("EndOdometer");
+                                    if (isRefreshBtnClicked) {
+                                        global.EldScreenToast(loadingSpinEldIV, ConstantsEnum.UPDATED, getResources().getColor(R.color.colorPrimary));
+                                    }
+                                    if (!obj.isNull("Data")) {
+                                        JSONObject dataObj = new JSONObject(obj.getString("Data"));
+                                        String Miles = dataObj.getString("Miles");
+                                        String StartOdometer = dataObj.getString("StartOdometer");
+                                        String EndOdometer = dataObj.getString("EndOdometer");
 
 
-                                if(!StartOdometer.equals("0")) {
-                                    String distance = "(" + StartOdometer + " - " + EndOdometer + ") = <b>" + Miles + " Miles </b>";
-                                    hosDistanceTV.setText(Html.fromHtml(distance));
+                                        if (!StartOdometer.equals("0")) {
+                                            String distance = "(" + StartOdometer + " - " + EndOdometer + ") = <b>" + Miles + " Miles </b>";
+                                            hosDistanceTV.setText(Html.fromHtml(distance));
 
-                                    // saved day start odometer locally to calculate distance
-                                    sharedPref.setDayStartOdometer(StartOdometer, global.GetCurrentDateTime(), getActivity());
+                                            // saved day start odometer locally to calculate distance
+                                            sharedPref.setDayStartOdometer(StartOdometer, global.GetCurrentDateTime(), getActivity());
 
+                                        }
+
+                                    }
+                                } catch (Exception e) {
+                                    //  hosDistanceTV.setText(Html.fromHtml(" <b>" + "-- </b>" ));
+                                    e.printStackTrace();
                                 }
-
-                            }
-                        }catch (Exception e){
-                          //  hosDistanceTV.setText(Html.fromHtml(" <b>" + "-- </b>" ));
-                            e.printStackTrace();
+                                break;
                         }
-                        break;
-                }
 
-            }else{
-                if(flag == GetMiles){
-                    if(isRefreshBtnClicked){
-                        if(getActivity() != null) {
-                            global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
-                                    getActivity().getResources().getColor(R.color.colorSleeper));
+                    } else {
+                        if (flag == GetMiles) {
+                            if (isRefreshBtnClicked) {
+                                global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
+                                        getActivity().getResources().getColor(R.color.colorSleeper));
+                            }
                         }
                     }
                 }
+            }catch (Exception e){
+                e.printStackTrace();
             }
-
             isRefreshBtnClicked = false;
         }
     };
@@ -1143,17 +1147,15 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         public void getError(VolleyError error, int flag) {
             Log.d("getMiles", "error: " + error);
             try {
-
-                if (flag == GetMiles) {
-                    if (isRefreshBtnClicked) {
-                        if (getActivity() != null) {
+                if (getActivity() != null) {
+                    if (flag == GetMiles) {
+                        if (isRefreshBtnClicked) {
                             global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
                                     getResources().getColor(R.color.colorSleeper));
                         }
                     }
+                    loadingSpinEldIV.stopAnimation();
                 }
-                loadingSpinEldIV.stopAnimation();
-
             }catch (Exception e){
                 e.printStackTrace();
             }

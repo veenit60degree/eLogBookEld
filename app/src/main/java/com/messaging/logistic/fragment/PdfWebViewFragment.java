@@ -1,22 +1,15 @@
 package com.messaging.logistic.fragment;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+
 import com.constants.Constants;
-/*import com.github.barteksc.pdfviewer.PDFView;
-import com.github.barteksc.pdfviewer.listener.OnErrorListener;
-import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
-import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
-import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
-import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;*/
 import com.messaging.logistic.R;
-//import com.shockwave.pdfium.PdfDocument;
 
 
 public class PdfWebViewFragment extends Fragment { //implements OnPageChangeListener, OnLoadCompleteListener,

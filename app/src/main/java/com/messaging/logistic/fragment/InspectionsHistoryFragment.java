@@ -147,7 +147,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         if(getBundle != null) {
             InspectionDateTime = getBundle.getString("date");
             inspectionType = getBundle.getString("inspection_type");
-            getBundle.clear();
+           // getBundle.clear();
         }
 
         dateActionBarTV.setText(InspectionDateTime);
@@ -299,9 +299,9 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out, android.R.anim.fade_in,android.R.anim.fade_out);
 
         if (inspectionType.equals("pti")) {
-            fragmentTran.replace(R.id.job_fragment, savedInspectionFragment);
+            fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
         }else{
-            fragmentTran.replace(R.id.job_fragment, ctPatDetailInspectionFragment);
+            fragmentTran.add(R.id.job_fragment, ctPatDetailInspectionFragment);
         }
 
         fragmentTran.addToBackStack(null);

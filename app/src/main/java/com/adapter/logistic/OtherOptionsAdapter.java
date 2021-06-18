@@ -136,8 +136,6 @@ public class OtherOptionsAdapter extends BaseAdapter {
                             sharedPref.isLocMalfunctionOccur(context) || sharedPref.isEngSyncMalfunction(context) ||
                             sharedPref.isEngSyncDiagnstc(context) ) {
                         makeViewHighlighed(imgView, titleView, errorView);
-                    }else{
-
                     }
                 }else{
                     if (sharedPref.isMalfunctionOccurCo(context) || sharedPref.isDiagnosticOccurCo(context) ||

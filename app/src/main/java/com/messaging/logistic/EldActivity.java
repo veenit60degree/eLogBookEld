@@ -32,7 +32,7 @@ public class EldActivity extends FragmentActivity  {
     String MainDriverName = "", MainDriverPass = "", CoDriverName = "" , CoDriverPass = "";
     boolean isOnStart = false;
     SharedPref sharedPref;
-
+    Globally globally;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,7 @@ public class EldActivity extends FragmentActivity  {
         setContentView(R.layout.frame_layout);
 
         sharedPref = new SharedPref();
+        globally = new Globally();
 
         DOTButton = (TextView)findViewById(R.id.tripTitleTV);
 
@@ -140,13 +141,13 @@ public class EldActivity extends FragmentActivity  {
                     if (Password.length() > 0) {
                         if (UserType.equals("main_driver")) {
                             if (userName.equals(MainDriverName) && Password.equals(MainDriverPass)) {
-                                Globally.hideKeyboardView(getApplicationContext(), PasswordEditText);
+                                globally.hideKeyboardView(getApplicationContext(), PasswordEditText);
 
                                 if (loginDialog != null)
                                     loginDialog.dismiss();
 
-                                Globally.hideKeyboardView(getApplicationContext(), PasswordEditText);
-                                Globally.EldScreenToast(DOTButton, "Password confirmed", getResources().getColor(R.color.color_eld_bg));
+                                globally.hideKeyboardView(getApplicationContext(), PasswordEditText);
+                                globally.EldScreenToast(DOTButton, "Password confirmed", getResources().getColor(R.color.color_eld_bg));
 
                                 if (sharedPref.IsDOT(getApplicationContext())) {
                                     isOnStart = true;
@@ -163,11 +164,11 @@ public class EldActivity extends FragmentActivity  {
                                 isOnStart = false;
 
                             } else {
-                                Globally.EldScreenToast(UsernameEditText, "Incorrect password", getResources().getColor(R.color.colorSleeper));
+                                globally.EldScreenToast(UsernameEditText, "Incorrect password", getResources().getColor(R.color.colorSleeper));
                             }
                         } else {
                             if (userName.equals(CoDriverName) && Password.equals(CoDriverPass)) {
-                                Globally.hideKeyboardView(getApplicationContext(), PasswordEditText);
+                                globally.hideKeyboardView(getApplicationContext(), PasswordEditText);
 
                                 if (loginDialog != null)
                                     loginDialog.dismiss();
@@ -175,7 +176,7 @@ public class EldActivity extends FragmentActivity  {
                                 if (sharedPref.IsDOT(getApplicationContext())) {
                                     isOnStart = true;
                                 }
-                                Globally.EldScreenToast(DOTButton, "Password confirmed", getResources().getColor(R.color.color_eld_bg));
+                                globally.EldScreenToast(DOTButton, "Password confirmed", getResources().getColor(R.color.color_eld_bg));
                                 sharedPref.SetDOTStatus(false, getApplicationContext());
 
                                 if (isOnStart) {
@@ -186,11 +187,11 @@ public class EldActivity extends FragmentActivity  {
                                 isOnStart = false;
 
                             } else {
-                                Globally.EldScreenToast(UsernameEditText, "Incorrect password", getResources().getColor(R.color.colorSleeper));
+                                globally.EldScreenToast(UsernameEditText, "Incorrect password", getResources().getColor(R.color.colorSleeper));
                             }
                         }
                     } else {
-                        Globally.EldScreenToast(UsernameEditText, "Please enter password", getResources().getColor(R.color.colorSleeper));
+                        globally.EldScreenToast(UsernameEditText, "Please enter password", getResources().getColor(R.color.colorSleeper));
                     }
                 }
             }catch (Exception e){
@@ -234,7 +235,7 @@ public class EldActivity extends FragmentActivity  {
                         finish();
                     } else {
                         ExitStrategy.startExitDelay(2000);
-                        Globally.EldScreenToast(EldFragment.refreshLogBtn/**/, getString(R.string.exit_msg), getResources().getColor(R.color.colorPrimary));
+                        globally.EldScreenToast(EldFragment.refreshLogBtn, getString(R.string.exit_msg), getResources().getColor(R.color.colorPrimary));
                     }
 
 

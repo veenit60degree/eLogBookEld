@@ -62,7 +62,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     String DriverId = "", DeviceId = "", DriverName = "", VIN = "", CurrentDate = "", Country = "";
     Globally global;
     Constants constants;
-    final int UnidentifiedRecordFlag  = 101;
+    final int GetUnidentifiedRecordFlag  = 101;
     UnIdentifiedListingAdapter listingAdapter;
     ArrayList<String> recordSelectedList = new ArrayList<>();
     List<UnIdentifiedRecordModel>  unIdentifiedRecordList = new ArrayList<>();
@@ -182,8 +182,8 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
         notifyAdapter(false, false);
 
-        if(Globally.isConnected(getContext())) {
-            GetUnidentifiedRecords( DriverId, DeviceId, CurrentDate, VIN, UnidentifiedRecordFlag);
+        if(global.isConnected(getContext())) {
+            GetUnidentifiedRecords( DriverId, DeviceId, CurrentDate, VIN, GetUnidentifiedRecordFlag);
         }else{
             global.EldScreenToast(dateActionBarTV, global.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
         }
@@ -200,7 +200,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
             case R.id.rightMenuBtn:
 
-                GetUnidentifiedRecords( DriverId, DeviceId, CurrentDate, VIN, UnidentifiedRecordFlag);
+                GetUnidentifiedRecords( DriverId, DeviceId, CurrentDate, VIN, GetUnidentifiedRecordFlag);
 
                 break;
 
@@ -317,31 +317,32 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                         switch (flag) {
 
                             case ClaimRecords:
-                                Globally.EldScreenToast(UnidentifiedFragment.rightMenuBtn,
+                                global.EldScreenToast(rightMenuBtn,
                                         getResources().getString(R.string.claim_successfully),
                                         getResources().getColor(R.color.color_eld_theme));
+                                UnidentifiedActivity.isUnIdentifiedRecordClaimed = true;
 
                                 break;
 
                             case RejectRecords:
-                                Globally.EldScreenToast(UnidentifiedFragment.rightMenuBtn,
+                                global.EldScreenToast(rightMenuBtn,
                                         getResources().getString(R.string.reject_successfully),
                                         getResources().getColor(R.color.color_eld_theme));
                                 break;
 
                             case RejectCompanyRecords:
-                                Globally.EldScreenToast(UnidentifiedFragment.rightMenuBtn,
+                                global.EldScreenToast(rightMenuBtn,
                                         getResources().getString(R.string.reject_successfully),
                                         getResources().getColor(R.color.color_eld_theme));
                                 break;
 
                         }
 
-                        GetUnidentifiedRecords( DriverId, DeviceId, CurrentDate, VIN, UnidentifiedRecordFlag);
+                        GetUnidentifiedRecords( DriverId, DeviceId, CurrentDate, VIN, GetUnidentifiedRecordFlag);
 
                     }else{
                         // {"Status":false,"Message":"Failed..","Data":null}
-                        Globally.EldScreenToast(UnidentifiedFragment.rightMenuBtn, obj.getString("Message"),
+                        global.EldScreenToast(rightMenuBtn, obj.getString("Message"),
                                 getResources().getColor(R.color.colorVoilation));
 
                     }
@@ -359,7 +360,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                     progressDialog.dismiss();
 
 
-                Globally.EldScreenToast(UnidentifiedFragment.rightMenuBtn, error,
+                global.EldScreenToast(rightMenuBtn, error,
                         getResources().getColor(R.color.colorVoilation));
             }
 
@@ -413,9 +414,8 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
                     switch (flag) {
 
-                        case UnidentifiedRecordFlag:
+                        case GetUnidentifiedRecordFlag:
 
-                            UnidentifiedActivity.isUnIdentifiedRecordClaimed = true;
                             JSONObject dataObj = new JSONObject(obj.getString(ConstantsKeys.Data));
                             JSONArray unidentifiedArray = new JSONArray(dataObj.getString(ConstantsKeys.Unidentified));
                             JSONArray companyAssignedArray = new JSONArray(dataObj.getString(ConstantsKeys.CompanyAssigned));
@@ -513,9 +513,9 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
             Log.d("error", ">>error: " + error);
             switch (flag) {
 
-                case UnidentifiedRecordFlag:
+                case GetUnidentifiedRecordFlag:
 
-                    Globally.EldScreenToast(rightMenuBtn, "Error!! Check your internet connection", getResources().getColor(R.color.colorVoilation));
+                    global.EldScreenToast(rightMenuBtn, "Error!! Check your internet connection", getResources().getColor(R.color.colorVoilation));
 
                     break;
 

@@ -27,13 +27,6 @@ import com.constants.VolleyRequest;
 import com.google.android.material.textfield.TextInputLayout;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.fragment.UnidentifiedFragment;
-import com.simplify.ink.InkView;
-
-import org.json.JSONObject;
-
-import java.util.HashMap;
 import java.util.Map;
 
 public class UnidentifiedDialog extends Dialog {
@@ -121,17 +114,14 @@ public class UnidentifiedDialog extends Dialog {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId == R.id.drivingRadBtnn) {
-                    //StatusId = Globally.DRIVING;
                     drivingRadBtn.setTextColor(getContext().getResources().getColor(R.color.hos_location));
                     onDutyRadBtn.setTextColor(getContext().getResources().getColor(R.color.black_semi));
                     personalRadBtn.setTextColor(getContext().getResources().getColor(R.color.black_semi));
                 }else if(checkedId == R.id.onDutyRadBtnn){
-                    //StatusId = Globally.ON_DUTY;
                     drivingRadBtn.setTextColor(getContext().getResources().getColor(R.color.black_semi));
                     onDutyRadBtn.setTextColor(getContext().getResources().getColor(R.color.hos_location));
                     personalRadBtn.setTextColor(getContext().getResources().getColor(R.color.black_semi));
                 }else{
-                    // StatusId = Globally.OFF_DUTY;
                     drivingRadBtn.setTextColor(getContext().getResources().getColor(R.color.black_semi));
                     onDutyRadBtn.setTextColor(getContext().getResources().getColor(R.color.black_semi));
                     personalRadBtn.setTextColor(getContext().getResources().getColor(R.color.hos_location));
@@ -196,7 +186,7 @@ public class UnidentifiedDialog extends Dialog {
                     Globally.EldScreenToast(remarksEditText, "Enter reason first", getContext().getResources().getColor(R.color.colorVoilation));
                 }
             }else{
-                Globally.EldScreenToast(v, Globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorVoilation));
+                Globally.EldScreenToast(btnLoadingJob, Globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorVoilation));
             }
 
 

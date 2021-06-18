@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,7 +83,8 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     BackgroundLocationService bleService;
     //BluetoothGattCharacteristic characteristic;
     ProgressBar loaderProgress;
-
+    ScrollView obdLayScrollView;
+    Globally globally;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,7 +116,9 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         tcpClient       = new TcpClient(obdResponseHandler);
         wifiConfig      = new WiFiConfig();
         constants       = new Constants();
+        globally        = new Globally();
 
+        obdLayScrollView= (ScrollView)v.findViewById(R.id.obdLayScrollView);
         loaderProgress  = (ProgressBar)v.findViewById(R.id.loaderProgress);
         bleObdTxtView   = (TextView) v.findViewById(R.id.bleObdTxtView);
         odometerTxtView = (TextView) v.findViewById(R.id.odometerTxtView);
@@ -181,24 +185,22 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
            // bleDevice   = intent.getParcelableExtra("BleDevice");
             //characteristic= intent.getParcelableExtra("characteristic");
 
-            obdDataTxtView.setText(Html.fromHtml(data));
-
+            try {
+                int scrollX = obdLayScrollView.getScrollX();
+                int scrollY = obdLayScrollView.getScrollY();
+                obdDataTxtView.setText(Html.fromHtml(data));
+                if (scrollY > 10) {
+                    obdLayScrollView.scrollTo(scrollX, scrollY);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             if(SharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED){
                 bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
             }else{
                 bleObdTxtView.setText(getString(R.string.scanning) + " (Ble OBD)");
             }
 
-            /*if(data.length() > 20){
-                if(data.contains("Exception")){
-                    bleObdTxtView.setText(getString(R.string.start_scan) + " - Ble OBD");
-                }else {
-                    bleObdTxtView.setText(getString(R.string.connected) + " - Ble OBD");
-                }
-            }else{
-
-
-            }*/
         }
     };
 
@@ -233,10 +235,10 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                     if (constants.CheckGpsStatusToCheckMalfunction(getActivity())) {
                         scanBtnClick();
                     } else {
-                        Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
+                        globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
-                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.chanage_obd_pref_sett_ble), getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.chanage_obd_pref_sett_ble), getResources().getColor(R.color.colorVoilation));
                 }
                 break;
 
@@ -249,13 +251,10 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 tcpClient.sendMessage(field1.getText().toString().trim());
                 obdDataTxtView.setText("");
                /* }else{
-                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                 }*/
 
                 break;
-
-
-
 
 
 
@@ -267,7 +266,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                         }
                     }
                 }else{
-                    Globally.EldScreenToast(obdDataTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                 }
                 break;
 
@@ -289,7 +288,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                     tcpClient.sendMessage("123456,can");
                     obdDataTxtView.setText("");
                 }else{
-                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                 }
 
 
@@ -314,7 +313,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                     tcpClient.sendMessage("123456,gps");
                     obdDataTxtView.setText("");
                 }else{
-                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                 }
                 break;
 
@@ -327,7 +326,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                     tcpClient.sendMessage("123456,cid");
                     obdDataTxtView.setText("");
                 }else{
-                    Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                 }
 
                 break;
@@ -364,7 +363,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                                 tcpClient.sendMessage("123456,rst");
                                 obdDataTxtView.setText("");
                             }else{
-                                Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                                globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                             }
                         }
                     });
@@ -464,7 +463,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
                     }else if(clickBtnFlag == CanFlag){
                         if(message.contains("CAN:UNCONNECTED")){
-                            Globally.EldScreenToast(odometerTxtView, noCanData, getResources().getColor(R.color.colorVoilation));
+                            globally.EldScreenToast(rightMenuBtn, noCanData, getResources().getColor(R.color.colorVoilation));
                             obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlRedFont + "Odometer data not available" + closeFont) );
 
                         }else {
@@ -497,7 +496,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                         }
                     }else if(clickBtnFlag == RestartObdFlag){
                         if(message.contains("RST")){
-                            Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_restarted), getResources().getColor(R.color.colorDriving));
+                            globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_restarted), getResources().getColor(R.color.colorDriving));
                             obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlBlueFont + getResources().getString(R.string.obd_restarted) + closeFont));
                         }
                     }else if(clickBtnFlag == newCmd1){
@@ -507,12 +506,12 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                     //*TS01,866758047725979,070204100120,RST#
                     if(clickBtnFlag == RestartObdFlag){
                         if(message.equals(noObd)){
-                            Globally.EldScreenToast(odometerTxtView, noObd, getResources().getColor(R.color.colorVoilation));
+                            globally.EldScreenToast(rightMenuBtn, noObd, getResources().getColor(R.color.colorVoilation));
                         }else {
-                            Globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_restarted), getResources().getColor(R.color.colorDriving));
+                            globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_restarted), getResources().getColor(R.color.colorDriving));
                         }
                     }else {
-                        Globally.EldScreenToast(odometerTxtView, noObd, getResources().getColor(R.color.colorVoilation));
+                        globally.EldScreenToast(rightMenuBtn, noObd, getResources().getColor(R.color.colorVoilation));
                     }
                 }
 

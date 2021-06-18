@@ -132,7 +132,7 @@ public class SignRecordDialog extends Dialog {
         setContentView(R.layout.sign_record_dialog);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        if(Globally.isTablet(context)){
+        if(globally.isTablet(context)){
             getWindow().setLayout(constants.intToPixel(context, 730), ViewGroup.LayoutParams.WRAP_CONTENT);
         }else{
             getWindow().setLayout(constants.intToPixel(context, 550), ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -148,8 +148,8 @@ public class SignRecordDialog extends Dialog {
         recapRecordInvisibleTv  = (TextView)findViewById(R.id.recapRecordInvisibleTv);
 
         if(recapRecordsList.size() > 0) {
-            String fromDate = Globally.dateConversionMonthNameWithDay(recapRecordsList.get(0).getDate().toString());
-            String toDate   = Globally.dateConversionMonthNameWithDay(recapRecordsList.get(recapRecordsList.size()-1).getDate().toString());
+            String fromDate = globally.dateConversionMonthNameWithDay(recapRecordsList.get(0).getDate().toString());
+            String toDate   = globally.dateConversionMonthNameWithDay(recapRecordsList.get(recapRecordsList.size()-1).getDate().toString());
 
             fromToDateTv.setText(fromDate + " - " + toDate);
         }
@@ -206,7 +206,7 @@ public class SignRecordDialog extends Dialog {
                     certifyConfirmationDialog.show();
 
                 }else{
-                    Globally.EldScreenToast(certifyRecordBtn, context.getResources().getString(R.string.no_date_for_certify),
+                    globally.EldScreenToast(certifyRecordBtn, context.getResources().getString(R.string.no_date_for_certify),
                             context.getResources().getColor(R.color.colorVoilation));
                 }
             }
@@ -299,7 +299,7 @@ public class SignRecordDialog extends Dialog {
                         SaveDriverSignArray(false);
 
                     } else {
-                        Globally.EldScreenToast(TabAct.sliderLay, "Error", context.getResources().getColor(R.color.colorVoilation) );
+                        globally.EldScreenToast(TabAct.sliderLay, "Error", context.getResources().getColor(R.color.colorVoilation) );
                         imagePath = "";
                     }
 
@@ -323,12 +323,12 @@ public class SignRecordDialog extends Dialog {
             saveByteSignLocally(lastSignature, true);
             LogSignImageInByte = lastSignature;
 
-            if(Globally.isConnected(context) ){
+            if(globally.isConnected(context) ){
                 progressDialog.show();
                 saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec,
                         true, false, DriverType, 101);
             }else{
-                Globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
+                globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
 
                 // refresh view with button click
                 DriverLogDetailFragment.invisibleRfreshBtn.performClick();
@@ -342,14 +342,14 @@ public class SignRecordDialog extends Dialog {
             if (f.exists() ) {
 
                 // Convert image file into bytes
-                LogSignImageInByte = Globally.ConvertImageToByteAsString(imagePath);
+                LogSignImageInByte = globally.ConvertImageToByteAsString(imagePath);
                 saveByteSignLocally(LogSignImageInByte, false);
 
-                if(Globally.isConnected(context) ){
+                if(globally.isConnected(context) ){
                     progressDialog.show();
                     saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec, true, false, DriverType, 101);
                 }else{
-                    Globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
+                    globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
 
                     // refresh view with button click
                     DriverLogDetailFragment.invisibleRfreshBtn.performClick();
@@ -359,7 +359,7 @@ public class SignRecordDialog extends Dialog {
                 }
 
             }else{
-                Globally.EldScreenToast(certifyRecordBtn , context.getResources().getString(R.string.sign_not_valid), context.getResources().getColor(R.color.colorVoilation));
+                globally.EldScreenToast(certifyRecordBtn , context.getResources().getString(R.string.sign_not_valid), context.getResources().getColor(R.color.colorVoilation));
             }
         }
 
@@ -372,13 +372,13 @@ public class SignRecordDialog extends Dialog {
         for(int i = 0 ; i < selectedDateList.size() ; i++){
             JSONObject CertifyLogObj;
             String dateStr = selectedDateList.get(i);
-            boolean isReCertifyRequired = constants.isReCertifyRequired(getContext(), null, Globally.ConvertDateFormat(dateStr));
+            boolean isReCertifyRequired = constants.isReCertifyRequired(getContext(), null, globally.ConvertDateFormat(dateStr));
             String locationType = sharedPref.getLocMalfunctionType(context);
             if(i == 0) {
-                CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, Globally.PROJECT_ID, dateStr,
+                CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, globally.PROJECT_ID, dateStr,
                         SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, locationType);
             }else{
-                CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, Globally.PROJECT_ID, dateStr,
+                CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, globally.PROJECT_ID, dateStr,
                         SignImageInBytes, true, isReCertifyRequired, CompanyId, locationType);
             }
             CertifyLogArray.put(CertifyLogObj);
@@ -426,7 +426,7 @@ public class SignRecordDialog extends Dialog {
         if(recordSelectedList.size() > 0) {
             for (int i = 0; i < recordSelectedList.size(); i++) {
                 if (recordSelectedList.get(i).equals("selected")) {
-                    String date = Globally.ConvertDateFormatMMddyyyy(recapRecordsList.get(i).getDate().toString());
+                    String date = globally.ConvertDateFormatMMddyyyy(recapRecordsList.get(i).getDate().toString());
                     selectedDateList.add(date);
                 }
             }
@@ -460,7 +460,7 @@ public class SignRecordDialog extends Dialog {
                     CertifyLogArray = new JSONArray();
                     certifyLogMethod.CertifyLogHelper(Integer.valueOf(DriverId), dbHelper, CertifyLogArray );
 
-                    Globally.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, context.getString(R.string.has_been_certified),
+                    globally.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, context.getString(R.string.has_been_certified),
                             context.getResources().getColor(R.color.colorPrimary));
 
                     // refresh view with button click
@@ -469,7 +469,7 @@ public class SignRecordDialog extends Dialog {
                     dismiss();
 
                 }else{
-                    Globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved),
+                    globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved),
                             context.getResources().getColor(R.color.colorSleeper) );
 
                     // refresh view with button click
@@ -496,7 +496,7 @@ public class SignRecordDialog extends Dialog {
 
                     dismissDialog();
 
-                    Globally.EldToastWithDuration(TabAct.sliderLay, context.getResources().getString(R.string.certify_log_offline_saved),
+                    globally.EldToastWithDuration(TabAct.sliderLay, context.getResources().getString(R.string.certify_log_offline_saved),
                                 context.getResources().getColor(R.color.colorSleeper));
 
                 }catch (Exception e){

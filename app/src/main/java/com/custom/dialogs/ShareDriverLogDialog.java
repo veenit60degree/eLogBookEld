@@ -79,7 +79,6 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     String DRIVER_ID;
     String DeviceId;
     String CurrentCycleId   = "";
-    String LATITUDE  = "", LONGITUDE = "";
     Date StartDate, EndDate;
     DateFormat format;
     ImageView countryFlagImgView;
@@ -112,7 +111,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     ScrollView sendLogScrollView;
     VolleyRequest GetAddFromLatLngRequest;
     Constants constant;
-
+    Globally globally;
 
     public ShareDriverLogDialog(Context context, FragmentActivity activity, String dRIVER_ID,
                                 String deviceId, String currentCycleId, boolean isAOBRD,
@@ -145,12 +144,10 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         EndDate = new Date();
         StartDate = new Date();
         constant  = new Constants();
+        globally  = new Globally();
 
         GetAddFromLatLngRequest = new VolleyRequest(getContext());
 
-
-        LATITUDE    = Globally.LATITUDE;
-        LONGITUDE   = Globally.LONGITUDE;
 
         checkboxEmail       = (CheckBox)findViewById(R.id.checkboxEmail);
         checkboxService     = (CheckBox)findViewById(R.id.checkboxService);
@@ -196,7 +193,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         locLogAutoComplete.setThreshold(3);
         inspectorCommentLay.setVisibility(View.VISIBLE);
 
-        if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
+        if (CurrentCycleId.equals(globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(globally.USA_WORKING_7_DAYS) ) {
             MaxDays = UsaMaxDays;
         }else{
             MaxDays = CanMaxDays;
@@ -235,7 +232,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                             countryFlagImgView.setImageResource(R.drawable.no_flag);
                             usaView();
                             selectedCountry = "Select";
-                            fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.eld_govt_logs));
+                           // fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.eld_govt_logs));
                             break;
 
                         case 1:
@@ -295,8 +292,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
             }
         }else{
-            if(Globally.isConnected(getContext())) {
-                  GetAddFromLatLng(LATITUDE, LONGITUDE);
+            if(globally.isConnected(getContext())) {
+                  GetAddFromLatLng(Globally.LATITUDE, Globally.LONGITUDE);
             }
         }
 
@@ -317,11 +314,11 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
 
     void setMinMaxDateOnView(int MaxDays, boolean isOnCreate){
-        String currentDate = Globally.GetCurrentDeviceDate();
-        String currentDateStr = Globally.ConvertDateFormat(currentDate);
-        DateTime selectedDateTime = new DateTime(Globally.getDateTimeObj(currentDateStr, false) );
+        String currentDate = globally.GetCurrentDeviceDate();
+        String currentDateStr = globally.ConvertDateFormat(currentDate);
+        DateTime selectedDateTime = new DateTime(globally.getDateTimeObj(currentDateStr, false) );
         selectedDateTime = selectedDateTime.minusDays(MaxDays);
-        String fromDate = Globally.ConvertDateFormatMMddyyyy(selectedDateTime.toString());
+        String fromDate = globally.ConvertDateFormatMMddyyyy(selectedDateTime.toString());
 
         try {
             startDateTv.setText(fromDate);
@@ -337,7 +334,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     }
 
     void canView(){
-        fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.eld_govt_logs));
+       // fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.eld_govt_logs));
         dataTransTxtView.setText(getContext().getResources().getString(R.string.Data_transmission));
         canEmailEditText.setVisibility(View.VISIBLE);
         checkboxService.setVisibility(View.GONE);
@@ -351,7 +348,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     }
 
     void usaView(){
-        fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.fmcsaLogs));
+       // fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.fmcsaLogs));
         dataTransTxtView.setText(getContext().getResources().getString(R.string.DataTransmissionThrough));
         canEmailEditText.setVisibility(View.GONE);
         checkboxService.setVisibility(View.VISIBLE);
@@ -435,16 +432,16 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
                 if (selectedCountry.equals("Select")) {
                     sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
-                    Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.select_country), getContext().getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.select_country), getContext().getResources().getColor(R.color.colorVoilation));
                 } else {
-                    if (Globally.isConnected(getContext())) {
+                    if (globally.isConnected(getContext())) {
                         if (emailLogLay.getVisibility() == View.VISIBLE) {
                             if (isValidEmailPattern(amountEditText)) {
                                 CheckValdation0(MailCheck, ServiceCheck);
                             } else {
                                 sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
                                 amountEditText.requestFocus();
-                                Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
+                                globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
                             }
                         } else {
                             if (selectedCountry.equals("CAN")) {
@@ -454,24 +451,24 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                                 } else {
                                     sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
                                     canEmailEditText.requestFocus();
-                                    Globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
+                                    globally.EldScreenToast(shareDriverLogBtn, getContext().getResources().getString(R.string.enter_valid_email), getContext().getResources().getColor(R.color.colorVoilation));
                                 }
                             } else {
                                 if (checkboxEmail.isChecked() || checkboxService.isChecked()) {
                                     CheckValdation0(MailCheck, ServiceCheck);
                                 } else {
                                     sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
-                                    Globally.EldScreenToast(shareDriverLogBtn, "Please select Web Service or Email", getContext().getResources().getColor(R.color.colorVoilation));
+                                    globally.EldScreenToast(shareDriverLogBtn, "Please select Web Service or Email", getContext().getResources().getColor(R.color.colorVoilation));
                                 }
                             }
                         }
 
                     } else {
-                        Globally.EldScreenToast(shareDriverLogBtn, Globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorVoilation));
+                        globally.EldScreenToast(shareDriverLogBtn, globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }
             }else{
-                Globally.EldScreenToast(shareDriverLogBtn,  getContext().getResources().getString(R.string.stop_vehicle_alert),
+                globally.EldScreenToast(shareDriverLogBtn,  getContext().getResources().getString(R.string.stop_vehicle_alert),
                        getContext().getResources().getColor(R.color.colorVoilation));
             }
         }
@@ -485,7 +482,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             }else{
                 sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
                 cityShareEditText.requestFocus();
-                Globally.EldScreenToast(shareDriverLogBtn, "Enter city name.", getContext().getResources().getColor(R.color.colorVoilation));
+                globally.EldScreenToast(shareDriverLogBtn, "Enter city name.", getContext().getResources().getColor(R.color.colorVoilation));
             }
         }else{
             DriverViewValidations(MailCheck, ServiceCheck);
@@ -605,7 +602,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 cycleId = "3";
             }
 
-            dateDialog = new DatePickerDialog(getContext(), cycleId + ",sendLog", Globally.GetCurrentDeviceDate(), new DateListener());
+            dateDialog = new DatePickerDialog(getContext(), cycleId + ",sendLog", globally.GetCurrentDeviceDate(), new DateListener());
             dateDialog.show();
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();
@@ -656,20 +653,20 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                     if(insComments.length() <= 60) {
                         SendDriverLog(DRIVER_ID, DeviceId, startDateTv.getText().toString(),
                                 endDateTv.getText().toString(), email, insComments,
-                                MailCheck, ServiceCheck, LATITUDE, LONGITUDE,
+                                MailCheck, ServiceCheck, Globally.LATITUDE, Globally.LONGITUDE,
                                 SharedPref.getTimeZone(getContext()));
                     }else {
-                        Globally.EldScreenToast(shareDriverLogBtn, "Allows 60 characters only", getContext().getResources().getColor(R.color.colorVoilation));
+                        globally.EldScreenToast(shareDriverLogBtn, "Allows 60 characters only", getContext().getResources().getColor(R.color.colorVoilation));
                         inspCmntEditTxt.setError("Allows 60 characters only");
                     }
                 } else {
-                    Globally.EldScreenToast(shareDriverLogBtn, "(To Date) should be greater then (From Date).", getContext().getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(shareDriverLogBtn, "(To Date) should be greater then (From Date).", getContext().getResources().getColor(R.color.colorVoilation));
                 }
             } else {
-                Globally.EldScreenToast(shareDriverLogBtn, "Select (To Date) first.", getContext().getResources().getColor(R.color.colorVoilation));
+                globally.EldScreenToast(shareDriverLogBtn, "Select (To Date) first.", getContext().getResources().getColor(R.color.colorVoilation));
             }
         } else {
-            Globally.EldScreenToast(shareDriverLogBtn, "Select (From Date) first.", getContext().getResources().getColor(R.color.colorVoilation));
+            globally.EldScreenToast(shareDriverLogBtn, "Select (From Date) first.", getContext().getResources().getColor(R.color.colorVoilation));
         }
     }
 
@@ -699,7 +696,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                         String Location = dataJObject.getString(ConstantsKeys.Location);
 
                         if (Country.contains("China") || Country.contains("Russia") || Country.contains("null")) {
-                            Location = LATITUDE + ","+LONGITUDE;
+                            Location = Globally.LATITUDE + "," + Globally.LONGITUDE;
                         } else {
                             if (!Location.contains(Country)) {
                                 Location = dataJObject.getString(ConstantsKeys.Location) + ", " + Country;
@@ -786,7 +783,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                                 dismiss();
 
                             }else{
-                                Globally.EldScreenToast(shareDriverLogBtn, message, getContext().getResources().getColor(R.color.colorVoilation));
+                                globally.EldScreenToast(shareDriverLogBtn, message, getContext().getResources().getColor(R.color.colorVoilation));
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -799,7 +796,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                     public void onErrorResponse(VolleyError error) {
                         Log.d("error ", "---error: " + error);
                        // sendLogProgressBar.setVisibility(View.GONE);
-                        Globally.EldScreenToast(shareDriverLogBtn, "Error", getContext().getResources().getColor(R.color.colorVoilation));
+                        globally.EldScreenToast(shareDriverLogBtn, "Error", getContext().getResources().getColor(R.color.colorVoilation));
                         pDialog.dismiss();
                     }
                 }

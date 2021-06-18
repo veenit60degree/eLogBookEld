@@ -1,6 +1,8 @@
 package com.messaging.logistic.fragment;
 
 import android.animation.ObjectAnimator;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -154,6 +156,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
+
         if (rootView != null) {
             ViewGroup parent = (ViewGroup) rootView.getParent();
             if (parent != null)
@@ -259,16 +263,6 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         viewInspectionBtn.setText(getResources().getString(R.string.view_inspections));
         viewInspectionBtn.setVisibility(View.VISIBLE);
 
-        RelativeLayout canGraphLayout = (RelativeLayout) view.findViewById(R.id.canGraphLayout);
-        ViewGroup.LayoutParams params = canGraphLayout.getLayoutParams();
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        if(global.isTablet(getActivity())){
-            params.height = constants.intToPixel(getActivity(), 170);
-        }else{
-            params.height = constants.intToPixel(getActivity(), 140);
-        }
-        canGraphLayout.setLayoutParams(params);
-
         getBundleData();
         initilizeWebView();
         ReloadWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
@@ -288,8 +282,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             GetDriverDotDetails(DriverId, LogDate);
 
         }else{
-            Globally.EldScreenToast(dateRodsTV, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
-            //webViewErrorDisplay();
+            Globally.EldScreenToast(getActivity().findViewById(android.R.id.content), global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
         }
 
 
@@ -349,7 +342,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 CurrentCycleId = getBundle.getString("cycle");
                 SelectedDayOfMonth = getBundle.getInt("day_of_month");
                 CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
-                getBundle.clear();
+              //  getBundle.clear();
             }
             CurrentDate = global.GetCurrentDeviceDate();
 
@@ -359,7 +352,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
                 CanMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, true);
 
-                if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
+                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
                     MaxDays = UsaMaxDays;
                 } else {
                     MaxDays = CanMaxDays;
@@ -370,7 +363,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 e.printStackTrace();
             }
 
-            EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
+            if(LogDate.length() > 1) {
+                EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
+           }
 
             try {
                 StatePrefManager statePrefManager  = new StatePrefManager();
@@ -451,7 +446,27 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.canDotModeTxtVw:
-                moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName);
+                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
+                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
+                }else{
+                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
+                }
+
+                String obdCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+                if(obdCycleId.equals(global.USA_WORKING_6_DAYS) || obdCycleId.equals(global.USA_WORKING_7_DAYS)){
+                    if(getParentFragmentManager().getBackStackEntryCount() > 1){
+                        getParentFragmentManager().popBackStack();
+                    }else{
+                        moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName);
+                    }
+                }else{
+                    moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName);
+                }
+
+                break;
+
+            case R.id.canDotModeImgVw:
+                canDotModeTxtVw.performClick();
                 break;
 
             case R.id.scrollUpBtn:
@@ -479,22 +494,14 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
             break;
 
-            case R.id.canDotModeImgVw:
-                moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName);
-                break;
+
         }
     }
 
 
     void moveToDotMode(String date, String dayName, String dayFullName, String dayShortName){
 
-        if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
-            CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
-        }else{
-            CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
-        }
-
-        getParentFragmentManager().popBackStackImmediate();
+        //getParentFragmentManager().popBackStackImmediate();
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
 
@@ -510,8 +517,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         FragmentTransaction fragmentTran = fragManager.beginTransaction();
         fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
                 android.R.anim.fade_in,android.R.anim.fade_out);
-        fragmentTran.replace(R.id.job_fragment, dotFragment);
-        fragmentTran.addToBackStack(null);  //"dot_log"
+        fragmentTran.add(R.id.job_fragment, dotFragment);
+        fragmentTran.addToBackStack("dot_can");  //"dot_log"
         fragmentTran.commit();
 
     }
@@ -565,7 +572,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         }else{
             LogDate = selectedDate;
-            Globally.EldScreenToast(dateRodsTV, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            global.EldScreenToast(scrollUpBtn, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             //webViewErrorDisplay();
         }
 
@@ -616,7 +623,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 GetDriverDotDetails(DriverId, LogDate);
 
             }else{
-                Globally.EldScreenToast(dateRodsTV, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                global.EldScreenToast(scrollUpBtn, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             }
 
         }
@@ -629,14 +636,14 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         boolean IsAOBRD                 = sharedPref.IsAOBRD(getActivity());
 
 
-        if (!IsAOBRD || IsAOBRDAutomatic) {
+      /*  if (!IsAOBRD || IsAOBRDAutomatic) {
             Constants.isEldHome = false;
             Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 getActivity().startForegroundService(Globally.serviceIntent);
             }
             getActivity().startService(Globally.serviceIntent);
-        }
+        }*/
 
         try {
             if (shareDialog != null && shareDialog.isShowing()) {
@@ -667,6 +674,17 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         canDotGraphWebView.setWebChromeClient(new WebChromeClient());
         canDotGraphWebView.addJavascriptInterface( new WebAppInterface(), "Android");
 
+        try {
+            if (Build.VERSION.SDK_INT >= 19) {
+                // chromium, enable hardware acceleration
+                canDotGraphWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            } else {
+                // older android version, disable hardware acceleration
+                canDotGraphWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -761,30 +779,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 String data = ConstantHtml.GraphHtml + htmlAppendedText + closeTag;
                 canDotGraphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
+                canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,  constants.dpToPx(getActivity(), 155)) );
+
             }
         }, 500);
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final int width = canDotGraphWebView.getWidth();
-                final int height = canDotGraphWebView.getHeight();
-
-                if(width < 400){
-                    canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT) );
-                }else{
-                    if(height == 0){
-                        if(Globally.isTablet(getActivity())){
-                            canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(width, constants.dpToPx(getActivity(), 150) ) );
-                        }else{
-                            canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(width, constants.dpToPx(getActivity(), 118) ));
-                        }
-
-                    }
-                }
-            }
-        }, 700);
 
 
     }
@@ -827,7 +825,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 String endDateTime = logObj.getString("EndTime");
 
                 if (endDateTime.equals("null")) {
-                    endDateTime = Globally.GetCurrentDateTime();
+                    endDateTime = global.GetCurrentDateTime();
                 }
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(global.DateFormat);  //:SSSZ
@@ -840,7 +838,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 if (logCount > 0 && logCount == driverLogJsonArray.length() - 1) {
                     if (LogDate.equals(CurrentDate)) {
-                        endDateTime = Globally.GetCurrentDateTime();
+                        endDateTime = global.GetCurrentDateTime();
                     } else {
                         if (endDateTime.length() > 16 && endDateTime.substring(11, 16).equals("00:00")) {
                             endDateTime = endDateTime.substring(0, 11) + "23:59" + endDateTime.substring(16, endDateTime.length());
@@ -933,7 +931,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             timeZoneCTV.setText(dataObj.getString("TimeZone"));
             currLocCTV.setText(Html.fromHtml(dataObj.getString("CurrentLocation")) );
             commentCTV.setText(constants.checkNullString(dataObj.getString("OutputFileComment")) );
-            dateTimeCTV.setText(Globally.ConvertDateFormatMMddyyyyHHmm(dataObj.getString("CurrentDate")));
+            dateTimeCTV.setText(global.ConvertDateFormatMMddyyyyHHmm(dataObj.getString("CurrentDate")));
 
             driverNameCTV.setText(dataObj.getString("DriverLastAndFirstName"));
             driverIdCTV.setText(dataObj.getString("DriverLoginId"));
@@ -991,13 +989,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             String currentCycle = "";
             if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
 
-                if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
+                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
                     currentCycle = "USA Cycle \n" + DriverConst.GetDriverSettings(DriverConst.USACycleName, getActivity());
                 }else{
                     currentCycle = "CAN Cycle \n" + DriverConst.GetDriverSettings(DriverConst.CANCycleName, getActivity());
                 }
             }else{
-                if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
+                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
                     currentCycle = "USA Cycle \n" + DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleName, getActivity());
                 }else{
                     currentCycle = "CAN Cycle \n" + DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleName, getActivity());
@@ -1015,9 +1013,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
 
-            totalHrsCTV.setText(Globally.FinalValue(TotalHrsInShift));
-            totalhrsCycleCTV.setText(Globally.FinalValue(TotalHrsInCycle));
-            remainingHourCTV.setText(Globally.FinalValue(RemainingHrsCycle));
+            totalHrsCTV.setText(global.FinalValue(TotalHrsInShift));
+            totalhrsCycleCTV.setText(global.FinalValue(TotalHrsInCycle));
+            remainingHourCTV.setText(global.FinalValue(RemainingHrsCycle));
             offDutyDeffCTV.setText(constants.checkNullString(dataObj.getString("OffDutyTimeDefferal")) );
 
 
@@ -1119,7 +1117,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
                     ReloadWebView(CloseTag);
 
-                    Globally.EldScreenToast(dateRodsTV, Message, getResources().getColor(R.color.colorVoilation));
+                    global.EldScreenToast(scrollUpBtn, Message, getResources().getColor(R.color.colorVoilation));
 
                 }
              } catch (Exception e) {
@@ -1137,7 +1135,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 try {
                     Log.d("error", ">>error: " + error);
                     canDotProgressBar.setVisibility(View.GONE);
-                    Globally.EldScreenToast(dateRodsTV, "Error", getResources().getColor(R.color.colorVoilation));
+                    global.EldScreenToast(scrollUpBtn, "Error", getResources().getColor(R.color.colorVoilation));
                     htmlAppendedText = "";
                     TotalOnDutyHours = "00:00";
                     TotalDrivingHours = "00:00";
@@ -1155,7 +1153,15 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     };
 
 
-
+    private Thread.UncaughtExceptionHandler onRuntimeError= new Thread.UncaughtExceptionHandler() {
+        public void uncaughtException(Thread thread, Throwable ex) {
+            //Try starting the Activity again
+            Log.d("uncaughtException", "uncaughtException: " +ex.toString());
+            SharedPref.SetDOTStatus( false, getActivity());
+            getActivity().finish();
+            System.exit(2);
+        }
+    };
 
 
 }

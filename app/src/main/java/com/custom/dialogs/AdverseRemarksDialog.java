@@ -34,6 +34,7 @@ public class AdverseRemarksDialog extends Dialog {
     TextView TitleTV, descTextView, desc2TxtView;
     TextInputLayout reasonInputLayout;
     boolean isAdverse, IsClaim, IsCompanyAssign;
+    Globally globally;
 
     public AdverseRemarksDialog(Context context, boolean isAdverse, boolean isClaim, boolean isCompanyAssign, RemarksListener readyListener) {
         super(context);
@@ -56,7 +57,7 @@ public class AdverseRemarksDialog extends Dialog {
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-
+        globally = new Globally();
         remarksEditText   = (EditText)findViewById(R.id.TrailorNoEditText);
 
         btnLoadingJob       = (Button)findViewById(R.id.btnLoadingJob);
@@ -132,15 +133,15 @@ public class AdverseRemarksDialog extends Dialog {
 
             } else {
                 if(isAdverse) {
-                    Globally.EldScreenToast(remarksEditText, ConstantsEnum.ADVERSE_REASON_ALERT, getContext().getResources().getColor(R.color.red_eld));
+                    globally.EldScreenToast(btnLoadingJob, ConstantsEnum.ADVERSE_REASON_ALERT, getContext().getResources().getColor(R.color.red_eld));
                 }else{
                     if(IsClaim){
-                        Globally.EldScreenToast(remarksEditText, ConstantsEnum.CLAIM_UNIDENTIFIED_REASON, getContext().getResources().getColor(R.color.red_eld));
+                        globally.EldScreenToast(btnLoadingJob, ConstantsEnum.CLAIM_UNIDENTIFIED_REASON, getContext().getResources().getColor(R.color.red_eld));
                     }else{
                         if(IsCompanyAssign) {
-                            Globally.EldScreenToast(remarksEditText, ConstantsEnum.COMPANY_REJECT_REASON, getContext().getResources().getColor(R.color.red_eld));
+                            globally.EldScreenToast(btnLoadingJob, ConstantsEnum.COMPANY_REJECT_REASON, getContext().getResources().getColor(R.color.red_eld));
                         }else{
-                            Globally.EldScreenToast(remarksEditText, ConstantsEnum.REJECT_REASON_ALERT, getContext().getResources().getColor(R.color.red_eld));
+                            globally.EldScreenToast(btnLoadingJob, ConstantsEnum.REJECT_REASON_ALERT, getContext().getResources().getColor(R.color.red_eld));
                         }
                     }
                 }

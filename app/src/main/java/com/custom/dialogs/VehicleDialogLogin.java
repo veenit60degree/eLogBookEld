@@ -97,7 +97,7 @@ public class VehicleDialogLogin  extends Dialog {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(getWindow().getAttributes());
-        if(Globally.isTablet(getContext())) {
+        if(global.isTablet(getContext())) {
             lp.width = constants.intToPixel(getContext(), 650);
         }else{
             lp.width = constants.intToPixel(getContext(), 550);
@@ -197,10 +197,10 @@ public class VehicleDialogLogin  extends Dialog {
             @Override
             public void onClick(View view) {
                 if(SharedPref.getDriverId(getContext()).length() > 0) {
-                    if (Globally.isConnected(getContext())) {
+                    if (global.isConnected(getContext())) {
                         LogoutUser(SharedPref.getDriverId(getContext()));
                     } else {
-                        Globally.EldScreenToast(logoutTruckPopupTV, Globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorSleeper));
+                        global.EldScreenToast(logoutTruckPopupTV, global.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorSleeper));
                     }
                 }else{
                     LogoutUser();
@@ -256,8 +256,8 @@ public class VehicleDialogLogin  extends Dialog {
     void LogoutUser() {
         try {
             if (constant.GetDriverSavedArray(getContext()).length() == 0) {
-                Globally.ClearAllFields(getContext());
-                Globally.StopService(getContext());
+                global.ClearAllFields(getContext());
+                global.StopService(getContext());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -276,7 +276,7 @@ public class VehicleDialogLogin  extends Dialog {
                 if (SelectedPosition >= 0) {
                     readyListener.ChangeVehicleReady(Title, SelectedPosition, saveBtnJob);
                 } else {
-                    Globally.EldScreenToast(saveBtnJob, "Please select truck to save.", getContext().getResources().getColor(R.color.colorVoilation));
+                    global.EldScreenToast(saveBtnJob, "Please select truck to save.", getContext().getResources().getColor(R.color.colorVoilation));
                 }
             }
         }
@@ -321,8 +321,8 @@ public class VehicleDialogLogin  extends Dialog {
             String status = "";
 
             try {
-                Globally.obj = new JSONObject(response);
-                status = Globally.obj.getString("Status");
+                JSONObject obj = new JSONObject(response);
+                status = obj.getString("Status");
 
                 if(status.equalsIgnoreCase("true")){
 
@@ -330,7 +330,7 @@ public class VehicleDialogLogin  extends Dialog {
                     dismiss();
 
                 }else{
-                    if(Globally.obj.getString("Message").equals("Device Logout")) {
+                    if(obj.getString("Message").equals("Device Logout")) {
 
                         constant.ClearLogoutData(mContext);
                         dismiss();
@@ -349,7 +349,7 @@ public class VehicleDialogLogin  extends Dialog {
         public void getError(VolleyError error, int flag) {
             Log.d("onDuty error", "onDuty error: " + error.toString());
             progressD.dismiss();
-            Globally.EldScreenToast(logoutTruckPopupTV, error.toString(), getContext().getResources().getColor(R.color.red_eld));
+            global.EldScreenToast(logoutTruckPopupTV, error.toString(), getContext().getResources().getColor(R.color.red_eld));
 
         }
     };

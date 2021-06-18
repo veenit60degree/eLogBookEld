@@ -40,6 +40,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -273,11 +274,39 @@ public class Globally {
 
 		}catch (Exception e){
 			e.printStackTrace();
+
+			if(view.getContext() != null){
+				//Toast.makeText(view.getContext(), message, Toast.LENGTH_LONG).show();
+				EldScreenToast1(view.getContext(), message, color);
+			}
 		}
 
 	}
 
+	/*========================= Show Toast message =====================*/
+	public static void EldScreenToast1(Context context, String message, int color) {
 
+		try {
+			Activity activity = (Activity) context;
+			Snackbar snackbar = Snackbar.make(activity.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+
+			snackbar.setActionTextColor(Color.WHITE);
+			View snackbarView = snackbar.getView();
+			snackbarView.setBackgroundColor(color);
+
+			TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
+			textView.setTextColor(Color.WHITE);
+			snackbar.show();
+
+		}catch (Exception e){
+			e.printStackTrace();
+
+			if(context != null){
+				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+			}
+		}
+
+	}
 	/*========================= Show Toast message =====================*/
 	public static void EldToastWithDuration(View view, String message, int color) {
 

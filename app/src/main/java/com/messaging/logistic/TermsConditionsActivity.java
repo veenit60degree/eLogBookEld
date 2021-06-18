@@ -1,5 +1,6 @@
 package com.messaging.logistic;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -67,8 +68,15 @@ public class TermsConditionsActivity extends FragmentActivity {
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setSupportZoom(true);
 
-
         try {
+            if (Build.VERSION.SDK_INT >= 19) {
+                // chromium, enable hardware acceleration
+                termsCondWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            } else {
+                // older android version, disable hardware acceleration
+                termsCondWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            }
+
             termsCondWebView.loadUrl(URl);
         }catch (Exception e){
             e.printStackTrace();

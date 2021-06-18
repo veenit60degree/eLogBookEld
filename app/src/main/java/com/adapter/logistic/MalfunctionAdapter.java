@@ -44,6 +44,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
     private HashMap<String, List<MalfunctionModel>> _listDataChild;
     String DriverId, CurrentCycleId;
     Constants constants;
+    Globally globally;
     SaveLogJsonObj clearRecordPost;
     ProgressDialog progressDialog;
     MalfunctionDialog malfunctionDialog;
@@ -58,6 +59,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
         constants = new Constants();
+        globally    = new Globally();
 
         CurrentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, _context);
 
@@ -103,7 +105,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         TextView originMalTxtVw = (TextView) convertView.findViewById(R.id.originMalTxtVw);
 
         if(childData.getDriverZoneEventDate().length() > 10) {
-            String date = Globally.dateConversionMalfunction(childData.getDriverZoneEventDate());   //EventDateTime()
+            String date = globally.dateConversionMalfunction(childData.getDriverZoneEventDate());   //EventDateTime()
             timeMalTxtVw.setText(date);
         }else {
             timeMalTxtVw.setText( "");
@@ -119,7 +121,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         }else{
             seqIdMalTxtVw.setText(childData.getSequenceNo());
         }
-        if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+        if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
             double miles = Double.parseDouble(childData.getMiles());
             String milesInKm = constants.Convert2DecimalPlacesDouble(constants.milesToKm(miles));
             vehMilesMalTxtVw.setText(milesInKm);
@@ -213,7 +215,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
 
         holder.malfHeaderTxtVw.setText(headerModel.getEventName());
 
-        if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+        if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
             holder.vehMilesMalTxtVw.setText(_context.getResources().getString(R.string.vehKm));
         }
 
@@ -223,7 +225,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         int sizePadding =  constants.intToPixel(_context, 5);
         int sizeMargin =  constants.intToPixel(_context, 10);
 
-        if(Globally.isTablet(_context)){
+        if(globally.isTablet(_context)){
             sizePadding =  constants.intToPixel(_context, 8);
             sizeMargin =  constants.intToPixel(_context, 15);
         }
@@ -277,7 +279,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                             new MalfunctionDiagnosticListener());
                     malfunctionDialog.show();
                 }else{
-                    Globally.EldScreenToast(view, _context.getResources().getString(R.string.stop_vehicle_alert),
+                    globally.EldScreenToast(view, _context.getResources().getString(R.string.stop_vehicle_alert),
                             _context.getResources().getColor(R.color.colorVoilation));
                 }
 
@@ -387,21 +389,17 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                 String status = obj.getString(ConstantsKeys.Status);
                 String message  = obj.getString(ConstantsKeys.Message);
                 if (status.equalsIgnoreCase("true")) {
-                // {"Status":true,"Message":"Required Parameter is empty","Data":null}
-
-
-
                     if(message.equals("Record Clear Successfully")) {
-                        Globally.EldScreenToast( MalfncnDiagnstcViewPager.invisibleMalfnBtn,  _context.getResources().getString(R.string.RecordClearedSuccessfully),
+
+                        globally.EldScreenToast( MalfncnDiagnstcViewPager.invisibleMalfnBtn,  _context.getResources().getString(R.string.RecordClearedSuccessfully),
                                 _context.getResources().getColor(R.color.color_eld_theme));
                         MalfncnDiagnstcViewPager.invisibleMalfnBtn.performClick();
                     }else{
-                        Globally.EldScreenToast(MalfncnDiagnstcViewPager.invisibleMalfnBtn, message,
+                        globally.EldScreenToast(MalfncnDiagnstcViewPager.invisibleMalfnBtn, message,
                                 _context.getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
-                    // {"Status":false,"Message":"Failed..","Data":null}
-                    Globally.EldScreenToast(MalfncnDiagnstcViewPager.invisibleMalfnBtn, message,
+                    globally.EldScreenToast(MalfncnDiagnstcViewPager.invisibleMalfnBtn, message,
                             _context.getResources().getColor(R.color.colorVoilation));
 
                 }
@@ -419,7 +417,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                 progressDialog.dismiss();
 
 
-            Globally.EldScreenToast(MalfunctionFragment.invisibleMalfnBtn, error,
+            globally.EldScreenToast(MalfunctionFragment.invisibleMalfnBtn, error,
                     _context.getResources().getColor(R.color.colorVoilation));
         }
 

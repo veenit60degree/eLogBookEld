@@ -420,7 +420,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             Location = lastItemJson.getString(ConstantsKeys.StartLocation);
             if(Location.contains("null"))
-                Location = Globally.LONGITUDE + ", " + Globally.LATITUDE;
+                Location = Globally.LATITUDE + ", " + Globally.LONGITUDE;
 
             if (Globally.isConnected(getActivity()) && Globally.LATITUDE.length() > 5) {
                 GetAddFromLatLng(Globally.LATITUDE, Globally.LONGITUDE);

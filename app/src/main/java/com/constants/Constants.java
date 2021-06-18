@@ -16,6 +16,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -92,10 +93,6 @@ import models.RulesResponseObject;
 import webapi.LocalCalls;
 
 public class Constants {
-
-    public static String LAT_KEY = "lat";
-    public static String LON_KEY = "lon";
-    public static String LOC_SAVED_TIME_KEY = "saved_time_key";
 
     public static int OBD_PREF_WIFI     = 1;
     public static int OBD_PREF_WIRED    = 2;
@@ -243,9 +240,6 @@ public class Constants {
     public static boolean IsAlsServerResponding = true;
     public static boolean isClaim   = false;
     public static boolean isEldHome   = false;
-
-    public static String DriverLogId = "";
-    public static String IsStartingLocation = "";
 
     public static int OFF_DUTY = 1;
     public static int SLEEPER  = 2;
@@ -1179,8 +1173,9 @@ public class Constants {
         if(context != null) {
             LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             boolean gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean gpsStatusNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
            // turnGPSOn(context);
-            return gpsStatus;
+            return gpsStatus || gpsStatusNetwork;
         }else{
             return true;
         }
@@ -3827,7 +3822,7 @@ public class Constants {
             isAllowed = true;
         }
 
-        return true;
+        return isAllowed;
     }
 
 

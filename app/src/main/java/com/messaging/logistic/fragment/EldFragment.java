@@ -148,7 +148,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     ImageView editTrailorIV, editTruckIV, eldMenuBtn, eldMenuErrorImgVw, certifyLogErrorImgVw;
     LoadingSpinImgView loadingSpinEldIV;
     RelativeLayout OnDutyBtn, DrivingBtn, OffDutyBtn, SleeperBtn, eldMenuLay, dayNightLay, eldHomeDriverUiLay, settingsMenuBtn, otherOptionBtn, malfunctionLay;
-    ImageView calendarBtn, coDriverImgView, connectionStatusImgView;
+    ImageView calendarBtn, coDriverImgView, connectionStatusImgView, cyleFlagImgView;
     Button sendReportBtn, yardMoveBtn, personalUseBtn;
     RelativeLayout certifyLogBtn;
     public static Button refreshLogBtn, moveToCertifyPopUpBtn;
@@ -502,6 +502,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         connectionStatusImgView = (ImageView)view.findViewById(R.id.connectionStatusImgView);
         eldMenuErrorImgVw = (ImageView) view.findViewById(R.id.eldMenuErrorImgVw);
         certifyLogErrorImgVw= (ImageView) view.findViewById(R.id.certifyLogErrorImgVw);
+        cyleFlagImgView= (ImageView) view.findViewById(R.id.cyleFlagImgView);
 
         certifyLogBtn = (RelativeLayout) view.findViewById(R.id.certifyLogBtn);
         sendReportBtn = (Button) view.findViewById(R.id.sendReportBtn);
@@ -761,9 +762,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             public void onAnimationEnd(Animation animation) {
                 try {
                     if(getActivity() != null) {
-                        if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED) {
+                        if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED ||
+                                sharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED ||
+                                sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED) {
                             connectionStatusAnimation.cancel();
                             connectionStatusImgView.setAlpha(1f);
+                            connectionStatusImgView.setImageResource(R.drawable.ble_ic);
+                            connectionStatusImgView.setColorFilter(getResources().getColor(R.color.colorPrimary));
                         } else {
                             connectionStatusImgView.startAnimation(connectionStatusAnimation);
                         }
@@ -1050,7 +1055,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         int obdStatus       = sharedPref.getObdStatus(getActivity());
                         int obdPreference   = sharedPref.getObdPreference(getActivity());
 
-                        if(obdPreference == Constants.OBD_PREF_BLE){
+                if(obdPreference == Constants.OBD_PREF_BLE){
                     if(obdStatus == Constants.BLE_CONNECTED){
                         connectionStatusImgView.setImageResource(R.drawable.ble_ic);
                         connectionStatusImgView.setColorFilter(getResources().getColor(R.color.colorPrimary));
@@ -1775,6 +1780,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 currentCycleTxtView.setText(CurrentCycle);
             }
 
+            if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
+                cyleFlagImgView.setImageResource(R.drawable.can_flag);
+            }else{
+                cyleFlagImgView.setImageResource(R.drawable.usa_flag);
+            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -2155,7 +2165,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                              GetOBDAssignedVehicles(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId, DriverCompanyId, VIN_NUMBER);
                          }
                      } else {
-                         Globally.EldScreenToast(truckLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                         Global.EldScreenToast(truckLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                      }
                 } else {
                     Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2177,7 +2187,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 trailerDialog.show();
                             }
                         } else {
-                            Globally.EldScreenToast(truckLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                            Global.EldScreenToast(truckLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                         }
                     } else {
                         Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -3966,10 +3976,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         constants.IS_TRAILER_INSPECT = isUpdatedTrailer;
 
                         if (reason.equals("Trailer Switch") && TrailorNo.length() == 0) {
-                            Globally.EldScreenToast(ReasonEditText, ConstantsEnum.SELECT_TRAILER_ALERT, getContext().getResources().getColor(R.color.red_eld));
+                            Global.EldScreenToast(ReasonEditText, ConstantsEnum.SELECT_TRAILER_ALERT, getContext().getResources().getColor(R.color.red_eld));
 
                         } else if (reason.equals("Trailer Switch") && TrailorNumber.equals(TrailorNo)) {
-                            Globally.EldScreenToast(ReasonEditText, ConstantsEnum.CHANGE_TRAILER_ALERT, getContext().getResources().getColor(R.color.red_eld));
+                            Global.EldScreenToast(ReasonEditText, ConstantsEnum.CHANGE_TRAILER_ALERT, getContext().getResources().getColor(R.color.red_eld));
 
                         } else {
                             String LastReason = "", lastItemIsYardMove = "false";
@@ -4905,6 +4915,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             currentCycleTxtView.setText(CurrentCycle + " (N)");
         }else{
             currentCycleTxtView.setText(CurrentCycle);
+        }
+
+        if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
+            cyleFlagImgView.setImageResource(R.drawable.can_flag);
+        }else{
+            cyleFlagImgView.setImageResource(R.drawable.usa_flag);
         }
     }
 
@@ -6113,14 +6129,19 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 isExemptDriver              = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsExemptDriver);
                                 boolean IsCycleRequest      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsCycleRequest);
                                 boolean IsUnidentified      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsUnidentified);
-
+                                int ObdPreference = Constants.OBD_PREF_WIFI;
                                 if(dataJObject.has(ConstantsKeys.ObdPreference) && !dataJObject.isNull(ConstantsKeys.ObdPreference) ) {
-                                    sharedPref.SetObdPreference(dataJObject.getInt(ConstantsKeys.ObdPreference), getActivity());
+                                    ObdPreference = dataJObject.getInt(ConstantsKeys.ObdPreference);
+                                    sharedPref.SetObdPreference(ObdPreference, getActivity());
                                 }else{
                                     sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getActivity());
                                 }
 
                                 if(IsTruckChange){
+                                    if(ObdPreference == Constants.OBD_PREF_BLE && sharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED){
+                                        // set obd disconnection time is current time for diagnostic/malfunction event.
+                                        sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Global.getCurrentDate(), getActivity());
+                                    }
                                     startService();
                                     setObdStatus(false);
                                 }
@@ -6853,11 +6874,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
 
-                            Log.d("VEHICLE_SPEED", "VEHICLE_SPEED: " + Global.VEHICLE_SPEED);
+                           // Log.d("VEHICLE_SPEED", "VEHICLE_SPEED: " + Globally.VEHICLE_SPEED);
                             sharedPref.SetTruckStartLoginStatus(false, getActivity());
                             sharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
 
-                            if (Global.VEHICLE_SPEED < 10) {
+                            if (Globally.VEHICLE_SPEED < 10) {
                                 SaveOffDutyStatus();
                             } else {
                                 SaveDrivingStatus();

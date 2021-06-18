@@ -73,8 +73,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     public static List<VehicleModel> vehicleList = new ArrayList<>();
 
     TextView noObdConnTV;
-    String WiredOBD     = "wired_obd";
-    String WifiOBD      = "wifi_obd";
+
     Slidingmenufunctions slideMenu;
     Intent inState;
     private PowerManager.WakeLock wl;
@@ -105,6 +104,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       // Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
 
         // Obtain the FirebaseAnalytics instance.
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -314,6 +314,17 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
     }
+
+
+
+/*    private Thread.UncaughtExceptionHandler onRuntimeError= new Thread.UncaughtExceptionHandler() {
+        public void uncaughtException(Thread thread, Throwable ex) {
+            //Try starting the Activity again
+            Log.d("TAB-uncaughtException", "TAB-uncaughtException: " +ex.toString());
+        }
+    };*/
+
+
 
 
     private void setSlidingMenu() {

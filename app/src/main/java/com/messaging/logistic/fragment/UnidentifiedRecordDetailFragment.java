@@ -28,6 +28,7 @@ import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UnidentifiedActivity;
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -385,6 +386,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                             Globally.EldScreenToast(TabAct.sliderLay,
                                     getResources().getString(R.string.claim_successfully),
                                     getResources().getColor(R.color.color_eld_theme));
+                            UnidentifiedActivity.isUnIdentifiedRecordClaimed = true;
 
                             break;
 

@@ -262,7 +262,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         if(getBundle != null) {
             editedData = getBundle.getString(ConstantsKeys.suggested_data);
             date = getBundle.getString(ConstantsKeys.Date);
-            getBundle.clear();
+           // getBundle.clear();
         }
 
         LogDate = Globally.ConvertDateFormatMMddyyyy(date);

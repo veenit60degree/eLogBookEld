@@ -389,21 +389,26 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
 
     private void MoveFragment(String date ){
-        InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("date", date);
-        bundle.putString("inspection_type", "ct_pat");
+        try {
+            if(getActivity() != null) {
+                InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("date", date);
+                bundle.putString("inspection_type", "ct_pat");
 
-        savedInspectionFragment.setArguments(bundle);
+                savedInspectionFragment.setArguments(bundle);
 
-        FragmentManager fragManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTran = fragManager.beginTransaction();
-        fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
-                android.R.anim.fade_in,android.R.anim.fade_out);
-        fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
-        fragmentTran.addToBackStack("inspection");
-        fragmentTran.commit();
-
+                FragmentManager fragManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTran = fragManager.beginTransaction();
+                fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
+                        android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
+                fragmentTran.addToBackStack("ctpat_inspection");
+                fragmentTran.commit();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 

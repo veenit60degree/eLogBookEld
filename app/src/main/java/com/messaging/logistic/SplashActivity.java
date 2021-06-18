@@ -279,9 +279,9 @@ public class SplashActivity extends Activity implements
                     200, locationListenerGPS);
             Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(loc != null){
-                global.LATITUDE = "" +loc.getLatitude();
-                global.LONGITUDE = "" +loc.getLongitude();
-                global.LONGITUDE = Globally.CheckLongitudeWithCycle(global.LONGITUDE);
+                Globally.LATITUDE = "" +loc.getLatitude();
+                Globally.LONGITUDE = "" +loc.getLongitude();
+                Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
             }
 
             CheckUserCredientials();
@@ -311,9 +311,9 @@ public class SplashActivity extends Activity implements
         @Override
         public void onLocationChanged(Location location) {
 
-            global.LATITUDE = "" +location.getLatitude();
-            global.LONGITUDE = "" +location.getLongitude();
-            global.LONGITUDE = Globally.CheckLongitudeWithCycle(global.LONGITUDE);
+            Globally.LATITUDE = "" +location.getLatitude();
+            Globally.LONGITUDE = "" +location.getLongitude();
+            Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
         }
 
         @Override
@@ -391,6 +391,7 @@ public class SplashActivity extends Activity implements
 
                     case Activity.RESULT_CANCELED:
                         Log.i(TAG, "User chose not to make required location settings changes.");
+                        CheckUserCredientials();
                         break;
                 }
                 break;
@@ -570,9 +571,9 @@ public class SplashActivity extends Activity implements
     @Override
     public void onLocationChanged(Location location) {
         Log.d("location", "location " + location);
-        global.LATITUDE = "" +location.getLatitude();
-        global.LONGITUDE = "" +location.getLongitude();
-        global.LONGITUDE = Globally.CheckLongitudeWithCycle(global.LONGITUDE);
+        Globally.LATITUDE = "" +location.getLatitude();
+        Globally.LONGITUDE = "" +location.getLongitude();
+        Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
     }
 
 

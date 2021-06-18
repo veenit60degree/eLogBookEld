@@ -77,7 +77,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     HelperMethods hMethods;
     SharedPref sharedPref;
     Constants constants;
-    WebView dotGraphWebView;    //dotWebView;
+    WebView dotGraphWebView;
     TextView errorConnectionView,  EldTitleTV, dotMalfunctionTV, viewInspectionBtn,sendLogBtn;
     ImageView nextDateBtn, previousDateBtn, eldMenuBtn, signImageView, dotModeImgVw;
 
@@ -147,6 +147,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
+
         rootView = inflater.inflate(R.layout.fragment_dot_us, container, false);
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -210,14 +212,6 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         dotGraphWebView.setWebChromeClient(new WebChromeClient());
         dotGraphWebView.addJavascriptInterface( new WebAppInterface(), "Android");
 
-
-     /*
-      dotWebView.setWebViewClient(new WebViewClients());
-        if (global.isConnected(getActivity())) {
-            dotWebView.loadUrl(logUrl + LogDate);
-        }else{
-            webViewErrorDisplay();
-        }*/
 
         nextDateBtn.setOnClickListener(this);
         previousDateBtn.setOnClickListener(this);
@@ -290,7 +284,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             CurrentCycleId = getBundle.getString("cycle");
             SelectedDayOfMonth = getBundle.getInt("day_of_month");
             CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
-            getBundle.clear();
+           // getBundle.clear();
         }
 
         CurrentDate             = global.GetCurrentDeviceDate();
@@ -303,7 +297,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
             CanMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, true);
 
-            if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
+            if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ) {
                 MaxDays = UsaMaxDays;
             }else{
                 MaxDays = CanMaxDays;
@@ -355,7 +349,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         if (global.isConnected(getActivity())) {
             GetDriverDotDetails(DRIVER_ID, LogDate);
         }else{
-            Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            Globally.EldScreenToast(getActivity().findViewById(android.R.id.content), global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
         }
     }
 
@@ -400,12 +394,23 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.dotModeTV:
-                if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
+                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
                     CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
                 }else{
                     CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
                 }
-                moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
+
+                String obdCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+                if(obdCycleId.equals(global.USA_WORKING_6_DAYS) || obdCycleId.equals(global.USA_WORKING_7_DAYS)){
+                    moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
+                }else{
+                    if(getParentFragmentManager().getBackStackEntryCount() > 1){
+                        getParentFragmentManager().popBackStack();
+                    }else{
+                        moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
+                    }
+                }
+
                 break;
 
             case R.id.dotModeImgVw:
@@ -418,7 +423,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
     void moveToDotMode(String date, String dayName, String dayFullName, String dayShortName, String cycle){
 
-        getParentFragmentManager().popBackStackImmediate();
+       // getParentFragmentManager().popBackStackImmediate();
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         Fragment dotFragment = new DotCanadaFragment();
@@ -433,8 +438,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         FragmentTransaction fragmentTran = fragManager.beginTransaction();
         fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
                 android.R.anim.fade_in,android.R.anim.fade_out);
-        fragmentTran.replace(R.id.job_fragment, dotFragment);
-        fragmentTran.addToBackStack(null);  //"dot_log"
+        fragmentTran.add(R.id.job_fragment, dotFragment);
+        fragmentTran.addToBackStack("dot_usa");  //"dot_log"
         fragmentTran.commit();
 
     }
@@ -444,24 +449,25 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     public void onDestroy() {
         super.onDestroy();
         Constants.IS_ACTIVE_ELD = true;
+
     }
 
 
 
     void shareDriverLogDialog() {
 
-        boolean IsAOBRDAutomatic        = sharedPref.IsAOBRDAutomatic(getActivity());
+      //  boolean IsAOBRDAutomatic        = sharedPref.IsAOBRDAutomatic(getActivity());
         boolean IsAOBRD                 = sharedPref.IsAOBRD(getActivity());
 
 
-        if (!IsAOBRD || IsAOBRDAutomatic) {
+       /* if (!IsAOBRD || IsAOBRDAutomatic) {
             Constants.isEldHome = false;
             Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 getActivity().startForegroundService(Globally.serviceIntent);
             }
             getActivity().startService(Globally.serviceIntent);
-        }
+        }*/
 
         try {
             if (shareDialog != null && shareDialog.isShowing()) {
@@ -531,7 +537,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
         }else{
             LogDate = selectedDate;
-            Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            global.EldScreenToast(eldMenuLay, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             //webViewErrorDisplay();
         }
 
@@ -625,7 +631,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 GetDriverDotDetails(DRIVER_ID, LogDate);
 
             }else{
-                Globally.EldScreenToast(eldMenuLay, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                global.EldScreenToast(eldMenuLay, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                 //webViewErrorDisplay();
             }
 
@@ -656,30 +662,9 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             public void run() {
                 String data = ConstantHtml.GraphHtml + htmlAppendedText + closeTag;
                 dotGraphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
+                dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, constants.dpToPx(getActivity(), 155)) );
             }
         }, 500);
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final int width = dotGraphWebView.getWidth();
-                final int height = dotGraphWebView.getHeight();
-
-                if(width < 400){
-                    dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT + 100) );
-                }else{
-                    if(height == 0){
-                        if(Globally.isTablet(getActivity())){
-                            dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(width, constants.dpToPx(getActivity(), 170) ) );
-                        }else{
-                            dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(width, constants.dpToPx(getActivity(), 140) ));
-                        }
-                    }
-                }
-                dotScrollView.fullScroll(ScrollView.FOCUS_UP);
-            }
-        }, 700);
 
 
     }
@@ -696,14 +681,6 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 int EventType = logObj.getInt("EventType");
 
                 boolean isYardMoveOrPersonal = false;
-
-               /*     if (!logObj.isNull(ConstantsKeys.Personal))
-                        isPersonal = logObj.getBoolean(ConstantsKeys.Personal);
-
-                    if(!logObj.isNull(ConstantsKeys.YardMove))
-                        YardMove = logObj.getBoolean(ConstantsKeys.YardMove);
-*/
-
 
                 if (EventType != 1 && EventType != 3) {   // && EventType != 2
                     if(logCount > 0) {
@@ -728,7 +705,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 String endDateTime = logObj.getString("EndTime");
 
                 if (endDateTime.equals("null")) {
-                    endDateTime = Globally.GetCurrentDateTime();
+                    endDateTime = global.GetCurrentDateTime();
                 }
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(global.DateFormat);  //:SSSZ
@@ -741,7 +718,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
                 if (logCount > 0 && logCount == driverLogJsonArray.length() - 1) {
                     if (LogDate.equals(CurrentDate)) {
-                        endDateTime = Globally.GetCurrentDateTime();
+                        endDateTime = global.GetCurrentDateTime();
                     } else {
                         if (endDateTime.length() > 16 && endDateTime.substring(11, 16).equals("00:00")) {
                             endDateTime = endDateTime.substring(0, 11) + "23:59" + endDateTime.substring(16, endDateTime.length());
@@ -888,7 +865,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
                 ReloadWebView(CloseTag);
 
-                Globally.EldScreenToast(eldMenuLay, Message, getResources().getColor(R.color.colorVoilation));
+                global.EldScreenToast(eldMenuLay, Message, getResources().getColor(R.color.colorVoilation));
 
             }
         }
@@ -904,7 +881,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             if(getActivity() != null) {
                 try {
                     dotProgressBar.setVisibility(View.GONE);
-                    Globally.EldScreenToast(eldMenuLay, "Error", getResources().getColor(R.color.colorVoilation));
+                    global.EldScreenToast(eldMenuLay, "Error", getResources().getColor(R.color.colorVoilation));
                     htmlAppendedText = "";
                     TotalOnDutyHours = "00:00";
                     TotalDrivingHours = "00:00";
@@ -1104,7 +1081,15 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
 
 
-
+    private Thread.UncaughtExceptionHandler onRuntimeError= new Thread.UncaughtExceptionHandler() {
+        public void uncaughtException(Thread thread, Throwable ex) {
+            //Try starting the Activity again
+            Log.d("uncaughtException", "uncaughtException: " +ex.toString());
+            SharedPref.SetDOTStatus( false, getActivity());
+            getActivity().finish();
+            System.exit(2);
+        }
+    };
 
 
 

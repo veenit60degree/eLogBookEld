@@ -1321,7 +1321,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 StartUTCCurrentTime,
 
                 0,  // because start and end date will be same for new status for that time
-                Global.LATITUDE, Global.LONGITUDE, Global.LATITUDE, Global.LONGITUDE,
+                Globally.LATITUDE, Global.LONGITUDE, Global.LATITUDE, Global.LONGITUDE,
                 Boolean.parseBoolean(isYardMove),
                 Boolean.parseBoolean(isPersonal),
                 Integer.valueOf(CurrentCycleId),

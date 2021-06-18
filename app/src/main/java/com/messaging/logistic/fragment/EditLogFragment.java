@@ -200,7 +200,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 logPermissionObj = new JSONObject(getBundle.getString("permissions"));
                 CurrentCycleId = getBundle.getString("cycleId");
                 DriverType = getBundle.getInt("driver_type");
-                getBundle.clear();
+               // getBundle.clear();
             }
 
             selectedDateFormat      = selectedDateTime.toString().substring(0,10);

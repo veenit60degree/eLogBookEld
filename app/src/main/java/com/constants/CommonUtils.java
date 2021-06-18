@@ -26,8 +26,8 @@ public class CommonUtils {
 		int densityDpi = (int)(metrics.density * 160f);
 		Log.d("densityDpi","densityDpi: " +densityDpi);
 
-		int SingleDriverMenuWidth = 385;
-		int DualDriverMenuWidth   = 500;
+		int SingleDriverMenuWidth;
+		int DualDriverMenuWidth;
 
 /*		TelephonyManager manager = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -46,11 +46,14 @@ public class CommonUtils {
 			//Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Tablet density pixel: " + densityDpi, 2003);
 
 			if(densityDpi <= 220){
-				SingleDriverMenuWidth = 355;
-				DualDriverMenuWidth   = 460;
+				SingleDriverMenuWidth = 430;
+				DualDriverMenuWidth   = 500;
 			}else if (densityDpi >= 240 && densityDpi <= 340){
-				SingleDriverMenuWidth = 470;
-				DualDriverMenuWidth   = 540;
+				SingleDriverMenuWidth = 530;
+				DualDriverMenuWidth   = 590;
+			}else{
+				SingleDriverMenuWidth = 520;
+				DualDriverMenuWidth   = 580;
 			}
 
 			if(SharedPref.getDriverType(mContext).equals(DriverConst.SingleDriver)){
@@ -65,8 +68,8 @@ public class CommonUtils {
 				SingleDriverMenuWidth = 310;
 				DualDriverMenuWidth   = 333;
 			}else if(densityDpi > 320 && densityDpi <= 420){
-				SingleDriverMenuWidth = 275;
-				DualDriverMenuWidth   = 295;
+				SingleDriverMenuWidth = 350;
+				DualDriverMenuWidth   = 390;
 			}else{
 				SingleDriverMenuWidth = 470;
 				DualDriverMenuWidth   = 540;

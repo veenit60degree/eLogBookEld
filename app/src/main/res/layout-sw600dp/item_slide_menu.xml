@@ -11,61 +11,73 @@
         android:background="@drawable/slider_list_selector"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_15"
-        android:paddingRight="@dimen/margin_15"
+        android:paddingRight="@dimen/margin_12"
 
         >
 
-        <ImageView
-            android:id="@+id/menuImgView"
-            android:layout_width="@dimen/view_height_30"
-            android:layout_height="@dimen/view_height_30"
-            android:src="@drawable/eld_malfunction"
-            android:layout_gravity="center_vertical"
-            android:tint="@color/slide_menu_default"
-            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            >
+
+            <ImageView
+                android:id="@+id/menuImgView"
+                android:layout_width="@dimen/margin_27"
+                android:layout_height="@dimen/margin_27"
+                android:src="@drawable/eld_malfunction"
+                android:layout_centerVertical="true"
+                android:tint="@color/slide_menu_default"
+                />
 
 
-        <TextView
-            android:id="@+id/menuTitleTxtView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin_18"
-            android:text="@string/noti_history"
-            android:textColor="@color/gray_unidenfied"
-            android:textSize="@dimen/text_size_18" />
+            <ImageView
+                android:id="@+id/mwnuErrorImgView"
+                android:layout_width="@dimen/margin_13"
+                android:layout_height="@dimen/margin_13"
+                android:src="@drawable/error"
+                android:layout_marginLeft="@dimen/margin_20"
+                android:layout_marginTop="@dimen/margin_short_5"
+                android:visibility="gone"
+
+                />
+
+
+            <TextView
+                android:id="@+id/menuTitleTxtView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_15"
+                android:text="@string/noti_history"
+                android:textColor="@color/gray_unidenfied"
+                android:textSize="@dimen/text_size_17"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/menuImgView"
+                />
 
 
 
-        <TextView
-            android:id="@+id/menuBadgeTxtView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_13"
-            android:padding="@dimen/margin_short_1"
-            android:textColor="@color/whiteee"
-            android:gravity="center"
-            android:background="@drawable/circuler_textview_phone"
+            <TextView
+                android:id="@+id/menuBadgeTxtView"
+                android:layout_width="@dimen/margin_19"
+                android:layout_height="@dimen/margin_19"
+                android:textSize="@dimen/text_size_12"
+                android:padding="@dimen/margin_short_1"
+                android:textColor="@color/whiteee"
+                android:gravity="center"
+                android:background="@drawable/circuler_textview_phone"
+                android:layout_marginLeft="@dimen/margin_20"
+                android:fallbackLineSpacing="true"
+               android:layout_toRightOf="@+id/menuTitleTxtView"
+                android:layout_centerVertical="true"
+                android:visibility="gone"
 
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginLeft="@dimen/view_height_35"
-            android:fallbackLineSpacing="true"
-            android:visibility="gone"
-
-            />
+                />
 
 
+        </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/mwnuErrorImgView"
-            android:layout_width="@dimen/margin_20"
-            android:layout_height="@dimen/margin_20"
-            android:src="@drawable/error"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginLeft="@dimen/margin_25"
-            android:visibility="gone"
-
-            />
 
     </LinearLayout>
 

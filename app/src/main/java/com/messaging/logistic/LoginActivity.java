@@ -76,7 +76,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	ProgressDialog progressDialog;
 	//private BroadcastReceiver mRegistrationBroadcastReceiver;
 	ProgressBar progressBarLogin;
-	String ImeiNumber = "", LoginUserType = "";
+	String ImeiNumber = "", LoginUserType = "", loginResponseData = "";
 	String StrSingleUserame = "", StrSinglePass = "", StrCoDriverUsername = "", StrCoDriverPass = "", StrOSType = "", AppVersion = "";
 	String status = "", message = "", deviceType = "";
 	Anim animation;
@@ -86,6 +86,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	Globally global;
 	SharedPref sharedPref;
 	Utils obdUtil;
+	RetryPolicy policy;
+	RequestQueue queue;
 
 
 	@Override
@@ -113,6 +115,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			e.printStackTrace();
 		}
 
+		queue 					= Volley.newRequestQueue(this);
+		policy 					= new DefaultRetryPolicy(Constants.SocketTimeout60Sec, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
 		progressBarLogin 		= (ProgressBar) findViewById(R.id.progressBarLogin);
 		appVersion 				= (TextView) findViewById(R.id.appVersion);
 		driverTitleTV 			= (TextView) findViewById(R.id.driverTitleTV);
@@ -627,8 +631,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				deviceType = "Mobile";
 			}
 
-			RequestQueue queue = Volley.newRequestQueue(this);
-
 			progressDialog = new ProgressDialog(LoginActivity.this);
 			progressDialog.setMessage("Loading...");
 			progressDialog.setCancelable(false);
@@ -650,21 +652,20 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 							try {
 
-								global.obj = new JSONObject(response);
-								status = global.obj.getString("Status");
-								message = global.obj.getString("Message");
+								JSONObject obj = new JSONObject(response);
+								status = obj.getString("Status");
+								message = obj.getString("Message");
 								int rulesVersion = 1;
 
-								if (global.obj.has(ConstantsKeys.rulesVersion) && !global.obj.isNull(ConstantsKeys.rulesVersion)) {
-									rulesVersion = global.obj.getInt(ConstantsKeys.rulesVersion);
+								if (obj.has(ConstantsKeys.rulesVersion) && !obj.isNull(ConstantsKeys.rulesVersion)) {
+									rulesVersion = obj.getInt(ConstantsKeys.rulesVersion);
 								}
 								sharedPref.SetRulesVersion(rulesVersion, getApplicationContext());
 
 								if (status.equalsIgnoreCase("true")) {
 
-									if (!global.obj.isNull("Data")) {
-										//ClearSqliteDB(LoginActivity.this);
-
+									if (!obj.isNull("Data")) {
+										loginResponseData = obj.getString("Data");
 										// reset user data
 										Constants.IS_ELD_ON_CREATE = true;
 
@@ -678,7 +679,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 											progressDialog.dismiss();
 										}
 
-										global.EldScreenToast(mainLoginLayout, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+										global.EldScreenToast(mainLoginLayout, "Error, Info not found." +message, getResources().getColor(R.color.colorVoilation));
 									}
 
 
@@ -688,17 +689,21 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 										progressDialog.dismiss();
 									}
 
-									if (message.contains("Object reference")) {
+									String errorStr = getErrorMsg(message);
+									global.EldScreenToast(mainLoginLayout, errorStr, getResources().getColor(R.color.colorVoilation));
+
+								/*	if (message.contains("Object reference")) {
 										global.EldScreenToast(mainLoginLayout, "Invalid Username/Password.", getResources().getColor(R.color.colorVoilation));
 									} else if (message.contains("timeout")) {
 										global.EldScreenToast(mainLoginLayout, "Please check your internet connection", getResources().getColor(R.color.colorVoilation));
 									} else {
 										global.EldScreenToast(mainLoginLayout, message, getResources().getColor(R.color.colorVoilation));
-									}
+									}*/
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
 								loginBtn.setEnabled(true);
+								global.EldScreenToast(mainLoginLayout, "Error", getResources().getColor(R.color.colorVoilation));
 
 								if (progressDialog != null && progressDialog.isShowing()) {
 									progressDialog.dismiss();
@@ -719,14 +724,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 								loginBtn.setEnabled(true);
 
 								Log.d("error", "error: " + error);
-								String errorStr = error.toString();
-
-								if (errorStr.contains("Network") || errorStr.contains("NoConnectionError") || errorStr.contains("timeout")) {
-									errorStr = "Internet connection problem";
-								} else if (errorStr.contains("ServerError")) {
-									errorStr = "ALS server not responding";
-								}
-
+								String errorStr = getErrorMsg(error.toString());
 								global.EldScreenToast(mainLoginLayout, errorStr, getResources().getColor(R.color.colorVoilation));
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -771,7 +769,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				}
 			};
 
-			RetryPolicy policy = new DefaultRetryPolicy(Constants.SocketTimeout60Sec, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
 			postRequest.setRetryPolicy(policy);
 			queue.add(postRequest);
 		}else{
@@ -781,129 +778,24 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	}
 
 
-	void ViewOnlyLogin(final String username, final String pass) {
+	private String getErrorMsg(String errorStr){
+		if (errorStr.contains("Object reference")) {
+			errorStr = "Invalid Username/Password.";
+		}else if( errorStr.contains("timeout")){
+			errorStr = "Connection timeout error";
+		}else if (errorStr.contains("NoConnectionError")) {
+			errorStr = "Internet connection error";
+		}else if(errorStr.contains("Network")){
+			errorStr = "Network Error";
+		} else if (errorStr.contains("ServerError")) {
+			errorStr = "ALS server not responding";
+		}else{
 
-
-		try {
-			MainDriverEldPref MainDriverPref = new MainDriverEldPref();
-			CoDriverEldPref CoDriverPref = new CoDriverEldPref();
-			MainDriverPref.ClearLocFromList(LoginActivity.this);
-			CoDriverPref.ClearLocFromList(LoginActivity.this);
-
-		} catch (Exception e) {
 		}
 
-		if (IsTablet) {
-			deviceType = "Tablet";
-		} else {
-			deviceType = "Mobile";
-		}
-
-		RequestQueue queue = Volley.newRequestQueue(this);
-
-		progressDialog = new ProgressDialog(LoginActivity.this);
-		progressDialog.setMessage("Loading...");
-		progressDialog.show();
-
-		StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.LOGIN_DEMO,
-				new Response.Listener<String>() {
-					@Override
-					public void onResponse(String response) {
-
-						// response
-						Log.d("Response", ">>>response: " + response);
-
-						try {
-							global.obj = new JSONObject(response);
-							status = global.obj.getString("Status");
-							message = global.obj.getString("Message");
-
-							if (status.equalsIgnoreCase("true")) {
-
-								if (!global.obj.isNull("Data")) {
-									sharedPref.SetNewLoginStatus(false, LoginActivity.this);
-									new ParseLoginJsonData().execute();
-								} else {
-									if (progressDialog != null && progressDialog.isShowing()) {
-										progressDialog.dismiss();
-									}
-									global.EldScreenToast(mainLoginLayout, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
-								}
-
-
-							} else if (status.equalsIgnoreCase("false")) {
-								if (progressDialog != null && progressDialog.isShowing()) {
-									progressDialog.dismiss();
-								}
-								if (message.contains("Object reference")) {
-									global.EldScreenToast(mainLoginLayout,"Invalid Username/Password.", getResources().getColor(R.color.colorVoilation));
-								} else if(message.contains("timeout")){
-									global.EldScreenToast(mainLoginLayout,"Please check your internet connection", getResources().getColor(R.color.colorVoilation));
-								}else {
-									global.EldScreenToast(mainLoginLayout, message, getResources().getColor(R.color.colorVoilation));
-								}
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-							if (progressDialog != null && progressDialog.isShowing()) {
-								progressDialog.dismiss();
-							}
-						}
-
-					}
-				},
-				new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						if (progressDialog != null && progressDialog.isShowing()) {
-							progressDialog.dismiss();
-						}
-						Log.d("error", "error: " + error);
-						String errorStr = error.toString();
-
-						if(errorStr.contains("Network") || errorStr.contains("NoConnectionError") || errorStr.contains("timeout")){
-							errorStr = "Internet connection problem";
-						}else if(errorStr.contains("ServerError")){
-							errorStr = "ALS server not responding";
-						}
-
-						global.EldScreenToast(mainLoginLayout, errorStr, getResources().getColor(R.color.colorVoilation));
-					}
-				}
-		) {
-
-			@Override
-			protected Response<String> parseNetworkResponse(NetworkResponse response) {
-				if (response.headers == null) {
-					// cant just set a new empty map because the member is final.
-					response = new NetworkResponse(
-							response.statusCode,
-							response.data,
-							Collections.<String, String>emptyMap(), // this is the important line, set an empty but non-null map.
-							response.notModified,
-							response.networkTimeMs);
-				}
-				return super.parseNetworkResponse(response);
-			}
-
-			@Override
-			protected Map<String, String> getParams() {
-				Map<String, String> params = new HashMap<String, String>();
-
-				params.put(ConstantsKeys.Password, pass);
-				params.put(ConstantsKeys.Username, username);
-				params.put(ConstantsKeys.TeamDriverType, "1");
-
-				return params;
-			}
-		};
-
-		int socketTimeout = 60000;   //150 seconds - change to what you want
-		RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-		postRequest.setRetryPolicy(policy);
-		queue.add(postRequest);
-
-
+		// intilize request queue object again to notify network.
+		queue 					= Volley.newRequestQueue(LoginActivity.this);
+		return errorStr;
 	}
 
 	@Override
@@ -931,7 +823,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			try {
 				//Log.d("strings", "strings: " + strings);
-				dataJson = new JSONArray(global.obj.getString("Data"));
+
+				dataJson = new JSONArray(loginResponseData);
 
 				ParseLoginDetails parseLoginDetails = new ParseLoginDetails();
 				parseLoginDetails.ParseLoginDetails(dataJson, LoginActivity.this);

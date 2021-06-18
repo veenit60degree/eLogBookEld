@@ -477,8 +477,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     truckRPM = obdDataArray[8];
                     obdEngineHours = obdDataArray[10];
                     currentHighPrecisionOdometer = obdDataArray[9];
-                    global.LATITUDE = obdDataArray[12] ;
-                    global.LONGITUDE = obdDataArray[13] ;
+                    Globally.LATITUDE = obdDataArray[12] ;
+                    Globally.LONGITUDE = obdDataArray[13] ;
 
                     if (Integer.valueOf(truckRPM) > 0) {
                         ignitionStatus = "ON";
@@ -537,7 +537,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 try {
                     if (ignitionStatus.equals("ON") && !truckRPM.equals("0")) {
 
-                        global.IS_OBD_IGNITION = true;
+                        Globally.IS_OBD_IGNITION = true;
                         continueStatusPromotForPcYm("ON", last_obs_source_name, global.getCurrentDate(), OBD_LAST_STATUS);
 
                         // check Power Malfunction/Diagnostic event
@@ -627,7 +627,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             // check malfunction if valid position not coming..
                             checkPositionMalfunction(currentHighPrecisionOdometer, currentLogDate);
-                            global.VEHICLE_SPEED = speed;
+                            Globally.VEHICLE_SPEED = speed;
 
                         }
 
@@ -635,7 +635,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     } else {
                         speed = 0;
-                        global.IS_OBD_IGNITION = false;
+                        Globally.IS_OBD_IGNITION = false;
                         continueStatusPromotForPcYm("OFF", last_obs_source_name, "", OBD_LAST_STATUS);
                         sharedPref.SetTruckIgnitionStatusForContinue("OFF", last_obs_source_name, "", getApplicationContext());
                         sharedPref.setVss(speed, getApplicationContext());
@@ -649,15 +649,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed);
 
-                        global.VEHICLE_SPEED = 0;
+                        Globally.VEHICLE_SPEED = 0;
                         callWiredConnWithTime(Constants.SocketTimeout8Sec);
 
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    global.IS_OBD_IGNITION = false;
-                    global.VEHICLE_SPEED = -1;
+                    Globally.IS_OBD_IGNITION = false;
+                    Globally.VEHICLE_SPEED = -1;
                     isWiredDataReceived = false;
 
                     callWiredConnWithTime(3000);
@@ -1126,6 +1126,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 ObserverManager.getInstance().notifyObserver(bleDevice);
                 stopService(bleDevice,getCharacteristic());
 
+                sendBroadCast("BLE DisConnected - isManualDisconnected: " +isManualDisconnected);
+
                 if (!isManualDisconnected()) {
                     bleInit();
                    // setScanRule();
@@ -1220,14 +1222,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             ObserverManager.getInstance().notifyObserver(bleDevice);
                             stopService(bleDevice,getCharacteristic());
                             writeFailureCount++;
+                            if(writeFailureCount > 4){
+                                writeFailureCount = 0;
+                            }
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    bleInit();
-                                }
-                            }, 1500);
-
+                            if (isManualDisconnected()) {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        bleInit();
+                                    }
+                                }, 1500);
+                            }
                         }
                     });
         }
@@ -1291,7 +1297,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         public void onNotifySuccess() {
                             Log.d(TAG_BLE_OPERATION, "onNotifySuccess");
                             isBleObdRespond = false;
-
+                            writeFailureCount = 4;
                           //  String data = HexUtil.formatHexString(characteristic.getValue(), true);
                           //  Log.d("Notify Success Data", "data: " + data);
                             constants.saveAppUsageLog("BleCallback: NotifySuccess" ,  false, false, obdUtil);
@@ -1346,6 +1352,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                     sendBroadCast(BleUtil.decodeDataChange(characteristic, bleDevice.getName(), bleDevice.getMac()));
                                     obdCallBackObservable(VehicleSpeed, VehicleVIN, global.GetCurrentDateTime(), decodedArray);
+                                }else{
+                                    if(isBleObdRespond == false){
+                                        sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
+                                        constants.saveAppUsageLog("BleCallback: Notify Data Changed" ,  false, false, obdUtil);
+                                    }
+                                    sendBroadCast("Ble OBD connected but returns inComplete data. <br/> Contact with your company.");
                                 }
 
                             }
@@ -1450,6 +1462,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     isBleObdRespond = false;
                     mIsScanning = false;
 
+                    if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                        sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+                    }
                     // stopSelf();
                 }
             }
@@ -1488,10 +1503,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 sharedPref.setMalfCallTime(currentLogDate, getApplicationContext());
 
                 if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext()) == false) {
-                    global.LATITUDE = "0.0";
-                    global.LONGITUDE = "0.0";
+                    Globally.LATITUDE = "0.0";
+                    Globally.LONGITUDE = "0.0";
                     if (sharedPref.getEcmObdLatitude(getApplicationContext()).length() > 4) {
-                        sharedPref.setEcmObdLocationWithTime(global.LATITUDE, global.LONGITUDE, currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
+                        sharedPref.setEcmObdLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
                     }
                 }
 
@@ -1708,8 +1723,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 obj.put(constants.obdRPM, rpm);
                 obj.put(constants.apiReturnedSpeed, apiReturnedSpeed);
                 obj.put(constants.obdTripDistance, tripDistance);
-                obj.put(ConstantsKeys.Latitude, global.LATITUDE);
-                obj.put(ConstantsKeys.Longitude, global.LONGITUDE);
+                obj.put(ConstantsKeys.Latitude, Globally.LATITUDE);
+                obj.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
                 global.OBD_DataArray.put(obj);
                 obdUtil.writeToLogFile(obj.toString());
@@ -1733,9 +1748,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         @Override
         public void onLocationChanged(Location location) {
             Log.d("onLocationChanged", "---Latitude: " + location.getLatitude() + " -- Longitude: " + location.getLongitude());
-            global.LATITUDE = "" +location.getLatitude();
-            global.LONGITUDE = "" +location.getLongitude();
-            global.LONGITUDE = Globally.CheckLongitudeWithCycle(global.LONGITUDE);
+            Globally.LATITUDE = "" +location.getLatitude();
+            Globally.LONGITUDE = "" +location.getLongitude();
+            Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
           //  GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
             isGpsUpdate = true;
             // GpsVehicleSpeed = 21;
@@ -1744,9 +1759,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             if(ObdStatus == Constants.WIRED_CONNECTED ||
                     ObdStatus == Constants.WIFI_CONNECTED ||
                     ObdStatus == Constants.BLE_CONNECTED){
-                saveEcmLocationWithTime(global.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
+                saveEcmLocationWithTime(Globally.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
             }else{
-                saveEcmLocationWithTime(global.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
+                saveEcmLocationWithTime(Globally.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
             }
 
             // getLocDegree(location);
@@ -1837,7 +1852,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         }
 
                     } else {
-                        global.VEHICLE_SPEED = -1;
+                        Globally.VEHICLE_SPEED = -1;
                         //VehicleSpeed = GpsVehicleSpeed;
                     }
 
@@ -1878,12 +1893,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     200, locationListenerGPS);
             Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (loc != null) {
-                global.LATITUDE = "" + loc.getLatitude();
-                global.LONGITUDE = "" + loc.getLongitude();
-                global.LONGITUDE = Globally.CheckLongitudeWithCycle(global.LONGITUDE);
+                Globally.LATITUDE = "" + loc.getLatitude();
+                Globally.LONGITUDE = "" + loc.getLongitude();
+                Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
             } else {
-                global.LATITUDE = "0.0";
-                global.LONGITUDE = "0.0";
+                Globally.LATITUDE = "0.0";
+                Globally.LONGITUDE = "0.0";
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1929,7 +1944,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 try {
                     // request for location if lat long is null
-                    if( global.LATITUDE.equals("0.0") ||  global.LATITUDE.equals("") ||  global.LATITUDE.equals("null")){
+                    if( Globally.LATITUDE.equals("0.0") ||  Globally.LATITUDE.equals("") ||  Globally.LATITUDE.equals("null")){
 
                         // check availability of play services
                         if (global.checkPlayServices(getApplicationContext())) {
@@ -1948,8 +1963,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 final boolean isGpsEnabled = constants.CheckGpsStatusToCheckMalfunction(getApplicationContext());
                 if(!isGpsEnabled){
                     // GpsVehicleSpeed = -1;
-                    global.LATITUDE = "0.0";
-                    global.LONGITUDE = "0.0";
+                    Globally.LATITUDE = "0.0";
+                    Globally.LONGITUDE = "0.0";
                 }
 
 
@@ -1989,7 +2004,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                     } else {
                                        // VehicleSpeed = GpsVehicleSpeed;
-                                        global.VEHICLE_SPEED = -1;
+                                        Globally.VEHICLE_SPEED = -1;
 
                                         if(UILApplication.isActivityVisible() && Constants.IS_ACTIVE_ELD){
                                              /*updateOfflineApiRejectionCount++;
@@ -2005,7 +2020,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     }
                                 }
                             }else{
-                                global.VEHICLE_SPEED = -1;
+                                Globally.VEHICLE_SPEED = -1;
                                // VehicleSpeed = GpsVehicleSpeed;
                                 updateOfflineApiRejectionCount++;
                                 if(updateOfflineApiRejectionCount > 2){
@@ -2644,13 +2659,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     void getLocation(boolean isSave){
         if(isSave) {
-            if(global.LATITUDE.equals("0.0") || global.LONGITUDE.equals("0.0")){
+            if(Globally.LATITUDE.equals("0.0") || Globally.LONGITUDE.equals("0.0")){
                 createLocationRequest(MIN_TIME_LOCATION_UPDATES);
             }else {
-                SaveLocation(global.LATITUDE, global.LONGITUDE);
+                SaveLocation(Globally.LATITUDE, Globally.LONGITUDE);
             }
         }else{
-            if(global.LATITUDE.equals("0.0") || global.LONGITUDE.equals("0.0")){
+            if(Globally.LATITUDE.equals("0.0") || Globally.LONGITUDE.equals("0.0")){
                 createLocationRequest(MIN_TIME_LOCATION_UPDATES);
             }
         }
@@ -2737,7 +2752,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
 
         if(latitude.length() > 4 ){
-            sharedPref.setEcmObdLocationWithTime(global.LATITUDE, global.LONGITUDE, odometer, global.GetCurrentDateTime(), getApplicationContext());
+            sharedPref.setEcmObdLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, odometer, global.GetCurrentDateTime(), getApplicationContext());
         }else{
             if(sharedPref.getEcmObdLatitude(getApplicationContext()).length() > 4) {
                 sharedPref.setEcmObdLocationWithTime("0", "0", odometer, global.GetCurrentDateTime(), getApplicationContext());
@@ -2749,18 +2764,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     @Override
     public void onLocationChanged(Location location) {
          Log.d("onLocationChanged", "---Latitude: " + location.getLatitude() + " -- Longitude: " + location.getLongitude());
-        global.LATITUDE = "" +location.getLatitude();
-        global.LONGITUDE = "" +location.getLongitude();
-        global.LONGITUDE = Globally.CheckLongitudeWithCycle(global.LONGITUDE);
+        Globally.LATITUDE = "" +location.getLatitude();
+        Globally.LONGITUDE = "" +location.getLongitude();
+        Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
 
        // GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
        // GpsVehicleSpeed = 21;
 
         int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
         if(ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED || ObdStatus == Constants.BLE_CONNECTED){
-            saveEcmLocationWithTime(global.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
+            saveEcmLocationWithTime(Globally.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
         }else{
-            saveEcmLocationWithTime(global.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
+            saveEcmLocationWithTime(Globally.LATITUDE, sharedPref.getHighPrecisionOdometer(getApplicationContext()));
         }
 
     }
@@ -2858,17 +2873,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 sharedPref.SetObdEngineHours(obdEngineHours, getApplicationContext());
 
                                 // saving location with time info to calculate location mafunction event
-                                saveEcmLocationWithTime(global.LATITUDE, HighResolutionDistance);
+                                saveEcmLocationWithTime(Globally.LATITUDE, HighResolutionDistance);
 
                                 if (!latitude.equals("0")) {
-                                    global.LATITUDE = latitude;
-                                    global.LONGITUDE = Globally.CheckLongitudeWithCycle(longitude);
+                                    Globally.LATITUDE = latitude;
+                                    Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(longitude);
                                 }
 
 
                                 if (ignitionStatus.equals("true")) {    // truckRpmInt > 0
                                     sharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, global.getCurrentDate(), getApplicationContext());
-                                    global.IS_OBD_IGNITION = true;
+                                    Globally.IS_OBD_IGNITION = true;
                                     continueStatusPromotForPcYm("ON", constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_CONNECTED);
 
                                     if (WheelBasedVehicleSpeed > 200) {
@@ -2877,7 +2892,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                     obdVehicleSpeed = (int) WheelBasedVehicleSpeed;
                                     VehicleSpeed = obdVehicleSpeed;
-                                    global.VEHICLE_SPEED = obdVehicleSpeed;
+                                    Globally.VEHICLE_SPEED = obdVehicleSpeed;
 
                                     saveWifiObdData("--", HighResolutionDistance, ignitionStatus, VehicleSpeed, obdTripDistance, rawResponse, correctData, true);
 
@@ -2885,7 +2900,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 } else {
                                     sharedPref.setVehilceMovingStatus(false, getApplicationContext());
                                     sharedPref.SetTruckIgnitionStatusForContinue("OFF", constants.WifiOBD, "", getApplicationContext());
-                                    global.IS_OBD_IGNITION = false;
+                                    Globally.IS_OBD_IGNITION = false;
                                     continueStatusPromotForPcYm(ignitionStatus, constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_DISCONNECTED);
 
                                     saveDummyData(rawResponse, constants.WifiOBD);
@@ -3052,7 +3067,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     if(speed == 0){
                         obdVehicleSpeed      = (int)speedCalculated;
                         VehicleSpeed         = obdVehicleSpeed;
-                        global.VEHICLE_SPEED =  obdVehicleSpeed;
+                        Globally.VEHICLE_SPEED =  obdVehicleSpeed;
                     }
 
                     ServiceCycle.ContinueSpeedCounter = 0;
@@ -3079,7 +3094,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     if(speed == 0){
                         obdVehicleSpeed      = (int)speedCalculated;
                         VehicleSpeed         = obdVehicleSpeed;
-                        global.VEHICLE_SPEED =  obdVehicleSpeed;
+                        Globally.VEHICLE_SPEED =  obdVehicleSpeed;
                     }
 
                     sharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer,currentLogDate, getApplicationContext());
@@ -3105,7 +3120,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 if (speedCalculated >= DrivingSpeedLimit && speed == 0 ) {
                     obdVehicleSpeed = (int) speedCalculated;
                     VehicleSpeed = obdVehicleSpeed;
-                    global.VEHICLE_SPEED = obdVehicleSpeed;
+                    Globally.VEHICLE_SPEED = obdVehicleSpeed;
                     speed = obdVehicleSpeed;
                 }
 
@@ -3633,7 +3648,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     obdVehicleSpeed = dataObj.getInt("VehicleSpeed");
                                     apiReturnedSpeed = dataObj.getString("VehicleSpeed");
 
-                                    global.VEHICLE_SPEED = obdVehicleSpeed;
+                                    Globally.VEHICLE_SPEED = obdVehicleSpeed;
 
                                     if (obdVehicleSpeed != -1) {
                                         VehicleSpeed = obdVehicleSpeed;
@@ -3645,7 +3660,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     constants.SaveCycleWithCurrentDate(CycleId, utcCurrentDateTime.toString(), "UpdateOfflineDriverLog_api", sharedPref, global, getApplicationContext());
                                 } catch (Exception e) {
                                    // VehicleSpeed = GpsVehicleSpeed;
-                                    global.VEHICLE_SPEED = -1;
+                                    Globally.VEHICLE_SPEED = -1;
                                     e.printStackTrace();
                                 }
 
@@ -3862,7 +3877,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     updateOfflineNoResponseCount++;
                   //  VehicleSpeed = GpsVehicleSpeed;
                     apiReturnedSpeed = "--";
-                    global.VEHICLE_SPEED = -1;
+                    Globally.VEHICLE_SPEED = -1;
 
                     break;
 

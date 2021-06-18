@@ -196,10 +196,10 @@
     <string name="has_been_certified">Log has been successfully certified.</string>
     <string name="sign_not_valid">Signature data not valid. Please sign again and save</string>
     <string name="Add_signature_first">Add signature first to save log data</string>
-    <string name="edited_log_willbe_saved">Connection unavailable! Your edited log will be posted to server automatically when your device will be connected with working internet connection</string>
-    <string name="certify_log_offline_saved">Connection unavailable! Cerify log will be posted to server automatically when your device will be connected with working internet connection</string>
-    <string name="inspection_willbe_saved">Connection unavailable! Inspections will be posted to server automatically when your device will be connected with working internet connection</string>
-    <string name="ct_pat_inspection_willbe_saved">Connection unavailable! CT-PAT inspections will be posted to server automatically when your device will be connected with working internet connection</string>
+    <string name="edited_log_willbe_saved">Edited successfully. Logs will be synchronized to server automatically as internet connection resumed</string>
+    <string name="certify_log_offline_saved">Certified successfully. Entries will be synchronized to server automatically as internet connection resumed</string>
+    <string name="inspection_willbe_saved">Inspections saved successfully. Data will be synchronized to server automatically as internet connection resumed</string>
+    <string name="ct_pat_inspection_willbe_saved">Saved successfully. Data will be synchronized to server automatically as internet connection resumed</string>
 
     <string name="ct_pat_inspection_saved_successfully">CT-PAT inspection saved successfully</string>
     <string name="inspection_saved_successfully">Inspection saved successfully</string>

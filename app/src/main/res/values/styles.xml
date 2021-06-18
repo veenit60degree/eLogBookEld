@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/app_colorPrimaryy</item>
         <item name="colorPrimaryDark">@color/app_colorPrimaryDark</item>
         <item name="colorAccent">@color/voilet_bg</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
     </style>
 
 

@@ -29,7 +29,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingRight="@dimen/margin_17"
             android:paddingLeft="@dimen/margin_17"
@@ -551,7 +551,7 @@
             <LinearLayout
                 android:id="@+id/canDotViewMorelay"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone"
 

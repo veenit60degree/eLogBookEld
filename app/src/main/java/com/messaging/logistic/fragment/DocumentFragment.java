@@ -665,7 +665,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile1.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);
@@ -679,7 +679,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile2.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);
@@ -693,7 +693,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile3.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);
@@ -707,7 +707,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile4.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);
@@ -722,7 +722,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile5.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);
@@ -737,7 +737,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile6.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);
@@ -752,7 +752,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile7.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);
@@ -767,7 +767,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile8.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);
@@ -782,7 +782,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile9.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);
@@ -797,7 +797,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                         documentViewerFragment(docFile10.toString(), localDocList.get(position).getDocumentTitle());
                     }else{
                         GetEldDocDetails();
-                        Globally.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(eldMenuLay, getResources().getString(R.string.document_checking), getContext().getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     displayPdfFromUrl(position);

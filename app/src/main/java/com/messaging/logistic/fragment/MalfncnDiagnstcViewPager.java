@@ -67,6 +67,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     String DriverId = "", DeviceId = "", VIN = "", FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId;
     Map<String, String> params;
     VolleyRequest GetMalfunctionEvents;
+    Globally globally;
 
     List<MalfunctionModel> malfunctionChildList = new ArrayList<>();
     List<MalfunctionHeaderModel> malfunctionHeaderList = new ArrayList<>();
@@ -119,7 +120,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
         constants           = new Constants();
         sharedPref          = new SharedPref();
-
+        globally            = new Globally();
         cancelCertifyBtn    = (CardView)rootView.findViewById(R.id.cancelCertifyBtn);
         confirmCertifyBtn   = (CardView)rootView.findViewById(R.id.confirmCertifyBtn);
 
@@ -166,48 +167,53 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         Country                 = constants.getCountryName(getActivity());
         OffsetFromUTC           = DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity());
         CompanyId               = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
-        DateTime currentDate    = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
-        ToDateTime              = currentDate.toString().substring(0,10);
-        String CurrentCycleId     = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        DateTime currentDate    = globally.getDateTimeObj(globally.GetCurrentDateTime(), false);
+        String CurrentCycleId   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
 
-        if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
-            FromDateTime = String.valueOf(currentDate.minusDays(14)).substring(0, 10);  // // in CAN 14+1 days
-        }else{
-            FromDateTime = String.valueOf(currentDate.minusDays(7)).substring(0, 10);   // // in US 7+1 days
-        }
+        try {
+            if (currentDate.toString().length() > 10) {
+                ToDateTime              = currentDate.toString().substring(0,10);
+                if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
+                    FromDateTime = String.valueOf(currentDate.minusDays(14)).substring(0, 10);  // // in CAN 14+1 days
+                } else {
+                    FromDateTime = String.valueOf(currentDate.minusDays(7)).substring(0, 10);   // // in US 7+1 days
+                }
+            }
 
-        if(sharedPref.IsAOBRD(getActivity())){
-            dateActionBarTV.setText(Html.fromHtml("<b><u>AOBRD</u></b>"));
-        }else{
-            dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
-        }
-
-
-        if(Globally.isConnected(getContext())) {
-            GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
-        }else{
-
-            boolean isDiagnostic;
-            boolean isMalfunction;
-            if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-                 isDiagnostic = sharedPref.isDiagnosticOccur(getActivity());
-                 isMalfunction = sharedPref.isMalfunctionOccur(getActivity());
-
+            if (sharedPref.IsAOBRD(getActivity())) {
+                dateActionBarTV.setText(Html.fromHtml("<b><u>AOBRD</u></b>"));
             } else {
-                 isDiagnostic = sharedPref.isDiagnosticOccurCo(getActivity());
-                 isMalfunction = sharedPref.isMalfunctionOccurCo(getActivity());
-            }
-
-            if(isDiagnostic && !isMalfunction ){
-                setPagerAdapter(1, false);
-            }else{
-                setPagerAdapter(0, false);
+                dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
             }
 
 
-            Globally.EldScreenToast(confirmCertifyTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            if (globally.isConnected(getContext())) {
+                GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+            } else {
+
+                boolean isDiagnostic;
+                boolean isMalfunction;
+                if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                    isDiagnostic = sharedPref.isDiagnosticOccur(getActivity());
+                    isMalfunction = sharedPref.isMalfunctionOccur(getActivity());
+
+                } else {
+                    isDiagnostic = sharedPref.isDiagnosticOccurCo(getActivity());
+                    isMalfunction = sharedPref.isMalfunctionOccurCo(getActivity());
+                }
+
+                if (isDiagnostic && !isMalfunction) {
+                    setPagerAdapter(1, false);
+                } else {
+                    setPagerAdapter(0, false);
+                }
+
+
+                globally.EldScreenToast(confirmCertifyTV, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
 
     }
 
@@ -356,21 +362,21 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 if (malfunctionDialog != null && malfunctionDialog.isShowing())
                     malfunctionDialog.dismiss();
 
-                if(Globally.isConnected(getContext())) {
+                if(globally.isConnected(getContext())) {
                     if(malfunctionHeaderList.size() > 0 || diagnosticHeaderList.size() > 0) {
                         if(constants.isActionAllowed(getContext())) {
                             malfunctionDialog = new MalfunctionDialog(getActivity(), new ArrayList<MalfunctionModel>(),
                                     new MalfunctionDiagnosticListener());
                             malfunctionDialog.show();
                         }else{
-                            Globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
+                            globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
                                     getResources().getColor(R.color.colorVoilation));
                         }
                     }else{
-                        Globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_diagnostc_records), getResources().getColor(R.color.colorVoilation));
+                        globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_diagnostc_records), getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
-                    Globally.EldScreenToast(confirmCertifyTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(confirmCertifyTV, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                 }
 
                 break;
@@ -412,12 +418,12 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     clearRecordPost.SaveLogJsonObj(clearEventObj, APIs.CLEAR_MALFNCN_DIAGSTC_EVENT, Constants.SocketTimeout30Sec, true, false, 0, 101);
                 }else{
                     if(SharedPref.IsClearDiagnostic(getActivity()) && SharedPref.IsClearMalfunction(getActivity())){
-                        Globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_diagnostc_valid), getResources().getColor(R.color.colorVoilation));
+                        globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_diagnostc_valid), getResources().getColor(R.color.colorVoilation));
                     }else{
                         if(SharedPref.IsClearDiagnostic(getActivity())){
-                            Globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_diagnostic_records), getResources().getColor(R.color.colorVoilation));
+                            globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_diagnostic_records), getResources().getColor(R.color.colorVoilation));
                         }else{
-                            Globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_records), getResources().getColor(R.color.colorVoilation));
+                            globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_records), getResources().getColor(R.color.colorVoilation));
                         }
                     }
 
@@ -706,12 +712,12 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                         // call get events api to refresh data
                         invisibleMalfnBtn.performClick();
                     }else{
-                        Globally.EldScreenToast(invisibleMalfnBtn, message,
+                        globally.EldScreenToast(invisibleMalfnBtn, message,
                                 getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
                     // {"Status":false,"Message":"Failed..","Data":null}
-                    Globally.EldScreenToast(invisibleMalfnBtn, message,
+                    globally.EldScreenToast(invisibleMalfnBtn, message,
                             getResources().getColor(R.color.colorVoilation));
 
                 }
@@ -729,7 +735,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 progressDialog.dismiss();
 
 
-            Globally.EldScreenToast(invisibleMalfnBtn, error,
+            globally.EldScreenToast(invisibleMalfnBtn, error,
                     getResources().getColor(R.color.colorVoilation));
         }
 

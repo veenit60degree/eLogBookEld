@@ -1635,9 +1635,13 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         getActivity().startActivity(i);
                         getActivity().finish();
                     }else{
-                        if(flag == GetAppUpdate || flag == OperatingZone || flag == ChangeCycle){
+                        if(flag == ChangeCycle){
+                            Globally.DriverSwitchAlert(getActivity(), "Cycle Change Request !!", Message, "Ok");
+                        }else if(flag == GetAppUpdate || flag == OperatingZone){
                             global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorVoilation));
                         }
+
+
 
                     }
                 }catch (Exception e){

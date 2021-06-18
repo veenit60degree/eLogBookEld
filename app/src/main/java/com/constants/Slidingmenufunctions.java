@@ -82,7 +82,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	public static Button MainDriverBtn, CoDriverBtn;
 	LoginDialog loginDialog;
 	String MainDriverName = "", MainDriverPass = "", CoDriverName = "", CoDriverPass = "";
-	String title                      = "<font color='#1A3561'><b>Alert !!</b></font>";
+	String title     = "<font color='#1A3561'><b>Alert !!</b></font>";
 	String titleDesc = "<html>You can't switch while vehicle is moving. Please stop your vehicle first to take this action.</html>";	// <font color='#1A3561'><b>DRIVING/PERSONAL USE</b></font>
 	String okText = "<font color='#1A3561' ><b>Ok</b></font>";
 	ProgressDialog dialog;
@@ -102,7 +102,6 @@ public class Slidingmenufunctions implements OnClickListener {
 	private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
 	RecapViewMethod recapViewMethod;
 	DriverPermissionMethod driverPermissionMethod;
-	Globally Global;
 
 
 	public Slidingmenufunctions() {
@@ -115,7 +114,6 @@ public class Slidingmenufunctions implements OnClickListener {
 		this.context = context;
 		this.DriverType	= DriverType;
 
-		Global = new Globally();
 		driverPermissionMethod = new DriverPermissionMethod();
 		recapViewMethod = new RecapViewMethod();
 		eldFragment = new EldFragment();
@@ -175,7 +173,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void listItemClick(int status){
 
-		boolean isActionAllowedWithCoDriver = constants.isActionAllowedWithCoDriver(context, dbHelper, hMethod, Global, SharedPref.getDriverId(context));
+		boolean isActionAllowedWithCoDriver = constants.isActionAllowedWithCoDriver(context, dbHelper, hMethod, global, SharedPref.getDriverId(context));
 
 		switch (status){
 
@@ -188,7 +186,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(4);
 				}else{
-					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 				break;
 
@@ -196,7 +194,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(8);
 				}else{
-					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 				break;
 
@@ -206,10 +204,10 @@ public class Slidingmenufunctions implements OnClickListener {
 						EldFragment.IsMsgClick = false;
 						TabAct.host.setCurrentTab(5);
 					}else{
-						Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.odometer_permission_desc), context.getResources().getColor(R.color.colorSleeper));
+						global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.odometer_permission_desc), context.getResources().getColor(R.color.colorSleeper));
 					}
 				}else{
-					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 				break;
 
@@ -221,7 +219,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(7);
 				}else{
-					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 				break;
 
@@ -233,7 +231,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(11);
 				}else{
-					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 				break;
 
@@ -241,7 +239,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(12);
 				}else{
-					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 				break;
 
@@ -249,7 +247,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(1);
 				}else{
-					global.EldScreenToast(menuListView, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 				break;
 
@@ -281,7 +279,7 @@ public class Slidingmenufunctions implements OnClickListener {
 						logoutDialog();
 					}
 				}else{
-					Globally.EldScreenToast(usernameTV, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
+					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
 				}
 
 
@@ -383,13 +381,13 @@ public class Slidingmenufunctions implements OnClickListener {
 
 					//if(DriverStatus == DRIVING){
 						if(constants.isObdConnected(context) && sharedPref.isVehicleMoving(context)){
-							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+							global.DriverSwitchAlert(context, title, titleDesc, okText);
 						}else{
 							ShowLoginDialog(DriverConst.StatusSingleDriver);
 						}
 				/*	}else{
 						if( sharedPref.isVehicleMoving(context)){
-							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+							global.DriverSwitchAlert(context, title, titleDesc, okText);
 						}else{
 							ShowLoginDialog(DriverConst.StatusSingleDriver);
 						}
@@ -412,14 +410,14 @@ public class Slidingmenufunctions implements OnClickListener {
 
 					//if(DriverStatus == DRIVING){
 						if(constants.isObdConnected(context) && sharedPref.isVehicleMoving(context)){
-							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+							global.DriverSwitchAlert(context, title, titleDesc, okText);
 						}else{
 							ShowLoginDialog("co_driver");
 						}
 
 					/*}else{
 						if( sharedPref.isVehicleMoving(context)){
-							Globally.DriverSwitchAlert(context, title, titleDesc, okText);
+							global.DriverSwitchAlert(context, title, titleDesc, okText);
 						}else{
 							ShowLoginDialog("co_driver");
 						}
@@ -480,7 +478,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		picker.setContentView(R.layout.popup_edit_delete_lay);
 
 		if(sharedPref.isSuggestedEditOccur(context) && sharedPref.IsCCMTACertified(context)) {
-			if (Globally.isTablet(context)) {
+			if (global.isTablet(context)) {
 				picker.getWindow().setLayout(constants.intToPixel(context, 700), ViewGroup.LayoutParams.WRAP_CONTENT);
 			} else {
 				picker.getWindow().setLayout(constants.intToPixel(context, 500), ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -543,7 +541,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	private void callLogoutApi(){
 		try {
 			if (context != null) {
-				if (Globally.isWifiOrMobileDataEnabled(context)) {
+				if (global.isWifiOrMobileDataEnabled(context)) {
 					dialog.show();
 
 					if (SharedPref.getDriverId(context).trim().length() > 0) {
@@ -574,7 +572,7 @@ public class Slidingmenufunctions implements OnClickListener {
 					}
 
 				} else {
-					Globally.EldScreenToast(usernameTV, Globally.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
+					global.EldScreenToast(MainDriverBtn, global.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
 				}
 			}
 		}catch (Exception e){
@@ -685,7 +683,7 @@ public class Slidingmenufunctions implements OnClickListener {
 			if(error.contains("TimeoutError")){
 				error = "Connection time out. Please try again.";
 			}
-			Globally.EldScreenToast(usernameTV, error, context.getResources().getColor(R.color.colorSleeper));
+			global.EldScreenToast(MainDriverBtn, error, context.getResources().getColor(R.color.colorSleeper));
 		}
 	};
 
@@ -717,7 +715,7 @@ public class Slidingmenufunctions implements OnClickListener {
 					MainDriverBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
 				} else {
 					if (isShown)
-						Globally.EldScreenToast(CoDriverBtn, "Co Driver information not available", eldWarningColor);
+						global.EldScreenToast(MainDriverBtn, "Co Driver information not available", eldWarningColor);
 				}
 			}
 		}catch (Exception e){
@@ -774,11 +772,10 @@ public class Slidingmenufunctions implements OnClickListener {
 		@Override
 		public void LoginBtnReady(String UserType, String userName, String Password, EditText UsernameEditText, EditText PasswordEditText) {
 
-			//if(userName.length() > 0) {
 				if(Password.length() > 0) {
 					if(UserType.equals("main_driver")){
 						if(userName.equals(MainDriverName) && Password.equals(MainDriverPass)){
-							Globally.hideKeyboardView(context, PasswordEditText);
+							global.hideKeyboardView(context, PasswordEditText);
 
 							if(loginDialog != null)
 								loginDialog.dismiss();
@@ -788,14 +785,14 @@ public class Slidingmenufunctions implements OnClickListener {
 							sharedPref.setDrivingAllowedStatus(true, "", context);
 
 							RefreshActivity();
-							Globally.hideKeyboardView(context, PasswordEditText);
-							Globally.EldScreenToast(usernameTV, "Password confirmed", eldGreenColor );
+							global.hideKeyboardView(context, PasswordEditText);
+							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
 						}else{
-							Globally.EldScreenToast(UsernameEditText, "Incorrect Password", eldWarningColor );
+							global.EldScreenToast(UsernameEditText, "Incorrect Password", eldWarningColor );
 						}
 					}else{
 						if(userName.equals(CoDriverName) && Password.equals(CoDriverPass)){
-							Globally.hideKeyboardView(context, PasswordEditText);
+							global.hideKeyboardView(context, PasswordEditText);
 
 							if(loginDialog != null)
 								loginDialog.dismiss();
@@ -805,17 +802,15 @@ public class Slidingmenufunctions implements OnClickListener {
 							sharedPref.setDrivingAllowedStatus(true, "", context);
 
 							RefreshActivity();
-							Globally.EldScreenToast(usernameTV, "Password confirmed", eldGreenColor );
+							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
 						}else{
-							Globally.EldScreenToast(UsernameEditText, "Incorrect password", eldWarningColor );
+							global.EldScreenToast(UsernameEditText, "Incorrect password", eldWarningColor );
 						}
 					}
 				}else{
-					Globally.EldScreenToast(UsernameEditText, "Please enter password", eldWarningColor );
+					global.EldScreenToast(UsernameEditText, "Please enter password", eldWarningColor );
 				}
-			/*}else{
-				Globally.EldScreenToast(UsernameEditText, "Please enter username");
-			}*/
+
 
 		}
 	}
@@ -840,17 +835,17 @@ public class Slidingmenufunctions implements OnClickListener {
 				String status = "", message = "";
 
 				try {
-					Globally.obj = new JSONObject(response);
-					status 	= Globally.obj.getString(ConstantsKeys.Status);
-					message	= Globally.obj.getString(ConstantsKeys.Message);
+					JSONObject obj = new JSONObject(response);
+					status 	= obj.getString(ConstantsKeys.Status);
+					message	= obj.getString(ConstantsKeys.Message);
 
 					if(status.equalsIgnoreCase("true")){
 						constants.ClearLogoutData(context);
 					}else{
-						if(Globally.obj.getString("Message").equals("Device Logout")) {
+						if(obj.getString("Message").equals("Device Logout")) {
 							constants.ClearLogoutData(context);
 						}else{
-							Globally.EldScreenToast(usernameTV, message, context.getResources().getColor(R.color.red_eld));
+							global.EldScreenToast(MainDriverBtn, message, context.getResources().getColor(R.color.red_eld));
 						}
 					}
 
@@ -867,14 +862,14 @@ public class Slidingmenufunctions implements OnClickListener {
 
 						String message = error.toString();
 						if(message.contains("TimeoutError")){
-							message = "Server not responding. Please try again.";
+							message = "Connection timeout. Please try again.";
 						}else if(message.contains("ServerError")){
 							message = "ALS server not responding";
 						}else if(message.contains("NoConnectionError")){
 							message = "Connection not working.";
 						}
 
-						Globally.EldScreenToast(usernameTV, message, context.getResources().getColor(R.color.red_eld));
+						global.EldScreenToast(MainDriverBtn, message, context.getResources().getColor(R.color.red_eld));
 					}
 				}
 		) {
