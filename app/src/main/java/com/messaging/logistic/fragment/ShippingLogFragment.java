@@ -47,7 +47,6 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
     DBHelper dbHelper;
     ShipmentHelperMethod shipmentHelper;
     Globally Global;
-    SharedPref sharedPref;
 
     ListView hiddenListView, shippingListView;
     RecyclerView notiHistoryRecyclerView;
@@ -86,7 +85,6 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
 
     void initView(View view) {
 
-        sharedPref          = new SharedPref();
         dbHelper            = new DBHelper(getActivity());
         shipmentHelper      = new ShipmentHelperMethod();
         Global              = new Globally();
@@ -104,10 +102,10 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
         noDataEldTV         = (TextView)view.findViewById(R.id.noDataEldTV);
         EldTitleTV          = (TextView)view.findViewById(R.id.EldTitleTV);
 
-        IsSingleDriver  = sharedPref.getDriverType(getContext());
+        IsSingleDriver  = SharedPref.getDriverType(getContext());
         MainDriverId    = DriverConst.GetDriverDetails(DriverConst.DriverID, getContext());
         CoDriverId      = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getContext());
-        DeviceId        = sharedPref.GetSavedSystemToken(getActivity());
+        DeviceId        = SharedPref.GetSavedSystemToken(getActivity());
         SelectedDate    = Global.GetCurrentDeviceDate();
 
         hiddenListView.setVisibility(View.GONE);
@@ -142,7 +140,7 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
 
 
 
-        DriverId       = sharedPref.getDriverId( getActivity());
+        DriverId       = SharedPref.getDriverId( getActivity());
 
         try {
             GetDriverCycle(DriverType);
@@ -158,7 +156,7 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
 
     void LoadDataOnList(){
 
-        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             DriverType = Constants.MAIN_DRIVER_TYPE;     // Single Driver Type and Position is 0
             shipment18DaysJsonArray = shipmentHelper.getShipment18DaysArray(Integer.valueOf(DriverId), dbHelper);
 

@@ -119,7 +119,6 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     JSONArray offlineJobArray = new JSONArray();
     JSONArray previousDateJobs = new JSONArray();
     Globally global;
-    SharedPref sharedPref;
     boolean isHaulExcptn;
     boolean isAdverseExcptn;
     boolean isNorthCanada;
@@ -140,7 +139,6 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     void initView(View view){
 
         global                  = new Globally();
-        sharedPref              = new SharedPref();
         constants               = new Constants();
         dbHelper                = new DBHelper(getActivity());
         hMethods                = new HelperMethods();
@@ -163,7 +161,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
         saveBtn                 = (FloatingActionButton)view.findViewById(R.id.saveBtn);
         editLogProgressBar      = (ProgressBar)view.findViewById(R.id.editLogProgressBar);
 
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
             DriverName          = DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
         }else{
@@ -183,6 +181,13 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
     }
 
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
 
     private void initListControls() {
 
@@ -204,7 +209,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
             }
 
             selectedDateFormat      = selectedDateTime.toString().substring(0,10);
-            DRIVER_ID               = sharedPref.getDriverId( getActivity());
+            DRIVER_ID               = SharedPref.getDriverId( getActivity());
             driverLogArray          = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
             logArray                = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, selectedDateTime, selectedUtcTime, IsCurrentDate, offsetFromUTC );
             logArrayBeforeSelectedDate = hMethods.GetArrayBeforeSelectedDate(driverLogArray, selectedDateTime);
@@ -230,17 +235,17 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                // editLogProgressBar.setVisibility(View.VISIBLE);
                 GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
             }
-            isNorthCanada   =  sharedPref.IsNorthCanada(getActivity());
+            isNorthCanada   =  SharedPref.IsNorthCanada(getActivity());
 
             if(DriverType == Constants.MAIN_DRIVER_TYPE){
                 IsSingleDriver = true;
-                isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
-                isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+                isHaulExcptn    = SharedPref.get16hrHaulExcptn(getActivity());
+                isAdverseExcptn = SharedPref.getAdverseExcptn(getActivity());
 
             }else{
                 IsSingleDriver = false;
-                isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
-                isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+                isHaulExcptn    = SharedPref.get16hrHaulExcptnCo(getActivity());
+                isAdverseExcptn = SharedPref.getAdverseExcptnCo(getActivity());
             }
 
 
@@ -646,7 +651,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     RulesResponseObject InitilizeRulesObj(JSONArray tempTotalArray, int DRIVER_JOB_STATUS , String CurrentCycleId){
         oDriverDetail = new DriverDetail();
         oDriverLogList = hMethods.GetLogAsList(tempTotalArray);
-        int rulesVersion = sharedPref.GetRulesVersion(getActivity());
+        int rulesVersion = SharedPref.GetRulesVersion(getActivity());
 
         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
@@ -848,7 +853,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     if(DRIVER_JOB_STATUS == Constants.DRIVING || DRIVER_JOB_STATUS == Constants.ON_DUTY) {
                         oDriverDetail = new DriverDetail();
                         oDriverLogList = hMethods.GetLogAsList(finalEditingArray);
-                        int rulesVersion = sharedPref.GetRulesVersion(getActivity());
+                        int rulesVersion = SharedPref.GetRulesVersion(getActivity());
 
                         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
@@ -913,26 +918,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
             finalEditedLogArray = GetEditDataAsJson(logArray, lastDaySavedLocation, reason);
 
             Globally.EldScreenToast(saveBtn, "Saved data successfully.", getResources().getColor(R.color.colorPrimary));
-            sharedPref.SetEditedLogStatus(true, getActivity());
+            SharedPref.SetEditedLogStatus(true, getActivity());
 
             SaveDataLocally();
             UpdateLocalLogWithBackStack(true);
-
-
-         //   updateLocalLog();
-           // JSONArray finalJobsArray =  finalPostedArray(previousDateJobs, finalEditedLogArray, reason);
-            //  SaveDriverCycle(finalJobsArray);
-
-          /*  if(global.isConnected(getActivity())) {
-                int socketTimeout = 30000;   //30 seconds
-                SAVE_DRIVER_EDITED_LOG(finalJobsArray, false, false, socketTimeout);
-            }else{
-                Globally.EldScreenToast(saveBtn, "Saved data successfully.", getResources().getColor(R.color.colorPrimary));
-                sharedPref.SetEditedLogStatus(true, getActivity());
-
-                SaveDataLocally();
-                UpdateLocalLogWithBackStack(true);
-            }*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1169,7 +1158,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
 
     JSONArray GetEditDataAsJson( JSONArray geoData, String oldLocAddress, String editLogReason){
-        String DeviceID = sharedPref.GetSavedSystemToken(getActivity());
+        String DeviceID = SharedPref.GetSavedSystemToken(getActivity());
         String City = "";
         String State = "";
         String Country = "";
@@ -1335,7 +1324,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         LocationType,
                         IsNorthCanada,
                         DrivingStartTime,
-                        ""+sharedPref.IsAOBRD(getActivity()),
+                        ""+SharedPref.IsAOBRD(getActivity()),
                         CurrentCycleId,
                         "false",
                         "",
@@ -1375,7 +1364,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
                     if (obj.getString("Status").equals("true")) {
                         Globally.EldScreenToast(saveBtn, Message , getResources().getColor(R.color.colorPrimary));
-                        sharedPref.SetEditedLogStatus(false, getActivity());
+                        SharedPref.SetEditedLogStatus(false, getActivity());
                         UpdateLocalLogWithBackStack(true);
 
                     }else{
@@ -1407,7 +1396,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     editLogProgressBar.setVisibility(View.GONE);
                     oDriverLogDetail = tempDriverLogDetail;
 
-                    sharedPref.SetEditedLogStatus(true, getActivity());
+                    SharedPref.SetEditedLogStatus(true, getActivity());
                 }
 
 
@@ -1529,7 +1518,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
             MainDriverPref.SaveDriverLoc(getActivity(), editLogList);
 
         }else{
-            if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) { // If Current driver is Main Driver
+            if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) { // If Current driver is Main Driver
                 // clear data before adding
                 MainDriverPref.ClearLocFromList(getActivity());
 

@@ -57,8 +57,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/margin_10"
+                    android:layout_height="@dimen/view_height_60"
                     android:background="@color/whiteee"
 
 
@@ -70,14 +69,20 @@
                         android:textColor="@color/color_eld_theme"
                         android:textSize="@dimen/text_size_24"
                         android:text="@string/ELDViewLogUs"
+                        android:layout_centerVertical="true"
                         android:textStyle="bold"
+                        android:paddingLeft="@dimen/margin_short_9"
                         />
 
 
                     <TextView
                         android:id="@+id/dotModeTV"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_short_5"
+                        android:layout_marginBottom="@dimen/margin_short_5"
+                        android:gravity="center_vertical"
+
                         android:textColor="@color/color_eld_theme"
                         android:textSize="@dimen/text_size_18"
                         android:text="@string/dot_mode_us"
@@ -92,11 +97,13 @@
                     <ImageView
                         android:id="@+id/dotModeImgVw"
                         android:layout_width="@dimen/margin_18"
-                        android:layout_height="@dimen/margin_18"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_short_5"
+                        android:layout_marginBottom="@dimen/margin_short_5"
+                        android:gravity="center_vertical"
+
                         android:src="@drawable/pencil"
                         android:layout_toRightOf="@+id/dotModeTV"
-                        android:layout_marginLeft="@dimen/margin_short_3"
-                        android:layout_marginTop="@dimen/margin_short_3"
 
                         />
 
@@ -108,7 +115,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/colorVoilation"
                         android:textSize="@dimen/text_size_16"
-                        android:layout_marginTop="@dimen/margin_short_7"
+                        android:layout_centerVertical="true"
                         android:text="@string/data_malfunction"
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/dotModeTV"
@@ -120,7 +127,7 @@
                         android:id="@+id/sendLogBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        android:layout_centerVertical="true"
                         android:textSize="@dimen/text_size_17"
                         android:text="@string/Send_Log"
                         android:layout_alignParentRight="true"
@@ -129,6 +136,7 @@
                         android:textColor="@color/whiteee"
                         android:paddingTop="@dimen/margin_short_7"
                         android:paddingBottom="@dimen/margin_short_7"
+                        android:layout_marginRight="@dimen/margin_short_9"
                         android:background="@drawable/green_eld_drawable"
                         />
 
@@ -1137,7 +1145,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/view_height_190"
                     android:minWidth="@dimen/view_height_500"
-                    android:minHeight="@dimen/view_height_115"
+                    android:minHeight="@dimen/view_height_190"
 
                     >
 
@@ -1146,7 +1154,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_190"
                         android:minWidth="@dimen/view_height_500"
-                        android:minHeight="@dimen/view_height_115"
+                        android:minHeight="@dimen/view_height_190"
                         android:layout_marginTop="@dimen/margin_short_4"
                         android:fillViewport="true"
 

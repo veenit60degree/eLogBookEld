@@ -52,17 +52,15 @@ public class AppUpdateDialog extends Dialog {
     TextView currentVersionTV, appVersionDescTV;
     Button btnIgnore, btnUpdate;
     TabHost tabHost;
-    SharedPref sharedPref;
     Context context;
 
 
-    public AppUpdateDialog(Context context, boolean update_type, String newAppVersion, TabHost host, SharedPref sharedPref) { //, UpdateListener updateListener
+    public AppUpdateDialog(Context context, boolean update_type, String newAppVersion, TabHost host) { //, UpdateListener updateListener
         super(context);
         this.context = context;
         this.isPlayStoreDownload = update_type;
         this.newAppVersion = newAppVersion;
         this.tabHost = host;
-        this.sharedPref = sharedPref;
       //  this.updateListener = updateListener;
     }
 
@@ -76,8 +74,8 @@ public class AppUpdateDialog extends Dialog {
         setContentView(R.layout.update_popup);
         setCancelable(false);
 
-        DriverId         = sharedPref.getDriverId(context);
-        DeviceId         = sharedPref.GetSavedSystemToken(context);
+        DriverId         = SharedPref.getDriverId(context);
+        DeviceId         = SharedPref.GetSavedSystemToken(context);
         currentVersion   = Globally.GetAppVersion(context, "VersionName");
 
         currentVersionTV = (TextView)findViewById(R.id.currentVersionTV);
@@ -107,7 +105,7 @@ public class AppUpdateDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 btnIgnore.setEnabled(false);
-                sharedPref.SetUpdateAppDialogTime(Globally.GetCurrentDeviceDate(), context);
+                SharedPref.SetUpdateAppDialogTime(Globally.GetCurrentDeviceDate(), context);
 
                 ignoreUpdate(DriverId, DeviceId, currentVersion);
 
@@ -132,7 +130,7 @@ public class AppUpdateDialog extends Dialog {
         @Override
         public void onClick(View v) {
            // updateListener.UpdateReady( startTimeTextView, endTimeTextView, viewType, timePicker );
-            sharedPref.SetUpdateAppDialogTime(Globally.GetCurrentDeviceDate(), context);
+            SharedPref.SetUpdateAppDialogTime(Globally.GetCurrentDeviceDate(), context);
 
             if(isPlayStoreDownload){
                 launchPlayStore();

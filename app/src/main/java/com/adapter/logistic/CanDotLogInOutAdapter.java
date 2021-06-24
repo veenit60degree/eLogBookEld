@@ -92,18 +92,24 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
 
         holder.logInOutDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
-        String EventDateTime = itemsList.get(position).getDateTimeWithMins();
+        String EventDateTime  = itemsList.get(position).getDateTimeWithMins();
+        String CertifyLogDate = itemsList.get(position).getCertifyLogDate();
+
         try {
-            if (position == 0) {
-                holder.dateTimeDiffLogInTV.setVisibility(View.VISIBLE);
-                holder.dateTimeDiffLogInTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
-            } else {
-                int dayDiff = constants.getDayDiff(itemsList.get(position-1).getDateTimeWithMins(), EventDateTime);
-                if (dayDiff != 0){
-                    holder.dateTimeDiffLogInTV.setVisibility(View.VISIBLE);
-                    holder.dateTimeDiffLogInTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
-                }
+            if(itemsList.get(position).IsNewDate()) {
+                showDateView(CertifyLogDate, CertifyLogDate, holder.dateTimeDiffLogInTV, true);
             }
+
+         /*   if (position == 0) {
+                showDateView(EventDateTime, EventDateTime, holder.dateTimeDiffLogInTV, true);
+               // holder.dateTimeDiffLogInTV.setVisibility(View.VISIBLE);
+               // holder.dateTimeDiffLogInTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+            } else {
+                if(itemsList.get(position).IsNewDate()) {
+                    showDateView(itemsList.get(position - 1).getDateTimeWithMins(), EventDateTime,
+                            holder.dateTimeDiffLogInTV, false);
+                }
+            }*/
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -154,6 +160,20 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
 
 
         return convertView;
+    }
+
+
+    private void showDateView(String lastItemDate, String EventDateTime, TextView view, boolean isDirectVisibile){
+        if(isDirectVisibile){
+            view.setVisibility(View.VISIBLE);
+            view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+        }else{
+            int dayDiff = constants.getDayDiff(lastItemDate, EventDateTime);
+            if (dayDiff != 0) {
+                view.setVisibility(View.VISIBLE);
+                view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+            }
+        }
     }
 
 

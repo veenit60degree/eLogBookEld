@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -102,7 +103,6 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     Constants constants;
     Globally global;
-    SharedPref sharedPref;
     VolleyRequest GetDotLogRequest;
     Map<String, String> params;
 
@@ -182,7 +182,6 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         hMethods            = new HelperMethods();
         constants           = new Constants();
         global              = new Globally();
-        sharedPref          = new SharedPref();
         GetDotLogRequest    = new VolleyRequest(getActivity());
 
         dateRodsTV          = (TextView)view.findViewById(R.id.dateRodsTV);
@@ -256,7 +255,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         canDotProgressBar   = (ProgressBar)view.findViewById(R.id.canDotProgressBar);
         canDotScrollView    = (ScrollView)view.findViewById(R.id.canDotScrollView);
 
-
+        canDotModeTxtVw.setPadding(15,0,12,0);
+        canDotModeTxtVw.setBackgroundResource(R.drawable.media_white_drawable);
         eldMenuBtn.setImageResource(R.drawable.back_btn);
         viewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_more) + "</u>"));
         rightMenuBtn.setVisibility(View.GONE);
@@ -326,23 +326,34 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
+
 
         private void getBundleData() {
 
             CurrentDate             = global.GetCurrentDeviceDate();
-            DeviceId                = sharedPref.GetSavedSystemToken(getActivity());
-            DriverId               = sharedPref.getDriverId( getActivity());
+            DeviceId                = SharedPref.GetSavedSystemToken(getActivity());
+            DriverId               = SharedPref.getDriverId( getActivity());
 
-            Bundle getBundle = this.getArguments();
-            if(getBundle != null) {
-                LogDate = getBundle.getString("date");
-                DayName = getBundle.getString("day_name");
-                MonthFullName = getBundle.getString("month_full_name");
-                MonthShortName = getBundle.getString("month_short_name");
-                CurrentCycleId = getBundle.getString("cycle");
-                SelectedDayOfMonth = getBundle.getInt("day_of_month");
-                CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
-              //  getBundle.clear();
+            try {
+                Bundle getBundle = this.getArguments();
+                if (getBundle != null) {
+                    LogDate = getBundle.getString("date");
+                    DayName = getBundle.getString("day_name");
+                    MonthFullName = getBundle.getString("month_full_name");
+                    MonthShortName = getBundle.getString("month_short_name");
+                    CurrentCycleId = getBundle.getString("cycle");
+                    SelectedDayOfMonth = getBundle.getInt("day_of_month");
+                    CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
+                    //  getBundle.clear();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
             CurrentDate = global.GetCurrentDeviceDate();
 
@@ -372,7 +383,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 StateList = statePrefManager.GetState(getActivity());
             } catch (Exception e) { }
 
-            StateArrayList =  sharedPref.getStatesInList(getActivity());
+            StateArrayList =  SharedPref.getStatesInList(getActivity());
 
 
 
@@ -563,11 +574,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 String dayOfTheWeek     = outFormat.format(date);
 
-
-                EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " (" + dayOfTheWeek + " )");
-
-                GetDriverDotDetails(DriverId, LogDate);
-
+                if(LogDate.length() > 1){
+                    EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " (" + dayOfTheWeek + " )");
+                    GetDriverDotDetails(DriverId, LogDate);
+                }
             }
 
         }else{
@@ -608,8 +618,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             DayName = dayOfTheWeek;
             MonthFullName = monthFullName;
             MonthShortName = monthShortName;
-            EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
-
+            if(LogDate.length() > 1) {
+                EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
+            }
             if (global.isConnected(getActivity())) {
 
                 String selectedDateStr = global.ConvertDateFormat(LogDate);
@@ -632,8 +643,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     void shareDriverLogDialog() {
 
-        boolean IsAOBRDAutomatic        = sharedPref.IsAOBRDAutomatic(getActivity());
-        boolean IsAOBRD                 = sharedPref.IsAOBRD(getActivity());
+       // boolean IsAOBRDAutomatic        = SharedPref.IsAOBRDAutomatic(getActivity());
+        boolean IsAOBRD                 = SharedPref.IsAOBRD(getActivity());
 
 
       /*  if (!IsAOBRD || IsAOBRDAutomatic) {
@@ -736,19 +747,18 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             if (inspectionLayHeight == 0) {
                 if (global.isTablet(getActivity())) {
                     inspectionLayHeight = constants.intToPixel(getActivity(), 60);
-                    headerViewHeight    = constants.intToPixel(getActivity(), 75);
+                    headerViewHeight    = constants.intToPixel(getActivity(), 82);
                 } else {
                     inspectionLayHeight = constants.intToPixel(getActivity(), 45);
                     headerViewHeight    = constants.intToPixel(getActivity(), 65);
                 }
             }
 
-
-            final int DutyStatusListHeight = (inspectionLayHeight * DutyStatusList.size()) + (constants.getDateTitleCount(DutyStatusList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(DutyStatusList));
-            final int LoginLogoutListHeight = (inspectionLayHeight * LoginLogoutList.size()) + (constants.getDateTitleCount(LoginLogoutList) * inspectionLayHeight)+ (headerViewHeight * constants.getListNewDateCount(LoginLogoutList));
-            final int CommentsRemarksListHeight = inspectionLayHeight * (CommentsRemarksList.size() +1) ;  //+ (constants.getDateTitleCount(CommentsRemarksList) * inspectionLayHeight)
-            final int CycleOpZoneListHeight = (inspectionLayHeight * CycleOpZoneList.size()) + (constants.getDateTitleCount(CycleOpZoneList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(CycleOpZoneList));
-            final int EnginePowerListHeight = (inspectionLayHeight * EnginePowerList.size()) + (constants.getDateTitleCount(EnginePowerList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(EnginePowerList));
+            final int DutyStatusListHeight = getHeight(inspectionLayHeight, DutyStatusList, headerViewHeight);  //(inspectionLayHeight * DutyStatusList.size()) + (constants.getDateTitleCount(DutyStatusList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(DutyStatusList));
+            final int LoginLogoutListHeight = getHeight(inspectionLayHeight, LoginLogoutList, headerViewHeight); //(inspectionLayHeight * LoginLogoutList.size()) + (constants.getDateTitleCount(LoginLogoutList) * inspectionLayHeight)+ (headerViewHeight * constants.getListNewDateCount(LoginLogoutList));
+            final int CommentsRemarksListHeight = inspectionLayHeight * (CommentsRemarksList.size() +1) ;
+            final int CycleOpZoneListHeight = getHeight(inspectionLayHeight, CycleOpZoneList, headerViewHeight);    //(inspectionLayHeight * CycleOpZoneList.size()) + (constants.getDateTitleCount(CycleOpZoneList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(CycleOpZoneList));
+            final int EnginePowerListHeight = getHeight(inspectionLayHeight, EnginePowerList, headerViewHeight);    //(inspectionLayHeight * EnginePowerList.size()) + (constants.getDateTitleCount(EnginePowerList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(EnginePowerList));
             final int UnIdenfdVehListHeight = (inspectionLayHeight * UnAssignedVehicleList.size()+1) + headerViewHeight;
 
             new Handler().postDelayed(new Runnable() {
@@ -769,6 +779,19 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    int getHeight(int inspectionLayHeight, List<CanadaDutyStatusModel> list, int headerViewHeight){
+        int itemViewHeight = inspectionLayHeight;
+        if(list.size() > 9 && list.size() < 21){
+            itemViewHeight = inspectionLayHeight + 12;
+        }else if(list.size() > 20 && list.size() < 31){
+            itemViewHeight = inspectionLayHeight + 16;
+        }else if(list.size() > 30){
+            itemViewHeight = inspectionLayHeight + 20;
+        }
+        int viewHeight = (itemViewHeight * list.size()) + (constants.getDateTitleCount(list) * itemViewHeight) +
+                (headerViewHeight * constants.getListNewDateCount(list));
+        return viewHeight;
+    }
 
     void ReloadWebView(final String closeTag){
         canDotGraphWebView.clearCache(true);
@@ -779,7 +802,14 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 String data = ConstantHtml.GraphHtml + htmlAppendedText + closeTag;
                 canDotGraphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
-                canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,  constants.dpToPx(getActivity(), 155)) );
+                if(global.isTablet(getActivity())){
+                    canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            constants.dpToPx(getActivity(), 250)) );
+                }else{
+                    canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            constants.dpToPx(getActivity(), 160)) );
+                }
+
 
             }
         }, 500);
@@ -987,7 +1017,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
             String currentCycle = "";
-            if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+            if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
 
                 if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
                     currentCycle = "USA Cycle \n" + DriverConst.GetDriverSettings(DriverConst.USACycleName, getActivity());
@@ -1095,8 +1125,14 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                         JSONArray enginePowerArray = new JSONArray(dataObj.getString(ConstantsKeys.enginePowerUpAndShutDownList));
                         JSONArray unIdentifiedVehArray = new JSONArray(dataObj.getString(ConstantsKeys.UnAssignedVehicleMilesList));
 
+
                         DutyStatusList =   constants.parseCanadaDotInList(dutyStatusArray, true);
-                        LoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray, true);
+                        if(dataObj.has(ConstantsKeys.loginAndLogoutDates)) {
+                            JSONArray loginSortingArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutDates));
+                            LoginLogoutList = constants.parseCanadaLogoutLoginList(loginSortingArray);
+                        }else{
+                            LoginLogoutList =   constants.parseCanadaDotInList(loginLogoutArray, true);
+                        }
                         CommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray, false);
                         CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList, true);
                         EnginePowerList = constants.parseCanadaDotInList(enginePowerArray, true);

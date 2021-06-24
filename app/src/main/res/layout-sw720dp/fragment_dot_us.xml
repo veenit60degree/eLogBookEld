@@ -70,8 +70,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/margin_10"
+                    android:layout_height="@dimen/view_height_70"
                     android:background="@color/whiteee"
 
 
@@ -79,7 +78,9 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/margin_14"
                         android:textColor="@color/color_eld_theme"
                         android:textSize="@dimen/view_height_35"
                         android:text="@string/ELDViewLogUs"
@@ -90,7 +91,11 @@
                     <TextView
                         android:id="@+id/dotModeTV"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_short_5"
+                        android:layout_marginBottom="@dimen/margin_short_5"
+                        android:gravity="center_vertical"
+
                         android:textColor="@color/color_eld_theme"
                         android:textSize="@dimen/text_size_29"
                         android:text="@string/dot_mode_us"
@@ -103,11 +108,13 @@
                     <ImageView
                         android:id="@+id/dotModeImgVw"
                         android:layout_width="@dimen/margin_29"
-                        android:layout_height="@dimen/margin_29"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_short_5"
+                        android:layout_marginBottom="@dimen/margin_short_5"
+                        android:gravity="center_vertical"
+
                         android:src="@drawable/pencil"
                         android:layout_toRightOf="@+id/dotModeTV"
-                        android:layout_marginLeft="@dimen/margin_short_4"
-                        android:layout_marginTop="@dimen/margin_short_4"
 
                         />
 
@@ -130,7 +137,8 @@
                         android:id="@+id/sendLogBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/margin_14"
                         android:textSize="@dimen/text_size_22"
                         android:text="@string/Send_Log"
                         android:layout_alignParentRight="true"
@@ -1130,18 +1138,18 @@
                 <RelativeLayout
                     android:id="@+id/graphLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/view_height_115"
+                    android:layout_height="@dimen/view_height_200"
                     android:minWidth="@dimen/view_height_500"
-                    android:minHeight="@dimen/view_height_115"
+                    android:minHeight="@dimen/view_height_200"
 
                     >
 
                     <WebView
                         android:id="@+id/dotGraphWebView"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_115"
+                        android:layout_height="@dimen/view_height_200"
                         android:minWidth="@dimen/view_height_500"
-                        android:minHeight="@dimen/view_height_115"
+                        android:minHeight="@dimen/view_height_200"
                         android:layout_marginTop="@dimen/margin_short_4"
                         android:fillViewport="true"
 

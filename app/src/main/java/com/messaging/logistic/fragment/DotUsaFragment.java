@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -75,7 +76,6 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     View rootView;
     Globally global;
     HelperMethods hMethods;
-    SharedPref sharedPref;
     Constants constants;
     WebView dotGraphWebView;
     TextView errorConnectionView,  EldTitleTV, dotMalfunctionTV, viewInspectionBtn,sendLogBtn;
@@ -162,7 +162,6 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     void initView(View view) {
 
         hMethods            = new HelperMethods();
-        sharedPref          = new SharedPref();
         global              = new Globally();
         constants           = new Constants();
         GetDotLogRequest    = new VolleyRequest(getActivity());
@@ -212,6 +211,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         dotGraphWebView.setWebChromeClient(new WebChromeClient());
         dotGraphWebView.addJavascriptInterface( new WebAppInterface(), "Android");
 
+        dotModeTV.setPadding(15,0,12,0);
+        dotModeTV.setBackgroundResource(R.drawable.media_white_drawable);
 
         nextDateBtn.setOnClickListener(this);
         previousDateBtn.setOnClickListener(this);
@@ -272,6 +273,13 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
+
     private void getBundleData(){
 
         Constants.IS_ACTIVE_ELD = false;
@@ -288,8 +296,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         }
 
         CurrentDate             = global.GetCurrentDeviceDate();
-        DeviceId                = sharedPref.GetSavedSystemToken(getActivity());
-        DRIVER_ID               = sharedPref.getDriverId( getActivity());
+        DeviceId                = SharedPref.GetSavedSystemToken(getActivity());
+        DRIVER_ID               = SharedPref.getDriverId( getActivity());
 
         try {
             DBHelper dbHelper = new DBHelper(getActivity());
@@ -344,7 +352,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             StateList = statePrefManager.GetState(getActivity());
         } catch (Exception e) { }
 
-        StateArrayList =  sharedPref.getStatesInList(getActivity());
+        StateArrayList =  SharedPref.getStatesInList(getActivity());
 
         if (global.isConnected(getActivity())) {
             GetDriverDotDetails(DRIVER_ID, LogDate);
@@ -456,8 +464,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
     void shareDriverLogDialog() {
 
-      //  boolean IsAOBRDAutomatic        = sharedPref.IsAOBRDAutomatic(getActivity());
-        boolean IsAOBRD                 = sharedPref.IsAOBRD(getActivity());
+      //  boolean IsAOBRDAutomatic        = SharedPref.IsAOBRDAutomatic(getActivity());
+        boolean IsAOBRD                 = SharedPref.IsAOBRD(getActivity());
 
 
        /* if (!IsAOBRD || IsAOBRDAutomatic) {
@@ -662,7 +670,16 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             public void run() {
                 String data = ConstantHtml.GraphHtml + htmlAppendedText + closeTag;
                 dotGraphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
-                dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, constants.dpToPx(getActivity(), 155)) );
+
+                if(global.isTablet(getActivity())){
+                    dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            constants.dpToPx(getActivity(), 250)) );
+                }else{
+                    dotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            constants.dpToPx(getActivity(), 160)) );
+                }
+
+
             }
         }, 500);
 

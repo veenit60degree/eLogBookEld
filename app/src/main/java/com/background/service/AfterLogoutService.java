@@ -85,7 +85,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     Decoder decoder;
     WiFiConfig wifiConfig;
     Constants constants;
-    SharedPref sharedPref;
     private Messenger messenger = null;     //used to make an RPC invocation
     private boolean isBound = false;
     private ServiceConnection connection;   //receives callbacks from bind and unbind invocations
@@ -132,7 +131,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         mNotificationManager    = new NotificationManagerSmart(getApplicationContext());
         textToSpeech            = new TextToSpeech(getApplicationContext(), this);
 
-        sharedPref              = new SharedPref();
         constants               = new Constants();
         mTimer                  = new Timer();
 
@@ -141,7 +139,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         this.replyTo = new Messenger(new IncomingHandler());
         BindConnection();
 
-        if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
             bleInit();
         }else{
             checkWiredObdConnection();
@@ -184,7 +182,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
     private void CallWired(long time){
-        if (sharedPref.getUserName(getApplicationContext()).equals("") && sharedPref.getPassword(getApplicationContext()).equals("")) {
+        if (SharedPref.getUserName(getApplicationContext()).equals("") && SharedPref.getPassword(getApplicationContext()).equals("")) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -202,10 +200,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         if (obdShell.result == 0) {
             if (obdShell.successMsg.contains("USB_DCP")) {
                 // Connected State
-                sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", getApplicationContext());
+                SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", getApplicationContext());
             } else {
                 // Disconnected State. Save only when last status was not already disconnected
-                sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
+                SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
             }
         } else {
             // Error
@@ -219,7 +217,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         // communicate with wired OBD server app with Message
        // StartStopServer(constants.WiredOBD);
 
-        if (sharedPref.getUserName(getApplicationContext()).equals("") &&  sharedPref.getPassword(getApplicationContext()).equals("")) {
+        if (SharedPref.getUserName(getApplicationContext()).equals("") &&  SharedPref.getPassword(getApplicationContext()).equals("")) {
 
             boolean isAlsNetworkConnected = wifiConfig.IsAlsNetworkConnected(getApplicationContext());  // get ALS Wifi ssid availability
             boolean isWiredObdConnected = false;
@@ -238,17 +236,17 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     private void checkObdDataWithRule(int speed){
         try {
-            if(sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED ||
-                    sharedPref.getObdStatus(getApplicationContext()) == Constants.BLE_CONNECTED) {
+            if(SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED ||
+                    SharedPref.getObdStatus(getApplicationContext()) == Constants.BLE_CONNECTED) {
 
                 if (ignitionStatus.equals("ON") && !truckRPM.equals("0")) {
-                    sharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", getApplicationContext());
+                    SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", getApplicationContext());
                     if (speed > 8 && lastVehSpeed > 8) {
-                        sharedPref.setLoginAllowedStatus(false, getApplicationContext());
+                        SharedPref.setLoginAllowedStatus(false, getApplicationContext());
 
-                        long count = sharedPref.getLastCalledWiredCallBack(getApplicationContext());
+                        long count = SharedPref.getLastCalledWiredCallBack(getApplicationContext());
                         if (count == 0) {
-                            sharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
+                            SharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
                             Globally.PlaySound(getApplicationContext());
                             Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
                             SpeakOutMsg(AlertMsgSpeech);
@@ -260,36 +258,36 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                         }
 
                         // save count --------------
-                        sharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
+                        SharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
                     } else {
-                        sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
                     }
                     lastVehSpeed = speed;
 
                     // ping wired server to get data
-                    if( sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED &&
-                            sharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
+                    if( SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED &&
+                            SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
                         CallWired(TIME_INTERVAL_WIRED);
                     }
 
                 } else {
                     lastVehSpeed = -1;
-                    sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                    SharedPref.setLoginAllowedStatus(true, getApplicationContext());
 
-                    if( sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
-                        if (sharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED ||
-                                sharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
-                            sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
+                    if( SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
+                        if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED ||
+                                SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
+                            SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
                             CallWired(TIME_INTERVAL_WIFI);
                         }
                     }
                 }
             }else{
                 lastVehSpeed = -1;
-                sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                SharedPref.setLoginAllowedStatus(true, getApplicationContext());
 
-                if( sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
-                    sharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
+                if( SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
+                    SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", getApplicationContext());
                     CallWired(Constants.SocketTimeout5Sec);
                 }
             }
@@ -306,9 +304,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         Log.i("service", "---------onStartCommand Service");
 
-        if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
             bleInit();
-        }else if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+        }else if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
             StartStopServer(constants.WiredOBD);
         }else{
             checkWifiOBDConnection();
@@ -339,9 +337,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             }else{
 
                 // communicate with wired OBD server app with Message
-                if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                     checkPermissionsBeforeScanBle();
-                }else if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+                }else if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
                     if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED ){
                         StartStopServer(constants.WiredOBD);
                     }else{
@@ -487,7 +485,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             try {
                 String correctData = "";
 
-                sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                SharedPref.setLoginAllowedStatus(true, getApplicationContext());
 
                 if (!message.equals(noObd) && message.length() > 10) {
 
@@ -528,21 +526,21 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                 ignitionStatus = wifiConfig.checkJsonParameter(canObj, "EngineRunning", "false");
 
                                 if (ignitionStatus.equals("true")) {
-                                    sharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, "", getApplicationContext());
+                                    SharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, "", getApplicationContext());
                                     if(WheelBasedVehicleSpeed > 8 && lastVehSpeed > 8){
-                                        sharedPref.setLoginAllowedStatus(false, getApplicationContext());
+                                        SharedPref.setLoginAllowedStatus(false, getApplicationContext());
                                         Globally.PlaySound(getApplicationContext());
                                         Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
                                         SpeakOutMsg(AlertMsgSpeech);
                                         //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
                                     }else{
-                                        sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
                                     }
                                     lastVehSpeed = WheelBasedVehicleSpeed;
                                 } else {
-                                    if(sharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
-                                        sharedPref.setLoginAllowedStatus(true, getApplicationContext());
-                                        sharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED,  "", getApplicationContext());
+                                    if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
+                                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                                        SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED,  "", getApplicationContext());
                                     }
                                     lastVehSpeed = -1;
                                 }
@@ -684,8 +682,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                             BleManager.getInstance().cancelScan();
                         }
                     }else{
-                        if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                            sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+                        if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                            SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
                         }
                     }
                 }catch (Exception e){
@@ -744,7 +742,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     }
 
                     if(bluetoothGattServices.size() > 2) {
-                        sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+                        SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
 
                         BluetoothGattService service = bluetoothGattServices.get(2);
                         setBluetoothGattService(service);
@@ -770,8 +768,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     startScan();
                 }
 
-                if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                    sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                    SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
                 }
 
 
@@ -910,7 +908,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                             isBleObdRespond = false;
                           //  String data = HexUtil.formatHexString(characteristic.getValue(), true);
                          //   Log.d("Notify Success Data", "data: " + data);
-                            sharedPref.SaveObdStatus(Constants.BLE_CONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+                            SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
 
                         }
 
@@ -921,8 +919,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                             mIsScanning = false;
                             isBleObdRespond = false;
 
-                            if (sharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                                sharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
                             }
 
                         }
@@ -1113,7 +1111,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         }else{
             Log.d(TAG, "Service stopped");
 
-            if(sharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+            if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                 //  ------------- BLE OBD ----------
                 stopService(bleDevice, characteristic);
             }else {

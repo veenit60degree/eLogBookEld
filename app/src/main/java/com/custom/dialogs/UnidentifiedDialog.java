@@ -48,7 +48,6 @@ public class UnidentifiedDialog extends Dialog {
     RadioButton drivingRadBtn, onDutyRadBtn, personalRadBtn;
     TextInputLayout reasonInputLayout;
 
-    SharedPref sharedPref;
     Map<String, String> params;
     VolleyRequest claimRequest, rejectRequest;
 
@@ -71,7 +70,6 @@ public class UnidentifiedDialog extends Dialog {
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        sharedPref          = new SharedPref();
         claimRequest        = new VolleyRequest(getContext());
         rejectRequest       = new VolleyRequest(getContext());
 
@@ -90,7 +88,7 @@ public class UnidentifiedDialog extends Dialog {
         reasonInputLayout   = (TextInputLayout)findViewById(R.id.trailorNoInputType);
 
 
-        DriverId                = sharedPref.getDriverId( getContext());
+        DriverId                = SharedPref.getDriverId( getContext());
 
 
         recordTitleTV.setVisibility(View.VISIBLE);

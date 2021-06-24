@@ -31,7 +31,6 @@ public class EldActivity extends FragmentActivity  {
     public static TextView DOTButton;
     String MainDriverName = "", MainDriverPass = "", CoDriverName = "" , CoDriverPass = "";
     boolean isOnStart = false;
-    SharedPref sharedPref;
     Globally globally;
 
     @Override
@@ -49,7 +48,6 @@ public class EldActivity extends FragmentActivity  {
 
         setContentView(R.layout.frame_layout);
 
-        sharedPref = new SharedPref();
         globally = new Globally();
 
         DOTButton = (TextView)findViewById(R.id.tripTitleTV);
@@ -149,11 +147,11 @@ public class EldActivity extends FragmentActivity  {
                                 globally.hideKeyboardView(getApplicationContext(), PasswordEditText);
                                 globally.EldScreenToast(DOTButton, "Password confirmed", getResources().getColor(R.color.color_eld_bg));
 
-                                if (sharedPref.IsDOT(getApplicationContext())) {
+                                if (SharedPref.IsDOT(getApplicationContext())) {
                                     isOnStart = true;
                                 }
 
-                                sharedPref.SetDOTStatus(false, getApplicationContext());
+                                SharedPref.SetDOTStatus(false, getApplicationContext());
 
                                 if (isOnStart) {
                                     LoadFragment(getSupportFragmentManager().getBackStackEntryCount());
@@ -173,11 +171,11 @@ public class EldActivity extends FragmentActivity  {
                                 if (loginDialog != null)
                                     loginDialog.dismiss();
 
-                                if (sharedPref.IsDOT(getApplicationContext())) {
+                                if (SharedPref.IsDOT(getApplicationContext())) {
                                     isOnStart = true;
                                 }
                                 globally.EldScreenToast(DOTButton, "Password confirmed", getResources().getColor(R.color.color_eld_bg));
-                                sharedPref.SetDOTStatus(false, getApplicationContext());
+                                SharedPref.SetDOTStatus(false, getApplicationContext());
 
                                 if (isOnStart) {
                                     LoadFragment(getSupportFragmentManager().getBackStackEntryCount());
@@ -217,13 +215,13 @@ public class EldActivity extends FragmentActivity  {
                 }
                 if (count > 1) {
                     if (count == 2) {
-                        if (sharedPref.IsDOT(getApplicationContext())) {
+                        if (SharedPref.IsDOT(getApplicationContext())) {
                             ConfirmDOT();
                         } else {
                             fragManager.popBackStack();
                         }
                     } else {
-                        if(sharedPref.IsDOT(getApplicationContext())){
+                        if(SharedPref.IsDOT(getApplicationContext())){
                             ConfirmDOT();
                         }else {
                             fragManager.popBackStack();

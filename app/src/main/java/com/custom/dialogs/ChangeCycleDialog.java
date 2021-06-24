@@ -35,7 +35,6 @@ public class ChangeCycleDialog extends Dialog {
     Globally Global;
     HelperMethods hMethods;
     DBHelper dbHelper;
-    SharedPref sharedPref;
 
 
     public ChangeCycleDialog(Context context, String type, String currentCycle, String currentOpZone,  ChangeCycleListener readyListener) {
@@ -49,7 +48,6 @@ public class ChangeCycleDialog extends Dialog {
         constants = new Constants();
         hMethods = new HelperMethods();
         dbHelper = new DBHelper(getContext());
-        sharedPref = new SharedPref();
 
     }
 
@@ -112,7 +110,7 @@ public class ChangeCycleDialog extends Dialog {
         }else if(type.equals("can_cycle")){
             changeCycleTitleTV.setText(getContext().getString(R.string.canada_cycle_change));
             String cycleName = "";
-            if(sharedPref.IsNorthCanada(getContext())){
+            if(SharedPref.IsNorthCanada(getContext())){
                 cycleName = "Cycle 1 (80/7) (N)";
             } else{
                 cycleName = "Cycle 1 (70/7)";
@@ -154,12 +152,12 @@ public class ChangeCycleDialog extends Dialog {
         }
 
 
-        String changedCycleCalculatedData = constants.CalculateCycleTimeData(getContext(), sharedPref.getDriverId( getContext()), OperatingZoneChange, isNorth,
-                                        changedCycleId, Global, sharedPref, hMethods, dbHelper);
+        String changedCycleCalculatedData = constants.CalculateCycleTimeData(getContext(), SharedPref.getDriverId( getContext()), OperatingZoneChange, isNorth,
+                                        changedCycleId, Global, hMethods, dbHelper);
         changedCycleRuleDescVw.setText(Html.fromHtml(changedCycleCalculatedData) );
 
-        String oldCycleCalculatedData = constants.CalculateCycleTimeData(getContext(), sharedPref.getDriverId( getContext()), OperatingZoneChangeOld, isNorthOldValue,
-                currentCycle, Global, sharedPref, hMethods, dbHelper);
+        String oldCycleCalculatedData = constants.CalculateCycleTimeData(getContext(), SharedPref.getDriverId( getContext()), OperatingZoneChangeOld, isNorthOldValue,
+                currentCycle, Global, hMethods, dbHelper);
         oldCycleRuleDescVw.setText(Html.fromHtml(oldCycleCalculatedData));
 
 

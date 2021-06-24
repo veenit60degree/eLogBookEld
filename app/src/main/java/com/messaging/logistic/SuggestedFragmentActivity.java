@@ -44,7 +44,6 @@ public class SuggestedFragmentActivity extends FragmentActivity {
     public static List<RecapModel> otherLogList   = new ArrayList<>();
 
     String editedData = "", DriverId, DeviceId;
-    SharedPref sharedPref;
     ProgressDialog progressDialog;
     VolleyRequest GetEditedRecordRequest;
     Map<String, String> params;
@@ -68,15 +67,14 @@ public class SuggestedFragmentActivity extends FragmentActivity {
         editDataArray   = new JSONArray();
         otherLogList    = new ArrayList<>();
         menuImageView   = (ImageView)findViewById(R.id.menuImageView);
-        sharedPref      = new SharedPref();
 
         Intent i        = getIntent();
         editedData      = i.getStringExtra(ConstantsKeys.suggested_data);
 
-        DeviceId        = sharedPref.GetSavedSystemToken(this);
-        DriverId        = sharedPref.getDriverId(this);
+        DeviceId        = SharedPref.GetSavedSystemToken(this);
+        DriverId        = SharedPref.getDriverId(this);
 
-        if (sharedPref.getCurrentDriverType(this).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+        if (SharedPref.getCurrentDriverType(this).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             DriverType = Constants.MAIN_DRIVER_TYPE;
         }else{
             DriverType = Constants.CO_DRIVER_TYPE;
@@ -240,16 +238,16 @@ public class SuggestedFragmentActivity extends FragmentActivity {
                 getSupportFragmentManager().popBackStack();
             } else {
                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                    if (dataArray.length() > 0 && sharedPref.isSuggestedEditOccur(SuggestedFragmentActivity.this)) {
-                        sharedPref.setSuggestedRecallStatus(false, getApplicationContext());
+                    if (dataArray.length() > 0 && SharedPref.isSuggestedEditOccur(SuggestedFragmentActivity.this)) {
+                        SharedPref.setSuggestedRecallStatus(false, getApplicationContext());
                     } else {
-                        sharedPref.setSuggestedRecallStatus(true, getApplicationContext());
+                        SharedPref.setSuggestedRecallStatus(true, getApplicationContext());
                     }
                 }else{
-                    if (dataArray.length() > 0 && sharedPref.isSuggestedEditOccurCo(SuggestedFragmentActivity.this)) {
-                        sharedPref.setSuggestedRecallStatusCo(false, getApplicationContext());
+                    if (dataArray.length() > 0 && SharedPref.isSuggestedEditOccurCo(SuggestedFragmentActivity.this)) {
+                        SharedPref.setSuggestedRecallStatusCo(false, getApplicationContext());
                     } else {
-                        sharedPref.setSuggestedRecallStatusCo(true, getApplicationContext());
+                        SharedPref.setSuggestedRecallStatusCo(true, getApplicationContext());
                     }
                 }
 

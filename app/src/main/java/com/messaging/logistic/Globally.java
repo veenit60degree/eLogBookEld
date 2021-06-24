@@ -1119,14 +1119,16 @@ public class Globally {
     public long GetTimeZoneOffSet(){
         String currentDate = getCurrentDate();
         String currentUTCDate = GetCurrentUTCTimeFormat();
-     //   DateTime currentDateTime = new DateTime(currentDate);
-     //   DateTime currentUtcdateTime = new DateTime(currentUTCDate);
-		DateTime currentDateTime = getDateTimeObj(currentDate, false);
-		DateTime currentUtcdateTime =  getDateTimeObj(currentUTCDate, false);
-		long diffInMillis = currentDateTime.getMillis() - currentUtcdateTime.getMillis();
-		long minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
-		minutes = minutes/60;
-
+		long minutes = 0;
+    	try {
+			DateTime currentDateTime = getDateTimeObj(currentDate, false);
+			DateTime currentUtcdateTime = getDateTimeObj(currentUTCDate, false);
+			long diffInMillis = currentDateTime.getMillis() - currentUtcdateTime.getMillis();
+			minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+			minutes = minutes / 60;
+		}catch (Exception e){
+    		e.printStackTrace();
+		}
         return minutes;
     }
 
@@ -1222,11 +1224,9 @@ public class Globally {
 
 	public static void StopService(Context context){
 		try {
-			SharedPref sharedPref = new SharedPref();
-
-			sharedPref.setDriverId( "", context);
-			sharedPref.setPassword( "", context);
-			sharedPref.setUserName( "", context);
+			SharedPref.setDriverId( "", context);
+			SharedPref.setPassword( "", context);
+			SharedPref.setUserName( "", context);
 			context.stopService(serviceIntent);
 		}catch (Exception e){
 			e.printStackTrace();
@@ -1549,7 +1549,6 @@ public class Globally {
 	// ---------- return array with new saved record --------------
 	public JSONArray getSaveCycleRecords(int CycleId, String changeType, Context context){
 		JSONArray cycleDetailArray = new JSONArray();
-		SharedPref sharedPref = new SharedPref();
 
 		try{
 			JSONObject obdModel = new JSONObject();
@@ -1559,7 +1558,7 @@ public class Globally {
 			obdModel.put(ConstantsKeys.CycleChangeType, changeType);
 			obdModel.put(ConstantsKeys.IsInternet, isConnected(context));
 
-			cycleDetailArray = new JSONArray(sharedPref.GetCycleDetails(context));
+			cycleDetailArray = new JSONArray(SharedPref.GetCycleDetails(context));
 			cycleDetailArray.put(obdModel);
 
 		}catch (Exception e){
@@ -1591,9 +1590,8 @@ public class Globally {
 					int cycleIdInt = Integer.valueOf(CurrentCycleId);
 					String CurrentSavedCycle   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
 					if(cycleIdInt != -1 && !CurrentSavedCycle.equals(cycleIdInt)) {
-						SharedPref sharedPref = new SharedPref();
 						JSONArray cycleDetailArray = getSaveCycleRecords(cycleIdInt, changeType, context);
-						sharedPref.SetCycleOfflineDetails(cycleDetailArray.toString(), context);
+						SharedPref.SetCycleOfflineDetails(cycleDetailArray.toString(), context);
 					}
 				}
 
@@ -1621,6 +1619,26 @@ public class Globally {
 
 				Vibrator mVibrate = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 				long pattern[] = {0, 600, 200, 600, 300, 1000, 400, 1000}; //4000
+				// 2nd argument is for repetition pass -1 if you do not want to repeat the Vibrate
+				mVibrate.vibrate(pattern, -1);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+
+
+	@SuppressLint("MissingPermission")
+	public static void PlayNotificationSound(Context context){
+		try {
+			if(context != null) {
+				int resID = context.getResources().getIdentifier("new_notification", "raw", context.getPackageName());
+				MediaPlayer mediaPlayer = MediaPlayer.create(context, resID);
+				mediaPlayer.start();
+
+				Vibrator mVibrate = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+				long pattern[] = {0, 600, 200, 600, 300, 100, 100, 100}; //4000
 				// 2nd argument is for repetition pass -1 if you do not want to repeat the Vibrate
 				mVibrate.vibrate(pattern, -1);
 			}
@@ -1844,6 +1862,37 @@ public class Globally {
 				alertDialog.show();
 			}
 		}catch (Exception e){e.printStackTrace();}
+	}
+
+
+	public static void DriverSwitchAlertWithDismiss(final Context context, final String title, final String msg,
+													final String okText, AlertDialog alertDialog, boolean isDismiss){
+		try {
+			if(isDismiss){
+				if(alertDialog != null && alertDialog.isShowing()){
+					alertDialog.dismiss();
+				}
+			}else{
+				alertDialog.setTitle(Html.fromHtml(title));
+				alertDialog.setMessage(Html.fromHtml(msg));
+
+				// Setting OK Button
+				alertDialog.setButton(Html.fromHtml(okText), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+
+						dialog.dismiss();
+					}
+				});
+
+				// Showing Alert Message
+				if (context != null) {
+					alertDialog.show();
+				}
+			}
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 
@@ -2120,15 +2169,13 @@ public class Globally {
 		IS_LOGOUT = true;
 
 		try {
-			SharedPref sharedPref = new SharedPref();
-
-			sharedPref.setPassword("", c);
-			sharedPref.setUserName("", c);
-			sharedPref.setServiceOnDestoryStatus(true, c);
-			sharedPref.SetTruckStartLoginStatus(true, c);
-			sharedPref.SetUpdateAppDialogTime("", c);
-			sharedPref.setLastCalledWiredCallBack(0, c);
-			//sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, c);
+			SharedPref.setPassword("", c);
+			SharedPref.setUserName("", c);
+			SharedPref.setServiceOnDestoryStatus(true, c);
+			SharedPref.SetTruckStartLoginStatus(true, c);
+			SharedPref.SetUpdateAppDialogTime("", c);
+			SharedPref.setLastCalledWiredCallBack(0, c);
+			//SharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, c);
 
 			ClearSqliteDB(c);
 
@@ -2159,33 +2206,31 @@ public class Globally {
 		SECOND_DRIVER_NAME = "--";
 
 		try {
-			SharedPref sharedPref = new SharedPref();
-
-			sharedPref.setLoadId("", c);
-			sharedPref.setDriverId("", c);
-			sharedPref.setDriverStatusId("jobType", "", c);
-			sharedPref.setCountryCycle("CountryCycle", "", c);
-			sharedPref.setTimeZone("", c);
-			sharedPref.setUTCTimeZone("utc_time_zone", "", c);
-			sharedPref.setVINNumber("", c);
-			sharedPref.setTrailorNumber("", c);
-			sharedPref.setVehicleId("", c);
-			sharedPref.SetViolation(false, c);
-			sharedPref.SetViolationReason("", c);
-			sharedPref.SetSystemToken("", c);
-			sharedPref.SetIsReadViolation(false, c);
-			sharedPref.setCurrentDate("", c);
-			sharedPref.SetIsAOBRD(false, c);
-			sharedPref.SetAOBRDAutomatic(false, c);
-			sharedPref.SetAOBRDAutoDrive(false, c);
-			sharedPref.SetDOTStatus(false, c);
-			sharedPref.SetOdometerFromOBD(false, c);
-			sharedPref.set16hrHaulExcptn(false, c);
-			sharedPref.set16hrHaulExcptnCo(false, c);
-			sharedPref.notificationDeleted(false, c);
-			sharedPref.SetOBDPingAllowedStatus(false, c);
-			sharedPref.SetAutoDriveStatus(false, c);
-			sharedPref.SaveConnectionInfo("", "", c);
+			SharedPref.setLoadId("", c);
+			SharedPref.setDriverId("", c);
+			SharedPref.setDriverStatusId("", c);
+			SharedPref.setCountryCycle("CountryCycle", "", c);
+			SharedPref.setTimeZone("", c);
+			SharedPref.setUTCTimeZone("utc_time_zone", "", c);
+			SharedPref.setVINNumber("", c);
+			SharedPref.setTrailorNumber("", c);
+			SharedPref.setVehicleId("", c);
+			SharedPref.SetViolation(false, c);
+			SharedPref.SetViolationReason("", c);
+			SharedPref.SetSystemToken("", c);
+			SharedPref.SetIsReadViolation(false, c);
+			SharedPref.setCurrentDate("", c);
+			SharedPref.SetIsAOBRD(false, c);
+			SharedPref.SetAOBRDAutomatic(false, c);
+			SharedPref.SetAOBRDAutoDrive(false, c);
+			SharedPref.SetDOTStatus(false, c);
+			SharedPref.SetOdometerFromOBD(false, c);
+			SharedPref.set16hrHaulExcptn(false, c);
+			SharedPref.set16hrHaulExcptnCo(false, c);
+			SharedPref.notificationDeleted(false, c);
+			SharedPref.SetOBDPingAllowedStatus(false, c);
+			SharedPref.SetAutoDriveStatus(false, c);
+			SharedPref.SaveConnectionInfo("", "", c);
 
 		} catch (Exception e) {
 			e.printStackTrace();

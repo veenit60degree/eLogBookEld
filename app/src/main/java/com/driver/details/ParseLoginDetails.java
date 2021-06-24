@@ -158,10 +158,10 @@ public class ParseLoginDetails {
 
                             if(DriverSetting.has(ConstantsKeys.IsAllowLogReCertification)) {
                                 SharedPref.SetCertifcnUnIdenfdSettingsCo(
-                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowLogReCertificationCo),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsShowUnidentifiedRecordsCo),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsPersonalCo),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsYardMoveCo), context);
+                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowLogReCertification),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsPersonal),
+                                        DriverSetting.getBoolean(ConstantsKeys.IsYardMove), context);
                             }else{
                                 SharedPref.SetCertifcnUnIdenfdSettingsCo(
                                         false,

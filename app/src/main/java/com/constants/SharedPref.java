@@ -189,6 +189,21 @@ public class SharedPref {
     }
 
 
+    // Get Ble Scan Count  -------------------
+    public static int getBleScanCount(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt("bleScanCount", 0);
+    }
+
+
+    // set Ble Scan Count  -------------------
+    public static void saveBleScanCount( int count, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("bleScanCount", count);
+        editor.commit();
+    }
+
   /*  // Get OBD Screen status -------------------
     public static boolean isOBDScreen(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -240,6 +255,23 @@ public class SharedPref {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("ObdStatusTime", "");
     }
+
+
+    // Set Wired Obd Call Time  -------------------
+    public static void SetWiredObdCallTime( String date, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("WiredObdCallTime", date);
+        editor.commit();
+    }
+
+    // Get last Wired Obd CallTime -------------------
+    public static String getWiredObdCallTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("WiredObdCallTime", "");
+    }
+
+
 
     // Get Obd Status -------------------
     public static String getObdSourceName( Context context) {
@@ -1249,21 +1281,21 @@ public class SharedPref {
 
 
     // Set  Job Type -------------------
-    public static void setDriverStatusId(String key, String value, Context context) {
+    public static void setDriverStatusId( String value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(key, value);
+        editor.putString("jobType", value);
         editor.commit();
     }
 
 
     // Get Job Type -------------------
-    public static String getDriverStatusId(String key, Context context) {
+    public static String getDriverStatusId( Context context) {
         String DriverStatusId = "";
         try {
             if (context != null) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                DriverStatusId = preferences.getString(key, "");
+                DriverStatusId = preferences.getString("jobType", "");
             }
         }catch (Exception e){}
         return DriverStatusId;
@@ -2016,7 +2048,7 @@ public class SharedPref {
         editor.commit();
     }
 
-    public List<String> getStatesInList(Context context) {
+    public static List<String> getStatesInList(Context context) {
 
         int stateListSize = 0;
         List<String> StateArrayList = new ArrayList<String>();
@@ -2431,7 +2463,7 @@ public class SharedPref {
 
 
     // ===========================Save Current Cycle with details ===========================
-    public void SetCycleOfflineDetails(String value, Context context) {
+    public static void SetCycleOfflineDetails(String value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("cycleDetails", value);
@@ -2439,7 +2471,7 @@ public class SharedPref {
     }
 
     // =========================== Get Offline Data Status ===========================
-    public String GetCycleDetails(Context context) {
+    public static String GetCycleDetails(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("cycleDetails", "[]");
     }
@@ -2447,7 +2479,7 @@ public class SharedPref {
 
 
     // =========================== Save Last OBD Type with Time ===========================
-    public void SaveConnectionInfo(String type, String time, Context context) {
+    public static void SaveConnectionInfo(String type, String time, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.CONNECTION_TYPE, type);
@@ -2456,7 +2488,7 @@ public class SharedPref {
     }
 
     // =========================== Get OBD saved time with Type===========================
-    public String GetConnectionInfo(String key, Context context) {
+    public static String GetConnectionInfo(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, "");
     }

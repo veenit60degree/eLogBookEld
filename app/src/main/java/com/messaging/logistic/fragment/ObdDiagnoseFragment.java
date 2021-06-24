@@ -85,6 +85,8 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     ProgressBar loaderProgress;
     ScrollView obdLayScrollView;
     Globally globally;
+    LinearLayout wifiObdLay;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,6 +134,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         obdProgressBar  = (ProgressBar)v.findViewById(R.id.obdProgressBar);
         rightMenuBtn    = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
         eldMenuLay      = (RelativeLayout)v.findViewById(R.id.eldMenuLay);
+        wifiObdLay      = (LinearLayout)v.findViewById(R.id.wifiObdLay);
         eldMenuBtn      = (ImageView)v.findViewById(R.id.eldMenuBtn);
 
         button2         = (Button)v.findViewById(R.id.button2);
@@ -154,6 +157,17 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         eldMenuLay.setOnClickListener(this);
         button2.setOnClickListener(this);
 
+        if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
+            bleObdTxtView.setVisibility(View.GONE);
+        }else if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_BLE){
+            wifiObdLay.setVisibility(View.GONE);
+        }else {
+            bleObdTxtView.setVisibility(View.GONE);
+            wifiObdLay.setVisibility(View.GONE);
+            responseRawTxtView.setVisibility(View.INVISIBLE);
+            obdDataTxtView.setText(getString(R.string.no_obd_settings));
+        }
+
     }
 
 
@@ -166,6 +180,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             loaderProgress.setVisibility(View.VISIBLE);
             bleObdTxtView.setText(getString(R.string.start_scan));
             SharedPref.SetBlePingStatus("start", getActivity());
+            SharedPref.saveBleScanCount(0, getActivity());
 
             Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

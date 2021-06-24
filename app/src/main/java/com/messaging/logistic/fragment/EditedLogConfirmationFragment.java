@@ -12,9 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.adapter.logistic.EditedLogAdapter;
+import com.constants.SharedPref;
 import com.messaging.logistic.R;
 
 public class EditedLogConfirmationFragment extends Fragment {
@@ -61,8 +63,8 @@ public class EditedLogConfirmationFragment extends Fragment {
         durationEditedTxtView.setTextAppearance(getActivity(), R.style.edit_text_style_bold);
 
         suggestedLogFragment = new SuggestedLogFragment();
-        DeviceId            = suggestedLogFragment.sharedPref.GetSavedSystemToken(getActivity());
-        DriverId            = suggestedLogFragment.sharedPref.getDriverId( getActivity());
+        DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
+        DriverId            = SharedPref.getDriverId( getActivity());
         offsetFromUTC       = (int) suggestedLogFragment.globally.GetTimeZoneOffSet();
 
 
@@ -78,6 +80,14 @@ public class EditedLogConfirmationFragment extends Fragment {
         return rootView;
     }
 
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
 
 
     void SetCertifyListViewHeight(){

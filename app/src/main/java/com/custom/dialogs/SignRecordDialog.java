@@ -78,7 +78,6 @@ public class SignRecordDialog extends Dialog {
     RecapViewMethod recapViewMethod;
     CertifyLogMethod certifyLogMethod;
     SaveDriverLogPost saveCertifyLogPost;
-    SharedPref sharedPref;
     Globally globally;
     DBHelper dbHelper;
     int DriverType;
@@ -92,7 +91,6 @@ public class SignRecordDialog extends Dialog {
                                     Constants constants,
                                     RecapViewMethod recapViewMethod,
                                     CertifyLogMethod certifyLogMethod,
-                                    SharedPref sharedPref,
                                     DBHelper dbHelper) {
         super(context);
         this.context = context;
@@ -105,7 +103,6 @@ public class SignRecordDialog extends Dialog {
         this.constants =  constants;
         this.recapViewMethod =  recapViewMethod;
         this.certifyLogMethod =  certifyLogMethod;
-        this.sharedPref =  sharedPref;
         this.dbHelper =  dbHelper;
 
         saveCertifyLogPost          = new SaveDriverLogPost(context, saveCertifyResponse);
@@ -115,8 +112,8 @@ public class SignRecordDialog extends Dialog {
         progressDialog  = new ProgressDialog(context);
         progressDialog.setMessage("Loading...");
 
-        DeviceId           = sharedPref.GetSavedSystemToken(context);
-        DriverId           = sharedPref.getDriverId(context);
+        DeviceId           = SharedPref.GetSavedSystemToken(context);
+        DriverId           = SharedPref.getDriverId(context);
         CompanyId          = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
 
         this.recap18DaysArray = recap18DaysArray;
@@ -373,7 +370,7 @@ public class SignRecordDialog extends Dialog {
             JSONObject CertifyLogObj;
             String dateStr = selectedDateList.get(i);
             boolean isReCertifyRequired = constants.isReCertifyRequired(getContext(), null, globally.ConvertDateFormat(dateStr));
-            String locationType = sharedPref.getLocMalfunctionType(context);
+            String locationType = SharedPref.getLocMalfunctionType(context);
             if(i == 0) {
                 CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, globally.PROJECT_ID, dateStr,
                         SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, locationType);

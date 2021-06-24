@@ -74,7 +74,7 @@
     <string name="arrival_departure_seal_number">Enter Arrival or Departure seal number</string>
     <string name="selectInsType">Please select Inspection type</string>
     <string name="NoDefects">No Defects</string>
-    <string name="SupervisorMechanicsName">Supervisor/Mechanics Name: </string>
+    <string name="SupervisorMechanicsName">Supervisor/Mechanic Name: </string>
     <string name="odometerReading">Odometer Reading</string>
     <string name="odometerReadingTitle">Reading: </string>
     <string name="reading">Reading</string>
@@ -117,6 +117,7 @@
     <string name="Add_Scanned_Documents">Add Scanned Documents</string>
     <string name="Add_trailer_no">Add Trailer number first</string>
     <string name="update_trailer_no">Please update your trailer number before driving</string>
+    <string name="yardmove_ended">Yard Move has been ended.</string>
 
     <string name="Entry_Time">Entry Time</string>
     <string name="Exit_Time">Exit Time</string>
@@ -233,6 +234,7 @@
 
     <string name="eng_sync_dia_event">Engine sync diagnostic event</string>
     <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>
+    <string name="eng_sync_dia_occured_ble_desc">Engine sync diagnostic event occurred due to bluetooth OBD disconnected.</string>
     <string name="missing_event_occured_desc">Missing data element diagnostic occurred</string>
     <string name="missing_data_element">Missing Data Diagnostic</string>
     <string name="dia_event_occured">Diagnostic event occurred</string>
@@ -356,11 +358,13 @@
     <string name="Date">Date: </string>
     <string name="NAME">NAME: </string>
     <string name="name">Name</string>
+    <string name="Sup_mech_name">Supv/Mech Name</string>
     <string name="Id_No">ID NO: </string>
     <string name="co_driver">CO DRIVER:  </string>
     <string name="TRACTOR">TRACTOR: </string>
     <string name="TRAILER">TRAILER: </string>
     <string name="seal_no">Seal number</string>
+
     <string name="person_name">Person name</string>
     <string name="refresh">Refresh</string>
     <string name="country">Country</string>
@@ -419,6 +423,13 @@
     <string name="who_conducted_followup">Person who conducted follow up security inspection</string>
     <string name="who_affixed_seal">Person who affixed seals</string>
     <string name="who_verify_physical">Person who verified physical integrity of seal</string>
+
+    <string name="seal_no_hint_arr">Seal no. of contr. at arrival</string>
+    <string name="seal_no_hint_dep">Seal no. of contr. at dep.</string>
+    <string name="security_arr_hint">Person Name of security arrival</string>
+    <string name="follow_up_hint">Person Name of follow up</string>
+    <string name="Affixed_seal_hint">Affixed seals Person</string>
+    <string name="Physical_intgrty_hint">Physical integrity Person</string>
 
     <string name="view_less">View Less</string>
     <string name="view_more">View More</string>
@@ -707,6 +718,8 @@
     <string name="wired_tablet">Wired Tablet Connected</string>
     <string name="obd_wifi">WiFi OBD Connected</string>
     <string name="obd_ble">Bluetooth OBD Connected</string>
+    <string name="BluetoothOBD">Bluetooth OBD</string>
+    <string name="BleObdNotFound">Bluetooth OBD not found. Please check your bluetooth device.</string>
     <string name="obd_not_connected">OBD not connected</string>
     <string name="wifi_active">WIFI OBD is connected</string>
     <string name="wifi_inactive">WIFI OBD is not working</string>
@@ -789,6 +802,7 @@
     <string name="scanning">Scanning</string>
     <string name="start_scan">Start scanning</string>
     <string name="stop_scan">Stop scanning</string>
+    <string name="no_obd_settings">No settings found for wired OBD preference.</string>
 
     <string name="WantEndYM">Do you want to End Yard Move?"</string>
     <string name="WantEndPU">Do you want to End Personal Use?"</string>

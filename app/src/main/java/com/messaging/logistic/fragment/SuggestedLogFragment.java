@@ -102,7 +102,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     String DriverId, DeviceId, imagePath = "", CoDriverId = "";
     public HelperMethods hMethods;
     public DBHelper dbHelper;
-    public SharedPref sharedPref;
     public Globally globally;
     public Constants constants;
     public static JSONArray driverLogArray;
@@ -155,7 +154,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         globally        = new Globally();
         hMethods        = new HelperMethods();
         dbHelper        = new DBHelper(getActivity());
-        sharedPref      = new SharedPref();
         constants       = new Constants();
 
 
@@ -191,7 +189,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         globally        = new Globally();
         hMethods        = new HelperMethods();
         dbHelper        = new DBHelper(getActivity());
-        sharedPref      = new SharedPref();
         constants       = new Constants();
 
       //  saveCertifyLogPost          = new SaveDriverLogPost(getActivity(), saveCertifyResponse);
@@ -218,10 +215,10 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         originalLogFragment = new OriginalLogFragment();
         confirmationDialog  = new AlertDialogEld(getActivity());
 
-        DeviceId               = sharedPref.GetSavedSystemToken(getActivity());
-        DriverId               = sharedPref.getDriverId( getActivity());
+        DeviceId               = SharedPref.GetSavedSystemToken(getActivity());
+        DriverId               = SharedPref.getDriverId( getActivity());
 
-        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             DriverType = Constants.MAIN_DRIVER_TYPE;
         }else {
             DriverType = Constants.CO_DRIVER_TYPE;
@@ -832,7 +829,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         params.put(ConstantsKeys.CoDriverKey, CoDriverId);
 
         params.put(ConstantsKeys.ActionDateTime, globally.getCurrentDate() );
-        params.put(ConstantsKeys.ActionTimeZone, sharedPref.getTimeZone(getActivity()) );
+        params.put(ConstantsKeys.ActionTimeZone, SharedPref.getTimeZone(getActivity()) );
 
         if(!isCurrentDate) {
              params.put(ConstantsKeys.ProjectId, Globally.PROJECT_ID);
@@ -929,11 +926,11 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                     case GetReCertifyRecords:
                         try {
                             if (!obj.isNull("Data")) {
-                                sharedPref.setReCertifyData(obj.getString("Data"), getActivity());
+                                SharedPref.setReCertifyData(obj.getString("Data"), getActivity());
 
                                 // update recap array for reCertify the log if edited
                                 constants.UpdateCertifyLogArray(recapViewMethod, DriverId, 7,
-                                        dbHelper, sharedPref, getActivity());
+                                        dbHelper, getActivity());
 
                             }
                         } catch (JSONException e) {
@@ -1157,15 +1154,15 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
       //  if(SuggestedFragmentActivity.editDataArray.length() == 1){
            // make is suggested value false if edit logs for single day
-        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-            sharedPref.setEldOccurences(sharedPref.isUnidentifiedOccur(getActivity()),
-                    sharedPref.isMalfunctionOccur(getActivity()),
-                    sharedPref.isDiagnosticOccur(getActivity()),
+        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+            SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
+                    SharedPref.isMalfunctionOccur(getActivity()),
+                    SharedPref.isDiagnosticOccur(getActivity()),
                     false, getActivity());
         }else{
-            sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccurCo(getActivity()),
-                    sharedPref.isMalfunctionOccurCo(getActivity()),
-                    sharedPref.isDiagnosticOccurCo(getActivity()),
+            SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccurCo(getActivity()),
+                    SharedPref.isMalfunctionOccurCo(getActivity()),
+                    SharedPref.isDiagnosticOccurCo(getActivity()),
                     false, getActivity());
         }
 

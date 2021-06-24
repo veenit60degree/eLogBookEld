@@ -14,6 +14,7 @@ public class ConstantsEnum {
     public static String DUPLICATE_JOB_ALERT  = "You can't change same status at the same time. Please change after 1 minute";
     public static String NO_TRAILER_ALERT     = "You can not select (Trailer Drop) reason when there is no trailer attached";
     public static String CO_DRIVING_ALERT     = "Co-Driver is in ";
+    public static String CO_DRIVING_ALSO      = "Co-Driver is also in ";
     public static String CO_DRIVING_ALERT1    = ". Please change his status first.";
     public static String PICK_TRAILER_ALERT   = "Trailer Number to pickup trailer";
     public static String PROPER_REASON_ALERT  = "Enter minimum 4 char for personal use reason";

@@ -721,7 +721,7 @@
                     android:paddingRight="@dimen/margin_short_8"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_18"
-                    android:hint="@string/name"
+                    android:hint="@string/Sup_mech_name"
                     android:background="@drawable/edit_green_drawable"
                     />
 

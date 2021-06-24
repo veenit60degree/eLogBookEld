@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -147,7 +148,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     JSONArray driverLogArray, inspection18DaysArray;
     JSONArray inspectionUnPostedArray = new JSONArray();
     SaveDriverLogPost saveInspectionPost;
-    SharedPref sharedPref;
     Constants constants;
 
 
@@ -167,7 +167,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     void initView(View view) {
 
-        sharedPref = new SharedPref();
         constants = new Constants();
         hMethods = new HelperMethods();
         inspectionMethod = new InspectionMethod();
@@ -280,8 +279,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
         try{
-            JSONArray TruckArray        = new JSONArray(sharedPref.getInspectionIssues(ConstantsKeys.TruckIssues, getActivity()));
-            JSONArray TrailerArray      = new JSONArray(sharedPref.getInspectionIssues(ConstantsKeys.TrailerIssues, getActivity()));
+            JSONArray TruckArray        = new JSONArray(SharedPref.getInspectionIssues(ConstantsKeys.TruckIssues, getActivity()));
+            JSONArray TrailerArray      = new JSONArray(SharedPref.getInspectionIssues(ConstantsKeys.TrailerIssues, getActivity()));
 
             ParseInspectionIssues(TruckArray, TrailerArray);
 
@@ -298,8 +297,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         // Get Inspection Details
         if (Globally.isConnected(getActivity())) {
-            DRIVER_ID           = sharedPref.getDriverId( getActivity());
-            DeviceId            = sharedPref.GetSavedSystemToken(getActivity());
+            DRIVER_ID           = SharedPref.getDriverId( getActivity());
+            DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
             VIN_NUMBER          = SharedPref.getVINNumber(getActivity());
             GetInspectionDetail(DRIVER_ID, DeviceId, Globally.PROJECT_ID, VIN_NUMBER);
         }
@@ -328,6 +327,14 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -336,12 +343,12 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         CoDriverId          = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
         CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
 
-        DRIVER_ID           = sharedPref.getDriverId( getActivity());
-        VIN_NUMBER          = sharedPref.getVINNumber(getActivity());
-        IsAOBRDAutomatic    = sharedPref.IsAOBRDAutomatic(getActivity());
-        DeviceId            = sharedPref.GetSavedSystemToken(getActivity());
+        DRIVER_ID           = SharedPref.getDriverId( getActivity());
+        VIN_NUMBER          = SharedPref.getVINNumber(getActivity());
+        IsAOBRDAutomatic    = SharedPref.IsAOBRDAutomatic(getActivity());
+        DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
         CreatedDate         = Globally.GetCurrentDeviceDateTime();
-        IsAOBRD             = sharedPref.IsAOBRD(getActivity());
+        IsAOBRD             = SharedPref.IsAOBRD(getActivity());
 
         DriverId            =  DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
         CoDriverId          =  DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
@@ -519,7 +526,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             case R.id.inspectionTrailerLay:
 
-                CurrentJobStatus = sharedPref.getDriverStatusId("jobType", getActivity());
+                CurrentJobStatus = SharedPref.getDriverStatusId(getActivity());
 
                 if (CurrentJobStatus.equals(Globally.DRIVING )) {
                     Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.TRAILER_CHANGE , getResources().getColor(R.color.colorVoilation));
@@ -543,7 +550,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             case R.id.inspectionTruckLay:
 
-                CurrentJobStatus = sharedPref.getDriverStatusId("jobType", getActivity());
+                CurrentJobStatus = SharedPref.getDriverStatusId(getActivity());
 
                 if (CurrentJobStatus.equals(Globally.DRIVING )) {
                     Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.TRUCK_CHANGE, getResources().getColor(R.color.colorVoilation));
@@ -1111,7 +1118,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 vehicleList.get(position).getPlateNumber(),
                 vehicleList.get(position).getVIN(),
                 CompanyId,
-                sharedPref.getImEiNumber(getActivity()) );
+                SharedPref.getImEiNumber(getActivity()) );
 
     }
 
@@ -1364,7 +1371,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                         case SaveTrailer:
                             try {
                                 Globally.TRAILOR_NUMBER = tempTrailer;
-                                sharedPref.setTrailorNumber( tempTrailer, getActivity());
+                                SharedPref.setTrailorNumber( tempTrailer, getActivity());
                                 trailerTextVw.setText(tempTrailer);
 
                                 CheckTrailerStatus();
@@ -1406,12 +1413,12 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                                 JSONArray TrailerArray      = new JSONArray(dataObj.getString("TrailorIssueList"));
 
                                 // Save Inspections issues list in local
-                                sharedPref.setInspectionIssues(TruckArray.toString(), TrailerArray.toString(), getActivity());
+                                SharedPref.setInspectionIssues(TruckArray.toString(), TrailerArray.toString(), getActivity());
 
 
                                 // Save CT-PAT Inspections issues list in local
                                 if(dataObj.has("SeventeenTruckList")){
-                                    sharedPref.setCtPatInspectionIssues(dataObj.getString("SeventeenTruckList"), dataObj.getString("SeventeenTrailorList"), getActivity());
+                                    SharedPref.setCtPatInspectionIssues(dataObj.getString("SeventeenTruckList"), dataObj.getString("SeventeenTrailorList"), getActivity());
                                 }
 
 
@@ -1478,10 +1485,10 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                             Globally.TRUCK_NUMBER = tempTruck;
                             SharedPref.setVINNumber(VIN_NUMBER, getActivity());
                             EldFragment.VehicleId = vehicleList.get(VehListPosition).getVehicleId();
-                            sharedPref.setVehicleId(EldFragment.VehicleId , getActivity());
+                            SharedPref.setVehicleId(EldFragment.VehicleId , getActivity());
                             powerInspectionTV.setText(tempTruck);
 
-                            if(sharedPref.getDriverType(getContext()).equals(DriverConst.TeamDriver)) {
+                            if(SharedPref.getDriverType(getContext()).equals(DriverConst.TeamDriver)) {
                                 /*Save Trip Details */
                                 Constants.SaveTripDetails(0, tempTruck , VIN_NUMBER, getActivity());
                                 Constants.SaveTripDetails(1, tempTruck , VIN_NUMBER, getActivity());

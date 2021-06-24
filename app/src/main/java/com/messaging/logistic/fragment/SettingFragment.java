@@ -32,6 +32,7 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -164,7 +165,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     DownloadAppService downloadAppService = new DownloadAppService();
     Globally global;
     Constants constants;
-    SharedPref sharedPref;
     WiFiConfig wifiConfig;
     Animation fadeViewAnim;
 
@@ -202,7 +202,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     void initView(View v) {
 
         constants                   = new Constants();
-        sharedPref                  = new SharedPref();
         global                      = new Globally();
         GetAppUpdateRequest         = new VolleyRequest(getActivity());
         GetDriverLogPostPermission  = new VolleyRequest(getActivity());
@@ -279,28 +278,19 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
         dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
 
-        //  haulExceptionLay.setVisibility(View.GONE);
-        //  haulExcptnTxtVw.setVisibility(View.GONE);
-
-
         // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
         if(UILApplication.getInstance().isNightModeEnabled()){
             settingsMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
         }
 
-
-        // Firebase initilization
-//        mFirebaseInstance = FirebaseDatabase.getInstance();
-
-        // get reference to 'users' node
-        //      mFirebaseDatabase = mFirebaseInstance.getReference("DataStatics");
-
         fadeViewAnim    = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
         fadeViewAnim.setDuration(1500);
 
-        DeviceId        = sharedPref.GetSavedSystemToken(getActivity());
-        DriverId        = sharedPref.getDriverId( getActivity());
+        DeviceId        = SharedPref.GetSavedSystemToken(getActivity());
+        DriverId        = SharedPref.getDriverId( getActivity());
         CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+
+
 
         if (global.isConnected(getActivity())) {
             getCycleChangeApproval(DriverId, DeviceId, CompanyId);
@@ -435,13 +425,19 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     }
 
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
 
     @Override
     public void onResume() {
         super.onResume();
 
 
-        if(sharedPref.IsAOBRD(getActivity())){
+        if(SharedPref.IsAOBRD(getActivity())){
             dateActionBarTV.setText(Html.fromHtml("<b><u>AOBRD</u></b>"));
         }else{
             dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
@@ -452,7 +448,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         global.hideSoftKeyboard(getActivity());
         getInstalledAppDetail();
         existingApkFilePath = getExistingApkPath();
-        DriverId            = sharedPref.getDriverId( getActivity());
+        DriverId            = SharedPref.getDriverId( getActivity());
         DriverName          =  DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
 
         actionBarTitle.setText(getResources().getString(R.string.action_settings));
@@ -514,11 +510,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     void getExceptionStatus(){
         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-            isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
-            isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+            isHaulExcptn    = SharedPref.get16hrHaulExcptn(getActivity());
+            isAdverseExcptn = SharedPref.getAdverseExcptn(getActivity());
         }else{
-            isHaulExcptn = sharedPref.get16hrHaulExcptnCo(getActivity());
-            isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+            isHaulExcptn = SharedPref.get16hrHaulExcptnCo(getActivity());
+            isAdverseExcptn = SharedPref.getAdverseExcptnCo(getActivity());
         }
     }
 
@@ -553,12 +549,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             // operating_zone  us_cycle   can_cycle
             SavedCycleType = type;
             if(type.equals("operating_zone")){
-                if(sharedPref.IsNorthCanada(getActivity())) {
+                if(SharedPref.IsNorthCanada(getActivity())) {
                     IsSouthCanada = "true";
-                   // sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneNorth), getActivity());
+                   // SharedPref.SaveOperatingZone(getString(R.string.OperatingZoneNorth), getActivity());
                 }else{
                     IsSouthCanada = "false";
-                  //  sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneSouth), getActivity());
+                  //  SharedPref.SaveOperatingZone(getString(R.string.OperatingZoneSouth), getActivity());
                 }
 
                 if (global.isConnected(getActivity())) {
@@ -618,7 +614,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         CanListSize = 0;
         int SavedCyclePos = 0;
 
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ){
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ){
 
             try {
                 CanListSize = caPrefManager.GetCycles(getActivity()).size();
@@ -676,7 +672,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         UsaListSize = 0;
         int SavedCyclePos = 0;
 
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ){
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ){
             try {
                 UsaListSize = usPrefmanager.GetCycles(getActivity()).size();
             } catch (Exception e) {
@@ -729,7 +725,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         TimeZoneListSize = 0;
         int SavedTimeZonePos = 0;
 
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ){
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ){
             try {
                 TimeZoneListSize = timeZonePrefManager.GetTimeZone(getActivity()).size();
             } catch (Exception e) {
@@ -782,7 +778,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         CanCycleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(CanCycleAdapter);
         spinner.setSelection(indexPosition);
-        if (spinnerArray.get(indexPosition).equals(Globally.CANADA_CYCLE_1_NAME) && sharedPref.IsNorthCanada(getActivity())) {
+        if (spinnerArray.get(indexPosition).equals(Globally.CANADA_CYCLE_1_NAME) && SharedPref.IsNorthCanada(getActivity())) {
             view.setText( "Cycle 1 (80/7) (N)");
         }else{
             if(spinnerArray.get(indexPosition).contains("C")) {
@@ -849,7 +845,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
     private void SyncData(){
-        //  Log.d("GetCycleDetails", "cycle Detail Array: " + sharedPref.GetCycleDetails(getActivity()));
 
         JSONArray savedSyncedArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DriverId), dbHelper);
 
@@ -1050,7 +1045,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
     private boolean isSleepOffDuty(){
-        String currentJob     = sharedPref.getDriverStatusId("jobType", getActivity());
+        String currentJob     = SharedPref.getDriverStatusId(getActivity());
         if(currentJob.equals(global.SLEEPER) || currentJob.equals(global.OFF_DUTY)){
             return true;
         }else{
@@ -1116,9 +1111,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         @Override
         public void JobBtnReady(String AdverseExceptionRemarks, boolean IsClaim, boolean IsCompanyAssign) {
             if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                sharedPref.setAdverseExcptn(true, getActivity());
+                SharedPref.setAdverseExcptn(true, getActivity());
             }else{
-                sharedPref.setAdverseExcptnCo(true, getActivity());
+                SharedPref.setAdverseExcptnCo(true, getActivity());
             }
 
             getExceptionStatus();
@@ -1130,7 +1125,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     adverseRemarksDialog.dismiss();
 
                 hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
-                        LocationType, "", false, isNorthCanada, DriverType, constants, sharedPref,
+                        LocationType, "", false, isNorthCanada, DriverType, constants,
                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                         syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
 
@@ -1148,7 +1143,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         @Override
         public void OkBtnReady() {
 
-            sharedPref.setAsyncCancelStatus(true, getActivity());
+            SharedPref.setAsyncCancelStatus(true, getActivity());
             IsDownloading = false;
             fadeViewAnim.cancel();
 
@@ -1192,7 +1187,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                         // Save Cycle record in file on local storage
                         try {
-                            JSONArray cycleArray = new JSONArray(sharedPref.GetCycleDetails(getActivity()));
+                            JSONArray cycleArray = new JSONArray(SharedPref.GetCycleDetails(getActivity()));
                             if(cycleArray.length() > 0) {
                                 cycleUpdationRecordFile = global.SaveFileInSDCard("Cycle_", cycleArray.toString(), false, getActivity());
                             }
@@ -1387,7 +1382,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
     void ClearDriverUnSavedlog(){
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
             DriverType = Constants.MAIN_DRIVER_TYPE;
             MainDriverPref.ClearLocFromList(getActivity());
         }else{
@@ -1458,7 +1453,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
         params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
         params.put(ConstantsKeys.LogDate, LogDate);
-        params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(getActivity()));
+        params.put(ConstantsKeys.LocationType, SharedPref.getLocMalfunctionType(getActivity()));
 
         ChangeCycleRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_DRIVER_CYCLE , params, ChangeCycle,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
@@ -1488,7 +1483,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         params.put(ConstantsKeys.Latitude, Latitude);
         params.put(ConstantsKeys.Longitude, Longitude);
         params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
-        params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(getActivity()));
+        params.put(ConstantsKeys.LocationType, SharedPref.getLocMalfunctionType(getActivity()));
 
         OperatingZoneRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_OPERATING_ZONE , params, OperatingZone,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
@@ -1610,11 +1605,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorPrimary));
 
                         if(IsSouthCanada.equals("true")) {
-                           // sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneSouth), getActivity());
-                            sharedPref.SetNorthCanadaStatus(false, getActivity());
+                            SharedPref.SetNorthCanadaStatus(false, getActivity());
                         }else{
-                            //sharedPref.SaveOperatingZone(getString(R.string.OperatingZoneNorth), getActivity());
-                            sharedPref.SetNorthCanadaStatus(true, getActivity());
+                            SharedPref.SetNorthCanadaStatus(true, getActivity());
                         }
 
                         getSavedCycleData();
@@ -1702,7 +1695,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                             if (cycleUpdationRecordFile != null && cycleUpdationRecordFile.exists()) {
                                 cycleUpdationRecordFile.delete();
-                                sharedPref.SetCycleOfflineDetails("[]", getActivity());
+                                SharedPref.SetCycleOfflineDetails("[]", getActivity());
                                 cycleUpdationRecordFile = null;
                             }
 
@@ -1715,7 +1708,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         syncingMethod.SyncingLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
                         global.EldScreenToast(SettingSaveBtn, msgTxt, getResources().getColor(R.color.colorPrimary));
                     }else{
-                        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
+                        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
                             // when main driver is selected, clear co driver data
                             CoDriverPref.ClearLocFromList(getActivity());
                         }else{
@@ -1782,7 +1775,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     void getSavedCycleData(){
 
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
             DriverType = Constants.MAIN_DRIVER_TYPE;
             SavedPosition  = 0;
             SavedCanCycle  = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
@@ -1802,7 +1795,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             DriverTimeZone = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
         }
 
-        isNorthCanada  =  sharedPref.IsNorthCanada(getActivity());
+        isNorthCanada  =  SharedPref.IsNorthCanada(getActivity());
         if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ){
             caCurrentCycleTV.setVisibility(View.VISIBLE);
             usCurrentCycleTV.setVisibility(View.GONE);
@@ -1830,7 +1823,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     void saveUpdatedCycleData(){
 
         CurrentCycleId = changedCycleId;
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
             if(SavedCycleType.equals("can_cycle")){
                 SavedCanCycle = changedCycleId;
 
@@ -1915,20 +1908,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         public void onClick(DialogInterface dialog, int arg1) {
                             dialog.dismiss();
 
-                            boolean isHaulException = constant.getShortHaulExceptionDetail(getActivity(), DriverId, global, sharedPref,
+                            boolean isHaulException = constant.getShortHaulExceptionDetail(getActivity(), DriverId, global,
                                                         isHaulExcptn, isAdverseExcptn, isNorthCanada, hMethods, dbHelper);
 
                             if (isHaulException) {
                                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                                    sharedPref.set16hrHaulExcptn(true, getActivity());
+                                    SharedPref.set16hrHaulExcptn(true, getActivity());
                                 }else{
-                                    sharedPref.set16hrHaulExcptnCo(true, getActivity());
+                                    SharedPref.set16hrHaulExcptnCo(true, getActivity());
                                 }
 
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.haul_excptn_enabled), getResources().getColor(R.color.colorPrimary));
 
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
-                                        LocationType, "", true, isNorthCanada, DriverType, constants, sharedPref,
+                                        LocationType, "", true, isNorthCanada, DriverType, constants,
                                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                         syncingMethod, global, hMethods, dbHelper, getActivity());
 
@@ -1937,9 +1930,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 haulExceptnSwitchButton.setChecked(false);
 
                                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                                    sharedPref.set16hrHaulExcptn(false, getActivity());
+                                    SharedPref.set16hrHaulExcptn(false, getActivity());
                                 }else{
-                                    sharedPref.set16hrHaulExcptnCo(false, getActivity());
+                                    SharedPref.set16hrHaulExcptnCo(false, getActivity());
                                 }
 
                             }

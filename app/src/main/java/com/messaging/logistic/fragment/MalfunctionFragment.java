@@ -48,7 +48,6 @@ import java.util.Map;
 public class MalfunctionFragment extends Fragment implements View.OnClickListener {
 
     View rootView;
-    SharedPref sharedPref;
     ExpandableListView malfunctionExpListView;
     TextView EldTitleTV, noDataEldTV, dateActionBarTV;
     RelativeLayout rightMenuBtn, eldMenuLay;
@@ -96,7 +95,6 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         progressDialog.setMessage("Loading ...");
 
         constants  = new Constants();
-        sharedPref = new SharedPref();
         malfunctionExpListView = (ExpandableListView) view.findViewById(R.id.malfunctionExpandList);
         noDataEldTV = (TextView) view.findViewById(R.id.noRecordTV);
         EldTitleTV = (TextView) view.findViewById(R.id.EldTitleTV);
@@ -106,8 +104,8 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
         rightMenuBtn = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         eldMenuLay   = (RelativeLayout) view.findViewById(R.id.eldMenuLay);
 
-        DriverId = sharedPref.getDriverId( getActivity());
-        DeviceId = sharedPref.GetSavedSystemToken(getActivity());
+        DriverId = SharedPref.getDriverId( getActivity());
+        DeviceId = SharedPref.GetSavedSystemToken(getActivity());
 
         rightMenuBtn.setVisibility(View.GONE);
         dateActionBarTV.setVisibility(View.VISIBLE);
@@ -151,8 +149,8 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
     public void onResume() {
         super.onResume();
 
-        DriverId                = sharedPref.getDriverId( getActivity());
-        VIN                     = sharedPref.getVINNumber(getActivity());
+        DriverId                = SharedPref.getDriverId( getActivity());
+        VIN                     = SharedPref.getVINNumber(getActivity());
         Country                 = constants.getCountryName(getActivity());
         OffsetFromUTC           = DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity());
         CompanyId               = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
@@ -253,19 +251,19 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
 
 
     void checkLocMalfunction(){
-        boolean isLocMalfunctionOccur = sharedPref.isLocMalfunctionOccur(getActivity());
-        String malfunctionType = sharedPref.getLocMalfunctionType(getActivity());
+        boolean isLocMalfunctionOccur = SharedPref.isLocMalfunctionOccur(getActivity());
+        String malfunctionType = SharedPref.getLocMalfunctionType(getActivity());
         if(isLocMalfunctionOccur && (malfunctionType.equals("m") || malfunctionType.equals("x"))){
             malfunctionHeaderList.add(new MalfunctionHeaderModel(
                     "Invalid Location Occur", "1", getString(R.string.loc_mal)));
             malfunctionChildList.add(new MalfunctionModel(
-                    sharedPref.getCountryCycle("CountryCycle", getActivity()),
-                    sharedPref.getVINNumber( getActivity()),
+                    SharedPref.getCountryCycle("CountryCycle", getActivity()),
+                    SharedPref.getVINNumber( getActivity()),
                     DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
-                    sharedPref.getLocMalfunctionOccuredTime(getActivity()),
+                    SharedPref.getLocMalfunctionOccuredTime(getActivity()),
                     "", "", "1", "", "1",
                     getString(R.string.loc_mal_occur), "", "", "",
-                    sharedPref.getLocMalfunctionOccuredTime(getActivity()), "101", "101",""
+                    SharedPref.getLocMalfunctionOccuredTime(getActivity()), "101", "101",""
 
             ));
 
@@ -424,8 +422,8 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
                         Toast.makeText(getActivity(), getString(R.string.RecordClearedSuccessfully), Toast.LENGTH_LONG).show();
                         progressDialog.show();
 
-                        sharedPref.saveEngSyncDiagnstcStatus(false, getActivity());
-                        sharedPref.saveEngSyncMalfunctionStatus(false, getActivity());
+                        SharedPref.saveEngSyncDiagnstcStatus(false, getActivity());
+                        SharedPref.saveEngSyncMalfunctionStatus(false, getActivity());
                         constants.saveDiagnstcStatus(getActivity(), false);
                         constants.saveMalfncnStatus(getActivity(), false);
 
@@ -470,16 +468,16 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
             noDataEldTV.setVisibility(View.GONE);
         }else{
             noDataEldTV.setVisibility(View.VISIBLE);
-            if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-                sharedPref.setEldOccurences(sharedPref.isUnidentifiedOccur(getActivity()),
+            if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
                         false,
                         false,
-                        sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+                        SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
             }else{
-                sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccurCo(getActivity()),
+                SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccurCo(getActivity()),
                         false,
                         false,
-                        sharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
+                        SharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
             }
 
         }

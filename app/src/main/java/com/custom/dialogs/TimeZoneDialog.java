@@ -44,7 +44,6 @@ public class TimeZoneDialog extends Dialog {
     Constants constant;
     Context mContext;
     Globally global;
-    SharedPref sharedPref;
     VolleyRequest LogoutRequest;
     Map<String, String> params;
     final int LogoutUser = 1;
@@ -76,7 +75,6 @@ public class TimeZoneDialog extends Dialog {
         LogoutRequest   = new VolleyRequest(mContext);
         constant        = new Constants();
         global          = new Globally();
-        sharedPref      = new SharedPref();
 
         recordTitleTV   = (TextView)findViewById(R.id.recordTitleTV);
         TitleTV         = (TextView)findViewById(R.id.TitleTV);
@@ -104,7 +102,7 @@ public class TimeZoneDialog extends Dialog {
             GetServerCurrentUtcTime();
         }else{
             if(isCurrentTimeBigger) {
-                sharedPref.setCurrentUTCTime(global.GetCurrentUTCTimeFormat(), mContext);
+                SharedPref.setCurrentUTCTime(global.GetCurrentUTCTimeFormat(), mContext);
             }
 
             if(isTimeZoneValid) {
@@ -115,9 +113,9 @@ public class TimeZoneDialog extends Dialog {
         logoutTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (sharedPref.getDriverId(mContext).length() > 0){
+                if (SharedPref.getDriverId(mContext).length() > 0){
                     if (global.isWifiOrMobileDataEnabled(mContext)) {
-                        LogoutUser(sharedPref.getDriverId(mContext));
+                        LogoutUser(SharedPref.getDriverId(mContext));
                     } else {
                         global.EldScreenToast(logoutTV, global.CHECK_INTERNET_MSG, mContext.getResources().getColor(R.color.colorSleeper));
                     }
@@ -207,7 +205,7 @@ public class TimeZoneDialog extends Dialog {
                         case CheckConnection:
 
                             // Save current UTC date time
-                            sharedPref.setCurrentUTCTime( obj.getString("Data") , mContext );
+                            SharedPref.setCurrentUTCTime( obj.getString("Data") , mContext );
                             boolean isCorrectTime = global.isCorrectTime(mContext);
 
                             if( isCorrectTime && isTimeZoneValid && mContext != null){
@@ -228,7 +226,7 @@ public class TimeZoneDialog extends Dialog {
                         }
                     }else{
                         if(isCurrentTimeBigger)
-                            sharedPref.setCurrentUTCTime( global.GetCurrentUTCTimeFormat() , mContext );
+                            SharedPref.setCurrentUTCTime( global.GetCurrentUTCTimeFormat() , mContext );
                         if(mContext != null) {
                             dismiss();
                         }
@@ -250,7 +248,7 @@ public class TimeZoneDialog extends Dialog {
 
             try {
                 if(isCurrentTimeBigger)
-                    sharedPref.setCurrentUTCTime( global.GetCurrentUTCTimeFormat() , mContext );
+                    SharedPref.setCurrentUTCTime( global.GetCurrentUTCTimeFormat() , mContext );
 
                 if(getContext() != null) {
                     if(progressD != null)

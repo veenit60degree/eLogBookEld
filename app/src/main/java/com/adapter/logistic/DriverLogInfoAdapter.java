@@ -282,7 +282,11 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         holder.certifyStatusTV.setText(status);
         holder.certifyStartTimeTV.setText(StartTime);
         holder.certifyDurationTV.setText(LogItem.getDuration());
-        holder.certifyLocationTV.setText(LogItem.getLocation());
+        if(LogItem.getLocation().contains("null")) {
+            holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
+        }else{
+            holder.certifyLocationTV.setText(LogItem.getLocation());
+        }
 
         if(!LogItem.getRemarks().trim().equalsIgnoreCase("null") && !LogItem.getRemarks().trim().equalsIgnoreCase(""))
             holder.certifyRemarksTV.setText(LogItem.getRemarks());
@@ -475,7 +479,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         String currentDriverZoneDate = Global.GetCurrentUTCTimeFormat();
 
         JSONObject logObj = logRecordMethod.GetUpdateLogRecordJson(logModel, String.valueOf(DriverId), DeviceId, RecordType,
-                currentUtcDate, currentDriverZoneDate, Global.LATITUDE, Global.LONGITUDE );
+                currentUtcDate, currentDriverZoneDate, Globally.LATITUDE, Globally.LONGITUDE );
 
         finalUpdatedArray = logRecordMethod.getSavedLogRecordArray(DriverId, dbHelper);
 

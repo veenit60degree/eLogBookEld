@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -80,7 +81,6 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
     JSONArray savedInspectionArray  = new JSONArray();
     JSONArray selectedDateArray     = new JSONArray();
     Globally global;
-    SharedPref sharedPref;
 
 
 
@@ -100,7 +100,6 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
     void initView(View view){
 
-        sharedPref              = new SharedPref();
         global                  = new Globally();
         dbHelper                = new DBHelper(getActivity());
         hMethods                = new HelperMethods();
@@ -137,11 +136,11 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
         TruckList           = new ArrayList<String>();
         TrailerList         = new ArrayList<String>();
-        DRIVER_ID           = sharedPref.getDriverId( getActivity());
+        DRIVER_ID           = SharedPref.getDriverId( getActivity());
 
         isTablet            = Globally.isTablet(getActivity());
-        DeviceId            = sharedPref.GetSavedSystemToken(getActivity());
-        isDOT               = sharedPref.IsDOT(getActivity());
+        DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
+        isDOT               = SharedPref.IsDOT(getActivity());
 
         Bundle getBundle  = this.getArguments();
         if(getBundle != null) {
@@ -193,6 +192,14 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         previousDateBtn.setOnClickListener(this);
         nextDateBtn.setOnClickListener(this);
         EldTitleTV.setOnClickListener(this);
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
     }
 
 

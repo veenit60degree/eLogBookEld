@@ -17,7 +17,6 @@ import java.util.List;
 public class OtherReviewLogAdapter extends BaseAdapter {
 
     Context context;
-    SharedPref sharedPref;
     LayoutInflater mInflater;
     List<RecapModel> LogList;
 
@@ -25,7 +24,6 @@ public class OtherReviewLogAdapter extends BaseAdapter {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         LogList = logList;
-        sharedPref = new SharedPref();
     }
 
 

@@ -66,6 +66,8 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
             String WorkShiftEnd;
             private Date dateTime;
             String EditDateTime;
+            String CertifyLogDate;
+            boolean IsNewDate;
 
 
     public CanadaDutyStatusModel(String dateTimeWithMins, String eventUTCTimeStamp, String driverStatusID, int eventType,
@@ -82,7 +84,7 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
                                  String distanceSinceLastValidCord, String recordOrigin, String distanceInKM,
                                  String hexaSeqNumber, String orderBy, String onDutyHours, String offDutyHours,
                                  String truckEquipmentNo, String workShiftStart, String workShiftEnd, Date dateTimee,
-                                 String editDateTime) {
+                                 String editDateTime, String certifyLogDate, boolean isNewDate) {
         DateTimeWithMins = dateTimeWithMins;
         EventUTCTimeStamp = eventUTCTimeStamp;
         DriverStatusID = driverStatusID;
@@ -135,6 +137,8 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
         WorkShiftEnd = workShiftEnd;
         dateTime = dateTimee;
         EditDateTime = editDateTime;
+        CertifyLogDate = certifyLogDate;
+        IsNewDate = isNewDate;
     }
 
 
@@ -347,6 +351,7 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
         this.dateTime = datetime;
     }
 
+
     @Override
     public int compareTo(CanadaDutyStatusModel canadaDutyStatusModel) {
         if(getDateTime().equals(canadaDutyStatusModel.getDateTime())){
@@ -361,5 +366,12 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
             return EditDateTime;
     }
 
+    public String getCertifyLogDate() {
+        return CertifyLogDate;
+    }
+
+    public boolean IsNewDate() {
+        return IsNewDate;
+    }
 
 }

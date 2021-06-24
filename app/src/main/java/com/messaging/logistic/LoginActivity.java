@@ -84,7 +84,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	String Sim1 = "", Sim2 = "", DeviceSimInfo = "";
 	Constants constants;
 	Globally global;
-	SharedPref sharedPref;
 	Utils obdUtil;
 	RetryPolicy policy;
 	RequestQueue queue;
@@ -100,7 +99,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		//WiFiConf = new WiFiConfig();
 		//wifiList = WiFiConf.GetSavedSSIDList();
 		//	pos 	 = WiFiConf.getWifiListPosition(this);
-		sharedPref				= new SharedPref();
 		global					= new Globally();
 		IsTablet 				= global.isTablet(this);
 		constants				= new Constants();
@@ -413,7 +411,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			case 4:
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					ImeiNumber = Constants.getIMEIDeviceId(StrSingleUserame, getApplicationContext());
-					sharedPref.setImEiNumber(ImeiNumber, LoginActivity.this);
+					SharedPref.setImEiNumber(ImeiNumber, LoginActivity.this);
 				}
 				break;
 		}
@@ -430,7 +428,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			ImeiNumber = "000D"+Globally.GetCurrentFullDateTime();
 		}
 
-		sharedPref.setImEiNumber(ImeiNumber, LoginActivity.this);
+		SharedPref.setImEiNumber(ImeiNumber, LoginActivity.this);
 
 	}
 
@@ -491,7 +489,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 							OutToLeftAnim(loginLayout);
 							InFromRightAnim(loginCoDriverLayout);
 						} else {
-							sharedPref.setDriverType(LoginUserType, LoginActivity.this);
+							SharedPref.setDriverType(LoginUserType, LoginActivity.this);
 							DriverConst.SetDriverLoginDetails(StrSingleUserame, StrSinglePass, LoginActivity.this);
 							checkNullInputs();
 
@@ -546,38 +544,40 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 	private void resetValues(){
 		try {
-			sharedPref.setVINNumber( "", getApplicationContext());
-			sharedPref.SetCycleOfflineDetails("[]", getApplicationContext());
-			sharedPref.SetNewLoginStatus(true, getApplicationContext());
-			sharedPref.setLastUsageDataSavedTime("", getApplicationContext());
-			sharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
-			sharedPref.SaveObdStatus(Constants.NO_CONNECTION,  "", getApplicationContext());
-			sharedPref.setRefreshDataTime("", getApplicationContext());
-			sharedPref.setDayStartOdometer("0", "", getApplicationContext());
-			sharedPref.setCertifyAlertViewTime("", getApplicationContext());
-			sharedPref.setEldOccurences(false, false, false, false, getApplicationContext());
-			sharedPref.setEldOccurencesCo(false, false, false, false, getApplicationContext());
-			sharedPref.setSuggestedRecallStatus(true, getApplicationContext());
-			sharedPref.setSuggestedRecallStatusCo(true, getApplicationContext());
-			sharedPref.setUnidentifiedAlertViewStatus(true, getApplicationContext());
-			sharedPref.setUnidentifiedAlertViewStatusCo(true, getApplicationContext());
-			sharedPref.setVehicleVin("", getApplicationContext());
-			sharedPref.setDriverStatusId("jobType", "", getApplicationContext());
-			sharedPref.setVehilceMovingStatus(false, getApplicationContext());
-			sharedPref.SetObdEngineHours("0", getApplicationContext());
-			sharedPref.saveHighPrecisionOdometer("", "", getApplicationContext());
-			sharedPref.setEcmObdLocationWithTime("0", "0", "0", "", getApplicationContext());
-			sharedPref.setLocMalfunctionType("", getApplicationContext());
-			sharedPref.saveLocMalfunctionOccurStatus(false, "", getApplicationContext());
-			sharedPref.SetCycleRequestStatusCo(false, getApplicationContext());
-			sharedPref.SetCycleRequestStatusMain(false, getApplicationContext());
-			sharedPref.SetCycleRequestAlertViewStatus(false, getApplicationContext());
-			sharedPref.SetELDNotificationAlertViewStatus(false, getApplicationContext());
-			sharedPref.SetELDNotification(false, getApplicationContext());
-			sharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
-			sharedPref.saveEngSyncDiagnstcStatus(false, getApplicationContext());
-			sharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
-			//sharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getApplicationContext());
+			SharedPref.setVINNumber( "", getApplicationContext());
+			SharedPref.SetCycleOfflineDetails("[]", getApplicationContext());
+			SharedPref.SetNewLoginStatus(true, getApplicationContext());
+			SharedPref.setLastUsageDataSavedTime("", getApplicationContext());
+			SharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
+			SharedPref.SaveObdStatus(Constants.NO_CONNECTION,  "", getApplicationContext());
+			SharedPref.setRefreshDataTime("", getApplicationContext());
+			SharedPref.setDayStartOdometer("0", "", getApplicationContext());
+			SharedPref.setCertifyAlertViewTime("", getApplicationContext());
+			SharedPref.setEldOccurences(false, false, false, false, getApplicationContext());
+			SharedPref.setEldOccurencesCo(false, false, false, false, getApplicationContext());
+			SharedPref.setSuggestedRecallStatus(true, getApplicationContext());
+			SharedPref.setSuggestedRecallStatusCo(true, getApplicationContext());
+			SharedPref.setUnidentifiedAlertViewStatus(true, getApplicationContext());
+			SharedPref.setUnidentifiedAlertViewStatusCo(true, getApplicationContext());
+			SharedPref.setVehicleVin("", getApplicationContext());
+			SharedPref.setDriverStatusId("", getApplicationContext());
+			SharedPref.setVehilceMovingStatus(false, getApplicationContext());
+			SharedPref.SetObdEngineHours("0", getApplicationContext());
+			SharedPref.saveHighPrecisionOdometer("", "", getApplicationContext());
+			SharedPref.setEcmObdLocationWithTime("0", "0", "0", "", getApplicationContext());
+			SharedPref.setLocMalfunctionType("", getApplicationContext());
+			SharedPref.saveLocMalfunctionOccurStatus(false, "", getApplicationContext());
+			SharedPref.SetCycleRequestStatusCo(false, getApplicationContext());
+			SharedPref.SetCycleRequestStatusMain(false, getApplicationContext());
+			SharedPref.SetCycleRequestAlertViewStatus(false, getApplicationContext());
+			SharedPref.SetELDNotificationAlertViewStatus(false, getApplicationContext());
+			SharedPref.SetELDNotification(false, getApplicationContext());
+			SharedPref.setDrivingAllowedStatus(true, "", getApplicationContext());
+			SharedPref.saveEngSyncDiagnstcStatus(false, getApplicationContext());
+			SharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
+			SharedPref.SetWiredObdCallTime("", getApplicationContext());
+			SharedPref.setPersonalUse75Km(false, getApplicationContext());
+			//SharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getApplicationContext());
 			constants.saveMalfncnStatus(getApplicationContext(), false);
 
 		}catch (Exception e){
@@ -590,9 +590,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				   final String CoDriverPassword, final String TeamDriverType, final String OSType,
 				   final String DeviceSimInfo, final String Sim2) {
 
-		//    sharedPref.setLoginAllowedStatus(true, getApplicationContext());
+		//    SharedPref.setLoginAllowedStatus(true, getApplicationContext());
 
-		if(sharedPref.isLoginAllowed(LoginActivity.this)) {
+		if(SharedPref.isLoginAllowed(LoginActivity.this)) {
 
 			loginBtn.setEnabled(false);
 			try {
@@ -645,8 +645,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 							Log.d("Response", ">>>response: " + response);
 							//	global.SaveFileInSDCard("LoginOutput", response, LoginActivity.this);
 
-							sharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
-							//sharedPref.SetConnectionType(constants.ConnectionMalfunction, getApplicationContext());
+							SharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
+							//SharedPref.SetConnectionType(constants.ConnectionMalfunction, getApplicationContext());
 							Globally.TEMP_USERNAME = userNameText.getText().toString();
 							Globally.TEMP_PASSWORD = passwordText.getText().toString();
 
@@ -660,7 +660,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 								if (obj.has(ConstantsKeys.rulesVersion) && !obj.isNull(ConstantsKeys.rulesVersion)) {
 									rulesVersion = obj.getInt(ConstantsKeys.rulesVersion);
 								}
-								sharedPref.SetRulesVersion(rulesVersion, getApplicationContext());
+								SharedPref.SetRulesVersion(rulesVersion, getApplicationContext());
 
 								if (status.equalsIgnoreCase("true")) {
 
@@ -829,8 +829,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				ParseLoginDetails parseLoginDetails = new ParseLoginDetails();
 				parseLoginDetails.ParseLoginDetails(dataJson, LoginActivity.this);
 
-				sharedPref.setUserName(StrSingleUserame, LoginActivity.this);
-				sharedPref.setPassword(StrSinglePass, LoginActivity.this);
+				SharedPref.setUserName(StrSingleUserame, LoginActivity.this);
+				SharedPref.setPassword(StrSinglePass, LoginActivity.this);
 
 				DriverConst.SetDriverLoginDetails(StrSingleUserame, StrSinglePass, LoginActivity.this);
 				DriverConst.SetCoDriverLoginDetails(StrCoDriverUsername, StrCoDriverPass, LoginActivity.this);
@@ -890,7 +890,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					if (StrCoDriverPass.length() > 0) {
 
 						if (!StrSingleUserame.equals(StrCoDriverUsername)) {
-							sharedPref.setDriverType(LoginUserType, LoginActivity.this);
+							SharedPref.setDriverType(LoginUserType, LoginActivity.this);
 							DriverConst.SetDriverLoginDetails(StrSingleUserame, StrSinglePass, LoginActivity.this);
 							DriverConst.SetCoDriverLoginDetails(StrCoDriverUsername, StrCoDriverPass, LoginActivity.this);
 							checkNullInputs();
@@ -1075,7 +1075,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			case R.id.mainDriverBtn:
 
-				if(sharedPref.isLoginAllowed(LoginActivity.this)) {
+				if(SharedPref.isLoginAllowed(LoginActivity.this)) {
 					LoginUserType = DriverConst.SingleDriver;
 					loginBtn.setText("Login");
 					driverTitleTV.setVisibility(View.INVISIBLE);
@@ -1091,7 +1091,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 
 			case R.id.CoDriverBtn:
-				if(sharedPref.isLoginAllowed(LoginActivity.this)) {
+				if(SharedPref.isLoginAllowed(LoginActivity.this)) {
 					LoginUserType = DriverConst.TeamDriver;
 					loginBtn.setText("Next");
 					driverTitleTV.setVisibility(View.VISIBLE);

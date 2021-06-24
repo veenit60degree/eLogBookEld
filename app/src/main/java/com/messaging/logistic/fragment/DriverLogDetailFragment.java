@@ -34,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -60,7 +61,6 @@ import com.constants.WebAppInterface;
 import com.custom.dialogs.CertifyConfirmationDialog;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.LoginDialog;
-import com.custom.dialogs.ShareDriverLogDialog;
 import com.custom.dialogs.SignDialog;
 import com.custom.dialogs.SignRecordDialog;
 import com.driver.details.DriverConst;
@@ -229,7 +229,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     int startHour = 0,startMin = 0, endHour = 0, endMin = 0;
     SignDialog signDialog;
     DatePickerDialog dateDialog;
-    ShareDriverLogDialog shareDialog;
     AlertDialog alertDialog;
 
     private DisplayImageOptions options;
@@ -258,7 +257,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     SaveDriverLogPost saveCertifyLogPost;
     DateTime currentDateTime, selectedDateTime, selectedUtcTime, selectedDateRecap;
     Globally global;
-    SharedPref sharedPref;
     Constants constants;
     String LeftWeekOnDutyHoursInt = "00:00", LeftDayOnDutyHoursInt = "00:00",
             LeftDayDrivingHoursInt = "00:00", TotalCycleUsedHour = "00:00";
@@ -290,7 +288,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         constants                   = new Constants();
         global                      = new Globally();
-        sharedPref                  = new SharedPref();
         dbHelper                    = new DBHelper(getActivity());
         hMethods                    = new HelperMethods();
 
@@ -402,13 +399,12 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         CurrentDateDefault      = Globally.GetCurrentDeviceDateDefault() + "T00:00:00";
         CurrentDate             = Globally.GetCurrentDeviceDate();
-        IsAOBRDAutomatic        = sharedPref.IsAOBRDAutomatic(getActivity());
+        IsAOBRDAutomatic        = SharedPref.IsAOBRDAutomatic(getActivity());
 
         eldWarningColor         = getActivity().getResources().getColor(R.color.colorVoilation);
 
-      //  isDOT                   = sharedPref.IsDOT(getActivity());
 
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             DriverType = Constants.MAIN_DRIVER_TYPE;
         }else{
             DriverType = Constants.CO_DRIVER_TYPE;
@@ -585,7 +581,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                         if( diff < 2 && isTrueAnyPermission ) {
 
                             if(diff == 0 && EditDaysCount != -1){
-                                if(sharedPref.IsCCMTACertified(getActivity()) == false) {
+                                if(SharedPref.IsCCMTACertified(getActivity()) == false) {
                                     IsEditBtnVisible = true;
                                     editLogBtn.setVisibility(View.VISIBLE);
                                 }
@@ -633,6 +629,14 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         rightMenuBtn.setOnClickListener(this);
         certifyRecordsListLay.setOnClickListener(this);
         invisibleRfreshBtn.setOnClickListener(this);
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
     }
 
 
@@ -979,17 +983,17 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }
 
 
-        DeviceId                = sharedPref.GetSavedSystemToken(getActivity());
-        DRIVER_ID               = sharedPref.getDriverId( getActivity());
+        DeviceId                = SharedPref.GetSavedSystemToken(getActivity());
+        DRIVER_ID               = SharedPref.getDriverId( getActivity());
         MainDriverName          = DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
 
         CoDriverName            = DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, getActivity());
-        TeamDriverType          = sharedPref.getDriverType(getActivity());
-        IsAOBRD                 = sharedPref.IsAOBRD(getActivity());
+        TeamDriverType          = SharedPref.getDriverType(getActivity());
+        IsAOBRD                 = SharedPref.IsAOBRD(getActivity());
 
         TruckNo             = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
-        isNorthCanada       =  sharedPref.IsNorthCanada(getActivity());
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+        isNorthCanada       =  SharedPref.IsNorthCanada(getActivity());
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             certifyDriverNameTV.setText(MainDriverName);
 
             CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
@@ -1040,7 +1044,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         certifyHomeTV.setText(HomeTerminal);
 
 
-        String engineHours = sharedPref.getObdEngineHours(getActivity());
+        String engineHours = SharedPref.getObdEngineHours(getActivity());
         int ObdStatus = SharedPref.getObdStatus(getActivity());
         if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
                 || ObdStatus == Constants.BLE_CONNECTED) && engineHours.length() > 1) {
@@ -1075,7 +1079,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             StateList = statePrefManager.GetState(getActivity());
         } catch (Exception e) { }
 
-        StateArrayList =  sharedPref.getStatesInList(getActivity());
+        StateArrayList =  SharedPref.getStatesInList(getActivity());
 
     }
 
@@ -1245,9 +1249,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
             case R.id.certifyDateTV:
 
-                /*if(isDOT){
-                    shareDriverLogDialog();
-                }*/
 
                 break;
 
@@ -1302,7 +1303,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         if (signList.size() > 0) {
             signRecordDialog = new SignRecordDialog(getActivity(), DriverType, isCertifySignExist, recap18DaysArray, signList, new SignRecapListener(),
-                                                        constants,  recapViewMethod,  certifyLogMethod, sharedPref,  dbHelper
+                                                        constants,  recapViewMethod,  certifyLogMethod, dbHelper
             );
             signRecordDialog.show();
         } else {
@@ -1827,14 +1828,14 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
         }else{
             oDriverLogDetail    = hMethods.getSelectedLogList(Integer.valueOf(DRIVER_ID), currentDateTime, dbHelper);
         }
-        int rulesVersion = sharedPref.GetRulesVersion(getActivity());
+        int rulesVersion = SharedPref.GetRulesVersion(getActivity());
         boolean isHaulExcptn, isAdverseExcptn;
-        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-            isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
-            isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            isHaulExcptn    = SharedPref.get16hrHaulExcptn(getActivity());
+            isAdverseExcptn = SharedPref.getAdverseExcptn(getActivity());
         }else{
-            isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
-            isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+            isHaulExcptn    = SharedPref.get16hrHaulExcptnCo(getActivity());
+            isAdverseExcptn = SharedPref.getAdverseExcptnCo(getActivity());
         }
 
         DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
@@ -1909,7 +1910,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 }
 
                 boolean isSingleDriver = false;
-                if(sharedPref.getDriverType(getContext()).equals(DriverConst.SingleDriver)){
+                if(SharedPref.getDriverType(getContext()).equals(DriverConst.SingleDriver)){
                     isSingleDriver = true;
                 }
 
@@ -2588,8 +2589,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId);
-         params.put(ConstantsKeys.ProjectId, "1");
+        params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.ProjectId, "1");
         params.put(ConstantsKeys.UTCDateTime, UtcDate);
 
         GetLog18DaysRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS, params, GetDriverLog18Days,
@@ -2725,7 +2726,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     private void saveByteSignLocally(String SignImageInBytes){
         // Add signed parameters with values into the json object and put into the json Array.
         JSONObject CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DRIVER_ID, DeviceId, global.PROJECT_ID, LogDate,
-                SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, sharedPref.getLocMalfunctionType(getActivity())  );
+                SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, SharedPref.getLocMalfunctionType(getActivity())  );
         CertifyLogArray.put(CertifyLogObj);
 
         // Insert/Update Certify Log table
@@ -3030,13 +3031,20 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                                     imagePath = "";
                                     if(!obj.isNull("Data")) {
                                         dataObj = new JSONObject(obj.getString("Data"));
-                                        JSONArray UnPostedData = GetUnsavedSavedData();
-                                        if(UnPostedData.length() == 0) {
-                                            selectedArray = new JSONArray(dataObj.getString("DriverLogModel"));
 
-                                            ParseLogData(dataObj, false);     // Parse Log Data
+                                        JSONArray unPostedLogArray = constants.GetDriversSavedArray(getActivity(),
+                                                    MainDriverPref, CoDriverPref);
 
+                                        String logModel = dataObj.getString("DriverLogModel");
+
+                                        if(unPostedLogArray.length() == 0){
+                                            if(selectedArray.length() != new JSONArray(logModel).length()){
+                                                GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
+                                            }
                                         }
+                                        selectedArray = new JSONArray(logModel);
+                                        ParseLogData(dataObj, false);     // Parse Log Data
+
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
@@ -3136,16 +3144,16 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                             case GetDriverLog18Days:
                                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
                                 try {
-                                    progressBarDriverLog.setVisibility(View.GONE);
-                                    String savedDate = Globally.GetCurrentDateTime() ;
-                                    if(savedDate != null)
-                                        sharedPref.setSavedDateTime(savedDate, getActivity());
+                                    if(getActivity() != null) {
+                                        String savedDate = Globally.GetCurrentDateTime();
+                                        if (savedDate != null)
+                                            SharedPref.setSavedDateTime(savedDate, getActivity());
 
-                                    JSONArray resultArray = new JSONArray(obj.getString("Data"));
-                                    hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, resultArray);
-                                    driverLogArray      = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
-                                    selectedArray       = hMethods.GetSingleDateArray( driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate , offsetFromUTC);
-
+                                        JSONArray resultArray = new JSONArray(obj.getString("Data"));
+                                        hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, resultArray);
+                                        driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
+                                        selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate, offsetFromUTC);
+                                    }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -3176,11 +3184,11 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
                                 try {
                                     if (!obj.isNull("Data")) {
-                                        sharedPref.setReCertifyData(obj.getString("Data"), getActivity());
+                                        SharedPref.setReCertifyData(obj.getString("Data"), getActivity());
 
                                         // update recap array for reCertify the log if edited
                                         constants.UpdateCertifyLogArray(recapViewMethod, DRIVER_ID, 7,
-                                                dbHelper, sharedPref, getActivity());
+                                                dbHelper, getActivity());
 
                                         refreshPendingSignView();
                                     }
@@ -3211,15 +3219,20 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                                     message = "Connection not working.";
                                 }
 
-                                if(message.equals("Device Logout") && GetUnsavedSavedData().length() == 0){
+
+                                if(message.equals("Device Logout")){
 
                                     if(getActivity() != null) {
-                                        global.ClearAllFields(getActivity());
-                                        global.StopService(getActivity());
-                                        Intent i = new Intent(getActivity(), LoginActivity.class);
+                                        JSONArray unPostedLogArray = constants.GetDriversSavedArray(getActivity(),
+                                                MainDriverPref, CoDriverPref);
+                                        if(unPostedLogArray.length() == 0) {
+                                            global.ClearAllFields(getActivity());
+                                            global.StopService(getActivity());
+                                            Intent i = new Intent(getActivity(), LoginActivity.class);
 
-                                        getActivity().startActivity(i);
-                                        getActivity().finish();
+                                            getActivity().startActivity(i);
+                                            getActivity().finish();
+                                        }
                                     }
                                 }else{
                                     GetShipmentDetails();
@@ -3372,7 +3385,14 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             public void run() {
                 String data = ConstantHtml.GraphHtml + htmlAppendedText + closeTag;
                 graphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
-                graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, constants.dpToPx(getActivity(), 155)) );
+                if(global.isTablet(getActivity())){
+                    graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            constants.dpToPx(getActivity(), 200)) );
+                }else{
+                    graphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            constants.dpToPx(getActivity(), 160)) );
+                }
+
             }
         }, 500);
 
@@ -3513,75 +3533,6 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             String EndDate = Globally.GetCurrentDeviceDate(); // current Date
 
             GetRecapView18DaysData(DRIVER_ID, DeviceId, StartDate, EndDate);
-        }
-    }
-
-    private JSONArray GetUnsavedSavedData(){
-        JSONArray DriverJsonArray = new JSONArray();
-        List<EldDataModelNew> tempList = new ArrayList<EldDataModelNew>();
-        int listSize = 0;
-
-        if(DriverType == Constants.MAIN_DRIVER_TYPE){
-            try {
-                listSize = MainDriverPref.LoadSavedLoc(getActivity()).size();
-                tempList = MainDriverPref.LoadSavedLoc(getActivity());
-            } catch (Exception e) {
-                listSize = 0;
-            }
-        }else{
-            try {
-                listSize = CoDriverPref.LoadSavedLoc(getActivity()).size();
-                tempList = CoDriverPref.LoadSavedLoc(getActivity());
-            } catch (Exception e) {
-                listSize = 0;
-            }
-        }
-
-        try {
-            if (listSize > 0) {
-                for (int i = 0; i < tempList.size(); i++) {
-                    EldDataModelNew listModel = tempList.get(i);
-                    if(listModel != null) {
-                        constants.SaveEldJsonToList(          /* Put data as JSON to List */
-                                listModel,
-                                DriverJsonArray
-                        );
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            listSize = 0;
-        }
-
-        return DriverJsonArray;
-    }
-
-
-
-
-    void shareDriverLogDialog() {
-
-        if (!IsAOBRD || IsAOBRDAutomatic) {
-            Constants.isEldHome = false;
-            Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                getActivity().startForegroundService(Globally.serviceIntent);
-            }
-            getActivity().startService(Globally.serviceIntent);
-        }
-
-        try {
-            if (shareDialog != null && shareDialog.isShowing()) {
-                shareDialog.dismiss();
-            }
-            shareDialog = new ShareDriverLogDialog(getActivity(), getActivity(), DRIVER_ID, DeviceId, CurrentCycleId,
-                    IsAOBRD, StateArrayList, StateList);
-            shareDialog.show();
-        } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (final Exception e) {
-            e.printStackTrace();
         }
     }
 

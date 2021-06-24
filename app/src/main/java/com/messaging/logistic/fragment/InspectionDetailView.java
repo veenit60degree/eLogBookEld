@@ -20,6 +20,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.adapter.logistic.ViewInspectionGridAdapter;
@@ -370,6 +371,14 @@ public class    InspectionDetailView  extends Fragment {
         });
 
 
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
     }
 
 

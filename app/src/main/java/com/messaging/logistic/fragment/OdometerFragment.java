@@ -77,7 +77,6 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
     JSONArray odometer18DaysArray, odometerArray;
     ShippingPost postRequest;
     Constants constant;
-    SharedPref sharedPref;
 
 
     @Override
@@ -96,7 +95,6 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
     void initView(View view) {
 
-        sharedPref              = new SharedPref();
         dbHelper                = new DBHelper(getActivity());
         odometerhMethod         = new OdometerHelperMethod();
         postRequest             = new ShippingPost(getActivity(), requestResponse);
@@ -167,10 +165,10 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        DRIVER_ID       = sharedPref.getDriverId( getActivity());
-        VIN_NUMBER      = sharedPref.getVINNumber( getActivity());
+        DRIVER_ID       = SharedPref.getDriverId( getActivity());
+        VIN_NUMBER      = SharedPref.getVINNumber( getActivity());
 
-        DeviceId        = sharedPref.GetSavedSystemToken(getActivity());
+        DeviceId        = SharedPref.GetSavedSystemToken(getActivity());
 
         UserInfo();
         GetOdometer18Days(DRIVER_ID, DeviceId, CompanyId, SelectedDate);
@@ -190,7 +188,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
     public void onResume() {
         super.onResume();
 
-        if(sharedPref.IsAOBRD(getActivity())){
+        if(SharedPref.IsAOBRD(getActivity())){
             dateActionBarTV.setText(Html.fromHtml("<b><u>AOBRD</u></b>"));
         }else{
             dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
@@ -224,11 +222,11 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
     void UserInfo(){
 
-        DRIVER_ID       = sharedPref.getDriverId( getActivity());
+        DRIVER_ID       = SharedPref.getDriverId( getActivity());
         VIN_NUMBER      = SharedPref.getVINNumber(getActivity());
-        DeviceId        = sharedPref.GetSavedSystemToken(getActivity());
+        DeviceId        = SharedPref.GetSavedSystemToken(getActivity());
 
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             CompanyId     = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
         } else {                                                                                 // If Current driver is Co Driver
             CompanyId     = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, getActivity());
@@ -470,7 +468,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
         if (Global.isConnected(getActivity())) {
             if(IsEditOdometer.equalsIgnoreCase("false")) {
-                sharedPref.SetOdoSavingStatus(true, getActivity());
+                SharedPref.SetOdoSavingStatus(true, getActivity());
                 postRequest.PostListingData(odometerArray, APIs.SAVE_ODOMETER_OFFLINE, SaveOdometerOffline);
             }else{
                 SaveOdometerReading(DRIVER_ID, DeviceId, VIN_NUMBER, StartOdometer, EndOdometer, DistanceType,
@@ -560,7 +558,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
             odometerArray = odometerhMethod.getSavedOdometerArray(Integer.valueOf(DRIVER_ID), dbHelper);
 
             if(odometerArray.length() > 0 ){
-                sharedPref.SetOdoSavingStatus(true, getActivity());
+                SharedPref.SetOdoSavingStatus(true, getActivity());
                 postRequest.PostListingData(odometerArray, APIs.SAVE_ODOMETER_OFFLINE, SaveOdometerOffline );
             }
 
@@ -677,7 +675,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
     void PerformOperationsAfterSave(boolean SwitchWindow, boolean internetStatus){
         try {
             EldFragment.IsOdometerReading = false;
-            sharedPref.OdometerSaved(true, getActivity());
+            SharedPref.OdometerSaved(true, getActivity());
             odoProgressBar.setVisibility(View.GONE);
 
             if(SwitchWindow) {
@@ -813,7 +811,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
                 case SaveOdometerOffline:
                     Log.d("response", "response Save: " + response);
-                    sharedPref.SetOdoSavingStatus(false, getActivity());
+                    SharedPref.SetOdoSavingStatus(false, getActivity());
 
                     // Remove saved data from array after post
                     odometerhMethod.OdometerHelper(Integer.valueOf(DRIVER_ID), dbHelper, new JSONArray());
@@ -830,7 +828,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         @Override
         public void onResponseError(String error, int flag) {
             Log.d("shipmentJsonArray ", ">>>Error");
-            sharedPref.SetOdoSavingStatus(false, getActivity());
+            SharedPref.SetOdoSavingStatus(false, getActivity());
             odoProgressBar.setVisibility(View.GONE);
             PerformOperationsAfterSave(IsOdometerSaved, false);
         }

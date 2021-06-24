@@ -87,7 +87,6 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     String savedCycleType = "", changedCycleName = "";
     boolean isCycleRequest, isApprovedCycleRequest = true;
 
-    SharedPref sharedPref;
     DBHelper dbHelper;
     NotificationPref notificationPref;
     CoNotificationPref coNotificationPref;
@@ -135,7 +134,6 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         coNotificationPref          = new CoNotificationPref();
         constants                   = new Constants();
         global                      = new Globally();
-        sharedPref                  = new SharedPref();
         dbHelper                    = new DBHelper(getActivity());
 
         notiProgressBar             = (ProgressBar)view.findViewById(R.id.notiProgressBar);
@@ -188,35 +186,24 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     public void onResume() {
         super.onResume();
 
-       /* TextView obdTestDataTV = (TextView)rootView.findViewById(R.id.obdTestDataTV);
-        try {
-            JSONArray obdDataArray = new JSONArray( sharedPref.getObdSpeed(getActivity()) );
-            JSONArray reverseArray = sharedPref.ReverseArray(obdDataArray);
-            obdTestDataTV.setText(reverseArray.toString());
-
-        }catch (Exception e){
-
-        }*/
-
-
-        DeviceId        = sharedPref.GetSavedSystemToken(getActivity());
-        DriverLoginType = sharedPref.getDriverType(getContext());
+        DeviceId        = SharedPref.GetSavedSystemToken(getActivity());
+        DriverLoginType = SharedPref.getDriverType(getContext());
         CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
 
-        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             DriverType      = 0;
             DriverId        = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
             TruckNumber     = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
             DriverTimeZone  = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
             currentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
-            isCycleRequest  = sharedPref.IsCycleRequestMain(getActivity());
+            isCycleRequest  = SharedPref.IsCycleRequestMain(getActivity());
         }else {
             DriverType      = 1;
             DriverId        = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
             TruckNumber     = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
             DriverTimeZone  = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
             currentCycleId    = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
-            isCycleRequest  = sharedPref.IsCycleRequestCo(getActivity());
+            isCycleRequest  = SharedPref.IsCycleRequestCo(getActivity());
         }
 
 
@@ -237,7 +224,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         ParseJSON(false, historyArray, new JSONObject());
 
         if (global.isConnected(getActivity()) ) {
-            boolean isDeleted = sharedPref.isNotificationDeleted(getActivity());
+            boolean isDeleted = SharedPref.isNotificationDeleted(getActivity());
 
             if(notificationsList.size() == 0 && !isDeleted || isCycleRequest) {
                 GetNotificationLog(DriverId, DeviceId);
@@ -591,7 +578,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
         params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
         params.put(ConstantsKeys.LogDate, LogDate);
-        params.put(ConstantsKeys.LocationType, sharedPref.getLocMalfunctionType(getActivity()));
+        params.put(ConstantsKeys.LocationType, SharedPref.getLocMalfunctionType(getActivity()));
 
         ChangeCycleRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_DRIVER_CYCLE , params, ChangeCycle,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
@@ -697,7 +684,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
                 isSwipe = true;
                 isUndo = false;
-                sharedPref.notificationDeleted(true, getActivity());
+                SharedPref.notificationDeleted(true, getActivity());
                 final int position = viewHolder.getAdapterPosition();
                 final Notification18DaysModel item = historyRecylerAdapter.getData().get(position);
 
@@ -763,7 +750,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
     void saveUpdatedCycleData(String SavedCycleType, String changedCycleName){
 
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
             if(SavedCycleType.equals("can_cycle")){
 
                 DriverConst.SetDriverSettings(changedCycleName, changedCycleId, changedCycleId,
@@ -782,7 +769,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
             }
 
             DriverConst.SetDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
-            sharedPref.SetCycleRequestStatusMain(false, getActivity());
+            SharedPref.SetCycleRequestStatusMain(false, getActivity());
 
         }else{
             if(SavedCycleType.equals("can_cycle")){
@@ -803,7 +790,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
             }
 
             DriverConst.SetCoDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
-            sharedPref.SetCycleRequestStatusCo(false, getActivity());
+            SharedPref.SetCycleRequestStatusCo(false, getActivity());
 
         }
 
@@ -904,7 +891,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
                         // refresh list
                         ParseJSON(false, new JSONArray(), obj);
-                        sharedPref.SetCycleRequestAlertViewStatus(false, getActivity());
+                        SharedPref.SetCycleRequestAlertViewStatus(false, getActivity());
 
                         if(isApprovedCycleRequest) {
                             saveUpdatedCycleData(savedCycleType, changedCycleName);

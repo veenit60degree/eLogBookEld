@@ -21,7 +21,6 @@ import java.util.List;
 public class OtherOptionsAdapter extends BaseAdapter {
 
     Context context;
-    SharedPref sharedPref;
     LayoutInflater mInflater;
     List<OtherOptionsModel> LogList;
     boolean isPendingNotification, isGps, isCycleRequest;
@@ -34,14 +33,13 @@ public class OtherOptionsAdapter extends BaseAdapter {
         this.pendingNotificationCount = pendingNotificationCount;
         this.isGps = isGps;
         LogList = logList;
-        sharedPref = new SharedPref();
 
-        if (sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             DriverType = Constants.MAIN_DRIVER_TYPE;
-            isCycleRequest = sharedPref.IsCycleRequestMain(context);
+            isCycleRequest = SharedPref.IsCycleRequestMain(context);
         }else{
             DriverType = Constants.CO_DRIVER_TYPE;
-            isCycleRequest = sharedPref.IsCycleRequestCo(context);
+            isCycleRequest = SharedPref.IsCycleRequestCo(context);
         }
     }
 
@@ -132,15 +130,15 @@ public class OtherOptionsAdapter extends BaseAdapter {
 
             case Constants.MALFUNCTION:
                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                    if (sharedPref.isMalfunctionOccur(context) || sharedPref.isDiagnosticOccur(context)||
-                            sharedPref.isLocMalfunctionOccur(context) || sharedPref.isEngSyncMalfunction(context) ||
-                            sharedPref.isEngSyncDiagnstc(context) ) {
+                    if (SharedPref.isMalfunctionOccur(context) || SharedPref.isDiagnosticOccur(context)||
+                            SharedPref.isLocMalfunctionOccur(context) || SharedPref.isEngSyncMalfunction(context) ||
+                            SharedPref.isEngSyncDiagnstc(context) ) {
                         makeViewHighlighed(imgView, titleView, errorView);
                     }
                 }else{
-                    if (sharedPref.isMalfunctionOccurCo(context) || sharedPref.isDiagnosticOccurCo(context) ||
-                            sharedPref.isLocMalfunctionOccur(context) || sharedPref.isEngSyncMalfunction(context) ||
-                            sharedPref.isEngSyncDiagnstc(context) ) {
+                    if (SharedPref.isMalfunctionOccurCo(context) || SharedPref.isDiagnosticOccurCo(context) ||
+                            SharedPref.isLocMalfunctionOccur(context) || SharedPref.isEngSyncMalfunction(context) ||
+                            SharedPref.isEngSyncDiagnstc(context) ) {
                         makeViewHighlighed(imgView, titleView, errorView);
                     }
                 }
@@ -149,11 +147,11 @@ public class OtherOptionsAdapter extends BaseAdapter {
 
             case Constants.UNIDENTIFIED:
                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                    if (sharedPref.isUnidentifiedOccur(context)) {
+                    if (SharedPref.isUnidentifiedOccur(context)) {
                         makeViewHighlighed(imgView, titleView, errorView);
                     }
                 }else{
-                    if (sharedPref.isUnidentifiedOccurCo(context)) {
+                    if (SharedPref.isUnidentifiedOccurCo(context)) {
                         makeViewHighlighed(imgView, titleView, errorView);
                     }
                 }
@@ -162,9 +160,9 @@ public class OtherOptionsAdapter extends BaseAdapter {
             case Constants.SUGGESTED_LOGS:
                 boolean isSuggestedOccur = false;
                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                    isSuggestedOccur = sharedPref.isSuggestedEditOccur(context);
+                    isSuggestedOccur = SharedPref.isSuggestedEditOccur(context);
                 }else{
-                    isSuggestedOccur = sharedPref.isSuggestedEditOccurCo(context);
+                    isSuggestedOccur = SharedPref.isSuggestedEditOccurCo(context);
                 }
 
                 if(isSuggestedOccur){
@@ -175,8 +173,8 @@ public class OtherOptionsAdapter extends BaseAdapter {
                 break;
 
             case Constants.OBD:
-               /* if(sharedPref.getObdStatus(context) != Constants.WIFI_CONNECTED && sharedPref.getObdStatus(context) != Constants.WIRED_CONNECTED &&
-                        sharedPref.getObdStatus(context) != Constants.BLE_CONNECTED){
+               /* if(SharedPref.getObdStatus(context) != Constants.WIFI_CONNECTED && SharedPref.getObdStatus(context) != Constants.WIRED_CONNECTED &&
+                        SharedPref.getObdStatus(context) != Constants.BLE_CONNECTED){
                     makeViewHighlighed(imgView, titleView, errorView);
                 }*/
                 break;

@@ -8,29 +8,16 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.constants.Constants;
-import com.constants.SharedPref;
 import com.driver.details.DriverConst;
-import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.EldFragment;
-
-import org.joda.time.DateTime;
-import org.json.JSONObject;
-
-import java.util.List;
-
-import models.DriverDetail;
-import models.DriverLog;
-import models.RulesResponseObject;
 
 public class CycleChangeRequestDialog extends Dialog {
 
@@ -45,7 +32,6 @@ public class CycleChangeRequestDialog extends Dialog {
     Constants constants;
     HelperMethods hMethods;
     DBHelper dbHelper;
-    SharedPref sharedPref;
 
 
     public CycleChangeRequestDialog(Context context, String driverId, String changedCycle, ConfirmationListener readyListener) {
@@ -69,7 +55,6 @@ public class CycleChangeRequestDialog extends Dialog {
         constants = new Constants();
         hMethods = new HelperMethods();
         dbHelper = new DBHelper(getContext());
-        sharedPref = new SharedPref();
 
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -125,7 +110,8 @@ public class CycleChangeRequestDialog extends Dialog {
         titleDescView.setText(Html.fromHtml(getContext().getString(R.string.change_cycle_request) + "<font color='#1A3561'> <b>"+ currentCycle
                                             +"</b></font> to<font color='#1A3561'> <b>"+ changedCycleName +"</b></font>.") );
 
-        String cycleCalculatedData = constants.CalculateCycleTimeData(getContext(), DriverId, false, false, changedCycleId, Global, sharedPref, hMethods, dbHelper);
+        String cycleCalculatedData = constants.CalculateCycleTimeData(getContext(), DriverId, false,
+                false, changedCycleId, Global, hMethods, dbHelper);
         changedCycleRuleDescVw.setText(Html.fromHtml(cycleCalculatedData) );
 
         cancelPopupButton.setOnClickListener(new CancelJobListener());

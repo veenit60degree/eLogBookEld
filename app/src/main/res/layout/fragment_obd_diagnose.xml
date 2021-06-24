@@ -42,6 +42,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 >
 
                 <TextView
@@ -70,6 +71,15 @@
             </RelativeLayout>
 
 
+
+
+        <LinearLayout
+            android:id="@+id/wifiObdLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+
+            >
 
         <TextView
             android:id="@+id/odometerTxtView"
@@ -153,6 +163,7 @@
 
             />
 
+        </LinearLayout>
 
 
         </LinearLayout>

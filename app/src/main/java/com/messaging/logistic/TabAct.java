@@ -28,6 +28,7 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -84,7 +85,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     public static boolean isUpdateDirectly = false;
     DBHelper dbHelper;
     HelperMethods hMethods;
-    SharedPref sharedPref;
 
     private BroadcastReceiver mMessageReceiver = null;
     Animation fadeInAnim, fadeOutAnim;
@@ -94,7 +94,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     String existingAppVersionStr = "";
 
     AlertDialog alertDialog;
-
+    AlertDialog statusAlertDialog;
 
    /* @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -115,7 +115,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         setContentView(R.layout.chat_friend_list);
 
-        sharedPref          = new SharedPref();
         dbHelper            = new DBHelper(this);
         hMethods            = new HelperMethods();
         constants           = new Constants();
@@ -166,51 +165,67 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             @Override
             public void onReceive(Context context, Intent intent) {
                   Log.d("received", "received from service");
-                boolean isSuggestedEdit     = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
-                boolean IsCycleRequest      = intent.getBooleanExtra(ConstantsKeys.IsCycleRequest, false);
-                boolean isFreshLogin        = sharedPref.GetNewLoginStatus(TabAct.this);
-                boolean IsCCMTACertified    = sharedPref.IsCCMTACertified(TabAct.this);
 
-                boolean IsELDNotification   = intent.getBooleanExtra(ConstantsKeys.IsELDNotification, false);
-                String ELDNotification      = intent.getStringExtra(ConstantsKeys.DriverELDNotificationList);
+                if (intent.hasExtra(ConstantsKeys.PersonalUse75Km)) {
+                    if (intent.getBooleanExtra(ConstantsKeys.PersonalUse75Km, false) == true) {
+                        String certifyTitle = intent.getStringExtra(ConstantsKeys.Title);
+                        String titleDesc = intent.getStringExtra(ConstantsKeys.Desc);
+                        int obdSpeed = intent.getIntExtra(ConstantsKeys.OBDSpeed, 0);
 
-                if(IsCCMTACertified && isSuggestedEdit && isFreshLogin == false){
-                    Intent i = new Intent(TabAct.this, SuggestedFragmentActivity.class);
-                    i.putExtra(ConstantsKeys.suggested_data, "");
-                    i.putExtra(ConstantsKeys.Date, "");
-                    startActivity(i);
-
-                }else{
-                    if(IsCycleRequest && isFreshLogin == false){
-
-                        if(sharedPref.IsCycleRequestAlertShownAlready(TabAct.this) == false) {
-                            String certifyTitle = "<font color='#1A3561'><b>Alert !!</b></font>";
-                            String titleDesc = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.cycle_change_req) + " </html> </font>";
-                            String okText = "<font color='#1A3561'><b>" + getResources().getString(R.string.ok) + "</b></font>";
-                            Globally.SwitchAlertWIthTabPosition(TabAct.this, certifyTitle, titleDesc, okText, 3);
+                        if(obdSpeed > 8){
+                            titleDesc = "Personal Use limit has been exceeded above 75 km for the day.";
                         }
-                        sharedPref.SetCycleRequestAlertViewStatus(true, TabAct.this);
+                        Globally.DriverSwitchAlertWithDismiss(TabAct.this, certifyTitle, titleDesc, "Ok",
+                                statusAlertDialog, false);
 
-                    }else if(IsELDNotification && isFreshLogin == false){
-                        if(sharedPref.IsELDNotificationAlertShownAlready(TabAct.this) == false){
-                            try {
-                                if (eldNotificationDialog != null && eldNotificationDialog.isShowing()) {
-                                    eldNotificationDialog.dismiss();
-                                }
+                    }
+                }else {
+                    boolean isSuggestedEdit = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
+                    boolean IsCycleRequest = intent.getBooleanExtra(ConstantsKeys.IsCycleRequest, false);
+                    boolean isFreshLogin = SharedPref.GetNewLoginStatus(TabAct.this);
+                    boolean IsCCMTACertified = SharedPref.IsCCMTACertified(TabAct.this);
 
-                                eldNotificationDialog = new EldNotificationDialog(TabAct.this, ELDNotification, true );
-                                eldNotificationDialog.show();
+                    boolean IsELDNotification = intent.getBooleanExtra(ConstantsKeys.IsELDNotification, false);
+                    String ELDNotification = intent.getStringExtra(ConstantsKeys.DriverELDNotificationList);
 
-                            } catch (final IllegalArgumentException e) {
-                                e.printStackTrace();
-                            } catch (final Exception e) {
-                                e.printStackTrace();
+                    if (IsCCMTACertified && isSuggestedEdit && isFreshLogin == false) {
+                        Intent i = new Intent(TabAct.this, SuggestedFragmentActivity.class);
+                        i.putExtra(ConstantsKeys.suggested_data, "");
+                        i.putExtra(ConstantsKeys.Date, "");
+                        startActivity(i);
+
+                    } else {
+                        if (IsCycleRequest && isFreshLogin == false) {
+
+                            if (SharedPref.IsCycleRequestAlertShownAlready(TabAct.this) == false) {
+                                String certifyTitle = "<font color='#1A3561'><b>Alert !!</b></font>";
+                                String titleDesc = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.cycle_change_req) + " </html> </font>";
+                                String okText = "<font color='#1A3561'><b>" + getResources().getString(R.string.ok) + "</b></font>";
+                                Globally.SwitchAlertWIthTabPosition(TabAct.this, certifyTitle, titleDesc, okText, 3);
                             }
+                            SharedPref.SetCycleRequestAlertViewStatus(true, TabAct.this);
+
+                        } else if (IsELDNotification && isFreshLogin == false) {
+                            if (SharedPref.IsELDNotificationAlertShownAlready(TabAct.this) == false) {
+                                try {
+                                    if (eldNotificationDialog != null && eldNotificationDialog.isShowing()) {
+                                        eldNotificationDialog.dismiss();
+                                    }
+
+                                    eldNotificationDialog = new EldNotificationDialog(TabAct.this, ELDNotification, true);
+                                    eldNotificationDialog.show();
+
+                                } catch (final IllegalArgumentException e) {
+                                    e.printStackTrace();
+                                } catch (final Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            SharedPref.SetELDNotificationAlertViewStatus(true, TabAct.this);
                         }
-                        sharedPref.SetELDNotificationAlertViewStatus(true, TabAct.this);
+
                     }
                 }
-
             }
         };
 
@@ -242,20 +257,20 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
         // Check app version
-        if (!sharedPref.GetNewLoginStatus(this)) {
-            if(!sharedPref.GetUpdateAppDialogTime(this).equals(Globally.GetCurrentDeviceDate())){
+        if (!SharedPref.GetNewLoginStatus(this)) {
+            if(!SharedPref.GetUpdateAppDialogTime(this).equals(Globally.GetCurrentDeviceDate())){
                 getAppVersion();
             }
 
         }
 
-        sharedPref.setLastCalledWiredCallBack(0, getApplicationContext());
-        if(sharedPref.getCurrentDriverType(TabAct.this).equals(DriverConst.StatusSingleDriver)){
+        SharedPref.setLastCalledWiredCallBack(0, getApplicationContext());
+        if(SharedPref.getCurrentDriverType(TabAct.this).equals(DriverConst.StatusSingleDriver)){
             DriverType = Constants.MAIN_DRIVER_TYPE;
-            sharedPref.setUnidentifiedAlertViewStatus(true, this);
+            SharedPref.setUnidentifiedAlertViewStatus(true, this);
         }else{
             DriverType = Constants.CO_DRIVER_TYPE;
-            sharedPref.setUnidentifiedAlertViewStatusCo(true, this);
+            SharedPref.setUnidentifiedAlertViewStatusCo(true, this);
         }
 
 
@@ -278,7 +293,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                 slideMenu.CoDriverView(TabAct.this, false);      //CoDriverView(TabAct.this, false);
                 slideMenu.usernameTV.setText(CoDriverName);
             }
-            if(sharedPref.getDriverType(TabAct.this).equals(DriverConst.SingleDriver)){
+            if(SharedPref.getDriverType(TabAct.this).equals(DriverConst.SingleDriver)){
                 slideMenu.driversLayout.setVisibility(View.GONE);
                 slideMenu.usernameTV.setVisibility(View.VISIBLE);
             }else{
@@ -325,7 +340,13 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     };*/
 
 
-
+    /*@Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
+*/
 
     private void setSlidingMenu() {
         if(getApplicationContext() != null) {
@@ -352,6 +373,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
     private void initilizeAlertDialog(){
+        statusAlertDialog =  new AlertDialog.Builder(TabAct.this).create();
+
+
         alertDialog = new AlertDialog.Builder(TabAct.this).create();
         alertDialog.setTitle(Html.fromHtml("Alert !!"));
         alertDialog.setMessage(Html.fromHtml("Please change your status to On Duty due to vehicle is not moving"));
@@ -607,25 +631,25 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         try {
             if(getApplicationContext() != null) {
                 if (DriverType == Constants.MAIN_DRIVER_TYPE) {
-                    if (sharedPref.IsAllowMalfunction(getApplicationContext()) || sharedPref.IsAllowDiagnostic(getApplicationContext()))
+                    if (SharedPref.IsAllowMalfunction(getApplicationContext()) || SharedPref.IsAllowDiagnostic(getApplicationContext()))
                         isMalfunction = true;
 
-                    isUnidentified = sharedPref.IsShowUnidentifiedRecords(getApplicationContext());
+                    isUnidentified = SharedPref.IsShowUnidentifiedRecords(getApplicationContext());
 
                 } else {
-                    if (sharedPref.IsAllowMalfunctionCo(getApplicationContext()) || sharedPref.IsAllowDiagnosticCo(getApplicationContext()))
+                    if (SharedPref.IsAllowMalfunctionCo(getApplicationContext()) || SharedPref.IsAllowDiagnosticCo(getApplicationContext()))
                         isMalfunction = true;
 
-                    isUnidentified = sharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext());
+                    isUnidentified = SharedPref.IsShowUnidentifiedRecordsCo(getApplicationContext());
 
                 }
 
                 if (isNotify) {
                     menuList.clear();
-                    menuList.addAll(constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
+                    menuList.addAll(constants.getSlideMenuList(getApplicationContext(), SharedPref.IsOdometerFromOBD(getApplicationContext()),
                             isUnidentified, isMalfunction, existingAppVersionStr));
                 } else {
-                    menuList = constants.getSlideMenuList(getApplicationContext(), sharedPref.IsOdometerFromOBD(getApplicationContext()),
+                    menuList = constants.getSlideMenuList(getApplicationContext(), SharedPref.IsOdometerFromOBD(getApplicationContext()),
                             isUnidentified, isMalfunction, existingAppVersionStr);
                 }
 
@@ -689,7 +713,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                                 appUpdateDialog.dismiss();
                             }
 
-                            appUpdateDialog = new AppUpdateDialog(TabAct.this, isPlayStoreDownload, responseVersion, host, sharedPref);
+                            appUpdateDialog = new AppUpdateDialog(TabAct.this, isPlayStoreDownload, responseVersion, host);
                             appUpdateDialog.show();
 
                         } catch (final IllegalArgumentException e) {

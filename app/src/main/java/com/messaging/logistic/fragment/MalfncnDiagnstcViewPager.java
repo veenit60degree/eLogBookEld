@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -63,7 +64,6 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     static TextView noRecordMalTV, noRecordDiaTV;
     static ExpandableListView malfunctionExpandList, diagnosticExpandList;
 
-    SharedPref sharedPref;
     String DriverId = "", DeviceId = "", VIN = "", FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId;
     Map<String, String> params;
     VolleyRequest GetMalfunctionEvents;
@@ -119,7 +119,6 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         progressDialog.setMessage("Loading ...");
 
         constants           = new Constants();
-        sharedPref          = new SharedPref();
         globally            = new Globally();
         cancelCertifyBtn    = (CardView)rootView.findViewById(R.id.cancelCertifyBtn);
         confirmCertifyBtn   = (CardView)rootView.findViewById(R.id.confirmCertifyBtn);
@@ -139,8 +138,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
         rightMenuBtn.setVisibility(View.GONE);
 
-        DriverId = sharedPref.getDriverId( getActivity());
-        DeviceId = sharedPref.GetSavedSystemToken(getActivity());
+        DriverId = SharedPref.getDriverId( getActivity());
+        DeviceId = SharedPref.GetSavedSystemToken(getActivity());
 
         dateActionBarTV.setVisibility(View.VISIBLE);
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
@@ -159,11 +158,19 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
 
-        DriverId                = sharedPref.getDriverId( getActivity());
-        VIN                     = sharedPref.getVINNumber(getActivity());
+        DriverId                = SharedPref.getDriverId( getActivity());
+        VIN                     = SharedPref.getVINNumber(getActivity());
         Country                 = constants.getCountryName(getActivity());
         OffsetFromUTC           = DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity());
         CompanyId               = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
@@ -180,7 +187,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 }
             }
 
-            if (sharedPref.IsAOBRD(getActivity())) {
+            if (SharedPref.IsAOBRD(getActivity())) {
                 dateActionBarTV.setText(Html.fromHtml("<b><u>AOBRD</u></b>"));
             } else {
                 dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
@@ -193,13 +200,13 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                 boolean isDiagnostic;
                 boolean isMalfunction;
-                if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-                    isDiagnostic = sharedPref.isDiagnosticOccur(getActivity());
-                    isMalfunction = sharedPref.isMalfunctionOccur(getActivity());
+                if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                    isDiagnostic = SharedPref.isDiagnosticOccur(getActivity());
+                    isMalfunction = SharedPref.isMalfunctionOccur(getActivity());
 
                 } else {
-                    isDiagnostic = sharedPref.isDiagnosticOccurCo(getActivity());
-                    isMalfunction = sharedPref.isMalfunctionOccurCo(getActivity());
+                    isDiagnostic = SharedPref.isDiagnosticOccurCo(getActivity());
+                    isMalfunction = SharedPref.isMalfunctionOccurCo(getActivity());
                 }
 
                 if (isDiagnostic && !isMalfunction) {
@@ -317,9 +324,9 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         }else{
             if(isUpdateFromApi) {
                 if (isMalfunctionUpdate) {
-                    sharedPref.saveEngSyncMalfunctionStatus(false, getActivity());
+                    SharedPref.saveEngSyncMalfunctionStatus(false, getActivity());
                 } else {
-                    sharedPref.saveEngSyncDiagnstcStatus(false, getActivity());
+                    SharedPref.saveEngSyncDiagnstcStatus(false, getActivity());
                 }
             }
         }
@@ -327,26 +334,26 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
         if(isUpdateFromApi) {
 
-            if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+            if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
                 if(isMalfunctionUpdate){
-                    isDiagnostic = sharedPref.isDiagnosticOccur(getActivity());
+                    isDiagnostic = SharedPref.isDiagnosticOccur(getActivity());
                 }else{
-                    isMalfunction = sharedPref.isMalfunctionOccur(getActivity());
+                    isMalfunction = SharedPref.isMalfunctionOccur(getActivity());
                 }
-                sharedPref.setEldOccurences(sharedPref.isUnidentifiedOccur(getActivity()),
+                SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
                         isMalfunction,
                         isDiagnostic,
-                        sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+                        SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
             } else {
                 if(isMalfunctionUpdate){
-                    isDiagnostic = sharedPref.isDiagnosticOccurCo(getActivity());
+                    isDiagnostic = SharedPref.isDiagnosticOccurCo(getActivity());
                 }else{
-                    isMalfunction = sharedPref.isMalfunctionOccurCo(getActivity());
+                    isMalfunction = SharedPref.isMalfunctionOccurCo(getActivity());
                 }
-                sharedPref.setEldOccurencesCo(sharedPref.isUnidentifiedOccurCo(getActivity()),
+                SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccurCo(getActivity()),
                         isMalfunction,
                         isDiagnostic,
-                        sharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
+                        SharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
             }
         }
 
@@ -519,19 +526,19 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
 
     void checkLocMalfunction(){
-        boolean isLocMalfunctionOccur = sharedPref.isLocMalfunctionOccur(getActivity());
-        String malfunctionType = sharedPref.getLocMalfunctionType(getActivity());
+        boolean isLocMalfunctionOccur = SharedPref.isLocMalfunctionOccur(getActivity());
+        String malfunctionType = SharedPref.getLocMalfunctionType(getActivity());
         if(isLocMalfunctionOccur && (malfunctionType.equals("m") || malfunctionType.equals("x"))){
             malfunctionHeaderList.add(new MalfunctionHeaderModel(
                     "Invalid Location Occur", "1", getString(R.string.loc_mal)));
             malfunctionChildList.add(new MalfunctionModel(
-                    sharedPref.getCountryCycle("CountryCycle", getActivity()),
-                    sharedPref.getVINNumber( getActivity()),
+                    SharedPref.getCountryCycle("CountryCycle", getActivity()),
+                    SharedPref.getVINNumber( getActivity()),
                     DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
-                    sharedPref.getLocMalfunctionOccuredTime(getActivity()),
+                    SharedPref.getLocMalfunctionOccuredTime(getActivity()),
                     "", "", "1", "", "1",
                     getString(R.string.loc_mal_occur), "", "", "",
-                    sharedPref.getLocMalfunctionOccuredTime(getActivity()), "101", "101",""
+                    SharedPref.getLocMalfunctionOccuredTime(getActivity()), "101", "101",""
 
             ));
 
@@ -703,8 +710,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                         Toast.makeText(getActivity(), getString(R.string.RecordClearedSuccessfully), Toast.LENGTH_LONG).show();
                         progressDialog.show();
 
-                        sharedPref.saveEngSyncDiagnstcStatus(false, getActivity());
-                        sharedPref.saveEngSyncMalfunctionStatus(false, getActivity());
+                        SharedPref.saveEngSyncDiagnstcStatus(false, getActivity());
+                        SharedPref.saveEngSyncMalfunctionStatus(false, getActivity());
                         constants.saveDiagnstcStatus(getActivity(), false);
                         constants.saveMalfncnStatus(getActivity(), false);
 

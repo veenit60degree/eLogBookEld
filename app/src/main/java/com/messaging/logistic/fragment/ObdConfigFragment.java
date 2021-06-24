@@ -41,7 +41,6 @@ public class ObdConfigFragment  extends Fragment implements View.OnClickListener
 
     MyTimerTask timerTask;
     private Timer mTimer;
-    SharedPref sharedPref;
 
     WIredObdAdapter adapter;
     ShipmentHelperMethod method;
@@ -74,7 +73,6 @@ public class ObdConfigFragment  extends Fragment implements View.OnClickListener
 
     void initView(View v) {
 
-        sharedPref = new SharedPref();
         method = new ShipmentHelperMethod();
         obdDataListView = (ListView) v.findViewById(R.id.obdDataListView);
 

@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
@@ -49,7 +50,6 @@ import java.util.Map;
 public class UnidentifiedFragment extends Fragment implements View.OnClickListener {
 
     View rootView;
-    SharedPref sharedPref;
     ListView unIdentifiedListView;
     TextView EldTitleTV, noDataEldTV, dateActionBarTV;
     TextView claimRecordUnBtn, rejectRecordUnBtn, totalRecordsTV;
@@ -101,7 +101,6 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
     void initView(View view) {
 
-        sharedPref              = new SharedPref();
         global                  = new Globally();
         constants               = new Constants();
         GetUnidentifiedRecords  = new VolleyRequest(getActivity());
@@ -121,7 +120,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
         checkboxUnIdentifiedRecord = (CheckBox)view.findViewById(R.id.checkboxUnIdentifiedRecord);
 
-        DeviceId                = sharedPref.GetSavedSystemToken(getActivity());
+        DeviceId                = SharedPref.GetSavedSystemToken(getActivity());
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading ...");
@@ -136,7 +135,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
 
         EldTitleTV.setText(getResources().getString(R.string.unIdentified_records));
-        if(sharedPref.IsAOBRD(getActivity())) {
+        if(SharedPref.IsAOBRD(getActivity())) {
             dateActionBarTV.setText(getString(R.string.aobrd));
         }else{
             dateActionBarTV.setText(getString(R.string.eld));
@@ -171,12 +170,21 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
+
+
+
+    @Override
     public void onResume() {
         super.onResume();
 
         CurrentDate             = global.getCurrentDateLocal();
-        DriverId                = sharedPref.getDriverId( getActivity());
-        VIN                     = sharedPref.getVINNumber(getActivity());
+        DriverId                = SharedPref.getDriverId( getActivity());
+        VIN                     = SharedPref.getVINNumber(getActivity());
         DriverName              = Slidingmenufunctions.usernameTV.getText().toString();
         Country                 = constants.getCountryName(getActivity());
 
@@ -544,18 +552,18 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
                 noDataEldTV.setVisibility(View.VISIBLE);
                 unIdentifiedTopLay.setVisibility(View.GONE);
-                if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {    // Single Driver Type and Position is 0
-                  //  sharedPref.setUnidentifiedAlertViewStatus(false, getContext());
-                    sharedPref.setEldOccurences(false,
-                            sharedPref.isMalfunctionOccur(getActivity()),
-                            sharedPref.isDiagnosticOccur(getActivity()),
-                            sharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+                if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {    // Single Driver Type and Position is 0
+                  //  SharedPref.setUnidentifiedAlertViewStatus(false, getContext());
+                    SharedPref.setEldOccurences(false,
+                            SharedPref.isMalfunctionOccur(getActivity()),
+                            SharedPref.isDiagnosticOccur(getActivity()),
+                            SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
                 }else{
-                   // sharedPref.setUnidentifiedAlertViewStatusCo(false, getContext());
-                    sharedPref.setEldOccurencesCo(false,
-                            sharedPref.isMalfunctionOccurCo(getActivity()),
-                            sharedPref.isDiagnosticOccurCo(getActivity()),
-                            sharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
+                   // SharedPref.setUnidentifiedAlertViewStatusCo(false, getContext());
+                    SharedPref.setEldOccurencesCo(false,
+                            SharedPref.isMalfunctionOccurCo(getActivity()),
+                            SharedPref.isDiagnosticOccurCo(getActivity()),
+                            SharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
                 }
 
             }

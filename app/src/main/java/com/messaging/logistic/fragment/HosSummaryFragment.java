@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -132,7 +133,6 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     ShareDriverLogDialog shareDialog;
     InitilizeEldView initilizeEldView;
     Constants constants;
-    SharedPref sharedPref;
     Globally global;
     HelperMethods hMethods;
     DBHelper dbHelper;
@@ -177,7 +177,6 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         initilizeEldView        = new InitilizeEldView();
         constants               = new Constants();
         global                  = new Globally();
-        sharedPref              = new SharedPref();
         hMethods                = new HelperMethods();
         dbHelper                = new DBHelper(getActivity());
         localCalls              = new LocalCalls();
@@ -236,14 +235,14 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         shiftCircularView       = (CircleProgressView)v.findViewById(R.id.shiftCircularView);
         currentStatusCircularView   = (CircleProgressView)v.findViewById(R.id.statusCircularView);
 
-        isNorthCanada  =  sharedPref.IsNorthCanada(getActivity());
+        isNorthCanada  =  SharedPref.IsNorthCanada(getActivity());
 
-        if (sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-            isHaulExcptn    = sharedPref.get16hrHaulExcptn(getActivity());
-            isAdverseExcptn = sharedPref.getAdverseExcptn(getActivity());
+        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            isHaulExcptn    = SharedPref.get16hrHaulExcptn(getActivity());
+            isAdverseExcptn = SharedPref.getAdverseExcptn(getActivity());
         }else{
-            isHaulExcptn    = sharedPref.get16hrHaulExcptnCo(getActivity());
-            isAdverseExcptn = sharedPref.getAdverseExcptnCo(getActivity());
+            isHaulExcptn    = SharedPref.get16hrHaulExcptnCo(getActivity());
+            isAdverseExcptn = SharedPref.getAdverseExcptnCo(getActivity());
         }
 
         editLogAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
@@ -252,7 +251,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         getBundleData();
 
         try {
-            StateArrayList     =  sharedPref.getStatesInList(getActivity());
+            StateArrayList     =  SharedPref.getStatesInList(getActivity());
             StatePrefManager statePrefManager  = new StatePrefManager();
             StateList          = statePrefManager.GetState(getActivity());
             //driverLogArray     = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
@@ -275,8 +274,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 setMarqueText(vinNumberTxtView);
                 setMarqueText(engHourTxtView);
 
-                if(sharedPref.getDriverStatusId("jobType", getActivity()).trim().equals(Globally.OFF_DUTY) ||
-                        sharedPref.getDriverStatusId("jobType", getActivity()).trim().equals(Globally.SLEEPER)){
+                if(SharedPref.getDriverStatusId(getActivity()).trim().equals(Globally.OFF_DUTY) ||
+                        SharedPref.getDriverStatusId(getActivity()).trim().equals(Globally.SLEEPER)){
                     availableHourBtnTV.setVisibility(View.VISIBLE);
                 }
 
@@ -289,10 +288,10 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 currentStatusCircularView.setSeekModeEnabled(false);
                 cycleCircularView.setSeekModeEnabled(false);
 
-                if(sharedPref.getVehicleVin(getActivity()).length() > 3 && !sharedPref.getVehicleVin(getActivity()).contains("u0000")){
-                    vin = "(<b>VIN: </b>" + sharedPref.getVehicleVin(getActivity())+ ")";   // getting from OBD directly (Cuurent VIN)
+                if(SharedPref.getVehicleVin(getActivity()).length() > 3 && !SharedPref.getVehicleVin(getActivity()).contains("u0000")){
+                    vin = "(<b>VIN: </b>" + SharedPref.getVehicleVin(getActivity())+ ")";   // getting from OBD directly (Cuurent VIN)
                 }else{
-                    vin = "(<b>VIN: </b>" + sharedPref.getVINNumber(getActivity()) + ")";   // getting from truck selection when user select Truck and getting its VIN
+                    vin = "(<b>VIN: </b>" + SharedPref.getVINNumber(getActivity()) + ")";   // getting from truck selection when user select Truck and getting its VIN
                 }
                 vinNumberTxtView.setText(Html.fromHtml( vin) );
 
@@ -334,7 +333,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if(sharedPref.isSuggestedEditOccur(getActivity()))
+                if(SharedPref.isSuggestedEditOccur(getActivity()))
                     malfunctionLay.startAnimation(editLogAnimation);
                 else {
                     editLogAnimation.cancel();
@@ -363,12 +362,20 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear();
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
 
         RestartTimer();
 
-        if(sharedPref.isSuggestedEditOccur(getActivity()) && sharedPref.IsCCMTACertified(getActivity()) ){
+        if(SharedPref.isSuggestedEditOccur(getActivity()) && SharedPref.IsCCMTACertified(getActivity()) ){
             malfunctionTV.setText(getString(R.string.review_carrier_edits));
           //  malfunctionTV.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
             malfunctionLay.setVisibility(View.VISIBLE);
@@ -525,7 +532,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             if(arr.length > 0){
                 String[] cycleHourArr = arr[1].split("/");
                 if(cycleHourArr.length > 0){
-                    if (CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) && sharedPref.IsNorthCanada(getActivity())) {
+                    if (CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) && SharedPref.IsNorthCanada(getActivity())) {
                         hosCurrentCycleTV.setText(CurrentCycle + " (North)");
                         TotalCycleHour = 80 * 60 ;
                     }else{
@@ -685,8 +692,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
     void shareDriverLogDialog() {
 
-        boolean IsAOBRDAutomatic        = sharedPref.IsAOBRDAutomatic(getActivity());
-        boolean IsAOBRD                 = sharedPref.IsAOBRD(getActivity());
+        boolean IsAOBRDAutomatic        = SharedPref.IsAOBRDAutomatic(getActivity());
+        boolean IsAOBRD                 = SharedPref.IsAOBRD(getActivity());
 
 
         if (!IsAOBRD || IsAOBRDAutomatic) {
@@ -715,9 +722,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     void calculateLocalOdometersDistance(){
         try{
 
-            String dayStartSavedDate    = sharedPref.getDayStartSavedTime(getActivity());
-            String dayStartOdometerStr  = sharedPref.getDayStartOdometer(getActivity());
-            String currentOdometerStr   = sharedPref.getHighPrecisionOdometer(getActivity());
+            String dayStartSavedDate    = SharedPref.getDayStartSavedTime(getActivity());
+            String dayStartOdometerStr  = SharedPref.getDayStartOdometer(getActivity());
+            String currentOdometerStr   = SharedPref.getHighPrecisionOdometer(getActivity());
 
          //   dayStartOdometerStr = "0";
          //   currentOdometerStr = "1145713860";
@@ -725,8 +732,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             if(dayStartSavedDate.length() > 0) {
                 int dayDiff = constants.getDayDiff(dayStartSavedDate, global.getCurrentDate());
                 if (dayDiff == 0) {
-                    if (sharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED || sharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED
-                            || sharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED) {
+                    if (SharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED || SharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED
+                            || SharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED) {
                         if (currentOdometerStr.contains(".")) {
                             currentOdometerStr = "" + Double.parseDouble(currentOdometerStr) * 1000;
                         }
@@ -760,7 +767,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             currentUTCTime = global.getDateTimeObj(global.GetCurrentUTCTimeFormat(), true);
 
             currentDayArray = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime, true, offsetFromUTC);
-            rulesVersion = sharedPref.GetRulesVersion(getActivity());
+            rulesVersion = SharedPref.GetRulesVersion(getActivity());
 
             List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
             DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DriverId),
@@ -849,8 +856,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     setProgressViolationColor(shiftCircularView, LeftShiftHoursInt);
 
                     // set Engine hour
-                    String engineHours = sharedPref.getObdEngineHours(getActivity());
+                    String engineHours = SharedPref.getObdEngineHours(getActivity());
                     if(engineHours.length() > 1) {
+                        if(engineHours.contains("-")){
+                            engineHours = "0";
+                        }
+                        engineHours = constants.Convert2DecimalPlacesDouble(Double.parseDouble(engineHours));
                         int ObdStatus = SharedPref.getObdStatus(getActivity());
                         if(ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED || ObdStatus == Constants.BLE_CONNECTED ){
                             engHourTxtView.setText(Html.fromHtml("(<b>Engine Hours: </b>" + engineHours + ")" ));
@@ -907,8 +918,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         switch (v.getId()){
 
             case R.id.hosDistanceCardView:
-                String dayStartOdometerStr  = sharedPref.getDayStartOdometer(getActivity());
-                String currentOdometerStr   = sharedPref.getHighPrecisionOdometer(getActivity());
+             //   String dayStartOdometerStr  = SharedPref.getDayStartOdometer(getActivity());
+             //   String currentOdometerStr   = SharedPref.getHighPrecisionOdometer(getActivity());
 
              //   Toast.makeText(getActivity(), "     Start Odometer: "+ dayStartOdometerStr + "\nCurrent Odometer: "+ currentOdometerStr, Toast.LENGTH_LONG).show();
 
@@ -919,7 +930,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
             case R.id.hosLocationCardView:
 
-             //   Toast.makeText(getActivity(), "OBD Vin: "+ sharedPref.getVehicleVin(getActivity()) + "\nAPI Vin: "+ sharedPref.getVINNumber(getActivity()), Toast.LENGTH_LONG).show();
+             //   Toast.makeText(getActivity(), "OBD Vin: "+ SharedPref.getVehicleVin(getActivity()) + "\nAPI Vin: "+ SharedPref.getVINNumber(getActivity()), Toast.LENGTH_LONG).show();
 
                 break;
 
@@ -1025,7 +1036,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
 
-        int isOdometer = sharedPref.IsOdometerFromOBD(getActivity()) ? 1 : 0;
+        int isOdometer = SharedPref.IsOdometerFromOBD(getActivity()) ? 1 : 0;
 
         Map<String, String> params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
@@ -1112,7 +1123,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                             hosDistanceTV.setText(Html.fromHtml(distance));
 
                                             // saved day start odometer locally to calculate distance
-                                            sharedPref.setDayStartOdometer(StartOdometer, global.GetCurrentDateTime(), getActivity());
+                                            SharedPref.setDayStartOdometer(StartOdometer, global.GetCurrentDateTime(), getActivity());
 
                                         }
 

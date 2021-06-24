@@ -356,6 +356,7 @@ public class ConstantsKeys {
     public static String RecordValue                    = "RecordValue";
     public static String EditDateTimeUTC                = "EditDateTimeUTC";
     public static String EditDateTime                   = "EditDateTime";
+    public static String CertifyLogDate                 = "CertifyLogDate";
 
     public static String CrntLat                        = "CrntLat";
     public static String CrntLong                       = "CrntLong";
@@ -376,6 +377,7 @@ public class ConstantsKeys {
     public static String NotificationTypeId             = "NotificationTypeId";
     public static String NotificationTypeName           = "NotificationTypeName";
     public static String Title                          = "Title";
+    public static String Desc                           = "Desc";
     public static String Message                        = "Message";
     public static String ImagePath                      = "ImagePath";
     public static String SendDate                       = "SendDate";
@@ -478,7 +480,8 @@ public class ConstantsKeys {
     public static String IsELDNotificationAlert         = "IsELDNotificationAlert";
     public static String ObdPreference                  = "ObdPreference";
 
-
+    public static String ChangedToOthers                = "ChangedToOthers";
+    public static String IsAutoStatusSaved              = "IsAutoStatusSaved";
     public static String IsIgnitionOn                   = "IsIgnitionOn";
     public static String GeoLocation                    = "GeoLocation";
     public static String StatusName                     = "StatusName";
@@ -531,6 +534,7 @@ public class ConstantsKeys {
     public static String DriverZoneEndDateTime          = "DriverZoneEndDateTime";
     public static String IsIntermediateLog              = "IsIntermediateLog";
 
+    public static String loginAndLogoutDates            = "loginAndLogoutDates";
     public static String dutyStatusChangesList          = "dutyStatusChangesList";
     public static String loginAndLogoutList             = "loginAndLogoutList";
     public static String ChangeInDriversCycleList       = "ChangeInDriversCycleList";

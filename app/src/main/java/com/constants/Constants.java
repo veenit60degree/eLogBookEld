@@ -179,6 +179,11 @@ public class Constants {
     public static final int MAIN_DRIVER_TYPE    = 0;
     public static final int CO_DRIVER_TYPE      = 1;
 
+    // login/Logout/Certification/Malfunction DOT events
+    public static int LogoutLoginEventDot = 5;
+    public static int MalfunctionEventDot = 7;
+    public static int CertificationEventDot = 4;
+
     public static int ConnectionMalfunction = 0;
     public static int ConnectionWired = 1;
     public static int ConnectionWifi = 2;
@@ -385,11 +390,9 @@ public class Constants {
 
         if(isAllowMalfunction)
             optionsList.add(new OtherOptionsModel(R.drawable.malfunction_other, MALFUNCTION, context.getResources().getString(R.string.malf_and_dia)));
-        //if(SharedPref.IsAllowMalfunction(context) || SharedPref.IsAllowDiagnostic(context))
 
         if(isAllowUnIdentified)
             optionsList.add(new OtherOptionsModel(R.drawable.unidentified_other, UNIDENTIFIED, context.getResources().getString(R.string.unIdentified_records)));
-        //if(SharedPref.IsShowUnidentifiedRecords(context))
 
         if(SharedPref.IsCCMTACertified(context))
             optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, SUGGESTED_LOGS, context.getResources().getString(R.string.suggested_logs)));
@@ -1390,7 +1393,7 @@ public class Constants {
     // calculate speed from wired truck odometers data (in meters) with time difference (in sec)
     public double calculateSpeedFromWiredTabOdometer(String savedTime, String currentDate,
                                                       String previousHighPrecisionOdometer, String currentHighPrecisionOdometer,
-                                                      Globally global, SharedPref sharedPref, Context context){
+                                                      Globally global, Context context){
 
         double speedInKm = -1;
 
@@ -1410,13 +1413,13 @@ public class Constants {
                     e.printStackTrace();
 
                     // save current HighPrecisionOdometer locally
-                    sharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
+                    SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
 
                 }
 
             } else {
                 // save current HighPrecisionOdometer locally
-                sharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
+                SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), context);
 
             }
         }catch (Exception e){
@@ -1465,6 +1468,11 @@ public class Constants {
             DateTime currentDateTime = Global.getDateTimeObj(StartDeviceCurrentTime, false);
             DateTime lastDateTime = Global.getDateTimeObj(lastDateTimeStr, false);
             LastJobTotalMin = currentDateTime.getMinuteOfDay() - lastDateTime.getMinuteOfDay();
+
+            if(LastJobTotalMin < 0){
+                LastJobTotalMin = Constants.getMinDiff(lastDateTime, currentDateTime);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1491,10 +1499,10 @@ public class Constants {
                 StartUTCCurrentTime,
 
                 0,  // because start and end date will be same for new status for that time
-                Global.LATITUDE,
-                Global.LONGITUDE,
-                Global.LATITUDE,
-                Global.LONGITUDE,
+                Globally.LATITUDE,
+                Globally.LONGITUDE,
+                Globally.LATITUDE,
+                Globally.LONGITUDE,
                 isYardMove,
                 Boolean.parseBoolean(isPersonal),
                 Integer.valueOf(CurrentCycleId),
@@ -1678,7 +1686,7 @@ public class Constants {
 
 
     public void UpdateCertifyLogArray(RecapViewMethod recapViewMethod, String DRIVER_ID, int DriverPermitDays,
-                                      DBHelper dbHelper, SharedPref sharedPref, Context context) {
+                                      DBHelper dbHelper, Context context) {
         JSONArray recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
 
         if (recap18DaysArray.length() > 0) {
@@ -1688,7 +1696,7 @@ public class Constants {
                 String currentDateHalf   = Globally.ConvertDateFormatyyyy_MM_dd(Globally.GetCurrentDeviceDate());
                 DateTime currentDateTime = Globally.getDateTimeObj(currentDateHalf + "T00:00:00", false );
                 DateTime fromDateTime    = currentDateTime.minusDays(DriverPermitDays);
-                JSONArray reCertifyArray = new JSONArray(sharedPref.getReCertifyData(context));
+                JSONArray reCertifyArray = new JSONArray(SharedPref.getReCertifyData(context));
 
                 for (int i = reCertifyArray.length()-1; i >= 0; i--) {
                     JSONObject obj = (JSONObject) reCertifyArray.get(i);
@@ -1806,7 +1814,13 @@ public class Constants {
 
 
     public String Convert2DecimalPlacesDouble(double value) {
-        return String.format("%.2f", value);
+        try{
+            return String.format("%.2f", value);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ""+value;
+        }
+
     }
 
     public String getCpuUsage() {
@@ -2088,7 +2102,7 @@ public class Constants {
 
 
 
-    public boolean getShortHaulExceptionDetail(Context context, String DriverId, Globally global, SharedPref sharedPref,
+    public boolean getShortHaulExceptionDetail(Context context, String DriverId, Globally global,
                                                boolean isShortHaul, boolean isAdverseExcptn, boolean IsNorthCanada,
                                                HelperMethods hMethods, DBHelper dbHelper){
 
@@ -2103,7 +2117,7 @@ public class Constants {
             String CurrentCycleId = GetDriverCycle(context);
             boolean isSingleDriver = global.isSingleDriver(context);
             int DRIVER_JOB_STATUS = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
-            int rulesVersion = sharedPref.GetRulesVersion(context);
+            int rulesVersion = SharedPref.GetRulesVersion(context);
 
             List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
             DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DriverId),
@@ -2713,8 +2727,6 @@ public class Constants {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
     }
 
 
@@ -2849,110 +2861,76 @@ public class Constants {
 
 
 
+    public List<CanadaDutyStatusModel> parseCanadaLogoutLoginList(JSONArray logArray){
+
+        List<CanadaDutyStatusModel> dotLogList = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < logArray.length(); i++) {
+                JSONObject obj = (JSONObject) logArray.get(i);
+                JSONArray dateWiseArray = new JSONArray(obj.getString("loginAndLogoutDateObjectList"));
+                parseData(dateWiseArray, dotLogList, false);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return dotLogList;
+    }
+
+
     public List<CanadaDutyStatusModel> parseCanadaDotInList(JSONArray logArray, boolean isSorting){
 
         List<CanadaDutyStatusModel> dotLogList = new ArrayList<>();
-        List<CanadaDutyStatusModel> dotDateWiseList = new ArrayList<>();
-        String lastDateTimeMin = "";
+        parseData(logArray, dotLogList, isSorting);
+
+        return dotLogList;
+    }
+
+
+    private void parseData(JSONArray logArray, List<CanadaDutyStatusModel> dotLogList, boolean isSorting){
 
         try{
+            boolean isNewDate = true;
+            String lastDateTimeMin = "";
+            List<CanadaDutyStatusModel> dotDateWiseList = new ArrayList<>();
             for(int i = 0 ; i< logArray.length() ; i++) {
                 JSONObject obj = (JSONObject)logArray.get(i);
 
                 DateFormat format = new SimpleDateFormat(Globally.DateFormat, Locale.ENGLISH);
                 Date date = format.parse(obj.getString(ConstantsKeys.DateTimeWithMins));
+               // Date certifyLogDate = format.parse(obj.getString(ConstantsKeys.CertifyLogDate));
 
                 int seqNumber = 0;
                 if(!obj.isNull(ConstantsKeys.SequenceNumber)){
                     seqNumber = obj.getInt(ConstantsKeys.SequenceNumber);
                 }
 
-                CanadaDutyStatusModel dutyModel = new CanadaDutyStatusModel(
-                        CheckNullBString(obj.getString(ConstantsKeys.DateTimeWithMins)),
-                        CheckNullBString(obj.getString(ConstantsKeys.EventUTCTimeStamp)),
-                        CheckNullBString(obj.getString(ConstantsKeys.DriverStatusID)),
+                if(i > 0){
+                    isNewDate = false;
+                }
 
-                        obj.getInt(ConstantsKeys.EventType),
-                        obj.getInt(ConstantsKeys.EventCode),
-                        CheckNullBString(obj.getString(ConstantsKeys.DutyMinutes)),
-
-                        CheckNullBString(obj.getString(ConstantsKeys.Annotation)),
-                        CheckNullBString(obj.getString(ConstantsKeys.EventDate)),
-                        CheckNullBString(obj.getString(ConstantsKeys.EventTime)),
-                        CheckNullBString(obj.getString(ConstantsKeys.AccumulatedVehicleMiles)),
-                        CheckNullBString(obj.getString(ConstantsKeys.AccumulatedEngineHours)),
-                        CheckNullBString(obj.getString(ConstantsKeys.TotalVehicleMiles)),
-                        CheckNullBString(obj.getString(ConstantsKeys.TotalEngineHours)),
-                        CheckNullBString(obj.getString(ConstantsKeys.GPSLatitude)),
-                        CheckNullBString(obj.getString(ConstantsKeys.GPSLongitude)),
-                        CheckNullBString(obj.getString(ConstantsKeys.CMVVIN)),
-                        CheckNullBString(obj.getString(ConstantsKeys.CarrierName)),
-
-                        obj.getBoolean(ConstantsKeys.IsMalfunction),
-
-                        CheckNullBString(obj.getString(ConstantsKeys.OdometerInKm)),
-                        CheckNullBString(obj.getString(ConstantsKeys.strEventType)),
-                        CheckNullBString(obj.getString(ConstantsKeys.Origin)),
-                        CheckNullBString(obj.getString(ConstantsKeys.StartTime)),
-                        CheckNullBString(obj.getString(ConstantsKeys.EndTime)),
-                        CheckNullBString(obj.getString(ConstantsKeys.OBDDeviceDataId)),
-                        CheckNullBString(obj.getString(ConstantsKeys.CurrentObdDeviceDataId)),
-                        CheckNullBString(obj.getString(ConstantsKeys.DriverLogId)),
-                        CheckNullBString(obj.getString(ConstantsKeys.Truck)),
-                        CheckNullBString(obj.getString(ConstantsKeys.Trailor)),
-                        CheckNullBString(obj.getString(ConstantsKeys.Remarks)),
-                        CheckNullBString(obj.getString(ConstantsKeys.DriverId)),
-
-                        obj.getBoolean(ConstantsKeys.IsPersonal),
-                        obj.getBoolean(ConstantsKeys.IsYard),
-
-                        CheckNullBString(obj.getString(ConstantsKeys.IsStatusAutomatic)),
-
-                        CheckNullBString(obj.getString(ConstantsKeys.CurrentCycleId)),
-
-                        seqNumber,
-
-                        CheckNullBString(obj.getString(ConstantsKeys.TotalVehicleKM)),
-                        CheckNullBString(obj.getString(ConstantsKeys.AdditionalInfo)),
-                        CheckNullBString(obj.getString(ConstantsKeys.EditedById)),
-                        CheckNullBString(obj.getString(ConstantsKeys.UserName)),
-
-                        CheckNullBString(obj.getString(ConstantsKeys.RecordStatus)),
-
-                        CheckNullBString(obj.getString(ConstantsKeys.DistanceSinceLastValidCord)),
-                        CheckNullBString(obj.getString(ConstantsKeys.RecordOrigin)),
-                        CheckNullBString(obj.getString(ConstantsKeys.DistanceInKM)),
-                        CheckNullBString(obj.getString(ConstantsKeys.HexaSeqNumber)),
-                        CheckNullBString(obj.getString(ConstantsKeys.OrderBy)),
-                        CheckNullBString(obj.getString(ConstantsKeys.OnDutyHours)),
-                        CheckNullBString(obj.getString(ConstantsKeys.OffDutyHours)),
-                        CheckNullBString(obj.getString(ConstantsKeys.TruckEquipmentNo)),
-                        CheckNullBString(obj.getString(ConstantsKeys.WorkShiftStart)),
-                        CheckNullBString(obj.getString(ConstantsKeys.WorkShiftEnd)),
-                        date,
-                        CheckNullBString(obj.getString(ConstantsKeys.EditDateTime))
-
-                );
-
+                CanadaDutyStatusModel dutyModel = getDutyModel(obj, seqNumber, date, isNewDate);
                 if(isSorting){
-                 if(i > 0){
-                     int dayDiff = getDayDiff(lastDateTimeMin, obj.getString(ConstantsKeys.DateTimeWithMins));
-                     if (dayDiff == 0){
-                         dotDateWiseList.add(dutyModel);
-                     }else{
-                         Collections.sort(dotDateWiseList);
-                         for(int listPos = 0 ; listPos < dotDateWiseList.size() ; listPos++){
-                             dotLogList.add(dotDateWiseList.get(listPos));
-                         }
-                         dotDateWiseList = new ArrayList<>();
-                     }
-                 }else{
-                     dotDateWiseList.add(dutyModel);
-                 }
+                    if(i > 0){
+                        int dayDiff = getDayDiff(lastDateTimeMin, obj.getString(ConstantsKeys.DateTimeWithMins));
+                        if (dayDiff == 0){
+                            dotDateWiseList.add(dutyModel);
+                        }else{
+                            Collections.sort(dotDateWiseList);
+                            for(int listPos = 0 ; listPos < dotDateWiseList.size() ; listPos++){
+                                dotLogList.add(dotDateWiseList.get(listPos));
+                            }
+                            dotDateWiseList = new ArrayList<>();
+                        }
+                    }else{
+                        dotDateWiseList.add(dutyModel);
+                    }
                 }else {
                     dotLogList.add(dutyModel);
                 }
                 lastDateTimeMin = obj.getString(ConstantsKeys.DateTimeWithMins);
+
             }
 
             if(dotLogList.size() == 0){
@@ -2961,10 +2939,90 @@ public class Constants {
                     dotLogList.add(dotDateWiseList.get(listPos));
                 }
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
-        return dotLogList;
+    }
+
+
+    private CanadaDutyStatusModel getDutyModel(JSONObject obj, int seqNumber, Date date, boolean IsNewDate){
+        try {
+            CanadaDutyStatusModel dutyModel = new CanadaDutyStatusModel(
+                    CheckNullBString(obj.getString(ConstantsKeys.DateTimeWithMins)),
+                    CheckNullBString(obj.getString(ConstantsKeys.EventUTCTimeStamp)),
+                    CheckNullBString(obj.getString(ConstantsKeys.DriverStatusID)),
+
+                    obj.getInt(ConstantsKeys.EventType),
+                    obj.getInt(ConstantsKeys.EventCode),
+                    CheckNullBString(obj.getString(ConstantsKeys.DutyMinutes)),
+
+                    CheckNullBString(obj.getString(ConstantsKeys.Annotation)),
+                    CheckNullBString(obj.getString(ConstantsKeys.EventDate)),
+                    CheckNullBString(obj.getString(ConstantsKeys.EventTime)),
+                    CheckNullBString(obj.getString(ConstantsKeys.AccumulatedVehicleMiles)),
+                    CheckNullBString(obj.getString(ConstantsKeys.AccumulatedEngineHours)),
+                    CheckNullBString(obj.getString(ConstantsKeys.TotalVehicleMiles)),
+                    CheckNullBString(obj.getString(ConstantsKeys.TotalEngineHours)),
+                    CheckNullBString(obj.getString(ConstantsKeys.GPSLatitude)),
+                    CheckNullBString(obj.getString(ConstantsKeys.GPSLongitude)),
+                    CheckNullBString(obj.getString(ConstantsKeys.CMVVIN)),
+                    CheckNullBString(obj.getString(ConstantsKeys.CarrierName)),
+
+                    obj.getBoolean(ConstantsKeys.IsMalfunction),
+
+                    CheckNullBString(obj.getString(ConstantsKeys.OdometerInKm)),
+                    CheckNullBString(obj.getString(ConstantsKeys.strEventType)),
+                    CheckNullBString(obj.getString(ConstantsKeys.Origin)),
+                    CheckNullBString(obj.getString(ConstantsKeys.StartTime)),
+                    CheckNullBString(obj.getString(ConstantsKeys.EndTime)),
+                    CheckNullBString(obj.getString(ConstantsKeys.OBDDeviceDataId)),
+                    CheckNullBString(obj.getString(ConstantsKeys.CurrentObdDeviceDataId)),
+                    CheckNullBString(obj.getString(ConstantsKeys.DriverLogId)),
+                    CheckNullBString(obj.getString(ConstantsKeys.Truck)),
+                    CheckNullBString(obj.getString(ConstantsKeys.Trailor)),
+                    CheckNullBString(obj.getString(ConstantsKeys.Remarks)),
+                    CheckNullBString(obj.getString(ConstantsKeys.DriverId)),
+
+                    obj.getBoolean(ConstantsKeys.IsPersonal),
+                    obj.getBoolean(ConstantsKeys.IsYard),
+
+                    CheckNullBString(obj.getString(ConstantsKeys.IsStatusAutomatic)),
+
+                    CheckNullBString(obj.getString(ConstantsKeys.CurrentCycleId)),
+
+                    seqNumber,
+
+                    CheckNullBString(obj.getString(ConstantsKeys.TotalVehicleKM)),
+                    CheckNullBString(obj.getString(ConstantsKeys.AdditionalInfo)),
+                    CheckNullBString(obj.getString(ConstantsKeys.EditedById)),
+                    CheckNullBString(obj.getString(ConstantsKeys.UserName)),
+
+                    CheckNullBString(obj.getString(ConstantsKeys.RecordStatus)),
+
+                    CheckNullBString(obj.getString(ConstantsKeys.DistanceSinceLastValidCord)),
+                    CheckNullBString(obj.getString(ConstantsKeys.RecordOrigin)),
+                    CheckNullBString(obj.getString(ConstantsKeys.DistanceInKM)),
+                    CheckNullBString(obj.getString(ConstantsKeys.HexaSeqNumber)),
+                    CheckNullBString(obj.getString(ConstantsKeys.OrderBy)),
+                    CheckNullBString(obj.getString(ConstantsKeys.OnDutyHours)),
+                    CheckNullBString(obj.getString(ConstantsKeys.OffDutyHours)),
+                    CheckNullBString(obj.getString(ConstantsKeys.TruckEquipmentNo)),
+                    CheckNullBString(obj.getString(ConstantsKeys.WorkShiftStart)),
+                    CheckNullBString(obj.getString(ConstantsKeys.WorkShiftEnd)),
+                    date,
+                    CheckNullBString(obj.getString(ConstantsKeys.EditDateTime)),
+                    CheckNullBString(obj.getString(ConstantsKeys.CertifyLogDate)),
+                    IsNewDate
+
+            );
+
+            return dutyModel;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public void setMarqueonView(final TextView textView){
@@ -3065,7 +3123,7 @@ public class Constants {
 
 
     // Save Driver Cycle From OBD data those are getting from als server.
-    public void SaveCycleWithCurrentDate(int CycleId, String currentUtcDate, String changeType, SharedPref sharedPref, Globally global, Context context){
+    public void SaveCycleWithCurrentDate(int CycleId, String currentUtcDate, String changeType, Globally global, Context context){
 
 
         try {
@@ -3073,7 +3131,7 @@ public class Constants {
             String CurrentCycle   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
             if(CycleId != -1 && !CurrentCycle.equals(CycleId)) {
                 JSONArray cycleDetailArray = global.getSaveCycleRecords(CycleId, changeType, context);
-                sharedPref.SetCycleOfflineDetails(cycleDetailArray.toString(), context);
+                SharedPref.SetCycleOfflineDetails(cycleDetailArray.toString(), context);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -3105,7 +3163,7 @@ public class Constants {
         }
 
         // Save Current Date
-        sharedPref.setCurrentDate(currentUtcDate, context);
+        SharedPref.setCurrentDate(currentUtcDate, context);
 
 
 
@@ -3723,36 +3781,37 @@ public class Constants {
 
 
 
-    public String CalculateCycleTimeData(Context context, String DriverId, boolean OperatingZoneChange, boolean isNorth, String changedCycleId,
-                                            Globally Global, SharedPref sharedPref, HelperMethods hMethods,DBHelper dbHelper ){
+    public String CalculateCycleTimeData(Context context, String DriverId, boolean OperatingZoneChange,
+                                            boolean isNorth, String changedCycleId,
+                                            Globally Global, HelperMethods hMethods,DBHelper dbHelper ){
 
         int offsetFromUTC = (int) Global.GetTimeZoneOffSet();
         List<DriverLog> oDriverLogDetail ;
 
         String finalCycleData = "";
-        String currentJobStatus     = sharedPref.getDriverStatusId("jobType", context);
+        String currentJobStatus     = SharedPref.getDriverStatusId(context);
 
         DateTime currentDateTime    = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);    // Current Date Time
         DateTime currentUTCTime     = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
         oDriverLogDetail           = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
 
-        int rulesVersion = sharedPref.GetRulesVersion(context);
+        int rulesVersion = SharedPref.GetRulesVersion(context);
         boolean isHaulExcptn, isAdverseExcptn, IsNorthCanada;
         boolean isSingleDriver = false;
 
-        if (sharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-            isHaulExcptn = sharedPref.get16hrHaulExcptn(context);
-            isAdverseExcptn = sharedPref.getAdverseExcptn(context);
+        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
+            isHaulExcptn = SharedPref.get16hrHaulExcptn(context);
+            isAdverseExcptn = SharedPref.getAdverseExcptn(context);
             isSingleDriver = true;
         } else {
-            isHaulExcptn = sharedPref.get16hrHaulExcptnCo(context);
-            isAdverseExcptn = sharedPref.getAdverseExcptnCo(context);
+            isHaulExcptn = SharedPref.get16hrHaulExcptnCo(context);
+            isAdverseExcptn = SharedPref.getAdverseExcptnCo(context);
         }
 
         if(OperatingZoneChange){
             IsNorthCanada = isNorth;
         }else {
-            IsNorthCanada = sharedPref.IsNorthCanada(context);
+            IsNorthCanada = SharedPref.IsNorthCanada(context);
         }
 
 
@@ -3807,6 +3866,68 @@ public class Constants {
     }
 
 
+    public static int getMinDiff(DateTime StartTime, DateTime EndTime){
+        int dayDiff = Days.daysBetween(StartTime.toLocalDate(), EndTime.toLocalDate()).getDays();
+        if(dayDiff > 0){
+            int startDateMin = StartTime.getMinuteOfDay();
+            int endDateMin = EndTime.getMinuteOfDay();
+            int totalMinInDay = 1440;
+
+            return totalMinInDay+ endDateMin - startDateMin;
+        }else{
+            return EndTime.getMinuteOfDay() - StartTime.getMinuteOfDay();
+        }
+
+    }
+
+
+    /*===== Get Driver Jobs in Array List======= */
+    public JSONArray GetDriversSavedArray(Context context, MainDriverEldPref MainDriverPref,
+                                          CoDriverEldPref CoDriverPref){
+        int listSize = 0;
+        JSONArray DriverJsonArray = new JSONArray();
+        List<EldDataModelNew> tempList = new ArrayList<EldDataModelNew>();
+
+        if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+            try {
+                listSize = MainDriverPref.LoadSavedLoc(context).size();
+                tempList = MainDriverPref.LoadSavedLoc(context);
+            } catch (Exception e) {
+                listSize = 0;
+            }
+        }else{
+            try {
+                listSize = CoDriverPref.LoadSavedLoc(context).size();
+                tempList = CoDriverPref.LoadSavedLoc(context);
+            } catch (Exception e) {
+                listSize = 0;
+            }
+        }
+
+        try {
+            if (listSize > 0) {
+                for (int i = 0; i < tempList.size(); i++) {
+                    EldDataModelNew listModel = tempList.get(i);
+                    if(listModel != null) {
+                        SaveEldJsonToList(          /* Put data as JSON to List */
+                                listModel,
+                                DriverJsonArray
+                        );
+                    }
+
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return DriverJsonArray;
+        // Log.d("Arraay", "Arraay: " + DriverJsonArray.toString());
+    }
+
+
+
+
     public boolean isActionAllowedWithCoDriver(Context context, DBHelper dbHelper, HelperMethods hMethods, Globally Global, String DRIVER_ID){
         boolean isAllowed = true;
         int ObdStatus = SharedPref.getObdStatus(context);
@@ -3850,6 +3971,17 @@ public class Constants {
         return true;
     }
 
+
+    public boolean isActionAllowedRestricted(Context context){
+        boolean isAllowed = true;
+        int ObdStatus = SharedPref.getObdStatus(context);
+        boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
+        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
+                || ObdStatus == Constants.BLE_CONNECTED) && isVehicleMoving ){
+            isAllowed = false;
+        }
+        return isAllowed;
+    }
 
     public void checkBleConnection(){
 

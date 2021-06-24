@@ -21,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
@@ -75,8 +76,8 @@ public class OriginalLogFragment extends Fragment {
         editedLogMainLay         = (LinearLayout)rootView.findViewById(R.id.editedLogMainLay);
 
         suggestedLogFragment = new SuggestedLogFragment();
-        DeviceId            = suggestedLogFragment.sharedPref.GetSavedSystemToken(getActivity());
-        DriverId            = suggestedLogFragment.sharedPref.getDriverId( getActivity());
+        DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
+        DriverId            =  SharedPref.getDriverId( getActivity());
         offsetFromUTC       = (int) suggestedLogFragment.globally.GetTimeZoneOffSet();
 
         selectedArray       = suggestedLogFragment.hMethods.GetSingleDateArray( SuggestedLogFragment.driverLogArray, suggestedLogFragment.selectedDateTime, suggestedLogFragment.currentDateTime,

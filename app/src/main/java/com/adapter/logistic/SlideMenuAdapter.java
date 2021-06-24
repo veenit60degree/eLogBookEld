@@ -162,7 +162,9 @@ public class SlideMenuAdapter extends BaseAdapter {
             }
 
             if (menuList.get(position).getStatus() == Constants.SETTINGS) {
-                boolean isHaulExcptn ;
+                holder.menuErrorImgView.setVisibility(View.GONE);
+
+                /*boolean isHaulExcptn ;
                 boolean isAdverseExcptn;
                 if(DriverType == Constants.MAIN_DRIVER_TYPE) {
                     isHaulExcptn        = SharedPref.get16hrHaulExcptn(context);
@@ -176,7 +178,7 @@ public class SlideMenuAdapter extends BaseAdapter {
                     holder.menuErrorImgView.setVisibility(View.VISIBLE);
                 }else {
                     holder.menuErrorImgView.setVisibility(View.GONE);
-                }
+                }*/
             }
 
 
