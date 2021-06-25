@@ -293,9 +293,10 @@ public class HelperMethods {
                                     String Trailor, String StartLocation,
                                     String EndLocation, String Truck,
                                     String IsStatusAutomatic, String OBDSpeed,
-                                    String GPSSpeed, String PlateNumber, boolean isHaulException, boolean isShortHaulUpdate,
-                                    String decesionSource,   String isAdverseException,
-                                    String adverseExceptionRemark, String LocationType, String malAddInfo, boolean IsNorthCanada){
+                                    String GPSSpeed, String PlateNumber, boolean isHaulException,
+                                    boolean isShortHaulUpdate, String decesionSource,   String isAdverseException,
+                                    String adverseExceptionRemark, String LocationType, String malAddInfo,
+                                    boolean IsNorthCanada, String StartLocationKm){
 
         JSONObject driverLogJson = new JSONObject();
 
@@ -350,6 +351,7 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.LocationType, LocationType);
             driverLogJson.put(ConstantsKeys.MalfunctionDefinition, malAddInfo);
             driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
+            driverLogJson.put(ConstantsKeys.StartLocationKm, StartLocationKm);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -370,6 +372,7 @@ public class HelperMethods {
                 JSONObject lastJob = GetLastJsonFromArray(array);
                 lastJob.put(ConstantsKeys.StartLocation, address);
                 lastJob.put(ConstantsKeys.EndLocation, address);
+                lastJob.put(ConstantsKeys.StartLocationKm, address);
 
                 updatedArray = UpdateJobLastItemInArray(array, lastJob);
 
@@ -628,6 +631,12 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.EndLocation,        logObj.getString(ConstantsKeys.EndLocation));
                 driverLogJson.put(ConstantsKeys.Truck,              logObj.getString(ConstantsKeys.Truck));
 
+                if(logObj.has(ConstantsKeys.StartLocationKm)){
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
+                }
+
                 if(logObj.has(ConstantsKeys.DriverName))
                     DriverName = logObj.getString(ConstantsKeys.DriverName);
                 else
@@ -766,6 +775,12 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.EndLocation,        logObj.getString(ConstantsKeys.EndLocation));
                 driverLogJson.put(ConstantsKeys.Truck,              logObj.getString(ConstantsKeys.Truck));
 
+                if(logObj.has(ConstantsKeys.StartLocationKm)){
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
+                }
+
                 if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                     IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
 
@@ -893,6 +908,12 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.EndLocation,        logObj.getString(ConstantsKeys.EndLocation));
                 driverLogJson.put(ConstantsKeys.Truck,              logObj.getString(ConstantsKeys.Truck));
 
+                if(logObj.has(ConstantsKeys.StartLocationKm)){
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
+                }
+
                 if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                     IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
 
@@ -1000,6 +1021,12 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.StartLocation,      logObj.getString(ConstantsKeys.StartLocation));
                 driverLogJson.put(ConstantsKeys.EndLocation,        logObj.getString(ConstantsKeys.EndLocation));
                 driverLogJson.put(ConstantsKeys.Truck,              logObj.getString(ConstantsKeys.Truck));
+
+                if(logObj.has(ConstantsKeys.StartLocationKm)){
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
+                }
 
                 if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                     IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1115,6 +1142,12 @@ public class HelperMethods {
             sameStatusJson.put(ConstantsKeys.StartLocation, lastItemJson.getString(ConstantsKeys.StartLocation));
             sameStatusJson.put(ConstantsKeys.EndLocation, lastItemJson.getString(ConstantsKeys.EndLocation));
             sameStatusJson.put(ConstantsKeys.Truck, lastItemJson.getString(ConstantsKeys.Truck));
+
+            if(lastItemJson.has(ConstantsKeys.StartLocationKm)){
+                sameStatusJson.put(ConstantsKeys.StartLocationKm,      lastItemJson.getString(ConstantsKeys.StartLocationKm));
+            }else{
+                sameStatusJson.put(ConstantsKeys.StartLocationKm,      lastItemJson.getString(ConstantsKeys.StartLocation));
+            }
 
             if(RulesObj != null) {
                 sameStatusJson.put(ConstantsKeys.IsViolation, RulesObj.isViolation());
@@ -1398,6 +1431,11 @@ public class HelperMethods {
                     CheckNullStatus(logObj, driverLogJson, ConstantsKeys.EndLocation);
                     CheckNullStatus(logObj, driverLogJson, ConstantsKeys.Truck);
 
+                    if(logObj.has(ConstantsKeys.StartLocationKm)){
+                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocationKm));
+                    }else{
+                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocation));
+                    }
 
                     if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                         IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1549,6 +1587,12 @@ public class HelperMethods {
             CheckNullStatus(logObj, driverLogJson, ConstantsKeys.EndLocation);
             CheckNullStatus(logObj, driverLogJson, ConstantsKeys.Truck);
 
+            if(logObj.has(ConstantsKeys.StartLocationKm)){
+                driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocationKm));
+            }else{
+                driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocation));
+            }
+
             if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                 IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
 
@@ -1617,6 +1661,7 @@ public class HelperMethods {
 
             sameStatusJson.put(ConstantsKeys.StartLocation, "Mid Night Event");
             sameStatusJson.put(ConstantsKeys.EndLocation, "Mid Night Event");
+            sameStatusJson.put(ConstantsKeys.StartLocationKm, "Mid Night Event");
 
             array.put(sameStatusJson);
 
@@ -1780,6 +1825,11 @@ public class HelperMethods {
                     CheckNullStatus(logObj, driverLogJson, ConstantsKeys.Truck);
                     CheckNullStatus(logObj, driverLogJson, ConstantsKeys.LocationType);
 
+                    if(logObj.has(ConstantsKeys.StartLocationKm)){
+                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocationKm));
+                    }else{
+                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocation));
+                    }
 
                     if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                         IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -2181,7 +2231,12 @@ public class HelperMethods {
                         driverLogModel.setPersonal(json.getBoolean(ConstantsKeys.Personal));
 
                         driverLogModel.setCurrentCyleId(CurrentCycleId);
-                        driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
+
+                        if (!json.isNull(ConstantsKeys.IsViolation))
+                            driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
+                        else
+                            driverLogModel.setViolation(false);
+
 
                         if (!json.isNull(ConstantsKeys.ViolationReason))
                             driverLogModel.setViolationReason(json.getString(ConstantsKeys.ViolationReason));
@@ -2845,6 +2900,12 @@ public class HelperMethods {
             driverLogModel.setEndLocation(json.getString(ConstantsKeys.EndLocation));
             driverLogModel.setTruck(json.getString(ConstantsKeys.Truck));
 
+            if(json.has(ConstantsKeys.StartLocationKm)){
+                driverLogModel.setStartLocationKm(json.getString(ConstantsKeys.StartLocationKm));
+            }else{
+                driverLogModel.setStartLocationKm(json.getString(ConstantsKeys.StartLocation));
+            }
+
             if(json.has(ConstantsKeys.IsStatusAutomatic))
                 IsStatusAutomatic = json.getString(ConstantsKeys.IsStatusAutomatic);
 
@@ -2985,7 +3046,8 @@ public class HelperMethods {
                         logModel.getAdverseExceptionRemark(),
                         logModel.getLocationType(),
                         logModel.getMalfunctionDefinition(),
-                        logModel.IsNorthCanada()
+                        logModel.IsNorthCanada(),
+                        logModel.getStartLocationKm()
                 );
                 obj.put(ConstantsKeys.isNewRecord, logModel.IsNewRecord());
                 array.put(obj);
@@ -3109,6 +3171,12 @@ public class HelperMethods {
             driverLogModel.setStartLocation(json.getString(ConstantsKeys.StartLocation));
             driverLogModel.setEndLocation(json.getString(ConstantsKeys.EndLocation));
             driverLogModel.setTruck(json.getString(ConstantsKeys.Truck));
+
+            if(json.has(ConstantsKeys.StartLocationKm)){
+                driverLogModel.setStartLocationKm(json.getString(ConstantsKeys.StartLocationKm));
+            }else{
+                driverLogModel.setStartLocationKm(json.getString(ConstantsKeys.StartLocation));
+            }
 
             driverLogModel.setIsStatusAutomatic(IsStatusAutomatic);
             driverLogModel.setOBDSpeed(OBDSpeed);
@@ -3272,7 +3340,7 @@ public class HelperMethods {
 
         boolean isViolation = false, IsYardMove = false;
         String address = "", wasViolation = "false", ViolationReason = "", isPersonal = "false";
-        String City = "", State = "", Country = "", AddressLine = "", finalRemarks = "", Remarks = "";
+        String City = "", State = "", Country = "", AddressLine = "", AddressKm = "", finalRemarks = "", Remarks = "";
         int DRIVER_JOB_STATUS = 1;
         String currentUTCTime = Global.GetCurrentUTCTime();
         String CurrentDeviceDate = Global.GetCurrentDateTime();
@@ -3319,18 +3387,24 @@ public class HelperMethods {
                     finalRemarks = AdverseExceptionRemarks;
                 }
             }
-            String location = lastItemJson.getString(ConstantsKeys.StartLocation);
 
-            String[] loc = location.split(", ");
-            if (loc.length > 2) {
-                int locLength = loc.length - 1;
-                Country = loc[locLength];
-                State = loc[locLength - 1];
+            AddressLine = lastItemJson.getString(ConstantsKeys.StartLocation);
+                String[] loc = AddressLine.split(", ");
+                if (loc.length > 2) {
+                    int locLength = loc.length - 1;
+                    Country = loc[locLength];
+                    State = loc[locLength - 1];
 
-                for (int i = 0; i < locLength - 1; i++) {
-                    City = City + " " + loc[i];
+                    for (int i = 0; i < locLength - 1; i++) {
+                        City = City + " " + loc[i];
+                    }
+                    AddressLine = City + ", " + State + ", " + Country;
                 }
-                AddressLine = City + ", " + State + ", " + Country;
+
+            if(lastItemJson.has(ConstantsKeys.StartLocationKm)){
+                AddressKm = lastItemJson.getString(ConstantsKeys.StartLocationKm);
+            }else{
+                AddressKm = AddressLine;
             }
 
         } catch (Exception e) {
@@ -3342,7 +3416,7 @@ public class HelperMethods {
             // Check violation before save status
             if (DRIVER_JOB_STATUS == Constants.DRIVING || DRIVER_JOB_STATUS == Constants.ON_DUTY) {
                 JSONArray logArray = constants.AddNewStatusInList("", ""+DRIVER_JOB_STATUS, "", "no_address",
-                        DRIVER_ID, City, State, Country, AddressLine,
+                        DRIVER_ID, City, State, Country, AddressLine, AddressKm,
                         CurrentCycleId, Remarks, isPersonal, isViolation,
                         "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
                         String.valueOf(BackgroundLocationService.GpsVehicleSpeed), SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
@@ -3427,7 +3501,7 @@ public class HelperMethods {
                 /* ==== Add data in list to show in offline mode ============ */
                 EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
-                        "", "", "", Boolean.parseBoolean(isPersonal),
+                        "", "", "","", Boolean.parseBoolean(isPersonal),
                         isAdverseExcptn, isHaulExcptn);
                 eldSharedPref.AddDriverLoc(context, logModel);
             } else {
@@ -3436,7 +3510,7 @@ public class HelperMethods {
                 /* ==== Add data in list to show in offline mode ============ */
                 EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
-                        "", "", "", Boolean.parseBoolean(isPersonal),
+                        "", "", "","", Boolean.parseBoolean(isPersonal),
                         isAdverseExcptn, isHaulExcptn);
                 coEldSharedPref.AddDriverLoc(context, logModel);
             }
@@ -3458,7 +3532,7 @@ public class HelperMethods {
 
             // ============================ Save Job Status in SQLite ==============================
             JSONArray driverLogArray = constants.AddNewStatusInList(DriverName, String.valueOf(DRIVER_JOB_STATUS), ViolationReason, address,
-                    DRIVER_ID, City, State, Country, AddressLine,
+                    DRIVER_ID, City, State, Country, AddressLine, AddressKm,
                     CurrentCycleId, Remarks, isPersonal, isViolation,
                     "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
                     String.valueOf(BackgroundLocationService.GpsVehicleSpeed),

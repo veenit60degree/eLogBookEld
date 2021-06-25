@@ -1433,7 +1433,7 @@ public class Constants {
 
     public JSONArray AddNewStatusInList(String DriverName, String DriverStatusId, String violaotionReason, String address,
                                         String DRIVER_ID, String City, String State, String Country, String AddressLine,
-                                        String CurrentCycleId, String Reason, String isPersonal, boolean isViolation,
+                                        String AddressKm, String CurrentCycleId, String Reason, String isPersonal, boolean isViolation,
                                         String IsStatusAutomatic, String OBDSpeed, String GPSSpeed, String PlateNumber,
                                         String decesionSource, boolean isYardMove,
                                         Globally Global, boolean isHaulException, boolean isHaulExceptionUpdate,
@@ -1486,6 +1486,12 @@ public class Constants {
             }
         }
 
+        if (AddressKm.equals("no_address")) {
+            if (City.length() > 0) {
+                AddressKm =  City + ", " + State;
+            }
+        }
+
 
         DriverLogId = DriverLogId + 1;
         JSONObject newJsonData = hMethods.AddJobInArray(
@@ -1525,7 +1531,8 @@ public class Constants {
                 adverseExceptionRemark,
                 LocationType,
                 malAddInfo,
-                IsNorthCanada
+                IsNorthCanada,
+                AddressKm
 
         );
 

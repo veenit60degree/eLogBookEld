@@ -558,7 +558,7 @@ public class ParseLoginDetails {
 
 
                 EldDriverLogModel driverLogModel = new EldDriverLogModel(driverStatusId, startDateTime, endDateTime, totalHours, currentCycleId,
-                        isViolation, UTCStartDateTime, UTCEndDateTime, Duration , Location , remarks, isPersonal,
+                        isViolation, UTCStartDateTime, UTCEndDateTime, Duration , Location , "", remarks, isPersonal,
                         IsAdverseException, IsShortHaulException);
 
                 if(position == 0)

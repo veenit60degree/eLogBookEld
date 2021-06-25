@@ -29,6 +29,7 @@ import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.custom.dialogs.DriverLocationDialog;
 import com.custom.dialogs.TrailorDialog;
+import com.driver.details.DriverConst;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.models.EldDriverLogModel;
 import com.local.db.ConstantsKeys;
@@ -72,6 +73,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     JSONArray finalUpdatedArray, driverLog18DaysArray, selectedArray;
     String RecordType = "";
     String selectedDate = "";
+    String currentCycle = "";
     boolean IsCurrentDate;
     DateTime currentDateTime, currentUTCTime;
     int offsetFromUTC;
@@ -103,6 +105,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         this.dbHelper       = db_helper;
         this.hMethods       = h_methods;
         Global = new Globally();
+        currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+
         malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
 
         saveDriverLogPost   = new SaveDriverLogPost(context, saveLogRequestResponse);
@@ -282,12 +286,22 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         holder.certifyStatusTV.setText(status);
         holder.certifyStartTimeTV.setText(StartTime);
         holder.certifyDurationTV.setText(LogItem.getDuration());
-        if(LogItem.getLocation().contains("null")) {
-            holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
-        }else{
-            holder.certifyLocationTV.setText(LogItem.getLocation());
-        }
 
+        if(currentCycle.equals(Globally.USA_WORKING_6_DAYS) || currentCycle.equals(Globally.USA_WORKING_7_DAYS)) {
+            if (LogItem.getLocation().contains("null")) {
+                holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
+            } else {
+                holder.certifyLocationTV.setText(LogItem.getLocation());
+            }
+        }else{
+            if (LogItem.getLocationKm().contains("null")) {
+                holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
+            } else {
+
+
+                holder.certifyLocationTV.setText(LogItem.getLocationKm());
+            }
+        }
         if(!LogItem.getRemarks().trim().equalsIgnoreCase("null") && !LogItem.getRemarks().trim().equalsIgnoreCase(""))
             holder.certifyRemarksTV.setText(LogItem.getRemarks());
         else
@@ -374,7 +388,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
                 if (JobType == Constants.EditLocation){
 
-                    logModel.setLocation(City + "; " + State ); //+ "; " + Country
+                    logModel.setLocation(City + "; " + State + "; " + Country);
+                    logModel.setLocationKm(City + "; " + State + "; " + Country);
                     SaveAndUploadData(logModel, RecordType, position, "","");
 
                     // Clear Diagnostic if occured
@@ -529,11 +544,17 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 }
                 if(selectedDate.equals(compareStartDate)){
                     if(RecordType.equals(Constants.Location)) {
-                        location = logObj.getString(ConstantsKeys.RecordValue).replaceAll(";", ",");
+                        //location = logObj.getString(ConstantsKeys.RecordValue).replaceAll(";", " ");
+                        String[] locArray = logObj.getString(ConstantsKeys.RecordValue).split(";");
+                        if(locArray.length > 1){
+                            location = locArray[0] + " " + locArray[1];
+                        }
+
                         obj.put(ConstantsKeys.StartLocation, location);
+                        obj.put(ConstantsKeys.StartLocationKm, location);
 
                         // Check diagnostic event
-                        checkDiagnosticEventsForClear(compareStartDate);
+                     //   checkDiagnosticEventsForClear(compareStartDate);
 
                     }else if (RecordType.equals(Constants.Remarks)){
 
@@ -558,6 +579,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         if(RecordType.equals(Constants.Location)) {
             logModel.setLocation(location);
+            logModel.setLocationKm(location);
             LogList.set(position, logModel);
         }else{
             logModel.setRemarks(onDutyRemarks);
@@ -597,11 +619,15 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             }
 
             if(eventList.size() > 0){
+
                 JSONArray eventsArray = new JSONArray();
                 eventsArray.put(malfunctionDiagnosticMethod.GetJsonForClearDiagnostic(""+DriverId, DeviceId, eventList.toString(),
                         "Auto clear from android"));
                 if(Global.isConnected(context)) {
                     ClearDiagnosticEvents(eventsArray, false, false, Constants.SocketTimeout10Sec);
+
+                    malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(DriverId, dbHelper, malfnJsonArray);
+
                 }
             }
         }catch (Exception e){

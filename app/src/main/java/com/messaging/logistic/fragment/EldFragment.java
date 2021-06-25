@@ -1341,13 +1341,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             if (!isUpdateDriverLog) {
                 GetDriversSavedData(false, DriverType);
-                try {
+               /* try {
                     driverLogArray = new JSONArray();
                     driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                 } catch (Exception e) {
                     e.printStackTrace();
                     driverLogArray = new JSONArray();
-                }
+                }*/
 
                 CalculateTimeInOffLine(false, true);
 
@@ -3570,7 +3570,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 if (driverStatus.equals(Global.DRIVING) || driverStatus.equals(Global.ON_DUTY)) {
                     JSONArray logArray = constants.AddNewStatusInList(
                             "", driverStatus, "", "no_address",
-                            DRIVER_ID, City, State, Country, AddressLine,
+                            DRIVER_ID, City, State, Country, AddressLine, AddressLine,
                             CurrentCycleId, Reason, isPersonal, isViolation,
                             "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
                             String.valueOf(BackgroundLocationService.GpsVehicleSpeed), SharedPref.GetCurrentTruckPlateNo(getActivity()), "mannual_save", isYardBtnClick,
@@ -3698,7 +3698,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     /* ==== Add data in list to show in offline mode ============ */
                     EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
                             "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
-                            "", "", "", Boolean.parseBoolean(isPersonal),
+                            "", "", AddressLine, "", Boolean.parseBoolean(isPersonal),
                             isAdverseExcptn, isHaulExcptn);
                     eldSharedPref.AddDriverLoc(getActivity(), logModel);
                 } else {
@@ -3707,7 +3707,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     /* ==== Add data in list to show in offline mode ============ */
                     EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
                             "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
-                            "", "", "", Boolean.parseBoolean(isPersonal),
+                            "", "", AddressLine, "", Boolean.parseBoolean(isPersonal),
                             isAdverseExcptn, isHaulExcptn);
                     coEldSharedPref.AddDriverLoc(getActivity(), logModel);
                 }
@@ -3772,7 +3772,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 // ============================ Save Job Status in SQLite ==============================
                 driverLogArray = constants.AddNewStatusInList(DriverName, DriverStatusId, ViolationReason, address,
-                        DRIVER_ID, City, State, Country, AddressLine,
+                        DRIVER_ID, City, State, Country, AddressLine, AddressLine,
                         CurrentCycleId, Reason, isPersonal, isViolation,
                         "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
                         String.valueOf(BackgroundLocationService.GpsVehicleSpeed),
@@ -3819,7 +3819,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 // ============================ Save Job Status in SQLite ==============================
                 driverLogArray = constants.AddNewStatusInList(DriverName, DriverStatusId, ViolationReason, address,
-                        DRIVER_ID, City, State, Country, AddressLine,
+                        DRIVER_ID, City, State, Country, AddressLine, AddressLine,
                         CurrentCycleId, Reason, isPersonal, isViolation,
                         "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
                         String.valueOf(BackgroundLocationService.GpsVehicleSpeed),
@@ -4714,7 +4714,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
                 // Calculate 18 days log data
-                if (!isArrayNull && lastJsonItem != null) {
+                if (!isArrayNull && lastJsonItem.length() > 0) {
                     try {
 
                         DRIVER_JOB_STATUS = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
@@ -6317,7 +6317,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 City        = dataJObject.getString(ConstantsKeys.City);
                                 State       = dataJObject.getString(ConstantsKeys.State);
                                 Country     = dataJObject.getString(ConstantsKeys.Country);
-                                AddressLine = dataJObject.getString(ConstantsKeys.Location) + ", " + Country;
+                                AddressLine = dataJObject.getString(ConstantsKeys.Location);    // + ", " + Country;
                                 AobrdState  = State;
 
                                 if (!IsAddressUpdate) {

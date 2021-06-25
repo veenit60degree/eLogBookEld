@@ -1158,7 +1158,7 @@
             android:id="@+id/personalUseBtn"
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_90"
-            android:text="@string/Personal_Use"
+            android:text="@string/pc_start"
             android:textColor="@color/color_eld_theme"
             android:textSize="@dimen/text_size_25"
             android:background="@drawable/gray_eld_selector"

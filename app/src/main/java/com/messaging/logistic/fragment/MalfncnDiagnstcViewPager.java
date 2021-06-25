@@ -34,6 +34,8 @@ import com.custom.dialogs.MalfunctionDialog;
 import com.driver.details.DriverConst;
 import com.google.android.material.tabs.TabLayout;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
@@ -59,6 +61,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     ViewPager MalDiaViewPager;
     RelativeLayout rightMenuBtn, eldMenuLay;
 
+    DBHelper dbHelper;
+    MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
     MalfunctionEventFragment malfunctionEventFragment;
     DiagnosticEventFragment diagnosticEventFragment;
     static TextView noRecordMalTV, noRecordDiaTV;
@@ -118,8 +122,11 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading ...");
 
+        malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
+        dbHelper            = new DBHelper(getActivity());
         constants           = new Constants();
         globally            = new Globally();
+
         cancelCertifyBtn    = (CardView)rootView.findViewById(R.id.cancelCertifyBtn);
         confirmCertifyBtn   = (CardView)rootView.findViewById(R.id.confirmCertifyBtn);
 
@@ -653,6 +660,13 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                     }
 
+                    try {
+                        if (malfunctionHeaderList.size() == 0) {
+                            malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 } else {
                     malfunctionHeaderList = new ArrayList<>();
                     malfunctionChildList = new ArrayList<>();

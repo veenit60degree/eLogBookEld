@@ -44,6 +44,7 @@ import com.constants.ShellUtils;
 import com.constants.TcpClient;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
+import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.EldFragment;
 import com.notifications.NotificationManagerSmart;
 import com.wifi.settings.WiFiConfig;
@@ -103,8 +104,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     boolean mIsScanning = false;
     boolean isBleObdRespond = false;
     boolean isManualDisconnected = false;
+    boolean isEldBleFound = false;
+
     int writeFailureCount = 0;
     int isScanningCount = 0;
+    int bleScanCount = 0;
 
     private BluetoothAdapter mBTAdapter;
     BleDevice bleDevice;
@@ -146,7 +150,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         }
 
 
-
+        SharedPref.saveBleScanCount(0, getApplicationContext());
         mTimer.schedule(timerTask, TIME_INTERVAL_WIFI, TIME_INTERVAL_WIFI);
 
     }
@@ -629,9 +633,19 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 }
             }else{
                 if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
+
                     if (!mIsScanning && !isConnected) {
-                       // setScanRule();
-                        startScan();
+                        if(SharedPref.getBleScanCount(getApplicationContext()) < 5) {
+                            startScan();
+                        }/*else{
+                            if(bleScanCount == 5) {
+                                bleScanCount++;
+                                Globally.PlayNotificationSound(getApplicationContext());
+                                Globally.ShowLocalNotification(getApplicationContext(),
+                                        getApplicationContext().getResources().getString(R.string.BluetoothOBD),
+                                        getApplicationContext().getResources().getString(R.string.BleObdNotFound), 2096);
+                            }
+                        }*/
                     }
 
                     if(isScanningCount > 6 && mIsScanning){
@@ -653,6 +667,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     private void startScan() {
         isScanningCount = 0;
+        isEldBleFound = false;
+
         BleManager.getInstance().scan(new BleScanCallback() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
@@ -678,6 +694,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     if(bleDevice.getName() != null) {
                         if (bleDevice.getName().contains("ALSELD") || bleDevice.getName().contains("SMBLE")) {
                             Log.d("getName", "getName: " + bleDevice.getName());
+
+                            isEldBleFound = true;
+                            bleScanCount = 0;
+                            SharedPref.saveBleScanCount(0, getApplicationContext());
+
                             connect(bleDevice);
                             BleManager.getInstance().cancelScan();
                         }
@@ -694,6 +715,12 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             @Override
             public void onScanFinished(List<BleDevice> scanResultList) {
                 mIsScanning = false;
+
+                if (!isEldBleFound) {
+                    bleScanCount++;
+                    SharedPref.saveBleScanCount(bleScanCount, getApplicationContext());
+                }
+
             }
         });
     }
@@ -843,6 +870,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                             ObserverManager.getInstance().notifyObserver(bleDevice);
                             stopService(bleDevice,getCharacteristic());
                             writeFailureCount++;
+
+
+
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override

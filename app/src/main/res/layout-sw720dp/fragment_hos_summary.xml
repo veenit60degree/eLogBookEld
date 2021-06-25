@@ -676,7 +676,7 @@
 
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/margin_short_5"
@@ -685,28 +685,32 @@
                     >
 
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/margin_short_6"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/margin_short_5"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        >
 
                         <TextView
                             android:layout_width="@dimen/margin_short_8"
                             android:layout_height="@dimen/margin_short_8"
-                            android:background="@drawable/circular_view_distance" />
+                            android:layout_marginTop="@dimen/margin_10"
+                            android:layout_marginLeft="@dimen/margin_short_3"
+                            android:background="@drawable/circular_view_distance"
+                            />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingLeft="@dimen/margin_short_5"
                             android:text="@string/distancee"
                             android:textColor="@color/black_hos"
                             android:textSize="@dimen/text_size_20"
-                            android:paddingRight="@dimen/margin_short_5"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:paddingRight="@dimen/margin_short_4"
+                            android:layout_marginLeft="@dimen/margin_short_7"
                             android:textStyle="bold"
-
 
                             />
 
@@ -716,14 +720,33 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/hos_shift"
-                            android:textSize="@dimen/text_size_16"
-                            android:paddingRight="@dimen/margin_short_5"
+                            android:textSize="@dimen/text_size_12"
+                            android:paddingRight="@dimen/margin_short_3"
                             android:paddingTop="@dimen/margin_short_2"
-
                             />
 
+                    <RelativeLayout
+                        android:id="@+id/obdHosInfoImg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/media_white_drawable"
+                        android:layout_alignParentRight="true"
+                        >
 
-                    </LinearLayout>
+                        <ImageView
+                            android:layout_width="@dimen/view_height_60"
+                            android:layout_height="@dimen/view_height_60"
+                            android:src="@drawable/info"
+                            android:paddingBottom="@dimen/margin_19"
+                            android:paddingRight="@dimen/margin_16"
+                            android:paddingLeft="@dimen/margin_17"
+
+
+                            />
+                    </RelativeLayout>
+
+                    </RelativeLayout>
+
 
                     <TextView
                         android:id="@+id/hosDistanceTV"

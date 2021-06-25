@@ -12,6 +12,7 @@ public class EldDriverLogModel {
     String UTCEndDateTime;
     String Duration;
     String Location;
+    String LocationKm;
     String Remarks;
     boolean IsPersonal;
     boolean IsAdverseException;
@@ -20,7 +21,7 @@ public class EldDriverLogModel {
 
     public EldDriverLogModel(int driverStatusId, String startDateTime, String endDateTime, String totalHours,
                              String currentCycleId, boolean isViolation, String UTCStartDateTime, String UTCEndDateTime,
-                             String duration, String location, String remarks, boolean isPersonal,
+                             String duration, String location, String locationKm, String remarks, boolean isPersonal,
                              boolean isAdverseException , boolean isShortHaulException) {
         DriverStatusId = driverStatusId;
         StartDateTime = startDateTime;
@@ -32,6 +33,7 @@ public class EldDriverLogModel {
         this.UTCEndDateTime = UTCEndDateTime;
         Duration = duration;
         Location = location;
+        LocationKm = locationKm;
         Remarks = remarks;
         IsPersonal = isPersonal;
         IsAdverseException = isAdverseException;
@@ -103,5 +105,13 @@ public class EldDriverLogModel {
 
     public boolean isShortHaulException() {
         return IsShortHaulException;
+    }
+
+    public String getLocationKm() {
+        return LocationKm;
+    }
+
+    public void setLocationKm(String locationKm) {
+        LocationKm = locationKm;
     }
 }

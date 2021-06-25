@@ -479,6 +479,7 @@ public class ConstantsKeys {
     public static String IsELDNotification              = "IsELDNotification";
     public static String IsELDNotificationAlert         = "IsELDNotificationAlert";
     public static String ObdPreference                  = "ObdPreference";
+    public static String StartLocationKm                = "StartLocationKm";
 
     public static String ChangedToOthers                = "ChangedToOthers";
     public static String IsAutoStatusSaved              = "IsAutoStatusSaved";

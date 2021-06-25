@@ -30,6 +30,7 @@ public class DriverLogModel {
     private String Trailor;
     private String StartLocation;
     private String EndLocation;
+    private String StartLocationKm;
     private String Truck;
 
     private String IsStatusAutomatic;
@@ -77,6 +78,7 @@ public class DriverLogModel {
         this.Trailor = logModel.getTrailor();
         this.StartLocation = logModel.getStartLocation();
         this.EndLocation = logModel.getEndLocation();
+        this.StartLocationKm = logModel.getStartLocationKm();
         this.Truck = logModel.getTruck();
         this.IsStatusAutomatic = logModel.getIsStatusAutomatic();
         this.OBDSpeed = logModel.getOBDSpeed();
@@ -183,6 +185,11 @@ public class DriverLogModel {
         StartLocation = startLocation;
     }
 
+    public void setStartLocationKm(String startLocationkm) {
+        StartLocationKm = startLocationkm;
+    }
+
+
     public void setEndLocation(String endLocation) {
         EndLocation = endLocation;
     }
@@ -286,6 +293,11 @@ public class DriverLogModel {
     public String getStartLocation() {
         return StartLocation;
     }
+
+    public String getStartLocationKm() {
+        return StartLocationKm;
+    }
+
 
     public String getEndLocation() {
         return EndLocation;

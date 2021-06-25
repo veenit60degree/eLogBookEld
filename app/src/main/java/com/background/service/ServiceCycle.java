@@ -868,7 +868,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                     }
 
                     JSONArray logArray = constants.AddNewStatusInList("", String.valueOf(ChangedDriverStatus), "", "no_address",
-                            String.valueOf(DriverId), "", "", "", "",
+                            String.valueOf(DriverId), "", "", "", "","",
                             CurrentCycleId, "", "false", isViolation,
                             "false", String.valueOf(OBDVehicleSpeed),
                             String.valueOf(GPSVehicleSpeed), SharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus, false,
@@ -1206,7 +1206,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             /* ==== Add data in list to show in offline mode ============ */
             EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
                     "currentCycleId", false , currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
-                    "", City + ", " + State + ", " + Country, "", Boolean.parseBoolean(isPersonal),
+                    "", City + ", " + State + ", " + Country, "", "", Boolean.parseBoolean(isPersonal),
                     isAdverseExcptn, isHaulExcptn );
             eldSharedPref.AddDriverLoc(context, logModel);
         }else{
@@ -1215,7 +1215,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             /* ==== Add data in list to show in offline mode ============ */
             EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
                     "currentCycleId", false , currentUtcTimeDiffFormat, currentUtcTimeDiffFormat, "", City + ", " + State + ", " + Country,
-                    "", Boolean.parseBoolean(isPersonal),
+                    "", "",Boolean.parseBoolean(isPersonal),
                     isAdverseExcptn, isHaulExcptn  );
             coEldSharedPref.AddDriverLoc(context, logModel);
         }
@@ -1338,7 +1338,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 connectionSource + LastStatus,
                 ""+isAdverseExcptn,
                 "", LocationType,
-                "", isNorthCanada
+                "", isNorthCanada,address
 
         );
 
@@ -1386,7 +1386,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         connectionSource + LastStatus,
                         ""+isAdverseExcptn,
                        "", LocationType,
-                        "", isNorthCanada
+                        "", isNorthCanada, address
 
                 );
 

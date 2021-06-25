@@ -720,6 +720,7 @@
     <string name="obd_ble">Bluetooth OBD Connected</string>
     <string name="BluetoothOBD">Bluetooth OBD</string>
     <string name="BleObdNotFound">Bluetooth OBD not found. Please check your bluetooth device.</string>
+    <string name="BleObdNotConnected">Bluetooth OBD is not connecting. Restart you app and try to connect it again.</string>
     <string name="obd_not_connected">OBD not connected</string>
     <string name="wifi_active">WIFI OBD is connected</string>
     <string name="wifi_inactive">WIFI OBD is not working</string>

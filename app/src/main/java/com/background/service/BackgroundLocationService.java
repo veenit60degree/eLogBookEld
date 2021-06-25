@@ -254,7 +254,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     boolean isEldBleFound = false;
     public static boolean IsAutoChange = false; //, IsAutoLogSaved = false;
 
-    int bleScanCount = 0;
     double latitude, longitude;
     private Handler mHandler = new Handler();
     File locDataFile;
@@ -308,6 +307,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     int writeFailureCount = 0;
     int isScanningCount = 0;
+    int writeFailureCountToStop = 0;
+    int bleScanCount = 0;
 
     private BluetoothAdapter mBTAdapter;
 
@@ -1257,12 +1258,25 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             stopService(bleDevice,getCharacteristic());
                             writeFailureCount++;
                             if(writeFailureCount > 4){
+
                                 writeFailureCount = 0;
 
                                 if (mBTAdapter != null && mBTAdapter.isEnabled()) {
                                     mBTAdapter.disable();
                                 }
+
                             }
+
+                            if(writeFailureCountToStop == 4){
+                                bleScanCount = 6;
+                                SharedPref.saveBleScanCount(bleScanCount, getApplicationContext());
+                                Globally.PlayNotificationSound(getApplicationContext());
+                                global.ShowLocalNotification(getApplicationContext(),
+                                        getApplicationContext().getResources().getString(R.string.BluetoothOBD),
+                                        getApplicationContext().getResources().getString(R.string.BleObdNotConnected), 2097);
+                                writeFailureCountToStop = 0;
+                            }
+                            writeFailureCountToStop++;
 
                             if (isManualDisconnected()) {
                                 new Handler().postDelayed(new Runnable() {
@@ -1333,7 +1347,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         public void onNotifySuccess() {
                             Log.d(TAG_BLE_OPERATION, "onNotifySuccess");
                             isBleObdRespond = false;
-                            writeFailureCount = 4;
+                            writeFailureCount = 2;
+                            writeFailureCountToStop = 0;
                           //  String data = HexUtil.formatHexString(characteristic.getValue(), true);
                           //  Log.d("Notify Success Data", "data: " + data);
                             constants.saveAppUsageLog("BleCallback: NotifySuccess" ,  false, false, obdUtil);
@@ -1843,6 +1858,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }else {
                 if (bleStatus.equals("start")) {
                     if (!mIsScanning && !isConnected) {
+                        writeFailureCountToStop = 0;
                         bleInit();
                     }
                 } else if(bleStatus.equals("stop")) {

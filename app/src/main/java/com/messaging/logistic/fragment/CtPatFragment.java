@@ -841,7 +841,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                                 try {
                                     JSONArray inspectionData = new JSONArray(obj.getString("Data"));
 
-                                    ctPatInspectionMethod.DriverCtPatInsp18DaysHelper(Integer.valueOf(DriverId), dbHelper, inspectionData);
+                                    ctPatInspectionMethod.DriverCtPatInsp18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, inspectionData);
 
 
                                 } catch (JSONException e) {

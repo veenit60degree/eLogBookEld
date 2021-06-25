@@ -38,6 +38,7 @@ import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.constants.VolleyRequestWithoutRetry;
 import com.custom.dialogs.HosInfoDialog;
+import com.custom.dialogs.ObdDataInfoDialog;
 import com.custom.dialogs.ShareDriverLogDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
@@ -79,7 +80,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     TextView statusHosTV, breakInfoTV, shiftInfoTV, statusInfoTV, cycleInfoTV, hosStatusCircle, hosStatusTV, malfunctionTV ;
     ImageView eldMenuBtn, hosStatusImgVw, malfunctionImgView;
     LoadingSpinImgView loadingSpinEldIV;
-    RelativeLayout rightMenuBtn, eldMenuLay, hosMainLay, malfunctionLay;
+    RelativeLayout rightMenuBtn, eldMenuLay, hosMainLay, malfunctionLay, obdHosInfoImg;
     LinearLayout nextBreakLay;
     CircleProgressView breakCircularView, shiftCircularView, currentStatusCircularView, cycleCircularView;
     CardView sendLogHosBtn, nextBreakCardView, disabledBreakCardView;
@@ -93,7 +94,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     String DriverId;
     String DeviceId;
     String CycleId;
-    String vin = "";
+    //String vin = "";
 
     long MIN_TIME_BW_UPDATES = 60000;  // 60 Sec
     final int OFF_DUTY = 1;
@@ -224,6 +225,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         eldMenuLay              = (RelativeLayout)v.findViewById(R.id.eldMenuLay);
         hosMainLay              = (RelativeLayout)v.findViewById(R.id.hosMainLay);
+        obdHosInfoImg           = (RelativeLayout)v.findViewById(R.id.obdHosInfoImg);
 
         malfunctionImgView      = (ImageView)v.findViewById(R.id.malfunctionImgView);
         eldMenuBtn              = (ImageView)v.findViewById(R.id.eldMenuBtn);
@@ -248,6 +250,10 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         editLogAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
         editLogAnimation.setDuration(1500);
 
+        vinNumberTxtView.setVisibility(View.GONE);
+        engHourTxtView.setVisibility(View.GONE);
+
+
         getBundleData();
 
         try {
@@ -271,8 +277,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
                 setMarqueText(hosLocationTV);
                 setMarqueText(hosDistanceTV);
-                setMarqueText(vinNumberTxtView);
-                setMarqueText(engHourTxtView);
+               // setMarqueText(vinNumberTxtView);
+               // setMarqueText(engHourTxtView);
 
                 if(SharedPref.getDriverStatusId(getActivity()).trim().equals(Globally.OFF_DUTY) ||
                         SharedPref.getDriverStatusId(getActivity()).trim().equals(Globally.SLEEPER)){
@@ -288,12 +294,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 currentStatusCircularView.setSeekModeEnabled(false);
                 cycleCircularView.setSeekModeEnabled(false);
 
-                if(SharedPref.getVehicleVin(getActivity()).length() > 3 && !SharedPref.getVehicleVin(getActivity()).contains("u0000")){
+             /*   if(SharedPref.getVehicleVin(getActivity()).length() > 3 && !SharedPref.getVehicleVin(getActivity()).contains("u0000")){
                     vin = "(<b>VIN: </b>" + SharedPref.getVehicleVin(getActivity())+ ")";   // getting from OBD directly (Cuurent VIN)
                 }else{
                     vin = "(<b>VIN: </b>" + SharedPref.getVINNumber(getActivity()) + ")";   // getting from truck selection when user select Truck and getting its VIN
                 }
-                vinNumberTxtView.setText(Html.fromHtml( vin) );
+               vinNumberTxtView.setText(Html.fromHtml( vin) );*/
 
                 CycleTimeCalculation(true);
 
@@ -356,6 +362,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         malfunctionLay.setOnClickListener(this);
         hosDistanceCardView.setOnClickListener(this);
         hosLocationCardView.setOnClickListener(this);
+        obdHosInfoImg.setOnClickListener(this);
 
         EldFragment.summaryBtn.setEnabled(true);
     }
@@ -856,7 +863,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     setProgressViolationColor(shiftCircularView, LeftShiftHoursInt);
 
                     // set Engine hour
-                    String engineHours = SharedPref.getObdEngineHours(getActivity());
+                   /* String engineHours = SharedPref.getObdEngineHours(getActivity());
                     if(engineHours.length() > 1) {
                         if(engineHours.contains("-")){
                             engineHours = "0";
@@ -870,7 +877,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                         }
                     }else{
                         engHourTxtView.setText("");
-                    }
+                    }*/
 
                 }
             });
@@ -917,14 +924,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()){
 
-            case R.id.hosDistanceCardView:
-             //   String dayStartOdometerStr  = SharedPref.getDayStartOdometer(getActivity());
-             //   String currentOdometerStr   = SharedPref.getHighPrecisionOdometer(getActivity());
-
-             //   Toast.makeText(getActivity(), "     Start Odometer: "+ dayStartOdometerStr + "\nCurrent Odometer: "+ currentOdometerStr, Toast.LENGTH_LONG).show();
-
-
-
+            case R.id.obdHosInfoImg:
+                ObdDataInfoDialog obdDialog = new ObdDataInfoDialog(getActivity());
+                obdDialog.show();
 
                 break;
 

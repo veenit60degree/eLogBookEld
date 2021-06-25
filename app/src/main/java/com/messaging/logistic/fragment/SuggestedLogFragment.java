@@ -719,11 +719,11 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
                 if(DRIVER_JOB_STATUS == constants.ON_DUTY) {
                     driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, "",
-                            isViolation, "", "", Duration, "", "", logObj.getBoolean(ConstantsKeys.Personal),
+                            isViolation, "", "", Duration, "", "","", logObj.getBoolean(ConstantsKeys.Personal),
                             isEditedLog,  logObj.getBoolean(ConstantsKeys.YardMove));
                 }else{
                     driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, "",
-                            isViolation, "", "", Duration, "", "",
+                            isViolation, "", "", Duration, "", "","",
                             logObj.getBoolean(ConstantsKeys.Personal),
                             isEditedLog, logObj.getBoolean(ConstantsKeys.YardMove));
                 }
@@ -1133,7 +1133,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         "",
                         "",
                         "",
-
+                        "",
                         editedObj.getBoolean(ConstantsKeys.Personal),
                         editedObj.getBoolean(ConstantsKeys.IsEdited),
                         editedObj.getBoolean(ConstantsKeys.YardMove)
