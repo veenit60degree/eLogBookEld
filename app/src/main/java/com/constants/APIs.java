@@ -31,8 +31,8 @@ public class APIs {
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_DEV ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_DEV ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
 
@@ -63,6 +63,7 @@ public class APIs {
     public static String CHANGE_DRIVER_CYCLE                = DOMAIN_URL_ALS + "ChangeDriverCycle";
     public static String CHANGE_OPERATING_ZONE              = DOMAIN_URL_ALS + "SaveOperatingZone";
     public static String MALFUNCTION_DIAGNOSTIC_EVENT       = DOMAIN_URL_ALS + "AddMalfunctionAndDiagnosticEvent";
+    public static String SAVE_DEFFERAL_EVENT                = DOMAIN_URL_ALS + "SaveDefferalEvent";
 
 
     /*-------- ELD API ----------*/

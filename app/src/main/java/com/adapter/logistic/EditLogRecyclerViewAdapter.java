@@ -378,13 +378,19 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
         }else if(status == SLEEPER ){
             ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(spinPos);
-            setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV, ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
-                    ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout, ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV, ((ViewHolderItem) viewHolder).editLogItemLay, position, IsSleeperPermission);
+            setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV,
+                    ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
+                    ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
+                    ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
+                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsSleeperPermission);
 
         }else if(status == DRIVING ){
             ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(spinPos);
-            setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV, ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
-                    ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout, ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV, ((ViewHolderItem) viewHolder).editLogItemLay, position, IsDrivingPermission);
+            setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV,
+                    ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
+                    ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
+                    ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
+                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsDrivingPermission);
 
         }else if(status == ON_DUTY ){
 
@@ -395,12 +401,18 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }else {
                 ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(spinPos);
             }
-            setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV, ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
-                    ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout, ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV, ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOnDutyPermission);
+            setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV, ((ViewHolderItem)
+                            viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
+                    ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
+                    ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
+                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOnDutyPermission);
         }else{
             ((ViewHolderItem) viewHolder).editLogStatusSpinner.setSelection(spinPos);
-            setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV, ((ViewHolderItem) viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
-                    ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout, ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV, ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOffDutyPermission);
+            setSpinnerViewEnabledStatus(((ViewHolderItem) viewHolder).editLogSerialNoTV, ((ViewHolderItem)
+                            viewHolder).editLogStatusSpinner, ((ViewHolderItem) viewHolder).startTimeLayout,
+                    ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeLayout,
+                    ((ViewHolderItem) viewHolder).endTimeTV, ((ViewHolderItem) viewHolder).editLogDurationTV,
+                    ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOffDutyPermission);
         }
 
 

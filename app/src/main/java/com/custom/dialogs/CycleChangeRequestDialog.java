@@ -107,8 +107,8 @@ public class CycleChangeRequestDialog extends Dialog {
             savedCycleType = "us_cycle";
         }
 
-        titleDescView.setText(Html.fromHtml(getContext().getString(R.string.change_cycle_request) + "<font color='#1A3561'> <b>"+ currentCycle
-                                            +"</b></font> to<font color='#1A3561'> <b>"+ changedCycleName +"</b></font>.") );
+        titleDescView.setText(Html.fromHtml(getContext().getString(R.string.change_cycle_request) + "<font color='#808080'> <b>"+ currentCycle
+                                            +"</b></font> to<font color='#808080'> <b>"+ changedCycleName +"</b></font>.") );
 
         String cycleCalculatedData = constants.CalculateCycleTimeData(getContext(), DriverId, false,
                 false, changedCycleId, Global, hMethods, dbHelper);

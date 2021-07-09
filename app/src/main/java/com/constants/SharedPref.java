@@ -1608,6 +1608,46 @@ public class SharedPref {
     }
 
 
+    // Set Deferral Rule settings For Main driver -------------------
+    public static void setDeferralForMain( boolean value, Context context) {
+        if(context != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("deferral_main", value);
+            editor.commit();
+        }
+    }
+
+    // Get Main driver's Deferral Rule settings -------------------
+    public static boolean getDeferralForMain( Context context) {
+        boolean isDefferal = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isDefferal = preferences.getBoolean("deferral_main", false);
+        }
+        return isDefferal;
+    }
+
+
+    // Set Deferral Rule settings For Co driver -------------------
+    public static void setDeferralForCo( boolean value, Context context) {
+        if(context != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("deferral_co", value);
+            editor.commit();
+        }
+    }
+
+    // Get Co driver's Deferral Rule settings -------------------
+    public static boolean getDeferralForCo( Context context) {
+        boolean isDefferal = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isDefferal = preferences.getBoolean("deferral_co", false);
+        }
+        return isDefferal;
+    }
 
     // Set 16 hour haul exception -------------------
     public static void set16hrHaulExcptn( boolean value, Context context) {

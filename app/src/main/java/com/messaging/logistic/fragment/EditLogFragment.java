@@ -1137,10 +1137,20 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     //*================== Get Driver Status Permissions ===================*//*
     void GetDriverStatusPermission(final String DriverId, final String DeviceId, final String VehicleId ){
 
+        String Country = "";
+        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+            Country = "CANADA";
+        } else {
+            Country = "USA";
+        }
         Map<String, String> params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
         params.put(ConstantsKeys.VehicleId, VehicleId );
+        params.put(ConstantsKeys.VIN, SharedPref.getVINNumber(getActivity()) );
+        params.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()) );
+        params.put(ConstantsKeys.Country, Country );
 
         GetPermissions.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS_PERMISSION, params, GetDriverPermission,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);

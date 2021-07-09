@@ -178,10 +178,20 @@ public class EldNotificationDialog extends Dialog  {
     //*================== Get Driver Status Permissions ===================*//*
     void GetDriverStatusPermission(final String DriverId, final String DeviceId, final String VehicleId ){
 
+        String Country = "";
+        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getContext());
+        if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+            Country = "CANADA";
+        } else {
+            Country = "USA";
+        }
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
         params.put(ConstantsKeys.DeviceId, DeviceId );
         params.put(ConstantsKeys.VehicleId, VehicleId );
+        params.put(ConstantsKeys.VIN, SharedPref.getVINNumber(getContext()) );
+        params.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, getContext()) );
+        params.put(ConstantsKeys.Country, Country );
 
         GetPermissions.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS_PERMISSION, params, 100,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);

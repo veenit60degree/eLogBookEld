@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -31,6 +33,7 @@ public class RecapRecordSignAdapter extends BaseAdapter {
     ArrayList<String> SelectedRecordList;
     boolean IsAllSelectedClicked;
     boolean isChecked;
+    Animation missingLocAnim;
 
     public RecapRecordSignAdapter(Context context, List<RecapSignModel> transferList, ArrayList<String> recordSelectedArray, boolean IsAllSelected, boolean isChecked) {
         this.context = context;
@@ -39,6 +42,9 @@ public class RecapRecordSignAdapter extends BaseAdapter {
         this.IsAllSelectedClicked = IsAllSelected;
         this.isChecked = isChecked;
         mInflater = LayoutInflater.from(context);
+        missingLocAnim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+        missingLocAnim.setDuration(1500);
+
     }
 
     @Override
@@ -67,6 +73,7 @@ public class RecapRecordSignAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.popup_sign_record, null);
 
             holder.dateSignTxtView      = (TextView) convertView.findViewById(R.id.dateSignTxtView);
+            holder.missingLocTxtView    = (TextView) convertView.findViewById(R.id.missingLocTxtView);
             holder.certifyStatusTxtView = (TextView) convertView.findViewById(R.id.certifyStatusTxtView);
             holder.noSignErrorImg       = (ImageView)convertView.findViewById(R.id.noSignErrorImg);
             holder.signRecordCheckBox   = (CheckBox)convertView.findViewById(R.id.signRecordCheckBox);
@@ -88,11 +95,41 @@ public class RecapRecordSignAdapter extends BaseAdapter {
             }
         }
 
+        if(eventItem.isMissingLocation()){
+            holder.missingLocTxtView.setVisibility(View.VISIBLE);
+            holder.missingLocTxtView.startAnimation(missingLocAnim);
+        }
 
         if(eventItem.isCertified()) {
             holder.signRecordCheckBox.setButtonDrawable(R.drawable.unchecked_mobile_disabled);
-          //  holder.dateSignTxtView.setTextColor(context.getResources().getColor(R.color.gray_text));
         }
+
+
+
+        missingLocAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                try {
+                    if(context != null){
+                        if(eventItem.isMissingLocation()){
+                            holder.missingLocTxtView.startAnimation(missingLocAnim);
+                        }
+                     }
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
 
         holder.signRecordCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,7 +219,7 @@ public class RecapRecordSignAdapter extends BaseAdapter {
 
 
     public class ViewHolder {
-        TextView dateSignTxtView, certifyStatusTxtView;
+        TextView dateSignTxtView, missingLocTxtView, certifyStatusTxtView;
         ImageView noSignErrorImg;
         CheckBox signRecordCheckBox;
         RelativeLayout recapRecordItemLay;

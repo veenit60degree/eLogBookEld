@@ -66,6 +66,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     public static TabHost host;
     FrameLayout tabcontent;
     Constants constants;
+    Globally global;
     public static List<SlideMenuModel> menuList = new ArrayList<>();
     public static SlidingMenu smenu;
     public static RelativeLayout sliderLay;
@@ -118,6 +119,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         dbHelper            = new DBHelper(this);
         hMethods            = new HelperMethods();
         constants           = new Constants();
+        global              = new Globally();
         requestQueue        = Volley.newRequestQueue(this);
         alsConnRequestQueue = Volley.newRequestQueue(this);
 
@@ -131,8 +133,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         vehicleList = new ArrayList<>();
         isTabActOnCreate = true;
-        IsTablet = Globally.isTablet(this);
-        existingAppVersionStr = "Version - " + Globally.GetAppVersion(this, "VersionName") + "," + getResources().getString(R.string.Powered_by);
+        IsTablet = global.isTablet(this);
+        existingAppVersionStr = "Version - " + global.GetAppVersion(this, "VersionName") + "," + getResources().getString(R.string.Powered_by);
 
         tabcontent = (FrameLayout)findViewById(android.R.id.tabcontent);
         speedAlertBtn = (Button)findViewById(R.id.wiredObdDataBtn);
@@ -175,9 +177,15 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                         if(obdSpeed > 8){
                             titleDesc = "Personal Use limit has been exceeded above 75 km for the day.";
                         }
-                        Globally.DriverSwitchAlertWithDismiss(TabAct.this, certifyTitle, titleDesc, "Ok",
+                        global.DriverSwitchAlertWithDismiss(TabAct.this, certifyTitle, titleDesc, "Ok",
                                 statusAlertDialog, false);
 
+                    }else{
+                        if (intent.hasExtra(ConstantsKeys.IsEldEcmALert)) {
+                            if (intent.getBooleanExtra(ConstantsKeys.IsEldEcmALert, false) == true) {
+                                global.InternetErrorDialog(TabAct.this);
+                            }
+                        }
                     }
                 }else {
                     boolean isSuggestedEdit = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_marginTop="10dp"
+    tools:ignore="HardcodedText">
+
+
+
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_12"
+            android:layout_marginRight="@dimen/margin_short_1"
+            android:layout_marginLeft="@dimen/margin_short_1"
+            android:background="@drawable/white_top_rectangle"
+            >
+
+            <TextView
+                android:id="@+id/ecmAlertTitleTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Limited_ELD_Connection"
+                android:textSize="@dimen/text_size_21"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:paddingLeft="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_short_8"
+                android:layout_marginBottom="@dimen/margin_12"
+                />
+
+
+            <ImageView
+                android:id="@+id/closeDialogImg"
+                android:layout_width="@dimen/view_height_55"
+                android:layout_height="@dimen/view_height_55"
+                android:src="@drawable/close_img_circle"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/margin_11"
+
+                />
+
+
+            <ImageView
+                android:id="@+id/errorImgEcm"
+                android:layout_width="@dimen/view_height_35"
+                android:layout_height="@dimen/view_height_35"
+                android:src="@drawable/warning_img"
+                android:paddingTop="@dimen/margin_short_8"
+                android:layout_below="@+id/ecmAlertTitleTV"
+                android:layout_marginLeft="@dimen/margin_10"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/margin_11"
+                android:layout_marginRight="@dimen/view_height_55"
+                android:text="@string/internet_hint"
+                android:textSize="@dimen/text_size_17"
+                android:textColor="@color/splash_gray"
+                android:layout_below="@+id/ecmAlertTitleTV"
+                android:layout_toRightOf="@+id/errorImgEcm"
+                android:layout_marginTop="@dimen/margin_short_5"
+                />
+
+
+        </RelativeLayout>
+
+
+</RelativeLayout>

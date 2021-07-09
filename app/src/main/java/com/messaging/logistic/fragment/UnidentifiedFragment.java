@@ -397,10 +397,11 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
         params.put(ConstantsKeys.CurrentDate, CurrentDate);
-         params.put(ConstantsKeys.VIN, VIN);
+        params.put(ConstantsKeys.VIN, VIN);
         params.put(ConstantsKeys.Country, Country);
+        params.put(ConstantsKeys.OffsetFromUTC, ""+global.GetTimeZoneOffSet() );
 
         GetUnidentifiedRecords.executeRequest(Request.Method.POST, APIs.GET_UNIDENTIFIED_RECORDS , params, flag,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_height="match_parent"
+    android:paddingRight="@dimen/view_height_100"
+    android:paddingLeft="@dimen/view_height_100"
+
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/white_default"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingTop="@dimen/margin_20"
+        android:paddingBottom="@dimen/view_height_35"
+        >
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+            <TextView
+                android:id="@+id/cancelDefTxtView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_19"
+                android:paddingRight="@dimen/margin_15"
+                android:paddingLeft="@dimen/margin_15"
+                android:paddingTop="@dimen/margin_short_8"
+                android:paddingBottom="@dimen/margin_short_8"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:layout_alignParentRight="true"
+                android:background="@color/whiteee"
+
+                />
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Day1ofDeferral"
+            android:textSize="@dimen/text_size_20"
+            android:visibility="gone"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ReviewConfirmDef"
+            android:textSize="@dimen/text_size_21"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="@dimen/margin_short_8"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/margin_25"
+            android:paddingRight="@dimen/margin_25"
+            android:text="@string/youCanDef"
+            android:textSize="@dimen/text_size_20"
+            android:layout_marginTop="@dimen/margin_18"
+            android:gravity="center_horizontal"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/margin_13"
+            android:paddingBottom="@dimen/margin_13"
+            android:paddingLeft="@dimen/view_height_250"
+            android:paddingRight="@dimen/view_height_250"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/margin_25"
+            android:background="@drawable/rectangle_grey_bg"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time to defer"
+                android:textSize="@dimen/text_size_19"
+
+                />
+
+
+            <TextView
+                android:id="@+id/defTimeTxtView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 hrs 0 min"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_21"
+                android:textColor="@color/colorPrimary"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/defConfirmBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_17"
+            android:gravity="center"
+            android:background="@drawable/eld_blue_new_selector"
+            android:layout_marginLeft="@dimen/view_height_120"
+            android:layout_marginRight="@dimen/view_height_120"
+            android:layout_marginTop="@dimen/view_height_35"
+
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Confirm"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_21"
+
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
+
+
+

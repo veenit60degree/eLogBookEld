@@ -2,6 +2,7 @@ package com.local.db;
 
 import android.database.Cursor;
 
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.fragment.EldFragment;
 
 import org.json.JSONArray;
@@ -81,6 +82,8 @@ public class CertifyLogMethod {
             jsonObj.put(ConstantsKeys.IsRecertifyRequied , isReCertifyRequired);
             jsonObj.put(ConstantsKeys.CompanyId , CompanyId);
             jsonObj.put(ConstantsKeys.LocationType, LocationType);
+            jsonObj.put(ConstantsKeys.Latitude , Globally.LATITUDE);
+            jsonObj.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -140,7 +140,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     HosTimerTask timerTask;
     private Timer mTimer;
     VolleyRequestWithoutRetry GetAddFromLatLngRequest, GetMilesRequest;
-    LocalCalls localCalls = new LocalCalls();
+    LocalCalls localCalls;
     RulesResponseObject usedAndRemainingTimeSB;
     RulesResponseObject RulesObj = new RulesResponseObject();
     DriverPermissionMethod driverPermissionMethod;
@@ -470,39 +470,40 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
     private void setBreakProgress(){
-        if( (CycleId.equals(global.USA_WORKING_6_DAYS) || CycleId.equals(global.USA_WORKING_7_DAYS ) ) &&
-                (DRIVER_JOB_STATUS == DRIVING || DRIVER_JOB_STATUS == ON_DUTY) ){
+        try {
+            if ((CycleId.equals(global.USA_WORKING_6_DAYS) || CycleId.equals(global.USA_WORKING_7_DAYS)) &&
+                    (DRIVER_JOB_STATUS == DRIVING || DRIVER_JOB_STATUS == ON_DUTY)) {
 
-            String timeType = "Hours";
-            if(LeftNextBreak < 60){
-                timeType = "Mins";
-            }
-
-            breakUsedTimeTV.setText(Html.fromHtml(getHtmlText("in " + global.FinalValue(LeftNextBreak), timeType)) );
-            breakCircularView.setMaxValue(ShiftHour); // 8 * 60 = 480 (8 hours)
-            breakCircularView.setValue(ShiftHour - LeftNextBreak);
-
-            if(LeftNextBreak > 0 && LeftNextBreak <= 120){
-
-
-                breakCircularView.setBarColor(getResources().getColor(R.color.colorSleeper), getResources().getColor(R.color.colorSleeper));
-
-                if(LeftNextBreak < 60){
-                    breakInfoTV.setVisibility(View.VISIBLE);
-                    breakInfoTV.setText(getResources().getString(R.string.hos_violation_apprch));
-                    breakUsedTimeTV.setTextColor(getResources().getColor(R.color.colorSleeper));
-                }else{
-                    breakInfoTV.setVisibility(View.GONE);
+                String timeType = "Hours";
+                if (LeftNextBreak < 60) {
+                    timeType = "Mins";
                 }
 
-            }else if(LeftNextBreak <= 0){
-                breakInfoTV.setVisibility(View.VISIBLE);
-                breakInfoTV.setText(violationReason);
-                breakCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
-                breakUsedTimeTV.setTextColor(getResources().getColor(R.color.colorVoilation));
-            }else{
-                breakInfoTV.setVisibility(View.GONE);
-            }
+                breakUsedTimeTV.setText(Html.fromHtml(getHtmlText("in " + global.FinalValue(LeftNextBreak), timeType)));
+                breakCircularView.setMaxValue(ShiftHour); // 8 * 60 = 480 (8 hours)
+                breakCircularView.setValue(ShiftHour - LeftNextBreak);
+
+                if (LeftNextBreak > 0 && LeftNextBreak <= 120) {
+
+
+                    breakCircularView.setBarColor(getResources().getColor(R.color.colorSleeper), getResources().getColor(R.color.colorSleeper));
+
+                    if (LeftNextBreak < 60) {
+                        breakInfoTV.setVisibility(View.VISIBLE);
+                        breakInfoTV.setText(getResources().getString(R.string.hos_violation_apprch));
+                        breakUsedTimeTV.setTextColor(getResources().getColor(R.color.colorSleeper));
+                    } else {
+                        breakInfoTV.setVisibility(View.GONE);
+                    }
+
+                } else if (LeftNextBreak <= 0) {
+                    breakInfoTV.setVisibility(View.VISIBLE);
+                    breakInfoTV.setText(violationReason);
+                    breakCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
+                    breakUsedTimeTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+                } else {
+                    breakInfoTV.setVisibility(View.GONE);
+                }
 
        /* }else  if( (CycleId.equals(global.CANADA_CYCLE_1) || CycleId.equals(global.CANADA_CYCLE_2 ) ) &&
                 (DRIVER_JOB_STATUS == DRIVING || DRIVER_JOB_STATUS == ON_DUTY) ){
@@ -527,45 +528,52 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
             }
 
-       */ }else{
-            disabledBreakCardView.setVisibility(View.VISIBLE);
+       */
+            } else {
+                disabledBreakCardView.setVisibility(View.VISIBLE);
 
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     private void getCycleHours(){
-        if(CurrentCycle.length() > 0 && !CurrentCycle.equals("null")){
-            String[] arr = CurrentCycle.split(" ");
-            if(arr.length > 0){
-                String[] cycleHourArr = arr[1].split("/");
-                if(cycleHourArr.length > 0){
-                    if (CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) && SharedPref.IsNorthCanada(getActivity())) {
-                        hosCurrentCycleTV.setText(CurrentCycle + " (North)");
-                        TotalCycleHour = 80 * 60 ;
-                    }else{
-                        hosCurrentCycleTV.setText(CurrentCycle);
-                        TotalCycleHour = Integer.valueOf(cycleHourArr[0]) * 60 ;
-                    }
+        try {
+            if (CurrentCycle.length() > 0 && !CurrentCycle.equals("null")) {
+                String[] arr = CurrentCycle.split(" ");
+                if (arr.length > 0) {
+                    String[] cycleHourArr = arr[1].split("/");
+                    if (cycleHourArr.length > 0) {
+                        if (CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) && SharedPref.IsNorthCanada(getActivity())) {
+                            hosCurrentCycleTV.setText(CurrentCycle + " (North)");
+                            TotalCycleHour = 80 * 60;
+                        } else {
+                            hosCurrentCycleTV.setText(CurrentCycle);
+                            TotalCycleHour = Integer.valueOf(cycleHourArr[0]) * 60;
+                        }
 
-                    int leftCycle = TotalCycleHour - LeftCycleHoursInt;
+                        int leftCycle = TotalCycleHour - LeftCycleHoursInt;
 
-                    cycleUsedTimeTV.setText(Html.fromHtml(getHtmlText("U " + global.FinalValue(leftCycle), "R " + global.FinalValue(LeftCycleHoursInt))));
+                        cycleUsedTimeTV.setText(Html.fromHtml(getHtmlText("U " + global.FinalValue(leftCycle), "R " + global.FinalValue(LeftCycleHoursInt))));
 
-                    cycleCircularView.setMaxValue(TotalCycleHour);
-                    cycleCircularView.setValue(leftCycle);
+                        cycleCircularView.setMaxValue(TotalCycleHour);
+                        cycleCircularView.setValue(leftCycle);
 
-                    setProgressViolationColor(cycleCircularView, LeftCycleHoursInt);
+                        setProgressViolationColor(cycleCircularView, LeftCycleHoursInt);
 
-                    if(LeftCycleHoursInt <= 0 ){
-                        cycleInfoTV.setVisibility(View.VISIBLE);
-                        cycleInfoTV.setText(cycleViolationReason.toLowerCase());
-                        cycleUsedTimeTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+                        if (LeftCycleHoursInt <= 0) {
+                            cycleInfoTV.setVisibility(View.VISIBLE);
+                            cycleInfoTV.setText(cycleViolationReason.toLowerCase());
+                            cycleUsedTimeTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+                        }
                     }
                 }
+
             }
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
 
     }
 
@@ -619,80 +627,87 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
     private void setDataOnStatusView(int status){
 
-        if(getActivity() != null) {
-            switch (status) {
+        try {
+            if (getActivity() != null) {
+                switch (status) {
 
-                case OFF_DUTY:
-                case SLEEPER:
+                    case OFF_DUTY:
+                    case SLEEPER:
 
-                    if (usedAndRemainingTimeSB != null) {
-                        setSBOffView((int) usedAndRemainingTimeSB.getSleeperBirthMinutes(), (int) usedAndRemainingTimeSB.getSleeperUsedMinutes());
-                    }
-                    break;
-
-
-                case DRIVING:
-
-                    setShiftEndTime();
-
-                    hosStatusImgVw.setImageResource(R.drawable.hos_driving);
-
-                    //set gradient color to circular progress view
-                    if (LeftDrivingHoursInt <= 0) {
-                        currentStatusCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
-                        statusInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
-                    } else {
-                        currentStatusCircularView.setBarColor(getResources().getColor(R.color.hos_current_status), getResources().getColor(R.color.colorVoilation));
-                        statusInfoTV.setTextColor(getResources().getColor(R.color.hos_current_status));
-                    }
-
-                    // Driving value settings
-                    setProgressbarValues(currentStatusCircularView, statusUsedTimeTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
-
-                    break;
+                        if (usedAndRemainingTimeSB != null) {
+                            setSBOffView((int) usedAndRemainingTimeSB.getSleeperBirthMinutes(), (int) usedAndRemainingTimeSB.getSleeperUsedMinutes());
+                        }
+                        break;
 
 
-                case ON_DUTY:
+                    case DRIVING:
 
-                    setShiftEndTime();
+                        setShiftEndTime();
 
-                    hosStatusImgVw.setImageResource(R.drawable.hos_status);
+                        hosStatusImgVw.setImageResource(R.drawable.hos_driving);
 
-                    //set gradient color to circular progress view
-                    if (LeftOnDutyHoursInt <= 0) {
-                        currentStatusCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
-                        statusInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
-                    } else {
-                        currentStatusCircularView.setBarColor(getResources().getColor(R.color.hos_current_status), getResources().getColor(R.color.colorVoilation));
-                    }
+                        //set gradient color to circular progress view
+                        if (LeftDrivingHoursInt <= 0) {
+                            currentStatusCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
+                            statusInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+                        } else {
+                            currentStatusCircularView.setBarColor(getResources().getColor(R.color.hos_current_status), getResources().getColor(R.color.colorVoilation));
+                            statusInfoTV.setTextColor(getResources().getColor(R.color.hos_current_status));
+                        }
 
-                    // OnDuty value settings
-                    setProgressbarValues(currentStatusCircularView, statusUsedTimeTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
+                        // Driving value settings
+                        setProgressbarValues(currentStatusCircularView, statusUsedTimeTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
 
-                    break;
+                        break;
+
+
+                    case ON_DUTY:
+
+                        setShiftEndTime();
+
+                        hosStatusImgVw.setImageResource(R.drawable.hos_status);
+
+                        //set gradient color to circular progress view
+                        if (LeftOnDutyHoursInt <= 0) {
+                            currentStatusCircularView.setBarColor(getResources().getColor(R.color.colorVoilation), getResources().getColor(R.color.colorVoilation));
+                            statusInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+                        } else {
+                            currentStatusCircularView.setBarColor(getResources().getColor(R.color.hos_current_status), getResources().getColor(R.color.colorVoilation));
+                        }
+
+                        // OnDuty value settings
+                        setProgressbarValues(currentStatusCircularView, statusUsedTimeTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
+
+                        break;
+
+                }
 
             }
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
     }
 
 
     void setShiftEndTime(){
-        if(getActivity() != null) {
-            if (LeftShiftHoursInt > 0) {
-                shiftInfoTV.setVisibility(View.VISIBLE);
-                shiftInfoTV.setTextColor(getResources().getColor(R.color.black_semi));
-                DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
-                DateTime endShiftDateTime = currentDateTime.plusMinutes(LeftShiftHoursInt);
-                String endDate = global.convertUSTtoMM_dd_yyyy_hh_mm(endShiftDateTime.toString());
-                Log.d("date", "converted Date: " + endDate);
-                shiftInfoTV.setText(Html.fromHtml("&nbsp; &nbsp; <b>Shift Ends At </b> <br/>" + endDate));
-            } else {
-                shiftInfoTV.setText(shiftViolationReson.toLowerCase());
-                shiftInfoTV.setVisibility(View.VISIBLE);
-                shiftInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+        try {
+            if (getActivity() != null) {
+                if (LeftShiftHoursInt > 0) {
+                    shiftInfoTV.setVisibility(View.VISIBLE);
+                    shiftInfoTV.setTextColor(getResources().getColor(R.color.black_semi));
+                    DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
+                    DateTime endShiftDateTime = currentDateTime.plusMinutes(LeftShiftHoursInt);
+                    String endDate = global.convertUSTtoMM_dd_yyyy_hh_mm(endShiftDateTime.toString());
+                    Log.d("date", "converted Date: " + endDate);
+                    shiftInfoTV.setText(Html.fromHtml("&nbsp; &nbsp; <b>Shift Ends At </b> <br/>" + endDate));
+                } else {
+                    shiftInfoTV.setText(shiftViolationReson.toLowerCase());
+                    shiftInfoTV.setVisibility(View.VISIBLE);
+                    shiftInfoTV.setTextColor(getResources().getColor(R.color.colorVoilation));
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -763,7 +778,6 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         try {
 
             calculateLocalOdometersDistance();
-            hosLocationTV.setText(Globally.LATITUDE + ", "+ Globally.LONGITUDE);
 
             if (isUpdateUI && global.isConnected(getActivity())) {
                 GetAddFromLatLng();
@@ -845,10 +859,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     } else {
                         shiftViolationReson = "";
                     }
+
                 }
-            }catch(Exception e){
+
+        }catch(Exception e){
                 e.printStackTrace();
-            }
+        }
 
         if (isUpdateUI) {
             getActivity().runOnUiThread(new Runnable() {
@@ -861,6 +877,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
                     setProgressbarValues(shiftCircularView, shiftUsedTimeTV, UsedShiftHoursInt, LeftShiftHoursInt);
                     setProgressViolationColor(shiftCircularView, LeftShiftHoursInt);
+
+                    hosLocationTV.setText(Globally.LATITUDE + ", "+ Globally.LONGITUDE);
 
                     // set Engine hour
                    /* String engineHours = SharedPref.getObdEngineHours(getActivity());

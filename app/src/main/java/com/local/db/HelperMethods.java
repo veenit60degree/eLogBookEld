@@ -3354,12 +3354,15 @@ public class HelperMethods {
 
         boolean isHaulExcptn;
         boolean isAdverseExcptn;
+        boolean isDeferral;
         if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             isHaulExcptn    = SharedPref.get16hrHaulExcptn(context);
             isAdverseExcptn = SharedPref.getAdverseExcptn(context);
+            isDeferral      = SharedPref.getDeferralForMain(context);
         }else{
             isHaulExcptn    = SharedPref.get16hrHaulExcptnCo(context);
             isAdverseExcptn = SharedPref.getAdverseExcptnCo(context);
+            isDeferral      = SharedPref.getDeferralForMain(context);
         }
 
         String DriverName = "";
@@ -3488,7 +3491,7 @@ public class HelperMethods {
                     CurrentDeviceDate,
                     String.valueOf(SharedPref.IsAOBRD(context)),
                     CurrentCycleId,
-                    "", "", "false"
+                    String.valueOf(isDeferral), "", "false"
 
             );
 

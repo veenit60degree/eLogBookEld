@@ -1,6 +1,7 @@
 package com.background.service;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
@@ -11,6 +12,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +23,12 @@ import android.os.Messenger;
 import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -42,9 +51,12 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.ShellUtils;
 import com.constants.TcpClient;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
+import com.messaging.logistic.SuggestedFragmentActivity;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
 import com.notifications.NotificationManagerSmart;
 import com.wifi.settings.WiFiConfig;
@@ -252,8 +264,14 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                         if (count == 0) {
                             SharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
                             Globally.PlaySound(getApplicationContext());
-                            Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
-                            SpeakOutMsg(AlertMsgSpeech);
+
+                            if(UILApplication.isActivityVisible()){
+                                signInAlertDialog();
+                            }else {
+                                Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
+                                SpeakOutMsg(AlertMsgSpeech);
+                            }
+
                         }
 
                         if (count >= TIME_INTERVAL_LIMIT) {
@@ -534,8 +552,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                     if(WheelBasedVehicleSpeed > 8 && lastVehSpeed > 8){
                                         SharedPref.setLoginAllowedStatus(false, getApplicationContext());
                                         Globally.PlaySound(getApplicationContext());
-                                        Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
-                                        SpeakOutMsg(AlertMsgSpeech);
+
+                                        if(UILApplication.isActivityVisible()){
+                                            signInAlertDialog();
+                                        }else {
+                                            Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
+                                            SpeakOutMsg(AlertMsgSpeech);
+                                        }
                                         //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
                                     }else{
                                         SharedPref.setLoginAllowedStatus(true, getApplicationContext());
@@ -568,6 +591,29 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     };
 
 
+
+
+
+    private void signInAlertDialog(){
+
+        final Dialog picker = new Dialog(getApplicationContext());
+        picker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        picker.setContentView(R.layout.dialog_signin_vehicle);
+
+        final Button signInOkBtn = (Button)picker.findViewById(R.id.signInOkBtn);
+        signInOkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                picker.dismiss();
+            }
+        });
+
+        if(getApplicationContext() != null) {
+            picker.show();
+        }
+
+    }
 
 
 

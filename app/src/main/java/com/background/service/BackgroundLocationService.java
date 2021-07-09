@@ -83,6 +83,7 @@ import com.local.db.CTPatInspectionMethod;
 import com.local.db.CertifyLogMethod;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.DeferralMethod;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.local.db.InspectionMethod;
@@ -101,7 +102,6 @@ import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
 import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
-import com.models.EldDataModelNew;
 import com.notifications.NotificationManagerSmart;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
@@ -170,6 +170,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     final int GetCtPat18DaysCoDriverLog     = 14;
     final int SaveDriverDeviceUsageLog      = 15;
     final int SaveMalDiagnstcEvent          = 16;
+    final int SaveDeferralMain              = 17;
+    final int SaveDeferralCo                = 18;
 
     final int GetRecapViewFlagMain          = 111;
     final int GetRecapViewFlagCo            = 112;
@@ -205,7 +207,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     int LocRefreshTime = 10;
     int CheckInternetConnection = 2;
     private static final long MIN_TIME_BW_UPDATES = 2 * 1000;   //30 sec. 30000 - 1/2 minute -- [960000 milli sec -- (16 minutes)]
-    private static final long MIN_TIME_LOCATION_UPDATES = 60 * 1000;   // 60 sec
+    private static final long MIN_TIME_LOCATION_UPDATES = 15 * 1000;   // 15 sec
     private static final long OBD_TIME_LOCATION_UPDATES = 10 * 1000;   // 10 sec
     private static final long IDLE_TIME_LOCATION_UPDATES = 3600 * 1000;   // 1 hour
 
@@ -231,6 +233,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     NotificationMethod notificationMethod;
     DriverPermissionMethod driverPermissionMethod;
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
+    DeferralMethod deferralMethod;
+
     CheckConnectivity checkConnectivity;
 
     Globally global;
@@ -268,8 +272,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     WiFiConfig wifiConfig;
     SyncingMethod syncingMethod;
     JSONArray savedSyncedArray;
+    JSONArray defMainDriverArray = new JSONArray();
+    JSONArray defCoDriverArray = new JSONArray();
+
     File syncingFile = new File("");
-    File DriverLogFile = new File("");
+    File ViolationFile = new File("");
 
 
     // ---------- Wired OBD Client setup ----------
@@ -346,6 +353,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         syncingMethod           = new SyncingMethod();
         driverPermissionMethod  = new DriverPermissionMethod();
         malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
+        deferralMethod          = new DeferralMethod();
 
         checkConnectivity       = new CheckConnectivity(getApplicationContext());
         MainDriverPref          = new MainDriverEldPref();
@@ -912,9 +920,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             } else {
                 // Disconnected State. Save only when last status was not already disconnected
                 if (isAlsNetworkConnected == false && lastObdStatus != constants.WIRED_DISCONNECTED) {
+
                     SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
                     if (ignitionStatus.equals("OFF")) {
                         SharedPref.SetTruckIgnitionStatus(ignitionStatus, constants.WiredOBD, global.getCurrentDate(), obdEngineHours, currentHighPrecisionOdometer, getApplicationContext());
+                    }
+
+                    if(UILApplication.isActivityVisible()){
+                        showEldEcmAlert();
                     }
                 }
 
@@ -928,6 +941,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
+    void showEldEcmAlert(){
+        try{
+            Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+            intent.putExtra(ConstantsKeys.PersonalUse75Km, false);
+            intent.putExtra(ConstantsKeys.IsEldEcmALert, true);
+            LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void bleInit() {
@@ -1178,6 +1202,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     ignitionStatus = "OFF";
                     SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
                     obdCallBackObservable(-1, SharedPref.getVehicleVin(getApplicationContext()), global.GetCurrentDateTime(), null);
+
+                    if(UILApplication.isActivityVisible()){
+                        showEldEcmAlert();
+                    }
                 }
 
 
@@ -1937,7 +1965,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         locationRequest = new LocationRequest();
         locationRequest.setInterval(time);
         locationRequest.setFastestInterval(time);
-        locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
     }
 
@@ -1950,7 +1978,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     MIN_TIME_LOCATION_UPDATES,
-                    200, locationListenerGPS);
+                    80, locationListenerGPS);
             Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (loc != null) {
                 Globally.LATITUDE = "" + loc.getLatitude();
@@ -3484,8 +3512,41 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
+    private void checkDeferralData(){
+        try{
+            if (SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver)) {
 
-    private void SyncData(){
+                // -----------------------------UnPosted inspection -----------------------------------
+                defMainDriverArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(DriverId), dbHelper);
+                defCoDriverArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(CoDriverId), dbHelper);
+
+                if (defMainDriverArray.length() > 0) {
+                    saveDriverLogPost.PostDriverLogData(defMainDriverArray, APIs.SAVE_DEFFERAL_EVENT, Constants.SocketTimeout10Sec, true, false,
+                            Integer.valueOf(DriverId), SaveDeferralMain);
+                }
+
+
+                if (defCoDriverArray.length() > 0) {
+                    saveDriverLogPost.PostDriverLogData(defCoDriverArray, APIs.SAVE_DEFFERAL_EVENT, Constants.SocketTimeout10Sec, true, false,
+                            Integer.valueOf(CoDriverId), SaveDeferralCo);
+                }
+
+            }else{
+                defMainDriverArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(DriverId), dbHelper);
+                if(defMainDriverArray.length() > 0){
+                    saveDriverLogPost.PostDriverLogData(defMainDriverArray, APIs.SAVE_DEFFERAL_EVENT, Constants.SocketTimeout10Sec, true, false,
+                            Integer.valueOf(DriverId), SaveDeferralMain);
+                }
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private void SyncData(boolean IsAutoSync){
 
         try {
 
@@ -3495,15 +3556,23 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 syncingFile = global.SaveFileInSDCard("Sync_", savedSyncedArray.toString(), false, getApplicationContext());
             }
 
-            DriverLogFile = global.GetSavedFile(getApplicationContext(),ConstantsKeys.ViolationTest, "txt");
-            Log.d("DriverLogFile","isDriverLogFile: "+DriverLogFile.exists());
-            Log.d("syncingFile","isSyncingFile: "+syncingFile.exists());
+            ViolationFile = global.GetSavedFile(getApplicationContext(),ConstantsKeys.ViolationTest, "txt");
 
-            if(DriverLogFile.exists() && syncingFile.exists() ) {
-                // Sync driver log API data to server with SAVE_LOG_TEXT_FILE (SAVE sync data service)
-                SyncDataUpload syncDataUpload = new SyncDataUpload(getApplicationContext(), DriverId, syncingFile, DriverLogFile, new File(""), true, asyncResponse);
-                syncDataUpload.execute();
+            if(IsAutoSync){
+                if(ViolationFile.exists() && syncingFile.exists() ) {
+                    // Sync driver log API data to server with SAVE_LOG_TEXT_FILE (SAVE sync data service)
+                    SyncDataUpload syncDataUpload = new SyncDataUpload(getApplicationContext(), DriverId, syncingFile, ViolationFile, new File(""), true, asyncResponse);
+                    syncDataUpload.execute();
+                }
+            }else{
+                // when AutoSync disabled only check violation file and post it on server
+                if(ViolationFile.exists() ) {
+                    syncingFile = null;
+                    SyncDataUpload syncDataUpload = new SyncDataUpload(getApplicationContext(), DriverId, syncingFile, ViolationFile, new File(""), true, asyncResponse);
+                    syncDataUpload.execute();
+                }
             }
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -3831,10 +3900,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     }
                                 }
 
-                                if (IsAutoSync) {
-                                    SyncData();
-                                }
 
+                                // Sync data automatically if violation file occured
+                                SyncData(IsAutoSync);
+
+                                checkDeferralData();
 
                             }
 
@@ -4013,10 +4083,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
 
 
-                    if (DriverLogFile != null && DriverLogFile.exists()) {
+                    if (ViolationFile != null && ViolationFile.exists()) {
                         msgTxt = "Data syncing is completed with violation log file";
-                        DriverLogFile.delete();
-                        DriverLogFile = null;
+                        ViolationFile.delete();
+                        ViolationFile = null;
                     }
 
 
@@ -4028,8 +4098,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     if(syncingFile != null && syncingFile.exists())
                         syncingFile.delete();
 
-                    if(DriverLogFile != null && DriverLogFile.exists())
-                        DriverLogFile.delete();
+                    if(ViolationFile != null && ViolationFile.exists())
+                        ViolationFile.delete();
                 }
 
             } catch (Exception e) {
@@ -4201,6 +4271,19 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             if (status.equals("true")) {
                 switch (flag) {
+
+                    case SaveDeferralMain:
+                        // clear main driver deferral events from local db
+                        deferralMethod.DeferralLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+
+                        break;
+
+                    case SaveDeferralCo:
+                        // clear main driver deferral events from local db
+                        deferralMethod.DeferralLogHelper(Integer.valueOf(CoDriverId), dbHelper, new JSONArray());
+
+                        break;
+
 
                     case SaveMainDriverLogData:
                         BackgroundLocationService.IsAutoChange = false;

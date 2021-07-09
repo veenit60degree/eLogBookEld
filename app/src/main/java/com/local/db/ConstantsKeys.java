@@ -131,6 +131,7 @@ public class ConstantsKeys {
 
     // --------------------- Odometer params -------------------------
     public static String VIN                    = "VIN";
+    public static String Odometer               = "Odometer";
     public static String StartOdometer          = "StartOdometer";
     public static String EndOdometer            = "EndOdometer";
     public static String DistanceType           = "DistanceType";
@@ -147,6 +148,8 @@ public class ConstantsKeys {
     public static String UTCEndDateTime         = "UTCEndDateTime";
     public static String CrntOdodmeter          = "CrntOdodmeter";
     public static String LocationType           = "LocationType";
+    public static String DeferralOffTime        = "DeferralOffTime";
+    public static String DayCount               = "DayCount";
 
 
     // --------------------- Inspection params -------------------------
@@ -245,6 +248,7 @@ public class ConstantsKeys {
     public static String MobileDeviceCurrentDateTime    = "MobileDeviceCurrentDateTime";
     public static String DrivingAllowedStatus           = "DrivingAllowedStatus";
     public static String DrivingAllowedStatusTime       = "DrivingAllowedStatusTime";
+    public static String IsEldEcmALert                  = "IsEldEcmALert";
 
     public static String IsUnidentified                 = "IsUnidentified";
     public static String IsMalfunction                  = "IsMalfunction";

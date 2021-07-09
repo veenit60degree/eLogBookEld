@@ -41,6 +41,18 @@
         />
 
 
+
+        <TextView
+            android:id="@+id/missingLocTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/MissingLoc"
+            android:textSize="@dimen/text_size_17"
+            android:textColor="@color/colorVoilation"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            />
+
         <ImageView
             android:id="@+id/noSignErrorImg"
             android:layout_width="@dimen/margin_17"

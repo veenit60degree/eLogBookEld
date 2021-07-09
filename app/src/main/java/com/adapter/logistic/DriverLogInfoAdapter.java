@@ -275,7 +275,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         holder.certifyRemarksTV.setTextColor(context.getResources().getColor(R.color.black));
         holder.certifyExcptnTV.setTextColor(context.getResources().getColor(R.color.black));
 
-        holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
+      //  holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
     }
 
 
@@ -287,18 +287,23 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         holder.certifyStartTimeTV.setText(StartTime);
         holder.certifyDurationTV.setText(LogItem.getDuration());
 
+
         if(currentCycle.equals(Globally.USA_WORKING_6_DAYS) || currentCycle.equals(Globally.USA_WORKING_7_DAYS)) {
-            if (LogItem.getLocation().contains("null")) {
+            String location = LogItem.getLocation();
+            if (location.contains("null") || location.equals(",") || location.equals("")) {
+                holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
                 holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
             } else {
+                holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                 holder.certifyLocationTV.setText(LogItem.getLocation());
             }
         }else{
-            if (LogItem.getLocationKm().contains("null")) {
+            String locationKm = LogItem.getLocationKm();
+            if (locationKm.contains("null") || locationKm.equals(",") || locationKm.equals("")) {
+                holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
                 holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
             } else {
-
-
+                holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                 holder.certifyLocationTV.setText(LogItem.getLocationKm());
             }
         }

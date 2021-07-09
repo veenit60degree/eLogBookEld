@@ -456,6 +456,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			e.printStackTrace();
 		}
 
+		UILApplication.activityResumed();
+
 
 	}
 
@@ -464,7 +466,16 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	@Override
 	protected void onPause() {
 		super.onPause();
+		UILApplication.activityPaused();
+
 	}
+
+	protected void onStop() {
+		super.onStop();
+		UILApplication.activityPaused();
+
+	}
+
 
 
 	void login() {
@@ -577,6 +588,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
 			SharedPref.SetWiredObdCallTime("", getApplicationContext());
 			SharedPref.setPersonalUse75Km(false, getApplicationContext());
+			SharedPref.setDeferralForMain(false, getApplicationContext());
+			SharedPref.setDeferralForCo(false, getApplicationContext());
+
 			//SharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getApplicationContext());
 			constants.saveMalfncnStatus(getApplicationContext(), false);
 
@@ -1125,13 +1139,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 	}
 
-	@Override
-	protected void onStop() {
-		super.onStop();
-		if(!IsLoginSuccess && IsTablet) {
-			//WiFiConf.ForgetWifiConfig(LoginActivity.this);
-		}
-	}
 
 
 }

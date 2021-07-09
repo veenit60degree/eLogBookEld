@@ -76,6 +76,20 @@
 
 
 
+        <TextView
+            android:id="@+id/updateVehTitleTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/select_truck_to_changee"
+            android:textSize="@dimen/text_size_21"
+            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/margin_23"
+            android:layout_marginLeft="@dimen/margin_20"
+            android:textStyle="bold"
+            android:visibility="invisible"
+
+            />
+
 
         <com.androidtrip.plugins.searchablespinner.SearchableSpinner
             android:id="@+id/searchableSpinner"

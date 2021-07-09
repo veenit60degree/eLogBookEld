@@ -1550,14 +1550,52 @@ public class Constants {
     }
 
 
-    public List<RecapSignModel> GetCertifySignList(RecapViewMethod recapViewMethod, String DRIVER_ID, DBHelper dbHelper,
-                                                   String currentDate, String CurrentCycleId, JSONObject logPermissionObj) {
+    boolean isLocationMissing (DateTime selectedDateTime, DateTime currentDateTime,
+                              JSONArray driverLogArray, HelperMethods hMethods, Globally Global){
+        boolean isLocMissing = false;
+        try {
+            boolean IsCurrentDate;
+            int dayDiff = Days.daysBetween(selectedDateTime.toLocalDate(), currentDateTime.toLocalDate()).getDays();
+            if(dayDiff == 0){
+                IsCurrentDate = true;
+            }else{
+                IsCurrentDate = false;
+            }
+
+            JSONArray selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime,
+                    currentDateTime, Globally.GetCurrentUTCDateTime(), IsCurrentDate, (int) Global.GetTimeZoneOffSet());
+
+            for(int i = 0 ; i < selectedArray.length(); i++){
+                JSONObject obj = (JSONObject)selectedArray.get(i);
+                String StartLocation = obj.getString(ConstantsKeys.StartLocation);
+                String StartLocationKm = obj.getString(ConstantsKeys.StartLocationKm);
+
+                if(StartLocation.equals("null") || StartLocation.equals(",") || StartLocation.length() == 0 ){
+                    if(StartLocationKm.equals("null") || StartLocationKm.equals(",") || StartLocationKm.length() == 0 ) {
+                        isLocMissing = true;
+                        break;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isLocMissing;
+    }
+
+    public List<RecapSignModel> GetCertifySignList(RecapViewMethod recapViewMethod, String DRIVER_ID,
+                                                   HelperMethods hMethods, DBHelper dbHelper,
+                                                   String currentDate, String CurrentCycleId,
+                                                   JSONObject logPermissionObj, Globally Global) {
         JSONArray recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
+        JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
         int arraylength = recap18DaysArray.length();
         int initilizeValue = 0;
         int daysValidationValue = 0;
         int DriverPermittedDays = GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, false);
         DateTime lastDateTime = new DateTime();
+        DateTime currentDateTime = new DateTime();
         List<RecapSignModel> recapSignatureList = new ArrayList<>();
 
         if (DriverPermittedDays > arraylength) {
@@ -1567,7 +1605,7 @@ public class Constants {
         if (arraylength > 0) {
             try {
                 String currentDateHalf = Globally.ConvertDateFormatyyyy_MM_dd(currentDate);
-                DateTime currentDateTime = Globally.getDateTimeObj(currentDateHalf + "T00:00:00", false );
+                currentDateTime = Globally.getDateTimeObj(currentDateHalf + "T00:00:00", false );
                 lastDateTime    = currentDateTime.minusDays(DriverPermittedDays);
 
                 JSONObject objLast = (JSONObject) recap18DaysArray.get(arraylength - 1);
@@ -1602,12 +1640,14 @@ public class Constants {
                     String date = Globally.ConvertDateFormatyyyy_MM_dd(obj.getString(ConstantsKeys.Date));
                     DateTime selectedDateTime = Globally.getDateTimeObj( date + "T00:00:00", false);
 
+                   boolean isLocationMissing = isLocationMissing(selectedDateTime, currentDateTime, driverLogArray, hMethods, Global);
+
                     if(selectedDateTime.isAfter(lastDateTime) || selectedDateTime.equals(lastDateTime)) {
                         String image = obj.getString(ConstantsKeys.LogSignImage);
                         if (image.length() == 0) {
-                            recapSignatureList.add(new RecapSignModel(false, selectedDateTime));
+                            recapSignatureList.add(new RecapSignModel(false, isLocationMissing, selectedDateTime));
                         }else{
-                            recapSignatureList.add(new RecapSignModel(true, selectedDateTime));
+                            recapSignatureList.add(new RecapSignModel(true, isLocationMissing, selectedDateTime));
                         }
                     }else{
                         break;

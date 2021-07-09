@@ -38,6 +38,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -237,6 +238,58 @@ public class Globally {
 	}
 
 
+	public void openDialog(){
+		/*final androidx.appcompat.app.AlertDialog.Builder alert = new androidx.appcompat.app.AlertDialog.Builder(LoginActivity.this);
+		View mView = getLayoutInflater().inflate(R.layout.dialog_engine_restarted,null);
+		alert.setView(mView);
+		final androidx.appcompat.app.AlertDialog alertDialog = alert.create();
+		alertDialog.setCanceledOnTouchOutside(false);
+		alertDialog.show();
+*/
+	}
+
+
+	public void InternetErrorDialog(Context context){
+		/*final Snackbar snackbar = Snackbar.make(v, "", Snackbar.LENGTH_LONG);
+		Activity activity = (Activity) context;
+		View customSnackView = activity.getLayoutInflater().inflate(R.layout.dialog_internet_connection, null);
+		snackbar.getView().setBackgroundColor(Color.TRANSPARENT);	//Color.parseColor("#99a8a8a8")
+		Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+		snackbarLayout.setPadding(0, 0, 0, 0);
+		snackbarLayout.addView(customSnackView, 0);
+		snackbar.show();*/
+
+
+		final Dialog picker = new Dialog(context);
+		picker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+		picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		picker.setContentView(R.layout.dialog_internet_connection);
+		picker.setCancelable(false);
+
+		picker.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+		lp.copyFrom(picker.getWindow().getAttributes());
+		lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+		lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+		lp.gravity = Gravity.BOTTOM;
+		picker.getWindow().setAttributes(lp);
+
+
+		final ImageView closeDialogImg = (ImageView) picker.findViewById(R.id.closeDialogImg);
+		closeDialogImg.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				picker.dismiss();
+			}
+		});
+
+		if(context != null) {
+			picker.show();
+		}
+
+	}
+
+
 
 	/*========================= Show Toast message =====================*/
 	public static void showToast(View view, String message) {
@@ -307,6 +360,7 @@ public class Globally {
 		}
 
 	}
+
 	/*========================= Show Toast message =====================*/
 	public static void EldToastWithDuration(View view, String message, int color) {
 
@@ -387,7 +441,8 @@ public class Globally {
 
 
 
-	public void AlertDialog(final Dialog AlertPicker, String title, String desc, String type, int notification, Activity activityReference){
+	public void AlertDialog(final Dialog AlertPicker, String title, String desc, String type, int notification,
+							Activity activityReference){
 
 		AlertPicker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		AlertPicker.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -937,6 +992,21 @@ public class Globally {
         return StringCurrentDate;
     }
 
+
+	public static DateTime GetCurrentJodaDateTime(){
+
+		SimpleDateFormat currentDateFormat = new SimpleDateFormat(DateFormat);
+		Calendar c = Calendar.getInstance();
+		DateTime date = new DateTime();
+		try {
+			String dateStr = currentDateFormat.format(c.getTime());
+			date = getDateTimeObj(dateStr, false);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return date;
+	}
 
 	public String getCurrentDateLocal(){
 		SimpleDateFormat currentDateFormat = new SimpleDateFormat(DateFormatLocal);
@@ -2277,6 +2347,7 @@ public class Globally {
             }catch (Exception e){ }
 
 			try {
+				//c.deleteDatabase(DBHelper.DATABASE_NAME);
 				DBHelper dbHelper            = new DBHelper(c);
 				dbHelper.DeleteTable();
 				dbHelper.DeleteShipmentTable();
@@ -2299,6 +2370,9 @@ public class Globally {
 				dbHelper.DeleteCtPatInspectionTable();
 				dbHelper.DeleteCtPat18DaysInspTable();
 				dbHelper.DeleteMalfunctionDiagnosticTable();
+				dbHelper.DeleteMalfunctionDiagnosticTable1();
+				dbHelper.DeleteMalDiaOccTimeTable();
+				dbHelper.DeletePowerComplianceTable();
 
 			}catch (Exception e){
 				e.printStackTrace();

@@ -979,7 +979,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
 
-            String truckTractorId = "", truckTractorVin = "", totalDisC = "", distanceToday = "",  currTotalDis = "", currTotalEng = "";
+            String truckTractorId = "", truckTractorVin = "", totalVehDistance = "", distanceToday = "",  currTotalDis = "", currTotalEng = "";
 
             JSONArray EngineHourArray = new JSONArray(dataObj.getString("EngineHourMilesReportList"));
             if(EngineHourArray.length() > 0) {
@@ -989,12 +989,12 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     if(i == 0) {
                         truckTractorId  = "" + (i+1) + ") "+ engineObj.getString("TruckEquipmentNo");
                         truckTractorVin = "" + (i+1) + ") "+ engineObj.getString("CMVVIN");
-                        totalDisC       = "" + (i+1) + ") "+ engineObj.getString("StartOdometr") + " - " + engineObj.getString("EndOdometer");
+                        totalVehDistance       = "" + (i+1) + ") "+ engineObj.getString("StartOdometr") + " - " + engineObj.getString("EndOdometer");
                         distanceToday   = "" + (i+1) + ") "+ engineObj.getString("DifferenceKM") ;
                     }else{
-                        truckTractorId = truckTractorId     + "\n" + (i+1) + ") "+ engineObj.getString("TruckEquipmentNo");
+                        truckTractorId  = truckTractorId     + "\n" + (i+1) + ") "+ engineObj.getString("TruckEquipmentNo");
                         truckTractorVin = truckTractorVin   + "\n" + (i+1) + ") "+ engineObj.getString("CMVVIN");
-                        totalDisC       = totalDisC         + "\n" + (i+1) + ") "+ engineObj.getString("StartOdometr") + " - " + engineObj.getString("EndOdometer");
+                        totalVehDistance= totalVehDistance  + "\n" + (i+1) + ") "+ engineObj.getString("StartOdometr") + " - " + engineObj.getString("EndOdometer");
                         distanceToday   = distanceToday     + "\n" + (i+1) + ") "+ engineObj.getString("DifferenceKM") ;
                     }
 
@@ -1010,7 +1010,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
             truckTractorIdTV.setText(truckTractorId);
             truckTractorVinTV.setText(truckTractorVin);
-            totalDisCTV.setText(totalDisC);
+            totalDisCTV.setText(totalVehDistance);
             distanceTodayCTV.setText(distanceToday);
             currTotalDisTV.setText(currTotalDis);
             currTotalEngTV.setText(currTotalEng);

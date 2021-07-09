@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+
+    >
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/media_white_drawable"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingBottom="@dimen/view_height_30"
+            android:paddingTop="@dimen/margin_20"
+            android:paddingLeft="@dimen/view_height_80"
+            android:paddingRight="@dimen/view_height_80"
+            >
+
+        <TextView
+            android:id="@+id/continueStatusTitleTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_10"
+            android:text="@string/Engine_Restarted"
+            android:textSize="@dimen/text_size_18"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+
+            />
+
+        <TextView
+            android:id="@+id/continueStatusDescTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_12"
+            android:text="@string/Lorem_ipsum_placeholder_text"
+            android:textSize="@dimen/text_size_14"
+            android:gravity="center_horizontal"
+            android:paddingLeft="@dimen/margin_20"
+            android:paddingRight="@dimen/margin_20"
+
+            />
+
+
+        <Button
+            android:id="@+id/continueStatusBtn"
+            android:layout_width="@dimen/view_height_300"
+            android:layout_height="@dimen/view_height_44"
+            android:layout_marginTop="@dimen/margin_25"
+            android:text="@string/stay_in_personel"
+            android:textSize="@dimen/text_size_17"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/green_selector"
+
+            />
+
+
+        <Button
+            android:id="@+id/changeStatusBtn"
+            android:layout_width="@dimen/view_height_300"
+            android:layout_height="@dimen/view_height_44"
+            android:layout_marginTop="@dimen/margin_15"
+            android:text="@string/go_off_duty"
+            android:textSize="@dimen/text_size_17"
+            android:textAllCaps="false"
+            android:textColor="@color/bluee_login"
+            android:background="@drawable/login_driver_btn_selector"
+
+            />
+
+        </LinearLayout>
+
+</LinearLayout>

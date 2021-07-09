@@ -338,7 +338,49 @@
 
 
 
-            <RelativeLayout
+                <RelativeLayout
+                    android:id="@+id/deferralRuleLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_60"
+                    android:paddingRight="@dimen/margin_15"
+                    android:visibility="gone"
+                    >
+
+                    <TextView
+                        android:id="@+id/deferralTxtView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/deferral_rule"
+                        android:layout_marginLeft="@dimen/margin_15"
+                        android:textColor="@color/bluee_login"
+                        android:textSize="@dimen/text_size_23"
+                        android:textStyle="bold"
+                        android:layout_centerVertical="true"
+                        />
+
+
+
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/deferralSwitchButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:checked="false"
+                        app:theme="@style/Custom.Widget.SwitchCompat"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+
+
+                        />
+
+
+                </RelativeLayout>
+
+
+
+
+                <RelativeLayout
                 android:id="@+id/haulExceptionLay"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/view_height_60"

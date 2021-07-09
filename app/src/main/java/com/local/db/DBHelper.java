@@ -43,6 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_MALFUNCTION_DIANOSTIC1= "tbl_mal_diagnostic_one";
     public static final String TABLE_MAL_DIA_OCCURRED_TIME = "tbl_mal_dia_occurred_time";
     public static final String TABLE_POWER_COMP_MAL_DIA    = "tbl_power_comp_mal_dia";
+    public static final String TABLE_DEFERRAL_RULE         = "tbl_deferral_rule";
 
 
     public static final String DRIVER_ID_KEY              = "driver_id";
@@ -72,6 +73,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String MALFUNCTION_DIANOSTIC_LIST1 = "oDriver_mal_diagnstc_list_one";
     public static final String MAL_DIA_OCCURRED_TIME_LIST  = "oDriver_mal_diagnstc_occurred_list";
     public static final String POWER_COMP_MAL_DIA_LIST     = "oDriver_power_comp_mal_dia_list";
+    public static final String DEFERRAL_RULE_LIST          = "oDriver_deferral_rule_list";
 
 
     public DBHelper(Context context) {
@@ -177,6 +179,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 PROJECT_ID_KEY + " INTEGER, " +  POWER_COMP_MAL_DIA_LIST + " TEXT )"
         );
 
+        db.execSQL( "CREATE TABLE " + TABLE_DEFERRAL_RULE + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  DEFERRAL_RULE_LIST + " TEXT )"
+        );
+
 
     }
 
@@ -206,6 +212,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALFUNCTION_DIANOSTIC1);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAL_DIA_OCCURRED_TIME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POWER_COMP_MAL_DIA);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DEFERRAL_RULE);
 
         onCreate(db);
     }
@@ -215,6 +222,7 @@ public class DBHelper extends SQLiteOpenHelper {
     // ==========================================================================================
     /* ---------------------- Create Driver Log table if not exist -------------------- */
     public void CreateDriverLogTable(){
+       // DROP DATABASE DATABASE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
         db.execSQL( "CREATE TABLE " + TABLE_DRIVER_LOG +  "(" +
                 DRIVER_ID_KEY + " INTEGER, " +  DRIVER_LOG_LIST + " TEXT )"  );
@@ -439,6 +447,18 @@ public class DBHelper extends SQLiteOpenHelper {
         );
 
     }
+
+
+    /* -- Create deferral rule table if not exist.*/
+    public void CreateDefferalTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL( "CREATE TABLE " + TABLE_DEFERRAL_RULE + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  DEFERRAL_RULE_LIST + " TEXT )"
+        );
+
+    }
+
+
 
 
 
@@ -789,6 +809,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Insert deferral events  Log -------------------- */
+    public boolean InsertDeferralLog(int DriverId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(DEFERRAL_RULE_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_DEFERRAL_RULE, null, contentValues);
+        return true;
+    }
+
+
+
+
 
 
 
@@ -1127,6 +1163,22 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ---------------------- Update Deferral Log -------------------- */
+    public boolean UpdateDeferralLog(int DriverId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(DEFERRAL_RULE_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_DEFERRAL_RULE, contentValues, DRIVER_ID_KEY + " = ? ", new String[] { Integer.toString(DriverId) } );
+        return true;
+    }
+
+
+
+
 
 
 
@@ -1338,6 +1390,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 PROJECT_ID_KEY + "=?", new String[]{Integer.toString(ProjectId)});
         return res;
     }
+
+
+
+    /* ---------------------- Get deferral event log-------------------- */
+    public Cursor getDeferralLog(int DriverId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_DEFERRAL_RULE + " WHERE " +
+                DRIVER_ID_KEY + "=?", new String[]{Integer.toString(DriverId)});
+        return res;
+    }
+
 
 
 
@@ -1607,6 +1670,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ------ Delete Deferral time Log Table ------ */
+    public void DeleteDeferralTable() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_DEFERRAL_RULE);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
 
 
 
@@ -1706,6 +1780,9 @@ public class DBHelper extends SQLiteOpenHelper {
             CreatePowerComplianceTable();
         }
 
+        if(!isTableExists(TABLE_DEFERRAL_RULE)) {
+            CreateDefferalTable();
+        }
 
     }
 

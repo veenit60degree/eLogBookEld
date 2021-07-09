@@ -56,7 +56,9 @@ import com.constants.VolleyRequest;
 import com.custom.dialogs.AdverseRemarksDialog;
 import com.custom.dialogs.ChangeCycleDialog;
 import com.custom.dialogs.ConfirmationDialog;
+import com.custom.dialogs.DeferralDialog;
 import com.custom.dialogs.ObdDataInfoDialog;
+import com.local.db.DeferralMethod;
 import com.models.CycleModel;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
@@ -94,6 +96,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import models.DriverDetail;
+import models.DriverLog;
+import models.RulesResponseObject;
+import webapi.LocalCalls;
+
 
 public class SettingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener{
 
@@ -105,9 +112,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     Button SettingSaveBtn;
     ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView, canEditImgView, usEditImgView;
     LoadingSpinImgView settingSpinImgVw;
-    RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn, obdDiagnoseBtn, docBtn;
+    RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn,
+            obdDiagnoseBtn, docBtn, deferralRuleLay;
     LinearLayout settingsMainLay;
-    SwitchCompat haulExceptnSwitchButton, adverseSwitchButton;
+    SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton;
     List<CycleModel> CanCycleList;
     List<CycleModel> UsaCycleList;
     List<TimeZoneModel> TimeZoneList;
@@ -121,6 +129,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     SyncingMethod syncingMethod;
     DBHelper dbHelper;
     HelperMethods hMethods;
+    DeferralMethod deferralMethod;
+
     Constants constant;
     Map<String, String> params;
 
@@ -141,6 +151,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     ProgressDialog progressDialog;
     ConfirmationDialog confirmationDialog;
     AdverseRemarksDialog adverseRemarksDialog;
+    DeferralDialog deferralDialog;
+
     CheckConnectivity connectivityTask;
     File syncingFile = new File("");
     File coDriverSyncFile = new File("");
@@ -153,6 +165,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     VolleyRequest GetAppUpdateRequest, GetDriverLogPostPermission, getCycleChangeApproval, ChangeCycleRequest, OperatingZoneRequest ;
     final int GetAppUpdate  = 1, DriverLogPermission = 2, CycleChangeApproval = 3, ChangeCycle = 4, OperatingZone = 5;
     int DriverType = 0;
+    int leftOffOrSleeperMin = 0;
     long progressPercentage = 0;
     boolean isNorthCanada = false;
     boolean IsLogPermission = false, IsDownloading = false, IsManualAppDownload = false;
@@ -172,8 +185,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     AlertDialog enableExceptionAlert;
     private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
 
+    LocalCalls localCalls;
+
     boolean isHaulExcptn = false;
     boolean isAdverseExcptn = false;
+    boolean isDeferral = false;
     boolean isCoDriverSync = false;
 
     @Override
@@ -201,6 +217,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     void initView(View v) {
 
+        localCalls                  = new LocalCalls();
         constants                   = new Constants();
         global                      = new Globally();
         GetAppUpdateRequest         = new VolleyRequest(getActivity());
@@ -217,6 +234,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         dbHelper                    = new DBHelper(getActivity());
         hMethods                    = new HelperMethods();
         syncingMethod               = new SyncingMethod();
+        deferralMethod              = new DeferralMethod();
         constant                    = new Constants();
 
         checkConnectivity           = new CheckConnectivity(getActivity());
@@ -264,11 +282,13 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         checkInternetBtn     = (RelativeLayout) v.findViewById(R.id.checkInternetBtn);
         obdDiagnoseBtn       = (RelativeLayout) v.findViewById(R.id.obdDiagnoseBtn);
         docBtn               = (RelativeLayout) v.findViewById(R.id.docBtn);
+        deferralRuleLay      = (RelativeLayout) v.findViewById(R.id.deferralRuleLay);
 
         rightMenuBtn         = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
         settingsMainLay      = (LinearLayout)v.findViewById(R.id.settingsMainLay);
 
         downloadProgressBar  = (CircularProgressBar) v.findViewById(R.id.downloadProgressBar);
+        deferralSwitchButton   = (SwitchCompat)v.findViewById(R.id.deferralSwitchButton);
         haulExceptnSwitchButton = (SwitchCompat)v.findViewById(R.id.haulExceptnSwitchButton);
         adverseSwitchButton = (SwitchCompat)v.findViewById(R.id.adverseSwitchButton);
 
@@ -295,6 +315,69 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         if (global.isConnected(getActivity())) {
             getCycleChangeApproval(DriverId, DeviceId, CompanyId);
         }
+
+
+        deferralSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(buttonView.isPressed()) {
+                    if (isChecked) {
+                        List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId),
+                                global.GetCurrentJodaDateTime(),
+                                global.GetCurrentUTCDateTime(), dbHelper);
+
+                        DriverDetail oDriverDetail = hMethods.getDriverList(global.GetCurrentJodaDateTime(),
+                                global.GetCurrentUTCDateTime(), Integer.valueOf(DriverId),
+                                (int) global.GetTimeZoneOffSet(), Integer.valueOf(CurrentCycleId),
+                                global.isSingleDriver(getActivity()),
+                                Integer.valueOf(SharedPref.getDriverStatusId(getActivity())), false,
+                                isHaulExcptn, isAdverseExcptn, isNorthCanada,
+                                SharedPref.GetRulesVersion(getActivity()), oDriverLogDetail);
+
+                        RulesResponseObject deferralObj = localCalls.IsEligibleDeferralRule(oDriverDetail);
+
+                        if (deferralObj.isDeferralEligible()) {
+
+                            leftOffOrSleeperMin = (int) deferralObj.getLeftOffOrSleeperMinutes();
+
+                            try {
+                                if (deferralDialog != null && deferralDialog.isShowing())
+                                    deferralDialog.dismiss();
+
+                                deferralDialog = new DeferralDialog(getActivity(), leftOffOrSleeperMin, new DeferralListener());
+                                deferralDialog.show();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        } else {
+                            buttonView.setChecked(false);
+                            global.EldScreenToast(SyncDataBtn, "You are not eligible for Deferral rule.", getResources().getColor(R.color.colorVoilation));
+                        }
+                    }else{
+                        buttonView.setChecked(true);
+                        global.EldScreenToast(SyncDataBtn, "Need Deferral rule disabled desc.", getResources().getColor(R.color.colorPrimary));
+
+                       /* if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                            SharedPref.setDeferralForMain(false, getActivity());
+                        }else{
+                            SharedPref.setDeferralForCo(false, getActivity());
+                        }
+
+
+                        hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_deferral_rule),
+                                LocationType, "", false, isNorthCanada, DriverType, constants,
+                                MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                                syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
+
+*/
+                    }
+                }
+            }
+        });
+
 
         haulExceptnSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -340,7 +423,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
                                         adverseRemarksDialog.dismiss();
 
-                                    adverseRemarksDialog = new AdverseRemarksDialog(getActivity(), true, false, false, new RemarksListener());
+                                    adverseRemarksDialog = new AdverseRemarksDialog(getActivity(), true,
+                                            false, false, new RemarksListener());
                                     adverseRemarksDialog.show();
 
                                 } catch (Exception e) {
@@ -457,6 +541,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         getExceptionStatus();
         haulExceptnSwitchButton.setChecked(isHaulExcptn);
         adverseSwitchButton.setChecked(isAdverseExcptn);
+        deferralSwitchButton.setChecked(isDeferral);
 
         if(constants.isLocMalfunctionEvent(getActivity(), DriverType) && SharedPref.getLocMalfunctionType( getContext()).equals("x")){
             // SharedPref.setLocMalfunctionType("m", getContext());
@@ -512,9 +597,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
             isHaulExcptn    = SharedPref.get16hrHaulExcptn(getActivity());
             isAdverseExcptn = SharedPref.getAdverseExcptn(getActivity());
+            isDeferral      = SharedPref.getDeferralForMain(getActivity());
         }else{
-            isHaulExcptn = SharedPref.get16hrHaulExcptnCo(getActivity());
+            isHaulExcptn    = SharedPref.get16hrHaulExcptnCo(getActivity());
             isAdverseExcptn = SharedPref.getAdverseExcptnCo(getActivity());
+            isDeferral      = SharedPref.getDeferralForCo(getActivity());
         }
     }
 
@@ -1093,7 +1180,42 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 */
 
+    private class DeferralListener implements DeferralDialog.DeferralListener{
 
+        @Override
+        public void JobBtnReady() {
+
+            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                SharedPref.setDeferralForMain(true, getActivity());
+            }else{
+                SharedPref.setDeferralForCo(true, getActivity());
+            }
+
+            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.Deferralenabled), getResources().getColor(R.color.colorPrimary));
+
+            JSONArray savedDeferralArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(DriverId), dbHelper);
+            JSONObject deferralObj = deferralMethod.GetDeferralJson(DriverId, DeviceId, TruckNumber, CompanyId,
+                    Globally.LATITUDE, Globally.LONGITUDE, SharedPref.getObdEngineHours(getActivity()),
+                    SharedPref.getHighPrecisionOdometer(getActivity()),
+                    ""+leftOffOrSleeperMin, "1");
+            savedDeferralArray.put(deferralObj);
+
+            // save deferral event inn local db and push automatically later. Reason behind this to save in offline also when internet is not working.
+            deferralMethod.DeferralLogHelper(Integer.valueOf(DriverId), dbHelper, savedDeferralArray);
+
+           /* hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_deferral_rule),
+                    LocationType, "", false, isNorthCanada, DriverType, constants,
+                    MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                    syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
+
+*/
+        }
+
+        @Override
+        public void CancelBtnReady() {
+            deferralSwitchButton.setChecked(false);
+        }
+    }
 
     private class RemarksListener implements AdverseRemarksDialog.RemarksListener{
 
@@ -1132,6 +1254,21 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             }catch (Exception e){
                 e.printStackTrace();
             }
+
+          /*  try {
+                // creating log when haul exception is not enabled to check log array
+                int currentStatus = Integer.valueOf(SharedPref.getDriverStatusId(getActivity()));
+                constants.writeViolationFile(global.getDateTimeObj(global.getCurrentDate(), false),
+                        global.GetCurrentUTCDateTime(),
+                        Integer.valueOf(DriverId), CurrentCycleId,
+                        (int) global.GetTimeZoneOffSet(),
+                        global.isSingleDriver(getActivity()),
+                        currentStatus, false, isHaulExcptn,
+                        "Not able to allow Adverse Exception.",
+                        hMethods, dbHelper, getActivity());
+            }catch (Exception e){
+                e.printStackTrace();
+            }*/
 
         }
     }
@@ -1803,13 +1940,13 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             opZoneTmgView.setVisibility(View.VISIBLE);
             canEditImgView.setVisibility(View.VISIBLE);
             usEditImgView.setVisibility(View.GONE);
+            deferralRuleLay.setVisibility(View.VISIBLE);
 
             if(isNorthCanada) {
                 operatingZoneTV.setText(getString(R.string.OperatingZoneNorth));
             }else{
                 operatingZoneTV.setText(getString(R.string.OperatingZoneSouth));
             }
-
         }else{
             caCurrentCycleTV.setVisibility(View.GONE);
             usCurrentCycleTV.setVisibility(View.VISIBLE);
@@ -1817,6 +1954,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             canEditImgView.setVisibility(View.GONE);
             usEditImgView.setVisibility(View.VISIBLE);
             operatingZoneTV.setText(getString(R.string.OperatingZoneUS));
+            deferralRuleLay.setVisibility(View.GONE);
         }
     }
 
@@ -1933,6 +2071,21 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     SharedPref.set16hrHaulExcptn(false, getActivity());
                                 }else{
                                     SharedPref.set16hrHaulExcptnCo(false, getActivity());
+                                }
+
+                                try {
+                                    // creating log when haul exception is not enabled to check log array
+                                    int currentStatus = Integer.valueOf(SharedPref.getDriverStatusId(getActivity()));
+                                    constants.writeViolationFile(global.getDateTimeObj(global.getCurrentDate(), false),
+                                            global.GetCurrentUTCDateTime(),
+                                            Integer.valueOf(DriverId), CurrentCycleId,
+                                            (int) global.GetTimeZoneOffSet(),
+                                            global.isSingleDriver(getActivity()),
+                                            currentStatus, false, isHaulExcptn,
+                                            "Not able to allow 16 hr Haul Exception.",
+                                            hMethods, dbHelper, getActivity());
+                                }catch (Exception e){
+                                    e.printStackTrace();
                                 }
 
                             }

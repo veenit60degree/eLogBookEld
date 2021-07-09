@@ -53,6 +53,7 @@
 
     <string name="per_day">(as per day)</string>
     <string name="per_shift">(as per shift)</string>
+    <string name="Deferralenabled">Deferral rule enabled</string>
     <string name="advrs_excptn_enabled">Adverse exception enabled</string>
     <string name="haul_excptn_enabled">16 hour short haul exception enabled</string>
     <string name="cycle_change_check">You can change Cycle in Sleeper/OffDuty.</string>
@@ -156,6 +157,7 @@
     <string name="Operating_zone">Operating Zone </string>
     <string name="take_16_hour_exc">16 Hour Short Haul Exception </string>
     <string name="adverse_excp">Adverse Exception </string>
+    <string name="deferral_rule">Deferral Rule</string>
     <string name="adverse_excp_enabled">Adverse Exception Enabled</string>
     <string name="short_haul_excp_enabled">Short Haul Exception Enabled</string>
     <string name="adverse">Adverse</string>
@@ -431,6 +433,7 @@
     <string name="Affixed_seal_hint">Affixed seals Person</string>
     <string name="Physical_intgrty_hint">Physical integrity Person</string>
 
+    <string name="MissingLoc">Missing Location</string>
     <string name="view_less">View Less</string>
     <string name="view_more">View More</string>
     <string name="date">Date </string>
@@ -554,6 +557,55 @@
     <string name="pc_end">PC End</string>
     <string name="ym_start">YM Start</string>
     <string name="ym_end">YM End</string>
+
+    <string name="Day1ofDeferral">Day 1 of Deferral</string>
+    <string name="ReviewConfirmDef">Review and confirm your off duty deferral</string>
+    <string name="YestrdyYouDef">Yesterday you deferred some of off duty time that you must use today</string>
+    <string name="youCanDef">You can defer up to 2 hours 0 min of OffDuty time. You must use this tomorrow.</string>
+    <string name="timeToDef">Time to Defer</string>
+
+
+    <!-- dialog text sign in vehicle-->
+    <string name="sign_in_vehicle">Sign in to vehicle</string>
+    <string name="sign_in_vehicle_hint">Please stop the vehicle and sign in \n to log your hours.</string>
+
+    <!--operating zone change-->
+    <string name="operating_zone_changee">Operating Zone Change</string>
+    <string name="operating_zone_hint">your available Driving time and required off duty time may change as a result.</string>
+    <string name="from_colomn">From:</string>
+    <string name="canada_south">Canada South Cycle 1</string>
+    <string name="to_colomn">To:</string>
+    <string name="canada_north">Canada North Cycle 1</string>
+    <string name="Cancel">Cancel</string>
+
+
+    <!--current hos configuration-->
+    <string name="current_hos_configu">Current HOS Configuration</string>
+    <string name="ELD_Exempt">ELD Exempt</string>
+    <string name="current_hos_hintt">Not required to keep a record of duty status or subject to hours of service limits</string>
+    <string name="Yard_Move_Disabled">Yard Move (YM) Disabled</string>
+    <string name="personel_conveyense">Personal Conveyance (PC) Disabled</string>
+
+    <!--engine restarted-->
+    <string name="Lorem_ipsum_placeholder_text">Lorem ipsum is a placeholder text</string>
+    <string name="Engine_Restarted">Engine Restarted</string>
+    <string name="LoginConfirmation">After Login Confirmation !!</string>
+    <string name="go_off_duty">Go off Duty</string>
+    <string name="stay_in_personel">Stay in Personal Conveynce</string>
+    <string name="stay_in_yard_move">Stay in Yard Move</string>
+    <string name="Others">Others</string>
+    <string name="want_continue">Do you want to continue with</string>
+
+
+    <!-- duty status changes -->
+    <string name="location_missing_dutystatus">Location is missing for duty status changes</string>
+    <string name="manually_add">Manually Add</string>
+
+    <!--internet connection-->
+    <string name="Limited_ELD_Connection">Limited ELD Connection</string>
+    <string name="internet_hint">The ELD is not receiving data from the engine of the selected vehicle, which may result in incomplete data being recorded for some events.</string>
+
+
 
     <string name="pre_trip_unloading">Pre-Trip + unloading</string>
     <string name="pre_trip">Pre-Trip</string>
@@ -706,7 +758,7 @@
     <string name="disable_ShortHaul_exception">DisableShortHaulException</string>
     <string name="enable_adverse_exception">EnableAdverseException</string>
     <string name="enable_ShortHaul_exception">EnableShortHaulException</string>
-
+    <string name="enable_deferral_rule">EnableDeferralRule</string>
 
     <string name="already_uploading">Please wait! Data saving in progress</string>
     <string name="already_refreshed">Please wait. Data is refreshing</string>

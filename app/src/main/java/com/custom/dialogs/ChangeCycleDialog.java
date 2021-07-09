@@ -88,7 +88,7 @@ public class ChangeCycleDialog extends Dialog {
         btnChangeCycle.setText(getContext().getString(R.string.change));
        // cancelPopupButton.setText(getContext().getString(R.string.no));
 
-        changeCycleDescTV.setTextColor(getContext().getResources().getColor(R.color.black_hover));
+        changeCycleDescTV.setTextColor(getContext().getResources().getColor(R.color.splash_gray));
         cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.black_hover));
 
         boolean OperatingZoneChange = false;

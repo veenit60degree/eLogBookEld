@@ -295,10 +295,12 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         // GetDriverLog18Days(DRIVER_ID, DeviceId, Global.GetCurrentUTCDate(), GetDriverLog18Days);
                     } else {
 
-
                         if (prevStartDate.equals(CurrentDate)) {     // Means both date are same
-                            CycleTimeCalculation(currentDateTime, currentUTCTime, isSingleDriver, DRIVER_JOB_STATUS,
-                                    DriverType, driverLogArray, hMethods, dbHelper, serviceResponse);
+                            DateTime lastItemStartTime = Global.getDateTimeObj(lastJsonItem.getString(ConstantsKeys.startDateTime), false);
+                            if(currentDateTime.isAfter(lastItemStartTime)) {
+                                CycleTimeCalculation(currentDateTime, currentUTCTime, isSingleDriver, DRIVER_JOB_STATUS,
+                                        DriverType, driverLogArray, hMethods, dbHelper, serviceResponse);
+                            }
                         } else {
                             // When date is changed or new day is started..
 
@@ -1152,6 +1154,13 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             isPersonal      = "false";
             isYardMove      = "false";
 
+            boolean isDeferral;
+            if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+                isDeferral      = SharedPref.getDeferralForMain(context);
+            }else{
+                isDeferral      = SharedPref.getDeferralForMain(context);
+            }
+
             String plateNo = SharedPref.GetCurrentTruckPlateNo(context);
 
                 locationModel = new EldDataModelNew(
@@ -1190,7 +1199,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         CurrentDeviceDate,
                         String.valueOf(SharedPref.IsAOBRD(context)),
                         CurrentCycleId,
-                        "", "", "false"
+                        String.valueOf(isDeferral), "", "false"
 
 
 
@@ -1280,18 +1289,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
         JSONObject lastItemUpdatedJson = hMethods.UpdateLastJsonFromArray(driverLogArray, StartDeviceCurrentTime, StartUTCCurrentTime,  LastJobTotalMin);
 
-        /*try {
-
-        startLoc = lastItemUpdatedJson.getString(ConstantsKeys.StartLocation);
-        endLoc   = lastItemUpdatedJson.getString(ConstantsKeys.EndLocation);
-
-        address = endLoc.trim();
-        if(address.length() == 0){
-            address = startLoc;
-        }
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
         if(City.length() != 0 && State.length() != 0){
             address = City + ", " + State + ", " + Country;
         }else{

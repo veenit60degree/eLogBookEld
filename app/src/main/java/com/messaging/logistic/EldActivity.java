@@ -214,12 +214,8 @@ public class EldActivity extends FragmentActivity  {
                     Constants.IsEdiLogBackStack = true;
                 }
                 if (count > 1) {
-                    if (count == 2) {
-                        if (SharedPref.IsDOT(getApplicationContext())) {
-                            ConfirmDOT();
-                        } else {
-                            fragManager.popBackStack();
-                        }
+                    if (count > 2) {
+                        fragManager.popBackStack();
                     } else {
                         if(SharedPref.IsDOT(getApplicationContext())){
                             ConfirmDOT();
