@@ -1622,7 +1622,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         try {
 
-            if(status.equals("not_saved")) {
+            if(!status.equals("not_saved")) {
                 // save current HighPrecisionOdometer in DB
                 SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
 

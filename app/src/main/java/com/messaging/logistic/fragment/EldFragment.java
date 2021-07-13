@@ -2536,7 +2536,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             DateTime currentTime = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), false);
 
             int secDiff = currentTime.getSecondOfDay() - lastSavedRefreshTime.getSecondOfDay();
-            if (secDiff > 20) {  // 20 sec diff
+            if (secDiff > 10) {  // 10 sec diff
                 onResumeDataSet(isConnected);
                 SharedPref.setRefreshDataTime(Global.GetCurrentUTCTimeFormat(), getActivity());
                 IsRefreshedClick = true;

@@ -500,6 +500,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
                 oDriverLogDetail = new ArrayList<DriverLogModel>();
 
+                DateTime lastRecordEndTime = null;
                 for(int i = 0 ; i < tempLogArray.length() ; i++) {
                     try {
                         tempTotalArray.put(tempLogArray.get(i));
@@ -514,18 +515,39 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                                 IsWrongDateEditLog = true;
                                 violationMsg = "Incorrect Time. Day start time should be 00:00";
                             }
-                        }
-
-                        if(!IsCurrentDate){
-                            if(i == tempLogArray.length()-1){
-                                String time = logObj.getString(ConstantsKeys.endDateTime).substring(11, 16);
-                                if(!time.equals("23:59")){
-                                    IsWrongDateEditLog = true;
-                                    violationMsg = "Incorrect Time. Day end time should be 23:59";
+                        }else{
+                             if(!IsCurrentDate){
+                                if(i == tempLogArray.length()-1){
+                                    String time = logObj.getString(ConstantsKeys.endDateTime).substring(11, 16);
+                                    if(!time.equals("23:59")){
+                                        IsWrongDateEditLog = true;
+                                        violationMsg = "Incorrect Time. Day end time should be 23:59";
+                                    }
                                 }
                             }
+
+                            DateTime currentLogStartTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.startDateTime), false);
+                            DateTime currentLogEndTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
+
+                            String pos = "";
+                            if(i == 1){
+                                pos = "2nd";
+                            }else if(i == 2){
+                                pos = "3rd";
+                            }else{
+                                pos = "" + (i+1) + "th";
+                            }
+                             if(!lastRecordEndTime.equals(currentLogStartTime)){
+                                 IsWrongDateEditLog = true;
+                                 violationMsg = "Incorrect Time. Start time is not matching in " + pos + " position with previous log End Time.";
+                             }else if(currentLogEndTime.isBefore(currentLogStartTime)){
+                                 IsWrongDateEditLog = true;
+                                 violationMsg = "Incorrect Time. Start time is greater then End time in "+ pos + " position.";
+                             }
                         }
 
+
+                        lastRecordEndTime = global.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
 
 
 
@@ -598,8 +620,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
                 logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail);
 
-                //LoadAdapterOnListView();
-                setRecyclerAdapter();
+              //  if(IsWrongDateEditLog == false) {
+                    //LoadAdapterOnListView();
+                    setRecyclerAdapter();
+               // }
 
                 try {
                     new Handler().postDelayed(new Runnable() {
@@ -609,6 +633,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                             if (getActivity() != null) {
                                 if (IsWrongDateEditLog) {
                                     global.EldScreenToast(eldMenuBtn, violationMsg, getResources().getColor(R.color.colorVoilation));
+                                    IsWrongDateEditLog = false;
                                 } else {
                                     if (logArray.length() > 0) {
                                         previewDialog = new EditLogPreviewDialog(getActivity(), logArray, new EditLogPreviewListener());

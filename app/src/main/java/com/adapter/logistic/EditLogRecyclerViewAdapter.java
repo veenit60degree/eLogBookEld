@@ -704,7 +704,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         int LastJobTotalMin = endDate.getMinuteOfDay() - startDate.getMinuteOfDay();
         if(IsPreviousEndAndNewStart){
 
-            if (LastJobTotalMin <= 1) {    //== 0         // || LastJobTotalMin == 1         //compareDate.equals(viewDate)
+            if (LastJobTotalMin == 0) {    //== 0         // || LastJobTotalMin == 1         //compareDate.equals(viewDate)
                 view.setBackgroundResource(R.drawable.edit_log_drawable);
             } else {
                 EditLogFragment.IsWrongDateEditLog = true;
