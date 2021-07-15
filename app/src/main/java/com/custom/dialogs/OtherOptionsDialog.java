@@ -25,6 +25,10 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
+import com.local.db.HelperMethods;
+import com.local.db.RecapViewMethod;
 import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.fragment.SuggestedLogFragment;
 import com.messaging.logistic.Globally;
@@ -32,6 +36,7 @@ import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.OtherOptionsModel;
+import com.models.RecapSignModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,17 +58,27 @@ public class OtherOptionsDialog extends Dialog {
     VolleyRequest GetEditedRecordRequest;
     Map<String, String> params;
     ProgressDialog progressDialog;
-    String DriverId, DeviceId;
+    String DriverId, DeviceId, CurrentCycleId;
     int pendingNotificationCount, DriverType = 0;
-
+    DriverPermissionMethod driverPermissionMethod;
+    RecapViewMethod recapViewMethod;
+    HelperMethods hMethods;
+    DBHelper dbHelper;
 
     public OtherOptionsDialog(@NonNull Context context, boolean isPendingNotification, int pendingNotificationCount,
-                              boolean isGps, int DriverType) {
+                              boolean isGps, int DriverType, String CurrentCycleId, DriverPermissionMethod driverPermissionMethod,
+                              RecapViewMethod recapViewMethod, HelperMethods hMethods, DBHelper dbHelper) {
         super(context);
         this.isPendingNotification = isPendingNotification;
         this.pendingNotificationCount = pendingNotificationCount;
         this.isGps = isGps;
         this.DriverType = DriverType;
+
+        this.CurrentCycleId = CurrentCycleId;
+        this.driverPermissionMethod = driverPermissionMethod;
+        this.recapViewMethod = recapViewMethod;
+        this.hMethods = hMethods;
+        this.dbHelper = dbHelper;
 
     }
 
@@ -111,7 +126,20 @@ public class OtherOptionsDialog extends Dialog {
         }
 
         try {
-            otherOptionList = constants.getOtherOptionsList(getContext(), isAllowMalfunction, isAllowUnIdentified);
+            Globally Global = new Globally();
+            JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
+            List<RecapSignModel> signList   = constants.GetCertifySignList(recapViewMethod, DriverId, hMethods, dbHelper,
+                    Global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, Global);
+            boolean isMissingLoc = false;
+            for(int i = 0 ; i < signList.size() ; i++){
+                if(signList.get(i).isMissingLocation()){
+                    isMissingLoc = true;
+                    break;
+                }
+            }
+            boolean isUncertifyLog = constants.GetCertifyLogSignStatus(recapViewMethod, DriverId, dbHelper, Global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
+
+            otherOptionList = constants.getOtherOptionsList(getContext(), isAllowMalfunction, isAllowUnIdentified, isMissingLoc, isUncertifyLog);
             OtherOptionsAdapter adapter = new OtherOptionsAdapter(getContext(), isPendingNotification, pendingNotificationCount, isGps, otherOptionList);
             otherFeatureListView.setAdapter(adapter);
         }catch (Exception e){}
@@ -166,6 +194,12 @@ public class OtherOptionsDialog extends Dialog {
                             getContext().startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
                         }
 
+                        dismiss();
+                        break;
+
+                    case 6:
+                    case 7:
+                        EldFragment.moveToCertifyPopUpBtn.performClick();
                         dismiss();
                         break;
 

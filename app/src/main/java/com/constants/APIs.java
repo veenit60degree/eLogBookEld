@@ -25,8 +25,8 @@ public class APIs {
     static String ELD_DOMAIN_INDIAN      = "http://192.168.0.2:8287/api/ELDAPI/";             //http://182.73.78.171:8287
 
 
-    static String ALS_DOMAIN_DEV_NEW    = "http://104.167.9.210:43850/api/LogisticsApi/";
-    static String ELD_DOMAIN_DEV_NEW    = "http://104.167.9.210:43851/api/ELDAPI/";
+    static String ALS_DOMAIN_DEV_NEW     = "http://104.167.9.210:43850/api/LogisticsApi/";
+    static String ELD_DOMAIN_DEV_NEW     = "http://104.167.9.210:43851/api/ELDAPI/";
 
 
 

@@ -492,6 +492,7 @@
     <string name="save_and_certify">Save &amp; Certify</string>
     <string name="certified">Certified</string>
     <string name="uncertified">Uncertified</string>
+    <string name="uncertify_log">UnCertified Logs</string>
     <string name="certify">Certify</string>
     <string name="Logout_confirmation">Logout</string>
     <string name="Logout">Logout</string>

@@ -189,39 +189,35 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             }
         }
 
+        holder.certifyLocationIV.setVisibility(View.VISIBLE);
+
+        holder.certifyLocationLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String city = holder.certifyLocationTV.getText().toString();
+                RecordType = Constants.Location;
+                selectedDate = LogItem.getStartDateTime();
+                OpenLocationDialog( city , position, Constants.EditLocation, view);
+            }
+        });
+
+
         if(IsEditView && DaysDiff < 2){
 
-          //  if(JobStatus == Constants.ON_DUTY ) {   //|| (JobStatus == Constants.OFF_DUTY && IsPersonal)
-           // }
-
             holder.certifyRemarksIV.setVisibility(View.VISIBLE);
-            holder.certifyLocationIV.setVisibility(View.VISIBLE);
-
-            holder.certifyLocationLay.setOnClickListener(new View.OnClickListener() {
+            holder.certifyRemarksLay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String city = holder.certifyLocationTV.getText().toString();
-                    RecordType = Constants.Location;
+                    String remarks = holder.certifyRemarksTV.getText().toString();
+                    if (remarks.equals("--")) {
+                        remarks = "";
+                    }
+                    RecordType = Constants.Remarks;
                     selectedDate = LogItem.getStartDateTime();
-                    OpenLocationDialog( city , position, Constants.EditLocation, view);
+                    OpenRemarksDialog(remarks, position, JobStatus, LogItem.isPersonal());  // isPersonal is used for yard move here
                 }
             });
 
-          //  if(JobStatus == Constants.ON_DUTY || (JobStatus == Constants.OFF_DUTY || IsPersonal )) {
-
-                holder.certifyRemarksLay.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String remarks = holder.certifyRemarksTV.getText().toString();
-                        if (remarks.equals("--")) {
-                            remarks = "";
-                        }
-                        RecordType = Constants.Remarks;
-                        selectedDate = LogItem.getStartDateTime();
-                        OpenRemarksDialog(remarks, position, JobStatus, LogItem.isPersonal());  // isPersonal is used for yard move here
-                    }
-                });
-          //  }
         }
 
         return convertView;

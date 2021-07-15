@@ -212,6 +212,8 @@ public class Constants {
     public static final int UNIDENTIFIED      = 3;
     public static final int SUGGESTED_LOGS    = 4;
     public static final int OBD               = 5;
+    public static final int MISSING_LOCATION  = 6;
+    public static final int UN_CERTIFY_LOG    = 7;
 
     public static String TruckIgnitionStatus = "TruckIgnitionStatus";
     public static String IgnitionSource = "IgnitionSource";
@@ -383,7 +385,8 @@ public class Constants {
 
 
 
-    public List<OtherOptionsModel> getOtherOptionsList(Context context, boolean isAllowMalfunction, boolean isAllowUnIdentified){
+    public List<OtherOptionsModel> getOtherOptionsList(Context context, boolean isAllowMalfunction, boolean isAllowUnIdentified,
+                                                       boolean isMissingLoc, boolean isUnCertify){
         List<OtherOptionsModel> optionsList = new ArrayList<>();
         optionsList.add(new OtherOptionsModel(R.drawable.notifications_other, NOTIFICATION, context.getResources().getString(R.string.notification)));
         optionsList.add(new OtherOptionsModel(R.drawable.gps_other, GPS, context.getResources().getString(R.string.gps)));
@@ -396,6 +399,13 @@ public class Constants {
 
         if(SharedPref.IsCCMTACertified(context))
             optionsList.add(new OtherOptionsModel(R.drawable.edit_log_icon, SUGGESTED_LOGS, context.getResources().getString(R.string.suggested_logs)));
+
+        if(isMissingLoc)
+            optionsList.add(new OtherOptionsModel(R.drawable.loc_missing, MISSING_LOCATION, context.getResources().getString(R.string.MissingLoc)));
+
+        if(isUnCertify)
+            optionsList.add(new OtherOptionsModel(R.drawable.uncertified, UN_CERTIFY_LOG, context.getResources().getString(R.string.uncertify_log)));
+
 
         if(SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED ){
             optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, OBD, context.getResources().getString(R.string.obd_wifi)));
@@ -1550,7 +1560,29 @@ public class Constants {
     }
 
 
-    boolean isLocationMissing (DateTime selectedDateTime, DateTime currentDateTime,
+    public boolean isLocationMissing(String DRIVER_ID, String CurrentCycleId, DriverPermissionMethod driverPermissionMethod,
+                              RecapViewMethod recapViewMethod, Globally Global, HelperMethods hMethods, DBHelper dbHelper, JSONObject logPermissionObj){
+        boolean isLocMissing = false;
+        try {
+            if(logPermissionObj == null){
+                logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
+            }
+            List<RecapSignModel> signList = GetCertifySignList(recapViewMethod, DRIVER_ID, hMethods, dbHelper,
+                    Global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, Global);
+            for (int i = 0; i < signList.size(); i++) {
+                if (signList.get(i).isMissingLocation()) {
+                    isLocMissing = true;
+                    break;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return isLocMissing;
+    }
+
+
+    boolean isLocationMissingSelectedDay (DateTime selectedDateTime, DateTime currentDateTime,
                               JSONArray driverLogArray, HelperMethods hMethods, Globally Global){
         boolean isLocMissing = false;
         try {
@@ -1562,21 +1594,36 @@ public class Constants {
                 IsCurrentDate = false;
             }
 
-            JSONArray selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime,
-                    currentDateTime, Globally.GetCurrentUTCDateTime(), IsCurrentDate, (int) Global.GetTimeZoneOffSet());
+         //   if(isSelectedArrayOnly) {
+                JSONArray selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime,
+                        currentDateTime, Globally.GetCurrentUTCDateTime(), IsCurrentDate, (int) Global.GetTimeZoneOffSet());
 
-            for(int i = 0 ; i < selectedArray.length(); i++){
-                JSONObject obj = (JSONObject)selectedArray.get(i);
-                String StartLocation = obj.getString(ConstantsKeys.StartLocation);
-                String StartLocationKm = obj.getString(ConstantsKeys.StartLocationKm);
+                for (int i = 0; i < selectedArray.length(); i++) {
+                    JSONObject obj = (JSONObject) selectedArray.get(i);
+                    String StartLocation = obj.getString(ConstantsKeys.StartLocation);
+                    String StartLocationKm = obj.getString(ConstantsKeys.StartLocationKm);
 
-                if(StartLocation.equals("null") || StartLocation.equals(",") || StartLocation.length() == 0 ){
-                    if(StartLocationKm.equals("null") || StartLocationKm.equals(",") || StartLocationKm.length() == 0 ) {
-                        isLocMissing = true;
-                        break;
+                    if (StartLocation.equals("null") || StartLocation.equals(",") || StartLocation.length() == 0) {
+                        if (StartLocationKm.equals("null") || StartLocationKm.equals(",") || StartLocationKm.length() == 0) {
+                            isLocMissing = true;
+                            break;
+                        }
                     }
                 }
-            }
+       /*     }else{
+                for (int i = 0; i < driverLogArray.length(); i++) {
+                    JSONObject obj = (JSONObject) driverLogArray.get(i);
+                    String StartLocation = obj.getString(ConstantsKeys.StartLocation);
+                    String StartLocationKm = obj.getString(ConstantsKeys.StartLocationKm);
+
+                    if (StartLocation.equals("null") || StartLocation.equals(",") || StartLocation.length() == 0) {
+                        if (StartLocationKm.equals("null") || StartLocationKm.equals(",") || StartLocationKm.length() == 0) {
+                            isLocMissing = true;
+                            break;
+                        }
+                    }
+                }
+            }*/
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1640,7 +1687,7 @@ public class Constants {
                     String date = Globally.ConvertDateFormatyyyy_MM_dd(obj.getString(ConstantsKeys.Date));
                     DateTime selectedDateTime = Globally.getDateTimeObj( date + "T00:00:00", false);
 
-                   boolean isLocationMissing = isLocationMissing(selectedDateTime, currentDateTime, driverLogArray, hMethods, Global);
+                   boolean isLocationMissing = isLocationMissingSelectedDay(selectedDateTime, currentDateTime, driverLogArray, hMethods, Global);
 
                     if(selectedDateTime.isAfter(lastDateTime) || selectedDateTime.equals(lastDateTime)) {
                         String image = obj.getString(ConstantsKeys.LogSignImage);
@@ -1663,7 +1710,8 @@ public class Constants {
 
 
 
-    public boolean GetCertifyLogSignStatus(RecapViewMethod recapViewMethod, String DRIVER_ID, DBHelper dbHelper, String currentDate, String CurrentCycleId, JSONObject logPermissionObj) {
+    public boolean GetCertifyLogSignStatus(RecapViewMethod recapViewMethod, String DRIVER_ID, DBHelper dbHelper, String currentDate,
+                                           String CurrentCycleId, JSONObject logPermissionObj) {
         JSONArray recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
         boolean IsPendingSignature = false;
         int arraylength = recap18DaysArray.length();
@@ -1719,6 +1767,7 @@ public class Constants {
                             IsPendingSignature = true;
                             break;
                         }
+
                     }else{
                         break;
                     }
@@ -3709,6 +3758,41 @@ public class Constants {
         }
 
         return event;
+    }
+
+
+    // calculate speed from wired truck odometers data (in meters) with time difference (in sec)
+    public double calculateSpeedFromWiredTabOdometer(String savedTime, String currentDate, String previousHighPrecisionOdometer,
+                                                     String currentHighPrecisionOdometer, Context context){
+
+        double speedInKm = -1;
+        double odometerDistance = Double.parseDouble(currentHighPrecisionOdometer) - Double.parseDouble(previousHighPrecisionOdometer);
+
+        if(savedTime.length() > 10) {
+            try{
+                String timeStampStr = savedTime.replace(" ", "T");
+                DateTime savedDateTime = Globally.getDateTimeObj(timeStampStr, false);
+                DateTime currentDateTime = Globally.getDateTimeObj(currentDate, false);
+
+                int timeInSecnd = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();    //Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
+                speedInKm = ( odometerDistance/1000.0f ) / ( timeInSecnd/3600.0f );
+                // speedInKm = odometerDistance / timeInSecnd;
+
+            }catch (Exception e){
+                e.printStackTrace();
+
+                // save current HighPrecisionOdometer locally
+                SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, Globally.GetCurrentDateTime(), context);
+
+            }
+
+        }else{
+            // save current HighPrecisionOdometer locally
+            SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, Globally.GetCurrentDateTime(), context);
+
+        }
+        return speedInKm;
+
     }
 
 

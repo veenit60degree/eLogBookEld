@@ -43,16 +43,7 @@
 
 
 
-        <TextView
-            android:id="@+id/missingLocTxtView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/MissingLoc"
-            android:textSize="@dimen/text_size_19"
-            android:textColor="@color/colorVoilation"
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            />
+
 
 
         <ImageView
@@ -69,6 +60,27 @@
 
 
         <TextView
+            android:id="@+id/missingLocTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/MissingLoc"
+            android:paddingBottom="@dimen/margin_short_3"
+            android:paddingTop="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_15"
+            android:paddingLeft="@dimen/margin_15"
+            android:textSize="@dimen/text_size_14"
+            android:textAllCaps="true"
+            android:textColor="@color/warning"
+            android:layout_toLeftOf="@+id/certifyStatusTxtView"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_10"
+            android:background="@drawable/missing_loc_border"
+            android:textStyle="bold"
+            android:visibility="gone"
+
+            />
+
+        <TextView
             android:id="@+id/certifyStatusTxtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -79,7 +91,7 @@
             android:paddingRight="@dimen/margin_20"
             android:paddingLeft="@dimen/margin_20"
             android:layout_marginRight="@dimen/margin_10"
-            android:textSize="@dimen/text_size_13"
+            android:textSize="@dimen/text_size_14"
             android:textAllCaps="true"
             android:background="@drawable/uncertify_border"
             android:textColor="@color/colorVoilation"

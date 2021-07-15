@@ -962,10 +962,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     null, null, false, asyncResponse );
             syncDataUpload.execute();
         }
-
-
-
     }
+
 
     @Override
     public void onClick(View v) {
@@ -1801,7 +1799,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     AsyncResponse asyncResponse = new AsyncResponse() {
         @Override
-        public void onAsyncResponse(String response) {
+        public void onAsyncResponse(String response, String DriverId) {
             if(progressDialog != null){
                 progressDialog.dismiss();
             }

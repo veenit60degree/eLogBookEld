@@ -33,7 +33,7 @@ public class RecapRecordSignAdapter extends BaseAdapter {
     ArrayList<String> SelectedRecordList;
     boolean IsAllSelectedClicked;
     boolean isChecked;
-    Animation missingLocAnim;
+  //  Animation missingLocAnim;
 
     public RecapRecordSignAdapter(Context context, List<RecapSignModel> transferList, ArrayList<String> recordSelectedArray, boolean IsAllSelected, boolean isChecked) {
         this.context = context;
@@ -42,8 +42,8 @@ public class RecapRecordSignAdapter extends BaseAdapter {
         this.IsAllSelectedClicked = IsAllSelected;
         this.isChecked = isChecked;
         mInflater = LayoutInflater.from(context);
-        missingLocAnim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
-        missingLocAnim.setDuration(1500);
+       // missingLocAnim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+       // missingLocAnim.setDuration(1500);
 
     }
 
@@ -97,7 +97,7 @@ public class RecapRecordSignAdapter extends BaseAdapter {
 
         if(eventItem.isMissingLocation()){
             holder.missingLocTxtView.setVisibility(View.VISIBLE);
-            holder.missingLocTxtView.startAnimation(missingLocAnim);
+          //  holder.missingLocTxtView.startAnimation(missingLocAnim);
         }
 
         if(eventItem.isCertified()) {
@@ -106,7 +106,7 @@ public class RecapRecordSignAdapter extends BaseAdapter {
 
 
 
-        missingLocAnim.setAnimationListener(new Animation.AnimationListener() {
+     /*   missingLocAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
             }
@@ -129,7 +129,7 @@ public class RecapRecordSignAdapter extends BaseAdapter {
             public void onAnimationRepeat(Animation animation) {
             }
         });
-
+*/
 
         holder.signRecordCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override

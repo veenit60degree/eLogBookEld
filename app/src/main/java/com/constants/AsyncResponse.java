@@ -2,6 +2,6 @@ package com.constants;
 
 public interface AsyncResponse {
 
-    void onAsyncResponse(String response);
+    void onAsyncResponse(String response, String DriverId);
 }
 

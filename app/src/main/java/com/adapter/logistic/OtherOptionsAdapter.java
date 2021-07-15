@@ -179,6 +179,10 @@ public class OtherOptionsAdapter extends BaseAdapter {
                 }*/
                 break;
 
+            case Constants.MISSING_LOCATION:
+             case Constants.UN_CERTIFY_LOG:
+                makeViewHighlighed(imgView, titleView, errorView);
+                break;
         }
     }
 

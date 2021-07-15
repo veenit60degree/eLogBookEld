@@ -207,7 +207,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     int LocRefreshTime = 10;
     int CheckInternetConnection = 2;
     private static final long MIN_TIME_BW_UPDATES = 2 * 1000;   //30 sec. 30000 - 1/2 minute -- [960000 milli sec -- (16 minutes)]
-    private static final long MIN_TIME_LOCATION_UPDATES = 15 * 1000;   // 15 sec
+    private static final long MIN_TIME_LOCATION_UPDATES = 8 * 1000;   // 8 sec
     private static final long OBD_TIME_LOCATION_UPDATES = 10 * 1000;   // 10 sec
     private static final long IDLE_TIME_LOCATION_UPDATES = 3600 * 1000;   // 1 hour
 
@@ -296,7 +296,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     long processStartTime = -1;
-    int tempOdo = 98515;
+    int tempOdo = 11515;
     int tempSpeed = 0;
     int ignitionCount = 0;
 
@@ -506,12 +506,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }else{
                 if(OBD_LAST_STATUS == constants.BLE_CONNECTED) {
                    // constants.saveAppUsageLog("BleCallback: Array null" ,  false, false, obdUtil);
-                    truckRPM = "";
-                    obdOdometer = "0";
-                    obdEngineHours = "0";
-                    speed = 0;
-                    vin = "";
-                    ignitionStatus = "OFF";
+                    truckRPM = "";  obdOdometer = "0";  obdEngineHours = "0";
+                    speed = 0;  vin = "";  ignitionStatus = "OFF";
                 }
             }
 
@@ -528,14 +524,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
         // ---------------- temp data ---------------------
-           /*  ignitionStatus = "ON"; truckRPM = "700"; speed = 0; obdEngineHours = "123959";
+            /* ignitionStatus = "ON"; truckRPM = "700"; speed = 15; obdEngineHours = "123959";
               ignitionCount++;
               obdOdometer = String.valueOf(tempOdo);
+                tempOdo = tempOdo + 100;
               currentHighPrecisionOdometer = obdOdometer;
               SharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
             SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
+            Log.d("tempOdo", "tempOdo: " +tempOdo);
 */
-
 
         if(OBD_LAST_STATUS == constants.WIRED_CONNECTED || OBD_LAST_STATUS == constants.BLE_CONNECTED) {
             isWiredObdRespond = true;
@@ -559,12 +556,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         getApplicationContext().getResources().getString(R.string.power_comp_mal_occured));
 
                                 constants.saveMalfncnStatus(getApplicationContext(), true);
-
+                                constants.saveAppUsageLog("OBD:"+ OBD_LAST_STATUS + " - saveMalfunctionInTable", false, false, obdUtil);
 
                             }else{
                                 constants.saveDiagnstcStatus(getApplicationContext(), true);
                                 saveMalfunctionInTable( constants.PowerDataDiagnostic,
                                         getApplicationContext().getResources().getString(R.string.power_dia_occured));
+
+                                constants.saveAppUsageLog("OBD:"+ OBD_LAST_STATUS + " - saveDiagnstcInTable", false, false, obdUtil);
 
                             }
 
@@ -582,6 +581,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             malfunctionDiagnosticMethod.updateOccEventTimeLog(currentTime, DriverId,
                                     SharedPref.getVINNumber(getApplicationContext()), currentTime , currentTime,
                                     getApplicationContext().getResources().getString(R.string.Connected), ConstantsKeys.DiagnosticEngSync, dbHelper, getApplicationContext());
+
+                            constants.saveAppUsageLog("OBD:"+ OBD_LAST_STATUS + " - Check Malfunction/Diagnostic  ECM disconnection status", false, false, obdUtil);
 
                         }
 
@@ -603,6 +604,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
                         }
 
+                        // calculating speed to comparing last saved odometer and current odometer (in meter) with time differencein seconds
+                        double calculatedSpeedFromOdo = constants.calculateSpeedFromWiredTabOdometer(savedDate, currentLogDate,
+                                previousHighPrecisionOdometer, currentHighPrecisionOdometer, getApplicationContext());
+
                         boolean isDrivingAllowed = true;
                         if (SharedPref.isDrivingAllowed(getApplicationContext()) == false && speed >= 8) {
                             final DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
@@ -622,7 +627,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         double savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
                         if (obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
 
-                            if (speed >= 8) {   // calculatedSpeedFromOdo >= 8 ||
+                            if (speed >= 8 || calculatedSpeedFromOdo >= 8) {
                                 SharedPref.setVehilceMovingStatus(true, getApplicationContext());
                             } else {
                                 SharedPref.setVehilceMovingStatus(false, getApplicationContext());
@@ -630,7 +635,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             if (isDrivingAllowed) {
                                 timeDuration = 2000;
-                                callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed);
+                                callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, calculatedSpeedFromOdo);
                             }
 
                             // check malfunction if valid position not coming..
@@ -642,7 +647,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         }
 
-                        callWiredConnWithTime(timeDuration);
+                        callWiredDataService(timeDuration);
 
                     } else {
                         speed = 0;
@@ -658,10 +663,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
                         }
 
-                        callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed);
+                        callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, 0);
 
                         Globally.VEHICLE_SPEED = 0;
-                        callWiredConnWithTime(Constants.SocketTimeout8Sec);
+
+                        callWiredDataService(Constants.SocketTimeout8Sec);
 
                     }
 
@@ -671,12 +677,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     Globally.VEHICLE_SPEED = -1;
                     isWiredDataReceived = false;
 
-                    callWiredConnWithTime(3000);
+                    callWiredDataService(3000);
 
                 }
 
             } else {
-                callWiredConnWithTime(3000);
+                callWiredDataService(3000);
             }
 
         }else{
@@ -767,9 +773,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                callWiredConnWithTime(4000);
+                callWiredDataService(4000);
             }else {
-                callWiredConnWithTime(8000);
+                callWiredDataService(8000);
             }
         }
 
@@ -781,7 +787,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-    void callRuleWithStatusWise(String currentHighPrecisionOdometer, String savedDate, String vin, String timeStamp, int speed){
+    void callRuleWithStatusWise(String currentHighPrecisionOdometer, String savedDate, String vin, String timeStamp, int speed, double calculatedSpeedFromOdo){
         try{
             String currentLogDate = global.GetCurrentDateTime();
             String jobType = SharedPref.getDriverStatusId(getApplicationContext());
@@ -792,14 +798,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
 
                     saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                            timeStamp, savedDate, "DRIVING");
+                            timeStamp, savedDate, "DRIVING", calculatedSpeedFromOdo);
 
                 }
 
             } else if (jobType.equals(global.ON_DUTY)) {
 
                 // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
-                if (speed >= 8) {  // && calculatedSpeedFromOdo >= 8
+                if (speed >= 8 && calculatedSpeedFromOdo >= 8) {
 
                     try {
                         if (EldFragment.driverLogArray == null || EldFragment.driverLogArray.length() == 0) {
@@ -809,20 +815,21 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         if(isYardMove){
                             String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getApplicationContext());
                             if(speed >= 32 && (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2))) {   // In Yard move
-                                timeDuration = Constants.SocketTimeout10Sec;
+                                timeDuration = Constants.SocketTimeout30Sec;
                                 saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                        timeStamp, savedDate, "OnDutyYM Speed: " + speed);
+                                        timeStamp, savedDate, "OnDutyYM Speed: " + speed, calculatedSpeedFromOdo);
                             }else{
                                 // call ELD rule after 1 minute to improve performance
                                 if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
                                     saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                            timeStamp, savedDate, "OnDutyYM Speed: " + speed);
+                                            timeStamp, savedDate, "OnDutyYM Speed: " + speed, calculatedSpeedFromOdo);
                                 }
+                                timeDuration = Constants.SocketTimeout10Sec;
                             }
                         }else{
-                            timeDuration = Constants.SocketTimeout8Sec;
+                            timeDuration = Constants.SocketTimeout30Sec;
                             saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                    timeStamp, savedDate, "OnDuty Speed: " + speed);
+                                    timeStamp, savedDate, "OnDuty Speed: " + speed, calculatedSpeedFromOdo);
                         }
 
                     }catch (Exception e){
@@ -836,7 +843,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     // call ELD rule after 1 minute to improve performance
                     if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
                         saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                timeStamp, savedDate, "OnDuty Speed: "+speed);
+                                timeStamp, savedDate, "OnDuty Speed: "+speed, calculatedSpeedFromOdo);
                     }
                 }
 
@@ -844,17 +851,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 // =================== For OFF Duty & Sleeper case =====================
 
-                if (speed <= 0 ) {  //&& calculatedSpeedFromOdo <= 0
+                if (speed <= 0 && calculatedSpeedFromOdo <= 0 ) {  //
                     //   Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
                     if(speed == 0)
                         timeDuration = Constants.SocketTimeout4Sec;
                 } else {
-                    if (speed >= 8 ) {    // && calculatedSpeedFromOdo >= 8 if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
+                    if (speed >= 8 && calculatedSpeedFromOdo >= 8 ) {    // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
 
                         if(jobType.equals(global.SLEEPER)){
-                            timeDuration = Constants.SocketTimeout5Sec;
+                            timeDuration = Constants.SocketTimeout30Sec;
                             saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                    timeStamp, savedDate, "Sleeper-Speed: "+speed);
+                                    timeStamp, savedDate, "Sleeper-Speed: "+speed, calculatedSpeedFromOdo);
                         }else{
                             if (EldFragment.driverLogArray == null || EldFragment.driverLogArray.length() == 0) {
                                 EldFragment.driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
@@ -864,13 +871,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 if(SharedPref.isPersonalUse75KmCrossed(getApplicationContext()) ){
                                     constants.saveAppUsageLog("PU exceeded 75km ELD rule called", false, false, obdUtil);
                                        saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                            timeStamp, savedDate, "PersonalUse-Speed: "+speed);
+                                            timeStamp, savedDate, "PersonalUse-Speed: "+speed, calculatedSpeedFromOdo);
+                                    timeDuration = Constants.SocketTimeout30Sec;
+                                }else{
+                                    timeDuration = Constants.SocketTimeout8Sec;
                                 }
-                                timeDuration = Constants.SocketTimeout8Sec;
+
                             }else{
-                                timeDuration = Constants.SocketTimeout5Sec;
+                                timeDuration = Constants.SocketTimeout30Sec;
                                 saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                        timeStamp, savedDate, "OffDuty-Speed: "+speed);
+                                        timeStamp, savedDate, "OffDuty-Speed: "+speed, calculatedSpeedFromOdo);
                             }
 
                         }
@@ -884,7 +894,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
-    void callWiredConnWithTime(int timeDuration){
+    void callWiredDataService(int timeDuration){
         try {
             if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
                 if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
@@ -1609,6 +1619,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     Globally.PlaySound(getApplicationContext());
                 }
+
+                constants.saveAppUsageLog("OBD:" + " - CheckPositionMalfunction", false, false, obdUtil);
+
             }
 
         }catch (Exception e){
@@ -1618,7 +1631,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
     void saveLogWithRuleCall(String currentHighPrecisionOdometer, String currentLogDate, int speed, String vin, double intHighPrecisionOdometerInKm,
-                             String timeStamp, String savedDate, String status){
+                             String timeStamp, String savedDate, String status, double calculatedSpeedFromOdo){
 
         try {
 
@@ -1629,14 +1642,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 // write wired OBD details in a text file and save into the SD card.
                 saveObdData(constants.WiredOBD, vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
                         currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
-                        String.valueOf(speed), obdTripDistance, timeStamp, savedDate);
+                        String.valueOf(calculatedSpeedFromOdo), obdTripDistance, timeStamp, savedDate);
 
                 if (speed > 200) {
                     speed = -1;
                 }
             }
 
-            callEldRuleForWired(speed);
+            callEldRuleForWired(speed, calculatedSpeedFromOdo);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -1730,14 +1743,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-    void callEldRuleForWired( int speed){   //, int calculatedSpeedFromOdo
+    void callEldRuleForWired( int speed, double calculatedSpeedFromOdo){
         // call cycle rule
-        VehicleSpeed = speed;
-        obdVehicleSpeed = speed;    //calculatedSpeedFromOdo;
-        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
-                hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
-                odometerhMethod, true, constants.WIRED_OBD, obdVehicleSpeed, GpsVehicleSpeed);
-
+        try {
+            VehicleSpeed = speed;
+            obdVehicleSpeed = (int) calculatedSpeedFromOdo;
+            serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
+                    hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
+                    odometerhMethod, true, constants.WIRED_OBD, obdVehicleSpeed, GpsVehicleSpeed);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         //   global.ShowLocalNotification(getApplicationContext(), "Wired OBD data", status + ", Speed " + VehicleSpeed, 2009);
 
 
@@ -1965,7 +1981,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         locationRequest = new LocationRequest();
         locationRequest.setInterval(time);
         locationRequest.setFastestInterval(time);
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
     }
 
@@ -1978,7 +1994,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     MIN_TIME_LOCATION_UPDATES,
-                    80, locationListenerGPS);
+                    10, locationListenerGPS);
             Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (loc != null) {
                 Globally.LATITUDE = "" + loc.getLatitude();
@@ -3135,7 +3151,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         try{
             truckRpm = Double.parseDouble(truckRPM);
         }catch (Exception e){}
-        Log.d("timeInSec", "timeInSec: "+timeInSec);
+      // Log.d("timeInSec", "timeInSec: "+timeInSec);
 
         if( ( truckRpm > 600 && timeInSec >= 5 ) ) {    //|| rawResponse.contains("GPS")
 
@@ -3710,7 +3726,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                                     String blank = "";
 
                                                     saveLogWithRuleCall(blank, blank, obdVehicleSpeed, blank,
-                                                            0, blank, blank, "not_saved");
+                                                            0, blank, blank, "not_saved", obdVehicleSpeed);
 
                                                 }
                                             }catch (Exception e){
@@ -4065,7 +4081,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     AsyncResponse asyncResponse = new AsyncResponse() {
         @Override
-        public void onAsyncResponse(String response) {
+        public void onAsyncResponse(String response, String DriverId) {
 
             Log.e("String Response", ">>>Sync Response:  " + response);
 

@@ -47,10 +47,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/MissingLoc"
-            android:textSize="@dimen/text_size_17"
-            android:textColor="@color/colorVoilation"
-            android:layout_centerInParent="true"
+            android:paddingBottom="@dimen/margin_short_3"
+            android:paddingTop="@dimen/margin_short_3"
+            android:textSize="@dimen/text_size_13"
+            android:textAllCaps="true"
+            android:textColor="@color/warning"
+            android:layout_toLeftOf="@+id/certifyStatusTxtView"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_10"
+            android:background="@drawable/missing_loc_border"
+            android:textStyle="bold"
             android:visibility="gone"
+
             />
 
         <ImageView

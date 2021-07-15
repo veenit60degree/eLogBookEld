@@ -1306,8 +1306,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
         if (signList.size() > 0) {
             signRecordDialog = new SignRecordDialog(getActivity(), DriverType, isCertifySignExist, recap18DaysArray, signList, new SignRecapListener(),
-                                                        constants,  recapViewMethod,  certifyLogMethod, dbHelper
-            );
+                                                        constants,  recapViewMethod,  certifyLogMethod, dbHelper );
             signRecordDialog.show();
         } else {
             if(isToastShowing)
@@ -2834,8 +2833,17 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
 
     void refreshPendingSignView(){
-        boolean isSignPending             = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
-        if(isSignPending) {
+        boolean isSignPending           = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
+        List<RecapSignModel> signList   = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, hMethods, dbHelper,
+                                            global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, global);
+        boolean isMissingLoc = false;
+        for(int i = 0 ; i < signList.size() ; i++){
+            if(signList.get(i).isMissingLocation()){
+                isMissingLoc = true;
+                break;
+            }
+        }
+        if(isSignPending || isMissingLoc) {
             certifyErrorImgView.setVisibility(View.VISIBLE);
         }else{
             certifyErrorImgView.setVisibility(View.GONE);

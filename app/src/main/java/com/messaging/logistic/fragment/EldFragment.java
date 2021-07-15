@@ -105,6 +105,7 @@ import com.messaging.logistic.UILApplication;
 import com.models.DriverLocationModel;
 import com.models.EldDataModelNew;
 import com.models.NotificationNewsModel;
+import com.models.RecapSignModel;
 import com.models.VehicleModel;
 import com.notifications.NotificationManagerSmart;
 import com.shared.pref.CoDriverEldPref;
@@ -1631,7 +1632,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                          */
                 }
 
-                if (isPendingNotifications) {
+                JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
+                boolean isUnCertified = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, SelectedDate, CurrentCycleId, logPermissionObj);
+                boolean isMissingLoc = constants.isLocationMissing(DRIVER_ID, CurrentCycleId, driverPermissionMethod,
+                        recapViewMethod, Global, hMethods, dbHelper, logPermissionObj);
+
+                if (isPendingNotifications | isUnCertified || isMissingLoc) {
                     otherOptionBadgeView.setVisibility(View.VISIBLE);
                 } else {
                     otherOptionBadgeView.setVisibility(View.GONE);
@@ -2077,7 +2083,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     }
 
                     JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
-                    if (constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, SelectedDate, CurrentCycleId, logPermissionObj)) {
+                    boolean isUnCertified = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, SelectedDate, CurrentCycleId, logPermissionObj);
+                    boolean isMissingLoc = constants.isLocationMissing(DRIVER_ID, CurrentCycleId, driverPermissionMethod,
+                            recapViewMethod, Global, hMethods, dbHelper, logPermissionObj);
+                    if (isMissingLoc || isUnCertified) {
                         certifyLogErrorImgVw.setVisibility(View.VISIBLE);
                     } else {
                         certifyLogErrorImgVw.setVisibility(View.GONE);
@@ -2276,7 +2285,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     }
                     boolean isPendingNotifications = isPendingNotifications(DRIVER_JOB_STATUS);
                     otherOptionsDialog = new OtherOptionsDialog(getActivity(), isPendingNotifications, pendingNotificationCount,
-                            constants.CheckGpsStatusToCheckMalfunction(getActivity()), DriverType);
+                            constants.CheckGpsStatusToCheckMalfunction(getActivity()), DriverType, CurrentCycleId, driverPermissionMethod,
+                            recapViewMethod, hMethods, dbHelper);
                     otherOptionsDialog.show();
                 } catch (final IllegalArgumentException e) {
                     e.printStackTrace();
@@ -5643,6 +5653,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                          if (Message.equals("Device Logout")) {
                                              if (DriverJsonArray.length() > 0) {
                                                  SyncUserData();
+                                                 ClearLogAfterSuccess(isLoad, IsRecap);
                                              } else {
                                                  LogoutUser();
                                              }
@@ -6651,16 +6662,24 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     AsyncResponse asyncResponse = new AsyncResponse() {
         @Override
-        public void onAsyncResponse(String response) {
+        public void onAsyncResponse(String response, String DriverId) {
             Log.d("async response", "async response: " +response );
 
             try {
 
                 JSONObject obj = new JSONObject(response);
                 String status = obj.getString("Status");
-              //  if (status.equalsIgnoreCase("true")) {
-                    //LogoutUser();
-              //  }
+
+                if (status.equalsIgnoreCase("true")) {
+                    // Clear Sync data after upload to server
+                    syncingMethod.SyncingLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+                }
+
+                DriverJsonArray = new JSONArray();
+                MainDriverPref.ClearLocFromList(getActivity());
+                CoDriverPref.ClearLocFromList(getActivity());
+
+
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -6669,6 +6688,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     };
 
+
+    void ClearDriverUnSavedlog(){
+        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
+            DriverType = Constants.MAIN_DRIVER_TYPE;
+            MainDriverPref.ClearLocFromList(getActivity());
+        }else{
+            DriverType = Constants.CO_DRIVER_TYPE;
+            CoDriverPref.ClearLocFromList(getActivity());
+        }
+    }
 
 
     TcpClient.OnMessageReceived obdResponseHandler = new TcpClient.OnMessageReceived() {
@@ -6708,20 +6737,63 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
     void SyncUserData(){
-        JSONArray savedSyncedArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DRIVER_ID), dbHelper);
+        /*JSONArray savedSyncedArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DRIVER_ID), dbHelper);
         File syncingFile = new File("");
         if(savedSyncedArray.length() > 0) {
             syncingFile = Globally.SaveFileInSDCard("Sync_", savedSyncedArray.toString(), false, getActivity());
+        }*/
+
+
+        if(isSingleDriver) {
+            JSONArray syncArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DRIVER_ID), dbHelper);
+            if(syncArray.length() > 0) {
+                SyncDriverData(DRIVER_ID, syncArray, false);
+                /*File blankFile = new File("");
+                SyncDataUpload asyncTaskUpload = new SyncDataUpload(getActivity(), DRIVER_ID, syncingFile, blankFile, blankFile, false, asyncResponse);
+                asyncTaskUpload.execute();*/
+            }else{
+                LogoutUser();
+            }
+        }else{
+            JSONArray MainDriverSyncArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(MainDriverId), dbHelper);
+            JSONArray CoDriverSyncArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(CoDriverId), dbHelper);
+
+            if(MainDriverSyncArray.length() == 0 && CoDriverSyncArray.length() == 0 ) {
+                LogoutUser();
+            }else{
+
+                if(MainDriverSyncArray.length() > 0) {
+                    SyncDriverData(MainDriverId, MainDriverSyncArray, false);
+                }
+
+                if(CoDriverSyncArray.length() > 0) {
+                    SyncDriverData(CoDriverId, CoDriverSyncArray, true);
+                }
+
+            }
         }
 
-        if(syncingFile.isFile()) {
-            File blankFile = new File("");
-            SyncDataUpload asyncTaskUpload = new SyncDataUpload(getActivity(), DRIVER_ID, syncingFile, blankFile, blankFile,false, asyncResponse);
-            asyncTaskUpload.execute();
-        }else{
-            LogoutUser();
+
+    }
+
+
+    private void SyncDriverData(String DriverId, JSONArray syncArray, boolean isCoDriver){
+
+        if(syncArray.length() > 0) {
+            String filePrefix = "Sync_";
+            if(isCoDriver){
+                filePrefix = "SyncCo_";
+            }
+           File driverSyncFile = Globally.SaveFileInSDCard(filePrefix, syncArray.toString(), false, getActivity());
+
+            // Sync driver log API data to server with SAVE_LOG_TEXT_FILE (SAVE sync data service)
+            SyncDataUpload syncDataUpload = new SyncDataUpload(getActivity(), DriverId, driverSyncFile,
+                    null, null, false, asyncResponse );
+            syncDataUpload.execute();
         }
     }
+
+
 
     void clearCalculationsView(){
         TotalOnDutyHoursInt         = 0;
