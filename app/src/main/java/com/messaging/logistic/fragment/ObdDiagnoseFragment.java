@@ -259,12 +259,14 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
             case R.id.button2:
 
-                responseRawTxtView.setText("");
-                //  if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
-                clickBtnFlag = newCmd1;
-                obdProgressBar.setVisibility(View.VISIBLE);
-                tcpClient.sendMessage(field1.getText().toString().trim());
-                obdDataTxtView.setText("");
+                if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
+                    responseRawTxtView.setText("");
+                    //  if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
+                    clickBtnFlag = newCmd1;
+                    obdProgressBar.setVisibility(View.VISIBLE);
+                    tcpClient.sendMessage(field1.getText().toString().trim());
+                    obdDataTxtView.setText("");
+                }
                /* }else{
                     globally.EldScreenToast(odometerTxtView, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                 }*/
@@ -274,14 +276,22 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
 
             case R.id.obdDataTxtView:
-                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
-                    if (clickBtnFlag == SIMFlag) {
-                        if (simNumber.trim().length() > 0) {
-                            constants.CopyString(getActivity(), simNumber);
+                if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
+                    if (wifiConfig.IsAlsNetworkConnected(getActivity())) {
+                        if (clickBtnFlag == SIMFlag) {
+                            if (simNumber.trim().length() > 0) {
+                                constants.CopyString(getActivity(), simNumber);
+                            }
                         }
+                    } else {
+                        globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
                     }
-                }else{
-                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                }else if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIRED) {
+                    Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        getActivity().startForegroundService(serviceIntent);
+                    }
+                    getActivity().startService(serviceIntent);
                 }
                 break;
 
@@ -296,16 +306,17 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
 
             case R.id.odometerTxtView:
-                responseRawTxtView.setText("");
-                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
-                    clickBtnFlag = CanFlag;
-                    obdProgressBar.setVisibility(View.VISIBLE);
-                    tcpClient.sendMessage("123456,can");
-                    obdDataTxtView.setText("");
-                }else{
-                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
+                    responseRawTxtView.setText("");
+                    if (wifiConfig.IsAlsNetworkConnected(getActivity())) {
+                        clickBtnFlag = CanFlag;
+                        obdProgressBar.setVisibility(View.VISIBLE);
+                        tcpClient.sendMessage("123456,can");
+                        obdDataTxtView.setText("");
+                    } else {
+                        globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                    }
                 }
-
 
           /*      String aaaa = "*TS01,868323029228761,024432250219,GPS:3;N49.177366;W122.723542;0;344;0.91,STT:C242;0,MGR:490784638,ADC:0;14.49;1;24.65;2;4.11,CAN:0B00F00471AAA9E31F00F4AA0B00FEC15ECE9C00829C9C000B00FEE0B2450600B24506000B00FEEE733E232BFFFF32FF0B00FEE583310000FFFFFFFF0B00FEE85B2D3E3EFFFFB54F0B00FEE9D28A00004B8A00000B00F003D07E1CFFFF0C82FF0B00FEEFADFFFF6FFFFFFFFA0B00FEBF933B7C7D868687860B00FEF6FF1A434DFFFFFFFF0B00FEF7FFFFFFFF1D01FFFF0B00FEFCFF93FFFFFFFFFFFF#";
                String curr = "*TS01,861107033666695,055408130620,CAN:0B00F004F1BCBD712A00FFBD0B00FEC1F6FEA812FFFFFFFF0B00FEE5DE26010009A019000B00FEBFD1557C7D8687FFFF#";
@@ -321,27 +332,31 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
             case R.id.gpsTxtView:
 
-                responseRawTxtView.setText("");
-                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
-                    clickBtnFlag = GpsFlag;
-                    obdProgressBar.setVisibility(View.VISIBLE);
-                    tcpClient.sendMessage("123456,gps");
-                    obdDataTxtView.setText("");
-                }else{
-                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
+                    responseRawTxtView.setText("");
+                    if (wifiConfig.IsAlsNetworkConnected(getActivity())) {
+                        clickBtnFlag = GpsFlag;
+                        obdProgressBar.setVisibility(View.VISIBLE);
+                        tcpClient.sendMessage("123456,gps");
+                        obdDataTxtView.setText("");
+                    } else {
+                        globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                    }
                 }
                 break;
 
 
             case R.id.simInfoTxtView:
-                responseRawTxtView.setText("");
-                if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
-                    clickBtnFlag = SIMFlag;
-                    obdProgressBar.setVisibility(View.VISIBLE);
-                    tcpClient.sendMessage("123456,cid");
-                    obdDataTxtView.setText("");
-                }else{
-                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
+                    responseRawTxtView.setText("");
+                    if (wifiConfig.IsAlsNetworkConnected(getActivity())) {
+                        clickBtnFlag = SIMFlag;
+                        obdProgressBar.setVisibility(View.VISIBLE);
+                        tcpClient.sendMessage("123456,cid");
+                        obdDataTxtView.setText("");
+                    } else {
+                        globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                    }
                 }
 
                 break;
@@ -349,8 +364,9 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
             case R.id.resetObdTxtView:
 
-                ObdDialog();
-
+                if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
+                    ObdDialog();
+                }
                 break;
 
             case R.id.eldMenuLay:
