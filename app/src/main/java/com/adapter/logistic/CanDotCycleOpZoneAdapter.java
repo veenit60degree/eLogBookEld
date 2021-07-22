@@ -110,8 +110,12 @@ public class CanDotCycleOpZoneAdapter extends BaseAdapter {
 
 
        // holder.dateCycleDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate()));
-        if(EventDateTime.length() > 16) {
+       /* if(EventDateTime.length() > 16) {
             holder.dateCycleDotTV.setText(EventDateTime.substring(11, 16));
+        }*/
+
+        if(EventDateTime.length() >= 19) {
+            holder.dateCycleDotTV.setText(EventDateTime.substring(11, 19));
         }
 
         holder.eventCycleEventTV.setText( constants.getCycleOpZoneEventName(

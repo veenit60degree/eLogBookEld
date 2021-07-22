@@ -381,6 +381,7 @@
     <string name="current_loc">Current Loc (Lat,Long)</string>
     <string name="comment">Comment</string>
     <string name="date_time">DateTime</string>
+    <string name="date__time">Date Time</string>
     <string name="PowerUnitNumber">Power Unit Number</string>
     <string name="VINPowerUnit">VIN (Power Unit)</string>
     <string name="curr_date_and_time">Current Date &amp; Time</string>
@@ -600,7 +601,7 @@
 
     <!-- duty status changes -->
     <string name="location_missing_dutystatus">Location is missing for duty status changes</string>
-    <string name="manually_add">Manually Add</string>
+    <string name="manually_add">Add Manually</string>
 
     <!--internet connection-->
     <string name="Limited_ELD_Connection">Limited ELD Connection</string>

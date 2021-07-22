@@ -632,6 +632,19 @@ public class Constants {
         return inputValue;
     }
 
+    public boolean CheckNullBoolean(String inputValue) {
+        boolean output = false;
+        try {
+            if (!inputValue.trim().equals("null")) {
+                output = Boolean.parseBoolean(inputValue);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return output;
+    }
+
 
     public static void ClearNotifications(Context context) {
         if (context != null) {
@@ -1582,7 +1595,7 @@ public class Constants {
     }
 
 
-    boolean isLocationMissingSelectedDay (DateTime selectedDateTime, DateTime currentDateTime,
+    public boolean isLocationMissingSelectedDay (DateTime selectedDateTime, DateTime currentDateTime,
                               JSONArray driverLogArray, HelperMethods hMethods, Globally Global){
         boolean isLocMissing = false;
         try {
@@ -3154,7 +3167,8 @@ public class Constants {
                         CheckNullBString(obj.getString(ConstantsKeys.DriverZoneEndDateTime)),
                         CheckNullBString(obj.getString(ConstantsKeys.StatusId)),
 
-                        obj.getBoolean(ConstantsKeys.IsIntermediateLog),
+                        CheckNullBoolean(obj.getString(ConstantsKeys.IsIntermediateLog)),
+
                         CheckNullBString(obj.getString(ConstantsKeys.HexaSeqNumber)),
 
                         CheckNullBString(obj.getString(ConstantsKeys.StartLocation)),
@@ -3764,6 +3778,18 @@ public class Constants {
     // calculate speed from wired truck odometers data (in meters) with time difference (in sec)
     public double calculateSpeedFromWiredTabOdometer(String savedTime, String currentDate, String previousHighPrecisionOdometer,
                                                      String currentHighPrecisionOdometer, Context context){
+
+       /* double pre = 1090031400;
+        double curr = 1090031465;
+        String previousHighPrecision = Double.toString(pre);
+        String curreHighPre = Double.toString(curr);
+        double pre1=  Double.parseDouble(previousHighPrecision);
+        double curr1 =  Double.parseDouble(curreHighPre);
+
+        double speedInKm = -1;
+        double odometerDistance = curr1 - pre1; //Double.parseDouble(currentHighPrecisionOdometer) - Double.parseDouble(previousHighPrecisionOdometer);
+*/
+
 
         double speedInKm = -1;
         double odometerDistance = Double.parseDouble(currentHighPrecisionOdometer) - Double.parseDouble(previousHighPrecisionOdometer);

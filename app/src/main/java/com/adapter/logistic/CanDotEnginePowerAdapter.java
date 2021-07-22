@@ -107,8 +107,12 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-        if(EventDateTime.length() > 16) {
+       /* if(EventDateTime.length() > 16) {
             holder.dateTimeEDotTV.setText(EventDateTime.substring(11, 16));
+        }*/
+
+        if(EventDateTime.length() >= 19) {
+            holder.dateTimeEDotTV.setText(EventDateTime.substring(11, 19));
         }
 
        // holder.dateTimeEDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins() ));

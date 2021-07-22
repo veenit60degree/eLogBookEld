@@ -775,6 +775,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					params.put(ConstantsKeys.OSType, OSType);
 					params.put(ConstantsKeys.DeviceType, deviceType);
 					params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
+					params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);
+					params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
 					params.put(ConstantsKeys.SIM1, DeviceSimInfo);
 					//params.put("SIM2, "");

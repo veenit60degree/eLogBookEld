@@ -773,8 +773,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                             if(obdStatus == Constants.BLE_CONNECTED){
                                 connectionStatusImgView.setImageResource(R.drawable.ble_ic);
-                            }else{
+                            }else if(obdStatus == Constants.WIRED_CONNECTED){
                                 connectionStatusImgView.setImageResource(R.drawable.obd_active);
+                            }else{
+                                connectionStatusImgView.setImageResource(R.drawable.wifi_obd_active);
                             }
 
                             connectionStatusAnimation.cancel();
@@ -782,7 +784,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             connectionStatusImgView.setColorFilter(getResources().getColor(R.color.colorPrimary));
 
                         } else {
-                            connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                            if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI && wifiConfig.IsAlsNetworkConnected(getActivity())){
+                                connectionStatusAnimation.cancel();
+                                connectionStatusImgView.setAlpha(1f);
+                                connectionStatusImgView.setColorFilter(getResources().getColor(R.color.colorPrimary));
+                            }else {
+                                connectionStatusImgView.startAnimation(connectionStatusAnimation);
+                            }
                         }
                     }
                 }catch (Exception e){
@@ -954,8 +962,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
         //---------------- temp delete last item code ---------------
-/*
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+      /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               try {
                     driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                     driverLogArray.remove(driverLogArray.length()-1);
@@ -965,8 +973,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                     driverLogArray = new JSONArray();
                 }
-            }
-*/
+            }*/
+
 
         SetDataInView();
         IsLogShown = false;
@@ -1111,13 +1119,15 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 }
                             }
                         }else{
-                            if(obdStatus ==  Constants.WIFI_CONNECTED) {
-                                connectionStatusImgView.setImageResource(R.drawable.obd_active);
+                            connectionStatusImgView.setImageResource(R.drawable.wifi_obd_active);
+
+                            if(wifiConfig.IsAlsNetworkConnected(getActivity())) {
+                                connectionStatusImgView.setColorFilter(getResources().getColor(R.color.colorPrimary));
                                 if (isToastShowing) {
                                     Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_active), getResources().getColor(R.color.color_eld_theme));
                                 }
-                            }else { //if(obdStatus ==  Constants.WIFI_DISCONNECTED)
-                                connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
+                            }else {
+                                connectionStatusImgView.setColorFilter(getResources().getColor(R.color.spinner_blue));
                                 connectionStatusImgView.startAnimation(connectionStatusAnimation);
                                 if (isToastShowing) {
                                     Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.wifi_inactive), getResources().getColor(R.color.colorSleeper));
@@ -3435,7 +3445,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                         }else if(intent.getBooleanExtra(ConstantsKeys.ChangedToOthers, false) == true){
                             certifyTitle = "Duty Status Change Alert !!";
-                            titleDesc = "Please change your status from Driving to others due to vehicle is not moving.";
+                            titleDesc = "Please change your status from Driving to other duty status due to vehicle is not moving.";
                             Global.DriverSwitchAlertWithDismiss(getActivity(), certifyTitle, titleDesc, "Ok",
                                     statusAlertDialog, false);
                         }
@@ -3882,6 +3892,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         if (driverStatus.equals(Global.ON_DUTY)){
             setYardMoveView();
         }
+        Log.d("Saved Status Service", "--- DriverStatusId: "+DriverStatusId);
     }
 
 
@@ -6275,10 +6286,34 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 isExemptDriver              = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsExemptDriver);
                                 boolean IsCycleRequest      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsCycleRequest);
                                 boolean IsUnidentified      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsUnidentified);
+
+                                if(dataJObject.has(ConstantsKeys.IsOdoCalculationAllowed) && !dataJObject.isNull(ConstantsKeys.IsOdoCalculationAllowed)){
+                                    SharedPref.SetOdoCalculationAllowed(dataJObject.getBoolean(ConstantsKeys.IsOdoCalculationAllowed), getActivity());
+                                }
+
                                 int ObdPreference = Constants.OBD_PREF_WIFI;
                                 if(dataJObject.has(ConstantsKeys.ObdPreference) && !dataJObject.isNull(ConstantsKeys.ObdPreference) ) {
                                     ObdPreference = dataJObject.getInt(ConstantsKeys.ObdPreference);
+                                    int savedObdPref = SharedPref.getObdPreference(getActivity());
+
+                                    if(ObdPreference != savedObdPref){
+                                        if(ObdPreference == Constants.OBD_PREF_BLE){
+                                            SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Global.getCurrentDate(), getActivity());
+                                        }else if(ObdPreference == Constants.OBD_PREF_WIRED){
+                                            SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, Global.getCurrentDate(), getActivity());
+                                        }else{
+                                            SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, Global.getCurrentDate(), getActivity());
+                                        }
+                                        constants.saveAppUsageLog("ObdPreference: From " + savedObdPref + " to " + ObdPreference, false, false, obdUtil);
+
+                                    }
+
                                     SharedPref.SetObdPreference(ObdPreference, getActivity());
+
+                                    if(ObdPreference != savedObdPref){
+                                        startService();     // call onStartCommand in service to connect with current OBD pref
+                                    }
+
                                 }else{
                                     SharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getActivity());
                                 }

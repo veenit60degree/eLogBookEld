@@ -1,22 +1,17 @@
 package com.background.service;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.constants.Constants;
-import com.constants.ConstantsEnum;
 import com.constants.CsvReader;
 import com.constants.SharedPref;
+import com.constants.Utils;
 import com.driver.details.DriverConst;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.fragment.EldFragment;
-import com.models.EldDriverLogModel;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
@@ -28,8 +23,10 @@ import com.local.db.ShipmentHelperMethod;
 import com.local.db.SyncingMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
 import com.models.EldDataModelNew;
+import com.models.EldDriverLogModel;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.CoNotificationPref;
 import com.shared.pref.EldCoDriverLogPref;
@@ -131,6 +128,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     SyncingMethod syncingMethod;
     JSONArray driver18DaysLogArray = new JSONArray();
     String pcYmRemarks = "";
+    Utils obdUtil;
 
     public ServiceCycle(Context context) {
         this.context        = context;
@@ -149,7 +147,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                    final LocationMethod locMethod, final ServiceCallback serviceResponse,
                                    final ServiceError serviceError, NotificationMethod notiMethod,
                                    ShipmentHelperMethod shipingHelper,  OdometerHelperMethod odometerMethod,
-                                   boolean isConnection, int connection_type, int obdVehicleSpeed, int gpsVehicleSpeed ) {
+                                   boolean isConnection, int connection_type, int obdVehicleSpeed, int gpsVehicleSpeed, Utils obdUtil ) {
 
         DriverId                 = driverId;
         VehicleSpeed             = vehicleSpeed;
@@ -174,7 +172,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             connectionType           = connection_type;
             OBDVehicleSpeed          = obdVehicleSpeed;
             GPSVehicleSpeed          = gpsVehicleSpeed;
-
+            this.obdUtil             = obdUtil;
 
             getConnectionSource(connectionType);
 
@@ -191,7 +189,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             try {
                 driver18DaysLogArray = hMethods.getSavedLogArray(DriverId, dbHelper);
 
-                  Thread.sleep(500); // 500 milli sec delay to get updated data from db
+                 // Thread.sleep(500); // 500 milli sec delay to get updated data from db
                     CheckEldRule(driver18DaysLogArray, currentDateTime, currentUTCTime,  isSingleDriver,  IsLogApiACalled,
                             serviceResponse,  latLongHelper,  locMethod,
                             hMethods,  dbHelper,  serviceError);
@@ -473,7 +471,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                     // message = "Vehicle is running below the threshold speed limit. Now your status is going to be changed to On Duty.";
                                                     message = "Duty status switched to On Duty not Driving due to vehicle is not moving.";
                                                 } else {
-                                                    message = "Please change your status from Driving to others due to vehicle is not moving.";
+                                                    message = "Please change your status from Driving to other duty status due to vehicle is not moving.";
                                                 }
 
                                                 CHANGED_STATUS = ON_DUTY;
@@ -801,7 +799,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             // --------- Showing notification to user to change there status...
 
             if (!IsAOBRDAuto) {
-                if(message.equals("Please change your status from Driving to others due to vehicle is not moving.")){
+                if(message.equals("Please change your status from Driving to other duty status due to vehicle is not moving.")){
                     sendBroadCast(false, true);
                 }
                 serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, isEldToast, AlertMsg, "");
@@ -1207,6 +1205,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
         } catch (JSONException e) {
             e.printStackTrace();
+            constants.saveAppUsageLog("Service- ModelNew, Exception occurred when changed to " + DriverStatusId, false, false, obdUtil);
         }
 
         if(DriverType == Constants.MAIN_DRIVER_TYPE){
@@ -1391,6 +1390,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 driverLogArray.put(driverLogArray.length()-1, updateViolationJson);
             }catch (Exception e){
                 e.printStackTrace();
+                constants.saveAppUsageLog("Exception occurred when changed to " + DriverStatusId, false, false, obdUtil);
             }
 
         }else{
@@ -1413,6 +1413,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         constants.IsAlreadyViolation = false;
 
         sendBroadCast(true, false);
+
+        Log.d("Saved Status", "--- service DriverStatusId: "+DriverStatusId);
 
     }
 

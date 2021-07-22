@@ -114,8 +114,13 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-        if(EventDateTime.length() > 16) {
+       /* if(EventDateTime.length() > 16) {
             holder.dateDotTV.setText(EventDateTime.substring(11, 16));
+        }*/
+
+
+        if(EventDateTime.length() >= 19) {
+            holder.dateDotTV.setText(EventDateTime.substring(11, 19));
         }
 
 

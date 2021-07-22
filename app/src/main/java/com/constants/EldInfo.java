@@ -5,7 +5,7 @@ public class EldInfo {
     /* -------- Upload ALS ELD updated APK to ALS server URL --------- */
     // https://alsrealtime.com/Home/AndroidAPK
 
-    /* ---------- (Manual Driver) Android OBD APK upload link ----------- */
+    /* ---------- (Manual Driver) Android APK upload link ----------- */
     // http://eld.alsrealtime.com/Home/ManualAndroidOBDAPK
     // http://develd.alsrealtime.com/Home/ManualAndroidOBDAPK
 

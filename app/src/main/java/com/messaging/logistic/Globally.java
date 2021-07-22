@@ -1526,7 +1526,7 @@ public class Globally {
 				fOut.close();
 
 				//Log.d("FileSaved", "---Saved File: " + filename + " \n" +savedData);
-				Log.d("myFile", "---myFile: " + myFile);
+				//Log.d("myFile", "---myFile: " + myFile);
 			}
 
 		} catch (FileNotFoundException e) {e.printStackTrace();}

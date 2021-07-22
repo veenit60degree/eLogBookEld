@@ -923,13 +923,13 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             for(int i = 0; i < array.length() ; i++){
                 JSONObject obj = (JSONObject)array.get(i);
                 String time = obj.getString("DateTimeWithMins");
-                if(time.length() > 16) {
+                if(time.length() > 18) {
                     DotDataModel dotLogItem = new DotDataModel(
                             constants.checkNullString(obj.getString("strEventType")),
                             time,
                             time,
                             obj.getBoolean("IsMalfunction"),
-                            time.substring(11, 16),
+                            time.substring(11, 19),
                             constants.checkNullString(obj.getString("Annotation")),
                             constants.checkNullString(obj.getString("OdometerInKm")),
                             constants.checkNullString(obj.getString("TotalVehicleMiles")),

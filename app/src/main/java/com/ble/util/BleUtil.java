@@ -23,6 +23,8 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.messaging.logistic.Globally;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -123,6 +125,10 @@ public class BleUtil {
                     String finalTime = time.substring(0, 2) + ":" + time.substring(2, 4) + ":" + time.substring(4, 6);
                     String accDateTime = arrayData[5];
                     String finalaccDateTime = accDateTime.substring(0, 2) + "-" + accDateTime.substring(2, 4) + "-" + accDateTime.substring(4, 6) + " " + accDateTime.substring(6, 8) + ":" + accDateTime.substring(8, 10) + ":" + accDateTime.substring(10, 12);
+                    if(arrayData[12].length() > 4) {
+                        Globally.LATITUDE = arrayData[12];
+                        Globally.LONGITUDE = arrayData[13];
+                    }
                     decodedData = "<b>Device Name:</b> " + name + "<br/>" +
                             "<b>MAC Address:</b> " + mac + "<br/><br/>" +
                             "<b>Sequence Id:</b> " + arrayData[0] + "<br/>" +

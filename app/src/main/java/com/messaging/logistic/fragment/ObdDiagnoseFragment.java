@@ -246,6 +246,17 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         switch (v.getId()){
 
             case R.id.bleObdTxtView:
+               /* String message = "*TS01,868323029228761,000115170721,CAN:1500FEEC33414B4A474C4452364A534A4E373536392A0B00F004018C8CEF1F00F48C0B00FEC100BCFE0C00BCFE0C0B00FEE50EEF0400FFFFFFFF0B00FEF1C3E00604000000300B00FEF6FF085E3BFFFFFFFF0B00FEEE7E53C62EFFFF43FF0B00FEEFA5FFFF39FFFFFFFA0B00FEFCFF86FFFFFFFFFFFF0B00FEF25D0016020B06FFFF0B00FEE0C3118500C31185000B00FEBFD70786747969FFFF0B00FEE852146107FFFFA04E0B00FEE99B010B009B010B00#";
+               // decoder.DecodeTextAndSave(message, new OBDDeviceData());
+
+                try{
+                    data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
+                    JSONObject simObj = new JSONObject(data.toString());
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }*/
+
                 if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_BLE) {
                     if (constants.CheckGpsStatusToCheckMalfunction(getActivity())) {
                         scanBtnClick();
@@ -365,7 +376,11 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             case R.id.resetObdTxtView:
 
                 if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
-                    ObdDialog();
+                    if (wifiConfig.IsAlsNetworkConnected(getActivity())) {
+                        ObdDialog();
+                    }else {
+                        globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
+                    }
                 }
                 break;
 
@@ -388,14 +403,10 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            if(wifiConfig.IsAlsNetworkConnected(getActivity()) ) {
-                                clickBtnFlag = RestartObdFlag;
-                                obdProgressBar.setVisibility(View.VISIBLE);
-                                tcpClient.sendMessage("123456,rst");
-                                obdDataTxtView.setText("");
-                            }else{
-                                globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.obd_connection_desc), getResources().getColor(R.color.colorVoilation));
-                            }
+                            clickBtnFlag = RestartObdFlag;
+                            obdProgressBar.setVisibility(View.VISIBLE);
+                            tcpClient.sendMessage("123456,rst");
+                            obdDataTxtView.setText("");
                         }
                     });
 
@@ -576,11 +587,25 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             String HighResolutionDistance   = wifiConfig.checkJsonParameter(canObj, "HighResolutionTotalVehicleDistanceInKM", "0");
             String WheelBasedVehicleSpeed   = wifiConfig.checkJsonParameter(canObj, "WheelBasedVehicleSpeed", "0");
 
+            String EngineHours   = wifiConfig.checkJsonParameter(canObj, "EngineHours", "0");
+            String GPSLatitude   = wifiConfig.checkJsonParameter(canObj, "GPSLatitude", "0");
+            String GPSLongitude   = wifiConfig.checkJsonParameter(canObj, "GPSLongitude", "0");
+            String RPMEngineSpeed   = wifiConfig.checkJsonParameter(canObj, "RPMEngineSpeed", "0");
+            String TotalVehcileDistance   = wifiConfig.checkJsonParameter(canObj, "TotalVehcileDistance", "0");
+
             String canData =
                     "<b>Mileage               : </b> " + MileageInMeters + " m <br />" +
                             "<b>TripDistance          : </b> " + TripDistanceInKM + " km <br />" +
                             "<b>Total Vehicle Distance: </b> " + HighResolutionDistance + " km <br />" +
-                            "<b>WheelBasedVehicleSpeed: </b> " + WheelBasedVehicleSpeed + " km <br />" ;
+                            "<b>WheelBasedVehicleSpeed: </b> " + WheelBasedVehicleSpeed + " km <br />" +
+
+                            "<b>Engine Hours: </b> " + EngineHours + " km <br />" +
+                            "<b>GPS Latitude: </b> " + GPSLatitude + " km <br />" +
+                            "<b>GPS Longitude: </b> " + GPSLongitude + " km <br />" +
+                            "<b>RPM Engine Speed: </b> " + RPMEngineSpeed + " km <br />" +
+                            "<b>Total Vehcile Distance: </b> " + TotalVehcileDistance + " km <br />"  ;
+
+
 
             obdDataTxtView.setText( Html.fromHtml(responseTxt + htmlBlueFont + canData + closeFont));
 

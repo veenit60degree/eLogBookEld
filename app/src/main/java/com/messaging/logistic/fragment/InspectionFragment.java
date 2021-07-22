@@ -386,9 +386,15 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             getLocation();
             locInspectionTV.setText(Location);
 
-            if(IsAOBRD == false)
+            if(Location.length() == 0 || Location.contains("0.0")){
+                changeLocBtn.setVisibility(View.VISIBLE);
+                locInspectionTV.setText("");
+            }
+            if(IsAOBRD == false && Globally.LATITUDE.length() > 4) {
                 changeLocBtn.setVisibility(View.GONE);
+            }
         }
+
         inspectionDateTv.setText(CreatedDate.substring(0, 11));
 
        /* if(IsAOBRD ) {
@@ -414,6 +420,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         EldFragment.IsPrePost = false;
         isOnCreate = false;
+
+
     }
 
 
@@ -431,6 +439,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             if (Globally.isConnected(getActivity()) && Globally.LATITUDE.length() > 5) {
                 GetAddFromLatLng(Globally.LATITUDE, Globally.LONGITUDE);
+            }else{
+                changeLocBtn.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
             e.printStackTrace();

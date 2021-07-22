@@ -88,8 +88,12 @@ public class CanDotRemarksAdapter extends BaseAdapter {
 
         String eventTime = itemsList.get(position).getDateTimeWithMins();
         holder.dateRemarksDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(eventTime));
-        if(eventTime.length() > 16) {
+      /*  if(eventTime.length() > 16) {
             holder.timeDotTV.setText(eventTime.substring(11, 16));
+        }*/
+
+        if(eventTime.length() >= 19) {
+            holder.timeDotTV.setText(eventTime.substring(11, 19));
         }
 
         //holder.timeDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins()));

@@ -21,7 +21,7 @@
             android:textSize="@dimen/text_size_18"
             android:textColor="@color/color_eld_theme"
             android:gravity="center_horizontal"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:maxLines="2"
 
             />
@@ -40,14 +40,68 @@
             android:textColor="@color/color_eld_theme"
             android:layout_weight="1"
             android:maxLines="2"
+            android:visibility="gone"
 
             />
+
+
+        <TextView
+            android:id="@+id/statusUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Status"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_4"
+            android:textSize="@dimen/text_size_18"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1.1"
+            android:maxLines="2"
+
+            />
+
+
+        <TextView
+            android:id="@+id/startTimeUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/date__time"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_4"
+            android:paddingRight="@dimen/margin_short_4"
+            android:textSize="@dimen/text_size_18"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="0.9"
+            android:maxLines="2"
+
+            />
+
+
+
+        <TextView
+            android:id="@+id/startLocUnTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Location"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_4"
+            android:paddingRight="@dimen/margin_short_4"
+            android:textSize="@dimen/text_size_18"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="0.9"
+            android:maxLines="2"
+
+            />
+
+
 
         <TextView
             android:id="@+id/startOdoUnTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/start_odo"
+            android:text="@string/Odometers"
             android:textStyle="bold"
             android:paddingLeft="@dimen/margin_short_4"
             android:paddingRight="@dimen/margin_short_4"
@@ -56,6 +110,7 @@
             android:textColor="@color/color_eld_theme"
             android:layout_weight="1"
             android:maxLines="2"
+
 
             />
 
@@ -72,26 +127,13 @@
             android:textColor="@color/color_eld_theme"
             android:layout_weight="1"
             android:maxLines="2"
+            android:visibility="gone"
 
             />
 
 
 
-        <TextView
-            android:id="@+id/startLocUnTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/start_loc_"
-            android:textStyle="bold"
-            android:paddingLeft="@dimen/margin_short_4"
-            android:paddingRight="@dimen/margin_short_4"
-            android:textSize="@dimen/text_size_18"
-            android:gravity="center_horizontal"
-            android:textColor="@color/color_eld_theme"
-            android:layout_weight="1"
-            android:maxLines="2"
 
-            />
 
         <TextView
             android:id="@+id/endLocUnTV"
@@ -106,8 +148,10 @@
             android:textColor="@color/color_eld_theme"
             android:layout_weight="1"
             android:maxLines="2"
+            android:visibility="gone"
 
             />
+
 
 
         <TextView
@@ -123,8 +167,10 @@
             android:textColor="@color/color_eld_theme"
             android:layout_weight="1"
             android:maxLines="2"
+            android:visibility="gone"
 
             />
+
 
         <TextView
             android:id="@+id/totalMilesUnTV"
@@ -139,24 +185,11 @@
             android:textColor="@color/color_eld_theme"
             android:layout_weight="1"
             android:maxLines="2"
+            android:visibility="gone"
 
             />
 
-        <TextView
-            android:id="@+id/startTimeUnTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/Start_time"
-            android:textStyle="bold"
-            android:paddingLeft="@dimen/margin_short_4"
-            android:paddingRight="@dimen/margin_short_4"
-            android:textSize="@dimen/text_size_18"
-            android:gravity="center_horizontal"
-            android:textColor="@color/color_eld_theme"
-            android:layout_weight="1"
-            android:maxLines="2"
 
-            />
 
 
         <TextView
@@ -171,24 +204,12 @@
             android:textColor="@color/color_eld_theme"
             android:layout_weight="1"
             android:maxLines="2"
+            android:visibility="gone"
 
             />
 
 
-        <TextView
-            android:id="@+id/statusUnTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/Status"
-            android:textStyle="bold"
-            android:paddingLeft="@dimen/margin_short_4"
-            android:textSize="@dimen/text_size_18"
-            android:gravity="center_horizontal"
-            android:textColor="@color/color_eld_theme"
-            android:layout_weight="1"
-            android:maxLines="2"
 
-            />
 
 
         <TextView
@@ -201,7 +222,7 @@
             android:textSize="@dimen/text_size_18"
             android:gravity="center_horizontal"
             android:textColor="@color/color_eld_theme"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:maxLines="2"
 
             />

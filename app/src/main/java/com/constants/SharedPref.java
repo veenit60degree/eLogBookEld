@@ -173,6 +173,24 @@ public class SharedPref {
     }
 
 
+    // Get Odometer Calculation Allow  status -------------------
+    public static boolean isOdoCalculationAllowed(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("OdoCalculationAllowed", false);
+    }
+
+
+    // Set Odometer Calculation Allow  status  -------------------
+    public static void SetOdoCalculationAllowed( boolean isAutoDrive, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("OdoCalculationAllowed", isAutoDrive);
+        editor.commit();
+    }
+
+
+
+
     // Get bluetooth ping status -------------------
     public static String isBlePing(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

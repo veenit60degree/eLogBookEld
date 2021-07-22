@@ -61,6 +61,7 @@ import com.constants.WebAppInterface;
 import com.custom.dialogs.CertifyConfirmationDialog;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.LoginDialog;
+import com.custom.dialogs.MissingLocationDialog;
 import com.custom.dialogs.SignDialog;
 import com.custom.dialogs.SignRecordDialog;
 import com.driver.details.DriverConst;
@@ -264,6 +265,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     LoginDialog loginDialog;
     SignRecordDialog signRecordDialog;
     CertifyConfirmationDialog certifyConfirmationDialog;
+    MissingLocationDialog missingLocationDialog;
 
     String MainDriverPass = "", CoDriverPass = "";
     int  eldWarningColor;
@@ -519,6 +521,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
             if(SelectedDayOfMonth == constants.CertifyLog){
                 openSignRecordDialog(false);
+            }else{
+                openMissingDialogAlert();
             }
        // }
 
@@ -1441,6 +1445,9 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 previousDateBtn.setVisibility(View.GONE);
             }
         }
+
+        openMissingDialogAlert();
+
     }
 
 
@@ -2385,6 +2392,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                 String dayOfTheWeek = dateMonth[2];
 
                 GetLogWithDate(SelectedDate, dayOfTheWeek, monthFullName, monthShortName);
+                openMissingDialogAlert();
             }
 
 
@@ -2452,8 +2460,8 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
 
             DOTBtnVisibility(DaysDiff, MaxDays);
-
             GetLogWithDate(SelectedDate, dayOfTheWeek, monthFullName, monthShortName);
+            openMissingDialogAlert();
 
         }
     }
@@ -2849,6 +2857,43 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
             certifyErrorImgView.setVisibility(View.GONE);
         }
     }
+
+
+    void openMissingDialogAlert(){
+        try {
+            boolean isLocationMissing = constants.isLocationMissingSelectedDay (selectedDateTime, currentDateTime, driverLogArray, hMethods, global);
+
+            if(isLocationMissing) {
+                if (missingLocationDialog != null && missingLocationDialog.isShowing()) {
+                    missingLocationDialog.dismiss();
+                }
+
+                missingLocationDialog = new MissingLocationDialog(getActivity(), new ChangeLocListener());
+                missingLocationDialog.show();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private class ChangeLocListener implements MissingLocationDialog.ChangeLocationListener{
+
+        @Override
+        public void AddLocationListener() {
+
+            try {
+                driverLogScrollView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        driverLogScrollView.smoothScrollTo(0, certifyLogItemLay.getBottom() * 12);
+                    }
+                });
+            }catch (Exception e){e.printStackTrace();}
+
+        }
+    }
+
 
     private class LoginListener implements LoginDialog.LoginListener{
 

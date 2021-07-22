@@ -1,3 +1,0 @@
-int attr inkFlags 0x0
-int[] styleable InkView { 0x0 }
-int styleable InkView_inkFlags 0

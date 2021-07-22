@@ -1,6 +1,7 @@
 package com.adapter.logistic;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,8 +112,8 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-        if(EventDateTime.length() > 16) {
-            holder.dateTimeDotTV.setText(EventDateTime.substring(11, 16));
+        if(EventDateTime.length() >= 19) {
+            holder.dateTimeDotTV.setText(EventDateTime.substring(11, 19));
         }
 
         holder.eventDotTV.setText(constants.getDutyChangeEventName( itemsList.get(position).getEventType(),

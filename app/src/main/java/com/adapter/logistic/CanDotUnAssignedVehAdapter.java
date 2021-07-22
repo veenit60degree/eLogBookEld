@@ -66,19 +66,20 @@ public class CanDotUnAssignedVehAdapter extends BaseAdapter {
             holder.unidentifiedVehDotLay     = (LinearLayout) convertView.findViewById(R.id.unidentifiedVehDotLay);
 
             holder.truckNoUnTV      = (TextView) convertView.findViewById(R.id.truckNoUnTV);
-            holder.vinUnLay         = (TextView) convertView.findViewById(R.id.vinUnLay);
-            holder.startOdoUnTV     = (TextView) convertView.findViewById(R.id.startOdoUnTV);
-            holder.endOdoUnTV       = (TextView) convertView.findViewById(R.id.endOdoUnTV);
+          //  holder.vinUnLay         = (TextView) convertView.findViewById(R.id.vinUnLay);
+            holder.statusUnTV       = (TextView) convertView.findViewById(R.id.statusUnTV);
+
+          //  holder.endOdoUnTV       = (TextView) convertView.findViewById(R.id.endOdoUnTV);
 
             holder.startLocUnTV     = (TextView) convertView.findViewById(R.id.startLocUnTV);
-            holder.endLocUnTV       = (TextView) convertView.findViewById(R.id.endLocUnTV);
+          //  holder.endLocUnTV       = (TextView) convertView.findViewById(R.id.endLocUnTV);
 
-            holder.totalKmUnTV      = (TextView) convertView.findViewById(R.id.totalKmUnTV);
-            holder.totalMilesUnTV   = (TextView) convertView.findViewById(R.id.totalMilesUnTV);
+          //  holder.totalKmUnTV      = (TextView) convertView.findViewById(R.id.totalKmUnTV);
+          //  holder.totalMilesUnTV   = (TextView) convertView.findViewById(R.id.totalMilesUnTV);
             holder.startTimeUnTV    = (TextView) convertView.findViewById(R.id.startTimeUnTV);
-            holder.endTimeUnTV      = (TextView) convertView.findViewById(R.id.endTimeUnTV);
+           // holder.endTimeUnTV      = (TextView) convertView.findViewById(R.id.endTimeUnTV);
 
-            holder.statusUnTV       = (TextView) convertView.findViewById(R.id.statusUnTV);
+            holder.startOdoUnTV     = (TextView) convertView.findViewById(R.id.startOdoUnTV);
             holder.seqNoUnTV        = (TextView) convertView.findViewById(R.id.seqNoUnTV);
 
             convertView.setTag(holder);
@@ -91,63 +92,79 @@ public class CanDotUnAssignedVehAdapter extends BaseAdapter {
 
         holder.unidentifiedVehDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
+       // truckNoUnTV, statusUnTV, startTimeUnTV, startLocUnTV, startOdoUnTV, seqNoUnTV
+
         holder.truckNoUnTV.setText( itemsList.get(position).getEquipmentNumber());
-        holder.vinUnLay.setText( itemsList.get(position).getVIN());
-        holder.startOdoUnTV.setText( itemsList.get(position).getStartOdometer());
-        holder.endOdoUnTV.setText( itemsList.get(position).getEndOdometer());
+
+
+        holder.statusUnTV.setText( itemsList.get(position).getDutyStatus());
+        //holder.startTimeUnTV.setText( itemsList.get(position).getDriverZoneStartDateTime());
+
+        String date = itemsList.get(position).getDriverZoneStartDateTime();
+        holder.startTimeUnTV.setText(Globally.ConvertDateFormatMMddyyyy(date) + " " + Globally.ConvertTo12HTimeFormat(date, Globally.DateFormat));
 
         holder.startLocUnTV.setText( itemsList.get(position).getStartLocation());
-        holder.endLocUnTV.setText( itemsList.get(position).getEndLocation());
+        holder.startOdoUnTV.setText( itemsList.get(position).getStartOdometer());
+        holder.seqNoUnTV.setText( itemsList.get(position).getHexaSeqNumber());
 
-        holder.totalKmUnTV.setText( itemsList.get(position).getTotalKm());
-        holder.totalMilesUnTV.setText( itemsList.get(position).getTotalMiles());
+
+     /*//   holder.vinUnLay.setText( itemsList.get(position).getVIN());
+        holder.startOdoUnTV.setText( itemsList.get(position).getStartOdometer());
+     //   holder.endOdoUnTV.setText( itemsList.get(position).getEndOdometer());
+
+        holder.startLocUnTV.setText( itemsList.get(position).getStartLocation());
+      //  holder.endLocUnTV.setText( itemsList.get(position).getEndLocation());
+
+      //  holder.totalKmUnTV.setText( itemsList.get(position).getTotalKm());
+       // holder.totalMilesUnTV.setText( itemsList.get(position).getTotalMiles());
 
         //holder.statusUnTV.setText( itemsList.get(position).getStatusId());
         holder.statusUnTV.setText( itemsList.get(position).getDutyStatus());
         holder.seqNoUnTV.setText( itemsList.get(position).getHexaSeqNumber());
 
         holder.startTimeUnTV.setText(Globally.ConvertTo12HTimeFormat(itemsList.get(position).getDriverZoneStartDateTime(), Globally.DateFormat));
-        holder.endTimeUnTV.setText(Globally.ConvertTo12HTimeFormat(itemsList.get(position).getDriverZoneEndDateTime(), Globally.DateFormat));
+*/
+        //  holder.endTimeUnTV.setText(Globally.ConvertTo12HTimeFormat(itemsList.get(position).getDriverZoneEndDateTime(), Globally.DateFormat));
 
         // Set text style normal
         constants.setTextStyleNormal(holder.truckNoUnTV);
-        constants.setTextStyleNormal(holder.vinUnLay);
+      //  constants.setTextStyleNormal(holder.vinUnLay);
         constants.setTextStyleNormal(holder.startOdoUnTV);
 
-        constants.setTextStyleNormal(holder.endOdoUnTV);
-        constants.setTextStyleNormal(holder.totalKmUnTV);
-        constants.setTextStyleNormal(holder.totalMilesUnTV);
+       // constants.setTextStyleNormal(holder.endOdoUnTV);
+       // constants.setTextStyleNormal(holder.totalKmUnTV);
+       // constants.setTextStyleNormal(holder.totalMilesUnTV);
 
         constants.setTextStyleNormal(holder.startTimeUnTV);
-        constants.setTextStyleNormal(holder.endTimeUnTV);
+       // constants.setTextStyleNormal(holder.endTimeUnTV);
         constants.setTextStyleNormal(holder.statusUnTV);
         constants.setTextStyleNormal(holder.seqNoUnTV);
 
         constants.setTextStyleNormal(holder.startLocUnTV);
-        constants.setTextStyleNormal(holder.endLocUnTV);
+       // constants.setTextStyleNormal(holder.endLocUnTV);
 
 
         // set Marque on view
         constants.setMarqueonView(holder.truckNoUnTV);
-        constants.setMarqueonView(holder.vinUnLay);
+      //  constants.setMarqueonView(holder.vinUnLay);
         constants.setMarqueonView(holder.startOdoUnTV);
-        constants.setMarqueonView(holder.endOdoUnTV);
-        constants.setMarqueonView(holder.totalKmUnTV);
-        constants.setMarqueonView(holder.totalMilesUnTV);
+      //  constants.setMarqueonView(holder.endOdoUnTV);
+      //  constants.setMarqueonView(holder.totalKmUnTV);
+      //  constants.setMarqueonView(holder.totalMilesUnTV);
         constants.setMarqueonView(holder.startTimeUnTV);
-        constants.setMarqueonView(holder.endTimeUnTV);
+       // constants.setMarqueonView(holder.endTimeUnTV);
         constants.setMarqueonView(holder.statusUnTV);
         constants.setMarqueonView(holder.seqNoUnTV);
         constants.setMarqueonView(holder.startLocUnTV);
-        constants.setMarqueonView(holder.endLocUnTV);
+        //constants.setMarqueonView(holder.endLocUnTV);
 
         return convertView;
     }
 
 
     public class ViewHolder {
-        TextView truckNoUnTV, vinUnLay, startOdoUnTV, endOdoUnTV, totalKmUnTV, totalMilesUnTV, startTimeUnTV, endTimeUnTV, statusUnTV, seqNoUnTV;
-        TextView startLocUnTV, endLocUnTV;
+        TextView truckNoUnTV, statusUnTV, startTimeUnTV, startLocUnTV, startOdoUnTV, seqNoUnTV;
+       // TextView vinUnLay, endOdoUnTV, endTimeUnTV, totalKmUnTV, totalMilesUnTV,endLocUnTV;
         LinearLayout unidentifiedVehDotLay;
 
     }

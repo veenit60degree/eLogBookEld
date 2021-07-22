@@ -1,6 +1,0 @@
-com/simplify/ink/BuildConfig.java
- com.simplify.ink.BuildConfig
-com/simplify/ink/InkView.java
- com.simplify.ink.InkView
- com.simplify.ink.InkView$InkListener
- com.simplify.ink.InkView$InkPoint

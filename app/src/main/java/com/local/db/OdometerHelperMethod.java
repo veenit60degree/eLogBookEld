@@ -373,12 +373,12 @@ public class OdometerHelperMethod {
         try {
             for(int i = 0 ; i < final18DaysArray.length() ; i++){
                 JSONObject obj = (JSONObject)final18DaysArray.get(i);
-                String selectedDate = obj.getString("strOdometerDate").split(" ")[0];
-
-                if(!currentDate.equals(selectedDate)){
-                    selectedArray.put(obj);
+                if(obj.has("strOdometerDate")) {
+                    String selectedDate = obj.getString("strOdometerDate").split(" ")[0];
+                    if (!currentDate.equals(selectedDate)) {
+                        selectedArray.put(obj);
+                    }
                 }
-
             }
 
             for(int i = 0 ; i < currentDayodometerArray.length() ; i++){

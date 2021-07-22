@@ -296,8 +296,14 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         }else{
             String locationKm = LogItem.getLocationKm();
             if (locationKm.contains("null") || locationKm.equals(",") || locationKm.equals("")) {
-                holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
-                holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
+                if(LogItem.getLocation().contains("null")){
+                    holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
+                    holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
+                }else{
+                    holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
+                    holder.certifyLocationTV.setText(LogItem.getLocation());
+                }
+
             } else {
                 holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                 holder.certifyLocationTV.setText(LogItem.getLocationKm());
