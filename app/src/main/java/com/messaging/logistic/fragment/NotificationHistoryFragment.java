@@ -248,7 +248,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     DriverLogResponse saveNotificationReqResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
 
 
             notiProgressBar.setVisibility(View.GONE);

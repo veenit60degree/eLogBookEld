@@ -1,7 +1,6 @@
 package com.messaging.logistic.fragment;
 
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,11 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.text.Html;
 import android.util.Log;
 import android.view.InflateException;
@@ -28,21 +22,21 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.background.service.BackgroundLocationService;
-import com.clj.fastble.data.BleDevice;
+import com.ble.utils.ToastUtil;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.TcpClient;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.TabAct;
 import com.wifi.settings.WiFiConfig;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Vector;
 
 import dal.tables.OBDDeviceData;
@@ -174,7 +168,8 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     void scanBtnClick(){
         int bleStatus = SharedPref.getObdStatus(getActivity());
         if(bleStatus == Constants.BLE_CONNECTED){
-            stopBleObdData();
+            //stopBleObdData();
+            ToastUtil.show(getActivity(), getString(R.string.device_already_connected));
         }else {
 
             loaderProgress.setVisibility(View.VISIBLE);
@@ -213,7 +208,12 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             if(SharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED){
                 bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
             }else{
-                bleObdTxtView.setText(getString(R.string.scanning) + " (Ble OBD)");
+                //<b>Device Name:</b> SMBLE-000066<br/><b>MAC Address:</b> C4:64:E3:54:EF:03<br/><br/><b>Sequence Id:</b> 01B5<br/><b>Event Type:</b> 0<br/><b>Event Code:</b> 1<br/><b>Date:</b> 072821<br/><b>Time:</b> 112943<br/><b>Latest ACC ON time:</b> 072821112943<br/><b>Event Data:</b> OnTime<br/><b>Vehicle Speed:</b> 0<br/><b>Engine RPM:</b> 0<br/><b>Odometer:</b> 0<br/><b>Engine Hours:</b> 0<br/><b>VIN Number:</b> <br/><b>Latitude:</b> 30.70728<br/><b>Longitude:</b> 76.68493<br/><b>Distance since Last located:</b> 0<br/><b>Driver ID:</b> <br/><b>Version:</b>1<br/>
+                if(!data.contains("MAC Address")) {
+                    bleObdTxtView.setText(getString(R.string.connect_ble_obd));
+                }else{
+                    bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
+                }
             }
 
         }
@@ -477,7 +477,6 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         @Override
         public void messageReceived(String message) {
             Log.d("response", "OBD Respone: " +message);
-            responseRawTxtView.setText(message);
 
 
             try{
@@ -492,7 +491,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 if(!message.equals(noObd) && message.length() > 10){
 
                     if(clickBtnFlag == SIMFlag) {
-
+                        responseRawTxtView.setText(message);
                         try{
                             data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
                             JSONObject simObj = new JSONObject(data.toString());
@@ -504,6 +503,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
 
                     }else if(clickBtnFlag == CanFlag){
+                        responseRawTxtView.setText(message);
                         if(message.contains("CAN:UNCONNECTED")){
                             globally.EldScreenToast(rightMenuBtn, noCanData, getResources().getColor(R.color.colorVoilation));
                             obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlRedFont + "Odometer data not available" + closeFont) );
@@ -516,6 +516,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
 
                     }else if(clickBtnFlag == GpsFlag){
+                        responseRawTxtView.setText(message);
                         if (message.contains("GPS")) {
                             String[] responseArray = message.split("GPS");
                             if (responseArray.length > 1) {

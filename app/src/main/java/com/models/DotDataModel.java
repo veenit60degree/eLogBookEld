@@ -16,10 +16,13 @@ public class DotDataModel {
     String OdometerInMiles;
     String EngineHours;
     String EventTypeStatus;
+    String Remarks;
     String Origin;
 
     public DotDataModel(String driverStatus, String startTime, String endTime, boolean isMalfunction, String time, String location,
-                        String startOdometer, String endOdomoter, String odometerInKm, String odometerInMiles, String engineHours, String eventTypeStatus, String origin) {
+                        String startOdometer, String endOdomoter, String odometerInKm, String odometerInMiles, String engineHours,
+                        String eventTypeStatus, String Remarks, String origin) {
+
         DriverStatus = driverStatus;
         StartTime = startTime;
         EndTime = endTime;
@@ -33,6 +36,7 @@ public class DotDataModel {
         OdometerInMiles = odometerInMiles;
         EngineHours = engineHours;
         EventTypeStatus = eventTypeStatus;
+        this.Remarks = Remarks;
         Origin = origin;
     }
 
@@ -82,6 +86,10 @@ public class DotDataModel {
 
     public String getEventTypeStatus() {
         return EventTypeStatus;
+    }
+
+    public String getRemarks() {
+        return Remarks;
     }
 
     public String getOrigin() {

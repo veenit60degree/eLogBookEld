@@ -34,7 +34,7 @@ public class SaveDriverLogPost
     }
 
 
-    public void PostDriverLogData(final JSONArray geoData, final String api, final int socketTimeout,
+    public void PostDriverLogData(final JSONArray driverLogData, final String api, final int socketTimeout,
                                   final boolean isLoad, final boolean IsRecap, final int DriverType, final int flag){
 
         if (SaveLogRequest == null) {
@@ -49,7 +49,7 @@ public class SaveDriverLogPost
                     public void onResponse(String response) {
                         Log.d("Response ", ">>>Response: " + response);
                         SharedPref.SetEditedLogStatus(false, context);
-                        postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag);
+                        postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag, driverLogData.length());
                     }
                 },
                 new Response.ErrorListener()
@@ -70,11 +70,11 @@ public class SaveDriverLogPost
             @Override
             public byte[] getBody() throws AuthFailureError {
                 try {
-                   // Log.d("certify", "certify Data: " + geoData.toString());
-                    return geoData.toString().getBytes("utf-8");
+                   // Log.d("certify", "certify Data: " + driverLogData.toString());
+                    return driverLogData.toString().getBytes("utf-8");
                 } catch (UnsupportedEncodingException uee) {
                     VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
-                            geoData, "utf-8");
+                            driverLogData, "utf-8");
                     return null;
                 }
 

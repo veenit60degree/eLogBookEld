@@ -23,6 +23,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.htstart.htsdk.bluetooth.HTBleData;
 import com.messaging.logistic.Globally;
 
 import java.nio.charset.Charset;
@@ -160,6 +161,42 @@ public class BleUtil {
 
         return decodedData;
     }
+
+
+    public static String decodeDataChange(HTBleData data, String name, String mac){
+
+        String decodedData = "";
+        String accDateTime = data.getRTCDate() + data.getRTCTime();
+        //String finalaccDateTime = accDateTime.substring(0, 2) + "-" + accDateTime.substring(2, 4) + "-" + accDateTime.substring(4, 6) + " " + accDateTime.substring(6, 8) + ":" + accDateTime.substring(8, 10) + ":" + accDateTime.substring(10, 12);
+
+        decodedData = "<b>Device Name:</b> " + name + "<br/>" +
+                "<b>MAC Address:</b> " + mac + "<br/><br/>" +
+                "<b>Sequence Id:</b> " + data.getSequenceID() + "<br/>" +
+                "<b>Event Type:</b> " + data.getEventType() + "<br/>" +
+                "<b>Event Code:</b> " + data.getEventCode()+ "<br/>" +
+                "<b>Date:</b> " + data.getRTCDate() + "<br/>" +
+                "<b>Time:</b> " + data.getRTCTime() + "<br/>" +
+                "<b>Latest ACC ON time:</b> " + accDateTime + "<br/>" +
+                "<b>Event Data:</b> " + data.getEventData() + "<br/>" +
+                "<b>Vehicle Speed:</b> " + data.getVehicleSpeed() + "<br/>" +
+                "<b>Engine RPM:</b> " + data.getEngineSpeed() + "<br/>" +
+                "<b>Odometer:</b> " + data.getOdoMeter() + "<br/>" +
+                "<b>Engine Hours:</b> " + data.getEngineHours() + "<br/>" +
+                "<b>VIN Number:</b> " + data.getVIN_Number() + "<br/>" +
+                "<b>Latitude:</b> " + data.getLatitude() + "<br/>" +
+                "<b>Longitude:</b> " + data.getLongitude() + "<br/>" +
+                "<b>Distance since Last located:</b> " + data.getDistanceSinceLast() + "<br/>" +
+                //"<b>Malfunction Indicator Status:</b> " + arrayData[15] + "<br/>" +
+                //"<b>Diagnostic Event Indicator Status:</b> " + arrayData[16] + "<br/>" +
+                "<b>Driver ID:</b> " + data.getDriverID() + "<br/>" +
+                "<b>Version:</b>" + data.getVersion() + "<br/>" ;
+//               + "<b>Event Checksum:</b> " + data.getEv + "<br/>" +
+        //"<b>Event Data Checksum:</b>" + arrayData[20];
+
+
+        return decodedData;
+    }
+
 
 
 }

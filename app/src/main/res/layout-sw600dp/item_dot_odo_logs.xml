@@ -38,6 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/Location"
+                    android:gravity="left"
                     android:textColor="@color/color_eld_theme"
                     android:textSize="@dimen/text_size_15"
                     android:padding="@dimen/margin_short_2"
@@ -100,6 +101,18 @@
                     />
 
 
+        <TextView
+            android:id="@+id/remarksDotTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Remarks_simple"
+            android:textColor="@color/color_eld_theme"
+            android:textSize="@dimen/text_size_15"
+            android:padding="@dimen/margin_short_2"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+
+            />
 
                 <TextView
                     android:id="@+id/originDotTV"

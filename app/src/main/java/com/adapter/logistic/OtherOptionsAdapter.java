@@ -81,6 +81,7 @@ public class OtherOptionsAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        holder.otherFeatureImgView.setVisibility(View.VISIBLE);
         holder.otherFeatureImgView.setImageResource(LogItem.getDrawable());
         holder.otherFeatureTxtView.setText(LogItem.getTitle());
 

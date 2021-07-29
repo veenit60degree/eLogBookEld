@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/whiteee"
 
     >
@@ -75,37 +76,26 @@
                         />
 
 
-                    <TextView
-                        android:id="@+id/dotModeTV"
+                    <lib.kingja.switchbutton.SwitchMultiButton
+                        android:id="@+id/usDotSwitchBtn"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/margin_short_5"
-                        android:layout_marginBottom="@dimen/margin_short_5"
-                        android:gravity="center_vertical"
-
-                        android:textColor="@color/color_eld_theme"
-                        android:textSize="@dimen/text_size_18"
-                        android:text="@string/dot_mode_us"
-                        android:textStyle="bold"
-                        android:textAllCaps="true"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_short_8"
+                        android:paddingBottom="@dimen/margin_short_8"
+                        app:strokeRadius="@dimen/margin_short_5"
+                        app:strokeWidth="@dimen/margin_short_1"
+                        app:selectedTab="0"
+                        app:selectedColor="@color/colorPrimary"
+                        app:switchTabs="@array/switch_tabs"
+                        android:layout_centerVertical="true"
                         android:layout_centerHorizontal="true"
+                        app:textSize="@dimen/text_size_14"
 
                         />
 
 
-
-                    <ImageView
-                        android:id="@+id/dotModeImgVw"
-                        android:layout_width="@dimen/margin_18"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/margin_short_5"
-                        android:layout_marginBottom="@dimen/margin_short_5"
-                        android:gravity="center_vertical"
-
-                        android:src="@drawable/pencil"
-                        android:layout_toRightOf="@+id/dotModeTV"
-
-                        />
 
 
 
@@ -118,27 +108,11 @@
                         android:layout_centerVertical="true"
                         android:text="@string/data_malfunction"
                         android:layout_centerHorizontal="true"
-                        android:layout_below="@+id/dotModeTV"
+                        android:layout_below="@+id/usDotSwitchBtn"
                         android:visibility="gone"
 
                         />
 
-                    <TextView
-                        android:id="@+id/sendLogBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:textSize="@dimen/text_size_17"
-                        android:text="@string/Send_Log"
-                        android:layout_alignParentRight="true"
-                        android:paddingLeft="@dimen/margin_12"
-                        android:paddingRight="@dimen/margin_12"
-                        android:textColor="@color/whiteee"
-                        android:paddingTop="@dimen/margin_short_7"
-                        android:paddingBottom="@dimen/margin_short_7"
-                        android:layout_marginRight="@dimen/margin_short_9"
-                        android:background="@drawable/green_eld_drawable"
-                        />
 
 
 
@@ -1059,9 +1033,13 @@
                             android:textColor="@color/colorPrimary"
                             android:textStyle="bold"
                             android:singleLine="true"
+                            android:text="@string/carrier_principal_address"
                             android:layout_weight="1"
 
                             />
+
+
+
 
 
 
@@ -1118,6 +1096,7 @@
 
 
                         <TextView
+                            android:id="@+id/placeOfBusinessTV"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingTop="@dimen/margin_short_6"

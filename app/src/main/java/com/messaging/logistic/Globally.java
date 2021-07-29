@@ -371,7 +371,7 @@ public class Globally {
 			snackbar.setActionTextColor(Color.WHITE);
 			View snackbarView = snackbar.getView();
 			snackbarView.setBackgroundColor(color);
-			snackbar.setDuration(6000);	// 6 sec
+			snackbar.setDuration(9000);	// 9 sec
 
 			TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
 			textView.setTextColor(Color.WHITE);

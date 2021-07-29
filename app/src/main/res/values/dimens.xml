@@ -48,6 +48,7 @@
     <dimen name="view_height_71">71dp</dimen>
     <dimen name="view_height_75">75dp</dimen>
     <dimen name="view_height_80">80dp</dimen>
+    <dimen name="view_height_84">84dp</dimen>
     <dimen name="view_height_85">85dp</dimen>
     <dimen name="view_height_90">90dp</dimen>
     <dimen name="view_height_95">95dp</dimen>

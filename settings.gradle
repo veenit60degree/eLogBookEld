@@ -1,4 +1,3 @@
-include ':FastBleLib'
 include ':searchablespinner'
 include ':SlidingLibrary'
 include ':CircleProgressView'

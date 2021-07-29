@@ -61,51 +61,24 @@
                 />
 
 
-            <TextView
-                android:id="@+id/canDotModeTxtVw"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textColor="@color/color_eld_theme"
-                android:textSize="@dimen/text_size_18"
-                android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/margin_short_5"
-                android:layout_marginBottom="@dimen/margin_short_5"
-                android:text="@string/dot_mode_canada"
-                android:textStyle="bold"
-                android:paddingRight="@dimen/margin_short_3"
-                android:layout_centerInParent="true"
-
-                />
-
-            <ImageView
-                android:id="@+id/canDotModeImgVw"
-                android:layout_width="@dimen/margin_18"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin_short_5"
-                android:layout_marginBottom="@dimen/margin_short_5"
-
-                android:src="@drawable/pencil"
-                android:layout_toRightOf="@+id/canDotModeTxtVw"
-                android:layout_centerVertical="true"
-                />
 
 
-
-            <TextView
-                android:id="@+id/canSendLogBtn"
+            <lib.kingja.switchbutton.SwitchMultiButton
+                android:id="@+id/canDotSwitchBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_17"
-                android:text="@string/Send_Log"
-                android:layout_alignParentRight="true"
-                android:paddingLeft="@dimen/margin_12"
-                android:paddingRight="@dimen/margin_12"
-                android:textColor="@color/whiteee"
-                android:paddingTop="@dimen/margin_short_7"
-                android:paddingBottom="@dimen/margin_short_7"
-                android:background="@drawable/green_eld_drawable"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingRight="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_short_8"
+                android:paddingBottom="@dimen/margin_short_8"
+                app:strokeRadius="@dimen/margin_short_5"
+                app:strokeWidth="@dimen/margin_short_1"
+                app:selectedTab="1"
+                app:selectedColor="@color/colorPrimary"
+                app:switchTabs="@array/switch_tabs"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/margin_13"
+                android:layout_centerHorizontal="true"
+                app:textSize="@dimen/text_size_14"
 
                 />
 
@@ -1802,6 +1775,7 @@
             android:background="@color/whiteee"
             android:padding="@dimen/margin_short_6"
             android:layout_marginTop="@dimen/margin_10"
+            android:visibility="gone"
 
             >
 

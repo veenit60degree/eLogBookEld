@@ -41,6 +41,7 @@ import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.constants.WebAppInterface;
 import com.custom.dialogs.DatePickerDialog;
+import com.custom.dialogs.DotOtherOptionDialog;
 import com.custom.dialogs.ShareDriverLogDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
@@ -71,6 +72,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import lib.kingja.switchbutton.SwitchMultiButton;
+
 public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
     View rootView;
@@ -78,11 +81,11 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     HelperMethods hMethods;
     Constants constants;
     WebView dotGraphWebView;
-    TextView errorConnectionView,  EldTitleTV, dotMalfunctionTV, viewInspectionBtn,sendLogBtn;
-    ImageView nextDateBtn, previousDateBtn, eldMenuBtn, signImageView, dotModeImgVw;
+    TextView errorConnectionView,  EldTitleTV, dotMalfunctionTV;
+    ImageView nextDateBtn, previousDateBtn, eldMenuBtn, signImageView;
 
     LinearLayout itemOdometerLay, itemShippingLay;
-    RelativeLayout rightMenuBtn, eldMenuLay, SignatureMainLay;
+    RelativeLayout rightMenuBtn, eldMenuLay, SignatureMainLay,otherOptionBtn;
     ProgressBar dotProgressBar;
 
     TextView recordDateTV, usDotTV, LicenseNoTV, LicensePlateTV;
@@ -91,10 +94,11 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     TextView period24startTV, driverIdTV, coDriverIdTV, truckTractorTV;
     TextView unidentifiedDriverTV, eldMalfTV, carrierTV, startEndOdoTV;
     TextView OdometerDiffTV, truckTractorVinTV, exemptDriverStatusTV, startEndEngineHrTV;
-    TextView currentLocTV, fileCommentTV, PrintDisplayDateTV, dotModeTV;
+    TextView currentLocTV, fileCommentTV, PrintDisplayDateTV, placeOfBusinessTV;
 
     ListView dotDataListView, shippingDotListView;
     ScrollViewExt dotScrollView;
+    SwitchMultiButton usDotSwitchBtn;
 
     DatePickerDialog dateDialog;
     ShareDriverLogDialog shareDialog;
@@ -107,6 +111,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     Map<String, String> params;
     DotLogAdapter dotLogAdapter;
     ShippingViewDetailAdapter shippingAdapter;
+    DotOtherOptionDialog dotOtherOptionDialog;
 
     String INDIAN_URL       = "http://182.73.78.171:8286/";
     String PRODUCTION_URL   = "https://alsrealtime.com/";
@@ -182,8 +187,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         previousDateBtn     = (ImageView)view.findViewById(R.id.previousDate);
         eldMenuBtn          = (ImageView)view.findViewById(R.id.eldMenuBtn);
         signImageView       = (ImageView)view.findViewById(R.id.signImageView);
-        dotModeImgVw        = (ImageView)view.findViewById(R.id.dotModeImgVw);
 
+        otherOptionBtn      = (RelativeLayout) view.findViewById(R.id.otherOptionBtn);
         rightMenuBtn        = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         itemOdometerLay     = (LinearLayout)view.findViewById(R.id.itemOdometerLay);
         itemShippingLay     = (LinearLayout)view.findViewById(R.id.itemShippingLay);
@@ -195,6 +200,9 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
         dotGraphWebView     = (WebView) view.findViewById(R.id.dotGraphWebView);
         dotScrollView       = (ScrollViewExt)view.findViewById(R.id.dotScrollView);
+        usDotSwitchBtn      = (SwitchMultiButton)view.findViewById(R.id.usDotSwitchBtn);
+
+        usDotSwitchBtn.setOnSwitchListener (onSwitchListener);
 
         initilizeTextView(view);
         getBundleData();
@@ -211,17 +219,12 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         dotGraphWebView.setWebChromeClient(new WebChromeClient());
         dotGraphWebView.addJavascriptInterface( new WebAppInterface(), "Android");
 
-        dotModeTV.setPadding(15,0,12,0);
-        dotModeTV.setBackgroundResource(R.drawable.media_white_drawable);
 
         nextDateBtn.setOnClickListener(this);
         previousDateBtn.setOnClickListener(this);
-        viewInspectionBtn.setOnClickListener(this);
+        otherOptionBtn.setOnClickListener(this);
         EldTitleTV.setOnClickListener(this);
-        sendLogBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
-        dotModeTV.setOnClickListener(this);
-        dotModeImgVw.setOnClickListener(this);
 
     }
 
@@ -230,8 +233,6 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         errorConnectionView = (TextView)view.findViewById(R.id.errorConnectionView);
         EldTitleTV          = (TextView)view.findViewById(R.id.EldTitleTV);
         dotMalfunctionTV    = (TextView)view.findViewById(R.id.dotMalfunctionTV);
-        viewInspectionBtn   = (TextView)view.findViewById(R.id.dateActionBarTV);
-        sendLogBtn          = (TextView)view.findViewById(R.id.sendLogBtn);
 
         recordDateTV        = (TextView)view.findViewById(R.id.recordDateTV);
         usDotTV             = (TextView)view.findViewById(R.id.usDotTV);
@@ -266,11 +267,38 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         currentLocTV        = (TextView)view.findViewById(R.id.currentLocTV);
         fileCommentTV       = (TextView)view.findViewById(R.id.fileCommentTV);
         PrintDisplayDateTV  = (TextView)view.findViewById(R.id.PrintDisplayDateTV);
-        dotModeTV           = (TextView)view.findViewById(R.id.dotModeTV);
+        placeOfBusinessTV   = (TextView)view.findViewById(R.id.placeOfBusinessTV);
 
 
 
     }
+
+
+    SwitchMultiButton.OnSwitchListener onSwitchListener = new SwitchMultiButton.OnSwitchListener() {
+        @Override
+        public void onSwitch(int position, String tabText) {
+
+            if ( position == 1) {
+                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
+                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
+                } else {
+                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
+                }
+
+                String obdCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+                if (obdCycleId.equals(global.USA_WORKING_6_DAYS) || obdCycleId.equals(global.USA_WORKING_7_DAYS)) {
+                    moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
+                } else {
+                    if (getParentFragmentManager().getBackStackEntryCount() > 1) {
+                        getParentFragmentManager().popBackStack();
+                    } else {
+                        moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
+                    }
+                }
+                usDotSwitchBtn.setSelectedTab(0);
+            }
+        }
+    };
 
 
     @Override
@@ -320,9 +348,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
         //dotMalfunctionTV.setText(CountryCycle);
         EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
-        viewInspectionBtn.setText(getResources().getString(R.string.view_inspections));
         eldMenuBtn.setImageResource(R.drawable.back_btn);
-        viewInspectionBtn.setVisibility(View.VISIBLE);
+        otherOptionBtn.setVisibility(View.VISIBLE);
         rightMenuBtn.setVisibility(View.GONE);
         previousDateBtn.setVisibility(View.VISIBLE);
         itemShippingLay.setBackgroundColor(getResources().getColor(R.color.dot_titles_bg));
@@ -376,9 +403,14 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 ChangeViewWithDate(false);
                 break;
 
-            //viewInspectionBtn view click
-            case R.id.dateActionBarTV:
-                MoveFragment(LogDate);
+            case R.id.otherOptionBtn:
+                try{
+                    dotOtherOptionDialog = new DotOtherOptionDialog(getActivity(), new OtherOptionDotListener());
+                    dotOtherOptionDialog.show();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 break;
 
             case R.id.EldTitleTV:
@@ -391,39 +423,15 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 break;
 
 
-            case R.id.sendLogBtn:
-                shareDriverLogDialog();
-                break;
-
             case R.id.eldMenuLay:
 
                 EldActivity.DOTButton.performClick();
 
                 break;
 
-            case R.id.dotModeTV:
-                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
-                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
-                }else{
-                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
-                }
 
-                String obdCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
-                if(obdCycleId.equals(global.USA_WORKING_6_DAYS) || obdCycleId.equals(global.USA_WORKING_7_DAYS)){
-                    moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
-                }else{
-                    if(getParentFragmentManager().getBackStackEntryCount() > 1){
-                        getParentFragmentManager().popBackStack();
-                    }else{
-                        moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
-                    }
-                }
 
-                break;
 
-            case R.id.dotModeImgVw:
-                dotModeTV.performClick();
-                break;
         }
     }
 
@@ -612,6 +620,18 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
 
 
+    private class OtherOptionDotListener implements DotOtherOptionDialog.OtherOptionDotListener{
+
+        @Override
+        public void ItemClickReady(int position) {
+            if(position == 0){
+                MoveFragment(LogDate);
+            }else{
+                shareDriverLogDialog();
+
+            }
+        }
+    }
 
     private class DateListener implements DatePickerDialog.DatePickerListener{
         @Override
@@ -937,6 +957,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                             constants.checkNullString(obj.getString("TotalVehicleMiles")),
                             constants.checkNullString(obj.getString("TotalEngineHours")),
                             constants.checkNullString(obj.getString("strEventType")),
+                            constants.checkNullString(obj.getString("Remarks")),
                             constants.checkNullString(obj.getString("Origin")));
                     dotLogList.add(dotLogItem);
                 }
@@ -1060,6 +1081,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             fileCommentTV.setText(CheckStringIsNull(obj, "FileComment"));
 
             PrintDisplayDateTV.setText(displayDate);
+            placeOfBusinessTV.setText(CheckStringIsNull(obj, "OfficeAddress"));
 
             String odometer = obj.getString("StartEndOdometer") + " (Miles) <br>" + obj.getString("StartEndOdometerKM") + " (KM)";
             startEndOdoTV.setText(Html.fromHtml(odometer));

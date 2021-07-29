@@ -140,6 +140,7 @@ import models.DriverDetail;
 import models.DriverLog;
 import models.RulesResponseObject;
 import obdDecoder.Decoder;
+import webapi.LocalCalls;
 
 
 public class EldFragment extends Fragment implements View.OnClickListener {
@@ -376,6 +377,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     OBDDeviceData data;
     Decoder decoder;
     Utils obdUtil;
+    LocalCalls localCalls;
 
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -409,6 +411,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             decoder         = new Decoder();
             obdUtil         = new Utils(getActivity());
             tcpClient       = new TcpClient(obdResponseHandler);
+            localCalls      = new LocalCalls();
 
             obdUtil.createLogFile();
             obdUtil.createAppUsageLogFile();
@@ -4882,8 +4885,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 minOffDutyUsedHours = (int) RemainingTimeObj.getMinimumOffDutyUsedHours();
                 isMinOffDutyHoursSatisfied = RemainingTimeObj.isMinimumOffDutyHoursSatisfied();
 
-                boolean isDisableAdverseException = RemainingTimeObj.isDisableAdverseException();
-                boolean isDisableShortHaul = RemainingTimeObj.isDisableShortHaul();
+              //  boolean isDisableAdverseException = RemainingTimeObj.isDisableAdverseException();
+               // boolean isDisableShortHaul = RemainingTimeObj.isDisableShortHaul();
+
+                boolean isDisableAdverseException =  localCalls.IsAdverseExceptionDisabled(oDriverDetail);
+                boolean isDisableShortHaul = localCalls.IsShortHaulExceptionDisabled(oDriverDetail);
 
                 if (isDisableAdverseException) {
                     if (isAdverseExcptn) {
@@ -5588,7 +5594,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
 
             switch (flag) {
 
@@ -5614,30 +5620,40 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 IsRefreshedClick = false;
                                 refreshPageBtn.performClick();
                             }else {
+
+                                GetDriversSavedData(false, DriverType);
+
                                 if (DriverJsonArray.length() == 1) {
                                     ClearLogAfterSuccess(isLoad, IsRecap);
                                 } else {
-                                    try {
-                                        int LastStatus = 0, SecLastStatus = 0;
-                                        JSONObject lastObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 1);
-                                        JSONObject secLastObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 2);
-                                        LastStatus = lastObj.getInt("DriverStatusId");
-                                        SecLastStatus = secLastObj.getInt("DriverStatusId");
+                                     /*Check Reason: some times data was uploading in background and user entered new status in between.
+                                     In api response we are clearing the entries and in between entry was skipped before upload to server.
+                                     So to avoid this we are checking input length and current log length.*/
+                                    if(DriverJsonArray.length() == inputDataLength) {
+                                        try {
+                                            int LastStatus = 0, SecLastStatus = 0;
+                                            JSONObject lastObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 1);
+                                            JSONObject secLastObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 2);
+                                            LastStatus = lastObj.getInt("DriverStatusId");
+                                            SecLastStatus = secLastObj.getInt("DriverStatusId");
 
-                                        if (LastStatus == SecLastStatus) {
-                                            ClearLogAfterSuccess(isLoad, IsRecap);
-
-                                        } else {
-                                            if (SaveRequestCount < 3) {
-                                                saveInfo("", false, false, false);
-                                            } else {
+                                            if (LastStatus == SecLastStatus) {
                                                 ClearLogAfterSuccess(isLoad, IsRecap);
-                                            }
-                                        }
 
-                                        SaveCoDriverData(isLoad, IsRecap);
-                                    } catch (Exception e) {
-                                        ClearLogAfterSuccess(isLoad, IsRecap);
+                                            } else {
+                                                if (SaveRequestCount < 3) {
+                                                    saveInfo("", false, false, false);
+                                                } else {
+                                                    ClearLogAfterSuccess(isLoad, IsRecap);
+                                                }
+                                            }
+
+                                            SaveCoDriverData(isLoad, IsRecap);
+                                        } catch (Exception e) {
+                                            ClearLogAfterSuccess(isLoad, IsRecap);
+                                        }
+                                    }else{
+                                         saveInfo("", false, false, false);
                                     }
                                 }
                             }

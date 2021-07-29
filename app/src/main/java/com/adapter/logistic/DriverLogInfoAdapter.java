@@ -189,15 +189,18 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             }
         }
 
-        holder.certifyLocationIV.setVisibility(View.VISIBLE);
+      //  holder.certifyLocationIV.setVisibility(View.VISIBLE);
 
         holder.certifyLocationLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String city = holder.certifyLocationTV.getText().toString();
-                RecordType = Constants.Location;
-                selectedDate = LogItem.getStartDateTime();
-                OpenLocationDialog( city , position, Constants.EditLocation, view);
+
+                if(holder.certifyLocationIV.getVisibility() == View.VISIBLE) {
+                    String city = holder.certifyLocationTV.getText().toString();
+                    RecordType = Constants.Location;
+                    selectedDate = LogItem.getStartDateTime();
+                    OpenLocationDialog(city, position, Constants.EditLocation, view);
+                }
             }
         });
 
@@ -289,9 +292,11 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             if (location.contains("null") || location.equals(",") || location.equals("")) {
                 holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
                 holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
+                holder.certifyLocationIV.setVisibility(View.VISIBLE);
             } else {
                 holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
-                holder.certifyLocationTV.setText(LogItem.getLocation());
+                holder.certifyLocationTV.setText(location);
+                holder.certifyLocationIV.setVisibility(View.GONE);
             }
         }else{
             String locationKm = LogItem.getLocationKm();
@@ -299,14 +304,17 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 if(LogItem.getLocation().contains("null")){
                     holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
                     holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
+                    holder.certifyLocationIV.setVisibility(View.VISIBLE);
                 }else{
                     holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                     holder.certifyLocationTV.setText(LogItem.getLocation());
+                    holder.certifyLocationIV.setVisibility(View.GONE);
                 }
 
             } else {
                 holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                 holder.certifyLocationTV.setText(LogItem.getLocationKm());
+                holder.certifyLocationIV.setVisibility(View.GONE);
             }
         }
         if(!LogItem.getRemarks().trim().equalsIgnoreCase("null") && !LogItem.getRemarks().trim().equalsIgnoreCase(""))
@@ -598,7 +606,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         if(Global.isConnected(context)) {
             SAVE_DRIVER_RECORD_LOG(finalUpdatedArray, false, false, Constants.SocketTimeout20Sec);
         }else{
-            Global.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, "Connection unavailable! Your edited " + RecordType + " will be posted to server automatically when your device will be connected with working internet connection.", context.getResources().getColor(R.color.colorVoilation));
+            Global.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, "Connection unavailable! Your edited " + RecordType + " will be posted to server automatically when your device will be connected with working internet connection.", context.getResources().getColor(R.color.colorSleeper));
         }
     }
 
@@ -664,7 +672,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
 
             // SaveDriverLog
             progressDialog.dismiss();

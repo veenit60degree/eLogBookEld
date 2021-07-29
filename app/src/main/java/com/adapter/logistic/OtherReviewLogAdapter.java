@@ -53,8 +53,6 @@ public class OtherReviewLogAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = mInflater.inflate(R.layout.item_other_options, null);
 
-
-            holder.otherFeatureImgView = (ImageView) convertView.findViewById(R.id.otherFeatureImgView);
             holder.otherFeatureTxtView = (TextView) convertView.findViewById(R.id.otherFeatureTxtView);
 
             convertView.setTag(holder);
@@ -62,7 +60,6 @@ public class OtherReviewLogAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.otherFeatureImgView.setVisibility(View.GONE);
         holder.otherFeatureTxtView.setText(LogItem.getDay());
         holder.otherFeatureTxtView.setTextColor(context.getResources().getColor(R.color.blue_button));
 
@@ -85,7 +82,5 @@ public class OtherReviewLogAdapter extends BaseAdapter {
 
     public class ViewHolder {
         TextView otherFeatureTxtView;
-        ImageView otherFeatureImgView;
-
     }
 }

@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -46,10 +47,12 @@ import com.constants.ConstantHtml;
 import com.constants.Constants;
 import com.constants.DoubleClickListener;
 import com.constants.SharedPref;
+import com.constants.SwitchTrackTextDrawable;
 import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.constants.WebAppInterface;
 import com.custom.dialogs.DatePickerDialog;
+import com.custom.dialogs.DotOtherOptionDialog;
 import com.custom.dialogs.ShareDriverLogDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
@@ -79,6 +82,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import lib.kingja.switchbutton.SwitchMultiButton;
+
 public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
@@ -87,19 +92,21 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     HelperMethods hMethods;
     TextView dateRodsTV, dayStartTimeTV, timeZoneCTV, currLocCTV, commentCTV, dateTimeCTV;
     TextView driverNameCTV, driverIdCTV, exemptDriverCTV, driLicNoCTV, coDriverNameCTV, coDriverIdCTV;
-    TextView viewMoreTV, EldTitleTV, canSendLogBtn, viewInspectionBtn;
+    TextView viewMoreTV, EldTitleTV;
     TextView truckTractorIdTV, truckTractorVinTV, totalDisCTV, distanceTodayCTV, currTotalDisTV, currTotalEngTV;
     TextView trailerIdCTV, carrierNameCTV, carrierHomeTerCTV, carrierPrinPlaceCTV, currOperZoneCTV, curreCycleCTV;
     TextView totalHrsCTV, totalhrsCycleCTV, remainingHourCTV, offDutyDeffCTV, datDiagCTV, unIdenDriRecCTV;
-    TextView malfStatusCTV, eldIdCTV, eldProviderCTV, eldCerCTV, eldAuthCTV, canDotModeTxtVw, eventDotETV;
-    RelativeLayout eldMenuLay, rightMenuBtn, scrollUpBtn, scrollDownBtn;
+    TextView malfStatusCTV, eldIdCTV, eldProviderCTV, eldCerCTV, eldAuthCTV, eventDotETV;   //canDotModeTxtVw
+    RelativeLayout eldMenuLay, rightMenuBtn, scrollUpBtn, scrollDownBtn, otherOptionBtn;
     LinearLayout canDotViewMorelay;
-    ImageView eldMenuBtn, nextDateBtn, previousDateBtn, canDotModeImgVw;
+    ImageView eldMenuBtn, nextDateBtn, previousDateBtn; // canDotModeImgVw;
 
     WebView canDotGraphWebView;
     ProgressBar canDotProgressBar;
     ScrollView canDotScrollView;
-    ListView dutyChangeDotListView, remAnotnDotListView, cycleOpZoneDotListView, loginLogDotListView, enginePwrDotListView, unIdnfdVehDotListView;
+    ListView dutyChangeDotListView, remAnotnDotListView, cycleOpZoneDotListView, loginLogDotListView,
+            enginePwrDotListView, unIdnfdVehDotListView;
+    SwitchMultiButton canDotSwitchBtn;
 
     Constants constants;
     Globally global;
@@ -113,6 +120,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     CanDotRemarksAdapter canDotRemarksAdapter;
     CanDotEnginePowerAdapter canDotEnginePowerAdapter;
     CanDotUnAssignedVehAdapter canDotUnAssignedVehAdapter;
+    DotOtherOptionDialog dotOtherOptionDialog;
 
     List<CanadaDutyStatusModel> DutyStatusList = new ArrayList();
     List<CanadaDutyStatusModel> LoginLogoutList = new ArrayList();
@@ -142,6 +150,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     String TotalOffDutyHours        = "00:00";
     String TotalSleeperBerthHours   = "00:00";
 
+    boolean isTabClicked = false;
+
     int inspectionLayHeight = 0;
     int hLineX1         = 0;
     int hLineX2         = 0;
@@ -151,6 +161,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     int startMin        = 0;
     int endHour         = 0;
     int endMin          = 0;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -224,12 +236,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         eldProviderCTV      = (TextView)view.findViewById(R.id.eldProviderCTV);
         eldCerCTV           = (TextView)view.findViewById(R.id.eldCerCTV);
         eldAuthCTV          = (TextView)view.findViewById(R.id.eldAuthCTV);
-        canDotModeTxtVw     = (TextView)view.findViewById(R.id.canDotModeTxtVw);
+       // canDotModeTxtVw     = (TextView)view.findViewById(R.id.canDotModeTxtVw);
 
         viewMoreTV          = (TextView)view.findViewById(R.id.viewMoreTV);
         EldTitleTV          = (TextView)view.findViewById(R.id.EldTitleTV);
-        canSendLogBtn       = (TextView)view.findViewById(R.id.canSendLogBtn);
-        viewInspectionBtn   = (TextView)view.findViewById(R.id.dateActionBarTV);
         eventDotETV         = (TextView)view.findViewById(R.id.eventDotETV);
 
         dutyChangeDotListView= (ListView)view.findViewById(R.id.dutyChangeDotListView);
@@ -245,23 +255,25 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         rightMenuBtn        = (RelativeLayout)view.findViewById(R.id.rightMenuBtn);
         scrollUpBtn         = (RelativeLayout)view.findViewById(R.id.scrollUpBtn);
         scrollDownBtn       = (RelativeLayout)view.findViewById(R.id.scrollDownBtn);
+        otherOptionBtn      = (RelativeLayout)view.findViewById(R.id.otherOptionBtn);
 
         eldMenuBtn          = (ImageView)view.findViewById(R.id.eldMenuBtn);
         nextDateBtn         = (ImageView)view.findViewById(R.id.nextDateBtn);
         previousDateBtn     = (ImageView)view.findViewById(R.id.previousDate);
-        canDotModeImgVw     = (ImageView)view.findViewById(R.id.canDotModeImgVw);
+      //  canDotModeImgVw     = (ImageView)view.findViewById(R.id.canDotModeImgVw);
 
         canDotGraphWebView  = (WebView)view.findViewById(R.id.canDotGraphWebView);
         canDotProgressBar   = (ProgressBar)view.findViewById(R.id.canDotProgressBar);
         canDotScrollView    = (ScrollView)view.findViewById(R.id.canDotScrollView);
 
-        canDotModeTxtVw.setPadding(15,0,12,0);
-        canDotModeTxtVw.setBackgroundResource(R.drawable.media_white_drawable);
+        canDotSwitchBtn     = (SwitchMultiButton) view.findViewById(R.id.canDotSwitchBtn);
+        canDotSwitchBtn.setOnSwitchListener (onSwitchListener);
+
+
         eldMenuBtn.setImageResource(R.drawable.back_btn);
         viewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_more) + "</u>"));
         rightMenuBtn.setVisibility(View.GONE);
-        viewInspectionBtn.setText(getResources().getString(R.string.view_inspections));
-        viewInspectionBtn.setVisibility(View.VISIBLE);
+        otherOptionBtn.setVisibility(View.VISIBLE);
 
         getBundleData();
         initilizeWebView();
@@ -310,17 +322,17 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-
+       /* Switch dotSwitchBtn = (Switch)view.findViewById(R.id.dotSwitchBtn);
+        dotSwitchBtn.setTrackDrawable(new SwitchTrackTextDrawable(getActivity(),"CAN", "US"));
+*/
 
         eldMenuLay.setOnClickListener(this);
         viewMoreTV.setOnClickListener(this);
         nextDateBtn.setOnClickListener(this);
         previousDateBtn.setOnClickListener(this);
-        canDotModeImgVw.setOnClickListener(this);
+       // canDotModeImgVw.setOnClickListener(this);
         EldTitleTV.setOnClickListener(this);
-        canSendLogBtn.setOnClickListener(this);
-        viewInspectionBtn.setOnClickListener(this);
-        canDotModeTxtVw.setOnClickListener(this);
+        otherOptionBtn.setOnClickListener(this);
         scrollUpBtn.setOnClickListener(this);
         scrollDownBtn.setOnClickListener(this);
 
@@ -333,6 +345,32 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         outState.clear();
     }
 
+
+    SwitchMultiButton.OnSwitchListener onSwitchListener = new SwitchMultiButton.OnSwitchListener() {
+        @Override
+        public void onSwitch(int position, String tabText) {
+
+            if ( position == 0) {
+                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
+                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
+                } else {
+                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
+                }
+
+                String obdCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+                if (obdCycleId.equals(global.USA_WORKING_6_DAYS) || obdCycleId.equals(global.USA_WORKING_7_DAYS)) {
+                    if (getParentFragmentManager().getBackStackEntryCount() > 1) {
+                        getParentFragmentManager().popBackStack();
+                    } else {
+                        moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName);
+                    }
+                } else {
+                    moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName);
+                }
+                canDotSwitchBtn.setSelectedTab(1);
+            }
+        }
+    };
 
         private void getBundleData() {
 
@@ -429,14 +467,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 break;
 
 
-            case R.id.canSendLogBtn:
-                shareDriverLogDialog();
-
-            break;
-
-            //viewInspectionBtn view click
-            case R.id.dateActionBarTV:
-                MoveFragment(LogDate);
+            case R.id.otherOptionBtn:
+                try{
+                    dotOtherOptionDialog = new DotOtherOptionDialog(getActivity(), new OtherOptionDotListener());
+                    dotOtherOptionDialog.show();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 break;
 
             case R.id.eldMenuLay:
@@ -456,29 +493,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 break;
 
-            case R.id.canDotModeTxtVw:
-                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
-                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
-                }else{
-                    CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
-                }
 
-                String obdCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
-                if(obdCycleId.equals(global.USA_WORKING_6_DAYS) || obdCycleId.equals(global.USA_WORKING_7_DAYS)){
-                    if(getParentFragmentManager().getBackStackEntryCount() > 1){
-                        getParentFragmentManager().popBackStack();
-                    }else{
-                        moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName);
-                    }
-                }else{
-                    moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName);
-                }
-
-                break;
-
-            case R.id.canDotModeImgVw:
+           /* case R.id.canDotModeImgVw:
                 canDotModeTxtVw.performClick();
-                break;
+                break;*/
 
             case R.id.scrollUpBtn:
 
@@ -607,6 +625,19 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     }
 
+    private class OtherOptionDotListener implements DotOtherOptionDialog.OtherOptionDotListener{
+
+        @Override
+        public void ItemClickReady(int position) {
+            if(position == 0){
+                MoveFragment(LogDate);
+            }else{
+                shareDriverLogDialog();
+
+            }
+        }
+    }
+
 
     private class DateListener implements DatePickerDialog.DatePickerListener{
         @Override
@@ -726,11 +757,11 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             enginePwrDotListView.setAdapter(canDotEnginePowerAdapter);
         }catch (Exception e){}
 
-        try {
+      /*  try {
             canDotUnAssignedVehAdapter = new CanDotUnAssignedVehAdapter(getActivity(), UnAssignedVehicleList);
             unIdnfdVehDotListView.setAdapter(canDotUnAssignedVehAdapter);
         }catch (Exception e){}
-
+*/
 
 
         try {
@@ -759,7 +790,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             final int CommentsRemarksListHeight = inspectionLayHeight * (CommentsRemarksList.size() +1) ;
             final int CycleOpZoneListHeight = getHeight(inspectionLayHeight, CycleOpZoneList, headerViewHeight);    //(inspectionLayHeight * CycleOpZoneList.size()) + (constants.getDateTitleCount(CycleOpZoneList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(CycleOpZoneList));
             final int EnginePowerListHeight = getHeight(inspectionLayHeight, EnginePowerList, headerViewHeight);    //(inspectionLayHeight * EnginePowerList.size()) + (constants.getDateTitleCount(EnginePowerList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(EnginePowerList));
-            final int UnIdenfdVehListHeight = (inspectionLayHeight * UnAssignedVehicleList.size()+1) + headerViewHeight;
+           // final int UnIdenfdVehListHeight = (inspectionLayHeight * UnAssignedVehicleList.size()+1) + headerViewHeight;
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -769,7 +800,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CommentsRemarksListHeight));
                     cycleOpZoneDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CycleOpZoneListHeight));
                     enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, EnginePowerListHeight));
-                    unIdnfdVehDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, UnIdenfdVehListHeight));
+                 //   unIdnfdVehDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, UnIdenfdVehListHeight));
 
                 }
             }, 500);
@@ -1137,7 +1168,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                         CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList, true);
                         EnginePowerList = constants.parseCanadaDotInList(enginePowerArray, true);
 
-                        UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
+                       // UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
 
                         setdataOnAdapter();
                         setDataOnTextView(dataObj);

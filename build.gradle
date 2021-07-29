@@ -3,13 +3,13 @@ buildscript {
     ext.kotlin_version = "1.4.32"
     repositories {
         google()
-      //  mavenCentral()
+        mavenCentral()
       //  gradlePluginPortal()
         jcenter()
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.android.tools.build:gradle:4.1.0'
 
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.12"
 
@@ -35,7 +35,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-      //  mavenCentral()
+        mavenCentral()
         jcenter()
     }
 }

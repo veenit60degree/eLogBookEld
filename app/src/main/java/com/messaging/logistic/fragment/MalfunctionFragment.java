@@ -404,7 +404,7 @@ public class MalfunctionFragment extends Fragment implements View.OnClickListene
     DriverLogResponse apiResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataCount) {
 
             try {
 

@@ -20,6 +20,7 @@
         android:layout_height="@dimen/margin_29"
         android:layout_gravity="center_vertical"
         android:tint="@color/colorPrimary"
+        android:visibility="gone"
 
         />
 

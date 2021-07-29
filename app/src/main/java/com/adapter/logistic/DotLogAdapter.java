@@ -61,6 +61,7 @@ public class DotLogAdapter  extends BaseAdapter {
             holder.engineHrsDotTV = (TextView) convertView.findViewById(R.id.engineHrsDotTV);
             holder.eventTypeDotTV = (TextView) convertView.findViewById(R.id.eventTypeDotTV);
             holder.originDotTV = (TextView) convertView.findViewById(R.id.originDotTV);
+            holder.remarksDotTV = (TextView) convertView.findViewById(R.id.remarksDotTV);
 
             holder.itemOdometerLay  = (LinearLayout)convertView.findViewById(R.id.itemOdometerLay);
 
@@ -83,6 +84,7 @@ public class DotLogAdapter  extends BaseAdapter {
         holder.engineHrsDotTV.setText(engineHours);
         holder.eventTypeDotTV.setText(dotLogArray.get(position).getEventTypeStatus());
         holder.originDotTV.setText(dotLogArray.get(position).getOrigin());
+        holder.remarksDotTV.setText(dotLogArray.get(position).getRemarks());
 
         String[] odometerData = OdometerInKm.split(" ");
         if( OdometerInKm.contains("Malfunction") && (driverStatus.equals("On Duty") && driverStatus.equals("Driving")) ){
@@ -145,7 +147,7 @@ public class DotLogAdapter  extends BaseAdapter {
 
 
     public class ViewHolder {
-        TextView timeDotTV, locationDotTV, odoKmDotTV, odoMilesDotTV, engineHrsDotTV, eventTypeDotTV, originDotTV;
+        TextView timeDotTV, locationDotTV, odoKmDotTV, odoMilesDotTV, engineHrsDotTV, eventTypeDotTV, remarksDotTV, originDotTV;
         LinearLayout itemOdometerLay;
     }
 

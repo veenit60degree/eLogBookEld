@@ -24,46 +24,37 @@ import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.ble.comm.Observer;
-import com.ble.comm.ObserverManager;
 import com.ble.util.BleUtil;
-import com.clj.fastble.BleManager;
-import com.clj.fastble.callback.BleGattCallback;
-import com.clj.fastble.callback.BleNotifyCallback;
-import com.clj.fastble.callback.BleReadCallback;
-import com.clj.fastble.callback.BleScanCallback;
-import com.clj.fastble.callback.BleWriteCallback;
-import com.clj.fastble.data.BleDevice;
-import com.clj.fastble.exception.BleException;
-import com.clj.fastble.scan.BleScanRuleConfig;
-import com.clj.fastble.utils.HexUtil;
+import com.ble.util.ConstantEvent;
+import com.ble.util.EventBusInfo;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.ShellUtils;
 import com.constants.TcpClient;
-import com.local.db.ConstantsKeys;
+import com.htstart.htsdk.HTBleSdk;
+import com.htstart.htsdk.bluetooth.HTBleData;
+import com.htstart.htsdk.bluetooth.HTBleDevice;
+import com.htstart.htsdk.bluetooth.HTModeSP;
+import com.htstart.htsdk.minterface.HTBleScanListener;
+import com.htstart.htsdk.minterface.IReceiveListener;
 import com.messaging.logistic.Globally;
-import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
-import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.EldFragment;
 import com.notifications.NotificationManagerSmart;
 import com.wifi.settings.WiFiConfig;
 
+import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -74,7 +65,7 @@ import dal.tables.OBDDeviceData;
 import obdDecoder.Decoder;
 
 
-public class AfterLogoutService extends Service implements TextToSpeech.OnInitListener, Observer {
+public class AfterLogoutService extends Service implements TextToSpeech.OnInitListener {
 
     String ServerPackage = "com.als.obd";
     String ServerService = "com.als.obd.services.MainService";
@@ -115,22 +106,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private static final String TAG_BLE_OPERATION = "BleOperation";
     boolean mIsScanning = false;
     boolean isBleObdRespond = false;
-    boolean isManualDisconnected = false;
-    boolean isEldBleFound = false;
 
-    int writeFailureCount = 0;
-    int isScanningCount = 0;
     int bleScanCount = 0;
 
     private BluetoothAdapter mBTAdapter;
-    BleDevice bleDevice;
-    private BluetoothGattService bluetoothGattService;
-    private BluetoothGattCharacteristic characteristic;
-    List<BluetoothGattService> bluetoothGattServices = new ArrayList<>();
-    List<BluetoothGattCharacteristic> characteristicList = new ArrayList<>();
+    private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
+    private LinkedList<HTBleData> mHtblData = new LinkedList<>();
 
-    String name = "";
-    String mac = "";
 
 
 
@@ -156,7 +138,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         BindConnection();
 
         if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-            bleInit();
+           initBleListener();
+            checkPermissionsBeforeScanBle();
         }else{
             checkWiredObdConnection();
         }
@@ -327,7 +310,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         Log.i("service", "---------onStartCommand Service");
 
         if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-            bleInit();
+            initHtBle();
         }else if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
             StartStopServer(constants.WiredOBD);
         }else{
@@ -618,316 +601,32 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void bleInit() {
-        try {
-            // BLE check
-            if (!BleUtil.isBLESupported(this)) {
-                return;
-            }
-
-            // BT check
-            BluetoothManager manager = BleUtil.getManager(this);
-            if (manager != null) {
-                mBTAdapter = manager.getAdapter();
-
-            }
-            if (mBTAdapter == null) {
-                return;
-            } else {
-                if (!mBTAdapter.isEnabled()) {
-                    mBTAdapter.enable();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                         initilizeBle();
-                        }
-                    }, 4000);
-                }else{
-                    initilizeBle();
-                }
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    private void initilizeBle(){
-        BleManager.getInstance().init(getApplication());
-        BleManager.getInstance()
-                .enableLog(true)
-                .setReConnectCount(3, 5000)
-                .setConnectOverTime(20000)
-                .setOperateTimeout(10000);
-    }
-
-
-
     private void checkPermissionsBeforeScanBle() {
-        try {
-            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            boolean isConnected = BleManager.getInstance().isConnected(bleDevice);
-            if (!bluetoothAdapter.isEnabled()) {
-                bluetoothAdapter.enable();
-                try {
-                    Thread.sleep(4000);
-                    BleManager.getInstance().disconnectAllDevice();
-                    ObserverManager.getInstance().notifyObserver(bleDevice);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }else{
-                if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
 
-                    if (!mIsScanning && !isConnected) {
-                        if(SharedPref.getBleScanCount(getApplicationContext()) < 5) {
-                            startScan();
-                        }/*else{
-                            if(bleScanCount == 5) {
-                                bleScanCount++;
-                                Globally.PlayNotificationSound(getApplicationContext());
-                                Globally.ShowLocalNotification(getApplicationContext(),
-                                        getApplicationContext().getResources().getString(R.string.BluetoothOBD),
-                                        getApplicationContext().getResources().getString(R.string.BleObdNotFound), 2096);
-                            }
-                        }*/
-                    }
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        boolean isConnected = HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac());
 
-                    if(isScanningCount > 6 && mIsScanning){
-                        if(BleManager.getInstance() != null) {
-                            BleManager.getInstance().cancelScan();
-                            mIsScanning = false;
-                            isScanningCount = 0;
-                        }
-                    }
-                    isScanningCount++;
-                }
-            }
+        if (!bluetoothAdapter.isEnabled()) {
+            bluetoothAdapter.enable();
+        }else{
+            if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+                if (!mIsScanning && !isConnected) {
 
-
-    private void startScan() {
-        isScanningCount = 0;
-        isEldBleFound = false;
-
-        BleManager.getInstance().scan(new BleScanCallback() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-            @Override
-            public void onScanStarted(boolean success) {
-                if(success) {
-                    mIsScanning = true;
-                    isBleObdRespond = false;
-                }else{
-                    mIsScanning = false;
-                    bleInit();
-                }
-            }
-
-            @Override
-            public void onLeScan(BleDevice bleDevice) {
-                super.onLeScan(bleDevice);
-            }
-
-            @Override
-            public void onScanning(BleDevice bleDevice) {
-
-                try{
-                    if(bleDevice.getName() != null) {
-                        if (bleDevice.getName().contains("ALSELD") || bleDevice.getName().contains("SMBLE")) {
-                            Log.d("getName", "getName: " + bleDevice.getName());
-
-                            isEldBleFound = true;
-                            bleScanCount = 0;
-                            SharedPref.saveBleScanCount(0, getApplicationContext());
-
-                            connect(bleDevice);
-                            BleManager.getInstance().cancelScan();
-                        }
+                    // ignore scan after 3 attempts if device not found
+                    if(bleScanCount < 3) {
+                        StartScanHtBle();
                     }else{
-                        if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                            SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
+                        if(bleScanCount == 3) {
+                            bleScanCount++;
+                            HTBleSdk.Companion.getInstance().stopHTBleScan();
                         }
                     }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
 
-            @Override
-            public void onScanFinished(List<BleDevice> scanResultList) {
-                mIsScanning = false;
-
-                if (!isEldBleFound) {
-                    bleScanCount++;
-                    SharedPref.saveBleScanCount(bleScanCount, getApplicationContext());
-                }
-
-            }
-        });
-    }
-
-
-
-    private void connect(final BleDevice bleDevice) {
-        BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
-            @Override
-            public void onStartConnect() {
-                Log.d(TAG_BLE_CONNECT, "onStartConnect");
-                isBleObdRespond = false;
-            }
-
-            @Override
-            public void onConnectFail(BleDevice bleDevice, BleException exception) {
-                Log.d(TAG_BLE_CONNECT, "onConnectFail");
-
-                isBleObdRespond = false;
-                ObserverManager.getInstance().notifyObserver(bleDevice);
-
-            }
-
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-            @Override
-            public void onConnectSuccess(BleDevice blueToothDevice, BluetoothGatt gatt, int status) {
-                Log.d(TAG_BLE_CONNECT, "Connected Successfully");
-                isBleObdRespond = false;
-                if (BleManager.getInstance().isConnected(bleDevice)) {
-
-                    isManualDisconnected = false;
-                    setDisconnectType(isManualDisconnected);
-
-                    setBleDevice(blueToothDevice);
-                    addObserver(blueToothDevice);
-                    name = bleDevice.getName();
-                    mac  = bleDevice.getMac();
-
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        gatt.requestMtu(512);
-//                    }
-
-                    bluetoothGattServices = new ArrayList<>();
-                    for (BluetoothGattService service : gatt.getServices()) {
-                        bluetoothGattServices.add(service);
-                    }
-
-                    if(bluetoothGattServices.size() > 2) {
-                        SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
-
-                        BluetoothGattService service = bluetoothGattServices.get(2);
-                        setBluetoothGattService(service);
-                        writeData();
-                    }
 
                 }
 
             }
-
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
-
-                Log.d(TAG_BLE_CONNECT, "onDisConnected");
-                isBleObdRespond = false;
-                ObserverManager.getInstance().notifyObserver(bleDevice);
-                stopService(bleDevice,getCharacteristic());
-
-                if (!isManualDisconnected()) {
-                    bleInit();
-                   // setScanRule();
-                    startScan();
-                }
-
-                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                    SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
-                }
-
-
-            }
-        });
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public void getCharacteristicListData() {
-        BluetoothGattService service = getBluetoothGattService();
-        characteristicList = new ArrayList<>();
-        if(service != null) {
-            for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-                characteristicList.add(characteristic);
-            }
-        }
-    }
-
-    private BluetoothGattCharacteristic getBluetoothGattCharacteristic(int maxlength, int PROPERTY){
-        BluetoothGattCharacteristic characteristic = null;
-        if(characteristicList.size() > maxlength) {
-            characteristic = characteristicList.get(maxlength);
-            if (PROPERTY > 0) {
-                setCharacteristic(characteristic);
-            }
-        }
-        return characteristic;
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void writeData(){
-
-        getCharacteristicListData();
-
-        BluetoothGattCharacteristic characteristic  = getBluetoothGattCharacteristic(0, BluetoothGattCharacteristic.PROPERTY_WRITE);
-
-        if(characteristic != null) {
-            String writeValue = "";
-            String uuidName = bleDevice.getName();
-            final String requestData = "request:{source_id:" + uuidName + ",events:[{5B6A,0,0,000000,000000,000000000000,1111,0,0,0,0,,0,0,0,0,0,0,0,57,79}]}";    //{5B6A,0,0,000000,000000,000000000000,1111,0,0,,0,0,0,0,0,0,0,57,79}]
-
-            writeValue = BleUtil.convertStringToHex(requestData);
-            writeValue = writeValue.replaceAll(" ", "");
-            byte[] bytes = BleUtil.invertStringToBytes(writeValue);
-
-            BleManager.getInstance().write(
-                    bleDevice,
-                    SERVICE_UUID/*characteristic.getService().getUuid().toString()*/,
-                    CHARACTER_WRITE_UUID/*characteristic.getUuid().toString()*/,
-                    bytes, // by,
-                    new BleWriteCallback() {
-
-                        @Override
-                        public void onWriteSuccess(final int current, final int total, final byte[] justWrite) {
-                            Log.d(TAG_BLE_OPERATION, "onWriteSuccess");
-                            // read ble data after write success
-                            if (current == total) {
-                                readData();
-                            }
-
-                        }
-
-                        @Override
-                        public void onWriteFailure(final BleException exception) {
-                            Log.d(TAG_BLE_OPERATION, "onWriteFailure");
-                            mIsScanning = false;
-                            isBleObdRespond = false;
-
-                            ObserverManager.getInstance().notifyObserver(bleDevice);
-                            stopService(bleDevice,getCharacteristic());
-                            writeFailureCount++;
-
-
-
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    bleInit();
-                                }
-                            }, 1500);
-                        }
-                    });
         }
 
     }
@@ -935,242 +634,138 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void readData(){
+    public void initHtBle(){
 
-        BluetoothGattCharacteristic characteristic = getBluetoothGattCharacteristic(1, BluetoothGattCharacteristic.PROPERTY_READ);
-
-        if (characteristic != null) {
-            BleManager.getInstance().read(
-                    bleDevice,
-                    SERVICE_UUID/*characteristic.getService().getUuid().toString()*/,
-                    CHARACTER_NOTIFY_UUID/*characteristic.getUuid().toString()*/,
-                    new BleReadCallback() {
-
-                        @Override
-                        public void onReadSuccess(final byte[] data) {
-                            Log.d(TAG_BLE_OPERATION, "onReadSuccess");
-                            isBleObdRespond = false;
-                            notifyData();
-                        }
-
-                        @Override
-                        public void onReadFailure(final BleException exception) {
-                            Log.d(TAG_BLE_OPERATION, "onReadFailure");
-                            mIsScanning = false;
-                            isBleObdRespond = false;
-                        }
-                    });
-        }
-    }
-
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void notifyData(){
-
-        final BluetoothGattCharacteristic characteristic = getBluetoothGattCharacteristic(1, BluetoothGattCharacteristic.PROPERTY_NOTIFY);
-
-        if (characteristic != null) {
-            BleManager.getInstance().notify(
-                    bleDevice,
-                    SERVICE_UUID/*characteristic.getService().getUuid().toString()*/,
-                    CHARACTER_NOTIFY_UUID/*characteristic.getUuid().toString()*/,
-                    false,
-                    new BleNotifyCallback() {
-
-                        @Override
-                        public void onNotifySuccess() {
-                            Log.d(TAG_BLE_OPERATION, "onNotifySuccess");
-                            isBleObdRespond = false;
-                          //  String data = HexUtil.formatHexString(characteristic.getValue(), true);
-                         //   Log.d("Notify Success Data", "data: " + data);
-                            SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
-
-                        }
-
-                        @Override
-                        public void onNotifyFailure(final BleException exception) {
-
-                            Log.d(TAG_BLE_OPERATION, "onReadFailure: " + exception.toString());
-                            mIsScanning = false;
-                            isBleObdRespond = false;
-
-                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Globally.GetCurrentDateTime(), getApplicationContext());
-                            }
-
-                        }
-
-                        @Override
-                        public void onCharacteristicChanged(byte[] data) {
-                            if(characteristic.getValue().length > 50) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-
-                                    try {
-                                        String[] decodedArray = BleUtil.decodeDataChange(characteristic);
-                                        if (decodedArray != null && decodedArray.length >= 10) {
-                                            int VehicleSpeed = Integer.valueOf(decodedArray[7]);
-                                            truckRPM = decodedArray[8];
-
-                                            if (Integer.valueOf(truckRPM) > 0) {
-                                                ignitionStatus = "ON";
-                                            } else {
-                                                ignitionStatus = "OFF";
-                                            }
-
-                                            checkObdDataWithRule(VehicleSpeed);
-                                        }
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                            }
-                        }
-                    });
-        }
-    }
-
-
-    private void addObserver(BleDevice blueToothDevice){
-        bleDevice = blueToothDevice;
-
-        if (bleDevice == null) {
+        if (!BleUtil.isBLESupported(this)) {
+            Log.d(TAG_BLE, getResources().getString(R.string.ble_not_supported));
             return;
         }
 
-        ObserverManager.getInstance().addObserver(this);
+        // BT check
+        BluetoothManager manager = BleUtil.getManager(this);
+        if (manager != null) {
+            mBTAdapter = manager.getAdapter();
+
+        }
+
+        if (mBTAdapter == null) {
+            Log.d(TAG_BLE, getResources().getString(R.string.bt_unavailable));
+            return;
+        }
+
+        if (!mBTAdapter.isEnabled()) {
+            mBTAdapter.enable();
+
+            StartScanHtBle();
+
+        }
+
     }
 
+    void initBleListener(){
+        HTBleSdk.Companion.getInstance().initHTBleSDK(getApplicationContext(), new IReceiveListener() {
+            @Override
+            public void onConnected(@org.jetbrains.annotations.Nullable String s) {
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_CONNECTED, s));
 
-    private void setScanRule() {
-           /* String uuid = "";
-        String displayName = "";
-        String mac = "";
-        boolean isAutoConnect = false;*/
-
-        String[] uuids;
-        String str_uuid = "";
-        if (TextUtils.isEmpty(str_uuid)) {
-            uuids = null;
-        } else {
-            uuids = str_uuid.split(",");
-        }
-        UUID[] serviceUuids = null;
-        if (uuids != null && uuids.length > 0) {
-            serviceUuids = new UUID[uuids.length];
-            for (int i = 0; i < uuids.length; i++) {
-                String name = uuids[i];
-                String[] components = name.split("-");
-                if (components.length != 5) {
-                    serviceUuids[i] = null;
-                } else {
-                    serviceUuids[i] = UUID.fromString(uuids[i]);
-                }
             }
-        }
 
-        String[] names;
-        String str_name = "";
-        if (TextUtils.isEmpty(str_name)) {
-            names = null;
-        } else {
-            names = str_name.split(",");
-        }
+            @Override
+            public void onConnectTimeout(@org.jetbrains.annotations.Nullable String s) {
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_TIMEOUT, s));
+            }
 
-        BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
-                .setServiceUuids(serviceUuids)      // Only scan the equipment of the specified service, optional
-                .setDeviceName(true, names)   // Only scan devices with specified broadcast name, optional
-                .setDeviceMac(mac)                  // Only scan devices of specified mac, optional
-                .setAutoConnect(false)      // AutoConnect parameter when connecting, optional, default false
-                .setScanTimeOut(10000)              // Scan timeout time, optional, default 10 seconds
-                .build();
-        BleManager.getInstance().initScanRule(scanRuleConfig);
-    }
+            @Override
+            public void onConnectionError(@NotNull String s, int i, int i1) {
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_ERROR, s));
+            }
 
-    @Override
-    public void disConnected(BleDevice bleDevice) {
-        if (bleDevice != null && (bleDevice != null && bleDevice.getKey().equals(bleDevice.getKey()))) {
-            mIsScanning = false;
-            isBleObdRespond = false;
-            Log.d(TAG_BLE_CONNECT, "Observer disConnected");
-        }
-    }
+            @Override
+            public void onDisconnected(@org.jetbrains.annotations.Nullable String s) {
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, s));
 
-    public boolean isBleConnected(){
-        getBleDevice();
-        return BleManager.getInstance().isConnected(bleDevice);
-    }
+            }
 
-    public void setDisconnectType(boolean isManual) {
-        this.isManualDisconnected = isManual;
-    }
+            @Override
+            public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
+                mHtblData.add(htBleData);
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
 
-    public boolean isManualDisconnected() {
-        return isManualDisconnected;
-    }
+                int VehicleSpeed = Integer.valueOf(htBleData.getVehicleSpeed());
+                truckRPM = htBleData.getEngineSpeed();
 
+                if(truckRPM.length() > 0) {
+                    if (Integer.valueOf(truckRPM) > 0) {
+                        ignitionStatus = "ON";
+                    } else {
+                        ignitionStatus = "OFF";
+                    }
 
-
-    public void setBleDevice(BleDevice bleDevice) {
-        this.bleDevice = bleDevice;
-    }
-
-    public BleDevice getBleDevice() {
-        return bleDevice;
-    }
-    public BluetoothGattService getBluetoothGattService() {
-        return bluetoothGattService;
-    }
-
-    public void setBluetoothGattService(BluetoothGattService bluetoothGattService) {
-        this.bluetoothGattService = bluetoothGattService;
-    }
-
-    public BluetoothGattCharacteristic getCharacteristic() {
-        return characteristic;
-    }
-
-    public void setCharacteristic(BluetoothGattCharacteristic characteristic) {
-        this.characteristic = characteristic;
-    }
-
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public void stopService(BleDevice bleDevice, BluetoothGattCharacteristic characteristic){
-        if(bleDevice != null){
-            if(BleManager.getInstance().isConnected(bleDevice)) {
-
-                String character = "";
-                if(writeFailureCount > 1){
-                    character = CHARACTER_NOTIFY_UUID;
-                }else{
-                    character = CHARACTER_WRITE_UUID;
+                    checkObdDataWithRule(VehicleSpeed);
                 }
-                Log.e("Character:",""+getCharacteristic().getUuid().toString());
 
-                BleManager.getInstance().stopNotify(
-                        bleDevice,
-                        characteristic.getService().getUuid().toString(),
-                        character);
+            }
 
-                isManualDisconnected = true;
-                setDisconnectType(isManualDisconnected);
-                BleManager.getInstance().clearCharacterCallback(bleDevice);
-                ObserverManager.getInstance().deleteObserver(this);
-                BleManager.getInstance().disconnect(bleDevice);
-               // BleManager.getInstance().disconnectAllDevice();
-                BleManager.getInstance().destroy();
+            @Override
+            public void onResponse(@NotNull String address, @NotNull String uuid, @NotNull String sequenceID, @NotNull int status) {
+                Log.e("status", "==" + status + "==" + address);
+                bleScanCount = 0;
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_RESPONSE, address, uuid, status));
+            }
+        });
+
+    }
+
+
+    public void StartScanHtBle(){
+
+        if(HTBleSdk.Companion.getInstance() == null) {
+            initBleListener();
+        }
+        HTBleSdk.Companion.getInstance().startHTBleScan(new HTBleScanListener() {
+            @Override
+            public void onScanStart() {
+                mHTBleDevices.clear();
+
+                bleScanCount++;
+                mIsScanning = true;
                 isBleObdRespond = false;
-                mIsScanning = false;
-
-                // stopSelf();
             }
 
-        }
+            @Override
+            public void onScanning(@org.jetbrains.annotations.Nullable HTBleDevice htBleDevice) {
+                if (mHTBleDevices.contains(htBleDevice))
+                    return;
+
+                mIsScanning = false;
+                mHTBleDevices.add(htBleDevice);
+                connectHtBle(htBleDevice);
+            }
+
+            @Override
+            public void onScanFailed(int i) {
+                mIsScanning = false;
+            }
+
+            @Override
+            public void onScanStop() {
+                mIsScanning = false;
+                if (HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac()));
+            }
+        });
 
     }
+
+
+    private void connectHtBle(final HTBleDevice htBleDevice) {
+        HTBleSdk.Companion.getInstance().stopHTBleScan();
+        if (HTBleSdk.Companion.getInstance().isAllConnected()) {
+            // ToastUtil.show(getApplicationContext(), getString(R.string.ht_connect_error_other));
+        } else {
+            HTBleSdk.Companion.getInstance().connect(htBleDevice);
+        }
+    }
+
 
 
 
@@ -1189,7 +784,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                 //  ------------- BLE OBD ----------
-                stopService(bleDevice, characteristic);
+                if(HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac())) {
+                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, HTModeSP.INSTANCE.getDeviceMac()));
+                    HTBleSdk.Companion.getInstance().disAllConnect();
+                }
+                super.onDestroy();
             }else {
                 //  ------------- Wired OBD ----------
                 if(isBound){

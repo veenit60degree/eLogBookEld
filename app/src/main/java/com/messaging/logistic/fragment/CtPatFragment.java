@@ -898,7 +898,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
     DriverLogResponse saveInspectionResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
             Log.d("InspectionLog", "---Response CT-PAT Inspection: " + response);
             pDialog.dismiss();
             Globally.hideSoftKeyboard(getActivity());

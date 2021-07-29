@@ -2861,6 +2861,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
 
     void openMissingDialogAlert(){
         try {
+            driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
             boolean isLocationMissing = constants.isLocationMissingSelectedDay (selectedDateTime, currentDateTime, driverLogArray, hMethods, global);
 
             if(isLocationMissing) {
@@ -2984,7 +2985,7 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     DriverLogResponse saveCertifyResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
             Log.d("signatureLog", "---Response: " + response);
             progressBarDriverLog.setVisibility(View.GONE);
             if(progressDialog.isShowing()){

@@ -46,7 +46,7 @@ public class CommonUtils {
 			//Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Tablet density pixel: " + densityDpi, 2003);
 
 			if(densityDpi <= 220){
-				SingleDriverMenuWidth = 430;
+				SingleDriverMenuWidth = 425;
 				DualDriverMenuWidth   = 500;
 			}else if (densityDpi >= 240 && densityDpi <= 340){
 				SingleDriverMenuWidth = 530;
@@ -65,11 +65,11 @@ public class CommonUtils {
 		//	Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Phone density pixel: " + densityDpi, 2003);
 
 			if(densityDpi <= 320){
-				SingleDriverMenuWidth = 310;
-				DualDriverMenuWidth   = 333;
+				SingleDriverMenuWidth = 560;
+				DualDriverMenuWidth   = 600;
 			}else if(densityDpi > 320 && densityDpi <= 420){
-				SingleDriverMenuWidth = 350;
-				DualDriverMenuWidth   = 390;
+				SingleDriverMenuWidth = 450;
+				DualDriverMenuWidth   = 490;
 			}else{
 				SingleDriverMenuWidth = 470;
 				DualDriverMenuWidth   = 540;

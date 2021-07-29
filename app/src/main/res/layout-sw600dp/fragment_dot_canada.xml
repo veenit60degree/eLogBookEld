@@ -59,55 +59,26 @@
                 />
 
 
-            <TextView
-                android:id="@+id/canDotModeTxtVw"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin_short_5"
-                android:layout_marginBottom="@dimen/margin_short_5"
-                android:gravity="center_vertical"
 
-                android:textColor="@color/color_eld_theme"
-                android:textSize="@dimen/text_size_26"
-                android:text="@string/dot_mode_canada"
-                android:textStyle="bold"
-                android:layout_centerInParent="true"
-
-
-                />
-
-            <ImageView
-                android:id="@+id/canDotModeImgVw"
-                android:layout_width="@dimen/margin_26"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin_short_5"
-                android:layout_marginBottom="@dimen/margin_short_5"
-                android:gravity="center_vertical"
-
-                android:src="@drawable/pencil"
-                android:layout_toRightOf="@+id/canDotModeTxtVw"
-                android:layout_centerVertical="true"
-                />
-
-
-
-            <TextView
-                android:id="@+id/canSendLogBtn"
+            <lib.kingja.switchbutton.SwitchMultiButton
+                android:id="@+id/canDotSwitchBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_19"
-                android:text="@string/Send_Log"
-                android:layout_alignParentRight="true"
-                android:paddingLeft="@dimen/margin_16"
-                android:paddingRight="@dimen/margin_16"
-                android:textColor="@color/whiteee"
+                android:paddingLeft="@dimen/margin_15"
+                android:paddingRight="@dimen/margin_15"
                 android:paddingTop="@dimen/margin_10"
                 android:paddingBottom="@dimen/margin_10"
-                android:background="@drawable/green_eld_drawable"
+                app:strokeRadius="@dimen/margin_short_5"
+                app:strokeWidth="@dimen/margin_short_1"
+                app:selectedTab="1"
+                app:selectedColor="@color/colorPrimary"
+                app:switchTabs="@array/switch_tabs"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/margin_15"
+                android:layout_centerHorizontal="true"
+                app:textSize="@dimen/text_size_16"
 
                 />
+
 
 
 
@@ -1880,6 +1851,8 @@
             android:background="@color/whiteee"
             android:padding="@dimen/margin_short_6"
             android:layout_marginTop="@dimen/margin_15"
+            android:visibility="gone"
+
             >
 
 

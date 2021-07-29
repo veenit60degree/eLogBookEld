@@ -607,7 +607,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
 		@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 		@Override
-		public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+		public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
 
 			if(global.isSingleDriver(context)) {
 				LogoutUser(SharedPref.getDriverId(context));

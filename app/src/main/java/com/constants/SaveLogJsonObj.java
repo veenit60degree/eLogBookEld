@@ -47,7 +47,7 @@ public class SaveLogJsonObj {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Response ", ">>>Response: " + response);
-                        postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag);
+                        postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag, geoData.length());
                     }
                 },
                 new Response.ErrorListener()

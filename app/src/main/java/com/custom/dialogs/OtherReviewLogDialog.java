@@ -63,10 +63,7 @@ public class OtherReviewLogDialog extends Dialog {
         otherFeatureListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Log.d("itemClick", "itemClick: " + position);
-
                 logListener.JobBtnReady(otherLogList.get(position).getDate(), position);
-
             }
         });
 

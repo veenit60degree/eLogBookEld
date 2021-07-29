@@ -401,6 +401,7 @@
     <string name="home_ter_add"> (Home Terminal Add)</string>
     <string name="add_bracket"> (Add)</string>
     <string name="carrier_principal_add">Principal Place Of Business</string>
+    <string name="carrier_principal_address">Principal Place Of Business (Address)</string>
     <string name="CurrentOperatingZone">Current Operating Zone</string>
     <string name="total_hrs">Total Hrs</string>
     <string name="total_hrs_in_work">(In Work Shift)</string>
@@ -689,6 +690,10 @@
     <string name="date_format">mm/dd/yyyy</string>
     <string name="TimeRemaining">Time Remaining</string>
 
+    <string name="ht_ble_answer1">Response command：</string>
+    <string name="ht_ble_response1">Device response data：</string>
+    <string name="ht_ble_return1">Device returns data：</string>
+
 
     <string name="TrailorNo">Trailer Number</string>
     <string name="reason">Reason</string>
@@ -948,6 +953,28 @@
     <string name="local_map_key">AIzaSyB79_gF15_gqvW3KzTetS1l7ayKEUy5mGY</string>
     <string name="place_api_key">AIzaSyDLtErLR9UyyIQcf3H58zCS8YWv8W7kzFI</string>
 
+
+
+
+    <string name="Scanning">Scanning</string>
+    <string name="ht_curr_device">Current Device：%1$s</string>
+    <string name="ht_disconnected">Current Device Disconnected：%1$s</string>
+    <string name="ht_connected">Current Device Connected：%1$s</string>
+    <string name="ht_connect_timeout">Current Device Connection Timeout：%1$s</string>
+    <string name="ht_connect_error">Current Device Connection Error：%1$s</string>
+    <string name="ht_response_data">Response Time: %1$s\nAccessuuid: %2$s\nCommand Response Result: %3$s:%4$s</string>
+    <string name="ht_please_ps">Enter Device Password</string>
+    <string name="ht_period_data_p">Start And End Times Must Be Met</string>
+    <string name="ht_interval_p">Enter Correct Time</string>
+    <string name="ht_start_timer">Start Time: %1$s</string>
+    <string name="ht_end_timer">End Time: %1$s</string>
+    <string name="ht_clear_data">Clear Data</string>
+    <string name="ht_connect_error_other">Device connection failed, please check if there is a device connection</string>
+    <string name="ht_scan_error">Scanning device failed</string>
+    <string name="ht_unConnect">The device has not been connected and cannot be reconnected</string>
+    <string name="device_already_connected">Device already connected.</string>
+    <string name="ht_scan_completed">Scan Completed</string>
+    <string name="ht_scan_completed_not_found">Scan Completed, Device not found</string>
 
 
     <!-- Ignition status -->

@@ -1,6 +1,3 @@
-
-
-
 package com.background.service;
 
 import android.Manifest;
@@ -8,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
@@ -25,14 +21,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
-import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,26 +34,15 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.ble.comm.Observable;
-import com.ble.comm.ObserverManager;
+import com.ble.util.ConstantEvent;
+import com.ble.util.EventBusInfo;
 import com.ble.util.BleUtil;
-import com.clj.fastble.BleManager;
-import com.clj.fastble.callback.BleGattCallback;
-import com.clj.fastble.callback.BleNotifyCallback;
-import com.clj.fastble.callback.BleReadCallback;
-import com.clj.fastble.callback.BleScanCallback;
-import com.clj.fastble.callback.BleWriteCallback;
-import com.clj.fastble.data.BleDevice;
-import com.clj.fastble.exception.BleException;
-import com.clj.fastble.scan.BleScanRuleConfig;
-import com.clj.fastble.utils.BleLog;
-import com.clj.fastble.utils.HexUtil;
+import com.ble.utils.ToastUtil;
 import com.constants.APIs;
 import com.constants.AsyncResponse;
 import com.constants.CheckConnectivity;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
-import com.constants.DownloadPdf;
 import com.constants.DriverLogResponse;
 import com.constants.RequestResponse;
 import com.constants.SaveDriverLogPost;
@@ -79,6 +60,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.htstart.htsdk.HTBleSdk;
+import com.htstart.htsdk.bluetooth.HTBleData;
+import com.htstart.htsdk.bluetooth.HTBleDevice;
+import com.htstart.htsdk.bluetooth.HTModeSP;
+import com.htstart.htsdk.minterface.HTBleScanListener;
+import com.htstart.htsdk.minterface.IReceiveListener;
 import com.local.db.CTPatInspectionMethod;
 import com.local.db.CertifyLogMethod;
 import com.local.db.ConstantsKeys;
@@ -113,37 +100,33 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.wifi.settings.WiFiConfig;
 
+import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
-import org.joda.time.Minutes;
 import org.joda.time.Seconds;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.nio.charset.Charset;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import dal.tables.OBDDeviceData;
 import models.RulesResponseObject;
 import obdDecoder.Decoder;
-import com.ble.comm.Observer;
 
 // 27 jan 2021   --
 public class BackgroundLocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, TextToSpeech.OnInitListener, LocationListener, Observer {
+        GoogleApiClient.OnConnectionFailedListener, TextToSpeech.OnInitListener, LocationListener {
 
     String TAG = "Service";
     String TAG_OBD = "OBD Service";
@@ -312,20 +295,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     boolean isManualDisconnected = false;
 
     int writeFailureCount = 0;
-    int isScanningCount = 0;
-    int writeFailureCountToStop = 0;
     int bleScanCount = 0;
 
     private BluetoothAdapter mBTAdapter;
 
-    BleDevice bleDevice;
-    private BluetoothGattService bluetoothGattService;
-    private BluetoothGattCharacteristic characteristic;
-    List<BluetoothGattService> bluetoothGattServices = new ArrayList<>();
-    List<BluetoothGattCharacteristic> characteristicList = new ArrayList<>();
-
-    String name = "";
-    String mac = "";
+    private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
+    private LinkedList<HTBleData> mHtblData = new LinkedList<>();
 
 
 
@@ -408,16 +383,21 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         SharedPref.SaveObdStatus(SharedPref.getObdStatus(getApplicationContext()), SharedPref.getObdLastStatusTime(getApplicationContext()), getApplicationContext());
 
         BindConnection();
+        initBleListener();
 
         if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-            bleInit();
 
-            if(!BleManager.getInstance().isConnected(bleDevice) && SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED){
+            checkPermissionsBeforeScanBle();
+
+            if(!HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac()) && SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED){
                 SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
             }
         }else{
             if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
                 checkWiredObdConnection(wifiConfig.IsAlsNetworkConnected(getApplicationContext()));
+            }
+            if (SharedPref.GetNewLoginStatus(getApplicationContext())) {
+                checkPermissionsBeforeScanBle();
             }
         }
 
@@ -471,42 +451,59 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
             bundle.clear();
 
+
+
+           /* vin = "13245678935432145";
+            speed = 0;
+            truckRPM = "700";
+            obdOdometer = "1930423565";
+            currentHighPrecisionOdometer = obdOdometer;
+            obdEngineHours = "132456798";
+            HTBleData htBleData = new HTBleData("1", "1", 123, 1, "2021-05-02", "03:33","", "",
+                    ""+speed, truckRPM, obdOdometer, obdEngineHours, vin,
+                    "", "", "", true, true, "101", "123","", "");
+            SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());*/
+
+
+
+
+
+
             obdCallBackObservable(speed, vin, timeStamp, null);
 
         }
     }
 
 
-    private void obdCallBackObservable(int speed, String vin, String timeStamp, String[] obdDataArray){
+    private void obdCallBackObservable(int speed, String vin, String timeStamp, HTBleData htBleData){
 
         int OBD_LAST_STATUS = SharedPref.getObdStatus(getApplicationContext());
         String last_obs_source_name = SharedPref.getObdSourceName(getApplicationContext());
 
         try {
-            if(obdDataArray != null) {
+            if(htBleData != null) {
                 obdEngineHours = "0"; currentHighPrecisionOdometer = "0"; obdOdometer = "0"; obdTripDistance = "0";
                 ignitionStatus = "OFF"; truckRPM = "0"; ;
 
-                if(obdDataArray.length > 14) {
-                    obdOdometer = obdDataArray[9];
-                    obdTripDistance = obdDataArray[14];
-                    truckRPM = obdDataArray[8];
-                    obdEngineHours = obdDataArray[10];
-                    currentHighPrecisionOdometer = obdDataArray[9];
-                    Globally.LATITUDE = obdDataArray[12] ;
-                    Globally.LONGITUDE = obdDataArray[13] ;
+                obdOdometer = htBleData.getOdoMeter();
+                obdTripDistance = htBleData.getDistanceSinceLast();
+                truckRPM = htBleData.getEngineSpeed();
+                obdEngineHours = htBleData.getEngineHours();
+                currentHighPrecisionOdometer = htBleData.getOdoMeter();
+                Globally.LATITUDE = htBleData.getLatitude();
+                Globally.LONGITUDE = htBleData.getLongitude() ;
 
-                    if (Integer.valueOf(truckRPM) > 0) {
-                        ignitionStatus = "ON";
-                        if (constants.isValidFloat(currentHighPrecisionOdometer)) {
-                            // convert km to meter
-                            float floatOdoInMeter = Float.parseFloat(currentHighPrecisionOdometer) * 1000;
-                            currentHighPrecisionOdometer = "" + Math.round(floatOdoInMeter);
-                        }
-                    } else {
-                        ignitionStatus = "OFF";
-                    }
+                if (Integer.valueOf(truckRPM) > 0) {
+                    ignitionStatus = "ON";
+                   /* if (constants.isValidFloat(currentHighPrecisionOdometer)) {
+                        // convert km to meter
+                        float floatOdoInMeter = Float.parseFloat(currentHighPrecisionOdometer) * 1000;
+                        currentHighPrecisionOdometer = "" + Math.round(floatOdoInMeter);
+                    }*/
+                } else {
+                    ignitionStatus = "OFF";
                 }
+
             }else{
                 if(OBD_LAST_STATUS == constants.BLE_CONNECTED) {
                    // constants.saveAppUsageLog("BleCallback: Array null" ,  false, false, obdUtil);
@@ -669,7 +666,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             }
 
                             Globally.VEHICLE_SPEED = speed;
-
 
 
                         }else{
@@ -884,7 +880,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     //   Log.d("ELD Rule", "data is correct for this status. No need to call ELD rule.");
                     if(speed == 0)
                         timeDuration = Constants.SocketTimeout4Sec;
-                    SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+
+                    // call ELD rule after 1 minute to improve performance
+                    if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
+                        SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
+
+                        saveObdData(getObdSource(), vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
+                                currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
+                                String.valueOf(calculatedSpeedFromOdo), obdTripDistance, timeStamp, savedDate);
+
+                    }
                 } else {
                     if (speed >= 8 && calculatedSpeedFromOdo >= 8 ) {    // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
 
@@ -923,6 +928,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+
+    private String getObdSource(){
+        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+            return constants.BleObd;
+        }else if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED){
+            return constants.WiredOBD;
+        }else{
+            return constants.WifiOBD;
         }
     }
 
@@ -1008,9 +1024,50 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
     }
 
+
+
+    private void checkPermissionsBeforeScanBle() {
+
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        boolean isConnected = HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac());
+
+        if (!bluetoothAdapter.isEnabled()) {
+            bluetoothAdapter.enable();
+            sendBroadCast("BlueTooth was disabled. Turning on..");
+            constants.saveAppUsageLog("BlueTooth was disabled. Turning on..", false, false, obdUtil);
+
+        }else{
+            if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
+
+                if (!mIsScanning && !isConnected) {
+
+                    // ignore scan after 3 attempts if device not found
+                    if(SharedPref.getBleScanCount(getApplicationContext()) < 3) {
+                        StartScanHtBle();
+                    }else{
+                        if(bleScanCount == 3) {
+                            bleScanCount++;
+                            HTBleSdk.Companion.getInstance().stopHTBleScan();
+                            Globally.PlayNotificationSound(getApplicationContext());
+                            global.ShowLocalNotification(getApplicationContext(),
+                                    getApplicationContext().getResources().getString(R.string.BluetoothOBD),
+                                    getApplicationContext().getResources().getString(R.string.BleObdNotFound), 2096);
+                        }
+                    }
+
+
+                }
+
+            }
+        }
+
+    }
+
+
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void bleInit() {
-        // BLE check
+    public void initHtBle(){
+
         if (!BleUtil.isBLESupported(this)) {
             sendBroadCast(getResources().getString(R.string.ble_not_supported));
             Log.d(TAG_BLE, getResources().getString(R.string.ble_not_supported));
@@ -1023,6 +1080,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             mBTAdapter = manager.getAdapter();
 
         }
+
         if (mBTAdapter == null) {
             sendBroadCast(getResources().getString(R.string.bt_unavailable));
             Log.d(TAG_BLE, getResources().getString(R.string.bt_unavailable));
@@ -1031,164 +1089,26 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         if (!mBTAdapter.isEnabled()) {
             mBTAdapter.enable();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                 initilizeBle();
-                }
-            }, 4000);
-
-
-        }else{
-            initilizeBle();
         }
 
-    }
+        StartScanHtBle();
 
-
-    private void initilizeBle(){
-        BleManager.getInstance().init(getApplication());
-        BleManager.getInstance()
-                .enableLog(true)
-                .setReConnectCount(3, 5000)
-                .setConnectOverTime(20000)
-                .setOperateTimeout(10000);
-    }
-
-
-    private void checkPermissionsBeforeScanBle() {
-
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        boolean isConnected = BleManager.getInstance().isConnected(bleDevice);
-
-        if (!bluetoothAdapter.isEnabled()) {
-            bluetoothAdapter.enable();
-            sendBroadCast("BlueTooth was disabled. Turning on..");
-            try {
-                Thread.sleep(2000);
-                BleManager.getInstance().disconnectAllDevice();
-                ObserverManager.getInstance().notifyObserver(bleDevice);
-                constants.saveAppUsageLog("BlueTooth was disabled. Turning on..", false, false, obdUtil);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }else{
-            if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
-
-                if (!mIsScanning && !isConnected) {
-
-                    // ignore scan after 5 attempts if device not found
-                    if(SharedPref.getBleScanCount(getApplicationContext()) < 5) {
-                        startScan();
-                    }else{
-                        if(bleScanCount == 5) {
-                            bleScanCount++;
-                            Globally.PlayNotificationSound(getApplicationContext());
-                            global.ShowLocalNotification(getApplicationContext(),
-                                    getApplicationContext().getResources().getString(R.string.BluetoothOBD),
-                                    getApplicationContext().getResources().getString(R.string.BleObdNotFound), 2096);
-                        }
-                    }
-
-
-                }
-
-                // some times scan not finished and continuesly scaning then we need this check
-                if(isScanningCount > 6 && mIsScanning){
-                    if(BleManager.getInstance() != null) {
-                        BleManager.getInstance().cancelScan();
-                        mIsScanning = false;
-                        isScanningCount = 0;
-                    }
-                }
-                isScanningCount++;
-
-            }
-        }
 
     }
 
-
-    private void startScan() {
-        isScanningCount = 0;
-        isEldBleFound = false;
-
-        BleManager.getInstance().scan(new BleScanCallback() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    void initBleListener(){
+        HTBleSdk.Companion.getInstance().initHTBleSDK(getApplicationContext(), new IReceiveListener() {
             @Override
-            public void onScanStarted(boolean success) {
-                if (success) {
-                    mIsScanning = true;
-                    isBleObdRespond = false;
-                    sendBroadCast("Scan Started");
-                   // constants.saveAppUsageLog("BleCallback: ScanStarted", false, false, obdUtil);
-                } else {
-                   // constants.saveAppUsageLog("Start Bluetooth: Scan" ,  false, false, obdUtil);
-                    sendBroadCast("Scanning");
-                    mIsScanning = false;
-                    bleInit();
-                }
+            public void onConnected(@org.jetbrains.annotations.Nullable String s) {
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_CONNECTED, s));
+                sendBroadCast(getString(R.string.ht_connected));
+
             }
 
             @Override
-            public void onLeScan(BleDevice bleDevice) {
-                super.onLeScan(bleDevice);
-            }
-
-            @Override
-            public void onScanning(BleDevice bleDevice) {
-
-                try {
-                    if (bleDevice.getName() != null) {
-                        if (bleDevice.getName().contains("ALSELD") || bleDevice.getName().contains("SMBLE")) {
-                            Log.d("getName", "getName: " + bleDevice.getName());
-                            bleScanCount = 0;
-                            SharedPref.saveBleScanCount(0, getApplicationContext());
-
-                            isEldBleFound = true;
-                            sendBroadCast("Connecting");
-                            connect(bleDevice);
-                            BleManager.getInstance().cancelScan();
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onScanFinished(List<BleDevice> scanResultList) {
-                mIsScanning = false;
-                sendBroadCast("Scan Finished");
-                if (!isEldBleFound) {
-                    bleScanCount++;
-                    SharedPref.saveBleScanCount(bleScanCount, getApplicationContext());
-                    sendBroadCast("Bluetooth OBD not found.");
-                    obdCallBackObservable(-1, SharedPref.getVehicleVin(getApplicationContext()), global.GetCurrentDateTime(), null);
-                }
-            }
-        });
-
-    }
-
-
-
-    private void connect(final BleDevice bleDevice) {
-        BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
-            @Override
-            public void onStartConnect() {
-                Log.d(TAG_BLE_CONNECT, "onStartConnect");
-                sendBroadCast("Connecting");
-                isBleObdRespond = false;
-            }
-
-            @Override
-            public void onConnectFail(BleDevice bleDevice, BleException exception) {
-                Log.d(TAG_BLE_CONNECT, "onConnectFail");
-                constants.saveAppUsageLog("BleCallback: ConnectFail" ,  false, false, obdUtil);
-                sendBroadCast("Connecting failed");
-
-                ObserverManager.getInstance().notifyObserver(bleDevice);
+            public void onConnectTimeout(@org.jetbrains.annotations.Nullable String s) {
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_TIMEOUT, s));
+                sendBroadCast(getString(R.string.ht_connect_timeout));
 
                 if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
                     SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
@@ -1196,420 +1116,122 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             }
 
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
-            public void onConnectSuccess(BleDevice blueToothDevice, BluetoothGatt gatt, int status) {
-                Log.d(TAG_BLE_CONNECT, "Connected Successfully");
+            public void onConnectionError(@NotNull String s, int i, int i1) {
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_ERROR, s));
+                sendBroadCast(getString(R.string.ht_connect_error));
 
-                if (BleManager.getInstance().isConnected(bleDevice)) {
-                    isManualDisconnected = false;
-                    setDisconnectType(isManualDisconnected);
-
-                    setBleDevice(blueToothDevice);
-                    addObserver(blueToothDevice);
-                    name = bleDevice.getName();
-                    mac  = bleDevice.getMac();
-
-                  /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        gatt.requestMtu(512);
-                    }*/
-
-                    bluetoothGattServices = new ArrayList<>();
-                    for (BluetoothGattService service : gatt.getServices()) {
-                        bluetoothGattServices.add(service);
-                    }
-
-                    if (bluetoothGattServices.size() > 2) {
-                        BluetoothGattService service = bluetoothGattServices.get(2);
-                        setBluetoothGattService(service);
-                        writeData();
-                    }else{
-                        constants.saveAppUsageLog("BleCallback: ConnectSuccess but gatt size is 0" ,  false, false, obdUtil);
-                    }
-
+                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                    SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
                 }
 
             }
 
-            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
-            public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
+            public void onDisconnected(@org.jetbrains.annotations.Nullable String s) {
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, s));
+                sendBroadCast(getString(R.string.ht_disconnected));
 
-                Log.d(TAG_BLE_CONNECT, "onDisConnected");
-                constants.saveAppUsageLog("BleCallback: DisConnected" ,  false, false, obdUtil);
-                isBleObdRespond = false;
-                ObserverManager.getInstance().notifyObserver(bleDevice);
-                stopService(bleDevice,getCharacteristic());
-
-                sendBroadCast("BLE DisConnected - isManualDisconnected: " +isManualDisconnected);
-
-                if (!isManualDisconnected()) {
-                    bleInit();
-                   // setScanRule();
-                    startScan();
-                }
-
-                // Reset data on disConnected
-                if(SharedPref.getObdStatus(getApplicationContext()) == constants.BLE_CONNECTED) {
-                    truckRPM = "0";
-                    obdOdometer = "0";
-                    obdEngineHours = "0";
-                    ignitionStatus = "OFF";
+                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
                     SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
-                    obdCallBackObservable(-1, SharedPref.getVehicleVin(getApplicationContext()), global.GetCurrentDateTime(), null);
-
-                    if(UILApplication.isActivityVisible()){
-                        showEldEcmAlert();
-                    }
                 }
 
+            }
 
+            @Override
+            public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
+                mHtblData.add(htBleData);
 
+                if (isBleObdRespond == false) {
+                    SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
+                    constants.saveAppUsageLog("BleCallback: onReceive", false, false, obdUtil);
+                }
+                isBleObdRespond = true;
+
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
+                sendBroadCast(BleUtil.decodeDataChange(htBleData, HTModeSP.INSTANCE.getDeviceName(), HTModeSP.INSTANCE.getDeviceMac()));
+                obdCallBackObservable(Integer.valueOf(htBleData.getVehicleSpeed()), htBleData.getVIN_Number(), global.GetCurrentDateTime(), htBleData);
+
+                constants.saveAppUsageLog("RPM: "+ htBleData.getEngineSpeed() + " - Speed: " + htBleData.getVehicleSpeed(), false, false, obdUtil);
+
+                saveObdData( constants.BleObd, htBleData.getVIN_Number(), htBleData.getOdoMeter(), htBleData.getOdoMeter(),
+                        htBleData.getOdoMeter(), "", ignitionStatus, htBleData.getEngineSpeed(), htBleData.getVehicleSpeed(),
+                        "Test calculate", htBleData.getDistanceSinceLast(), "", Globally.GetCurrentDeviceDate());
+
+            }
+
+            @Override
+            public void onResponse(@NotNull String address, @NotNull String uuid, @NotNull String sequenceID, @NotNull int status) {
+                Log.e("status", "==" + status + "==" + address);
+                bleScanCount = 0;
+                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_RESPONSE, address, uuid, status));
+                sendBroadCast(getString(R.string.ht_ble_response1));
             }
         });
-    }
-
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public void getCharacteristicListData() {
-        BluetoothGattService service = getBluetoothGattService();
-        characteristicList = new ArrayList<>();
-        if (service != null) {
-            for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-                characteristicList.add(characteristic);
-            }
-        }
-    }
-
-    private BluetoothGattCharacteristic getBluetoothGattCharacteristic(int maxlength, int PROPERTY) {
-        BluetoothGattCharacteristic characteristic = null;
-        if (characteristicList.size() > maxlength) {
-            characteristic = characteristicList.get(maxlength);
-            if (PROPERTY > 0) {
-                setCharacteristic(characteristic);
-            }
-        }
-        return characteristic;
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void writeData(){
-
-        getCharacteristicListData();
-
-        BluetoothGattCharacteristic characteristic  = getBluetoothGattCharacteristic(0, BluetoothGattCharacteristic.PROPERTY_WRITE);
-
-        if(characteristic != null) {
-            String writeValue = "";
-            String uuidName = bleDevice.getName();
-            //final String requestData  = "request:{source_id:" + uuidName + ",events:[{5B6A,0,0,000000,000000,000000000000,1111,0,0,,0,0,0,0,0,0,0,57,79}]}";
-            final String requestData = "request:{source_id:" + uuidName + ",events:[{5B6A,0,0,000000,000000,000000000000,1111,0,0,0,0,,0,0,0,0,0,0,0,57,79}]}";    //{5B6A,0,0,000000,000000,000000000000,1111,0,0,,0,0,0,0,0,0,0,57,79}]
-
-            writeValue = BleUtil.convertStringToHex(requestData);
-            writeValue = writeValue.replaceAll(" ", "");
-            byte[] bytes = BleUtil.invertStringToBytes(writeValue);
-
-            BleManager.getInstance().write(
-                    bleDevice,
-                    SERVICE_UUID    /*characteristic.getService().getUuid().toString()*/,
-                    CHARACTER_WRITE_UUID    /*characteristic.getUuid().toString()*/,
-                    bytes, // by,
-                    new BleWriteCallback() {
-
-                        @Override
-                        public void onWriteSuccess(final int current, final int total, final byte[] justWrite) {
-                            Log.d(TAG_BLE_OPERATION, "onWriteSuccess");
-                            sendBroadCast("Write data Success");
-
-                            if(current == total) {
-                                // read ble data after write success
-                                readData();
-                            }
-                        }
-
-                        @Override
-                        public void onWriteFailure(final BleException exception) {
-                            Log.d(TAG_BLE_OPERATION, "onWriteFailure" + exception.toString());
-                            constants.saveAppUsageLog("onWriteFailure: " +exception.toString() ,  false, false, obdUtil);
-                            sendBroadCast("Write data Failure: " +exception.toString());
-                            mIsScanning = false;
-                            isBleObdRespond = false;
-
-                            ObserverManager.getInstance().notifyObserver(bleDevice);
-                            stopService(bleDevice,getCharacteristic());
-                            writeFailureCount++;
-                            if(writeFailureCount > 4){
-
-                                writeFailureCount = 0;
-
-                                if (mBTAdapter != null && mBTAdapter.isEnabled()) {
-                                    mBTAdapter.disable();
-                                }
-
-                            }
-
-                            if(writeFailureCountToStop == 4){
-                                bleScanCount = 6;
-                                SharedPref.saveBleScanCount(bleScanCount, getApplicationContext());
-                                Globally.PlayNotificationSound(getApplicationContext());
-                                global.ShowLocalNotification(getApplicationContext(),
-                                        getApplicationContext().getResources().getString(R.string.BluetoothOBD),
-                                        getApplicationContext().getResources().getString(R.string.BleObdNotConnected), 2097);
-                                writeFailureCountToStop = 0;
-                            }
-                            writeFailureCountToStop++;
-
-                            if (isManualDisconnected()) {
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        bleInit();
-                                    }
-                                }, 1500);
-                            }
-                        }
-                    });
-        }
 
     }
 
 
+    public void StartScanHtBle(){
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void readData(){
+        try {
+            HTBleSdk.Companion.getInstance().startHTBleScan(new HTBleScanListener() {
+                @Override
+                public void onScanStart() {
+                    mHTBleDevices.clear();
 
-        BluetoothGattCharacteristic characteristic = getBluetoothGattCharacteristic(1, BluetoothGattCharacteristic.PROPERTY_READ);
-
-        if (characteristic != null) {
-            BleManager.getInstance().read(
-                    bleDevice,
-                    SERVICE_UUID    /*characteristic.getService().getUuid().toString()*/,
-                    CHARACTER_NOTIFY_UUID   /*characteristic.getUuid().toString()*/,
-                    new BleReadCallback() {
-
-                        @Override
-                        public void onReadSuccess(final byte[] data) {
-                            Log.d(TAG_BLE_OPERATION, "onReadSuccess");
-                            sendBroadCast("onReadSuccess");
-                            notifyData();
-
-                        }
-
-                        @Override
-                        public void onReadFailure(final BleException exception) {
-                            Log.d(TAG_BLE_OPERATION, "onReadFailure");
-                            mIsScanning = false;
-                            isBleObdRespond = false;
-
-                            constants.saveAppUsageLog("ReadFailure: " +exception.toString() ,  false, false, obdUtil);
-                            sendBroadCast("onReadFailure: " +exception.toString());
-
-                        }
-                    });
-        }
-    }
-
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void notifyData(){
-
-        final BluetoothGattCharacteristic characteristic = getBluetoothGattCharacteristic(1, BluetoothGattCharacteristic.PROPERTY_NOTIFY);
-
-        if (characteristic != null) {
-            BleManager.getInstance().notify(
-                    bleDevice,
-                    SERVICE_UUID    /*characteristic.getService().getUuid().toString()*/,
-                    CHARACTER_NOTIFY_UUID   /*characteristic.getUuid().toString()*/,
-                    false,
-                    new BleNotifyCallback() {
-
-                        @Override
-                        public void onNotifySuccess() {
-                            Log.d(TAG_BLE_OPERATION, "onNotifySuccess");
-                            isBleObdRespond = false;
-                            writeFailureCount = 2;
-                            writeFailureCountToStop = 0;
-                          //  String data = HexUtil.formatHexString(characteristic.getValue(), true);
-                          //  Log.d("Notify Success Data", "data: " + data);
-                           // constants.saveAppUsageLog("BleCallback: NotifySuccess" ,  false, false, obdUtil);
-                            sendBroadCast("onNotifySuccess");
-                        }
-
-                        @Override
-                        public void onNotifyFailure(final BleException exception) {
-
-                            Log.d(TAG_BLE_OPERATION, "onReadFailure: " + exception.toString());
-                            mIsScanning = false;
-                            constants.saveAppUsageLog("NotifyFailure: " +exception.toString() ,  false, false, obdUtil);
-                            sendBroadCast("onNotifyFailure: " + exception.toString());
-
-                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
-                            }
-
-
-
-                        }
-
-                        @Override
-                        public void onCharacteristicChanged(byte[] data) {
-                            Log.d("onCharacteristicChanged", "onCharacteristicChanged" );
-
-                            try {
-                                if (characteristic.getValue() != null && characteristic.getValue().length > 50) {
-                                    // temp data
-                              /*  if(isBleObdRespond == false){
-                                    SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
-                                    constants.saveAppUsageLog("BleCallback: Notify Data Changed" ,  false, false, obdUtil);
-                                }
-                                sendBroadCast( "Name: " + bleDevice.getName()+ ", Mac: "+ bleDevice.getMac());
-*/
-                                    String[] decodedArray = BleUtil.decodeDataChange(characteristic);
-                                    if (decodedArray != null && decodedArray.length >= 20) {  //11
-                                        if (isBleObdRespond == false) {
-                                            SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
-                                            constants.saveAppUsageLog("BleCallback: Notify Data Changed", false, false, obdUtil);
-                                        }
-
-                                        isBleObdRespond = true;
-                                        int VehicleSpeed = Integer.valueOf(decodedArray[7]);
-                                        String VehicleVIN = decodedArray[10];
-
-                                 /*   // temp value assigned. updated firmware position in upper comment section
-                                    int VehicleSpeed = 0;
-                                    String VehicleVIN = decodedArray[8];
-*/
-
-                                        sendBroadCast(BleUtil.decodeDataChange(characteristic, bleDevice.getName(), bleDevice.getMac()));
-                                        obdCallBackObservable(VehicleSpeed, VehicleVIN, global.GetCurrentDateTime(), decodedArray);
-                                    } else {
-                                        if (isBleObdRespond == false) {
-                                            SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
-                                            constants.saveAppUsageLog("BleCallback: Notify Data Changed inComplete", false, false, obdUtil);
-                                        }
-                                        isBleObdRespond = true;
-                                        sendBroadCast("Ble OBD connected but returns inComplete data. <br/> Contact with your company.");
-                                    }
-
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-        }
-    }
-
-
-    private void addObserver(BleDevice blueToothDevice){
-        bleDevice = blueToothDevice;
-        if (bleDevice == null) {
-            return;
-        }
-        ObserverManager.getInstance().addObserver(this);
-    }
-
-
-    private void setScanRule() {
-        BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
-                .setServiceUuids(new UUID[0])      // Only scan the equipment of the specified service, optional
-                .setDeviceName(true, "")   // Only scan devices with specified broadcast name, optional
-                .setDeviceMac("")                  // Only scan devices of specified mac, optional
-                .setAutoConnect(false)          // isAutoConnect - AutoConnect parameter when connecting, optional, default false
-                .setScanTimeOut(10000)              // Scan timeout time, optional, default 10 seconds
-                .build();
-        BleManager.getInstance().initScanRule(scanRuleConfig);
-    }
-
-    @Override
-    public void disConnected(BleDevice bleDevice) {
-        if (bleDevice != null && (bleDevice != null && bleDevice.getKey().equals(bleDevice.getKey()))) {
-            mIsScanning = false;
-            isBleObdRespond = false;
-            Log.d(TAG_BLE_CONNECT, "Observer disConnected");
-
-            sendBroadCast("disConnected");
-        }
-    }
-
-    public void setDisconnectType(boolean isManual) {
-        this.isManualDisconnected = isManual;
-    }
-
-    public boolean isManualDisconnected() {
-        return isManualDisconnected;
-    }
-
-
-
-    public void setBleDevice(BleDevice bleDevice) {
-        this.bleDevice = bleDevice;
-    }
-
-    public BleDevice getBleDevice() {
-        return bleDevice;
-    }
-    public BluetoothGattService getBluetoothGattService() {
-        return bluetoothGattService;
-    }
-
-    public void setBluetoothGattService(BluetoothGattService bluetoothGattService) {
-        this.bluetoothGattService = bluetoothGattService;
-    }
-
-    public BluetoothGattCharacteristic getCharacteristic() {
-        return characteristic;
-    }
-
-    public void setCharacteristic(BluetoothGattCharacteristic characteristic) {
-        this.characteristic = characteristic;
-    }
-
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public void stopService(BleDevice bleDevice, BluetoothGattCharacteristic characteristic){
-        try{
-            if(bleDevice != null) {
-                if (BleManager.getInstance().isConnected(bleDevice)) {
-
-                    String character = "";
-                    if(writeFailureCount > 1){
-                        character = CHARACTER_NOTIFY_UUID;
-                    }else{
-                        character = CHARACTER_WRITE_UUID;
-                    }
-                    Log.e("Character:",""+getCharacteristic().getUuid().toString());
-
-                    BleManager.getInstance().stopNotify(
-                            bleDevice,
-                            characteristic.getService().getUuid().toString(),
-                            character);
-
-                    isManualDisconnected = true;
-                    setDisconnectType(isManualDisconnected);
-                    BleManager.getInstance().clearCharacterCallback(bleDevice);
-                    ObserverManager.getInstance().deleteObserver(this);
-                    BleManager.getInstance().disconnect(bleDevice);
-                   // BleManager.getInstance().disconnectAllDevice();
-                    BleManager.getInstance().destroy();
+                    bleScanCount++;
+                    mIsScanning = true;
                     isBleObdRespond = false;
-                    mIsScanning = false;
-
-                    if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                        SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
-                    }
-                    // stopSelf();
+                    sendBroadCast(getString(R.string.Scanning));
                 }
-            }
+
+                @Override
+                public void onScanning(@org.jetbrains.annotations.Nullable HTBleDevice htBleDevice) {
+                    if (mHTBleDevices.contains(htBleDevice))
+                        return;
+
+                    mIsScanning = false;
+                    mHTBleDevices.add(htBleDevice);
+                    connectHtBle(htBleDevice);
+                }
+
+                @Override
+                public void onScanFailed(int i) {
+                    mIsScanning = false;
+                    sendBroadCast(getString(R.string.ht_scan_error));
+                }
+
+                @Override
+                public void onScanStop() {
+                    mIsScanning = false;
+                    SharedPref.saveBleScanCount(bleScanCount, getApplicationContext());
+
+                    if (HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac())) {
+                        sendBroadCast(getString(R.string.ht_scan_completed));
+                    } else {
+                        sendBroadCast(getString(R.string.ht_scan_completed_not_found));
+                    }
+                }
+            });
         }catch (Exception e){
             e.printStackTrace();
         }
-
     }
+
+
+    private void connectHtBle(final HTBleDevice htBleDevice) {
+        HTBleSdk.Companion.getInstance().stopHTBleScan();
+        if (HTBleSdk.Companion.getInstance().isAllConnected()) {
+           // ToastUtil.show(getApplicationContext(), getString(R.string.ht_connect_error_other));
+            sendBroadCast(getString(R.string.ht_connect_error_other));
+        } else {
+            sendBroadCast(getString(R.string.ht_connected));
+            HTBleSdk.Companion.getInstance().connect(htBleDevice);
+        }
+    }
+
+
 
 
     private void sendBroadCast(String data){
@@ -1685,18 +1307,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
 
                 // write wired OBD details in a text file and save into the SD card.
-                String obdSource;
-                if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-                    obdSource = constants.BleObd;
-                }else{
-                    obdSource = constants.WiredOBD;
-                }
+
                 if(SharedPref.isOdoCalculationAllowed(getApplicationContext())) {
-                    saveObdData(obdSource, vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
+                    saveObdData(getObdSource(), vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
                             currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                             String.valueOf(calculatedSpeedFromOdo), obdTripDistance, timeStamp, savedDate);
                 }else{
-                    saveObdData(obdSource, vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
+                    saveObdData(getObdSource(), vin, obdOdometer, String.valueOf(intHighPrecisionOdometerInKm),
                             currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                             String.valueOf(-1), obdTripDistance, timeStamp, savedDate);
                 }
@@ -1956,28 +1573,22 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         */
         if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
 
-            boolean isConnected = BleManager.getInstance().isConnected(bleDevice);
+            boolean isConnected = HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac());
             String bleStatus = SharedPref.isBlePing(getApplicationContext());
 
             if(EldFragment.IsTruckChange){
                 if(!mIsScanning && !isConnected) {
-                    bleInit();
+                    initBleListener();
+                    initHtBle();
                 }
             }else {
                 if (bleStatus.equals("start")) {
                     if (!mIsScanning && !isConnected) {
-                        writeFailureCountToStop = 0;
-                        bleInit();
+                        initHtBle();
                     }
-                } else if(bleStatus.equals("stop")) {
-                    // stop ble communication
-                    stopService(bleDevice, getCharacteristic());
-                    isBleObdRespond = false;
-                    SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
-                    constants.saveAppUsageLog("BleCallback: "+getResources().getString(R.string.ble_disconnected_by_user) ,  false, false, obdUtil);
-                   // sendBroadCast(getResources().getString(R.string.ble_disconnected_by_user));
                 }
             }
+
             SharedPref.SetBlePingStatus("", getApplicationContext());
 
         }else if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED){
@@ -2106,8 +1717,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                        // constants.saveAppUsageLog("StartStopServer in Timer" ,  false, false, obdUtil);
                         StartStopServer(constants.WiredOBD);
 
-                        if(BleManager.getInstance() != null && BleManager.getInstance().isConnected(bleDevice)) {
-                            stopService(bleDevice, characteristic);
+
+                        if(HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac())) {
+                            EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, HTModeSP.INSTANCE.getDeviceMac()));
                         }
 
                     }else{
@@ -2120,7 +1732,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         }
                     }
                 }else if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE ){
-                    checkPermissionsBeforeScanBle();
+                    //checkPermissionsBeforeScanBle();
                 }
 
                 try {
@@ -2605,14 +2217,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             try {
                 StopLocationUpdates();
-                stopService(bleDevice, characteristic);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                 //  ------------- BLE OBD ----------
-                  stopService(bleDevice, characteristic);
+                if(HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac())) {
+                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, HTModeSP.INSTANCE.getDeviceMac()));
+                    HTBleSdk.Companion.getInstance().disAllConnect();
+                }
+                super.onDestroy();
             }else {
                 //  ------------- Wired OBD ----------
                 if(isBound){
@@ -2620,6 +2235,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     this.unbindService(connection);
                     isBound = false;
                 }
+                super.onDestroy();
             }
 
 
@@ -4358,7 +3974,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int driver_id, int flag) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int driver_id, int flag, int inputDataLength) {
             // SaveDriverLog
             String status = "", Message = "";
             try {
@@ -4388,6 +4004,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     case SaveMainDriverLogData:
                         BackgroundLocationService.IsAutoChange = false;
+                        driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
 
                         if (driverLogArray.length() == 1) {
                             ClearLogAfterSuccess(driver_id);
@@ -4396,14 +4013,21 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             SaveCoDriverData();
                         }else{
 
-                            if(RePostDataCountMain > 1){
-                                ClearLogAfterSuccess(driver_id);
-                                RePostDataCountMain = 0;
-                            }else {
+                            /* Check Reason: some times data was uploading in background and user entered new status in between.
+                                 In api response we are clearing the entries and in between entry was skipped before upload to server.
+                                So to avoid this we are checking input length and current log length.*/
+                            if(driverLogArray.length() == inputDataLength) {
+                                if (RePostDataCountMain > 1) {
+                                    ClearLogAfterSuccess(driver_id);
+                                    RePostDataCountMain = 0;
+                                } else {
+                                    saveActiveDriverData();
+                                    RePostDataCountMain++;
+                                }
+                            }else{
                                 saveActiveDriverData();
-                                RePostDataCountMain ++;
+                                RePostDataCountMain++;
                             }
-
                         }
 
                         break;

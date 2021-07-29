@@ -7,6 +7,8 @@ plugins {
     // Add the Firebase Crashlytics plugin.
     id 'com.google.firebase.crashlytics'
 
+    id 'kotlin-android'
+
   //  id 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 
 }
@@ -16,10 +18,10 @@ android {
 
     defaultConfig {
         applicationId "com.messaging.logistic"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 109  //99
-        versionName "3.5.13"  //3.5.4
+        versionName "3.5.14"  //3.5.4
         // Enabling multidex support.
         multiDexEnabled true
 
@@ -43,6 +45,17 @@ android {
             debuggable true
         }
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
@@ -63,7 +76,6 @@ dependencies {
     implementation project(':ink')
     implementation project(':CircleProgressView')
     implementation project(path: ':searchablespinner')
-    implementation project(':FastBleLib')
     implementation(name: 'HTBleSdk-release', ext: 'aar')
     
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -104,4 +116,10 @@ dependencies {
    // implementation 'com.onesignal:OneSignal:[4.0.0, 4.99.99]'
 
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    /*implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'*/
+
+    implementation 'lib.kingja.switchbutton:switchbutton:1.1.3'
+
 }

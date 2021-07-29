@@ -137,7 +137,7 @@ public class EldNotificationDialog extends Dialog  {
      DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
          @RequiresApi(api = Build.VERSION_CODES.KITKAT)
          @Override
-         public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+         public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
 
              try {
                  JSONObject obj = new JSONObject(response);
