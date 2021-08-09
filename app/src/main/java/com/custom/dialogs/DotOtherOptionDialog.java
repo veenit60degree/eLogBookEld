@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.messaging.logistic.R;
@@ -37,7 +38,7 @@ public class DotOtherOptionDialog extends Dialog {
         super.onCreate(savedInstanceState);
         getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         setContentView(R.layout.dialog_other_options);
-        //setCancelable(true);
+        setCancelable(true);
 
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -54,6 +55,13 @@ public class DotOtherOptionDialog extends Dialog {
 
         otherFeatureListView.setAdapter(arrayAdapter);
 
+        RelativeLayout otherOptionMainLay = (RelativeLayout)findViewById(R.id.otherOptionMainLay);
+        otherOptionMainLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
         otherFeatureListView.setOnItemClickListener(new CancelBtnListener());
     }
 

@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -103,6 +104,11 @@ public class DriverLocationDialog extends Dialog {
 
         malfunctionAnim = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
         malfunctionAnim.setDuration(1500);
+
+        InputFilter[] filterArray = new InputFilter[1];
+        filterArray[0] = new InputFilter.LengthFilter(30);
+        CityNameEditText.setFilters(filterArray);
+
 
         if(JobType == Constants.EditRemarks){
             cityInputLayout.setHint("Enter Remarks");

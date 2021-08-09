@@ -38,7 +38,7 @@ import com.local.db.HelperMethods;
 import com.local.db.UpdateLogRecordMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.DriverLogDetailFragment;
+import com.messaging.logistic.fragment.CertifyViewLogFragment;
 import com.models.DriverLocationModel;
 
 import org.joda.time.DateTime;
@@ -73,6 +73,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     JSONArray finalUpdatedArray, driverLog18DaysArray, selectedArray;
     String RecordType = "";
     String selectedDate = "";
+    String selectedRemarks = "";
+    int selectedStatus = 0;
     String currentCycle = "";
     boolean IsCurrentDate;
     DateTime currentDateTime, currentUTCTime;
@@ -199,6 +201,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     String city = holder.certifyLocationTV.getText().toString();
                     RecordType = Constants.Location;
                     selectedDate = LogItem.getStartDateTime();
+                    selectedStatus = LogItem.getDriverStatusId();
+                    selectedRemarks = LogItem.getRemarks();
                     OpenLocationDialog(city, position, Constants.EditLocation, view);
                 }
             }
@@ -217,6 +221,9 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     }
                     RecordType = Constants.Remarks;
                     selectedDate = LogItem.getStartDateTime();
+                    selectedStatus = LogItem.getDriverStatusId();
+                    selectedRemarks = LogItem.getRemarks();
+
                     OpenRemarksDialog(remarks, position, JobStatus, LogItem.isPersonal());  // isPersonal is used for yard move here
                 }
             });
@@ -287,27 +294,41 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         holder.certifyDurationTV.setText(LogItem.getDuration());
 
 
-        if(currentCycle.equals(Globally.USA_WORKING_6_DAYS) || currentCycle.equals(Globally.USA_WORKING_7_DAYS)) {
-            String location = LogItem.getLocation();
+       /* if(currentCycle.equals(Globally.USA_WORKING_6_DAYS) || currentCycle.equals(Globally.USA_WORKING_7_DAYS)) {
+            String location = LogItem.getLocation().trim();
             if (location.contains("null") || location.equals(",") || location.equals("")) {
-                holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
-                holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
-                holder.certifyLocationIV.setVisibility(View.VISIBLE);
+                if(LogItem.getStartLatitude().length() > 4){
+                    holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
+                    holder.certifyLocationTV.setText(LogItem.getStartLatitude() + "," + LogItem.getStartLongitude());
+                   holder.certifyLocationIV.setVisibility(View.GONE);
+                }else {
+                    holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
+                    holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
+                    holder.certifyLocationIV.setVisibility(View.VISIBLE);
+                }
             } else {
                 holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                 holder.certifyLocationTV.setText(location);
                 holder.certifyLocationIV.setVisibility(View.GONE);
             }
-        }else{
-            String locationKm = LogItem.getLocationKm();
+        }else{*/
+
+            String locationKm = LogItem.getLocationKm().trim();
+            String location = LogItem.getLocation().trim();
             if (locationKm.contains("null") || locationKm.equals(",") || locationKm.equals("")) {
-                if(LogItem.getLocation().contains("null")){
-                    holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
-                    holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
-                    holder.certifyLocationIV.setVisibility(View.VISIBLE);
+                if(location.contains("null") || location.equals(",") || location.equals("")){
+                     if(LogItem.getStartLatitude().length() > 4){
+                        holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
+                        holder.certifyLocationTV.setText(LogItem.getStartLatitude() + "," + LogItem.getStartLongitude());
+                        holder.certifyLocationIV.setVisibility(View.GONE);
+                    }else {
+                         holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
+                         holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
+                         holder.certifyLocationIV.setVisibility(View.VISIBLE);
+                     }
                 }else{
                     holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
-                    holder.certifyLocationTV.setText(LogItem.getLocation());
+                    holder.certifyLocationTV.setText(location);
                     holder.certifyLocationIV.setVisibility(View.GONE);
                 }
 
@@ -316,7 +337,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 holder.certifyLocationTV.setText(LogItem.getLocationKm());
                 holder.certifyLocationIV.setVisibility(View.GONE);
             }
-        }
+       // }
+
         if(!LogItem.getRemarks().trim().equalsIgnoreCase("null") && !LogItem.getRemarks().trim().equalsIgnoreCase(""))
             holder.certifyRemarksTV.setText(LogItem.getRemarks());
         else
@@ -519,13 +541,12 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             try {
                 JSONObject existingObj = (JSONObject) finalUpdatedArray.get(i);
                 String existingDate = existingObj.getString(ConstantsKeys.startDateTime);
-                String selectedDate = logObj.optString(ConstantsKeys.startDateTime);
+                String selectedDatee = logObj.optString(ConstantsKeys.startDateTime);
 
                 String existingStatus = existingObj.getString(ConstantsKeys.DriverStatusId);
                 String selectedStatus = logObj.optString(ConstantsKeys.DriverStatusId);
 
-
-                if(existingDate.equals(selectedDate) && existingStatus.equals(selectedStatus)){
+                if(existingDate.equals(selectedDatee) && existingStatus.equals(selectedStatus)){
                     IsAlreadyExistEntry = true;
                     finalUpdatedArray.put(i, logObj);
                 }
@@ -545,56 +566,81 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         JSONArray driverLogArray          = hMethods.getSavedLogArray(DriverId, dbHelper);
 
-        String location = "";
+        String location = "", locationKm = "";
         for(int i = driverLogArray.length()-1 ; i >=0  ; i--){
 
             try {   //2021-04-26T00:09:03
                 JSONObject obj = (JSONObject)driverLogArray.get(i);
                 String compareStartDate = obj.getString(ConstantsKeys.startDateTime);
+                int status = obj.getInt(ConstantsKeys.DriverStatusId);
                 String selectedDateSec = selectedDate.substring(17, selectedDate.length());
+                String selectedRem = obj.getString(ConstantsKeys.Remarks);
+
                 if(selectedDateSec.equals("00")) {
                     if (compareStartDate.length() > 17) {
                         compareStartDate = compareStartDate.substring(0, 17) + "00";
                     }
                 }
-                if(selectedDate.equals(compareStartDate)){
-                    if(RecordType.equals(Constants.Location)) {
-                        //location = logObj.getString(ConstantsKeys.RecordValue).replaceAll(";", " ");
-                        String[] locArray = logObj.getString(ConstantsKeys.RecordValue).split(";");
-                        if(locArray.length > 1){
-                            location = locArray[0] + " " + locArray[1];
+                if(selectedDate.equals(compareStartDate) && selectedStatus == status){
+
+                    if(selectedStatus == Constants.ON_DUTY){
+                        if (selectedRem.equals(selectedRemarks)) {
+                            if (RecordType.equals(Constants.Location)) {
+                                String[] locArray = logObj.getString(ConstantsKeys.RecordValue).split(";");
+                                if (locArray.length > 1) {
+                                    location = locArray[1] + " " + locArray[0];
+                                    locationKm = locArray[0] + " " + locArray[1];
+                                }
+                                obj.put(ConstantsKeys.StartLocation, location);
+                                obj.put(ConstantsKeys.StartLocationKm, locationKm);
+                            } else if (RecordType.equals(Constants.Remarks)) {
+                                if (onDutyRemarks.equals("Yard Move")) {
+                                    obj.put(ConstantsKeys.YardMove, true);
+                                    onDutyRemarks = ReasonDesc;
+                                }
+                                obj.put(ConstantsKeys.Remarks, ReasonDesc);
+                            }
+
+                            driverLogArray.put(i, obj);
+                            break;
+
+                        }
+                    }else {
+                        if (RecordType.equals(Constants.Location)) {
+                            String[] locArray = logObj.getString(ConstantsKeys.RecordValue).split(";");
+                            if (locArray.length > 1) {
+                                location = locArray[1] + " " + locArray[0];
+                                locationKm = locArray[0] + " " + locArray[1];
+                            }
+                            obj.put(ConstantsKeys.StartLocation, location);
+                            obj.put(ConstantsKeys.StartLocationKm, locationKm);
+
+                        } else if (RecordType.equals(Constants.Remarks)) {
+                            if (onDutyRemarks.equals("Yard Move")) {
+                                obj.put(ConstantsKeys.YardMove, true);
+                                onDutyRemarks = ReasonDesc;
+                            }
+                            obj.put(ConstantsKeys.Remarks, ReasonDesc);
                         }
 
-                        obj.put(ConstantsKeys.StartLocation, location);
-                        obj.put(ConstantsKeys.StartLocationKm, location);
-
-                        // Check diagnostic event
-                     //   checkDiagnosticEventsForClear(compareStartDate);
-
-                    }else if (RecordType.equals(Constants.Remarks)){
-
-                        if(onDutyRemarks.equals("Yard Move")){
-                            obj.put(ConstantsKeys.YardMove, true);
-                            onDutyRemarks = ReasonDesc;
-                        }
-                        obj.put(ConstantsKeys.Remarks, ReasonDesc);
+                        driverLogArray.put(i, obj);
+                        break;
                     }
-                    driverLogArray.put(i, obj);
-                    break;
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-      //  Log.d("driverLogArray", "driverLogArray: " + driverLogArray);
+
 
         // Update 18 Days Array.....
         hMethods.DriverLogHelper( DriverId, dbHelper, driverLogArray);
 
         if(RecordType.equals(Constants.Location)) {
             logModel.setLocation(location);
-            logModel.setLocationKm(location);
+            logModel.setLocationKm(locationKm);
             LogList.set(position, logModel);
         }else{
             logModel.setRemarks(onDutyRemarks);
@@ -606,7 +652,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         if(Global.isConnected(context)) {
             SAVE_DRIVER_RECORD_LOG(finalUpdatedArray, false, false, Constants.SocketTimeout20Sec);
         }else{
-            Global.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, "Connection unavailable! Your edited " + RecordType + " will be posted to server automatically when your device will be connected with working internet connection.", context.getResources().getColor(R.color.colorSleeper));
+            Global.EldToastWithDuration(CertifyViewLogFragment.saveSignatureBtn, "Connection unavailable! Your edited " + RecordType + " will be posted to server automatically when your device will be connected with working internet connection.", context.getResources().getColor(R.color.colorSleeper));
         }
     }
 
@@ -687,7 +733,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                         // update event array
                         malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(DriverId, dbHelper, malfnJsonArray);
                     }else {
-                        Global.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, Message, context.getResources().getColor(R.color.colorPrimary));
+                        Global.EldScreenToast(CertifyViewLogFragment.saveSignatureBtn, Message, context.getResources().getColor(R.color.colorPrimary));
 
                         // ------------ Clear Log Record File locally ------------
                         logRecordMethod.UpdateLogRecordHelper(DriverId, dbHelper, new JSONArray());
@@ -695,7 +741,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 }else{
                     // ------------ Clear Log Record File locally ------------
                     logRecordMethod.UpdateLogRecordHelper( DriverId, dbHelper, new JSONArray());
-                    Global.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, Message , context.getResources().getColor(R.color.colorVoilation));
+                    Global.EldScreenToast(CertifyViewLogFragment.saveSignatureBtn, Message , context.getResources().getColor(R.color.colorVoilation));
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -708,7 +754,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
             Log.d("errorrr ", ">>>error dialog: " );
-            Global.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, "Data updated successfully." , context.getResources().getColor(R.color.colorPrimary));
+            Global.EldScreenToast(CertifyViewLogFragment.saveSignatureBtn, "Data updated successfully." , context.getResources().getColor(R.color.colorPrimary));
             progressDialog.dismiss();
 
 

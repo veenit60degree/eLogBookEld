@@ -332,7 +332,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/view_height_45"
                 android:paddingRight="@dimen/margin_15"
-                android:visibility="gone"
+
 
                 >
 
@@ -379,13 +379,12 @@
                     android:id="@+id/haulExpTxtView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/take_16_hour_exc"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/margin_12"
+                    android:text="@string/take_16_hour_exc"
                     android:textColor="@color/bluee_login"
                     android:textSize="@dimen/text_size_18"
-                    android:textStyle="bold"
-                    android:layout_centerVertical="true"
-                    />
+                    android:textStyle="bold" />
 
 
 

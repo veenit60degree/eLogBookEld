@@ -720,12 +720,14 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 if(DRIVER_JOB_STATUS == constants.ON_DUTY) {
                     driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, "",
                             isViolation, "", "", Duration, "", "","", logObj.getBoolean(ConstantsKeys.Personal),
-                            isEditedLog,  logObj.getBoolean(ConstantsKeys.YardMove));
+                            isEditedLog,  logObj.getBoolean(ConstantsKeys.YardMove), logObj.getString(ConstantsKeys.StartLatitude),
+                            logObj.getString(ConstantsKeys.StartLongitude) );
                 }else{
                     driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, "",
                             isViolation, "", "", Duration, "", "","",
                             logObj.getBoolean(ConstantsKeys.Personal),
-                            isEditedLog, logObj.getBoolean(ConstantsKeys.YardMove));
+                            isEditedLog, logObj.getBoolean(ConstantsKeys.YardMove), logObj.getString(ConstantsKeys.StartLatitude),
+                            logObj.getString(ConstantsKeys.StartLongitude));
                 }
 
                 if(isEdited){
@@ -1136,7 +1138,10 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         "",
                         editedObj.getBoolean(ConstantsKeys.Personal),
                         editedObj.getBoolean(ConstantsKeys.IsEdited),
-                        editedObj.getBoolean(ConstantsKeys.YardMove)
+                        editedObj.getBoolean(ConstantsKeys.YardMove),
+
+                        editedObj.getString(ConstantsKeys.StartLatitude),
+                        editedObj.getString(ConstantsKeys.StartLongitude)
 
                 );
 

@@ -982,8 +982,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                         if(getActivity() != null){
                             if(!global.isConnected(getActivity())) {
                                 loadingSpinEldIV.stopAnimation();
-                                global.EldScreenToast(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
-                                        getResources().getColor(R.color.colorSleeper));
+                                global.EldScreenToast(loadingSpinEldIV, ConstantsEnum.UPDATED, getResources().getColor(R.color.colorSleeper));
                             }
                         }
 
@@ -1110,7 +1109,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                         if (AddressLine.length() > 0 && !AddressLine.equals("null")) {
                                             hosLocationTV.setText(AddressLine);
                                         } else {
-                                            hosLocationTV.setText(Globally.LATITUDE + ", " + Globally.LONGITUDE);
+                                            if(Globally.LATITUDE.length() > 4) {
+                                                hosLocationTV.setText(Globally.LATITUDE + ", " + Globally.LONGITUDE);
+                                            }
                                         }
 
 
@@ -1158,8 +1159,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     } else {
                         if (flag == GetMiles) {
                             if (isRefreshBtnClicked) {
-                                global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
-                                        getActivity().getResources().getColor(R.color.colorSleeper));
+                                global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.UPDATED, getActivity().getResources().getColor(R.color.colorSleeper));
                             }
                         }
                     }
@@ -1181,8 +1181,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 if (getActivity() != null) {
                     if (flag == GetMiles) {
                         if (isRefreshBtnClicked) {
-                            global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.HOS_NOT_REFRESHED,
-                                    getResources().getColor(R.color.colorSleeper));
+                            global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.UPDATED, getResources().getColor(R.color.colorSleeper));
                         }
                     }
                     loadingSpinEldIV.stopAnimation();

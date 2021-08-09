@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -19,22 +18,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.androidtrip.plugins.searchablespinner.SearchableSpinner;
-import com.androidtrip.plugins.searchablespinner.interfaces.IStatusListener;
-import com.androidtrip.plugins.searchablespinner.interfaces.OnItemSelectedListener;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
-import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.models.VehicleModel;
-import com.searchable.spinner.SearchArrayListAdapter;
 
 import org.json.JSONObject;
 
@@ -43,8 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-public class VehicleDialogLogin  extends Dialog {
+public class VehicleDialogLoginOld extends Dialog {
 
     public interface VehicleLoginListener {
         public void ChangeVehicleReady(String Title, int position, View ButtonView, boolean isOldDialog);
@@ -54,13 +46,12 @@ public class VehicleDialogLogin  extends Dialog {
 
     List<VehicleModel> truckList;
     private VehicleLoginListener readyListener;
-    Button saveBtnJob;
-    SearchableSpinner searchableSpinner;
-    private SearchArrayListAdapter mSimpleArrayListAdapter;
-
+    EditText TrailorNoEditText;
+    Button ContinueBtnJob, ChangeBtnJob;
+    Spinner remarkSpinner;
     String Truck, Title = "", CoDriverId = "", CompanyId = "";
-    TextView TitleTV, logoutTruckPopupTV;
-    int SelectedPosition = -1;  //, SetSpinnerPosition = 0;
+    TextView TitleTV, SpinnerTitleTV, logoutTruckPopupTV;
+    int SelectedPosition = 0;  //, SetSpinnerPosition = 0;
     boolean isContinue = false;
     boolean isOldDialog;
     Activity activity;
@@ -69,11 +60,9 @@ public class VehicleDialogLogin  extends Dialog {
     Map<String, String> params;
     ProgressDialog progressD ;
     Context mContext;
-    Globally global;
-    Constants constants;
 
-
-    public VehicleDialogLogin(Context context, Activity act, String truck, boolean isOldDialog, List<VehicleModel> remarkList, VehicleLoginListener readyListener) {
+    public VehicleDialogLoginOld(Context context, Activity act, String truck, boolean isOldDialog,
+                                 List<VehicleModel> remarkList, VehicleLoginListener readyListener) {
         super(context);
         activity = act;
         Truck = truck;
@@ -81,7 +70,6 @@ public class VehicleDialogLogin  extends Dialog {
         this.truckList = remarkList;
         this.readyListener = readyListener;
         this.mContext= context;
-
     }
 
 
@@ -90,88 +78,69 @@ public class VehicleDialogLogin  extends Dialog {
         super.onCreate(savedInstanceState);
         getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        setContentView(R.layout.popup_vehicle_list);
+        setContentView(R.layout.popup_trailor_fields);
         setCancelable(false);
-        global = new Globally();
-        constants = new Constants();
 
-        try {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-            lp.copyFrom(getWindow().getAttributes());
-            if (global.isTablet(getContext())) {
-                lp.width = constants.intToPixel(getContext(), 650);
-            } else {
-                lp.width = constants.intToPixel(getContext(), 550);
-            }
-            lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-            lp.gravity = Gravity.CENTER;
-            getWindow().setAttributes(lp);
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
+        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         LogoutRequest   = new VolleyRequest(getContext());
         constant        = new Constants();
+        TrailorNoEditText = (EditText) findViewById(R.id.TrailorNoEditText);
+        TrailorNoEditText.setVisibility(View.GONE);
 
-        saveBtnJob = (Button) findViewById(R.id.btnSaveVehList);
-        TitleTV = (TextView) findViewById(R.id.TitleVehTV);
-        logoutTruckPopupTV = (TextView) findViewById(R.id.logoutVehTV);
-        searchableSpinner = (SearchableSpinner) findViewById(R.id.searchableSpinner);
+        ContinueBtnJob = (Button) findViewById(R.id.btnLoadingJob);
+        ChangeBtnJob = (Button) findViewById(R.id.btnCancelLoadingJob);
+
+        TitleTV = (TextView) findViewById(R.id.TitleTV);
+        SpinnerTitleTV = (TextView) findViewById(R.id.SpinnerTitleTV);
+        logoutTruckPopupTV = (TextView) findViewById(R.id.logoutTruckPopupTV);
+
+        remarkSpinner = (Spinner) findViewById(R.id.remarkSpinner);
 
         logoutTruckPopupTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
+        ChangeBtnJob.setText("Save");
+
+        logoutTruckPopupTV.setVisibility(View.VISIBLE);
+        ContinueBtnJob.setVisibility(View.GONE); //BackgroundResource(R.drawable.green_selector);
+        ChangeBtnJob.setBackgroundResource(R.drawable.gray_selector);
 
         progressD = new ProgressDialog(getContext());
         progressD.setMessage("Loading ...");
         progressD.setCancelable(false);
-        saveBtnJob.setBackgroundResource(R.drawable.gray_selector);
 
-        if (truckList.size() < 1) {
-            saveBtnJob.setText("Ok");
+        if (truckList.size() <= 1) {
+            ChangeBtnJob.setText("Ok");
         } else {
-            searchableSpinner.setVisibility(View.VISIBLE);
+            remarkSpinner.setVisibility(View.VISIBLE);
+            // SpinnerTitleTV.setVisibility(View.VISIBLE);
+            //  SpinnerTitleTV.setText("Select truck from list to change.");
         }
 
-        Title = "Please select the truck from list.";
+        if (Truck.trim().length() > 0) {
+            Title = "Please select truck from list.";
+        } else {
+            Title = "You haven't selected any truck for now. Please select a truck first.";
+        }
+
         TitleTV.setText(Title);
-        if (truckList.size() > 0) {
+        if (truckList.size() > 1) {
             ArrayList<String> EquipmentList = new ArrayList<String>();
             for (int i = 0; i < truckList.size(); i++) {
                 EquipmentList.add(truckList.get(i).getEquipmentNumber());
             }
 
             // Creating adapter for spinner
-            if (EquipmentList.size() > 0) {
-            /*    ArrayAdapter dataAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, EquipmentList);
+            if (EquipmentList.size() > 1) {
+                ArrayAdapter dataAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, EquipmentList);
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                remarkSpinner.setAdapter(dataAdapter);*/
-
-                mSimpleArrayListAdapter = new SearchArrayListAdapter(getContext(), EquipmentList);
-                searchableSpinner.setAdapter(mSimpleArrayListAdapter);
-
-                searchableSpinner.setOnItemSelectedListener(mOnItemSelectedListener);
-                searchableSpinner.setStatusListener(new IStatusListener() {
-                    @Override
-                    public void spinnerIsOpening() {
-                        Log.d("spinnerIsOpening", "spinnerIsOpening" );
-
-                    }
-
-                    @Override
-                    public void spinnerIsClosing() {
-                        Log.d("spinnerIsClosing", "spinnerIsClosing" );
-                    }
-                });
-
+                remarkSpinner.setAdapter(dataAdapter);
             } else {
                 if (Truck.trim().length() == 0) {
                     Title = "No truck available. Please contact with your company to continue.";
-                    TitleTV.setText(Title);
                 }
-                searchableSpinner.setVisibility(View.GONE);
-                saveBtnJob.setText("Ok");
+                remarkSpinner.setVisibility(View.GONE);
+                ChangeBtnJob.setText("Ok");
             }
         }else{
             Title = "You don't have any truck. Please contact to your company.";
@@ -180,7 +149,8 @@ public class VehicleDialogLogin  extends Dialog {
 
 
 
- /*       // Spinner click listener
+
+        // Spinner click listener
         remarkSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -197,15 +167,15 @@ public class VehicleDialogLogin  extends Dialog {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-*/
+
         logoutTruckPopupTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(SharedPref.getDriverId(getContext()).length() > 0) {
-                    if (global.isConnected(getContext())) {
+                    if (Globally.isConnected(getContext())) {
                         LogoutUser(SharedPref.getDriverId(getContext()));
                     } else {
-                        global.EldScreenToast(logoutTruckPopupTV, global.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorSleeper));
+                        Globally.EldScreenToast(logoutTruckPopupTV, Globally.CHECK_INTERNET_MSG, getContext().getResources().getColor(R.color.colorSleeper));
                     }
                 }else{
                     LogoutUser();
@@ -214,40 +184,11 @@ public class VehicleDialogLogin  extends Dialog {
             }
         });
 
-        saveBtnJob.setOnClickListener(new ContinueBtnListener());
+        ChangeBtnJob.setOnClickListener(new ChangeFieldListener());
+        ContinueBtnJob.setOnClickListener(new ContinueBtnListener());
 
         HideKeyboard();
     }
-
-
-    private OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(View view, int position, long id) {
-           Log.d("onItemSelected", "onItemSelected: " + position);
-            SelectedPosition = position;
-
-            Object object = searchableSpinner.getSelectedItem();
-            if(object != null) {
-                for (int i = 0; i < truckList.size(); i++) {
-                    if (object.toString().equals(truckList.get(i).getEquipmentNumber())) {
-                        SelectedPosition = i;
-                        break;
-                    }
-                }
-                saveBtnJob.setBackgroundResource(R.drawable.green_selector);
-            }else{
-                SelectedPosition = -1;
-                saveBtnJob.setBackgroundResource(R.drawable.gray_selector);
-            }
-
-        }
-
-        @Override
-        public void onNothingSelected() {
-            Log.d("onNothingSelected", "onNothingSelected" );
-            saveBtnJob.setBackgroundResource(R.drawable.gray_selector);
-        }
-    };
 
 
     void HideKeyboard() {
@@ -261,34 +202,33 @@ public class VehicleDialogLogin  extends Dialog {
     void LogoutUser() {
         try {
             if (constant.GetDriverSavedArray(getContext()).length() == 0) {
-                global.ClearAllFields(getContext());
-                global.StopService(getContext());
+                Globally.ClearAllFields(getContext());
+                Globally.StopService(getContext());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private class ContinueBtnListener implements View.OnClickListener {
+    private class ChangeFieldListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            if (saveBtnJob.getText().toString().equals("Ok")) {
+            if (ChangeBtnJob.getText().toString().equals("Ok")) {
                 dismiss();
                 LogoutUser();
                 activity.finish();
             } else {
-
-                if (SelectedPosition >= 0) {
-                    readyListener.ChangeVehicleReady(Title, SelectedPosition, saveBtnJob, isOldDialog);
-                } else {
-                    global.EldScreenToast(saveBtnJob, "Please select truck to save.", getContext().getResources().getColor(R.color.colorVoilation));
-                }
+                //if (SelectedPosition > 0) {
+                    readyListener.ChangeVehicleReady(Title, SelectedPosition, ChangeBtnJob, isOldDialog);
+                /*} else {
+                    Globally.EldScreenToast(ChangeBtnJob, "Please select truck to save.", getContext().getResources().getColor(R.color.colorVoilation));
+                }*/
             }
         }
     }
 
 
-    private class ChangeFieldListener implements View.OnClickListener {
+    private class ContinueBtnListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (isContinue) {
@@ -308,8 +248,7 @@ public class VehicleDialogLogin  extends Dialog {
     void LogoutUser(final String DriverId){
         progressD.show();
         params = new HashMap<String, String>();
-        params.put(ConstantsKeys.DriverId, DriverId);
-        params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
+        params.put("DriverId", DriverId);
 
         LogoutRequest.executeRequest(Request.Method.POST, APIs.DRIVER_LOGOUT , params, 1,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -326,8 +265,8 @@ public class VehicleDialogLogin  extends Dialog {
             String status = "";
 
             try {
-                JSONObject obj = new JSONObject(response);
-                status = obj.getString("Status");
+                Globally.obj = new JSONObject(response);
+                status = Globally.obj.getString("Status");
 
                 if(status.equalsIgnoreCase("true")){
 
@@ -335,7 +274,7 @@ public class VehicleDialogLogin  extends Dialog {
                     dismiss();
 
                 }else{
-                    if(obj.getString("Message").equals("Device Logout")) {
+                    if(Globally.obj.getString("Message").equals("Device Logout")) {
 
                         constant.ClearLogoutData(mContext);
                         dismiss();
@@ -354,7 +293,7 @@ public class VehicleDialogLogin  extends Dialog {
         public void getError(VolleyError error, int flag) {
             Log.d("onDuty error", "onDuty error: " + error.toString());
             progressD.dismiss();
-            global.EldScreenToast(logoutTruckPopupTV, error.toString(), getContext().getResources().getColor(R.color.red_eld));
+            Globally.EldScreenToast(logoutTruckPopupTV, error.toString(), getContext().getResources().getColor(R.color.red_eld));
 
         }
     };

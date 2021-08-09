@@ -3505,7 +3505,7 @@ public class HelperMethods {
                 EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                         "", "", "","", Boolean.parseBoolean(isPersonal),
-                        isAdverseExcptn, isHaulExcptn);
+                        isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE );
                 eldSharedPref.AddDriverLoc(context, logModel);
             } else {
                 CoDriverPref.AddDriverLoc(context, locationModel);
@@ -3514,7 +3514,7 @@ public class HelperMethods {
                 EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                         "", "", "","", Boolean.parseBoolean(isPersonal),
-                        isAdverseExcptn, isHaulExcptn);
+                        isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE);
                 coEldSharedPref.AddDriverLoc(context, logModel);
             }
 

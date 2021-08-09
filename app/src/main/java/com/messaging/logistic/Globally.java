@@ -92,7 +92,7 @@ import models.RulesResponseObject;
 public class Globally {
 
 	public static String registrationId = "";
-	public static String LATITUDE = "0.0", LONGITUDE = "0.0";
+	public static String LATITUDE = "", LONGITUDE = "";
 	public static int VEHICLE_SPEED = -1;
 	public static JSONObject obj ;
 	public static Intent i;
@@ -1600,7 +1600,7 @@ public class Globally {
 
 	public static String CheckLongitudeWithCycle(String longitude){
 
-		if (!longitude.contains("-")) {
+		if (longitude.length() > 0 && !longitude.contains("-")) {
 			longitude = "-" + longitude;
 		}
 

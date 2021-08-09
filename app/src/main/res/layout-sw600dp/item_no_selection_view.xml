@@ -4,7 +4,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="@dimen/margin_10"
+    android:paddingLeft="@dimen/margin_short_8"
+    android:paddingBottom="@dimen/margin_short_8"
     app:layout_collapseMode="parallax"
     app:layout_collapseParallaxMultiplier="0.5">
 
@@ -14,10 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/margin_short_8"
-        android:paddingTop="@dimen/margin_10"
+        android:paddingTop="@dimen/margin_short_6"
         android:text="@string/Select"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_size_19"
+        android:textSize="@dimen/text_size_18"
         />
 
 </LinearLayout>

@@ -195,7 +195,7 @@
     <string name="certify_previous_days_log_ask_popup">You need to certify your previous days log.</string>
     <string name="cycle_change_req">You have a cycle change request.</string>
 
-    <string name="certify_previous_days_log_warning">It seems you haven\'t certified your previous days logs.Please certify your logs.</string>
+    <string name="certify_previous_days_log_warning">It seems you haven\'t certified your previous days log. Please certify your logs.</string>
     <string name="has_been_certified">Log has been successfully certified.</string>
     <string name="sign_not_valid">Signature data not valid. Please sign again and save</string>
     <string name="Add_signature_first">Add signature first to save log data</string>
@@ -255,8 +255,8 @@
     <string name="DisConnected">DisConnected</string>
     <string name="PwrComplianceEvent">PwrComplianceEvent</string>
 
-    <string name="title_aobrd">HOURS OF SERVICE - AOBRD</string>
-    <string name="title_eld">HOURS OF SERVICE - ELD</string>
+    <string name="title_aobrd">HOS - AOBRD</string> <!--HOURS OF SERVICE-->
+    <string name="title_eld">HOS - ELD</string> <!--HOURS OF SERVICE-->
     <string name="title_eld_exempt">HOS - ELD (Exempt Driver)</string>
 
     <string name="RecordDate">Record Date</string>
@@ -777,6 +777,8 @@
     <string name="wired_tablet">Wired Tablet Connected</string>
     <string name="obd_wifi">WiFi OBD Connected</string>
     <string name="obd_ble">Bluetooth OBD Connected</string>
+    <string name="obd_ble_disconnected">Bluetooth OBD disconnected</string>
+    <string name="obd_ble_discon_conn_error">Bluetooth OBD disconnected, connection error</string>
     <string name="BluetoothOBD">Bluetooth OBD</string>
     <string name="BleObdNotFound">Bluetooth OBD not found. Please check your bluetooth device.</string>
     <string name="BleObdNotConnected">Bluetooth OBD is not connecting. Restart you app and try to connect it again.</string>
@@ -835,9 +837,9 @@
     <string name="Distance_miles">Distance (Miles) </string>
     <string name="Distance_km">Distance (KM) </string>
     <string name="connect_ble_obd">Connect Bluetooth OBD</string>
-    <string name="odometer_details">Odometer Details (WIFI OBD)</string>
-    <string name="gps_details">Gps Details (WIFI OBD)</string>
-    <string name="sim_info">Sim Info (WIFI OBD)</string>
+    <string name="odometer_details">Odometer Details</string>
+    <string name="gps_details">Gps Details</string>
+    <string name="sim_info">Sim Info</string>
     <string name="reset_obd">Reset WIFI OBD</string>
     <string name="No_data_found">No data found</string>
     <string name="dot_mode_us">DOT MODE (US)</string>
@@ -863,6 +865,7 @@
     <string name="start_scan">Start scanning</string>
     <string name="stop_scan">Stop scanning</string>
     <string name="no_obd_settings">No settings found for wired OBD preference.</string>
+    <string name="wired_obd">Wired OBD</string>
 
     <string name="WantEndYM">Do you want to End Yard Move?"</string>
     <string name="WantEndPU">Do you want to End Personal Use?"</string>
@@ -958,11 +961,11 @@
 
     <string name="Scanning">Scanning</string>
     <string name="ht_curr_device">Current Device：%1$s</string>
-    <string name="ht_disconnected">Current Device Disconnected：%1$s</string>
-    <string name="ht_connected">Current Device Connected：%1$s</string>
-    <string name="ht_connect_timeout">Current Device Connection Timeout：%1$s</string>
-    <string name="ht_connect_error">Current Device Connection Error：%1$s</string>
-    <string name="ht_response_data">Response Time: %1$s\nAccessuuid: %2$s\nCommand Response Result: %3$s:%4$s</string>
+    <string name="ht_disconnected">Device Disconnected</string>
+    <string name="ht_connected">Device Connected</string>
+    <string name="ht_connect_timeout">Connection Timeou</string>
+    <string name="ht_connect_error">Connection Error</string>
+    <string name="ht_response_data">Response Time: %1$s\nAccessuuid: %2$s\nCommand Response Result</string>
     <string name="ht_please_ps">Enter Device Password</string>
     <string name="ht_period_data_p">Start And End Times Must Be Met</string>
     <string name="ht_interval_p">Enter Correct Time</string>

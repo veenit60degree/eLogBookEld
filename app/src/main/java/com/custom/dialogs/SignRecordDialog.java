@@ -35,7 +35,7 @@ import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
-import com.messaging.logistic.fragment.DriverLogDetailFragment;
+import com.messaging.logistic.fragment.CertifyViewLogFragment;
 import com.models.RecapSignModel;
 import com.simplify.ink.InkView;
 
@@ -325,10 +325,10 @@ public class SignRecordDialog extends Dialog {
                 saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec,
                         true, false, DriverType, 101);
             }else{
-                globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
+                globally.EldToastWithDuration(CertifyViewLogFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
 
                 // refresh view with button click
-                DriverLogDetailFragment.invisibleRfreshBtn.performClick();
+                CertifyViewLogFragment.invisibleRfreshBtn.performClick();
 
                 dismiss();
 
@@ -346,10 +346,10 @@ public class SignRecordDialog extends Dialog {
                     progressDialog.show();
                     saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout10Sec, true, false, DriverType, 101);
                 }else{
-                    globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
+                    globally.EldToastWithDuration(CertifyViewLogFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved), context.getResources().getColor(R.color.colorSleeper) );
 
                     // refresh view with button click
-                    DriverLogDetailFragment.invisibleRfreshBtn.performClick();
+                    CertifyViewLogFragment.invisibleRfreshBtn.performClick();
 
                     dismiss();
 
@@ -457,20 +457,20 @@ public class SignRecordDialog extends Dialog {
                     CertifyLogArray = new JSONArray();
                     certifyLogMethod.CertifyLogHelper(Integer.valueOf(DriverId), dbHelper, CertifyLogArray );
 
-                    globally.EldScreenToast(DriverLogDetailFragment.saveSignatureBtn, context.getString(R.string.has_been_certified),
+                    globally.EldScreenToast(CertifyViewLogFragment.saveSignatureBtn, context.getString(R.string.has_been_certified),
                             context.getResources().getColor(R.color.colorPrimary));
 
                     // refresh view with button click
-                    DriverLogDetailFragment.invisibleRfreshBtn.performClick();
+                    CertifyViewLogFragment.invisibleRfreshBtn.performClick();
 
                     dismiss();
 
                 }else{
-                    globally.EldToastWithDuration(DriverLogDetailFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved),
+                    globally.EldToastWithDuration(CertifyViewLogFragment.saveSignatureBtn, context.getResources().getString(R.string.certify_log_offline_saved),
                             context.getResources().getColor(R.color.colorSleeper) );
 
                     // refresh view with button click
-                    DriverLogDetailFragment.invisibleRfreshBtn.performClick();
+                    CertifyViewLogFragment.invisibleRfreshBtn.performClick();
 
                     dismiss();
 

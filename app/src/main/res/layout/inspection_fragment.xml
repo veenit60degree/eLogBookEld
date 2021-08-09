@@ -17,25 +17,21 @@
         />
 
 
-
-
     <ScrollView
         android:id="@+id/inspectionScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
         android:layout_below="@+id/InspectionActionBar"
+        android:scrollbars="none"
 
 
         >
 
 
-        <include
-            layout="@layout/item_inspection_layout"
+        <include layout="@layout/item_inspection_layout"
 
 
             />
-
 
 
     </ScrollView>

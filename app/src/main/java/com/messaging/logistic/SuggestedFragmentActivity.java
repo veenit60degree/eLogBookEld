@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -37,7 +38,7 @@ import java.util.Map;
 
 public class SuggestedFragmentActivity extends FragmentActivity {
 
-    ImageView menuImageView;
+    TextView tripTitleTV;
     FragmentManager fragManager;
     public static JSONArray dataArray = new JSONArray();
     public static JSONArray editDataArray = new JSONArray();
@@ -66,7 +67,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
         dataArray       = new JSONArray();
         editDataArray   = new JSONArray();
         otherLogList    = new ArrayList<>();
-        menuImageView   = (ImageView)findViewById(R.id.menuImageView);
+        tripTitleTV   = (TextView) findViewById(R.id.tripTitleTV);
 
         Intent i        = getIntent();
         editedData      = i.getStringExtra(ConstantsKeys.suggested_data);
@@ -96,7 +97,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
             if (Globally.isConnected(this)) {
                 GetSuggestedRecords(DriverId, DeviceId);
             } else {
-                Globally.EldScreenToast(menuImageView, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                Globally.EldScreenToast(tripTitleTV, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             }
 
         }
@@ -225,7 +226,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
                     progressDialog.dismiss();
             }catch (Exception e){ e.printStackTrace();}
 
-           Globally.EldScreenToast(menuImageView, error.toString(), getResources().getColor(R.color.colorVoilation));
+           Globally.EldScreenToast(tripTitleTV, error.toString(), getResources().getColor(R.color.colorVoilation));
 
         }
     };

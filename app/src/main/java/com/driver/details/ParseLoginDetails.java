@@ -559,7 +559,7 @@ public class ParseLoginDetails {
 
                 EldDriverLogModel driverLogModel = new EldDriverLogModel(driverStatusId, startDateTime, endDateTime, totalHours, currentCycleId,
                         isViolation, UTCStartDateTime, UTCEndDateTime, Duration , Location , "", remarks, isPersonal,
-                        IsAdverseException, IsShortHaulException);
+                        IsAdverseException, IsShortHaulException, logObj.getString("StartLatitude"), logObj.getString("StartLongitude"));
 
                 if(position == 0)
                     eldSharedPref.AddDriverLoc(context, driverLogModel);

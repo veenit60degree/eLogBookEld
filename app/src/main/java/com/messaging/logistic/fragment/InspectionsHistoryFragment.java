@@ -306,7 +306,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out, android.R.anim.fade_in,android.R.anim.fade_out);
 
         if (inspectionType.equals("pti")) {
-            fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
+            fragmentTran.replace(R.id.job_fragment, savedInspectionFragment);
         }else{
             fragmentTran.add(R.id.job_fragment, ctPatDetailInspectionFragment);
         }
@@ -534,6 +534,17 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
                 }
 
+                String location = "";
+                try {
+                    location = CheckStringIsNull(inspectionItemObj, "Location");
+                    if (location.length() == 0 || location.equals("N/A")) {
+                        if (inspectionItemObj.has(ConstantsKeys.Latitude) && inspectionItemObj.getString(ConstantsKeys.Latitude).length() > 4) {
+                            location = inspectionItemObj.getString(ConstantsKeys.Latitude) + ", " + inspectionItemObj.getString(ConstantsKeys.Longitude);
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
                 SavedInspectionModel inspectModel = new SavedInspectionModel(
                         AddHeaderInList(InspectionTypeId),
@@ -541,7 +552,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                         VehicleEquNumber,
                         TrailorEquNumber,
                         InspecDateTime,
-                        CheckStringIsNull(inspectionItemObj, "Location"),
+                        location,
 
                         PreTripInspectionSatisfactory,
                         PostTripInspectionSatisfactory,

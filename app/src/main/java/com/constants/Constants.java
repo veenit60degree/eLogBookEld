@@ -1618,8 +1618,11 @@ public class Constants {
 
                     if (StartLocation.equals("null") || StartLocation.equals(",") || StartLocation.length() == 0) {
                         if (StartLocationKm.equals("null") || StartLocationKm.equals(",") || StartLocationKm.length() == 0) {
-                            isLocMissing = true;
-                            break;
+                            String StartLatitude = obj.getString(ConstantsKeys.StartLatitude);
+                            if (StartLatitude.length() < 5 ){
+                                isLocMissing = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -3351,7 +3354,8 @@ public class Constants {
                                     int dayDiff = getDayDiff(SharedPref.getPowerMalOccTime(context), global.GetCurrentDateTime());
                                     if (dayDiff > 0) {
                                         eventStatus = MalfunctionEvent;
-                                        Globally.PlaySound(context);
+
+                                        Globally.PlayNotificationSound(context);
                                         global.ShowLocalNotification(context,
                                                 context.getResources().getString(R.string.malfunction_events),
                                                 context.getResources().getString(R.string.power_comp_mal_occured), 2093);
@@ -3362,7 +3366,7 @@ public class Constants {
                                     }
                                 } else {
                                     eventStatus = MalfunctionEvent;
-                                    Globally.PlaySound(context);
+                                    Globally.PlayNotificationSound(context);
                                     global.ShowLocalNotification(context,
                                             context.getResources().getString(R.string.malfunction_events),
                                             context.getResources().getString(R.string.power_comp_mal_occured), 2093);
@@ -3375,7 +3379,7 @@ public class Constants {
 
                             } else {
                                 eventStatus = DiagnosticEvent;
-                                Globally.PlaySound(context);
+                                Globally.PlayNotificationSound(context);
                                 global.ShowLocalNotification(context,
                                         context.getResources().getString(R.string.dia_event),
                                         context.getResources().getString(R.string.power_dia_occured), 2092);

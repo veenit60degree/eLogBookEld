@@ -25,32 +25,31 @@
                 android:id="@+id/eldMenuLay"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingLeft="@dimen/margin_short_6"
-                android:paddingRight="@dimen/margin_short_6"
-                android:paddingTop="@dimen/margin_short_8"
-                android:paddingBottom="@dimen/margin_short_8"
                 android:background="@drawable/green_with_corner_drawable"
+                android:paddingLeft="@dimen/margin_short_6"
+                android:paddingTop="@dimen/margin_short_8"
+                android:paddingRight="@dimen/margin_short_6"
+                android:paddingBottom="@dimen/margin_short_8"
 
                 >
 
-            <ImageView
-                android:id="@+id/eldMenuBtn"
-                android:layout_width="@dimen/view_height_30"
-                android:layout_height="@dimen/view_height_30"
-                android:src="@drawable/slide_menu"
-                android:layout_centerVertical="true"
+                <ImageView
+                    android:id="@+id/eldMenuBtn"
+                    android:layout_width="@dimen/view_height_30"
+                    android:layout_height="@dimen/view_height_30"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/slide_menu"
 
-                />
+                    />
 
 
                 <ImageView
                     android:id="@+id/eldMenuErrorImgVw"
                     android:layout_width="@dimen/margin_15"
                     android:layout_height="@dimen/margin_15"
-                    android:src="@drawable/error"
                     android:layout_marginLeft="@dimen/margin_25"
-                    android:visibility="gone"
-                    />
+                    android:src="@drawable/error"
+                    android:visibility="gone" />
 
 
             </RelativeLayout>
@@ -60,23 +59,22 @@
                 android:id="@+id/eldCodeTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/whiteee"
-                android:textSize="@dimen/text_size_16"
-                android:text="@string/als_certificate"
-                android:layout_toRightOf="@+id/eldMenuLay"
-                android:layout_marginLeft="@dimen/margin_10"
                 android:layout_centerVertical="true"
-                />
+                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_toRightOf="@+id/eldMenuLay"
+                android:text="@string/als_certificate"
+                android:textColor="@color/whiteee"
+                android:textSize="@dimen/text_size_16" />
 
 
             <RelativeLayout
                 android:id="@+id/settingsMenuBtn"
                 android:layout_width="@dimen/view_height_40"
                 android:layout_height="@dimen/view_height_44"
-                android:gravity="center_horizontal"
-                android:background="@drawable/green_with_corner_drawable"
-                android:layout_toRightOf="@+id/eldCodeTV"
                 android:layout_marginLeft="@dimen/margin_10"
+                android:layout_toRightOf="@+id/eldCodeTV"
+                android:background="@drawable/green_with_corner_drawable"
+                android:gravity="center_horizontal"
                 android:visibility="gone"
 
                 >
@@ -85,29 +83,48 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:src="@drawable/settings_white"
                     android:padding="@dimen/margin_10"
-                    />
-
+                    android:src="@drawable/settings_white" />
 
 
             </RelativeLayout>
 
+
+            <RelativeLayout
+                android:id="@+id/logoutMenuBtn"
+                android:layout_width="@dimen/view_height_40"
+                android:layout_height="@dimen/view_height_44"
+                android:layout_marginLeft="@dimen/margin_short_2"
+                android:layout_toRightOf="@+id/settingsMenuBtn"
+                android:background="@drawable/green_with_corner_drawable"
+                android:gravity="center_horizontal"
+                android:visibility="gone"
+
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:padding="@dimen/margin_short_8"
+                    android:src="@drawable/logout_home"
+                    android:tint="@color/white"
+                    />
+
+
+            </RelativeLayout>
 
 
             <TextView
                 android:id="@+id/menuTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/menuImageView"
-                android:text="Back"
-                android:textSize="17sp"
-                android:paddingLeft="2dp"
-                android:visibility="gone"
                 android:layout_centerVertical="true"
+                android:paddingLeft="2dp"
+                android:text="Back"
                 android:textColor="@color/whiteee"
-                />
-
+                android:textSize="17sp"
+                android:visibility="gone" />
 
 
         </RelativeLayout>

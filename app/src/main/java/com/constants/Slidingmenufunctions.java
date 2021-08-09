@@ -70,7 +70,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	EldFragment eldFragment;
 	SlidingMenu menu;
 	Context context;
-	public static TextView usernameTV, invisibleRefreshAdapterEvent;
+	public static TextView usernameTV, invisibleRefreshAdapterEvent, invisibleLogoutEvent;
 	private TextView appVersionHome;
 	ListView menuListView;
 
@@ -125,6 +125,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		appVersionHome	 = (TextView)       menu.findViewById(R.id.appVersionHome);
 		usernameTV 		 = (TextView)       menu.findViewById(R.id.usernameTV);
 		invisibleRefreshAdapterEvent= (TextView)       menu.findViewById(R.id.invisibleViewEvent);
+		invisibleLogoutEvent = (TextView)menu.findViewById(R.id.invisibleLogoutEvent);
 
 		driversLayout	 = (LinearLayout)   menu.findViewById(R.id.driversLayout);
 		menuListView 	 = (ListView)		menu.findViewById(R.id.menuListView);
@@ -165,6 +166,8 @@ public class Slidingmenufunctions implements OnClickListener {
 		MainDriverBtn.setOnClickListener(this);
 		CoDriverBtn.setOnClickListener(this);
 		invisibleRefreshAdapterEvent.setOnClickListener(this);
+		invisibleLogoutEvent.setOnClickListener(this);
+
 
 	}
 
@@ -235,33 +238,36 @@ public class Slidingmenufunctions implements OnClickListener {
 
 			case Constants.LOGOUT:
 
-				if(constants.isActionAllowed(context)){
-					boolean isExemptDriver = false;
-					if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
-						isExemptDriver = SharedPref.IsExemptDriverMain(context);
-					} else {
-						isExemptDriver = SharedPref.IsExemptDriverCo(context);
-					}
-
-					if(isExemptDriver && context != null){
-						Toast.makeText(context, context.getResources().getString(R.string.exempt_reminder_desc), Toast.LENGTH_LONG).show();
-					}
-
-					if(isSignPending()){
-						certifyLogAlert();
-					}else {
-						logoutDialog();
-					}
-				}else{
-					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
-				}
-
-
+				logoutEvent();
 
 				break;
 
 		}
 	}
+
+	void logoutEvent(){
+		if(constants.isActionAllowed(context)){
+			boolean isExemptDriver = false;
+			if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+				isExemptDriver = SharedPref.IsExemptDriverMain(context);
+			} else {
+				isExemptDriver = SharedPref.IsExemptDriverCo(context);
+			}
+
+			if(isExemptDriver && context != null){
+				Toast.makeText(context, context.getResources().getString(R.string.exempt_reminder_desc), Toast.LENGTH_LONG).show();
+			}
+
+			if(isSignPending()){
+				certifyLogAlert();
+			}else {
+				logoutDialog();
+			}
+		}else{
+			global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
+		}
+	}
+
 
 	boolean isSignPending(){
 		if(SharedPref.getDriverId(context).trim().length() > 0) {
@@ -336,13 +342,15 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		
-		if(v.getId() != R.id.invisibleViewEvent){
+
+		int viewId = v.getId();
+		if(viewId != R.id.invisibleViewEvent && viewId != R.id.invisibleLogoutEvent){
 			menu.showContent();
 		}
 
 
-		switch (v.getId()) {
+
+		switch (viewId) {
 
 			case R.id.MainDriverBtn:
 
@@ -382,6 +390,10 @@ public class Slidingmenufunctions implements OnClickListener {
 
 			case R.id.invisibleViewEvent:
 				setMenuAdapter();
+				break;
+
+			case R.id.invisibleLogoutEvent:
+				logoutEvent();
 				break;
 
 

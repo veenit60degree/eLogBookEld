@@ -113,7 +113,7 @@ import models.DriverDetail;
 import models.DriverLog;
 import models.RulesResponseObject;
 
-public class DriverLogDetailFragment extends Fragment implements View.OnClickListener, ScrollViewListener {
+public class CertifyViewLogFragment extends Fragment implements View.OnClickListener, ScrollViewListener {
 
 
     View rootView;
@@ -2179,52 +2179,14 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                     Duration = global.FinalValue(Integer.valueOf(Duration));
                 }
 
-                if (logObj.has(ConstantsKeys.Location)) {
-                    Location = logObj.getString(ConstantsKeys.Location);
-                }else {
-                    if(logObj.getString(ConstantsKeys.StartLocation).length() > 0) {
-                        Location = logObj.getString(ConstantsKeys.StartLocation);
-                    }else{
-                        Location = logObj.getString(ConstantsKeys.StartLatitude) + "," + logObj.getString(ConstantsKeys.StartLongitude);
-                    }
-                }
+                Location = logObj.getString(ConstantsKeys.StartLocation);
+                Location = checkLocationData(Location);
 
-                if(Location.equals(", , ") || Location.equals(" , ")){
-                    Location = "No Location Found";
-                }
-
-                if(logObj.has(ConstantsKeys.StartLocationKm)){
-                    LocationKm = logObj.getString(ConstantsKeys.StartLocationKm);
-                    if(LocationKm.equals(", , ") || LocationKm.equals(" , ")){
-                        LocationKm = "No Location Found";
-                    }
-                }else{
-                    LocationKm = Location;
-                }
+                LocationKm = logObj.getString(ConstantsKeys.StartLocationKm);
+                LocationKm = checkLocationData(LocationKm);
 
                 remarks          = logObj.getString(ConstantsKeys.Remarks);
 
-
-
-
-                EldDriverLogModel driverLogModel;
-                if(DRIVER_JOB_STATUS == constants.ON_DUTY) {
-                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, currentCycleId,
-                            isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm, remarks, YardMove,
-                            IsAdverseException, IsShortHaulException);
-                }else{
-                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, currentCycleId,
-                            isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm, remarks, isPersonal,
-                            IsAdverseException, IsShortHaulException);
-                }
-                DriverLogList.add(driverLogModel);
-
-                //global.GetCurrentUTCTimeFormat();
-
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(global.DateFormat);  //:SSSZ
-                Date startDate = new Date();
-                Date endDate = new Date();
-                startHour = 0; startMin = 0; endHour = 0; endMin = 0;
 
                 if(logCount > 0 && logCount == driverLogJsonArray.length()-1 ) {
                     if(  LogDate.equals(CurrentDate) ) {
@@ -2234,8 +2196,32 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
                             endDateTime = endDateTime.substring(0,11) + "23:59" +endDateTime.substring(16,endDateTime.length());
                         }
                     }
-
+                    DateTime startDateT = Globally.getDateTimeObj(startDateTime, false);
+                    DateTime endDateT = Globally.getDateTimeObj(endDateTime, false);
+                    int minDiff = endDateT.getMinuteOfDay() - startDateT.getMinuteOfDay();
+                    Duration = global.FinalValue(minDiff);
                 }
+
+                EldDriverLogModel driverLogModel;
+                if(DRIVER_JOB_STATUS == constants.ON_DUTY) {
+                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, currentCycleId,
+                            isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm, remarks, YardMove,
+                            IsAdverseException, IsShortHaulException, logObj.getString(ConstantsKeys.StartLatitude),
+                            logObj.getString(ConstantsKeys.StartLongitude) );
+                }else{
+                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, currentCycleId,
+                            isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm, remarks, isPersonal,
+                            IsAdverseException, IsShortHaulException, logObj.getString(ConstantsKeys.StartLatitude),
+                            logObj.getString(ConstantsKeys.StartLongitude));
+                }
+                DriverLogList.add(driverLogModel);
+
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(global.DateFormat);  //:SSSZ
+                Date startDate = new Date();
+                Date endDate = new Date();
+                startHour = 0; startMin = 0; endHour = 0; endMin = 0;
+
                 try {
                     startDate   = simpleDateFormat.parse(startDateTime);
                     endDate     = simpleDateFormat.parse(endDateTime);
@@ -2282,7 +2268,12 @@ public class DriverLogDetailFragment extends Fragment implements View.OnClickLis
     }
 
 
-
+    String checkLocationData(String Location){
+        if(Location.equals(", , ") || Location.equals(" , ")){
+            Location = "No Location Found";
+        }
+        return Location;
+    }
 
     void NullCheckJson(JSONObject json, TextView view, String key, String value){
         try {

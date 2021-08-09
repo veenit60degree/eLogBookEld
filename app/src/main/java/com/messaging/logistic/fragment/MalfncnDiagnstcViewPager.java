@@ -596,6 +596,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     malfunctionChildHashMap = new HashMap<>();
                     diagnosticHeaderList = new ArrayList<>();
                     diagnosticChildHashMap = new HashMap<>();
+                    malfunctionChildList = new ArrayList<>();
 
                     checkLocMalfunction();
 

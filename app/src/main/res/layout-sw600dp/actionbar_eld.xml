@@ -93,11 +93,36 @@
 
 
 
+            <RelativeLayout
+                android:id="@+id/logoutMenuBtn"
+                android:layout_width="@dimen/view_height_55"
+                android:layout_height="@dimen/view_height_55"
+                android:layout_toRightOf="@+id/settingsMenuBtn"
+                android:layout_marginLeft="@dimen/margin_short_4"
+                android:background="@drawable/green_with_corner_drawable"
+                android:gravity="center_horizontal"
+                android:visibility="gone"
+
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:padding="@dimen/margin_13"
+                    android:src="@drawable/logout_home"
+                    android:tint="@color/white"
+                    />
+
+
+            </RelativeLayout>
+
+
+
             <TextView
                 android:id="@+id/menuTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/menuImageView"
                 android:text="Back"
                 android:textSize="17sp"
                 android:paddingLeft="2dp"

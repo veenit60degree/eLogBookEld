@@ -500,12 +500,15 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
                 default:
                     Log.d("Driver", "error" + error.toString());
-                    Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
 
-                    if(helpDocList.size() > 0){
-                        noDataEldTV.setVisibility(View.GONE);
-                    }else{
-                        noDataEldTV.setVisibility(View.VISIBLE);
+                    if(getActivity() != null) {
+                        Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+
+                        if (helpDocList.size() > 0) {
+                            noDataEldTV.setVisibility(View.GONE);
+                        } else {
+                            noDataEldTV.setVisibility(View.VISIBLE);
+                        }
                     }
 
                     break;

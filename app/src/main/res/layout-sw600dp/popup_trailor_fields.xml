@@ -65,6 +65,7 @@
             android:paddingRight="@dimen/margin_short_5"
             android:paddingLeft="@dimen/margin_short_5"
             android:paddingBottom="@dimen/margin_short_5"
+            android:paddingTop="@dimen/margin_20"
             android:gravity="center_horizontal"
             android:visibility="gone"
 
@@ -213,7 +214,7 @@
             android:theme="@style/AppTheme.EditText"
             android:singleLine="true"
             android:hint="@string/TrailorNo"
-
+            android:maxLength="30"
             />
     </com.google.android.material.textfield.TextInputLayout>
 

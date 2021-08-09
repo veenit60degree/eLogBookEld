@@ -36,7 +36,7 @@ public class VehicleDialog extends Dialog {
 
 
     public interface VehicleListener {
-        public void ChangeVehicleReady(String Title, int position);
+        public void ChangeVehicleReady(String Title, int position, boolean isOldDialog);
     }
 
     Constants constants;
@@ -48,11 +48,12 @@ public class VehicleDialog extends Dialog {
     TextView TitleVehTV, updateVehTitleTV, logoutVehTV;
     int SelectedPosition = -1, SetSpinnerPosition = 0;
     private SearchArrayListAdapter mSimpleArrayListAdapter;
+    boolean isOldDialog;
 
-
-    public VehicleDialog(Context context, String truck, List<VehicleModel> remarkList, VehicleListener readyListener) {
+    public VehicleDialog(Context context, String truck, boolean isOldDialog, List<VehicleModel> remarkList, VehicleListener readyListener) {
         super(context);
         Truck = truck;
+        this.isOldDialog = isOldDialog;
         this.truckList = remarkList;
         this.readyListener = readyListener;
     }
@@ -209,7 +210,7 @@ public class VehicleDialog extends Dialog {
         public void onClick(View v) {
 
             if(SelectedPosition >= 0) {
-                readyListener.ChangeVehicleReady(Title, SelectedPosition);
+                readyListener.ChangeVehicleReady(Title, SelectedPosition, isOldDialog);
             }else{
                 Globally.EldScreenToast(btnSaveVehList, "Please select truck to change.", getContext().getResources().getColor(R.color.colorVoilation));
             }

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
@@ -221,6 +222,10 @@ public class TrailorDialog extends Dialog {
 
         TrailorNoEditText.setText(Trailor);
         TrailorNoEditText.setSelection(Trailor.length());
+
+        InputFilter[] filterArray = new InputFilter[1];
+        filterArray[0] = new InputFilter.LengthFilter(30);
+        TrailorNoEditText.setFilters(filterArray);
 
 
         // Spinner click listener

@@ -72,6 +72,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
     boolean IsAppForground   = true;
     boolean isViolation      = false;
+    boolean PersonalUse75Km  = false;
     int DriverId = 0, offsetFromUTC = 0;
     final int OFF_DUTY       = 1;
     final int SLEEPER        = 2;
@@ -127,7 +128,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     CoNotificationPref coNotificationPref;
     SyncingMethod syncingMethod;
     JSONArray driver18DaysLogArray = new JSONArray();
-    String pcYmRemarks = "";
     Utils obdUtil;
 
     public ServiceCycle(Context context) {
@@ -151,6 +151,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
         DriverId                 = driverId;
         VehicleSpeed             = vehicleSpeed;
+        PersonalUse75Km          = false;
 
         boolean isDrivingAllowed = hMethods.isDrivingAllowedWithCoDriver(context, Global, ""+DriverId, false, dbHelper);
         if(isDrivingAllowed == false && VehicleSpeed >= 8){
@@ -207,7 +208,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                       ServiceCallback serviceResponse, LatLongHelper latLongHelper, LocationMethod locMethod,
                       HelperMethods hMethods, DBHelper dbHelper, ServiceError serviceError){
 
-        pcYmRemarks = "";
         if (driverLogArray.length() == 0) {
 
             try {
@@ -594,7 +594,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 }
 
                                                 if (VehicleSpeed >= DrivingSpeedLimit ) {   //&& isDrivingAllowed
-                                                    pcYmRemarks = "--"; //none
                                                     LastStatus = "_YMNotConfirmed_From_" + DRIVER_JOB_STATUS;
                                                     CHANGED_STATUS = DRIVING;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
@@ -670,11 +669,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                         if (VehicleSpeed >= DrivingSpeedLimit) {
 
                                             if (isPersonalUse75KmCrossed) {
+                                                PersonalUse75Km = true;
                                                 LastStatus = "_PU_Crossed75Km";
                                                 message = "Duty status switched to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
 
                                             } else {
-                                                pcYmRemarks = "--"; //none
                                                 LastStatus = "_PU_NotConfirmedAfterLogin" ;
 
                                                 // set value false when status will be changed to driving.
@@ -1111,7 +1110,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         try {
 
             String[] locationArray        = jobJsonObj.getString(ConstantsKeys.StartLocation).split(", ");
-            Remarks                       = jobJsonObj.getString(ConstantsKeys.Remarks);
+         //   Remarks                       = jobJsonObj.getString(ConstantsKeys.Remarks);
 
             if(isAutoChanged) { //jobJsonObj.has(ConstantsKeys.IsStatusAutomatic)
                 isAutomatic = "true";
@@ -1136,17 +1135,12 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             }else{
                 DriverStatusId = String.valueOf(DriverStatusInt);
 
-                if(pcYmRemarks.length() == 0) {
-                    if (DriverStatusInt != ON_DUTY) {
-                        Remarks = "";
-                    } else {
-                        if (Remarks.length() == 0) {
-                            Remarks = "Others";
-                        }
-                    }
-                }else{
-                    Remarks = pcYmRemarks;
+                if (DriverStatusInt != ON_DUTY) {
+                    Remarks = "";
+                } else {
+                    Remarks = "Others";
                 }
+
             }
 
             isPersonal      = "false";
@@ -1215,7 +1209,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
                     "currentCycleId", false , currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                     "", City + ", " + State + ", " + Country, "", "", Boolean.parseBoolean(isPersonal),
-                    isAdverseExcptn, isHaulExcptn );
+                    isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE );
             eldSharedPref.AddDriverLoc(context, logModel);
         }else{
             CoDriverPref.AddDriverLoc(context, locationModel);
@@ -1224,7 +1218,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
                     "currentCycleId", false , currentUtcTimeDiffFormat, currentUtcTimeDiffFormat, "", City + ", " + State + ", " + Country,
                     "", "",Boolean.parseBoolean(isPersonal),
-                    isAdverseExcptn, isHaulExcptn  );
+                    isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE  );
             coEldSharedPref.AddDriverLoc(context, logModel);
         }
 
@@ -1291,10 +1285,13 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         if(City.length() != 0 && State.length() != 0){
             address = City + ", " + State + ", " + Country;
         }else{
-            if (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) {
+            if ( (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2))
+                    && SharedPref.IsAOBRD(context) == false ) {
                 address = csvReader.getShortestAddress(context);
             }else{
-                address = Globally.LATITUDE + "," + Globally.LONGITUDE;
+                if(Globally.LATITUDE.length() > 4) {
+                    address = Globally.LATITUDE + "," + Globally.LONGITUDE;
+                }
             }
         }
 
@@ -1426,6 +1423,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             intent.putExtra(ConstantsKeys.IsIgnitionOn, false);
             intent.putExtra(ConstantsKeys.IsAutoStatusSaved, IsAutoStatusSaved);
             intent.putExtra(ConstantsKeys.ChangedToOthers, changedToOther);
+            intent.putExtra(ConstantsKeys.PersonalUse75Km, PersonalUse75Km);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }catch (Exception e){
             e.printStackTrace();

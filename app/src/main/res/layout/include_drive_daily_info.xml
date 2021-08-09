@@ -85,19 +85,19 @@
             android:layout_weight="1"
             >
 
-    <TextView
-        android:id="@+id/certifyLocationTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Location"
-        android:textSize="@dimen/text_size_13"
-        android:textColor="@color/whiteee"
-        android:textStyle="bold"
-        android:gravity="center_horizontal"
-        android:singleLine="true"
-        android:layout_toLeftOf="@+id/certifyLocationIV"
+            <TextView
+                android:id="@+id/certifyLocationTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/certifyLocationIV"
+                android:gravity="center_horizontal"
+                android:singleLine="true"
+                android:text="@string/Location"
+                android:textColor="@color/whiteee"
+                android:textSize="@dimen/text_size_13"
+                android:textStyle="bold"
 
-        />
+                />
 
             <ImageView
                 android:id="@+id/certifyLocationIV"

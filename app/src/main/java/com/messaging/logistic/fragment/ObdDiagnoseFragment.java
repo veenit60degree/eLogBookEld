@@ -136,7 +136,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
         rightMenuBtn.setVisibility(View.INVISIBLE);
         eldMenuBtn.setImageResource(R.drawable.back_white);
-        EldTitleTV.setText(getResources().getString(R.string.obd_diagnose));
+
 
         button2.setVisibility(View.GONE);
         field1.setVisibility(View.GONE);
@@ -152,10 +152,13 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         button2.setOnClickListener(this);
 
         if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
+            EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (WIFI)");
             bleObdTxtView.setVisibility(View.GONE);
         }else if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_BLE){
+            EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (Bluetooth)");
             wifiObdLay.setVisibility(View.GONE);
         }else {
+            EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (Wired)");
             bleObdTxtView.setVisibility(View.GONE);
             wifiObdLay.setVisibility(View.GONE);
             responseRawTxtView.setVisibility(View.INVISIBLE);

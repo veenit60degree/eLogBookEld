@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.DriverLogDetailFragment;
+import com.messaging.logistic.fragment.CertifyViewLogFragment;
 import com.messaging.logistic.fragment.EldFragment;
 
 import java.util.ArrayList;
@@ -129,7 +129,7 @@ public class InitilizeEldView {
         Constants.IS_ACTIVE_ELD = false;
 
         try {
-            DriverLogDetailFragment detailFragment = new DriverLogDetailFragment();
+            CertifyViewLogFragment detailFragment = new CertifyViewLogFragment();
             Bundle bundle = new Bundle();
             bundle.putString("date", date);
             bundle.putString("day_name", dayName);

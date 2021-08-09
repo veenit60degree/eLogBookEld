@@ -415,6 +415,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         inspectionUnPostedArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(DRIVER_ID), dbHelper);
 
         if(Globally.isConnected(getActivity()) && inspectionUnPostedArray.length() > 0 ){
+            ClearFields();
             saveInspectionPost.PostDriverLogData(inspectionUnPostedArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false, 1, 102);
         }
 
@@ -728,6 +729,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             SaveInspectionOfflineWithAPI();
             //  new SaveDriverInspection().execute();
         }else{
+            inspectionScrollView.fullScroll(ScrollView.FOCUS_DOWN);
             Globally.EldScreenToast(saveInspectionBtn, "Please add driver signature.", getResources().getColor(R.color.colorVoilation));
         }
     }
@@ -787,7 +789,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             if (AboveDefectsCorrected.equals("true") || AboveDefectsNotCorrected.equals("true")) {
                 CallSaveInspectionAPI();
             } else {
-                Globally.EldScreenToast(saveInspectionBtn, "Please select defect status", getResources().getColor(R.color.colorVoilation));
+                Globally.EldScreenToast(inspectionDateTv, "Please select defect status", getResources().getColor(R.color.colorVoilation));
             }
         } else {
             TruckIssueType = "";
@@ -799,32 +801,34 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int CheckBoxId) {
 
-        switch (CheckBoxId) {
+        boolean isChecked = radioGroup.isPressed();
+       // if (isChecked) {
+            switch (CheckBoxId) {
 
-            case R.id.preTripButton:
-                btnSelectedType = "pre";
-                SetButtonView(btnSelectedType);
+                case R.id.preTripButton:
+                    btnSelectedType = "pre";
+                    SetButtonView(btnSelectedType);
 
-                break;
+                    break;
 
-            case R.id.postTripButton:
-                btnSelectedType = "post";
-                SetButtonView(btnSelectedType);
+                case R.id.postTripButton:
+                    btnSelectedType = "post";
+                    SetButtonView(btnSelectedType);
 
-                break;
+                    break;
 
-            case R.id.DefectsCorrectedBtn:
-                btnSelectedType = "corrected";
-                SetButtonView(btnSelectedType);
-                break;
+                case R.id.DefectsCorrectedBtn:
+                    btnSelectedType = "corrected";
+                    SetButtonView(btnSelectedType);
+                    break;
 
-            case R.id.DefectsNotCorrectedBtn:
-                btnSelectedType = "notCorrected";
-                SetButtonView(btnSelectedType);
+                case R.id.DefectsNotCorrectedBtn:
+                    btnSelectedType = "notCorrected";
+                    SetButtonView(btnSelectedType);
 
-                break;
-        }
-
+                    break;
+            }
+      //  }
     }
 
 
@@ -974,7 +978,23 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     }
 
     void ClearFields(){
+
+        postTripButton.setChecked(false);
+        preTripButton.setChecked(false);
+        DefectsCorrectedBtn.setChecked(false);
+        DefectsNotCorrectedBtn.setChecked(false);
+
+        prePostRadioGroup.clearCheck();
+        correctRadioGroup.clearCheck();
+
+        postTripButton.setTextColor(Color.parseColor(BlackColor));
+        preTripButton.setTextColor(Color.parseColor(BlackColor));
+        DefectsCorrectedBtn.setTextColor(Color.parseColor(BlackColor));
+        DefectsNotCorrectedBtn.setTextColor(Color.parseColor(BlackColor));
+
+
         SetButtonView("clear");
+
         TruckList = new ArrayList<>();
         TruckIdList = new ArrayList<>();
         TrailerList = new ArrayList<>();
@@ -1022,19 +1042,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         EldFragment.City = "";
         EldFragment.OldSelectedStatePos = 0;
 
-        postTripButton.setChecked(false);
-        preTripButton.setChecked(false);
-        DefectsCorrectedBtn.setChecked(false);
-        DefectsNotCorrectedBtn.setChecked(false);
-
-        prePostRadioGroup.clearCheck();
-        correctRadioGroup.clearCheck();
-
-        postTripButton.setTextColor(Color.parseColor(BlackColor));
-        preTripButton.setTextColor(Color.parseColor(BlackColor));
-        DefectsCorrectedBtn.setTextColor(Color.parseColor(BlackColor));
-        DefectsNotCorrectedBtn.setTextColor(Color.parseColor(BlackColor));
-
         signDriverIV.setBackgroundDrawable(null);
         signSuprvsrIV.setBackgroundDrawable(null);
 
@@ -1065,7 +1072,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     private class VehicleListener implements VehicleDialog.VehicleListener {
         @Override
-        public void ChangeVehicleReady(String Title, int position) {
+        public void ChangeVehicleReady(String Title, int position, boolean isOldDialog) {
 
 
             try {
@@ -1471,7 +1478,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                                             vehicleDialog.dismiss();
                                         }
 
-                                        vehicleDialog = new VehicleDialog(getActivity(), Globally.TRUCK_NUMBER, vehicleList, new VehicleListener());
+                                        vehicleDialog = new VehicleDialog(getActivity(), Globally.TRUCK_NUMBER, false, vehicleList, new VehicleListener());
                                         vehicleDialog.show();
 
                                     } catch (final IllegalArgumentException e) {
@@ -1660,6 +1667,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 pDialog.dismiss();
 
             if(flag != 102) {
+                ClearFields();
                 locInspectionTV.setEnabled(false);
                 Globally.EldToastWithDuration(TabAct.sliderLay, getResources().getString(R.string.inspection_willbe_saved), getResources().getColor(R.color.colorSleeper));
                 new Handler().postDelayed(new Runnable() {
