@@ -3358,11 +3358,11 @@ public class HelperMethods {
         if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
             isHaulExcptn    = SharedPref.get16hrHaulExcptn(context);
             isAdverseExcptn = SharedPref.getAdverseExcptn(context);
-            isDeferral      = SharedPref.getDeferralForMain(context);
+            isDeferral      = SharedPref.isDeferralMainDriver(context);
         }else{
             isHaulExcptn    = SharedPref.get16hrHaulExcptnCo(context);
             isAdverseExcptn = SharedPref.getAdverseExcptnCo(context);
-            isDeferral      = SharedPref.getDeferralForMain(context);
+            isDeferral      = SharedPref.isDeferralCoDriver(context);
         }
 
         String DriverName = "";
@@ -3464,7 +3464,7 @@ public class HelperMethods {
 
                     finalRemarks,
                     currentUTCTime,
-                    Global.TRUCK_NUMBER,
+                    Globally.TRUCK_NUMBER,
                     TrailorNumber,
                     DriverCompanyId,
                     DriverName,

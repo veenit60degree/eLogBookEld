@@ -1148,9 +1148,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
             boolean isDeferral;
             if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
-                isDeferral      = SharedPref.getDeferralForMain(context);
+                isDeferral      = SharedPref.isDeferralMainDriver(context);
             }else{
-                isDeferral      = SharedPref.getDeferralForMain(context);
+                isDeferral      = SharedPref.isDeferralCoDriver(context);
             }
 
             String plateNo = SharedPref.GetCurrentTruckPlateNo(context);

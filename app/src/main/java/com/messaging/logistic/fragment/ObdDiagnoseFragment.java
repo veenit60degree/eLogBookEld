@@ -177,7 +177,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
             loaderProgress.setVisibility(View.VISIBLE);
             bleObdTxtView.setText(getString(R.string.start_scan));
-            SharedPref.SetBlePingStatus("start", getActivity());
+            SharedPref.SetPingStatus("start", getActivity());
             SharedPref.saveBleScanCount(0, getActivity());
 
             Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
@@ -446,7 +446,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
                             bleObdTxtView.setText(getString(R.string.disconnected) + " (Ble OBD)");
                             obdDataTxtView.setText("");
-                            SharedPref.SetBlePingStatus("stop", getActivity());
+                            SharedPref.SetPingStatus("stop", getActivity());
 
                             Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

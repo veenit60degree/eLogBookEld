@@ -135,7 +135,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         SaveOdometerRequest     = new VolleyRequest(getActivity());
 
         EldTitleTV.setText("Odometer Reading");
-        odometerTruckTV.setText(Global.TRUCK_NUMBER);
+        odometerTruckTV.setText(Globally.TRUCK_NUMBER);
         rightMenuBtn.setVisibility(View.GONE);
         dateActionBarTV.setVisibility(View.VISIBLE);
 
@@ -195,7 +195,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         }
 
         UserInfo();
-        odometerTruckTV.setText(Global.TRUCK_NUMBER);
+        odometerTruckTV.setText(Globally.TRUCK_NUMBER);
         saveReadingBtn.setEnabled(true);
 
         odometer18DaysArray = new JSONArray();
@@ -458,7 +458,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         IsOdometerSaved = true;
 
         JSONObject odoJson = odometerhMethod.AddOdometerInArray(DRIVER_ID, DeviceId, VIN_NUMBER, StartOdometer, EndOdometer, DistanceType,
-                SelectedDate, IsEditOdometer, TruckOdometerId, Global.TRUCK_NUMBER, EldFragment.DriverStatusId);
+                SelectedDate, IsEditOdometer, TruckOdometerId, Globally.TRUCK_NUMBER, EldFragment.DriverStatusId);
 
         odometerArray.put(odoJson);
         odometerhMethod.OdometerHelper(Integer.valueOf(DRIVER_ID), dbHelper, odometerArray);
@@ -622,14 +622,14 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
                     if (odometerArray.length() > 1) {
                         JSONObject obj = odometerhMethod.GetLastJsonObject(odometerArray, 2);
 
-                        if (obj.getString(ConstantsKeys.TruckEquipmentNumber).equals(Global.TRUCK_NUMBER)) {
+                        if (obj.getString(ConstantsKeys.TruckEquipmentNumber).equals(Globally.TRUCK_NUMBER)) {
                             if (odometerArray.length() > 1) {
                                 StartOdometer = obj.getString(ConstantsKeys.StartOdometer);
                             }
                         } else {
                             if (odometer18DaysArray.length() > 1) {
                                 JSONObject obj1 = odometerhMethod.GetLastJsonObject(odometer18DaysArray, 1);
-                                if (obj1.getString(ConstantsKeys.TruckEquipmentNumber).equals(Global.TRUCK_NUMBER)) {
+                                if (obj1.getString(ConstantsKeys.TruckEquipmentNumber).equals(Globally.TRUCK_NUMBER)) {
                                     StartOdometer = obj1.getString(ConstantsKeys.StartOdometer);
                                 }
                             }

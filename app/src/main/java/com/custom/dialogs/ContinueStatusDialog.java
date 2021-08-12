@@ -20,14 +20,15 @@ public class ContinueStatusDialog extends Dialog {
     }
 
 
-    private boolean isYardMove, isLogin;
+    private boolean isYardMove, isPersonal, isLogin;
     String TruckIgnitionStatus;
     private ContinueListener readyListener;
 
-    public ContinueStatusDialog(Context context, boolean isYardMove,  boolean isLogin,
+    public ContinueStatusDialog(Context context, boolean isYardMove, boolean isPersonal, boolean isLogin,
                                 String TruckIgnitionStatus, ContinueListener readyListener) {
         super(context);
         this.isYardMove = isYardMove;
+        this.isPersonal = isPersonal;
         this.isLogin = isLogin;
         this.TruckIgnitionStatus = TruckIgnitionStatus;
         this.readyListener = readyListener;
@@ -60,6 +61,11 @@ public class ContinueStatusDialog extends Dialog {
         if(isYardMove){
             continueStatusBtn.setText(getContext().getResources().getString(R.string.stay_in_yard_move));
             changeStatusBtn.setText(getContext().getResources().getString(R.string.Others));
+            continueStatusDescTV.setText(getContext().getString(R.string.ConfirmDutyStatus));
+        }else if(isPersonal){
+            continueStatusBtn.setText(getContext().getResources().getString(R.string.stay_in_personel));
+            changeStatusBtn.setText(getContext().getResources().getString(R.string.Others));
+            continueStatusDescTV.setText(getContext().getString(R.string.ConfirmDutyStatus));
         }
 
         if(isLogin){

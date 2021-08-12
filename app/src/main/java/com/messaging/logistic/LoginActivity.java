@@ -588,8 +588,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
 			SharedPref.SetWiredObdCallTime("", getApplicationContext());
 			SharedPref.setPersonalUse75Km(false, getApplicationContext());
-			SharedPref.setDeferralForMain(false, getApplicationContext());
-			SharedPref.setDeferralForCo(false, getApplicationContext());
+			SharedPref.setDeferralForMain(false, "", "0", getApplicationContext());
+			SharedPref.setDeferralForCo(false, "", "0", getApplicationContext());
 
 			//SharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getApplicationContext());
 			constants.saveMalfncnStatus(getApplicationContext(), false);
@@ -603,8 +603,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	void LoginUser(final String DeviceId, final String username, final String pass, final String CoDriverUsername,
 				   final String CoDriverPassword, final String TeamDriverType, final String OSType,
 				   final String DeviceSimInfo, final String Sim2) {
-
-		//    SharedPref.setLoginAllowedStatus(true, getApplicationContext());
 
 		if(SharedPref.isLoginAllowed(LoginActivity.this)) {
 
@@ -624,14 +622,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				}
 				constants.saveLoginDetails(username, OSType, DeviceSimInfo, ImeiNumber, obdUtil);
 
-				/*========= Call main Service to start obd server service =============*/
-		/*		Constants.isEldHome = false;
-				Intent serviceIntent = new Intent(LoginActivity.this, BackgroundLocationService.class);
-				if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-					startForegroundService(serviceIntent);
-				}
-				startService(serviceIntent);
-*/
 				// delete previous obd server logs
 				obdUtil.deleteServerObdLog();
 

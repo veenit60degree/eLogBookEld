@@ -51,6 +51,7 @@ import com.local.db.HelperMethods;
 import com.messaging.logistic.EldActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.models.CanadaDutyStatusModel;
 import com.models.DotDataModel;
 import com.models.DriverLocationModel;
 import com.models.ShipmentModel;
@@ -63,12 +64,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -860,12 +864,12 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 TotalSleeperBerthHours   = "00:00";
 
                 try {
-                    TotalOffDutyHours       = dataObj.getString("TotalOffDutyHours");
-                    TotalSleeperBerthHours  = dataObj.getString("TotalSleeperHours");
-                    TotalDrivingHours       = dataObj.getString("TotalDrivingHours");
-                    TotalOnDutyHours        = dataObj.getString("TotalOnDutyHours");
-                    IsMalfunction           = dataObj.getBoolean("IsMalfunction");
-                    LogSignImage            = dataObj.getString("LogSignImage");
+                    TotalOffDutyHours       = dataObj.getString(ConstantsKeys.TotalOffDutyHours);
+                    TotalSleeperBerthHours  = dataObj.getString(ConstantsKeys.TotalSleeperHours);
+                    TotalDrivingHours       = dataObj.getString(ConstantsKeys.TotalDrivingHours);
+                    TotalOnDutyHours        = dataObj.getString(ConstantsKeys.TotalOnDutyHours);
+                    IsMalfunction           = dataObj.getBoolean(ConstantsKeys.IsMalfunction);
+                    LogSignImage            = dataObj.getString(ConstantsKeys.LogSignImage);
                     if(LogSignImage.equals("null")){
                         LogSignImage = "";
                     }
@@ -877,10 +881,10 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
                     setDataOnView(dataObj);
                     CheckSignatureVisibilityStatus();
-                    JSONArray dotLogArray = new JSONArray(dataObj.getString("oReportList"));
+                    JSONArray dotLogArray = new JSONArray(dataObj.getString(ConstantsKeys.oReportList));
                     setDataOnList(dotLogArray);
 
-                    JSONArray shippingLogArray = new JSONArray(dataObj.getString("ShippingInformationModel"));
+                    JSONArray shippingLogArray = new JSONArray(dataObj.getString(ConstantsKeys.ShippingInformationModel));
                     setShippingDataOnList(shippingLogArray);
 
                     ParseGraphData(dotLogArray);
@@ -942,27 +946,35 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             dotLogList = new ArrayList<>();
             for(int i = 0; i < array.length() ; i++){
                 JSONObject obj = (JSONObject)array.get(i);
-                String time = obj.getString("DateTimeWithMins");
+                String time = obj.getString(ConstantsKeys.DateTimeWithMins);
                 if(time.length() > 18) {
+                    DateFormat format = new SimpleDateFormat(Globally.DateFormat, Locale.ENGLISH);
+                    Date date = format.parse(time);
+
                     DotDataModel dotLogItem = new DotDataModel(
-                            constants.checkNullString(obj.getString("strEventType")),
+                            constants.checkNullString(obj.getString(ConstantsKeys.strEventType)),
                             time,
                             time,
-                            obj.getBoolean("IsMalfunction"),
+                            obj.getBoolean(ConstantsKeys.IsMalfunction),
                             time.substring(11, 19),
-                            constants.checkNullString(obj.getString("Annotation")),
-                            constants.checkNullString(obj.getString("OdometerInKm")),
-                            constants.checkNullString(obj.getString("TotalVehicleMiles")),
-                            constants.checkNullString(obj.getString("OdometerInKm")),
-                            constants.checkNullString(obj.getString("TotalVehicleMiles")),
-                            constants.checkNullString(obj.getString("TotalEngineHours")),
-                            constants.checkNullString(obj.getString("strEventType")),
-                            constants.checkNullString(obj.getString("Remarks")),
-                            constants.checkNullString(obj.getString("Origin")));
+                            constants.checkNullString(obj.getString(ConstantsKeys.Annotation)),
+                            constants.checkNullString(obj.getString(ConstantsKeys.OdometerInKm)),
+                            constants.checkNullString(obj.getString(ConstantsKeys.TotalVehicleMiles)),
+                            constants.checkNullString(obj.getString(ConstantsKeys.OdometerInKm)),
+                            constants.checkNullString(obj.getString(ConstantsKeys.TotalVehicleMiles)),
+                            constants.checkNullString(obj.getString(ConstantsKeys.TotalEngineHours)),
+                            constants.checkNullString(obj.getString(ConstantsKeys.strEventType)),
+                            constants.checkNullString(obj.getString(ConstantsKeys.Remarks)),
+                            constants.checkNullString(obj.getString(ConstantsKeys.Origin)),
+                            constants.checkNullString(obj.getString(ConstantsKeys.SequenceNumber)),
+                            date
+
+                            );
                     dotLogList.add(dotLogItem);
                 }
             }
 
+            Collections.sort(dotLogList);
 
             dotLogAdapter = new DotLogAdapter(getActivity(), constants, dotLogList);
             dotDataListView.setAdapter(dotLogAdapter);
@@ -983,6 +995,9 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
     }
+
+
+
 
 
     void setShippingDataOnList(JSONArray array){
@@ -1046,52 +1061,52 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     void  setDataOnView(JSONObject obj){
 
         try {
-            String recordDate  = global.ConvertDateFormatMMddyyyy(obj.getString("RecordDate"));
-            String displayDate = global.ConvertDateFormatMMddyyyy(obj.getString("PrintDisplayDate"));
+            String recordDate  = global.ConvertDateFormatMMddyyyy(obj.getString(ConstantsKeys.RecordDate));
+            String displayDate = global.ConvertDateFormatMMddyyyy(obj.getString(ConstantsKeys.PrintDisplayDate));
 
             recordDateTV.setText(recordDate);
-            usDotTV.setText(CheckStringIsNull(obj, "USDOTNumber"));
-            LicenseNoTV .setText(CheckStringIsNull(obj, "DriverLicenseNumber"));
-            LicensePlateTV.setText(CheckStringIsNull(obj, "DriverLicenseState"));
+            usDotTV.setText(CheckStringIsNull(obj, ConstantsKeys.USDOTNumber));
+            LicenseNoTV .setText(CheckStringIsNull(obj, ConstantsKeys.DriverLicenseNumber));
+            LicensePlateTV.setText(CheckStringIsNull(obj, ConstantsKeys.DriverLicenseState));
 
-            eldIdTV.setText(CheckStringIsNull(obj, "ELDID"));
-            trailerIdTV.setText(CheckStringIsNull(obj, "TrailerId"));
-            timeZoneTV.setText(CheckStringIsNull(obj, "TimeZone"));
-            driverNameTV.setText(CheckStringIsNull(obj, "DriverName"));
+            eldIdTV.setText(CheckStringIsNull(obj, ConstantsKeys.ELDID));
+            trailerIdTV.setText(CheckStringIsNull(obj, ConstantsKeys.TrailerId));
+            timeZoneTV.setText(CheckStringIsNull(obj, ConstantsKeys.TimeZone));
+            driverNameTV.setText(CheckStringIsNull(obj, ConstantsKeys.DriverName));
 
-            coDriverNameTV.setText(CheckStringIsNull(obj, "CoDriverName"));
-            eldManfctrTV.setText(CheckStringIsNull(obj, "ELDManufacturer"));
-            shippingIdTV.setText(CheckStringIsNull(obj, "ShippingID"));
-            dataDiagnticTV.setText(CheckStringIsNull(obj, "DataDiagnosticIndicators"));
+            coDriverNameTV.setText(CheckStringIsNull(obj, ConstantsKeys.CoDriverName));
+            eldManfctrTV.setText(CheckStringIsNull(obj, ConstantsKeys.ELDManufacturer));
+            shippingIdTV.setText(CheckStringIsNull(obj, ConstantsKeys.ShippingID));
+            dataDiagnticTV.setText(CheckStringIsNull(obj, ConstantsKeys.DataDiagnosticIndicators));
 
-            period24startTV.setText(CheckStringIsNull(obj, "PeriodStartingTime"));
-            driverIdTV.setText(CheckStringIsNull(obj, "DriverID"));
-            coDriverIdTV .setText(CheckStringIsNull(obj, "CoDriverID"));
-            truckTractorTV.setText(CheckStringIsNull(obj, "TruckTractorID"));
+            period24startTV.setText(CheckStringIsNull(obj, ConstantsKeys.PeriodStartingTime));
+            driverIdTV.setText(CheckStringIsNull(obj, ConstantsKeys.DriverID));
+            coDriverIdTV .setText(CheckStringIsNull(obj, ConstantsKeys.CoDriverID));
+            truckTractorTV.setText(CheckStringIsNull(obj, ConstantsKeys.TruckTractorID));
 
-            unidentifiedDriverTV.setText(CheckStringIsNull(obj, "UnIdentifiedDriverRecords"));
-            eldMalfTV.setText(CheckStringIsNull(obj, "ELDMalfunctionIndicators"));
-            carrierTV.setText(CheckStringIsNull(obj, "Carrier"));
+            unidentifiedDriverTV.setText(CheckStringIsNull(obj, ConstantsKeys.UnIdentifiedDriverRecords));
+            eldMalfTV.setText(CheckStringIsNull(obj, ConstantsKeys.ELDMalfunctionIndicators));
+            carrierTV.setText(CheckStringIsNull(obj, ConstantsKeys.Carrier));
 
-            truckTractorVinTV .setText(CheckStringIsNull(obj, "TruckTractorVIN"));
-            exemptDriverStatusTV.setText(CheckStringIsNull(obj, "ExemptDriverStatus"));
-            startEndEngineHrTV.setText(CheckStringIsNull(obj, "StartEndEngineHours"));
+            truckTractorVinTV .setText(CheckStringIsNull(obj, ConstantsKeys.TruckTractorVIN));
+            exemptDriverStatusTV.setText(CheckStringIsNull(obj, ConstantsKeys.ExemptDriverStatus));
+            startEndEngineHrTV.setText(CheckStringIsNull(obj, ConstantsKeys.StartEndEngineHours));
 
-            currentLocTV.setText(CheckStringIsNull(obj, "CurrentLocation"));
-            fileCommentTV.setText(CheckStringIsNull(obj, "FileComment"));
+            currentLocTV.setText(CheckStringIsNull(obj, ConstantsKeys.CurrentLocation));
+            fileCommentTV.setText(CheckStringIsNull(obj, ConstantsKeys.FileComment));
 
             PrintDisplayDateTV.setText(displayDate);
-            placeOfBusinessTV.setText(CheckStringIsNull(obj, "OfficeAddress"));
+            placeOfBusinessTV.setText(CheckStringIsNull(obj, ConstantsKeys.OfficeAddress));
 
-            String odometer = obj.getString("StartEndOdometer") + " (Miles) <br>" + obj.getString("StartEndOdometerKM") + " (KM)";
+            String odometer = obj.getString(ConstantsKeys.StartEndOdometer) + " (Miles) <br>" + obj.getString(ConstantsKeys.StartEndOdometerKM) + " (KM)";
             startEndOdoTV.setText(Html.fromHtml(odometer));
 
             String odometerDiff = "";
             if(IsMalfunction){
-                odometerDiff = obj.getString("OdometerDifference") + " (Miles) <font color='red'>(Malfunction)</font> <br>" +
-                        obj.getString("OdometerDifferenceKM") + " (KM) <font color='red'>(Malfunction)</font>";
+                odometerDiff = obj.getString(ConstantsKeys.OdometerDifference) + " (Miles) <font color='red'>(Malfunction)</font> <br>" +
+                        obj.getString(ConstantsKeys.OdometerDifferenceKM) + " (KM) <font color='red'>(Malfunction)</font>";
             }else{
-                odometerDiff = obj.getString("OdometerDifference") + " (Miles) <br>" + obj.getString("OdometerDifferenceKM") + " (KM)";
+                odometerDiff = obj.getString(ConstantsKeys.OdometerDifference) + " (Miles) <br>" + obj.getString(ConstantsKeys.OdometerDifferenceKM) + " (KM)";
             }
 
             OdometerDiffTV.setText(Html.fromHtml(odometerDiff));

@@ -148,7 +148,7 @@ public class ConstantsKeys {
     public static String UTCEndDateTime         = "UTCEndDateTime";
     public static String CrntOdodmeter          = "CrntOdodmeter";
     public static String LocationType           = "LocationType";
-    public static String DeferralOffTime        = "DeferralOffTime";
+    public static String DeferralOffTime        = "DeferralOff_dutyTime";
     public static String DayCount               = "DayCount";
 
 
@@ -277,6 +277,9 @@ public class ConstantsKeys {
     public static String ShipperAddress                 = "ShipperAddress";
 
     public static String suggested_data                 = "suggested_data";
+    public static String DeferralDay                    = "DeferralDay";
+    public static String DeferralDate                   = "DeferralDate";
+
 
     public static String EventDateTime                  = "EventDateTime";
     public static String EngineHours                    = "EngineHours";
@@ -387,6 +390,7 @@ public class ConstantsKeys {
     public static String SendDate                       = "SendDate";
     public static String Status                         = "Status";
     public static String Data                           = "Data";
+    public static String SaveOfflineData                = "SaveOfflineData";
     public static String DriverLogDate                  = "DriverLogDate";
     public static String SuggestedEditModel             = "SuggestedEditModel";
     public static String MalfunctionEngSync             = "SuggestedEditModel";
@@ -485,10 +489,16 @@ public class ConstantsKeys {
     public static String ObdPreference                  = "ObdPreference";
     public static String StartLocationKm                = "StartLocationKm";
     public static String IsOdoCalculationAllowed        = "IsOdoCalculationAllowed";
+    public static String IsEngineRestarted              = "IsEngineRestarted";
+
 
     public static String ChangedToOthers                = "ChangedToOthers";
     public static String IsAutoStatusSaved              = "IsAutoStatusSaved";
     public static String IsIgnitionOn                   = "IsIgnitionOn";
+    public static String obdCurrentIgnition             = "obdCurrentIgnition";
+    public static String obdType                        = "obdType";
+    public static String obdTime                        = "obdTime";
+
     public static String GeoLocation                    = "GeoLocation";
     public static String StatusName                     = "StatusName";
     public static String cycleRequests                  = "cycleRequests";
@@ -549,6 +559,40 @@ public class ConstantsKeys {
     public static String enginePowerUpAndShutDownList   = "enginePowerUpAndShutDownList";
     public static String UnAssignedVehicleMilesList     = "UnAssignedVehicleMilesList";
 
+
+    public static String TotalOffDutyHours              = "TotalOffDutyHours";
+    public static String TotalSleeperHours              = "TotalSleeperHours";
+    public static String TotalDrivingHours              = "TotalDrivingHours";
+    public static String TotalOnDutyHours               = "TotalOnDutyHours";
+
+    public static String oReportList                    = "oReportList";
+    public static String ShippingInformationModel       = "ShippingInformationModel";
+    public static String RecordDate                     = "RecordDate";
+    public static String PrintDisplayDate               = "PrintDisplayDate";
+    public static String USDOTNumber                    = "USDOTNumber";
+    public static String DriverLicenseNumber            = "DriverLicenseNumber";
+    public static String DriverLicenseState             = "DriverLicenseState";
+    public static String ELDID                          = "ELDID";
+    public static String TrailerId                      = "TrailerId";
+    public static String  TimeZone                      = "TimeZone";
+    public static String ELDManufacturer                = "ELDManufacturer";
+    public static String ShippingID                     = "ShippingID";
+    public static String DataDiagnosticIndicators       = "DataDiagnosticIndicators";
+    public static String PeriodStartingTime             = "PeriodStartingTime";
+    public static String CoDriverID                     = "CoDriverID";
+    public static String  TruckTractorID                = "TruckTractorID";
+    public static String UnIdentifiedDriverRecords      = "UnIdentifiedDriverRecords";
+    public static String ELDMalfunctionIndicators       = "ELDMalfunctionIndicators";
+    public static String TruckTractorVIN                = "TruckTractorVIN";
+    public static String ExemptDriverStatus             = "ExemptDriverStatus";
+    public static String StartEndEngineHours            = "StartEndEngineHours";
+    public static String CurrentLocation                = "CurrentLocation";
+    public static String FileComment                    = "FileComment";
+    public static String OfficeAddress                  = "OfficeAddress";
+    public static String StartEndOdometer               = "StartEndOdometer";
+    public static String StartEndOdometerKM             = "StartEndOdometerKM";
+    public static String OdometerDifference             = "OdometerDifference";
+    public static String OdometerDifferenceKM           = "OdometerDifferenceKM";
 
 
 }

@@ -87,6 +87,7 @@ import com.messaging.logistic.EldActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
+import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
 import com.notifications.NotificationManagerSmart;
@@ -201,7 +202,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String ObdRestarted = "OBD Restarted";
 
     int DriverType = 0;
-    boolean isStopService = false,  RestartObdFlag = false;
+    boolean isStopService = false,  RestartObdFlag = false, IsAutoSync = false;;
     JSONArray shipmentArray, odometerArray, driverLogArray;
     DBHelper dbHelper;
     HelperMethods hMethods;
@@ -445,20 +446,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
             bundle.clear();
 
+            /*if (SharedPref.getObdStatus(getApplicationContext()) == constants.WIRED_CONNECTED) {
+                saveObdData(getObdSource(), vin, obdOdometer, currentHighPrecisionOdometer,
+                        currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
+                        String.valueOf(-1), obdTripDistance, timeStamp, timeStamp);
 
-          //  if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+            }*/
 
-                if (SharedPref.getObdStatus(getApplicationContext()) == constants.WIRED_CONNECTED) {
-                    saveObdData(getObdSource(), vin, obdOdometer, currentHighPrecisionOdometer,
-                            currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
-                            String.valueOf(-1), obdTripDistance, timeStamp, timeStamp);
-
-                }
-
-                // call ELD rules with wired tablet data
-                obdCallBackObservable(speed, vin, timeStamp, null);
-          //  }
-
+            // call ELD rules with wired tablet data
+            obdCallBackObservable(speed, vin, timeStamp, null);
 
         }
     }
@@ -1022,6 +1018,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     if (ignitionStatus.equals("OFF")) {
                         SharedPref.SetTruckIgnitionStatus(ignitionStatus, constants.WiredOBD, global.getCurrentDate(), obdEngineHours, currentHighPrecisionOdometer, getApplicationContext());
                     }
+
+                    obdCallBackObservable(-1, "", "", null);
 
                     if(UILApplication.isActivityVisible()){
                         showEldEcmAlert();
@@ -1649,55 +1647,61 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         Log.i(TAG, "---------onStartCommand Service");
 
-        /*double speed = constants.calculateSpeedFromWiredTabOdometer("2021-06-28T00:12:26.08", "2021-06-28T00:12:30.08",
-                "1090031400", "1090031465", getApplicationContext());
-        Log.d("speed", "speed: " +speed);
-        */
-        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+        String pingStatus = SharedPref.isPing(getApplicationContext());
 
-            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
-                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+        if(pingStatus.equals(ConstantsKeys.SaveOfflineData)){
+
+            driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
+            if (driverLogArray.length() > 0) {
+                saveActiveDriverData();
+            } else {
+                postAllOfflineSavedData(IsAutoSync);
             }
 
-            boolean isConnected = HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac());
-            String bleStatus = SharedPref.isBlePing(getApplicationContext());
+        }else {
+            if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
 
-            if(EldFragment.IsTruckChange){
-                if(!mIsScanning && !isConnected) {
-                    initBleListener();
-                    initHtBle();
+                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
+                    SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
                 }
-            }else {
-                if (bleStatus.equals("start")) {
+
+                boolean isConnected = HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac());
+
+                if (EldFragment.IsTruckChange) {
                     if (!mIsScanning && !isConnected) {
+                        initBleListener();
                         initHtBle();
                     }
+                } else {
+                    if (pingStatus.equals("start")) {
+                        if (!mIsScanning && !isConnected) {
+                            initHtBle();
+                        }
+                    }
                 }
-            }
 
-            SharedPref.SetBlePingStatus("", getApplicationContext());
+            } else if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+                //  ------------- BLE OBD ----------
+                disconnectBleObd();
+                disableBle();
 
-        }else if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED){
-            //  ------------- BLE OBD ----------
-            disconnectBleObd();
-            disableBle();
+                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
+                    SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+                }
 
-            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
-                SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
-            }
+                StartStopServer(constants.WiredOBD);
+            } else {
+                //  ------------- BLE OBD ----------
+                disconnectBleObd();
+                disableBle();
 
-            StartStopServer(constants.WiredOBD);
-        }else{
-            //  ------------- BLE OBD ----------
-            disconnectBleObd();
-            disableBle();
-
-            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED) {
-                SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
-            }
-            if(wifiConfig.IsAlsNetworkConnected(getApplicationContext()) && IsOBDPingAllowed ){    // check ALS SSID connection with IsOBDPingAllowed permission
-                tcpClient.sendMessage("123456,can");
-                SharedPref.SaveConnectionInfo(constants.WifiOBD, Globally.GetCurrentDeviceDate(), getApplicationContext());
+                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED) {
+                    SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
+                }
+                if (wifiConfig.IsAlsNetworkConnected(getApplicationContext()) && IsOBDPingAllowed) {    // check ALS SSID connection with IsOBDPingAllowed permission
+                    tcpClient.sendMessage("123456,can");
+                    SharedPref.SaveConnectionInfo(constants.WifiOBD, Globally.GetCurrentDeviceDate(), getApplicationContext());
+                }
             }
         }
 
@@ -1748,7 +1752,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
 
 
-
+            SharedPref.SetPingStatus("", getApplicationContext());
 
         }
 
@@ -1905,11 +1909,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         Globally.VEHICLE_SPEED = -1;
 
                                         if(UILApplication.isActivityVisible() && Constants.IS_ACTIVE_ELD){
-                                             /*updateOfflineApiRejectionCount++;
-                                           if (updateOfflineApiRejectionCount > 1) {
-                                                updateOfflineApiRejectionCount = 0;
-                                                constants.IsAlsServerResponding = false;
-                                            }*/
+
                                         }else {
 
                                             saveActiveDriverData();
@@ -3314,10 +3314,22 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 if (lastIgnitionStatus.equals("OFF") && obdCurrentIgnition.equals("ON")) {
                                     SharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
 
-                                    Intent intent = new Intent(ConstantsKeys.IsIgnitionOn);
-                                    intent.putExtra(ConstantsKeys.IsIgnitionOn, true);
-                                    LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+                                    if(TabAct.host.getCurrentTab() == 0) {
+                                        Intent intent = new Intent(ConstantsKeys.IsIgnitionOn);
+                                        intent.putExtra(ConstantsKeys.IsIgnitionOn, true);
+                                        LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+                                    }else{
+                                        Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                                        intent.putExtra(ConstantsKeys.SuggestedEdit, false);
+                                        intent.putExtra(ConstantsKeys.IsCycleRequest, false);
+                                        intent.putExtra(ConstantsKeys.IsELDNotification, false);
+                                        intent.putExtra(ConstantsKeys.DriverELDNotificationList, false);
+                                        intent.putExtra(ConstantsKeys.IsEngineRestarted, true);
+                                        intent.putExtra(ConstantsKeys.IsYard, isYard);
+                                        intent.putExtra(ConstantsKeys.IsPersonal, isPersonal);
 
+                                        LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+                                    }
                                 }
 
                                 SharedPref.SetTruckIgnitionStatusForContinue(obdCurrentIgnition, type, time, getApplicationContext());
@@ -3407,7 +3419,81 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
+    void postAllOfflineSavedData(boolean IsAutoSync){
+        try{
+            // -------- upload offline locally saved data ---------
+            UploadSavedShipmentData();
+            SaveCertifyLog();
+            SaveMalfnDiagnstcLogToServer(null);
 
+            if (!SharedPref.GetOdoSavingStatus(getApplicationContext()))
+                UploadSavedOdometerData();
+
+
+            if (SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver)) {
+
+                // -----------------------------UnPosted inspection -----------------------------------
+                JSONArray inspectionMainDriverArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(DriverId), dbHelper);
+                JSONArray inspectionCoDriverArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(CoDriverId), dbHelper);
+
+                if (inspectionMainDriverArray.length() > 0) {
+                    saveDriverLogPost.PostDriverLogData(inspectionMainDriverArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
+                            Integer.valueOf(DriverId), SaveInspectionMain);
+                }
+
+
+                if (inspectionCoDriverArray.length() > 0) {
+                    saveDriverLogPost.PostDriverLogData(inspectionCoDriverArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
+                            Integer.valueOf(CoDriverId), SaveInspectionCo);
+                }
+
+
+                // -----------------------------UnPosted CT-PAT Inspection -----------------------------------
+                if (!Constants.IsCtPatUploading) {
+                    JSONArray ctPatInspMainDriverArray = ctPatInspectionMethod.getCtPatUnPostedInspArray(Integer.valueOf(DriverId), dbHelper);
+                    JSONArray ctPatInspCoDriverArray = ctPatInspectionMethod.getCtPatUnPostedInspArray(Integer.valueOf(CoDriverId), dbHelper);
+
+                    if (ctPatInspMainDriverArray.length() > 0) {
+                        saveDriverLogPost.PostDriverLogData(ctPatInspMainDriverArray, APIs.SAVE_17_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
+                                Integer.valueOf(DriverId), SaveCtPatInspMain);
+                    }
+
+
+                    if (ctPatInspCoDriverArray.length() > 0) {
+                        saveDriverLogPost.PostDriverLogData(ctPatInspCoDriverArray, APIs.SAVE_17_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
+                                Integer.valueOf(CoDriverId), SaveCtPatInspCo);
+                    }
+                }
+
+            } else {
+                // -----------------------------UnPosted inspection -----------------------------------
+                JSONArray inspectionMainDriverArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(DriverId), dbHelper);
+                if (inspectionMainDriverArray.length() > 0) {
+                    saveDriverLogPost.PostDriverLogData(inspectionMainDriverArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
+                            Integer.valueOf(DriverId), SaveInspectionMain);
+                }
+
+
+                // -----------------------------UnPosted CT-PAT Inspection -----------------------------------
+                if (!Constants.IsCtPatUploading) {
+                    JSONArray ctPatInspMainDriverArray = ctPatInspectionMethod.getCtPatUnPostedInspArray(Integer.valueOf(DriverId), dbHelper);
+                    if (ctPatInspMainDriverArray.length() > 0) {
+                        saveDriverLogPost.PostDriverLogData(ctPatInspMainDriverArray, APIs.SAVE_17_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
+                                Integer.valueOf(DriverId), SaveCtPatInspMain);
+                    }
+
+                }
+            }
+
+
+            // Sync data automatically if violation file occured
+            SyncData(IsAutoSync);
+
+            checkDeferralData();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback(){
 
@@ -3443,7 +3529,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         //   Log.d("response", "UpdateOffLine: " + flag + ": " + response);
                         try {
 
-                            boolean IsAutoSync = false;
                             updateOfflineNoResponseCount = 0;
                             updateOfflineApiRejectionCount = 0;
                             constants.IsAlsServerResponding = true;
@@ -3661,75 +3746,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     e.printStackTrace();
                                 }
 
-                                // -------- upload offline locally saved data ---------
-                                UploadSavedShipmentData();
-                                SaveCertifyLog();
-                                SaveMalfnDiagnstcLogToServer(null);
-
-                                if (!SharedPref.GetOdoSavingStatus(getApplicationContext()))
-                                    UploadSavedOdometerData();
-
-
-                                if (SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver)) {
-
-                                    // -----------------------------UnPosted inspection -----------------------------------
-                                    JSONArray inspectionMainDriverArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(DriverId), dbHelper);
-                                    JSONArray inspectionCoDriverArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(CoDriverId), dbHelper);
-
-                                    if (inspectionMainDriverArray.length() > 0) {
-                                        saveDriverLogPost.PostDriverLogData(inspectionMainDriverArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
-                                                Integer.valueOf(DriverId), SaveInspectionMain);
-                                    }
-
-
-                                    if (inspectionCoDriverArray.length() > 0) {
-                                        saveDriverLogPost.PostDriverLogData(inspectionCoDriverArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
-                                                Integer.valueOf(CoDriverId), SaveInspectionCo);
-                                    }
-
-
-                                    // -----------------------------UnPosted CT-PAT Inspection -----------------------------------
-                                    if (!Constants.IsCtPatUploading) {
-                                        JSONArray ctPatInspMainDriverArray = ctPatInspectionMethod.getCtPatUnPostedInspArray(Integer.valueOf(DriverId), dbHelper);
-                                        JSONArray ctPatInspCoDriverArray = ctPatInspectionMethod.getCtPatUnPostedInspArray(Integer.valueOf(CoDriverId), dbHelper);
-
-                                        if (ctPatInspMainDriverArray.length() > 0) {
-                                            saveDriverLogPost.PostDriverLogData(ctPatInspMainDriverArray, APIs.SAVE_17_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
-                                                    Integer.valueOf(DriverId), SaveCtPatInspMain);
-                                        }
-
-
-                                        if (ctPatInspCoDriverArray.length() > 0) {
-                                            saveDriverLogPost.PostDriverLogData(ctPatInspCoDriverArray, APIs.SAVE_17_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
-                                                    Integer.valueOf(CoDriverId), SaveCtPatInspCo);
-                                        }
-                                    }
-
-                                } else {
-                                    // -----------------------------UnPosted inspection -----------------------------------
-                                    JSONArray inspectionMainDriverArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(DriverId), dbHelper);
-                                    if (inspectionMainDriverArray.length() > 0) {
-                                        saveDriverLogPost.PostDriverLogData(inspectionMainDriverArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
-                                                Integer.valueOf(DriverId), SaveInspectionMain);
-                                    }
-
-
-                                    // -----------------------------UnPosted CT-PAT Inspection -----------------------------------
-                                    if (!Constants.IsCtPatUploading) {
-                                        JSONArray ctPatInspMainDriverArray = ctPatInspectionMethod.getCtPatUnPostedInspArray(Integer.valueOf(DriverId), dbHelper);
-                                        if (ctPatInspMainDriverArray.length() > 0) {
-                                            saveDriverLogPost.PostDriverLogData(ctPatInspMainDriverArray, APIs.SAVE_17_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false,
-                                                    Integer.valueOf(DriverId), SaveCtPatInspMain);
-                                        }
-
-                                    }
-                                }
-
-
-                                // Sync data automatically if violation file occured
-                                SyncData(IsAutoSync);
-
-                                checkDeferralData();
+                                postAllOfflineSavedData(IsAutoSync);
 
                             }
 
@@ -4383,8 +4400,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
     private void StartStopServer(final String value){
-        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ||
-                SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED   ||
+                   SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
             if (isBound) {
 
                 mHandler.post(new Runnable() {

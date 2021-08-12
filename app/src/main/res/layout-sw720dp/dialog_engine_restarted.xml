@@ -37,7 +37,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_12"
-                    android:text="@string/Lorem_ipsum_placeholder_text"
                     android:textSize="@dimen/text_size_19"
                     android:gravity="center_horizontal"
                     android:paddingLeft="@dimen/margin_20"

@@ -561,12 +561,19 @@
     <string name="ym_start">YM Start</string>
     <string name="ym_end">YM End</string>
 
+    <string name="youCanDefUpTo">You can defer up to </string>
+    <string name="ofOffdutyTime"> of OffDuty time.</string>
+    <string name="YouMustUseTom">You must use this tomorrow.</string>
+    <string name="defWillAutoDis">It will be disabled automatically after 48 hours of start time of Deferral rule.</string>
+    <string name="notEligForDef">You are not eligible for Deferral rule.</string>
+
     <string name="Day1ofDeferral">Day 1 of Deferral</string>
+    <string name="Day2ofDeferral">Day 2 of Deferral</string>
     <string name="ReviewConfirmDef">Review and confirm your off duty deferral</string>
     <string name="YestrdyYouDef">Yesterday you deferred some of off duty time that you must use today</string>
     <string name="youCanDef">You can defer up to 2 hours 0 min of OffDuty time. You must use this tomorrow.</string>
     <string name="timeToDef">Time to Defer</string>
-
+    <string name="ConfirmDutyStatus">Please confirm your duty status</string>
 
     <!-- dialog text sign in vehicle-->
     <string name="sign_in_vehicle">Sign in to vehicle</string>
@@ -594,7 +601,7 @@
     <string name="Engine_Restarted">Engine Restarted</string>
     <string name="LoginConfirmation">After Login Confirmation !!</string>
     <string name="go_off_duty">Go off Duty</string>
-    <string name="stay_in_personel">Stay in Personal Conveynce</string>
+    <string name="stay_in_personel">Stay in Personal Conveyance</string>
     <string name="stay_in_yard_move">Stay in Yard Move</string>
     <string name="Others">Others</string>
     <string name="want_continue">Do you want to continue with</string>

@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.background.service.BackgroundLocationService;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
@@ -1539,9 +1540,9 @@ public class Constants {
                 violaotionReason,
                 DriverName,
                 Reason,
-                Global.TRAILOR_NUMBER,
+                Globally.TRAILOR_NUMBER,
                 address, address,
-                Global.TRUCK_NUMBER,
+                Globally.TRUCK_NUMBER,
                 IsStatusAutomatic,
                 OBDSpeed,
                 GPSSpeed,
@@ -4155,5 +4156,70 @@ public class Constants {
             e.printStackTrace();
         }
     }
+
+    public void startService(Context context){
+        Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent);
+        }
+        context.startService(serviceIntent);
+    }
+
+
+
+    public boolean isDeferralOccurred(String DRIVER_ID, String MainDriverId, Context context){
+        int deferralDay;
+        if(DRIVER_ID.equals(MainDriverId)) {
+            deferralDay = Integer.parseInt(SharedPref.getDeferralDayMainDriver(context));
+        }else{
+            deferralDay = Integer.parseInt(SharedPref.getDeferralDayCoDriver(context));
+        }
+
+        if(deferralDay != 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    public int confirmDeferralRuleDays(String DRIVER_ID, String MainDriverId, Context context){
+        DateTime currentDate        = Globally.GetCurrentJodaDateTime();
+
+        int newDeferralDayValue = -1;
+        int deferralDay;
+        String deferralDate;
+
+        try {
+            if (DRIVER_ID.equals(MainDriverId)) {
+                deferralDay = Integer.parseInt(SharedPref.getDeferralDayMainDriver(context));
+                deferralDate = SharedPref.getDeferralDateMainDriver(context);
+            } else {
+                deferralDay = Integer.parseInt(SharedPref.getDeferralDayCoDriver(context));
+                deferralDate = SharedPref.getDeferralDateCoDriver(context);
+            }
+
+            if (deferralDate.length() > 15) {
+                DateTime deferralDateTime = Globally.getDateTimeObj(deferralDate, false);
+                int daysDiff = Days.daysBetween(deferralDateTime.toLocalDate(), currentDate.toLocalDate()).getDays();
+
+                if (daysDiff == 1) {
+                    if (deferralDay == 1) {
+                        newDeferralDayValue = 2;
+                    } else if (deferralDay == 2) {
+                        newDeferralDayValue = 0;
+                    }
+                } else if (daysDiff > 1) {
+                    newDeferralDayValue = 0;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return newDeferralDayValue;
+
+    }
+
+
 
 }

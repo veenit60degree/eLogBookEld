@@ -44,6 +44,7 @@ import com.constants.Slidingmenufunctions;
 import com.constants.UrlResponce;
 import com.constants.Utils;
 import com.custom.dialogs.AppUpdateDialog;
+import com.custom.dialogs.ContinueStatusDialog;
 import com.custom.dialogs.EldNotificationDialog;
 import com.driver.details.DriverConst;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -51,6 +52,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
+import com.messaging.logistic.fragment.EldFragment;
 import com.models.SlideMenuModel;
 import com.models.VehicleModel;
 
@@ -96,6 +98,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
     AlertDialog alertDialog;
     AlertDialog statusAlertDialog;
+    ContinueStatusDialog continueStatusDialog;
 
    /* @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -230,6 +233,18 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                                 }
                             }
                             SharedPref.SetELDNotificationAlertViewStatus(true, TabAct.this);
+                        }else{
+                            if (intent.hasExtra(ConstantsKeys.IsEngineRestarted)) {
+                                if(intent.getBooleanExtra(ConstantsKeys.IsEngineRestarted, false)){
+                                    Log.d("IsEngineRestarted", "IsEngineRestarted" );
+                                    boolean IsYardMove = intent.getBooleanExtra(ConstantsKeys.IsYard, false);
+                                    boolean IsPersonal = intent.getBooleanExtra(ConstantsKeys.IsPersonal, false);
+
+                                    YardMovePersonalStatusAlert(IsYardMove, IsPersonal);
+                                }
+
+                            }
+
                         }
 
                     }
@@ -340,23 +355,48 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
 
-/*    private Thread.UncaughtExceptionHandler onRuntimeError= new Thread.UncaughtExceptionHandler() {
-        public void uncaughtException(Thread thread, Throwable ex) {
-            //Try starting the Activity again
-            Log.d("TAB-uncaughtException", "TAB-uncaughtException: " +ex.toString());
+    public void YardMovePersonalStatusAlert(boolean isYardMove, boolean isPersonal) {
+
+        try {
+                if (continueStatusDialog != null && continueStatusDialog.isShowing()) {
+                    Log.d("dialog", "dialog is showing");
+                } else {
+
+                    String TruckIgnitionStatus = SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, TabAct.this);
+                    continueStatusDialog = new ContinueStatusDialog(TabAct.this, isYardMove, isPersonal, false, TruckIgnitionStatus, new ContinueListener());
+                    continueStatusDialog.show();
+
+                }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-    };*/
-
-
-    /*@Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //Clear the Activity's bundle of the subsidiary fragments' bundles.
-        outState.clear();
     }
-*/
 
-    private void setSlidingMenu() {
+    private class ContinueListener implements ContinueStatusDialog.ContinueListener{
+
+        @Override
+        public void ContinueBtnReady(String TruckIgnitionStatus) {
+            SharedPref.SetTruckStartLoginStatus(false, getApplicationContext());
+            SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", global.getCurrentDate(), getApplicationContext());
+
+        }
+
+        @Override
+        public void CancelBtnReady(String TruckIgnitionStatus) {
+            SharedPref.SetTruckStartLoginStatus(false, getApplicationContext());
+            SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", global.getCurrentDate(), getApplicationContext());
+
+            if (Globally.VEHICLE_SPEED < 10) {
+                EldFragment.autoOffDutyBtn.performClick();
+            } else {
+                EldFragment.autoDriveBtn.performClick();
+            }
+        }
+    }
+
+    private
+    void setSlidingMenu() {
         if(getApplicationContext() != null) {
             try {
 

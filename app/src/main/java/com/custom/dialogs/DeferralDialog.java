@@ -18,18 +18,19 @@ import com.messaging.logistic.R;
 public class DeferralDialog extends Dialog {
 
     public interface DeferralListener {
-        public void JobBtnReady();
+        public void JobBtnReady(int time, int deferralDays);
         public void CancelBtnReady();
     }
 
 
     Constants constants;
-    private int time;
+    private int time, deferralDays;
     private DeferralListener readyListener;
 
-    public DeferralDialog(Context context, int time, DeferralListener readyListener) {
+    public DeferralDialog(Context context, int time, int deferralDays, DeferralListener readyListener) {
         super(context);
         this.time = time;
+        this.deferralDays = deferralDays;
         this.readyListener = readyListener;
     }
 
@@ -53,13 +54,34 @@ public class DeferralDialog extends Dialog {
 
         constants = new Constants();
 
-        TextView defTimeTxtView           = (TextView) findViewById(R.id.defTimeTxtView);
-        TextView cancelDefTxtView      = (TextView)findViewById(R.id.cancelDefTxtView);
-        LinearLayout defConfirmBtn         = (LinearLayout) findViewById(R.id.defConfirmBtn);
+        TextView defTimeTxtView         = (TextView) findViewById(R.id.defTimeTxtView);
+        TextView cancelDefTxtView       = (TextView)findViewById(R.id.cancelDefTxtView);
+        TextView deferralTitleTV        = (TextView)findViewById(R.id.deferralTitleTV);
+        TextView defTimeDurationTV      = (TextView)findViewById(R.id.defTimeDurationTV);
+
+        LinearLayout defConfirmBtn      = (LinearLayout) findViewById(R.id.defConfirmBtn);
 
         int hours = Globally.HourFromMin(time);
         int min = Globally.MinFromHourOnly(time);
-        defTimeTxtView.setText(""+hours + " hrs " + min + " mins");
+        String defTime = " "+hours + " hrs " + min + " mins ";
+        String desc = "";
+
+        if(deferralDays == 1) {
+            desc = getContext().getString(R.string.youCanDefUpTo) +
+                    defTime +
+                    getContext().getString(R.string.ofOffdutyTime) +
+                    getContext().getString(R.string.YouMustUseTom);
+        }else{
+            desc = getContext().getString(R.string.youCanDefUpTo) +
+                    defTime +
+                    getContext().getString(R.string.ofOffdutyTime);
+
+            cancelDefTxtView.setVisibility(View.GONE);
+            deferralTitleTV.setText(getContext().getString(R.string.Day2ofDeferral));
+        }
+
+        defTimeDurationTV.setText(desc);
+        defTimeTxtView.setText(defTime.trim());
 
         defConfirmBtn.setOnClickListener(new LoadingJobListener());
         cancelDefTxtView.setOnClickListener(new CancelJobListener());
@@ -70,7 +92,7 @@ public class DeferralDialog extends Dialog {
     private class LoadingJobListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            readyListener.JobBtnReady();
+            readyListener.JobBtnReady(time, deferralDays);
             dismiss();
         }
     }

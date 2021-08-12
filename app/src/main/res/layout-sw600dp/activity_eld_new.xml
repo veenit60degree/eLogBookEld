@@ -10,6 +10,22 @@
     >
 
 
+    <Button
+        android:id="@+id/autoOffDutyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+
+        />
+
+    <Button
+        android:id="@+id/autoDriveBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+
+        />
+
 
     <Button
         android:id="@+id/resetTimerBtn"

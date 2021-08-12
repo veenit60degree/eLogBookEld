@@ -43,6 +43,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.VolleyError;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.AsyncResponse;
 import com.constants.CheckConnectivity;
@@ -345,7 +346,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 if (deferralDialog != null && deferralDialog.isShowing())
                                     deferralDialog.dismiss();
 
-                                deferralDialog = new DeferralDialog(getActivity(), leftOffOrSleeperMin, new DeferralListener());
+                                deferralDialog = new DeferralDialog(getActivity(), leftOffOrSleeperMin, 1, new DeferralListener());
                                 deferralDialog.show();
 
                             } catch (Exception e) {
@@ -354,11 +355,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                         } else {
                             buttonView.setChecked(false);
-                            global.EldScreenToast(SyncDataBtn, "You are not eligible for Deferral rule.", getResources().getColor(R.color.colorVoilation));
+                            global.EldScreenToast(SyncDataBtn, getString(R.string.notEligForDef), getResources().getColor(R.color.colorVoilation));
                         }
                     }else{
                         buttonView.setChecked(true);
-                        global.EldScreenToast(SyncDataBtn, "Need Deferral rule disabled desc.", getResources().getColor(R.color.colorPrimary));
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.defWillAutoDis), getResources().getColor(R.color.warning));
 
                        /* if(DriverType == Constants.MAIN_DRIVER_TYPE) {
                             SharedPref.setDeferralForMain(false, getActivity());
@@ -597,11 +598,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
             isHaulExcptn    = SharedPref.get16hrHaulExcptn(getActivity());
             isAdverseExcptn = SharedPref.getAdverseExcptn(getActivity());
-            isDeferral      = SharedPref.getDeferralForMain(getActivity());
+            isDeferral      = SharedPref.isDeferralMainDriver(getActivity());
         }else{
             isHaulExcptn    = SharedPref.get16hrHaulExcptnCo(getActivity());
             isAdverseExcptn = SharedPref.getAdverseExcptnCo(getActivity());
-            isDeferral      = SharedPref.getDeferralForCo(getActivity());
+            isDeferral      = SharedPref.isDeferralCoDriver(getActivity());
         }
     }
 
@@ -1139,54 +1140,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     }
 
 
-    /**
-     * Creating new user node under 'users'
-     */
-   /* private void addUsageData() {
-        // TODO
-        // In real apps this userId should be fetched
-        // by implementing firebase auth
-
-        // Check for already existed userId
-        if (TextUtils.isEmpty(userId)) {
-            // create User data
-        } else {
-            // add User data
-
-        }
-
-
-       *//* if (TextUtils.isEmpty(userId)) {
-            userId = mFirebaseDatabase.push().getKey();
-        }*//*
-
-        DataUsageModel user = new DataUsageModel(
-                DriverId, DriverName,
-                AlsSendingData, AlsReceivedData,
-                MobileUsage, TotalUsage,
-                global.getCurrentDate());
-
-        Map<String, DataUsageModel> users = new HashMap<>();
-        users.put(DriverName, user);
-
-        mFirebaseDatabase.child(DriverId).push().setValue(user);
-
-      //  mFirebaseDatabase.setValue(users);
-
-
-    }
-
-*/
-
     private class DeferralListener implements DeferralDialog.DeferralListener{
 
         @Override
-        public void JobBtnReady() {
+        public void JobBtnReady(int time, int deferralDays) {
 
             if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-                SharedPref.setDeferralForMain(true, getActivity());
+                SharedPref.setDeferralForMain(true, Globally.GetCurrentDateTime(), "1", getActivity());
             }else{
-                SharedPref.setDeferralForCo(true, getActivity());
+                SharedPref.setDeferralForCo(true, Globally.GetCurrentDateTime(), "1", getActivity());
             }
 
             global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.Deferralenabled), getResources().getColor(R.color.colorPrimary));
@@ -1201,12 +1163,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             // save deferral event inn local db and push automatically later. Reason behind this to save in offline also when internet is not working.
             deferralMethod.DeferralLogHelper(Integer.valueOf(DriverId), dbHelper, savedDeferralArray);
 
-           /* hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_deferral_rule),
-                    LocationType, "", false, isNorthCanada, DriverType, constants,
-                    MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                    syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
 
-*/
+            SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+            constant.startService(getActivity());
+
         }
 
         @Override
@@ -1214,6 +1174,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             deferralSwitchButton.setChecked(false);
         }
     }
+
+
+
 
     private class RemarksListener implements AdverseRemarksDialog.RemarksListener{
 

@@ -1,6 +1,8 @@
 package com.models;
 
-public class DotDataModel {
+import java.util.Date;
+
+public class DotDataModel implements Comparable<DotDataModel>{
 
     String DriverStatus;
     String StartTime;
@@ -18,10 +20,12 @@ public class DotDataModel {
     String EventTypeStatus;
     String Remarks;
     String Origin;
+    String SeqNumber;
+    Date date;
 
     public DotDataModel(String driverStatus, String startTime, String endTime, boolean isMalfunction, String time, String location,
                         String startOdometer, String endOdomoter, String odometerInKm, String odometerInMiles, String engineHours,
-                        String eventTypeStatus, String Remarks, String origin) {
+                        String eventTypeStatus, String Remarks, String origin, String seqNumber, Date date) {
 
         DriverStatus = driverStatus;
         StartTime = startTime;
@@ -38,6 +42,9 @@ public class DotDataModel {
         EventTypeStatus = eventTypeStatus;
         this.Remarks = Remarks;
         Origin = origin;
+        SeqNumber = seqNumber;
+        this.date = date;
+
     }
 
     public String getDriverStatus() {
@@ -94,5 +101,26 @@ public class DotDataModel {
 
     public String getOrigin() {
         return Origin;
+    }
+
+    public boolean isMalfunction() {
+        return IsMalfunction;
+    }
+
+    public String getSeqNumber() {
+        return SeqNumber;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    @Override
+    public int compareTo(DotDataModel dotDataModel) {
+        if(getDate().equals(dotDataModel.getDate())){
+            return getSeqNumber().compareTo(dotDataModel.getSeqNumber());
+        }else{
+            return getDate().compareTo(dotDataModel.getDate());
+        }
     }
 }

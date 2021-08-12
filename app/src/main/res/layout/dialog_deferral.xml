@@ -49,11 +49,13 @@
 
 
         <TextView
+            android:id="@+id/deferralTitleTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Day1ofDeferral"
             android:textSize="@dimen/text_size_16"
-            android:visibility="gone"
+            android:textColor="@color/black_download"
+
             />
 
 
@@ -71,6 +73,7 @@
             />
 
         <TextView
+            android:id="@+id/defTimeDurationTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/margin_15"

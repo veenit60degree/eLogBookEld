@@ -191,15 +191,15 @@ public class SharedPref {
 
 
 
-    // Get bluetooth ping status -------------------
-    public static String isBlePing(Context context) {
+    // Get  ping status -------------------
+    public static String isPing(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("IsBlePing", "");
     }
 
 
-    // Set bluetooth ping status  -------------------
-    public static void SetBlePingStatus( String status, Context context) {
+    // Set ping status  -------------------
+    public static void SetPingStatus( String status, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("IsBlePing", status);
@@ -1627,17 +1627,20 @@ public class SharedPref {
 
 
     // Set Deferral Rule settings For Main driver -------------------
-    public static void setDeferralForMain( boolean value, Context context) {
+    public static void setDeferralForMain( boolean value, String startDate, String eventDay, Context context) {
         if(context != null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("deferral_main", value);
+            editor.putString("deferral_start_date", startDate);
+            editor.putString("deferral_day", eventDay);
+
             editor.commit();
         }
     }
 
     // Get Main driver's Deferral Rule settings -------------------
-    public static boolean getDeferralForMain( Context context) {
+    public static boolean isDeferralMainDriver( Context context) {
         boolean isDefferal = false;
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1647,18 +1650,40 @@ public class SharedPref {
     }
 
 
+    // Get Main driver's Deferral Start Date -------------------
+    public static String getDeferralDateMainDriver( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString("deferral_start_date", "");
+        }
+        return "";
+    }
+
+    // Get Main driver's Deferral Day -------------------
+    public static String getDeferralDayMainDriver( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString("deferral_day", "0");
+        }
+        return "";
+    }
+
+
+
     // Set Deferral Rule settings For Co driver -------------------
-    public static void setDeferralForCo( boolean value, Context context) {
+    public static void setDeferralForCo( boolean value, String startDate, String eventDay, Context context) {
         if(context != null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("deferral_co", value);
+            editor.putString("deferral_co_start_date", startDate);
+            editor.putString("deferral_co_day", eventDay);
             editor.commit();
         }
     }
 
     // Get Co driver's Deferral Rule settings -------------------
-    public static boolean getDeferralForCo( Context context) {
+    public static boolean isDeferralCoDriver( Context context) {
         boolean isDefferal = false;
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1666,6 +1691,29 @@ public class SharedPref {
         }
         return isDefferal;
     }
+
+
+    // Get Co driver's Deferral Start Date -------------------
+    public static String getDeferralDateCoDriver( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString("deferral_co_start_date", "");
+        }
+        return "";
+    }
+
+    // Get Co driver's Deferral Event Code -------------------
+    public static String getDeferralDayCoDriver( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString("deferral_co_day", "");
+        }
+        return "";
+    }
+
+
+
+
 
     // Set 16 hour haul exception -------------------
     public static void set16hrHaulExcptn( boolean value, Context context) {

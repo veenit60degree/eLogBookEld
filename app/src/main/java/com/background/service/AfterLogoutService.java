@@ -170,8 +170,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 e.printStackTrace();
             }
 
-            // ---------------- temp data ---------------------CalculateCycleTime
-              ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
+            // ---------------- temp data ---------------------
+            //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
 
             checkObdDataWithRule(speed);
         }
