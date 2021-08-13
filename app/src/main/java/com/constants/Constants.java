@@ -2984,9 +2984,18 @@ public class Constants {
                 JSONArray dateWiseArray = new JSONArray(obj.getString("loginAndLogoutDateObjectList"));
                 parseData(dateWiseArray, dotLogList, false);
             }
+
+
+            if(dotLogList.size() > 0){
+                CanadaDutyStatusModel model = dotLogList.get(dotLogList.size()-1);
+                model.setHeaderViewCount(logArray.length());
+                dotLogList.add(model);
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
+
 
         return dotLogList;
     }
@@ -3004,6 +3013,7 @@ public class Constants {
     private void parseData(JSONArray logArray, List<CanadaDutyStatusModel> dotLogList, boolean isSorting){
 
         try{
+            int headerViewCount = 0;
             boolean isNewDate = true;
             String lastDateTimeMin = "";
             List<CanadaDutyStatusModel> dotDateWiseList = new ArrayList<>();
@@ -3012,7 +3022,6 @@ public class Constants {
 
                 DateFormat format = new SimpleDateFormat(Globally.DateFormat, Locale.ENGLISH);
                 Date date = format.parse(obj.getString(ConstantsKeys.DateTimeWithMins));
-               // Date certifyLogDate = format.parse(obj.getString(ConstantsKeys.CertifyLogDate));
 
                 int seqNumber = 0;
                 if(!obj.isNull(ConstantsKeys.SequenceNumber)){
@@ -3030,6 +3039,7 @@ public class Constants {
                         if (dayDiff == 0){
                             dotDateWiseList.add(dutyModel);
                         }else{
+                            headerViewCount++;
                             Collections.sort(dotDateWiseList);
                             for(int listPos = 0 ; listPos < dotDateWiseList.size() ; listPos++){
                                 dotLogList.add(dotDateWiseList.get(listPos));
@@ -3037,6 +3047,7 @@ public class Constants {
                             dotDateWiseList = new ArrayList<>();
                         }
                     }else{
+                        headerViewCount++;
                         dotDateWiseList.add(dutyModel);
                     }
                 }else {
@@ -3051,6 +3062,10 @@ public class Constants {
                 for(int listPos = 0 ; listPos < dotDateWiseList.size() ; listPos++){
                     dotLogList.add(dotDateWiseList.get(listPos));
                 }
+            }
+
+            if(dotLogList.size() > 0){
+                dotLogList.get(dotLogList.size()-1).setHeaderViewCount(headerViewCount);
             }
 
         }catch (Exception e){
@@ -3126,7 +3141,8 @@ public class Constants {
                     date,
                     CheckNullBString(obj.getString(ConstantsKeys.EditDateTime)),
                     CheckNullBString(obj.getString(ConstantsKeys.CertifyLogDate)),
-                    IsNewDate
+                    IsNewDate,
+                    0
 
             );
 
@@ -4219,6 +4235,7 @@ public class Constants {
         return newDeferralDayValue;
 
     }
+
 
 
 

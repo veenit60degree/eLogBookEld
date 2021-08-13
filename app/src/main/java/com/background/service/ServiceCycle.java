@@ -653,8 +653,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                             // auto change in personal use only applicable in canada cycle
                             boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(context);
 
-                            if ((isPersonal || isYmPcAlertShown) &&
-                                    (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2))) {
+                            if ((isPersonal || isYmPcAlertShown) &&  (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2))  ) {
                                 boolean isPersonalUse75KmCrossed = SharedPref.isPersonalUse75KmCrossed(context);
 
                                 if (isPersonalUse75KmCrossed || isYmPcAlertShown) {
@@ -686,8 +685,23 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                     driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
                                         } else {
-                                            ContinueSpeedCounter = 0;
-                                            ClearCount();
+                                            if (isPersonal && isPersonalUse75KmCrossed) {
+                                                PersonalUse75Km = true;
+                                                LastStatus = "_PU_Crossed75Km";
+                                                message = "Duty status switched to On Duty due to Personal Use limit (75 km) is exceeded for the day";
+
+                                                // set value false when PU status has been changed
+                                                SharedPref.SetTruckStartLoginStatus(false, context);
+
+                                                CHANGED_STATUS = ON_DUTY;
+                                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+
+                                            }else{
+                                                ContinueSpeedCounter = 0;
+                                                ClearCount();
+                                            }
+
                                         }
                                     }
                                 }

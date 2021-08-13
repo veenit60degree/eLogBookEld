@@ -364,10 +364,25 @@ public class TrailorDialog extends Dialog {
         public void onClick(View v) {
 
             boolean isAllowed = true;
+            String alertMsg  = "";
             String Trailer = TrailorNoEditText.getText().toString().trim();
-            if(noTrailerView.getVisibility() == View.VISIBLE && radioEnterTrailer.isChecked() && Trailer.length() == 0){
+            /*if(noTrailerView.getVisibility() == View.VISIBLE && radioEnterTrailer.isChecked() && Trailer.length() == 0){
                 isAllowed = false;
-            }
+            }*/
+
+              if(noTrailerView.getVisibility() == View.VISIBLE){
+                  if(Trailer.length() == 0 && !radioNoTrailer.isChecked() && !radioEnterTrailer.isChecked()){
+                      alertMsg = ConstantsEnum.SELECT_TRAILER_TYPE;
+                      isAllowed = false;
+                  }else{
+                      if(Trailer.length() == 0 && radioEnterTrailer.isChecked()){
+                          alertMsg = ConstantsEnum.ENTER_TRAILER_NO;
+                          isAllowed = false;
+                      }else if(radioNoTrailer.isChecked()){
+                          Trailer = getContext().getString(R.string.no_trailer);
+                      }
+                  }
+              }
 
             if(isAllowed) {
                 if (spinnerSelection.equals(getContext().getResources().getString(R.string.YardMove))) {
@@ -429,7 +444,7 @@ public class TrailorDialog extends Dialog {
                             dismiss();
                         } else {
 
-                            if (updatedReason.equals("Trailer Drop") && (Trailor.length() == 0 || Trailor.equals(getContext().getResources().getString(R.string.no_trailer)))) {
+                            if (updatedReason.equals("Trailer Drop") && (Trailor.length() == 0 || Trailor.equals(getContext().getString(R.string.no_trailer)))) {
                                 Global.EldScreenToast(btnLoadingJob, ConstantsEnum.NO_TRAILER_ALERT, getContext().getResources().getColor(R.color.red_eld));
 
                             } else if ((updatedReason.equals("Trailer Pickup") && Trailer.length() == 0) ||
@@ -506,7 +521,7 @@ public class TrailorDialog extends Dialog {
                 }
             }else{
                 noTrailerView.requestFocus();
-                Global.EldScreenToast(btnLoadingJob, getContext().getResources().getString(R.string.enter_trailer_number),
+                Global.EldScreenToast(btnLoadingJob, alertMsg,
                         getContext().getResources().getColor(R.color.colorVoilation));
             }
 

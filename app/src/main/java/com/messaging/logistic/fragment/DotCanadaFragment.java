@@ -139,6 +139,12 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     int CanMaxDays          = 14;
     int MaxDays;
 
+   /* public static int DutyStatusHeaderCount  = 1;
+    public static int LoginLogoutHeaderCount = 1;
+    public static int CycleOpZoneHeaderCount = 1;
+    public static int EnginePowerHeaderCount = 1;
+*/
+
     String DayName, MonthFullName , MonthShortName , CurrentCycleId, CountryCycle;
     String DefaultLine      = " <g class=\"event \">\n";
 
@@ -765,31 +771,39 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
 
         try {
-            int headerViewHeight = 38;
-            if(global.isTablet(getActivity())){
-                inspectionLayHeight  = eventDotETV.getHeight() + 20;
-                headerViewHeight = eventDotETV.getHeight() + 40;
+            int headerViewHeight;
+            int viewHeight = eventDotETV.getHeight();
+            if(viewHeight > 0) {
+                if (global.isTablet(getActivity())) {
+                    inspectionLayHeight = viewHeight + 25;
+                    headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) +10;
+                } else {
+                    inspectionLayHeight = viewHeight + 30;
+                    headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) ;
+                }
+
             }else{
-                inspectionLayHeight  = eventDotETV.getHeight() + 40;
-                headerViewHeight = eventDotETV.getHeight() + 40;
-            }
-
-
-            if (inspectionLayHeight == 0) {
                 if (global.isTablet(getActivity())) {
                     inspectionLayHeight = constants.intToPixel(getActivity(), 60);
-                    headerViewHeight    = constants.intToPixel(getActivity(), 82);
+                    headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) + 10;
                 } else {
                     inspectionLayHeight = constants.intToPixel(getActivity(), 45);
-                    headerViewHeight    = constants.intToPixel(getActivity(), 65);
+                    headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight);
                 }
+
             }
 
-            final int DutyStatusListHeight = getHeight(inspectionLayHeight, DutyStatusList, headerViewHeight);  //(inspectionLayHeight * DutyStatusList.size()) + (constants.getDateTitleCount(DutyStatusList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(DutyStatusList));
-            final int LoginLogoutListHeight = getHeight(inspectionLayHeight, LoginLogoutList, headerViewHeight); //(inspectionLayHeight * LoginLogoutList.size()) + (constants.getDateTitleCount(LoginLogoutList) * inspectionLayHeight)+ (headerViewHeight * constants.getListNewDateCount(LoginLogoutList));
-            final int CommentsRemarksListHeight = inspectionLayHeight * (CommentsRemarksList.size() +1) ;
-            final int CycleOpZoneListHeight = getHeight(inspectionLayHeight, CycleOpZoneList, headerViewHeight);    //(inspectionLayHeight * CycleOpZoneList.size()) + (constants.getDateTitleCount(CycleOpZoneList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(CycleOpZoneList));
-            final int EnginePowerListHeight = getHeight(inspectionLayHeight, EnginePowerList, headerViewHeight);    //(inspectionLayHeight * EnginePowerList.size()) + (constants.getDateTitleCount(EnginePowerList) * inspectionLayHeight) + (headerViewHeight * constants.getListNewDateCount(EnginePowerList));
+
+            int HeaderViewCount = 1;
+            if(LoginLogoutList.size() > 0){
+                HeaderViewCount = LoginLogoutList.get(LoginLogoutList.size()-1).getHeaderViewCount();
+            }
+            int dividerHeight = constants.intToPixel(getActivity(), remAnotnDotListView.getDividerHeight());
+            final int DutyStatusListHeight = getHeight(inspectionLayHeight, DutyStatusList, headerViewHeight, dividerHeight);
+            final int LoginLogoutListHeight = getHeight(inspectionLayHeight, LoginLogoutList, headerViewHeight * HeaderViewCount, dividerHeight);
+            final int CommentsRemarksListHeight = getHeight(inspectionLayHeight, CommentsRemarksList, 1, dividerHeight);
+            final int CycleOpZoneListHeight = getHeight(inspectionLayHeight, CycleOpZoneList, headerViewHeight, dividerHeight);
+            final int EnginePowerListHeight = getHeight(inspectionLayHeight, EnginePowerList, headerViewHeight, dividerHeight);
            // final int UnIdenfdVehListHeight = (inspectionLayHeight * UnAssignedVehicleList.size()+1) + headerViewHeight;
 
             new Handler().postDelayed(new Runnable() {
@@ -810,18 +824,18 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    int getHeight(int inspectionLayHeight, List<CanadaDutyStatusModel> list, int headerViewHeight){
-        int itemViewHeight = inspectionLayHeight;
-        if(list.size() > 9 && list.size() < 21){
-            itemViewHeight = inspectionLayHeight + 12;
-        }else if(list.size() > 20 && list.size() < 31){
-            itemViewHeight = inspectionLayHeight + 16;
-        }else if(list.size() > 30){
-            itemViewHeight = inspectionLayHeight + 20;
-        }
-        int viewHeight = (itemViewHeight * list.size()) + (constants.getDateTitleCount(list) * itemViewHeight) +
-                (headerViewHeight * constants.getListNewDateCount(list));
-        return viewHeight;
+    int getHeight(int inspectionLayHeight, List<CanadaDutyStatusModel> list, int headerViewHeight, int dividerHeight){
+
+       /* if (global.isTablet(getActivity())) {
+            inspectionLayHeight = inspectionLayHeight;
+        }else{
+            inspectionLayHeight = inspectionLayHeight;
+        }*/
+
+        dividerHeight = dividerHeight * list.size();
+        return (inspectionLayHeight * list.size()) + (constants.getDateTitleCount(list) * inspectionLayHeight) +
+                (headerViewHeight * constants.getListNewDateCount(list)) + dividerHeight;
+
     }
 
     void ReloadWebView(final String closeTag){

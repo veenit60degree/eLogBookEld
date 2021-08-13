@@ -165,6 +165,21 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             obdDataTxtView.setText(getString(R.string.no_obd_settings));
         }
 
+       /* final Button testBtn = (Button) rootView.findViewById(R.id.testBtn);
+        testBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(BackgroundLocationService.OBD_DISCONNECTED){
+                    BackgroundLocationService.OBD_DISCONNECTED = false;
+                    testBtn.setText("OBD Disconnected");
+                }else{
+                    BackgroundLocationService.OBD_DISCONNECTED = true;
+                    testBtn.setText("OBD Connected");
+                }
+            }
+        });
+      */
+
     }
 
 

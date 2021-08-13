@@ -68,7 +68,7 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
             String EditDateTime;
             String CertifyLogDate;
             boolean IsNewDate;
-
+            int HeaderViewCount;
 
     public CanadaDutyStatusModel(String dateTimeWithMins, String eventUTCTimeStamp, String driverStatusID, int eventType,
                                  int eventCode, String dutyMinutes, String annotation,
@@ -84,7 +84,7 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
                                  String distanceSinceLastValidCord, String recordOrigin, String distanceInKM,
                                  String hexaSeqNumber, String orderBy, String onDutyHours, String offDutyHours,
                                  String truckEquipmentNo, String workShiftStart, String workShiftEnd, Date dateTimee,
-                                 String editDateTime, String certifyLogDate, boolean isNewDate) {
+                                 String editDateTime, String certifyLogDate, boolean isNewDate, int headerViewCount) {
         DateTimeWithMins = dateTimeWithMins;
         EventUTCTimeStamp = eventUTCTimeStamp;
         DriverStatusID = driverStatusID;
@@ -139,6 +139,7 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
         EditDateTime = editDateTime;
         CertifyLogDate = certifyLogDate;
         IsNewDate = isNewDate;
+        HeaderViewCount = headerViewCount;
     }
 
 
@@ -374,4 +375,11 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
         return IsNewDate;
     }
 
+    public void setHeaderViewCount(int headerViewCount) {
+        HeaderViewCount = headerViewCount;
+    }
+
+    public int getHeaderViewCount() {
+        return HeaderViewCount;
+    }
 }

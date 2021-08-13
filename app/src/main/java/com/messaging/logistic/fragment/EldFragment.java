@@ -1956,7 +1956,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     personalUseBtn.setText(getString(R.string.pc_end));
                 }
 
-
+                yardMoveBtn.setText(getString(R.string.ym_start));
                 StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
 
                 break;
@@ -1969,6 +1969,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed);
                 StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
 
+                personalUseBtn.setText(getString(R.string.pc_start));
+                yardMoveBtn.setText(getString(R.string.ym_start));
+
                 break;
 
             case DRIVING:   //3
@@ -1977,6 +1980,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 initilizeEldView.ActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, isViolation);
                 initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed);
                 initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed);
+
+                personalUseBtn.setText(getString(R.string.pc_start));
+                yardMoveBtn.setText(getString(R.string.ym_start));
 
                 if (isViolation) {
                     StatusMainView.setBackgroundResource(R.drawable.red_default);
@@ -1990,6 +1996,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed);
                 initilizeEldView.ActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, isViolation);
                 initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed);
+
+                personalUseBtn.setText(getString(R.string.pc_start));
 
                 if (isViolation) {
                     StatusMainView.setBackgroundResource(R.drawable.red_default);
@@ -2006,7 +2014,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed);
                 initilizeEldView.ActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, false);
                 StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
-
+                personalUseBtn.setText(getString(R.string.pc_start));
+                yardMoveBtn.setText(getString(R.string.ym_start));
 
                 break;
         }
@@ -2239,6 +2248,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             if (DRIVER_JOB_STATUS == DRIVING ) {
                                 Global.EldScreenToast(OnDutyBtn, ConstantsEnum.TRAILER_CHANGE, getResources().getColor(R.color.colorVoilation));
                             } else {
+                                if (trailerDialog != null && trailerDialog.isShowing())
+                                    trailerDialog.dismiss();
+
                                 trailerDialog = new TrailorDialog(getActivity(), "trailor", false, TrailorNumber, 0, false,
                                         Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
                                 trailerDialog.show();
@@ -2802,6 +2814,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                         if (TrailorNumber.trim().length() > 0) {
                                             shipmentInfoAlert();
                                         } else {
+                                            if (trailerDialog != null && trailerDialog.isShowing())
+                                                trailerDialog.dismiss();
+
                                             trailerDialog = new TrailorDialog(getActivity(), "trailor_driving", false, TrailorNumber, 0, false,
                                                     Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
                                             trailerDialog.show();
@@ -3007,6 +3022,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
             } else {
+                if (trailerDialog != null && trailerDialog.isShowing())
+                    trailerDialog.dismiss();
+
                 trailerDialog = new TrailorDialog(getActivity(), "trailor_driving", false, TrailorNumber, 0, false,
                         Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
                 trailerDialog.show();
@@ -7198,6 +7216,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     }
                                 } else {
                                     if(getActivity() != null) {
+                                        if (trailerDialog != null && trailerDialog.isShowing())
+                                            trailerDialog.dismiss();
+
                                         trailerDialog = new TrailorDialog(getActivity(), constants.Personal, false,
                                                 TrailorNumber, 0, false, Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
                                         trailerDialog.show();
