@@ -160,7 +160,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     ImageView calendarBtn, coDriverImgView, connectionStatusImgView, cyleFlagImgView;
     Button sendReportBtn, yardMoveBtn, personalUseBtn;
     RelativeLayout certifyLogBtn;
-    public static Button refreshLogBtn, moveToCertifyPopUpBtn, autoOffDutyBtn, autoDriveBtn;
+    public static Button refreshLogBtn, moveToCertifyPopUpBtn, autoOffDutyBtn, autoOnDutyBtn, autoDriveBtn;
     public static TextView summaryBtn;
     int DRIVER_JOB_STATUS = 1, SWITCH_VIEW = 1, oldStatusView = 0, DriverType = 0;
     TextView dateTv, nameTv, jobTypeTxtVw, perDayTxtVw, jobTimeTxtVw, jobTimeRemngTxtVw, EldTitleTV,
@@ -533,6 +533,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         moveToCertifyPopUpBtn = (Button) view.findViewById(R.id.resetTimerBtn);
         refreshLogBtn = (Button) view.findViewById(R.id.refreshLogBtn);
         autoOffDutyBtn = (Button) view.findViewById(R.id.autoOffDutyBtn);
+        autoOnDutyBtn  = (Button)view.findViewById(R.id.autoOnDutyBtn);
         autoDriveBtn = (Button) view.findViewById(R.id.autoDriveBtn);
 
         summaryBtn = (TextView) view.findViewById(R.id.summaryBtn);
@@ -577,6 +578,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         personalUseBtn.setOnClickListener(this);
         moveToCertifyPopUpBtn.setOnClickListener(this);
         autoOffDutyBtn.setOnClickListener(this);
+        autoOnDutyBtn.setOnClickListener(this);
         autoDriveBtn.setOnClickListener(this);
 
 
@@ -1676,7 +1678,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
                 boolean isUnCertified = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, SelectedDate, CurrentCycleId, logPermissionObj);
                 boolean isMissingLoc = constants.isLocationMissing(DRIVER_ID, CurrentCycleId, driverPermissionMethod,
-                        recapViewMethod, Global, hMethods, dbHelper, logPermissionObj);
+                        recapViewMethod, Global, hMethods, dbHelper, logPermissionObj, getActivity());
 
                 if (isPendingNotifications | isUnCertified || isMissingLoc) {
                     otherOptionBadgeView.setVisibility(View.VISIBLE);
@@ -1812,8 +1814,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
 
             if (CurrentCycle.equalsIgnoreCase("null") || CurrentCycleId.equals("-1")  || CurrentCycleId.length() == 0) {
-                CurrentCycle = Global.USA_WORKING_7_DAYS_NAME;
-                CurrentCycleId = Global.USA_WORKING_7_DAYS;
+                CurrentCycle = Global.NO_CYCLE_NAME;
+                CurrentCycleId = Global.NO_CYCLE;
             }
 
             remainingTimeTopTV.setText(Html.fromHtml("Cycle time left <b>" + Global.FinalValue(LeftWeekOnDutyHoursInt) + "</b>" ));
@@ -2120,7 +2122,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
                     boolean isUnCertified = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, SelectedDate, CurrentCycleId, logPermissionObj);
                     boolean isMissingLoc = constants.isLocationMissing(DRIVER_ID, CurrentCycleId, driverPermissionMethod,
-                            recapViewMethod, Global, hMethods, dbHelper, logPermissionObj);
+                            recapViewMethod, Global, hMethods, dbHelper, logPermissionObj, getActivity());
                     if (isMissingLoc || isUnCertified) {
                         certifyLogErrorImgVw.setVisibility(View.VISIBLE);
                     } else {
@@ -2568,6 +2570,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 SaveDrivingStatus();
                 break;
 
+            case R.id.autoOnDutyBtn:
+                isYardBtnClick = false;
+                Reason = "Others";
+                SaveDriverJob(Global.ON_DUTY);
+                break;
+
         }
     }
 
@@ -2639,7 +2647,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         // if Odometers are saving through OBD automatically then makes all the condition false to ignore odometer save
                         if(SharedPref.IsOdometerFromOBD(getActivity())) {
                             SharedPref.OdometerSaved(true, getActivity());
-                            EldFragment.IsStartReading = false;
+                            IsStartReading = false;
                             IsPopupDismissed = true;
                         }
 
@@ -2654,7 +2662,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                         OpenLocationDialog(OFF_DUTY, OldSelectedStatePos, false);
                                     }
                                 } else {
-                                    if (DRIVER_JOB_STATUS == OFF_DUTY && EldFragment.IsStartReading) {
+                                    if (DRIVER_JOB_STATUS == OFF_DUTY && IsStartReading) {
                                         Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_END_READING, true, OFF_DUTY, OffDutyBtn, alertDialog);
                                     } else {
                                         JobStatusInt = OFF_DUTY;
@@ -2664,7 +2672,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             } else {
                                 AFTER_PERSONAL_JOB = PERSONAL_OFF_DUTY;
                                 if (isPersonal.equals("true")) {
-                                    if (EldFragment.IsStartReading) {
+                                    if (IsStartReading) {
                                         Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_END_READING, true, OFF_DUTY, OffDutyBtn, alertDialog);
                                     } else {
                                         Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING, true, OFF_DUTY, OffDutyBtn, alertDialog);
@@ -2718,7 +2726,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 // if Odometers are saving through OBD autmatically then makes all the condition false to ignore odometer save
                 if(SharedPref.IsOdometerFromOBD(getActivity())) {
                     SharedPref.OdometerSaved(true, getActivity());
-                    EldFragment.IsStartReading = false;
+                    IsStartReading = false;
                     IsPopupDismissed = true;
                 }
 
@@ -2733,12 +2741,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         if (IsAOBRD && !IsAOBRDAutomatic) {
                             //  if (Global.isConnected(getActivity())) {
                             if (isPersonal.equals("true")) {
-                                if (SharedPref.IsOdometerSaved(getActivity()) && !EldFragment.IsStartReading) {
+                                if (SharedPref.IsOdometerSaved(getActivity()) && !IsStartReading) {
                                     JobStatusInt = SLEEPER;
                                     OpenLocationDialog(SLEEPER, OldSelectedStatePos, false);
                                 } else {
                                     AFTER_PERSONAL_JOB = PERSONAL_SLEEPER;
-                                    if (EldFragment.IsStartReading) {
+                                    if (IsStartReading) {
                                         Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_END_READING, true, SLEEPER, SleeperBtn, alertDialog);
                                     } else {
                                         Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING, true, SLEEPER, SleeperBtn, alertDialog);
@@ -2761,13 +2769,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                         } else{
                             if(constants.isLocMalfunctionEvent(getActivity(), DriverType)){
-                            OpenLocationDialog(SLEEPER, OldSelectedStatePos, true);
-                        }else {
-                            DisableJobViews();
-                            // save status directly on button click. and uploaded automatically in background
-                            SaveJobStatusAlert("Sleeper Berth");
+                                OpenLocationDialog(SLEEPER, OldSelectedStatePos, true);
+                            }else {
+                                DisableJobViews();
+                                // save status directly on button click. and uploaded automatically in background
+                                SaveJobStatusAlert("Sleeper Berth");
 
-                        }
+                            }
                         }
 
                     } else {
@@ -2910,22 +2918,28 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     if (hMethods.CanChangeStatus(OFF_DUTY, driverLogArray, Global, true)) {
 
                         restartLocationService();
-                        DisableJobViews();
 
-                        // if Odometers are saving through OBD autmatically then makes all the condition false to ignore odometer save
-                        if(SharedPref.IsOdometerFromOBD(getActivity())) {
-                            EldFragment.IsStartReading = false;
+                        if (!IsAOBRD) {
+
+                            DisableJobViews();
+
+                            // if Odometers are saving through OBD autmatically then makes all the condition false to ignore odometer save
+                            if (SharedPref.IsOdometerFromOBD(getActivity())) {
+                                IsStartReading = false;
+                            }
+
+                            // save status directly on button click. and uploaded automatically in background
+                            if (!IsStartReading) {
+                                SaveJobStatusAlert("Personal");
+                            } else {
+                                Global.EldScreenToast(OnDutyBtn, "Please enter End odometer Reading before Personal use.", getResources().getColor(R.color.colorVoilation));
+                            }
+
+                            EnableJobViews();
+                        }else{
+                            //SaveJobStatusAlert("Personal");
+                            OpenLocationDialog(PERSONAL, OldSelectedStatePos, false);
                         }
-
-                        // save status directly on button click. and uploaded automatically in background
-                        if (!IsStartReading) {
-                            SaveJobStatusAlert("Personal");
-                        } else {
-                            Global.EldScreenToast(OnDutyBtn, "Please enter End odometer Reading before Personal use.", getResources().getColor(R.color.colorVoilation));
-                        }
-
-                        EnableJobViews();
-
 
 
                     } else {
@@ -3125,16 +3139,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 // if Odometers are saving through OBD autmatically then makes all the condition false to ignore odometer save
                 if(SharedPref.IsOdometerFromOBD(getActivity())) {
                     SharedPref.OdometerSaved(true, getActivity());
-                    EldFragment.IsStartReading = false;
+                    IsStartReading = false;
                 }
 
-                if (SharedPref.IsOdometerSaved(getActivity()) && !EldFragment.IsStartReading) {
+                if (SharedPref.IsOdometerSaved(getActivity()) && !IsStartReading) {
                     JobStatusInt = DRIVING;
                     OpenLocationDialog(DRIVING, OldSelectedStatePos, false);
                 } else {
                     AFTER_PERSONAL_JOB = PERSONAL_DRIVING;
 
-                    if (EldFragment.IsStartReading) {
+                    if (IsStartReading) {
                         Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_END_READING, true, DRIVING, DrivingBtn, alertDialog);
                     } else {
                         Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING, true, DRIVING, DrivingBtn, alertDialog);
@@ -3204,17 +3218,17 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             // if Odometers are saving through OBD autmatically then makes all the condition false to ignore odometer save
             if (SharedPref.IsOdometerFromOBD(getActivity())) {
                 SharedPref.OdometerSaved(true, getActivity());
-                EldFragment.IsStartReading = false;
+                IsStartReading = false;
                 IsPopupDismissed = true;
             }
 
             if (isPersonal.equals("true")) {
-                if (SharedPref.IsOdometerSaved(getActivity()) && !EldFragment.IsStartReading) {
+                if (SharedPref.IsOdometerSaved(getActivity()) && !IsStartReading) {
                     JobStatusInt = ON_DUTY;
                     OpenLocationDialog(ON_DUTY, OldSelectedStatePos, false);
                 } else {
                     AFTER_PERSONAL_JOB = PERSONAL_ON_DUTY;
-                    if (EldFragment.IsStartReading) {
+                    if (IsStartReading) {
                         Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_END_READING, true, ON_DUTY, view, alertDialog);
                     } else {
                         Global.OdometerDialog(getActivity(), ConstantsEnum.SAVE_READING, true, ON_DUTY, view, alertDialog);
@@ -3498,11 +3512,26 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             Global.DriverSwitchAlertWithDismiss(getActivity(), certifyTitle, titleDesc, "Ok",
                                     statusAlertDialog, true);
 
+                            if(intent.getBooleanExtra(ConstantsKeys.IsPcYmAlertChangeStatus, false) == true){
+                                try {
+                                    if(getActivity() != null) {
+                                        if (continueStatusDialog != null && continueStatusDialog.isShowing()) {
+                                            continueStatusDialog.dismiss();
+                                            Log.d("dialog", "dialog dismissed");
+                                        }
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+
                         } else if (intent.getBooleanExtra(ConstantsKeys.ChangedToOthers, false) == true) {
                             certifyTitle = "Duty Status Change Alert !!";
                             titleDesc = "Please change your status from Driving to other duty status due to vehicle is not moving.";
                             Global.DriverSwitchAlertWithDismiss(getActivity(), certifyTitle, titleDesc, "Ok",
                                     statusAlertDialog, false);
+                        }else if(intent.getBooleanExtra(ConstantsKeys.IsOBDStatusUpdate, false) == true){
+                            setObdStatus(false);
                         }
 
                     }
@@ -3741,7 +3770,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     City = constants.CheckNullString(City);
                     State = constants.CheckNullString(State);
                     Country = constants.CheckNullString(Country);
-                    address = City + ", " + State + ", " + Country;
+                    address = City + ", " + State ; //+ ", " + Country
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -4168,14 +4197,20 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
 
         @Override
-        public void CancelBtnReady(String TruckIgnitionStatus) {
+        public void CancelBtnReady(String TruckIgnitionStatus, boolean isYardMove) {
             SharedPref.SetTruckStartLoginStatus(false, getActivity());
             SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", Global.getCurrentDate(), getActivity());
 
             if (Globally.VEHICLE_SPEED < 10) {
-                SaveOffDutyStatus();
+                if(isYardMove){
+                    Reason = "Others";
+                    SaveDriverJob(Global.ON_DUTY);
+                }else {
+                    SaveOffDutyStatus();
+                }
             } else {
-                SaveDrivingStatus();
+                Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
+                //SaveDrivingStatus();
             }
         }
     }
@@ -4801,7 +4836,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             LocationType = "";
 
             if (spinnerItemPos < StateList.size()) {
-                State = StateList.get(spinnerItemPos).getState();
+                State = StateList.get(spinnerItemPos).getStateCode();
                 Country = StateList.get(spinnerItemPos).getCountry();
             }
 
@@ -4875,7 +4910,18 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case PERSONAL:
-                SavePersonalStatus();
+
+               // SavePersonalStatus();
+
+                if(getActivity() != null) {
+                    if (trailerDialog != null && trailerDialog.isShowing())
+                        trailerDialog.dismiss();
+
+                    trailerDialog = new TrailorDialog(getActivity(), constants.Personal, false,
+                            TrailorNumber, 0, false, Global.onDutyRemarks, 0, dbHelper, new TrailorListener());
+                    trailerDialog.show();
+                }
+
                 break;
         }
     }
@@ -5620,7 +5666,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     //*================== Get Address From Lat Lng ===================*//*
     void GetAddFromLatLng() {
 
-        if(!IsAddressUpdate) {
+        if (!IsAddressUpdate) {
             if (JobStatusInt != 101) {
                 int OldSelectedStateListPos = -1;
                 OpenLocationDialog(JobStatusInt, OldSelectedStateListPos, false);
@@ -5633,14 +5679,15 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         Globally.LONGITUDE = Global.CheckLongitudeWithCycle(Globally.LONGITUDE);
 
-        params = new HashMap<String, String>();
-        params.put(ConstantsKeys.Latitude, Globally.LATITUDE);
-        params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
-        params.put(ConstantsKeys.IsAOBRDAutomatic, String.valueOf(IsAOBRDAutomatic));
+        if (SharedPref.IsAOBRD(getActivity()) == false){
+            params = new HashMap<String, String>();
+            params.put(ConstantsKeys.Latitude, Globally.LATITUDE);
+            params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+            params.put(ConstantsKeys.IsAOBRDAutomatic, String.valueOf(IsAOBRDAutomatic));
 
-        GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, GetAddFromLatLng,
-                Constants.SocketTimeout3Sec, ResponseCallBack, ErrorCallBack);
-
+            GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, GetAddFromLatLng,
+                    Constants.SocketTimeout3Sec, ResponseCallBack, ErrorCallBack);
+        }
     }
 
 
@@ -6453,9 +6500,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             try {
                                 if (!dataObj.getString("StartOdometer").equals("null") &&
                                         dataObj.getString("EndOdometer").equals("null")) {
-                                    EldFragment.IsStartReading = true;
+                                    IsStartReading = true;
                                 } else {
-                                    EldFragment.IsStartReading = false;
+                                    IsStartReading = false;
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -6641,6 +6688,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                 }
 
+                                // temp data
+                                //SharedPref.SetDiagnosticAndMalfunctionSettingsMain(true, true, true, true, context);
+                               // SharedPref.SetDiagnosticAndMalfunctionSettingsCo(true, true, true, true, context);
+
                                 setExceptionView();
 
                                 if(IsELDNotification){
@@ -6701,7 +6752,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 }else{
                                     driverLogArray = hMethods.updateLocationInLastItem(driverLogArray, AddressLine);
                                     // save updated log array into the database
-                                    hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray); // saving in db after updating the location in array
+                                        hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray); // saving in db after updating the location in array
 
                                 }
 

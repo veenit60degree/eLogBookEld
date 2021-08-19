@@ -274,6 +274,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                             // save count --------------
                             SharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
+
                         } else {
                             SharedPref.setLoginAllowedStatus(true, getApplicationContext());
                         }
@@ -538,8 +539,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                 JSONObject canObj = new JSONObject(data.toString());
 
 
-                                double GPSSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "GPSSpeed", "0"));
-                                WheelBasedVehicleSpeed = Double.parseDouble(wifiConfig.checkJsonParameter(canObj, "WheelBasedVehicleSpeed", "0"));
+                                int GPSSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "GPSSpeed", "0"));
+                                WheelBasedVehicleSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "WheelBasedVehicleSpeed", "0"));
 
                                 if (WheelBasedVehicleSpeed == 0) {
                                     WheelBasedVehicleSpeed = GPSSpeed;
@@ -550,22 +551,43 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                 if (ignitionStatus.equals("true")) {
                                     SharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, "", getApplicationContext());
-                                    if(WheelBasedVehicleSpeed > 8 && lastVehSpeed > 8){
-                                      //  SharedPref.setLoginAllowedStatus(false, getApplicationContext());
-                                        Globally.PlaySound(getApplicationContext());
 
-                                        if(UILApplication.isActivityVisible()){
-                                            signInAlertDialog();
-                                        }else {
-                                            Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", "Vehicle Speed: " +WheelBasedVehicleSpeed + " "
-                                                    + AlertMsg, 2003);
-                                            SpeakOutMsg(AlertMsgSpeech);
+
+                                        if (WheelBasedVehicleSpeed > 8 && lastVehSpeed > 8) {
+                                            long count = SharedPref.getLastCalledWiredCallBack(getApplicationContext());
+                                            if (count == 0) {
+                                                //  SharedPref.setLoginAllowedStatus(false, getApplicationContext());
+                                                SharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
+
+                                                Globally.PlaySound(getApplicationContext());
+
+                                                if (UILApplication.isActivityVisible()) {
+                                                    signInAlertDialog();
+                                                } else {
+                                                    Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD",
+                                                            "Vehicle Speed: " + (int) WheelBasedVehicleSpeed + " " + AlertMsg, 2003);
+                                                    SpeakOutMsg(AlertMsgSpeech);
+                                                }
+                                            }
+
+                                            if (count >= TIME_INTERVAL_LIMIT) {
+                                                // reset call back count
+                                                count = 0;
+                                            }
+
+                                            // save count --------------
+                                            SharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
+
+
+                                            //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
+                                        } else {
+                                            SharedPref.setLoginAllowedStatus(true, getApplicationContext());
                                         }
-                                        //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
-                                    }else{
-                                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-                                    }
+
+
                                     lastVehSpeed = WheelBasedVehicleSpeed;
+
+
                                 } else {
                                     if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
                                         SharedPref.setLoginAllowedStatus(true, getApplicationContext());

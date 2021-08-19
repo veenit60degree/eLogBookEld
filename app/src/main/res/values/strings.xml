@@ -841,6 +841,7 @@
     <string name="restart_on">Restart on</string>
     <string name="truck_tractor">Truck/Tractor</string>
     <string name="no_location">No Location</string>
+    <string name="no_location_found">No Location Found</string>
     <string name="Distance_miles">Distance (Miles) </string>
     <string name="Distance_km">Distance (KM) </string>
     <string name="connect_ble_obd">Connect Bluetooth OBD</string>

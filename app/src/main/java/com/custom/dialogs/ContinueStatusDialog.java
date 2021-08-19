@@ -10,13 +10,15 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.constants.Constants;
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
 public class ContinueStatusDialog extends Dialog {
 
     public interface ContinueListener {
         public void ContinueBtnReady(String TruckIgnitionStatus);
-        public void CancelBtnReady(String TruckIgnitionStatus);
+        public void CancelBtnReady(String TruckIgnitionStatus, boolean isYardMove);
     }
 
 
@@ -58,13 +60,17 @@ public class ContinueStatusDialog extends Dialog {
         Button continueStatusBtn        = (Button) findViewById(R.id.continueStatusBtn);
         Button changeStatusBtn          = (Button) findViewById(R.id.changeStatusBtn);
 
+        Constants.isPcYmAlertButtonClicked = true;
+
         if(isYardMove){
+            //changeStatusBtn.setText("On Duty (Others)");
+
             continueStatusBtn.setText(getContext().getResources().getString(R.string.stay_in_yard_move));
-            changeStatusBtn.setText(getContext().getResources().getString(R.string.Others));
+            changeStatusBtn.setText("On Duty (Others)");
             continueStatusDescTV.setText(getContext().getString(R.string.ConfirmDutyStatus));
         }else if(isPersonal){
             continueStatusBtn.setText(getContext().getResources().getString(R.string.stay_in_personel));
-            changeStatusBtn.setText(getContext().getResources().getString(R.string.Others));
+            changeStatusBtn.setText("Off Duty");
             continueStatusDescTV.setText(getContext().getString(R.string.ConfirmDutyStatus));
         }
 
@@ -83,6 +89,7 @@ public class ContinueStatusDialog extends Dialog {
         @Override
         public void onClick(View v) {
             readyListener.ContinueBtnReady(TruckIgnitionStatus);
+            Constants.isPcYmAlertButtonClicked = false;
             dismiss();
         }
     }
@@ -90,7 +97,8 @@ public class ContinueStatusDialog extends Dialog {
     private class ChangeJobListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            readyListener.CancelBtnReady(TruckIgnitionStatus);
+            readyListener.CancelBtnReady(TruckIgnitionStatus, isYardMove);
+            Constants.isPcYmAlertButtonClicked = false;
             dismiss();
         }
     }

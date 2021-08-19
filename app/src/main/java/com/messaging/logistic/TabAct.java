@@ -188,14 +188,25 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                             if (intent.getBooleanExtra(ConstantsKeys.IsEldEcmALert, false) == true) {
                                 global.InternetErrorDialog(TabAct.this);
                             }
+                        }else if (intent.hasExtra(ConstantsKeys.IsPcYmAlertChangeStatus)) {
+                            if (intent.getBooleanExtra(ConstantsKeys.IsPcYmAlertChangeStatus, false) == true) {
+                                try {
+                                    if (continueStatusDialog != null && continueStatusDialog.isShowing()) {
+                                        continueStatusDialog.dismiss();
+                                        Log.d("dialogTab", "dialog dismissed");
+                                    }
+
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
-                }else {
+                }  else {
                     boolean isSuggestedEdit = intent.getBooleanExtra(ConstantsKeys.SuggestedEdit, false);
                     boolean IsCycleRequest = intent.getBooleanExtra(ConstantsKeys.IsCycleRequest, false);
                     boolean isFreshLogin = SharedPref.GetNewLoginStatus(TabAct.this);
                     boolean IsCCMTACertified = SharedPref.IsCCMTACertified(TabAct.this);
-
                     boolean IsELDNotification = intent.getBooleanExtra(ConstantsKeys.IsELDNotification, false);
                     String ELDNotification = intent.getStringExtra(ConstantsKeys.DriverELDNotificationList);
 
@@ -235,6 +246,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                             SharedPref.SetELDNotificationAlertViewStatus(true, TabAct.this);
                         }else{
                             if (intent.hasExtra(ConstantsKeys.IsEngineRestarted)) {
+
                                 if(intent.getBooleanExtra(ConstantsKeys.IsEngineRestarted, false)){
                                     Log.d("IsEngineRestarted", "IsEngineRestarted" );
                                     boolean IsYardMove = intent.getBooleanExtra(ConstantsKeys.IsYard, false);
@@ -383,15 +395,21 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         }
 
         @Override
-        public void CancelBtnReady(String TruckIgnitionStatus) {
+        public void CancelBtnReady(String TruckIgnitionStatus, boolean isYardMove) {
             SharedPref.SetTruckStartLoginStatus(false, getApplicationContext());
             SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", global.getCurrentDate(), getApplicationContext());
 
             if (Globally.VEHICLE_SPEED < 10) {
-                EldFragment.autoOffDutyBtn.performClick();
+                if(isYardMove){
+                    EldFragment.autoOnDutyBtn.performClick();
+                }else {
+                    EldFragment.autoOffDutyBtn.performClick();
+                }
             } else {
-                EldFragment.autoDriveBtn.performClick();
+                Globally.EldScreenToast(speedAlertBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
+                //EldFragment.autoDriveBtn.performClick();
             }
+
         }
     }
 

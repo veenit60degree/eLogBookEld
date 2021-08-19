@@ -2556,7 +2556,7 @@ public class HelperMethods {
                 DateTime endDateTime         = Globally.getDateTimeObj(json.getString(ConstantsKeys.endDateTime), false);
                 DateTime utcStartDateTime    = Globally.getDateTimeObj(json.getString(ConstantsKeys.utcStartDateTime), true);
                 DateTime utcEndDateTime      = Globally.getDateTimeObj(json.getString(ConstantsKeys.utcEndDateTime), true);
-                int CurrentCycleId = 1; // temp set to check violation
+                int CurrentCycleId = -1; // temp set to check violation
                 if(!json.isNull(ConstantsKeys.CurrentCycleId)){
                     CurrentCycleId = json.getInt(ConstantsKeys.CurrentCycleId);
                 }
@@ -2682,7 +2682,6 @@ public class HelperMethods {
         LocalCalls CallDriverRule = new LocalCalls();
 
         List<DriverLog> oDriverLog3DaysList = getNumberOffDaysLog(DriverId, 3, currentDate, currentUTCDate, dbHelper);   // 3 days log list
-        //List<DriverLog> oDriverLogDetail = getSavedLogList(DriverId, currentDate, currentUTCDate, dbHelper);    // temp array
 
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException, isNorthCanada,

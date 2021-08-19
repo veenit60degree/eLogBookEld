@@ -118,8 +118,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     DotOtherOptionDialog dotOtherOptionDialog;
 
     String INDIAN_URL       = "http://182.73.78.171:8286/";
-    String PRODUCTION_URL   = "https://alsrealtime.com/";
-    String logUrl = PRODUCTION_URL + "DriverLog/MobileELDView?driverId=";
+   // String PRODUCTION_URL   = "https://alsrealtime.com/";
+   // String logUrl = PRODUCTION_URL + "DriverLog/MobileELDView?driverId=";
     String LogDate, DayName, MonthFullName , MonthShortName , CurrentCycleId;
     String CurrentDate, CountryCycle, DRIVER_ID, DeviceId ;
     String DefaultLine      = " <g class=\"event \">\n";
@@ -348,7 +348,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
 
-        logUrl = PRODUCTION_URL + "DriverLog/MobileELDView?driverId=" + DRIVER_ID + "&date=";
+     //   logUrl = PRODUCTION_URL + "DriverLog/MobileELDView?driverId=" + DRIVER_ID + "&date=";
 
         //dotMalfunctionTV.setText(CountryCycle);
         EldTitleTV.setText(MonthShortName + " " + LogDate.split("/")[1] + " ( " + DayName + " )");
@@ -358,7 +358,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         previousDateBtn.setVisibility(View.VISIBLE);
         itemShippingLay.setBackgroundColor(getResources().getColor(R.color.dot_titles_bg));
         shippingLayHeight   = itemShippingLay.getMeasuredHeight();
-        inspectionLayHeight = itemOdometerLay.getHeight();
+        /*inspectionLayHeight = itemOdometerLay.getHeight();
 
         ViewTreeObserver vto = itemOdometerLay.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -372,7 +372,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 inspectionLayHeight = itemOdometerLay.getMeasuredHeight();
 
             }
-        });
+        });*/
 
 
 
@@ -979,18 +979,22 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             dotLogAdapter = new DotLogAdapter(getActivity(), constants, dotLogList);
             dotDataListView.setAdapter(dotLogAdapter);
 
-            if(inspectionLayHeight == 0) {
-                // itemOdometerLay.measure(0, 0);
-                //inspectionLayHeight =  itemOdometerLay.getMeasuredHeight() + 1;
-                inspectionLayHeight = 160;
-            }
+         //   if(inspectionLayHeight == 0) {
+                if(global.isTablet(getActivity())){
+                    inspectionLayHeight = constants.intToPixel(getActivity(), 68);
+                }else{
+                    inspectionLayHeight = constants.intToPixel(getActivity(), 62);
+                }
+
+          //  }
+            Log.d("inspectionLayHeight","inspectionLayHeight: "+inspectionLayHeight);
             final int Height      = (inspectionLayHeight + 1 ) * dotLogList.size();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     dotDataListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Height  ));
                 }
-            },800);
+            },500);
         }catch (Exception e){
             e.printStackTrace();
         }

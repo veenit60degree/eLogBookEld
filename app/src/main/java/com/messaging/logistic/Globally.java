@@ -22,7 +22,6 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -147,11 +146,13 @@ public class Globally {
 	public static String PERSONAL			                  = "5";
 
 	/*-------- ELD CYCLES IDs ----------*/
+	public static String NO_CYCLE                   		  = "0";
 	public static String CANADA_CYCLE_1                       = "1";
 	public static String CANADA_CYCLE_2                       = "2";
 	public static String USA_WORKING_6_DAYS                   = "3";
 	public static String USA_WORKING_7_DAYS                   = "4";
 
+	public static String NO_CYCLE_NAME                        = "No Cycle";
 	public static String CANADA_CYCLE_1_NAME                  = "C 70/7";
 	public static String CANADA_CYCLE_2_NAME                  = "C 120/14";
 	public static String USA_WORKING_6_DAYS_NAME              = "U 60/7";
@@ -177,6 +178,7 @@ public class Globally {
 	public static JSONArray OBD_DataArray = new JSONArray();
 
 	public static List<String> onDutyRemarks = new ArrayList<String>();
+	Dialog ecmErrorAlert;
 
 	//public static Bundle bundle = new Bundle();
 	//public static Bundle getBundle;
@@ -250,43 +252,40 @@ public class Globally {
 
 
 	public void InternetErrorDialog(Context context){
-		/*final Snackbar snackbar = Snackbar.make(v, "", Snackbar.LENGTH_LONG);
-		Activity activity = (Activity) context;
-		View customSnackView = activity.getLayoutInflater().inflate(R.layout.dialog_internet_connection, null);
-		snackbar.getView().setBackgroundColor(Color.TRANSPARENT);	//Color.parseColor("#99a8a8a8")
-		Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
-		snackbarLayout.setPadding(0, 0, 0, 0);
-		snackbarLayout.addView(customSnackView, 0);
-		snackbar.show();*/
 
-
-		final Dialog picker = new Dialog(context);
-		picker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-		picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		picker.setContentView(R.layout.dialog_internet_connection);
-		picker.setCancelable(false);
-
-		picker.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-		lp.copyFrom(picker.getWindow().getAttributes());
-		lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-		lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-		lp.gravity = Gravity.BOTTOM;
-		picker.getWindow().setAttributes(lp);
-
-
-		final ImageView closeDialogImg = (ImageView) picker.findViewById(R.id.closeDialogImg);
-		closeDialogImg.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				picker.dismiss();
+		try {
+			if (ecmErrorAlert != null && ecmErrorAlert.isShowing()) {
+				ecmErrorAlert.dismiss();
 			}
-		});
 
-		if(context != null) {
-			picker.show();
+			ecmErrorAlert = new Dialog(context);
+			ecmErrorAlert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+			ecmErrorAlert.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			ecmErrorAlert.setContentView(R.layout.dialog_limited_eld_connection);
+
+			ecmErrorAlert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+			WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+			lp.copyFrom(ecmErrorAlert.getWindow().getAttributes());
+			lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+			lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+			lp.gravity = Gravity.BOTTOM;
+			ecmErrorAlert.getWindow().setAttributes(lp);
+
+
+			final ImageView closeDialogImg = (ImageView) ecmErrorAlert.findViewById(R.id.closeDialogImg);
+			closeDialogImg.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					ecmErrorAlert.dismiss();
+				}
+			});
+
+			if (context != null) {
+				ecmErrorAlert.show();
+			}
+		}catch (Exception e){
+			e.printStackTrace();
 		}
-
 	}
 
 

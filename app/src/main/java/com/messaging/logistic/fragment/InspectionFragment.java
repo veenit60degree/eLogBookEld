@@ -265,7 +265,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 if(position < StateList.size()) {
-                    State = StateList.get(position).getState();
+                    State = StateList.get(position).getStateCode();
                     Country = StateList.get(position).getCountry();
                 }
 
@@ -374,7 +374,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             cityEditText.setSelection(EldFragment.City.length());
             if(EldFragment.OldSelectedStatePos < StateList.size()) {
                 stateInspSpinner.setSelection(EldFragment.OldSelectedStatePos);
-                State = StateList.get(EldFragment.OldSelectedStatePos).getState();
+                State = StateList.get(EldFragment.OldSelectedStatePos).getStateCode();
                 Country = StateList.get(EldFragment.OldSelectedStatePos).getCountry();
             }
 
@@ -1527,11 +1527,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
                                     if (Country.contains("China") || Country.contains("Russia") || Country.contains("null")) {
                                         Location = Globally.LATITUDE + ","+Globally.LONGITUDE;
-                                    }else {
+                                    }/*else {
                                         if (!Location.contains(Country)) {
                                             Location = dataJObject.getString(ConstantsKeys.Location) + ", " + Country;
                                         }
-                                    }
+                                    }*/
 
                                     locInspectionTV.setText(Location);
 

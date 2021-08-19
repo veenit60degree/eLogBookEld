@@ -450,7 +450,7 @@ public class    InspectionDetailView  extends Fragment {
 
             City = city;
             if (spinnerItemPos < StateList.size()) {
-                State = StateList.get(spinnerItemPos).getState();
+                State = StateList.get(spinnerItemPos).getStateCode();
                 Country = StateList.get(spinnerItemPos).getCountry();
             }
 
@@ -464,7 +464,7 @@ public class    InspectionDetailView  extends Fragment {
                     e.printStackTrace();
                 }
                 Globally.hideKeyboard(getActivity(), truckTrailerTVLay);
-                String Location = City + ", " + State + ", " + Country;
+                String Location = City + ", " + State ; //+ ", " + Country
                 locInspectionTV.setText(Location.trim());
                 UpdatedLocation = locInspectionTV.getText().toString();
 

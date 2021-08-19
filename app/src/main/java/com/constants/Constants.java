@@ -248,6 +248,7 @@ public class Constants {
     public static boolean IsAlsServerResponding = true;
     public static boolean isClaim   = false;
     public static boolean isEldHome   = false;
+    public static boolean isPcYmAlertButtonClicked   = false;
 
     public static int OFF_DUTY = 1;
     public static int SLEEPER  = 2;
@@ -287,6 +288,7 @@ public class Constants {
     public static int SocketTimeout10Sec = 10000;   // 10 seconds
     public static int SocketTimeout15Sec = 15000;   // 15 seconds
     public static int SocketTimeout20Sec = 20000;   // 20 seconds
+    public static int SocketTimeout25Sec = 25000;   // 25 seconds
     public static int SocketTimeout30Sec = 30000;   // 30 seconds
     public static int SocketTimeout40Sec = 40000;   // 30 seconds
     public static int SocketTimeout50Sec = 50000;   // 50 seconds
@@ -1575,14 +1577,15 @@ public class Constants {
 
 
     public boolean isLocationMissing(String DRIVER_ID, String CurrentCycleId, DriverPermissionMethod driverPermissionMethod,
-                              RecapViewMethod recapViewMethod, Globally Global, HelperMethods hMethods, DBHelper dbHelper, JSONObject logPermissionObj){
+                              RecapViewMethod recapViewMethod, Globally Global, HelperMethods hMethods, DBHelper dbHelper,
+                                     JSONObject logPermissionObj, Context context){
         boolean isLocMissing = false;
         try {
             if(logPermissionObj == null){
                 logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
             }
             List<RecapSignModel> signList = GetCertifySignList(recapViewMethod, DRIVER_ID, hMethods, dbHelper,
-                    Global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, Global);
+                    Global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, Global, context);
             for (int i = 0; i < signList.size(); i++) {
                 if (signList.get(i).isMissingLocation()) {
                     isLocMissing = true;
@@ -1597,7 +1600,7 @@ public class Constants {
 
 
     public boolean isLocationMissingSelectedDay (DateTime selectedDateTime, DateTime currentDateTime,
-                              JSONArray driverLogArray, HelperMethods hMethods, Globally Global){
+                              JSONArray driverLogArray, HelperMethods hMethods, Globally Global, Context context){
         boolean isLocMissing = false;
         try {
             boolean IsCurrentDate;
@@ -1614,13 +1617,13 @@ public class Constants {
 
                 for (int i = 0; i < selectedArray.length(); i++) {
                     JSONObject obj = (JSONObject) selectedArray.get(i);
-                    String StartLocation = obj.getString(ConstantsKeys.StartLocation);
-                    String StartLocationKm = obj.getString(ConstantsKeys.StartLocationKm);
-
-                    if (StartLocation.equals("null") || StartLocation.equals(",") || StartLocation.length() == 0) {
-                        if (StartLocationKm.equals("null") || StartLocationKm.equals(",") || StartLocationKm.length() == 0) {
+                    String StartLocation = obj.getString(ConstantsKeys.StartLocation).trim();
+                    String StartLocationKm = obj.getString(ConstantsKeys.StartLocationKm).trim();
+                 //   if (locationKm.contains("null") || locationKm.equals(",") || locationKm.equals("") || locationKm.equals(context.getString(R.string.no_location_found))) {
+                    if (StartLocation.equals("null") || StartLocation.equals(",") || StartLocation.length() == 0 || StartLocation.equals("No Location Found")) {
+                        if (StartLocationKm.equals("null") || StartLocationKm.equals(",") || StartLocationKm.length() == 0 || StartLocationKm.equals("No Location Found")) {
                             String StartLatitude = obj.getString(ConstantsKeys.StartLatitude);
-                            if (StartLatitude.length() < 5 ){
+                            if (StartLatitude.length() < 5  && SharedPref.IsAOBRD(context) == false){
                                 isLocMissing = true;
                                 break;
                             }
@@ -1651,7 +1654,7 @@ public class Constants {
     public List<RecapSignModel> GetCertifySignList(RecapViewMethod recapViewMethod, String DRIVER_ID,
                                                    HelperMethods hMethods, DBHelper dbHelper,
                                                    String currentDate, String CurrentCycleId,
-                                                   JSONObject logPermissionObj, Globally Global) {
+                                                   JSONObject logPermissionObj, Globally Global, Context context) {
         JSONArray recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
         JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
         int arraylength = recap18DaysArray.length();
@@ -1704,7 +1707,8 @@ public class Constants {
                     String date = Globally.ConvertDateFormatyyyy_MM_dd(obj.getString(ConstantsKeys.Date));
                     DateTime selectedDateTime = Globally.getDateTimeObj( date + "T00:00:00", false);
 
-                   boolean isLocationMissing = isLocationMissingSelectedDay(selectedDateTime, currentDateTime, driverLogArray, hMethods, Global);
+                   boolean isLocationMissing = isLocationMissingSelectedDay(selectedDateTime, currentDateTime, driverLogArray,
+                           hMethods, Global, context);
 
                     if(selectedDateTime.isAfter(lastDateTime) || selectedDateTime.equals(lastDateTime)) {
                         String image = obj.getString(ConstantsKeys.LogSignImage);
@@ -2989,7 +2993,7 @@ public class Constants {
             if(dotLogList.size() > 0){
                 CanadaDutyStatusModel model = dotLogList.get(dotLogList.size()-1);
                 model.setHeaderViewCount(logArray.length());
-                dotLogList.add(model);
+                dotLogList.set(dotLogList.size()-1, model);
             }
 
         }catch (Exception e){
@@ -3020,8 +3024,13 @@ public class Constants {
             for(int i = 0 ; i< logArray.length() ; i++) {
                 JSONObject obj = (JSONObject)logArray.get(i);
 
+                String DateTimeWithMins = obj.getString(ConstantsKeys.DateTimeWithMins);
+                if(DateTimeWithMins.length() > 19){
+                    DateTimeWithMins = DateTimeWithMins.substring(0, 19);
+                }
+
                 DateFormat format = new SimpleDateFormat(Globally.DateFormat, Locale.ENGLISH);
-                Date date = format.parse(obj.getString(ConstantsKeys.DateTimeWithMins));
+                Date date = format.parse(DateTimeWithMins);
 
                 int seqNumber = 0;
                 if(!obj.isNull(ConstantsKeys.SequenceNumber)){
@@ -3035,7 +3044,7 @@ public class Constants {
                 CanadaDutyStatusModel dutyModel = getDutyModel(obj, seqNumber, date, isNewDate);
                 if(isSorting){
                     if(i > 0){
-                        int dayDiff = getDayDiff(lastDateTimeMin, obj.getString(ConstantsKeys.DateTimeWithMins));
+                        int dayDiff = getDayDiff(lastDateTimeMin, DateTimeWithMins);
                         if (dayDiff == 0){
                             dotDateWiseList.add(dutyModel);
                         }else{
@@ -3053,7 +3062,7 @@ public class Constants {
                 }else {
                     dotLogList.add(dutyModel);
                 }
-                lastDateTimeMin = obj.getString(ConstantsKeys.DateTimeWithMins);
+                lastDateTimeMin = DateTimeWithMins;
 
             }
 
@@ -3076,8 +3085,13 @@ public class Constants {
 
     private CanadaDutyStatusModel getDutyModel(JSONObject obj, int seqNumber, Date date, boolean IsNewDate){
         try {
+            String DateTimeWithMins = CheckNullBString(obj.getString(ConstantsKeys.DateTimeWithMins));
+            if(DateTimeWithMins.length() > 19){
+                DateTimeWithMins = DateTimeWithMins.substring(0, 19);
+            }
+
             CanadaDutyStatusModel dutyModel = new CanadaDutyStatusModel(
-                    CheckNullBString(obj.getString(ConstantsKeys.DateTimeWithMins)),
+                    DateTimeWithMins,
                     CheckNullBString(obj.getString(ConstantsKeys.EventUTCTimeStamp)),
                     CheckNullBString(obj.getString(ConstantsKeys.DriverStatusID)),
 

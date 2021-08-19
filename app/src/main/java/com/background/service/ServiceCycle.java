@@ -25,6 +25,7 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
+import com.messaging.logistic.fragment.EldFragment;
 import com.models.EldDataModelNew;
 import com.models.EldDriverLogModel;
 import com.shared.pref.CoDriverEldPref;
@@ -114,7 +115,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     boolean IsAlertTimeValid = false;
     boolean isSingleDriver   = true;
     boolean isALSConnection;
-
+    boolean isPcYmAlertChangeStatus = false;
 
     String CurrentCycleId = "", message = "", DriverName = "", DriverCompanyId = "", TruckNo = "";;
     int DRIVER_JOB_STATUS;
@@ -159,6 +160,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             SharedPref.setDrivingAllowedStatus(false, Global.GetCurrentDateTime(), context);
         }else {
             SharedPref.setDrivingAllowedStatus(true, "", context);
+            isPcYmAlertChangeStatus = false;
 
             oDriverLogDetail         = new ArrayList<DriverLog>();
             RulesObj                 = new RulesResponseObject();
@@ -593,7 +595,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                     message = " Please confirm your Yard Move status.";
                                                 }
 
-                                                if (VehicleSpeed >= DrivingSpeedLimit ) {   //&& isDrivingAllowed
+                                                if (VehicleSpeed >= DrivingSpeedLimit ) {
+                                                    Constants.isPcYmAlertButtonClicked = false;
                                                     LastStatus = "_YMNotConfirmed_From_" + DRIVER_JOB_STATUS;
                                                     CHANGED_STATUS = DRIVING;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
@@ -625,22 +628,36 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                                 if (isApplicable && minutesDiff >= DrivingInterval) {
 
-                                                    //  if (isDrivingAllowed) {
+                                                    Constants.isPcYmAlertButtonClicked = false;
                                                     LastStatus = "_YM_From_" + DRIVER_JOB_STATUS;
                                                     CHANGED_STATUS = DRIVING;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                             driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
-                                                  /*  } else {
-                                                        serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, ConstantsEnum.CO_DRIVING_ALERT1, "");
-                                                        // ---------- Text to speech listener---------
-                                                        SpeakOutMsg(ConstantsEnum.CO_DRIVING_ALERT1);
-                                                    }*/
+
                                                 } else {
                                                     ContinueSpeedCounter = 0;
                                                     ClearCount();
                                                 }
                                             }
+
+
+
+
                                         }
+
+
+                                        if(Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit ) {
+                                            Constants.isPcYmAlertButtonClicked = false;
+                                            BackgroundLocationService.IsAutoChange = true;
+                                            message = " Duty status switched to DRIVING due to not confirming YardMove status.";
+                                            LastStatus = "_YM_NotConfirmedByDriver ";
+
+                                            isPcYmAlertChangeStatus = true;
+                                            CHANGED_STATUS = DRIVING;
+                                            ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                    driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                        }
+
                                     }
                                 }
 
@@ -681,19 +698,21 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                             }
 
+                                            Constants.isPcYmAlertButtonClicked = false;
                                             CHANGED_STATUS = DRIVING;
                                             ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                     driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
                                         } else {
                                             if (isPersonal && isPersonalUse75KmCrossed) {
+                                                Constants.isPcYmAlertButtonClicked = false;
                                                 PersonalUse75Km = true;
                                                 LastStatus = "_PU_Crossed75Km";
-                                                message = "Duty status switched to On Duty due to Personal Use limit (75 km) is exceeded for the day";
+                                                message = "Duty status switched to Off Duty due to Personal Use limit (75 km) is exceeded for the day";
 
                                                 // set value false when PU status has been changed
                                                 SharedPref.SetTruckStartLoginStatus(false, context);
 
-                                                CHANGED_STATUS = ON_DUTY;
+                                                CHANGED_STATUS = OFF_DUTY;
                                                 ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                         driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
 
@@ -706,6 +725,20 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                     }
                                 }
                             }
+
+                            if(isPersonal && Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit ){
+                                Constants.isPcYmAlertButtonClicked = false;
+                                isPcYmAlertChangeStatus = true;
+                                BackgroundLocationService.IsAutoChange = true;
+                                message = " Duty status switched to DRIVING due to not confirming Personal use status.";
+                                LastStatus = "_PU_NotConfirmedByDriver ";
+
+                                CHANGED_STATUS = DRIVING;
+                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                    driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                            }
+
+
                         }
                     }
 
@@ -905,7 +938,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 JSONObject sameStatusJson = hMethods.AddSameStatusJson(lastItemJson, currentDateTime, currentUTCTime, RulesObj, false, 0);
                 driverLogArray.put(sameStatusJson);
 
-                SaveDriversJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType, String.valueOf(RulesObj.isViolation()),
+                SaveDriverJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType, String.valueOf(RulesObj.isViolation()),
                         RulesObj.getViolationReason(), ChangedDriverStatus, isAutomatic, false);
 
                 // callback method called to update Eld home screen
@@ -978,11 +1011,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 int minDiff = duplicateLogStartTime.getMinuteOfDay() - lastLogStartTime.getMinuteOfDay();
 
                                                 if(minDiff > 30) {
-                                                      SaveDriversJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType,
+                                                      SaveDriverJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType,
                                                                 String.valueOf(isViolation), violationReason, 0, true, false);
                                                 }else {
                                                       // update Last status with violation reason
-                                                      SaveDriversJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType,
+                                                      SaveDriverJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType,
                                                                 String.valueOf(isViolation), violationReason, 0, true, true);
                                                 }
 
@@ -1094,7 +1127,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
 
     /*===== Save Driver Jobs with Shared Preference to Array List======= */
-    private void SaveDriversJob(JSONObject jobJsonObj, JSONArray driverLogArray, HelperMethods hMethods, DBHelper dbHelper,
+    private void SaveDriverJob(JSONObject jobJsonObj, JSONArray driverLogArray, HelperMethods hMethods, DBHelper dbHelper,
                                 int DriverType, String isViolationStr, String ViolationReason, int DriverStatusInt,
                                 boolean isAutoChanged, boolean isUpdate) {
 
@@ -1414,16 +1447,26 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         /* ---------------- DB Helper operations (Insert/Update) --------------- */
         hMethods.DriverLogHelper(DriverId, dbHelper, driverLogArray);
 
+        // update static log array which is used
+        EldFragment.driverLogArray =  new JSONArray();
+
         //ClearCounter
         BackgroundLocationService.IsAutoChange = false;
 
         // Save odometer
         constants.saveOdometer(DriverStatusId, String.valueOf(DriverId), DeviceId, driver18DaysLogArray,
                 odometerhMethod, hMethods, dbHelper, context);
-
         constants.IsAlreadyViolation = false;
-
         sendBroadCast(true, false);
+
+        if(TabAct.host.getCurrentTab() != 0) {   // this parameter is used to auto dismiss engine restart alert because driver was not confirming and status is changed due to speed at Tab Host activity.
+            Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+            intent.putExtra(ConstantsKeys.PersonalUse75Km, false);
+            intent.putExtra(ConstantsKeys.IsPcYmAlertChangeStatus, isPcYmAlertChangeStatus);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
+
+        isPcYmAlertChangeStatus = false;
 
         Log.d("Saved Status", "--- service DriverStatusId: "+DriverStatusId);
 
@@ -1438,6 +1481,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             intent.putExtra(ConstantsKeys.IsAutoStatusSaved, IsAutoStatusSaved);
             intent.putExtra(ConstantsKeys.ChangedToOthers, changedToOther);
             intent.putExtra(ConstantsKeys.PersonalUse75Km, PersonalUse75Km);
+            intent.putExtra(ConstantsKeys.IsOBDStatusUpdate, false);
+            intent.putExtra(ConstantsKeys.IsPcYmAlertChangeStatus, isPcYmAlertChangeStatus);    // this parameter is used to auto dismiss engine restart alert because driver was not confirming and status is changed due to speed at EldFragment.
+
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }catch (Exception e){
             e.printStackTrace();

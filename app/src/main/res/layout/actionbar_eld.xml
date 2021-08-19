@@ -141,16 +141,15 @@
         android:visibility="gone"
         />
 
-    <TextView
+        <TextView
             android:id="@+id/EldTitleTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/margin_short_7"
             android:text="ELD"
             android:textColor="@color/whiteee"
-            android:textSize="@dimen/text_size_17"
-            android:padding="@dimen/margin_short_7"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" />
+            android:textSize="@dimen/text_size_17" />
 
 
 

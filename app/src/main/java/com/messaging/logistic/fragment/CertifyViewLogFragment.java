@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -444,6 +445,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             } else {
                 EldTitleTV.setText(LogDate);
             }
+
             signImageView.setBackground(null);
             signImageView.setImageResource(R.drawable.transparent);
         }catch (Exception e){
@@ -452,19 +454,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
 
         if(CurrentCycleId.equalsIgnoreCase("null"))
-            CurrentCycleId = Globally.CANADA_CYCLE_1;
-
-      /*  if(isDOT) {
-            certifyDateTV.setText(getResources().getString(R.string.Send_Log));
-
-            if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
-                MaxDays = UsaMaxDays;
-            }else{
-                MaxDays = CanMaxDays;
-            }
+            CurrentCycleId = Globally.NO_CYCLE;
 
 
-        }else{*/
 
             if(isSignPending){
                 certifyErrorImgView.setVisibility(View.VISIBLE);
@@ -621,6 +613,12 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         });
 
+
+
+        if(LogDate.trim().length() == 0) {
+            Toast.makeText(getActivity(), "Date format issue. Please select again.", Toast.LENGTH_LONG).show();
+            getParentFragmentManager().popBackStack();
+        }
 
         eldMenuLay.setOnClickListener(this);
         signLay.setOnClickListener(this);
@@ -1306,7 +1304,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             signRecordDialog.dismiss();
 
         List<RecapSignModel> signList = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, hMethods, dbHelper,
-                global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, global);
+                global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, global, getActivity());
 
         if (signList.size() > 0) {
             signRecordDialog = new SignRecordDialog(getActivity(), DriverType, isCertifySignExist, recap18DaysArray, signList, new SignRecapListener(),
@@ -2834,7 +2832,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     void refreshPendingSignView(){
         boolean isSignPending           = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj);
         List<RecapSignModel> signList   = constants.GetCertifySignList(recapViewMethod, DRIVER_ID, hMethods, dbHelper,
-                                            global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, global);
+                                            global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, global, getActivity());
         boolean isMissingLoc = false;
         for(int i = 0 ; i < signList.size() ; i++){
             if(signList.get(i).isMissingLocation()){
@@ -2853,7 +2851,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     void openMissingDialogAlert(){
         try {
             driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
-            boolean isLocationMissing = constants.isLocationMissingSelectedDay (selectedDateTime, currentDateTime, driverLogArray, hMethods, global);
+            boolean isLocationMissing = constants.isLocationMissingSelectedDay (selectedDateTime, currentDateTime, driverLogArray, hMethods,
+                    global, getActivity());
 
             if(isLocationMissing) {
                 if (missingLocationDialog != null && missingLocationDialog.isShowing()) {

@@ -74,6 +74,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     String RecordType = "";
     String selectedDate = "";
     String selectedRemarks = "";
+    boolean IsPersonalRecord = false;
     int selectedStatus = 0;
     String currentCycle = "";
     boolean IsCurrentDate;
@@ -150,7 +151,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = mInflater.inflate(R.layout.include_drive_daily_info, null);
 
-            holder.certifyNoTV                 = (TextView)convertView.findViewById(R.id.certifyNoTV);
+            holder.certifyNoTV          = (TextView)convertView.findViewById(R.id.certifyNoTV);
             holder.certifyStatusTV      = (TextView)convertView.findViewById(R.id.certifyStatusTV);
             holder.certifyStartTimeTV   = (TextView)convertView.findViewById(R.id.certifyStartTimeTV);
             holder.certifyDurationTV    = (TextView)convertView.findViewById(R.id.certifyDurationTV);
@@ -191,7 +192,9 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             }
         }
 
-      //  holder.certifyLocationIV.setVisibility(View.VISIBLE);
+        if(SharedPref.IsAOBRD(context)) {
+            holder.certifyLocationIV.setVisibility(View.VISIBLE);
+        }
 
         holder.certifyLocationLay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,6 +206,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     selectedDate = LogItem.getStartDateTime();
                     selectedStatus = LogItem.getDriverStatusId();
                     selectedRemarks = LogItem.getRemarks();
+                    IsPersonalRecord = LogItem.isPersonal();
+
                     OpenLocationDialog(city, position, Constants.EditLocation, view);
                 }
             }
@@ -223,6 +228,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     selectedDate = LogItem.getStartDateTime();
                     selectedStatus = LogItem.getDriverStatusId();
                     selectedRemarks = LogItem.getRemarks();
+                    IsPersonalRecord = LogItem.isPersonal();
 
                     OpenRemarksDialog(remarks, position, JobStatus, LogItem.isPersonal());  // isPersonal is used for yard move here
                 }
@@ -315,9 +321,9 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
             String locationKm = LogItem.getLocationKm().trim();
             String location = LogItem.getLocation().trim();
-            if (locationKm.contains("null") || locationKm.equals(",") || locationKm.equals("")) {
-                if(location.contains("null") || location.equals(",") || location.equals("")){
-                     if(LogItem.getStartLatitude().length() > 4){
+            if (locationKm.equals("null") || locationKm.equals(",") || locationKm.equals("") || locationKm.equals(context.getString(R.string.no_location_found))) {
+                if(location.equals("null") || location.equals(",") || location.equals("") || locationKm.equals(context.getString(R.string.no_location_found)) ){
+                     if(LogItem.getStartLatitude().length() > 4 && SharedPref.IsAOBRD(context) == false){
                         holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                         holder.certifyLocationTV.setText(LogItem.getStartLatitude() + "," + LogItem.getStartLongitude());
                         holder.certifyLocationIV.setVisibility(View.GONE);
@@ -329,13 +335,17 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 }else{
                     holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                     holder.certifyLocationTV.setText(location);
-                    holder.certifyLocationIV.setVisibility(View.GONE);
+                    if(SharedPref.IsAOBRD(context) == false) {
+                        holder.certifyLocationIV.setVisibility(View.GONE);
+                    }
                 }
 
             } else {
                 holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                 holder.certifyLocationTV.setText(LogItem.getLocationKm());
-                holder.certifyLocationIV.setVisibility(View.GONE);
+                if(SharedPref.IsAOBRD(context) == false) {
+                    holder.certifyLocationIV.setVisibility(View.GONE);
+                }
             }
        // }
 
@@ -531,7 +541,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         String currentDriverZoneDate = Global.GetCurrentUTCTimeFormat();
 
         JSONObject logObj = logRecordMethod.GetUpdateLogRecordJson(logModel, String.valueOf(DriverId), DeviceId, RecordType,
-                currentUtcDate, currentDriverZoneDate, Globally.LATITUDE, Globally.LONGITUDE );
+                currentUtcDate, currentDriverZoneDate, Globally.LATITUDE, Globally.LONGITUDE, selectedRemarks, ""+IsPersonalRecord );
+
 
         finalUpdatedArray = logRecordMethod.getSavedLogRecordArray(DriverId, dbHelper);
 
@@ -608,10 +619,24 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     }else {
                         if (RecordType.equals(Constants.Location)) {
                             String[] locArray = logObj.getString(ConstantsKeys.RecordValue).split(";");
-                            if (locArray.length > 1) {
-                                location = locArray[1] + " " + locArray[0];
-                                locationKm = locArray[0] + " " + locArray[1];
-                            }
+
+                          /*  if(SharedPref.IsAOBRD(context)){
+                                if (locArray.length > 2) {
+                                    location = locArray[0] + ", " + locArray[1] + ", " + locArray[2];
+                                    locationKm = locArray[0] + ", " + locArray[1] + ", " + locArray[2];
+                                }else{
+                                    if (locArray.length > 1) {
+                                        location = locArray[0] + " " + locArray[1];
+                                        locationKm = locArray[0] + " " + locArray[1];
+                                    }
+                                }
+                            }else {*/
+                                if (locArray.length > 1) {
+                                    location = locArray[1] + " " + locArray[0];
+                                    locationKm = locArray[0] + " " + locArray[1];
+                                }
+                           // }
+
                             obj.put(ConstantsKeys.StartLocation, location);
                             obj.put(ConstantsKeys.StartLocationKm, locationKm);
 

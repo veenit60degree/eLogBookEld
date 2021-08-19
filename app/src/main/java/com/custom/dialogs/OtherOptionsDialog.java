@@ -129,7 +129,7 @@ public class OtherOptionsDialog extends Dialog {
             Globally Global = new Globally();
             JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DriverId), dbHelper);
             List<RecapSignModel> signList   = constants.GetCertifySignList(recapViewMethod, DriverId, hMethods, dbHelper,
-                    Global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, Global);
+                    Global.GetCurrentDeviceDate(), CurrentCycleId, logPermissionObj, Global, getContext());
             boolean isMissingLoc = false;
             for(int i = 0 ; i < signList.size() ; i++){
                 if(signList.get(i).isMissingLocation()){

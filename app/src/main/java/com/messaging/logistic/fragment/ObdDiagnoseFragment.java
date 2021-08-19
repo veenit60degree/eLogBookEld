@@ -140,7 +140,6 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
         button2.setVisibility(View.GONE);
         field1.setVisibility(View.GONE);
-      //  responseRawTxtView.setVisibility(View.GONE);
 
         obdDataTxtView.setOnClickListener(this);
         bleObdTxtView.setOnClickListener(this);
@@ -165,20 +164,27 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             obdDataTxtView.setText(getString(R.string.no_obd_settings));
         }
 
-       /* final Button testBtn = (Button) rootView.findViewById(R.id.testBtn);
+ /*       final Button testBtn = (Button) rootView.findViewById(R.id.testBtn);
+        testBtn.setVisibility(View.VISIBLE);
+        if(BackgroundLocationService.OBD_DISCONNECTED){
+            testBtn.setText("OBD Connected");
+        }else{
+            testBtn.setText("OBD Disconnect");
+        }
+
         testBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(BackgroundLocationService.OBD_DISCONNECTED){
                     BackgroundLocationService.OBD_DISCONNECTED = false;
-                    testBtn.setText("OBD Disconnected");
+                    testBtn.setText("OBD Disconnect");
                 }else{
                     BackgroundLocationService.OBD_DISCONNECTED = true;
                     testBtn.setText("OBD Connected");
                 }
             }
         });
-      */
+*/
 
     }
 
@@ -210,8 +216,6 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
             loaderProgress.setVisibility(View.GONE);
             String data = intent.getStringExtra("decoded_data");
-           // bleDevice   = intent.getParcelableExtra("BleDevice");
-            //characteristic= intent.getParcelableExtra("characteristic");
 
             try {
                 int scrollX = obdLayScrollView.getScrollX();
@@ -234,6 +238,10 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 }
             }
 
+            if (SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI ) {
+                String rawdata = intent.getStringExtra("raw_message");
+                responseRawTxtView.setText(rawdata);
+            }
         }
     };
 
@@ -615,14 +623,14 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             String canData =
                     "<b>Mileage               : </b> " + MileageInMeters + " m <br />" +
                             "<b>TripDistance          : </b> " + TripDistanceInKM + " km <br />" +
-                            "<b>Total Vehicle Distance: </b> " + HighResolutionDistance + " km <br />" +
+                            "<b>Total Vehicle Distance: </b> " + HighResolutionDistance + "<br />" +
                             "<b>WheelBasedVehicleSpeed: </b> " + WheelBasedVehicleSpeed + " km <br />" +
 
-                            "<b>Engine Hours: </b> " + EngineHours + " km <br />" +
-                            "<b>GPS Latitude: </b> " + GPSLatitude + " km <br />" +
-                            "<b>GPS Longitude: </b> " + GPSLongitude + " km <br />" +
-                            "<b>RPM Engine Speed: </b> " + RPMEngineSpeed + " km <br />" +
-                            "<b>Total Vehcile Distance: </b> " + TotalVehcileDistance + " km <br />"  ;
+                            "<b>Engine Hours: </b> " + EngineHours + "<br />" +
+                            "<b>GPS Latitude: </b> " + GPSLatitude + "<br />" +
+                            "<b>GPS Longitude: </b> " + GPSLongitude + "<br />" +
+                            "<b>RPM Engine Speed: </b> " + RPMEngineSpeed + "<br />" +
+                            "<b>Total Vehcile Distance: </b> " + TotalVehcileDistance + "<br />"  ;
 
 
 

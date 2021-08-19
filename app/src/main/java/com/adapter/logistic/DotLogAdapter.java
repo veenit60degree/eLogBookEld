@@ -63,7 +63,7 @@ public class DotLogAdapter  extends BaseAdapter {
             holder.originDotTV = (TextView) convertView.findViewById(R.id.originDotTV);
             holder.remarksDotTV = (TextView) convertView.findViewById(R.id.remarksDotTV);
 
-            holder.itemOdometerLay  = (LinearLayout)convertView.findViewById(R.id.itemOdometerLay);
+           // holder.itemOdometerLay  = (LinearLayout)convertView.findViewById(R.id.itemOdometerLay);
 
             convertView.setTag(holder);
         } else {
@@ -148,7 +148,7 @@ public class DotLogAdapter  extends BaseAdapter {
 
     public class ViewHolder {
         TextView timeDotTV, locationDotTV, odoKmDotTV, odoMilesDotTV, engineHrsDotTV, eventTypeDotTV, remarksDotTV, originDotTV;
-        LinearLayout itemOdometerLay;
+       // LinearLayout itemOdometerLay;
     }
 
 }

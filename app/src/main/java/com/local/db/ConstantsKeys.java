@@ -249,6 +249,9 @@ public class ConstantsKeys {
     public static String DrivingAllowedStatus           = "DrivingAllowedStatus";
     public static String DrivingAllowedStatusTime       = "DrivingAllowedStatusTime";
     public static String IsEldEcmALert                  = "IsEldEcmALert";
+    public static String IsOBDStatusUpdate              = "IsOBDStatusUpdate";
+    public static String IsPcYmAlertChangeStatus        = "IsPcYmAlertChangeStatus";
+
 
     public static String IsUnidentified                 = "IsUnidentified";
     public static String IsMalfunction                  = "IsMalfunction";
@@ -375,6 +378,8 @@ public class ConstantsKeys {
     public static String EndDate                        = "EndDate";
     public static String EndLat                         = "EndLat";
     public static String EndLon                         = "EndLon";
+    public static String PreviousRemarks                = "PreviousRemarks";
+    public static String IsPersonalRecord               = "IsPersonalRecord";
 
 
 
