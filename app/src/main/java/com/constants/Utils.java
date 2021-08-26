@@ -329,7 +329,7 @@ public class Utils
 
            // Log.d("log size", "log size: " + fileSize);
 
-            if(fileSize > 20 && Globally.isConnected(context)){
+            if(fileSize > 10 && Globally.isConnected(context)){
                 SyncWiredObdLog syncDataUpload = new SyncWiredObdLog(context, DriverId, DriverName, wiredObdLog );
                 syncDataUpload.execute();
 

@@ -20,8 +20,8 @@ android {
         applicationId "com.messaging.logistic"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 110  //99
-        versionName "3.5.14.10"  //3.5.4
+        versionCode 111  //99
+        versionName "3.5.15"  //3.5.4
         // Enabling multidex support.
         multiDexEnabled true
 

@@ -192,7 +192,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             }
         }
 
-        if(SharedPref.IsAOBRD(context)) {
+        if(SharedPref.IsAOBRD(context) || IsEditView) {
             holder.certifyLocationIV.setVisibility(View.VISIBLE);
         }
 
@@ -200,7 +200,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
 
-                if(holder.certifyLocationIV.getVisibility() == View.VISIBLE) {
+                if(IsEditView || holder.certifyLocationIV.getVisibility() == View.VISIBLE) {
                     String city = holder.certifyLocationTV.getText().toString();
                     RecordType = Constants.Location;
                     selectedDate = LogItem.getStartDateTime();
@@ -323,7 +323,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             String location = LogItem.getLocation().trim();
             if (locationKm.equals("null") || locationKm.equals(",") || locationKm.equals("") || locationKm.equals(context.getString(R.string.no_location_found))) {
                 if(location.equals("null") || location.equals(",") || location.equals("") || locationKm.equals(context.getString(R.string.no_location_found)) ){
-                     if(LogItem.getStartLatitude().length() > 4 && SharedPref.IsAOBRD(context) == false){
+                     if(LogItem.getStartLatitude().length() > 4 && SharedPref.IsAOBRD(context) == false && IsEditView == false ){
                         holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                         holder.certifyLocationTV.setText(LogItem.getStartLatitude() + "," + LogItem.getStartLongitude());
                         holder.certifyLocationIV.setVisibility(View.GONE);
@@ -335,7 +335,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 }else{
                     holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                     holder.certifyLocationTV.setText(location);
-                    if(SharedPref.IsAOBRD(context) == false) {
+                    if(SharedPref.IsAOBRD(context) == false && IsEditView == false ) {
                         holder.certifyLocationIV.setVisibility(View.GONE);
                     }
                 }
@@ -343,7 +343,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             } else {
                 holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                 holder.certifyLocationTV.setText(LogItem.getLocationKm());
-                if(SharedPref.IsAOBRD(context) == false) {
+                if(SharedPref.IsAOBRD(context) == false && IsEditView == false ) {
                     holder.certifyLocationIV.setVisibility(View.GONE);
                 }
             }

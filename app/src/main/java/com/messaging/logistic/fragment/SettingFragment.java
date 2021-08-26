@@ -1901,7 +1901,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             opZoneTmgView.setVisibility(View.VISIBLE);
             canEditImgView.setVisibility(View.VISIBLE);
             usEditImgView.setVisibility(View.GONE);
-            deferralRuleLay.setVisibility(View.VISIBLE);
+           // deferralRuleLay.setVisibility(View.VISIBLE);
 
             if(isNorthCanada) {
                 operatingZoneTV.setText(getString(R.string.OperatingZoneNorth));

@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.constants.Constants;
+import com.constants.SharedPref;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
@@ -74,13 +75,16 @@ public class ContinueStatusDialog extends Dialog {
             continueStatusDescTV.setText(getContext().getString(R.string.ConfirmDutyStatus));
         }
 
-        if(isLogin){
+        if(SharedPref.GetAfterLoginConfStatus(getContext()) == false && isLogin){
             continueStatusDescTV.setVisibility(View.INVISIBLE );
             continueStatusTitleTV.setText(getContext().getResources().getString(R.string.LoginConfirmation) );
         }
+
         continueStatusBtn.setOnClickListener(new ContinueJobListener());
         changeStatusBtn.setOnClickListener(new ChangeJobListener());
 
+    //    SharedPref.SetTruckStartLoginStatus(false, getContext());
+        SharedPref.SetAfterLoginConfStatus(true, getContext());
     }
 
 

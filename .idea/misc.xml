@@ -30,6 +30,7 @@
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/dialog_deferral.xml" value="0.49939975990396157" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/dialog_engine_restarted.xml" value="0.19067028985507245" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/dialog_internet_connection.xml" value="0.536" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/dialog_limited_eld_connection.xml" value="0.23958333333333334" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/dialog_other_options.xml" value="0.19429347826086957" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/fragment_certify_log.xml" value="0.18115942028985507" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/fragment_dot_us.xml" value="0.18115942028985507" />
@@ -46,8 +47,10 @@
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_inspection_layout.xml" value="0.1897644927536232" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_login_logout_dot.xml" value="0.15208333333333332" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_no_selection_view.xml" value="0.2536231884057971" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_permission_info.xml" value="0.2441123188405797" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_remarks_ano_dot.xml" value="0.15208333333333332" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/items_job_detail.xml" value="0.2536231884057971" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_permission_info.xml" value="0.2441123188405797" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_share_log.xml" value="0.25416666666666665" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_trailor_fields.xml" value="0.24094202898550723" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_vehicle_list.xml" value="0.22282608695652173" />

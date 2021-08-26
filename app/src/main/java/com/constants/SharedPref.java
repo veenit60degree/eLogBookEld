@@ -1457,6 +1457,20 @@ public class SharedPref {
     }
 
 
+    // Set Truck Start or Login Status for Yard move / Personal use -------------------
+    public static void SetAfterLoginConfStatus( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("after_login_conf", value);
+        editor.commit();
+    }
+
+
+    // Get Truck Start or Login Status for Yard move / Personal use -------------------
+    public static boolean GetAfterLoginConfStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("after_login_conf", false);
+    }
 
     // Set Truck Start or Login Status for Yard move / Personal use -------------------
     public static void SetTruckStartLoginStatus( boolean value, Context context) {

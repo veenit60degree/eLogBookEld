@@ -176,6 +176,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     int MaxSpeedCounter                     = 60;
     int HalfSpeedCounter                    = 30;
     int sameLocationCount                   = 0;
+    int ignitionOffCount                    = 0;
 
     public static int obdVehicleSpeed       = -1;
     public static int GpsVehicleSpeed       = -1;
@@ -387,7 +388,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
         }else{
             if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
-                checkWiredObdConnection(wifiConfig.IsAlsNetworkConnected(getApplicationContext()));
+                checkWiredObdConnection();
             }
             if (SharedPref.GetNewLoginStatus(getApplicationContext())) {
                 checkPermissionsBeforeScanBle();
@@ -448,15 +449,37 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             bundle.clear();
 
             // need to delete it in production apk
-          /*  if (SharedPref.getObdStatus(getApplicationContext()) == constants.WIRED_CONNECTED) {
+         /*   if (SharedPref.getObdStatus(getApplicationContext()) == constants.WIRED_CONNECTED) {
                 saveObdData(getObdSource(), vin, obdOdometer, currentHighPrecisionOdometer,
                         currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                         String.valueOf(-1), obdTripDistance, timeStamp, timeStamp);
 
             }*/
 
-            // call ELD rules with wired tablet data
-            obdCallBackObservable(speed, vin, timeStamp, null);
+            if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
+                    !SharedPref.getPassword(getApplicationContext()).equals("")) {
+
+                // this check is used to avoid fake PC/YM continue alert. because obd some times return ignition status value off false. So we are checking it continuesly 3 times
+                if (ignitionStatus.equals("OFF")) {
+                    if (ignitionOffCount > 2) {
+                        // call ELD rules with wired tablet data
+                        obdCallBackObservable(speed, vin, timeStamp, null);
+                    } else {
+                        // ignore to call rules 3 times due to false ignition status
+                        ignitionOffCount++;
+                        saveObdData(getObdSource(), vin, obdOdometer, currentHighPrecisionOdometer,
+                                currentHighPrecisionOdometer, "WIRED-IgnitionOffCount- " + ignitionOffCount, ignitionStatus, truckRPM, String.valueOf(speed),
+                                String.valueOf(-1), obdTripDistance, timeStamp, timeStamp);
+                    }
+
+                } else {
+                    ignitionOffCount = 0;
+
+                    // call ELD rules with wired tablet data
+                    obdCallBackObservable(speed, vin, timeStamp, null);
+                }
+            }
+
 
 
         }
@@ -481,9 +504,30 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 Globally.LATITUDE = htBleData.getLatitude();
                 Globally.LONGITUDE = htBleData.getLongitude() ;
 
-                if (Integer.valueOf(truckRPM) > 0) {
+                if (Integer.valueOf(truckRPM) > 0 || speed > 0) {
                     ignitionStatus = "ON";
+                    ignitionOffCount = 0;
                 }
+
+                // this check is used to avoid fake PC/YM continue alert. because obd some times return ignition status value off false. So we are checking it continuesly 3 times
+                if(ignitionStatus.equals("OFF")){
+                    if(ignitionOffCount > 2){
+                       // ignitionOffCount = 0;
+
+                    }else{
+                        ignitionOffCount++;
+                        saveObdData(getObdSource(), vin, obdOdometer, currentHighPrecisionOdometer,
+                                currentHighPrecisionOdometer, "BLE-IgnitionOffCount- "+ignitionOffCount, ignitionStatus, truckRPM, String.valueOf(speed),
+                                String.valueOf(-1), obdTripDistance, timeStamp, timeStamp);
+
+                        // temp ON ignitionStatus to check 3 times to confirm
+                        ignitionStatus = "ON";
+                    }
+
+                }else{
+                    ignitionOffCount = 0;
+                }
+
 
             }else{
                 if(OBD_LAST_STATUS == constants.BLE_CONNECTED) {
@@ -504,8 +548,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         SharedPref.SetObdEngineHours(obdEngineHours, getApplicationContext());
 
 
+
         // ---------------- temp data ---------------------
-      /*  if(OBD_DISCONNECTED){
+  /*      if(OBD_DISCONNECTED){
             ignitionStatus = "ON"; truckRPM = "700"; speed = 10; obdEngineHours = "123959";
             SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(), getApplicationContext());
             OBD_LAST_STATUS = constants.WIRED_CONNECTED;
@@ -521,8 +566,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
               currentHighPrecisionOdometer = obdOdometer;
               SharedPref.SetWiredObdOdometer(obdOdometer, getApplicationContext());
             sendBroadCast(parseObdDatainHtml(vin, speed, -1), "");
-*/
 
+*/
 
 
 // ------------------------------------------------------------------------
@@ -549,14 +594,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         getString(R.string.power_comp_mal_occured));
 
                                 constants.saveMalfncnStatus(getApplicationContext(), true);
-                                constants.saveAppUsageLog("OBD:"+ OBD_LAST_STATUS + " - saveMalfunctionInTable", false, false, obdUtil);
+                               // constants.saveAppUsageLog("OBD:"+ OBD_LAST_STATUS + " - saveMalfunctionInTable", false, false, obdUtil);
 
                             }else{
                                 constants.saveDiagnstcStatus(getApplicationContext(), true);
                                 saveMalfunctionInTable( constants.PowerDataDiagnostic,
                                         getString(R.string.power_dia_occured));
 
-                                constants.saveAppUsageLog("OBD:"+ OBD_LAST_STATUS + " - saveDiagnstcInTable", false, false, obdUtil);
+                             //   constants.saveAppUsageLog("OBD:"+ OBD_LAST_STATUS + " - saveDiagnstcInTable", false, false, obdUtil);
 
                             }
 
@@ -658,7 +703,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             }
 
                         }else{
-                            constants.saveAppUsageLog("Odometer issue - Current: " + obdOdometerDouble + ". Last: "+ savedOdometer, false, false, obdUtil);
+                           // constants.saveAppUsageLog("Odometer issue - Current: " + obdOdometerDouble + ". Last: "+ savedOdometer, false, false, obdUtil);
                         }
 
                         if(OBD_LAST_STATUS != constants.BLE_CONNECTED) {
@@ -666,9 +711,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         }
 
                     } else {
+
+                        // save log when ignition status is changed
+                        if (SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, getApplicationContext()).equals("ON") ) {
+                            saveObdData(getObdSource(), vin, obdOdometer, currentHighPrecisionOdometer,
+                                    currentHighPrecisionOdometer, "OBD disconnected", ignitionStatus, truckRPM, String.valueOf(speed),
+                                    String.valueOf(-1), obdTripDistance, timeStamp, timeStamp);
+                        }
+
+
                         speed = 0;
                         Globally.IS_OBD_IGNITION = false;
-                      //  continueStatusPromotForPcYm("OFF", last_obs_source_name, "", OBD_LAST_STATUS);
                         SharedPref.SetTruckIgnitionStatusForContinue("OFF", last_obs_source_name, "", getApplicationContext());
                         SharedPref.setVss(speed, getApplicationContext());
                         SharedPref.setVehilceMovingStatus(false, getApplicationContext());
@@ -705,8 +758,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }else{
             isWiredObdRespond = true;
             // check in wire disconnect case but device is also not connected with ALS/OBD wifi ssid
-            if((OBD_LAST_STATUS == constants.WIRED_DISCONNECTED || OBD_LAST_STATUS == constants.BLE_DISCONNECTED) &&
-                    wifiConfig.IsAlsNetworkConnected(getApplicationContext()) == false) {
+            if( (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED && OBD_LAST_STATUS == constants.WIRED_DISCONNECTED) ||
+                    (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE && OBD_LAST_STATUS == constants.BLE_DISCONNECTED)) {
 
                 try {
                     if(SharedPref.IsAllowMalfunction(getApplicationContext()) ||
@@ -798,7 +851,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 }
 
 
-                SharedPref.SetTruckIgnitionStatusForContinue(ignitionStatus, last_obs_source_name, "", getApplicationContext());
+                // save log when ignition status is changed
+                if (SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, getApplicationContext()).equals("ON") ) {
+                    saveObdData(getObdSource(), vin, obdOdometer, currentHighPrecisionOdometer,
+                            currentHighPrecisionOdometer, "OBD Ignition Off", ignitionStatus, truckRPM, String.valueOf(speed),
+                            String.valueOf(-1), obdTripDistance, timeStamp, timeStamp);
+                }
+
+
+             //   SharedPref.SetTruckIgnitionStatusForContinue(ignitionStatus, last_obs_source_name, "", getApplicationContext());
 
 
             }else {
@@ -916,11 +977,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             boolean isPersonal = hMethods.isPCYM(EldFragment.driverLogArray);
                             if(isPersonal){
                                 if(SharedPref.isPersonalUse75KmCrossed(getApplicationContext()) || Constants.isPcYmAlertButtonClicked){
-                                    if(Constants.isPcYmAlertButtonClicked){
+                                    /*if(Constants.isPcYmAlertButtonClicked){
                                         constants.saveAppUsageLog("PU alert not confirming called", false, false, obdUtil);
                                     }else {
                                         constants.saveAppUsageLog("PU exceeded 75km ELD rule called", false, false, obdUtil);
-                                    }
+                                    }*/
 
                                     saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
                                             timeStamp, savedDate, "PersonalUse-Speed: "+speed, calculatedSpeedFromOdo);
@@ -1016,7 +1077,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
-    private void checkWiredObdConnection(boolean isAlsNetworkConnected){
+    private void checkWiredObdConnection(){
         int lastObdStatus = SharedPref.getObdStatus(getApplicationContext());
         obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
 
@@ -1025,10 +1086,20 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             if (obdShell.successMsg.contains("USB_DCP")) {  // Connected State
                 if (lastObdStatus != Constants.WIRED_CONNECTED) {
                     StartStopServer(constants.WiredOBD);
-                    constants.saveAppUsageLog("WIRED_CONNECTED", false, false, obdUtil);
+                   // constants.saveAppUsageLog("WIRED_CONNECTED", false, false, obdUtil);
+
+                    saveObdData(getObdSource(), VIN_NUMBER, obdOdometer, "-1",
+                            currentHighPrecisionOdometer, "", "WIRED-CONNECTED", truckRPM, "-1",
+                            "-1", obdTripDistance, "", "");
+
 
                     sendBroadCast("<b>Wired tablet connected</b> <br/>", "");
                     sendBroadcastUpdateObd();
+
+                    sendEcmBroadcast(false);
+                    global.ShowLocalNotification(getApplicationContext(),
+                            getString(R.string.wired_tablettt),
+                            getString(R.string.wired_tablet_connected), 2081);
 
                 }
 
@@ -1037,7 +1108,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             } else {
                 // Disconnected State. Save only when last status was not already disconnected
                 if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
-                    if (isAlsNetworkConnected == false && lastObdStatus != constants.WIRED_DISCONNECTED) {
+                    if (lastObdStatus != constants.WIRED_DISCONNECTED) {
+
+                        saveObdData(getObdSource(), VIN_NUMBER, obdOdometer, "-1",
+                                currentHighPrecisionOdometer, "", "WIRED-DISCONNECTED", truckRPM, "-1",
+                                "-1", obdTripDistance, "", "");
+
 
                         SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
                         if (ignitionStatus.equals("OFF")) {
@@ -1046,26 +1122,45 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         obdCallBackObservable(-1, "", "", null);
                         sendBroadcastUpdateObd();
-                        sendEcmBroadcast();
+                        sendEcmBroadcast(true);
                         Globally.PlayNotificationSound(getApplicationContext());
+                        global.ShowLocalNotification(getApplicationContext(),
+                                getString(R.string.wired_tablettt),
+                                getString(R.string.wired_tablet_disconnected), 2081);
+
                     }
                 }
             }
         } else {
-            if (isAlsNetworkConnected == false && lastObdStatus != Constants.WIFI_CONNECTED) {
-                SharedPref.SaveObdStatus(Constants.WIRED_ERROR, global.getCurrentDate(), getApplicationContext());
-                sendBroadcastUpdateObd();
-            }
+           if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+               if (lastObdStatus != Constants.WIRED_ERROR) {
+
+                   saveObdData(getObdSource(), VIN_NUMBER, obdOdometer, "-1",
+                           currentHighPrecisionOdometer, "", "WIRED-ERROR", truckRPM, "-1",
+                           "-1", obdTripDistance, "", "");
+
+
+                   sendEcmBroadcast(true);
+                   Globally.PlayNotificationSound(getApplicationContext());
+                   global.ShowLocalNotification(getApplicationContext(),
+                           getString(R.string.wired_tablettt),
+                           getString(R.string.wired_tablet_conn_error), 2081);
+
+                    SharedPref.SaveObdStatus(Constants.WIRED_ERROR, global.getCurrentDate(), getApplicationContext());
+                   sendBroadcastUpdateObd();
+               }
+           }
         }
+
 
     }
 
 
-    void sendEcmBroadcast(){
+    void sendEcmBroadcast(boolean IsEldEcmALert){
         try{
             Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
             intent.putExtra(ConstantsKeys.PersonalUse75Km, false);
-            intent.putExtra(ConstantsKeys.IsEldEcmALert, true);
+            intent.putExtra(ConstantsKeys.IsEldEcmALert, IsEldEcmALert);
             LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
 
         }catch (Exception e){
@@ -1102,7 +1197,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 Globally.PlayNotificationSound(getApplicationContext());
                                 global.ShowLocalNotification(getApplicationContext(),
                                         getString(R.string.BluetoothOBD),
-                                        getString(R.string.BleObdNotFound), 2096);
+                                        getString(R.string.BleObdNotFound), 2081);
                             }
 
                         }
@@ -1165,10 +1260,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         sendBroadCast(getString(R.string.ht_connect_timeout), "");
 
                         if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+
+                            saveObdData(getObdSource(), VIN_NUMBER, obdOdometer, "-1",
+                                    currentHighPrecisionOdometer, "", "BLE - onConnectTimeout: " +s, truckRPM, "-1",
+                                    "-1", obdTripDistance, "", "");
+
+
+
                             SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
 
                             sendBroadcastUpdateObd();
-                            sendEcmBroadcast();
+                            sendEcmBroadcast(true);
                             Globally.PlayNotificationSound(getApplicationContext());
                         }
                     }
@@ -1185,6 +1287,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                         if(SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+
+                            saveObdData(getObdSource(), VIN_NUMBER, obdOdometer, "-1",
+                                    currentHighPrecisionOdometer, "", "BLE - onConnectionError: " +s, truckRPM, "-1",
+                                    "-1", obdTripDistance, "", "");
+
+
                             SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
 
                             Globally.PlayNotificationSound(getApplicationContext());
@@ -1193,7 +1301,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     getString(R.string.obd_ble_discon_conn_error), 2081);
 
                             sendBroadcastUpdateObd();
-                            sendEcmBroadcast();
+                            sendEcmBroadcast(true);
 
                         }
 
@@ -1216,6 +1324,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         sendBroadCast(getString(R.string.ht_disconnected), "");
 
                         if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+
+                            saveObdData(getObdSource(), VIN_NUMBER, obdOdometer, "-1",
+                                    currentHighPrecisionOdometer, "", "BLE-DISCONNECTED: " +s, truckRPM, "-1",
+                                    "-1", obdTripDistance, "", "");
+
+
                             SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
 
                             Globally.PlayNotificationSound(getApplicationContext());
@@ -1224,7 +1338,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     getString(R.string.obd_ble_disconnected), 2081);
 
                             sendBroadcastUpdateObd();
-                            sendEcmBroadcast();
+                            sendEcmBroadcast(true);
                         }
 
                         // call handler callback method to check malfunction/diagnostic when disconnected
@@ -1240,33 +1354,43 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
 
                 try {
-                    mHtblData.add(htBleData);
+                    if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
+                            !SharedPref.getPassword(getApplicationContext()).equals("")) {
 
-                    if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
-                        SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
-                        constants.saveAppUsageLog("BleCallback: onReceive", false, false, obdUtil);
+                        mHtblData.add(htBleData);
 
-                        sendBroadcastUpdateObd();
+                        if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
+                            SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(), getApplicationContext());
+                           // constants.saveAppUsageLog("BleCallback: onReceive", false, false, obdUtil);
 
+                            sendBroadcastUpdateObd();
+
+                            sendEcmBroadcast(false);
+                            global.ShowLocalNotification(getApplicationContext(),
+                                    getString(R.string.BluetoothOBD),
+                                    getString(R.string.obd_ble), 2081);
+
+                        }
+
+                        EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
+
+                        if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                            sendBroadCast(BleUtil.decodeDataChange(htBleData, HTModeSP.INSTANCE.getDeviceName(), HTModeSP.INSTANCE.getDeviceMac()), "");
+                            obdCallBackObservable(Integer.valueOf(htBleData.getVehicleSpeed()), htBleData.getVIN_Number(), global.GetCurrentDateTime(), htBleData);
+
+/*
+                            saveObdData(getObdSource(), htBleData.getVIN_Number(), obdOdometer, currentHighPrecisionOdometer,
+                                    currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(htBleData.getVehicleSpeed()),
+                                    String.valueOf(-1), obdTripDistance, Globally.GetCurrentDateTime(), Globally.GetCurrentDateTime());
+*/
+
+                        }
                     }
-
-                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
-
-                    if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-                        sendBroadCast(BleUtil.decodeDataChange(htBleData, HTModeSP.INSTANCE.getDeviceName(), HTModeSP.INSTANCE.getDeviceMac()), "");
-                        obdCallBackObservable(Integer.valueOf(htBleData.getVehicleSpeed()), htBleData.getVIN_Number(), global.GetCurrentDateTime(), htBleData);
-                    }
-
                 }catch (Exception e){
                     e.printStackTrace();
                 }
 
-               // constants.saveAppUsageLog("RPM: "+ htBleData.getEngineSpeed() + " - Speed: " + htBleData.getVehicleSpeed(), false, false, obdUtil);
 
-               /* saveObdData( constants.BleObd, htBleData.getVIN_Number(), htBleData.getOdoMeter(), htBleData.getOdoMeter(),
-                        htBleData.getOdoMeter(), "", ignitionStatus, htBleData.getEngineSpeed(), htBleData.getVehicleSpeed(),
-                        "Test calculate", htBleData.getDistanceSinceLast(), "", Globally.GetCurrentDeviceDate());
-*/
             }
 
             @Override
@@ -1696,8 +1820,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         Log.i(TAG, "---------onStartCommand Service");
 
-        Log.i(TAG, "-----");
-
         String pingStatus = SharedPref.isPing(getApplicationContext());
 
         if(pingStatus.equals(ConstantsKeys.SaveOfflineData)){
@@ -1868,7 +1990,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 // communicate with wired OBD server if not connected
                 if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
-                    checkWiredObdConnection(isAlsNetworkConnected);
+                    checkWiredObdConnection();
                     if(!isWiredObdRespond) {
                        // constants.saveAppUsageLog("StartStopServer in Timer" ,  false, false, obdUtil);
                         StartStopServer(constants.WiredOBD);
@@ -2728,8 +2850,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     if (message.contains("CAN")) {
 
                         if (message.contains("CAN:UNCONNECTED")) {
-                            SharedPref.SetTruckIgnitionStatusForContinue("OFF", constants.WifiOBD, "", getApplicationContext());
-                            SharedPref.setVehilceMovingStatus(false, getApplicationContext());
 
                             ignitionStatus = "false";
                             saveDummyData(rawResponse, constants.WifiOBD);
@@ -2867,7 +2987,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIFI) {
                                 if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_DISCONNECTED) {
                                     sendBroadcastUpdateObd();
-                                    sendEcmBroadcast();
+                                    sendEcmBroadcast(true);
                                     Globally.PlayNotificationSound(getApplicationContext());
                                 }
                                 SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, global.getCurrentDate(), getApplicationContext());
@@ -3371,6 +3491,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     }
                                 }
 
+
                                 SharedPref.SetTruckIgnitionStatusForContinue(obdCurrentIgnition, type, time, getApplicationContext());
                             }
                         }
@@ -3638,7 +3759,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                         boolean isPU75Crossed = dataObj.getBoolean(ConstantsKeys.PersonalUse75Km);
                                         boolean wasPU75Crossed = SharedPref.isPersonalUse75KmCrossed(getApplicationContext());
-                                       // isPU75Crossed = true; //------------------
 
                                         SharedPref.setPersonalUse75Km(isPU75Crossed, getApplicationContext());
 
@@ -4209,8 +4329,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     RePostDataCountMain++;
                                 }
                             }else{
-                                saveActiveDriverData();
-                                RePostDataCountMain++;
+                                if (RePostDataCountMain > 2) {
+                                    ClearLogAfterSuccess(driver_id);
+                                    RePostDataCountMain = 0;
+                                }else{
+                                    saveActiveDriverData();
+                                    RePostDataCountMain++;
+                                }
                             }
                         }
 

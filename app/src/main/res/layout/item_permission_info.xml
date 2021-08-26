@@ -28,15 +28,14 @@
         />
 
 
-    <ImageView
-        android:id="@+id/permissionImgView"
-        android:layout_width="@dimen/view_height_160"
-        android:layout_height="@dimen/view_height_150"
-        android:src="@drawable/permsn_storage"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/margin_20"
-        android:layout_marginTop="@dimen/margin_20"
-    />
+        <ImageView
+            android:id="@+id/permissionImgView"
+            android:layout_width="@dimen/view_height_140"
+            android:layout_height="@dimen/view_height_130"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/view_height_30"
+            android:layout_marginRight="@dimen/margin_15"
+            android:src="@drawable/permsn_storage" />
 
 
 
@@ -52,7 +51,7 @@
             android:layout_below="@+id/permissionTitleTV"
             android:layout_toLeftOf="@+id/permissionImgView"
             android:layout_alignParentLeft="true"
-            android:layout_marginRight="@dimen/margin_15"
+            android:layout_marginRight="@dimen/margin_10"
             />
 
 

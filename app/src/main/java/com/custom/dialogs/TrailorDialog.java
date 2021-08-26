@@ -234,6 +234,7 @@ public class TrailorDialog extends Dialog {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 if(!isYardMove) {
+                    String tempTrailerNo = TrailorNoEditText.getText().toString().trim();
                     spinnerSelection = parent.getItemAtPosition(position).toString();
                     ReasonEditText.setHint(getContext().getResources().getString(R.string.EnterReason));
 
@@ -265,7 +266,7 @@ public class TrailorDialog extends Dialog {
                         ShowHideTrailerField(Trailor, isStart);
 
                     } else {
-                        ShowHideTrailerField(Trailor, isStart);
+                        ShowHideTrailerField(tempTrailerNo, isStart);
                         ReasonEditText.setVisibility(View.GONE);
                         ReasonEditText.setText(spinnerSelection);
 
@@ -341,7 +342,9 @@ public class TrailorDialog extends Dialog {
               }
 
           } else if (!Trailor.equals("")) {
-              trailorNoInputType.setVisibility(View.GONE);
+              if(isStartUp) {
+                  trailorNoInputType.setVisibility(View.GONE);
+              }
           } else {
               isUpdatedTrailer = true;
           }

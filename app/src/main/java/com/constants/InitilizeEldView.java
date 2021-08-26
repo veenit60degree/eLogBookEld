@@ -1,6 +1,7 @@
 package com.constants;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -232,7 +233,7 @@ public class InitilizeEldView {
 
     @SuppressLint("Range")
     public void InActiveView(RelativeLayout layout, TextView violationView, TextView timeView, TextView jobTypeView,
-                             TextView asPerShiftOrDayView, Button personalUseBtn, boolean IsPersonalAllowed){
+                             TextView asPerShiftOrDayView, Button personalUseBtn, boolean IsPersonalAllowed, Context context){
         String EldThemeColor = "", SkyBlueColor = "";    //4A88CC
 
         //if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
@@ -249,15 +250,10 @@ public class InitilizeEldView {
 
         jobTypeView.setTextColor(Color.parseColor(EldThemeColor));
         asPerShiftOrDayView.setTextColor(Color.parseColor(EldThemeColor));
-       /* asPerShiftDrivingTV.setTextColor(Color.parseColor(EldThemeColor));
-        asPerDateSleepTV.setTextColor(Color.parseColor(EldThemeColor));
-        asPerDateOffDutyTV.setTextColor(Color.parseColor(EldThemeColor));*/
 
-        if(IsPersonalAllowed) {
+        if(IsPersonalAllowed && SharedPref.isPersonalUse75KmCrossed(context) == false) {
             personalUseBtn.setTextColor(Color.parseColor(EldThemeColor));
-           // personalUseBtn.setText("PC End");
         }else{
-         //   personalUseBtn.setText("PC Start");
             personalUseBtn.setTextColor(Color.parseColor("#ABAAAB"));
         }
 

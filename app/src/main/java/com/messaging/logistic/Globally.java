@@ -251,37 +251,40 @@ public class Globally {
 	}
 
 
-	public void InternetErrorDialog(Context context){
+	public void InternetErrorDialog(Context context, boolean isDisplay){
 
 		try {
 			if (ecmErrorAlert != null && ecmErrorAlert.isShowing()) {
 				ecmErrorAlert.dismiss();
 			}
 
-			ecmErrorAlert = new Dialog(context);
-			ecmErrorAlert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-			ecmErrorAlert.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			ecmErrorAlert.setContentView(R.layout.dialog_limited_eld_connection);
+			if(isDisplay) {
+				ecmErrorAlert = new Dialog(context);
+				ecmErrorAlert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+				ecmErrorAlert.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				ecmErrorAlert.setContentView(R.layout.dialog_limited_eld_connection);
+				ecmErrorAlert.setCancelable(false);
 
-			ecmErrorAlert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-			WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-			lp.copyFrom(ecmErrorAlert.getWindow().getAttributes());
-			lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-			lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-			lp.gravity = Gravity.BOTTOM;
-			ecmErrorAlert.getWindow().setAttributes(lp);
+				ecmErrorAlert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+				WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+				lp.copyFrom(ecmErrorAlert.getWindow().getAttributes());
+				lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+				lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+				lp.gravity = Gravity.BOTTOM;
+				ecmErrorAlert.getWindow().setAttributes(lp);
 
 
-			final ImageView closeDialogImg = (ImageView) ecmErrorAlert.findViewById(R.id.closeDialogImg);
-			closeDialogImg.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					ecmErrorAlert.dismiss();
+				final ImageView closeDialogImg = (ImageView) ecmErrorAlert.findViewById(R.id.closeDialogImg);
+				closeDialogImg.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						ecmErrorAlert.dismiss();
+					}
+				});
+
+				if (context != null) {
+					ecmErrorAlert.show();
 				}
-			});
-
-			if (context != null) {
-				ecmErrorAlert.show();
 			}
 		}catch (Exception e){
 			e.printStackTrace();

@@ -413,7 +413,7 @@ public class Constants {
         if(SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED ){
             optionsList.add(new OtherOptionsModel(R.drawable.wifi_other, OBD, context.getResources().getString(R.string.obd_wifi)));
         }else if(SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED){
-            optionsList.add(new OtherOptionsModel(R.drawable.wired_status_inactive, OBD, context.getResources().getString(R.string.wired_tablet)));
+            optionsList.add(new OtherOptionsModel(R.drawable.wired_status_inactive, OBD, context.getResources().getString(R.string.wired_tablet_connected)));
         }else if(SharedPref.getObdStatus(context) == Constants.BLE_CONNECTED){
             optionsList.add(new OtherOptionsModel(R.drawable.ble_ic, OBD, context.getResources().getString(R.string.obd_ble)));
         }else{

@@ -195,6 +195,11 @@ public class WiFiConfig {
     }
 
 
+    public static boolean isWifiEnabled(Context c){
+        WifiManager wifi = (WifiManager)c.getSystemService(Context.WIFI_SERVICE);
+        return wifi.isWifiEnabled();
+    }
+
 
     private boolean IsWifiConnected(Context c) {
         boolean isConnected = false;

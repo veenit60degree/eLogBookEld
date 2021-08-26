@@ -47,9 +47,9 @@
                 android:id="@+id/closeDialogImg"
                 android:layout_width="@dimen/view_height_40"
                 android:layout_height="@dimen/view_height_40"
-                android:src="@drawable/close_img_circle"
                 android:layout_alignParentRight="true"
                 android:padding="@dimen/margin_short_7"
+                android:src="@drawable/close_img_circle"
 
                 />
 

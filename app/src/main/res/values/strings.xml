@@ -781,7 +781,10 @@
     <string name="wired_conn_error">OBD connection error</string>
     <string name="engine_ign_off_state">Engine ignition in off state</string>
     <string name="wifi">WiFi</string>
-    <string name="wired_tablet">Wired Tablet Connected</string>
+    <string name="wired_tablettt">Wired Tablet</string>
+    <string name="wired_tablet_connected">Wired Tablet Connected</string>
+    <string name="wired_tablet_disconnected">Wired Tablet disconnected</string>
+    <string name="wired_tablet_conn_error">Wired Tablet connection error</string>
     <string name="obd_wifi">WiFi OBD Connected</string>
     <string name="obd_ble">Bluetooth OBD Connected</string>
     <string name="obd_ble_disconnected">Bluetooth OBD disconnected</string>
@@ -792,6 +795,7 @@
     <string name="obd_not_connected">OBD not connected</string>
     <string name="wifi_active">WIFI OBD is connected</string>
     <string name="wifi_inactive">WIFI OBD is not working</string>
+    <string name="wifi_status_disabled">Device WIFI is disabled. Please turned ON it.</string>
     <string name="ble_active">Bluetooth OBD is connected</string>
     <string name="ble_inactive">Bluetooth OBD is not connected</string>
     <string name="obd_data_connection_desc">Kindly connect with OBD via Wifi or Cable connection</string>
