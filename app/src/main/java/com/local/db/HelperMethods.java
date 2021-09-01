@@ -2626,12 +2626,12 @@ public class HelperMethods {
 
 
 
-    public String CheckStringNull(String value){
+   /* public String CheckStringNull(String value){
         if(value.equalsIgnoreCase("null") || value.equalsIgnoreCase("")){
             value = Globally.USA_WORKING_7_DAYS;
         }
         return value;
-    }
+    }*/
 
 
     public int CalculateJobTime(int previousMin, int currentMin){
@@ -3365,7 +3365,6 @@ public class HelperMethods {
         }
 
         String DriverName = "";
-        CurrentCycleId = CheckStringNull(CurrentCycleId);
         if (DriverType == Constants.MAIN_DRIVER_TYPE) {
             DriverName = MainDriverName;
         } else {
@@ -3421,7 +3420,8 @@ public class HelperMethods {
                         DRIVER_ID, City, State, Country, AddressLine, AddressKm,
                         CurrentCycleId, Remarks, isPersonal, isViolation,
                         "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                        String.valueOf(BackgroundLocationService.GpsVehicleSpeed), SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
+                        "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                        SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                         Global, isHaulExcptn, isShortHaulUpdate,
                         ""+isAdverseExcptn,
                         AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada,
@@ -3477,7 +3477,7 @@ public class HelperMethods {
                     Globally.LONGITUDE,
                     "false", // IsStatusAutomatic is false when mannual job has been done
                     String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                    String.valueOf(BackgroundLocationService.GpsVehicleSpeed),
+                    "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                     SharedPref.GetCurrentTruckPlateNo(context),
                     String.valueOf(isHaulExcptn),
                     String.valueOf( isShortHaulUpdate),
@@ -3537,7 +3537,7 @@ public class HelperMethods {
                     DRIVER_ID, City, State, Country, AddressLine, AddressKm,
                     CurrentCycleId, Remarks, isPersonal, isViolation,
                     "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                    String.valueOf(BackgroundLocationService.GpsVehicleSpeed),
+                    "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                     SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                     Global, isHaulExcptn, isShortHaulUpdate,
                     ""+isAdverseExcptn,

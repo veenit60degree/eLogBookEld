@@ -635,6 +635,19 @@ public class Constants {
         return inputValue;
     }
 
+
+    public String CheckDateFormat(String inputValue) {
+        try {
+            if (inputValue.trim().length() > 19) {
+                inputValue = inputValue.substring(0, 19);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return inputValue;
+    }
+
     public boolean CheckNullBoolean(String inputValue) {
         boolean output = false;
         try {
@@ -2231,7 +2244,7 @@ public class Constants {
             DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
             DateTime currentUTCTime = global.getDateTimeObj(global.GetCurrentUTCTimeFormat(), true);
             int offsetFromUTC = (int) global.GetTimeZoneOffSet();
-            String CurrentCycleId = GetDriverCycle(context);
+            String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
             boolean isSingleDriver = global.isSingleDriver(context);
             int DRIVER_JOB_STATUS = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
             int rulesVersion = SharedPref.GetRulesVersion(context);
@@ -2270,24 +2283,6 @@ public class Constants {
         return IsAllowed;
     }
 
-
-
-    String GetDriverCycle(Context context){
-        String cycleId = Globally.CANADA_CYCLE_1; // default value
-        try{
-            if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-                cycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
-            }else{
-                cycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, context);
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return cycleId;
-
-    }
 
 
     public void CopyString(Context context, String data){
@@ -2604,12 +2599,12 @@ public class Constants {
         JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
         boolean IsSendLog              = true;
 
-        if(logPermissionObj != null) {
-            try {
+        try {
+            if(logPermissionObj != null && logPermissionObj.has(ConstantsKeys.SendLog)) {
                 IsSendLog = logPermissionObj.getBoolean(ConstantsKeys.SendLog);
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return IsSendLog;
     }
@@ -2851,21 +2846,16 @@ public class Constants {
 
     public String getCountryName(Context context){
 
-        String CurrentCycleId = "", countryName;
+        String CountryName = "";
 
-        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
-            CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
-        }else{
-            CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, context);
-        }
-
+        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
         if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2) ){
-            countryName = "CANADA";
-        }else{
-            countryName = "USA";
+            CountryName = "CANADA";
+        }else if(CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)){
+            CountryName = "USA";
         }
 
-        return  countryName;
+        return  CountryName;
     }
 
 
@@ -3085,14 +3075,14 @@ public class Constants {
 
     private CanadaDutyStatusModel getDutyModel(JSONObject obj, int seqNumber, Date date, boolean IsNewDate){
         try {
-            String DateTimeWithMins = CheckNullBString(obj.getString(ConstantsKeys.DateTimeWithMins));
-            if(DateTimeWithMins.length() > 19){
+            //String DateTimeWithMins = ;
+            /*if(DateTimeWithMins.length() > 19){
                 DateTimeWithMins = DateTimeWithMins.substring(0, 19);
-            }
+            }*/
 
             CanadaDutyStatusModel dutyModel = new CanadaDutyStatusModel(
-                    DateTimeWithMins,
-                    CheckNullBString(obj.getString(ConstantsKeys.EventUTCTimeStamp)),
+                    CheckDateFormat(obj.getString(ConstantsKeys.DateTimeWithMins)),
+                    CheckDateFormat(obj.getString(ConstantsKeys.EventUTCTimeStamp)),
                     CheckNullBString(obj.getString(ConstantsKeys.DriverStatusID)),
 
                     obj.getInt(ConstantsKeys.EventType),
@@ -3153,8 +3143,8 @@ public class Constants {
                     CheckNullBString(obj.getString(ConstantsKeys.WorkShiftStart)),
                     CheckNullBString(obj.getString(ConstantsKeys.WorkShiftEnd)),
                     date,
-                    CheckNullBString(obj.getString(ConstantsKeys.EditDateTime)),
-                    CheckNullBString(obj.getString(ConstantsKeys.CertifyLogDate)),
+                    CheckDateFormat(obj.getString(ConstantsKeys.EditDateTime)),
+                    CheckDateFormat(obj.getString(ConstantsKeys.CertifyLogDate)),
                     IsNewDate,
                     0
 
@@ -3273,7 +3263,7 @@ public class Constants {
         try {
             /* ------------- Save Cycle details with time is different with earlier cycle --------------*/
             String CurrentCycle   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
-            if(CycleId != -1 && !CurrentCycle.equals(CycleId)) {
+            if(CycleId != 0 && !CurrentCycle.equals(CycleId)) {
                 JSONArray cycleDetailArray = global.getSaveCycleRecords(CycleId, changeType, context);
                 SharedPref.SetCycleOfflineDetails(cycleDetailArray.toString(), context);
             }
@@ -3286,24 +3276,27 @@ public class Constants {
 
             case 1:
                 DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
-                DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
+               // DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
                 break;
 
             case 2:
                 DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, context);
-                DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, context);
+               // DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, context);
                 break;
 
             case 3:
                 DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, context);
-                DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, context);
+               // DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, context);
                 break;
 
             case 4:
                 DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, context);
-                DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, context);
+               // DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, context);
                 break;
 
+            default:
+                DriverConst.SetDriverCurrentCycle(Globally.NO_CYCLE_NAME, Globally.NO_CYCLE, context);
+                break;
         }
 
         // Save Current Date
@@ -3333,6 +3326,7 @@ public class Constants {
     public String isPowerDiaMalOccurred(String currentHighPrecisionOdometer, String ignitionStatus,
                                          String obdEngineHours, String DriverId, Globally global,
                                          MalfunctionDiagnosticMethod malfunctionDiagnosticMethod,
+                                        boolean isPowerCompMalAllowed , boolean isPowerCompDiaAllowed,
                                          Context context, DBHelper dbHelper){
 
         String eventStatus = "";
@@ -3381,48 +3375,51 @@ public class Constants {
 
                             if (totalMinDia >= 20) {  // malfunction event time is 30 min
 
-                                if (SharedPref.isPowerMalfunction(context)) {
-                                    int dayDiff = getDayDiff(SharedPref.getPowerMalOccTime(context), global.GetCurrentDateTime());
-                                    if (dayDiff > 0) {
-                                        eventStatus = MalfunctionEvent;
+                                if(isPowerCompMalAllowed) {
+                                    if (SharedPref.isPowerMalfunctionOccurred(context)) {
+                                        int dayDiff = getDayDiff(SharedPref.getPowerMalOccTime(context), global.GetCurrentDateTime());
+                                        if (dayDiff > 0) {
+                                            eventStatus = MalfunctionEvent;
 
+                                            Globally.PlayNotificationSound(context);
+                                            global.ShowLocalNotification(context,
+                                                    context.getResources().getString(R.string.malfunction_events),
+                                                    context.getResources().getString(R.string.power_comp_mal_occured), 2093);
+
+                                            // Save power mal status with updated time
+                                            SharedPref.savePowerMalfunctionOccurStatus(true, global.GetCurrentDateTime(), context);
+
+                                        }
+                                    } else {
+                                        eventStatus = MalfunctionEvent;
                                         Globally.PlayNotificationSound(context);
                                         global.ShowLocalNotification(context,
                                                 context.getResources().getString(R.string.malfunction_events),
                                                 context.getResources().getString(R.string.power_comp_mal_occured), 2093);
 
                                         // Save power mal status with updated time
-                                        SharedPref.savePowerMalfunctionStatus(true, global.GetCurrentDateTime(), context);
+                                        SharedPref.savePowerMalfunctionOccurStatus(true, global.GetCurrentDateTime(), context);
 
                                     }
-                                } else {
-                                    eventStatus = MalfunctionEvent;
-                                    Globally.PlayNotificationSound(context);
-                                    global.ShowLocalNotification(context,
-                                            context.getResources().getString(R.string.malfunction_events),
-                                            context.getResources().getString(R.string.power_comp_mal_occured), 2093);
-
-                                    // Save power mal status with updated time
-                                    SharedPref.savePowerMalfunctionStatus(true, global.GetCurrentDateTime(), context);
-
                                 }
 
-
                             } else {
-                                eventStatus = DiagnosticEvent;
-                                Globally.PlayNotificationSound(context);
-                                global.ShowLocalNotification(context,
-                                        context.getResources().getString(R.string.dia_event),
-                                        context.getResources().getString(R.string.power_dia_occured), 2092);
+                                if (isPowerCompDiaAllowed) {
+                                    eventStatus = DiagnosticEvent;
+                                    Globally.PlayNotificationSound(context);
+                                    global.ShowLocalNotification(context,
+                                            context.getResources().getString(R.string.dia_event),
+                                            context.getResources().getString(R.string.power_dia_occured), 2092);
 
-                                SharedPref.savePowerMalfunctionStatus(false, global.GetCurrentDateTime(), context);
+                                    SharedPref.savePowerMalfunctionOccurStatus(false, global.GetCurrentDateTime(), context);
+                                }
+
+                                // save updated values with truck ignition status
+                                SharedPref.SetTruckIgnitionStatus(ignitionStatus, WiredOBD, global.getCurrentDate(), obdEngineHours, currentHighPrecisionOdometer, context);
                             }
-
-                            // save updated values with truck ignition status
-                            SharedPref.SetTruckIgnitionStatus(ignitionStatus, WiredOBD, global.getCurrentDate(), obdEngineHours, currentHighPrecisionOdometer, context);
                         }
                     }else{
-                        SharedPref.savePowerMalfunctionStatus(false, global.GetCurrentDateTime(), context);
+                        SharedPref.savePowerMalfunctionOccurStatus(false, global.GetCurrentDateTime(), context);
                     }
 
                 }
@@ -3449,7 +3446,7 @@ public class Constants {
                     ObdStatus == Constants.WIFI_CONNECTED ||
                     ObdStatus == Constants.BLE_CONNECTED) {
 
-                if (SharedPref.getEcmObdLatitude(context).length() < 4) {
+                if (SharedPref.getEcmObdLatitude(context).length() < 5) {
 
                     String currentOdometer = SharedPref.getHighPrecisionOdometer(context);
                     String lastOdometer = SharedPref.getEcmOdometer(context);
@@ -4198,13 +4195,16 @@ public class Constants {
 
 
     public boolean isDeferralOccurred(String DRIVER_ID, String MainDriverId, Context context){
-        int deferralDay;
-        if(DRIVER_ID.equals(MainDriverId)) {
-            deferralDay = Integer.parseInt(SharedPref.getDeferralDayMainDriver(context));
-        }else{
-            deferralDay = Integer.parseInt(SharedPref.getDeferralDayCoDriver(context));
+        int deferralDay = -1;
+        try {
+            if (DRIVER_ID.equals(MainDriverId)) {
+                deferralDay = Integer.parseInt(SharedPref.getDeferralDayMainDriver(context));
+            } else {
+                deferralDay = Integer.parseInt(SharedPref.getDeferralDayCoDriver(context));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
         if(deferralDay != 0){
             return true;
         }else{

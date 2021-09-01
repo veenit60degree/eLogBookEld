@@ -308,7 +308,7 @@ public class ParseLoginDetails {
             }else
                 DriverConst.SetCoDriverSettings(CurrentCycle, CurrentCycleId, CanCycleId, USCycleId,
                         CanCycleName, USCycleName, TimeZone,  OffSet, TimeZoneId, context);
-            DriverConst.SetCoDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
+           // DriverConst.SetCoDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
 
         }catch (Exception e){
             e.printStackTrace();

@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -149,18 +150,16 @@ public class VehicleDialog extends Dialog {
 
 
 
-        // Spinner click listener
-       /* remarkSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        LinearLayout loginTruckLay = (LinearLayout)findViewById(R.id.loginTruckLay);
+        loginTruckLay.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-               // String item = parent.getItemAtPosition(position).toString();
-                SelectedPosition = position;
-            }
+            public void onClick(View view) {
+                HideKeyboard();
+                updateVehSearchableSpinner.hideEdit();
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
             }
-        });*/
+        });
+
 
         btnSaveVehList.setOnClickListener(new VehicleFieldListener());
         btnCancelLoadingJob.setOnClickListener(new CancelBtnListener());
@@ -225,4 +224,12 @@ public class VehicleDialog extends Dialog {
         }
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        updateVehSearchableSpinner.hideEdit();
+
+    }
 }

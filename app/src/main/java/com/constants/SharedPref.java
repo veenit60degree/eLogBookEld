@@ -560,6 +560,28 @@ public class SharedPref {
     }
 
 
+    // Set location received parameter from OBD -------------------
+    public static void SetLocReceivedFromObdStatus( boolean IsNorthCanada, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.LocReceivedFromObd, IsNorthCanada);
+        editor.commit();
+    }
+
+
+
+    // Get location received parameter from OBD -------------------
+    public static boolean IsLocReceivedFromObd(Context context) {
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.LocReceivedFromObd, false);
+        }
+        return isRecord;
+    }
+
+
 
     // Set Obd Preference for to use obd -------------------
     public static void SetObdPreference( int ObdPreference, Context context) {
@@ -1964,9 +1986,37 @@ public class SharedPref {
     }
 
 
+    // Save particular malfunction/Diagnostic status
+    public static void saveParticularMalDiaStatus( boolean PowerComplianceMal, boolean EnginSyncMal, boolean PostioningComplMal,
+                                                   boolean PowerDataDiag, boolean EnginSyncDiag, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putBoolean(ConstantsKeys.PowerComplianceMal, PowerComplianceMal);
+        editor.putBoolean(ConstantsKeys.EnginSyncMal, EnginSyncMal);
+        editor.putBoolean(ConstantsKeys.PostioningComplMal, PostioningComplMal);
+
+        editor.putBoolean(ConstantsKeys.PowerDataDiag, PowerDataDiag);
+        editor.putBoolean(ConstantsKeys.EnginSyncDiag, EnginSyncDiag);
+
+        editor.commit();
+    }
+
+
+    // Get particular malfunction/Diagnostic status -------------------
+    public static boolean GetParticularMalDiaStatus(String key,  Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(key, false);
+        }else {
+            return false;
+        }
+    }
+
+
 
     // Save Power Malfunction status  -------------------
-    public static void savePowerMalfunctionStatus( boolean IsEngSyncDia, String time, Context context) {
+    public static void savePowerMalfunctionOccurStatus( boolean IsEngSyncDia, String time, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.PowerMalfunction, IsEngSyncDia);
@@ -1975,7 +2025,7 @@ public class SharedPref {
     }
 
     // Get power Malfunction status -------------------
-    public static boolean isPowerMalfunction( Context context) {
+    public static boolean isPowerMalfunctionOccurred( Context context) {
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             return preferences.getBoolean(ConstantsKeys.PowerMalfunction, false);

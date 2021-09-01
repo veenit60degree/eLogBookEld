@@ -102,7 +102,7 @@ public class CycleChangeRequestDialog extends Dialog {
         }else if(changedCycleId.equals(Globally.USA_WORKING_6_DAYS)){
             changedCycleName = Globally.USA_WORKING_6_DAYS_NAME;
             savedCycleType = "us_cycle";
-        }else{
+        }else {
             changedCycleName = Globally.USA_WORKING_7_DAYS_NAME;
             savedCycleType = "us_cycle";
         }

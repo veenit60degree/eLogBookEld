@@ -593,9 +593,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         UILApplication.activityResumed();
         ActiveScreen();
 
-        // save app display status log
-       // constants.saveAppUsageLog(ConstantsEnum.StatusForeground, false, false, util);
-
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(ConstantsKeys.SuggestedEdit));
 
 
@@ -616,9 +613,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         UILApplication.activityPaused();
         Globally.IS_LOGOUT = false;
-
-        // save app display status log
-       // constants.saveAppUsageLog(ConstantsEnum.StatusBackground, false, false, util);
 
         try{
             if(wl != null)

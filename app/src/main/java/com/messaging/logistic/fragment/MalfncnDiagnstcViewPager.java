@@ -187,7 +187,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         try {
             if (currentDate.toString().length() > 10) {
                 ToDateTime              = currentDate.toString().substring(0,10);
-                if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
+                if ( CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2) ) {
                     FromDateTime = String.valueOf(currentDate.minusDays(14)).substring(0, 10);  // // in CAN 14+1 days
                 } else {
                     FromDateTime = String.valueOf(currentDate.minusDays(7)).substring(0, 10);   // // in US 7+1 days
@@ -591,12 +591,12 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 status = obj.getString("Status");
                 if (status.equalsIgnoreCase("true")) {
 
-                    JSONArray malfunctionArray = new JSONArray(obj.getString(ConstantsKeys.Data));
-                    malfunctionHeaderList = new ArrayList<>();
-                    malfunctionChildHashMap = new HashMap<>();
-                    diagnosticHeaderList = new ArrayList<>();
-                    diagnosticChildHashMap = new HashMap<>();
-                    malfunctionChildList = new ArrayList<>();
+                    JSONArray malfunctionArray  = new JSONArray(obj.getString(ConstantsKeys.Data));
+                    malfunctionHeaderList       = new ArrayList<>();
+                    malfunctionChildHashMap     = new HashMap<>();
+                    diagnosticHeaderList        = new ArrayList<>();
+                    diagnosticChildHashMap      = new HashMap<>();
+                    malfunctionChildList        = new ArrayList<>();
 
                     checkLocMalfunction();
 

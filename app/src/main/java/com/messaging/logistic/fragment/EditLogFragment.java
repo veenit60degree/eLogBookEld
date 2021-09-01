@@ -156,7 +156,6 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
         eldMenuBtn              = (ImageView)view.findViewById(R.id.eldMenuBtn);
         EldTitleTV              = (TextView)view.findViewById(R.id.EldTitleTV);
 
-       // cancelBtn             = (FloatingActionButton)view.findViewById(R.id.cancelBtn);
         addBtn                  = (FloatingActionButton)view.findViewById(R.id.addBtn);
         saveBtn                 = (FloatingActionButton)view.findViewById(R.id.saveBtn);
         editLogProgressBar      = (ProgressBar)view.findViewById(R.id.editLogProgressBar);
@@ -1004,7 +1003,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 JSONObject lastItemJson = hMethods.GetLastJsonFromArray(finalEditedLogArray);
                 String country = lastItemJson.getString(ConstantsKeys.Country).trim();
 
-                global.SaveCurrentCycle(DriverType, country, "edit_log", getActivity());
+                global.SaveCurrentCycle(country, "edit_log", getActivity());
 
             }
         }catch (Exception e){

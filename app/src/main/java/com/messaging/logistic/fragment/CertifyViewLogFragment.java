@@ -997,22 +997,22 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         TruckNo             = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
         isNorthCanada       =  sharedPref.IsNorthCanada(getActivity());
+        CountryCycle        = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
+        CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+
         if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             certifyDriverNameTV.setText(MainDriverName);
-
-            CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
             HomeTerminal        = DriverConst.GetDriverDetails(DriverConst.HomeTerminal, getActivity());
             OfficeAddress       = DriverConst.GetDriverDetails(DriverConst.CarrierAddress, getActivity());
             Carrier             = DriverConst.GetDriverDetails(DriverConst.Carrier, getActivity());
-            CountryCycle        = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
+
         } else {
             certifyDriverNameTV.setText(CoDriverName);
 
-            CompanyId           = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, getActivity());
+           // CompanyId           = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, getActivity());
             HomeTerminal        = DriverConst.GetCoDriverDetails(DriverConst.CoHomeTerminal, getActivity());
             OfficeAddress       = DriverConst.GetCoDriverDetails(DriverConst.CoCarrierAddress, getActivity());
             Carrier             = DriverConst.GetCoDriverDetails(DriverConst.CoCarrier, getActivity());
-            CountryCycle        = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycle, getActivity());
         }
 
         if(IsAOBRD){

@@ -251,6 +251,7 @@ public class ConstantsKeys {
     public static String IsEldEcmALert                  = "IsEldEcmALert";
     public static String IsOBDStatusUpdate              = "IsOBDStatusUpdate";
     public static String IsPcYmAlertChangeStatus        = "IsPcYmAlertChangeStatus";
+    public static String IsNeedToUpdate18DaysLog        = "IsNeedToUpdate18DaysLog";
 
 
     public static String IsUnidentified                 = "IsUnidentified";
@@ -266,6 +267,15 @@ public class ConstantsKeys {
     public static String PowerDiagnstc                  = "PowerDiagnstc";
     public static String PowerMalfunction               = "PowerMalfunction";
     public static String PowerMalfunctionTimeOcc        = "PowerMalfunctionTimeOcc";
+
+    public static String PowerComplianceMal             = "PowerComplianceMal";
+    public static String EnginSyncMal                   = "EnginSyncMal";
+    public static String PostioningComplMal             = "PostioningComplMal";
+
+    public static String PowerDataDiag                  = "PowerDataDiag";
+    public static String EnginSyncDiag                  = "EnginSyncDiag";
+
+    public static String TimingCompMal                  = "TimingCompMal";
 
 
     public static String IsUnidentifiedCo               = "IsUnidentifiedCo";
@@ -495,6 +505,7 @@ public class ConstantsKeys {
     public static String StartLocationKm                = "StartLocationKm";
     public static String IsOdoCalculationAllowed        = "IsOdoCalculationAllowed";
     public static String IsEngineRestarted              = "IsEngineRestarted";
+    public static String LocReceivedFromObd             = "LocReceivedFromObd";
 
 
     public static String ChangedToOthers                = "ChangedToOthers";

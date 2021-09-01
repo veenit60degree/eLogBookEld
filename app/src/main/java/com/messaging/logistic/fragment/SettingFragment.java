@@ -1873,13 +1873,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     void getSavedCycleData(){
 
+        CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+
         if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
             DriverType = Constants.MAIN_DRIVER_TYPE;
             SavedPosition  = 0;
             SavedCanCycle  = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
             SavedUsaCycle  = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
             SavedTimeZone  = DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity());
-            CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
             TruckNumber    = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
             DriverTimeZone = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
         }else{
@@ -1888,7 +1889,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             SavedCanCycle  = DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleId, getActivity());
             SavedUsaCycle  = DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleId, getActivity());
             SavedTimeZone  = DriverConst.GetCoDriverSettings(DriverConst.CoTimeZoneID, getActivity());
-            CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
+          //  CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
             TruckNumber    = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
             DriverTimeZone = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
         }
@@ -1960,7 +1961,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         DriverConst.GetCoDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
             }
 
-            DriverConst.SetCoDriverCurrentCycle(changedCycleName, CurrentCycleId, getActivity());
+           // DriverConst.SetCoDriverCurrentCycle(changedCycleName, CurrentCycleId, getActivity());
         }
 
 

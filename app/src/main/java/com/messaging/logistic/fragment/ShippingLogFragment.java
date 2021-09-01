@@ -143,7 +143,7 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
         DriverId       = SharedPref.getDriverId( getActivity());
 
         try {
-            GetDriverCycle(DriverType);
+            GetDriverCycle();
             LoadDataOnList();
         }catch (Exception e){
             e.printStackTrace();
@@ -340,16 +340,16 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
     };
 
 
-    void GetDriverCycle(int DriverType){
+    void GetDriverCycle(){
 
         try{
-            if (DriverType == Constants.MAIN_DRIVER_TYPE) {
+           // if (DriverType == Constants.MAIN_DRIVER_TYPE) {
                 CurrentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
                 CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
-            }else{
+           /* }else{
                 CurrentCycle = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycle, getActivity());
                 CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
-            }
+            }*/
 
             if (CurrentCycle.equalsIgnoreCase("null") || CurrentCycle.length() == 0) {
                 CurrentCycle = Global.CANADA_CYCLE_1_NAME;

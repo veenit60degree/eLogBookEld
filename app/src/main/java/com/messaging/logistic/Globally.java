@@ -1643,10 +1643,10 @@ public class Globally {
 
 
 
-	public void SaveCurrentCycle( int DriverType, String CountryName, String changeType, Context context) {
+	public void SaveCurrentCycle( String CountryName, String changeType, Context context) {
 		try{
 
-			String CurrentCycle = "", CurrentCycleId = "";
+			String CurrentCycle = "", CurrentCycleId = "0";
 			if(CountryName.equalsIgnoreCase("CANADA")){
 				CurrentCycleId 	= DriverConst.GetDriverSettings(DriverConst.CANCycleId, context);
 				CurrentCycle 	= DriverConst.GetDriverSettings(DriverConst.CANCycleName, context);
@@ -1658,18 +1658,21 @@ public class Globally {
 			if(CurrentCycle.length() > 0) {
 
 				/* ------------- Save Cycle details with time is different with earlier cycle --------------*/
-				if(changeType.length() > 0){
+				if(changeType.equals("border_crossing")){
+
 					int cycleIdInt = Integer.valueOf(CurrentCycleId);
 					String CurrentSavedCycle   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
-					if(cycleIdInt != -1 && !CurrentSavedCycle.equals(cycleIdInt)) {
+
+					// Add cycle change record in cycle array
+					if(cycleIdInt != 0 && !CurrentSavedCycle.equals(cycleIdInt)) {
 						JSONArray cycleDetailArray = getSaveCycleRecords(cycleIdInt, changeType, context);
 						SharedPref.SetCycleOfflineDetails(cycleDetailArray.toString(), context);
 					}
+
+					DriverConst.SetDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
+					//DriverConst.SetCoDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
+
 				}
-
-
-				DriverConst.SetDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
-				DriverConst.SetCoDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
 
 			}
 		}catch (Exception e){
@@ -2247,6 +2250,7 @@ public class Globally {
 			SharedPref.SetTruckStartLoginStatus(true, c);
 			SharedPref.SetUpdateAppDialogTime("", c);
 			SharedPref.setLastCalledWiredCallBack(0, c);
+			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , c);
 			//SharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, c);
 
 			ClearSqliteDB(c);
@@ -2313,7 +2317,7 @@ public class Globally {
 		try {
 				DriverConst.SetDriverLoginDetails( "", "", c);
 				DriverConst.SetDriverDetails( "", "", "", "", "", "","", "", c);
-				DriverConst.SetDriverCurrentCycle("", "", c);
+				DriverConst.SetDriverCurrentCycle("NoCycle", "0", c);
 				DriverConst.SetDriverSettings("", "","", "","", "", "", "", "" , c);
 				DriverConst.SetDriverTripDetails( "", "", "", "", "", "", "", "", "", "", "", "","", "", "", c);
 				DriverConst.SetDriverLogDetails( "", "", "", "", "", "", "", "", "", "","", "", "", "", "", c);
@@ -2323,7 +2327,7 @@ public class Globally {
 			try {
 				DriverConst.SetCoDriverLoginDetails("", "", c);
 				DriverConst.SetCoDriverDetails("", "", "", "", "", "", "", "", c);
-				DriverConst.SetCoDriverCurrentCycle("", "", c);
+				//DriverConst.SetCoDriverCurrentCycle("", "", c);
 				DriverConst.SetCoDriverSettings("", "", "","", "", "", "", "", "", c);
 				DriverConst.SetCoDriverTripDetails("", "", "", "", "", "", "", "", "", "", "", "","", "", "", c);
 				DriverConst.SetCoDriverLogDetails("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", c);

@@ -135,13 +135,6 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
 
         EldTitleTV.setText(getResources().getString(R.string.unIdentified_records));
-        if(SharedPref.IsAOBRD(getActivity())) {
-            dateActionBarTV.setText(getString(R.string.aobrd));
-        }else{
-            dateActionBarTV.setText(getString(R.string.eld));
-        }
-
-
 
 
         checkboxUnIdentifiedRecord.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -187,6 +180,12 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         VIN                     = SharedPref.getVINNumber(getActivity());
         DriverName              = Slidingmenufunctions.usernameTV.getText().toString();
         Country                 = constants.getCountryName(getActivity());
+
+        if(SharedPref.IsAOBRD(getActivity())) {
+            dateActionBarTV.setText(getString(R.string.aobrd));
+        }else{
+            dateActionBarTV.setText(getString(R.string.eld));
+        }
 
         notifyAdapter(false, false);
 
@@ -498,6 +497,9 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
                             checkboxUnIdentifiedRecord.setChecked(false);
                             notifyAdapter(false, false);
+
+                            checkboxUnIdentifiedRecord.setChecked(false);
+                            setListSelectionRecord(false);
 
                             break;
 

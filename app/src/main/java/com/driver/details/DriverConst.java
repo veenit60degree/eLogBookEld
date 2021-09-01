@@ -271,8 +271,25 @@ public class DriverConst {
     /* ============ Get Driver Login Details ============*/
     public static String GetDriverCurrentCycle(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(key, "-1");
+        return preferences.getString(key, "0");
     }
+
+
+    /* ============ Save Co Driver Settings ============*/
+   /* public static void SetCoDriverCurrentCycle( String currentCycleName, String currentCycleId, Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(CoCurrentCycle, currentCycleName);
+        editor.putString(CoCurrentCycleId, currentCycleId);
+        editor.commit();
+    }
+    *//* ============ Get Driver Login Details ============*//*
+    public static String GetCoDriverCurrentCycle(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "1");     //default value is canada Cycle 1
+    }*/
+
+    
 
     public static void SetDriverSettings(
             String currentCycle, String currentCycleId,
@@ -484,20 +501,6 @@ public class DriverConst {
 
 
 
-
-    /* ============ Save Co Driver Settings ============*/
-    public static void SetCoDriverCurrentCycle( String currentCycleName, String currentCycleId, Context context){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(CoCurrentCycle, currentCycleName);
-        editor.putString(CoCurrentCycleId, currentCycleId);
-        editor.commit();
-    }
-    /* ============ Get Driver Login Details ============*/
-    public static String GetCoDriverCurrentCycle(String key, Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(key, "1");     //default value is canada Cycle 1
-    }
 
 
     public static void SetCoDriverSettings(

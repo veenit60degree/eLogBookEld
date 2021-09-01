@@ -25,7 +25,7 @@ public class EldInfo {
     // https://docs.google.com/document/d/1W--cgKbFZcnhF3q6bE7YK_EYJGBZ3YF1jT93u51jd-4/edit#heading=h.xpbvxw45js7s
 
     // super Admin
-    // http://super-admin.alsrealtime.com/
+    // https://super-admin.alsrealtime.com/
     // http://104.167.9.210:47654/
 
 

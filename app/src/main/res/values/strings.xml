@@ -612,10 +612,11 @@
     <string name="manually_add">Add Manually</string>
 
     <!--internet connection-->
-    <string name="Limited_ELD_Connection">Limited ELD Connection</string>
-    <string name="internet_hint">The ELD is not receiving data from the engine of the selected vehicle, which may result in incomplete data being recorded for some events.</string>
-
-
+    <string name="Limited_ELD_">Limited ELD Connection</string>
+    <string name="internet_hint_old">The ELD is not receiving data from the engine of the selected vehicle, which may result in incomplete data being recorded for some events.</string>
+    <string name="Limited_ELD_Connection">Limited ELD Connectivity</string>
+    <string name="internet_hint">ELD Log Book failed to receive data from engine of selected vehicle, this may result in missing data for some events. Please make sure your ELD Log Book is connected with ECM of current vehicle using WiFi/Bluetooth/Wired connection.</string>
+    <string name="Limited_ELD_failed_to_rec">Limited ELD Connectivity. Failed to receive data from engine.</string>
 
     <string name="pre_trip_unloading">Pre-Trip + unloading</string>
     <string name="pre_trip">Pre-Trip</string>
@@ -785,6 +786,9 @@
     <string name="wired_tablet_connected">Wired Tablet Connected</string>
     <string name="wired_tablet_disconnected">Wired Tablet disconnected</string>
     <string name="wired_tablet_conn_error">Wired Tablet connection error</string>
+    <string name="wifi_obd">WiFi OBD</string>
+    <string name="obd_device_connected">Device Connected</string>
+    <string name="obd_device_disconnected">Device disconnected</string>
     <string name="obd_wifi">WiFi OBD Connected</string>
     <string name="obd_ble">Bluetooth OBD Connected</string>
     <string name="obd_ble_disconnected">Bluetooth OBD disconnected</string>

@@ -189,20 +189,19 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         DeviceId        = SharedPref.GetSavedSystemToken(getActivity());
         DriverLoginType = SharedPref.getDriverType(getContext());
         CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+        currentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
 
         if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             DriverType      = 0;
             DriverId        = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
             TruckNumber     = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
             DriverTimeZone  = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
-            currentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
             isCycleRequest  = SharedPref.IsCycleRequestMain(getActivity());
         }else {
             DriverType      = 1;
             DriverId        = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
             TruckNumber     = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
             DriverTimeZone  = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
-            currentCycleId    = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
             isCycleRequest  = SharedPref.IsCycleRequestCo(getActivity());
         }
 
@@ -768,13 +767,12 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                         DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
             }
 
-            DriverConst.SetDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
             SharedPref.SetCycleRequestStatusMain(false, getActivity());
 
         }else{
             if(SavedCycleType.equals("can_cycle")){
                 DriverConst.SetCoDriverSettings(changedCycleName, changedCycleId, changedCycleId,
-                        DriverConst.GetCoDriverCurrentCycle(DriverConst.CoUSACycleId, getContext()),  changedCycleName,
+                        DriverConst.GetDriverCurrentCycle(DriverConst.CANCycleId, getContext()),  changedCycleName,
                         DriverConst.GetCoDriverSettings(DriverConst.USACycleName, getActivity()),
                         DriverTimeZone, DriverConst.GetCoDriverSettings(DriverConst.OffsetHours, getActivity()),
                         DriverConst.GetCoDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
@@ -782,18 +780,20 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
             }else{
                 DriverConst.SetCoDriverSettings(changedCycleName, changedCycleId,
-                        DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCANCycleId, getContext()),
+                        DriverConst.GetDriverCurrentCycle(DriverConst.CANCycleId, getContext()),
                         changedCycleId,  DriverConst.GetCoDriverSettings(DriverConst.CANCycleName, getActivity()),
                         changedCycleName,
                         DriverTimeZone, DriverConst.GetCoDriverSettings(DriverConst.OffsetHours, getActivity()),
                         DriverConst.GetCoDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
             }
 
-            DriverConst.SetCoDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
+         //   DriverConst.SetCoDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
             SharedPref.SetCycleRequestStatusCo(false, getActivity());
 
         }
 
+        DriverConst.SetDriverCurrentCycle(changedCycleName, changedCycleId, getActivity());
+        
         currentCycleId = changedCycleId;
 
     }

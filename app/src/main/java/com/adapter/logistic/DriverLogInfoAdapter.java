@@ -442,13 +442,13 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     // Clear Diagnostic if occured
 
 
-                }else {
-                    Global.SaveCurrentCycle(DriverType, Country, "edit_log", context);
-                }
+                }/*else {
+                   // Global.SaveCurrentCycle(Country, "edit_log", context);
+                }*/
 
-                if(position == LogList.size()-1 && IsCurrentDate){
-                    Global.SaveCurrentCycle(DriverType, Country, "edit_log", context);
-                }
+               /* if(position == LogList.size()-1 && IsCurrentDate){
+                   // Global.SaveCurrentCycle(Country, "edit_log", context);
+                }*/
 
 
                 try {

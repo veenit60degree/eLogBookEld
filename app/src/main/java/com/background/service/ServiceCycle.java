@@ -23,6 +23,7 @@ import com.local.db.ShipmentHelperMethod;
 import com.local.db.SyncingMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.SplashActivity;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
@@ -117,7 +118,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     boolean isALSConnection;
     boolean isPcYmAlertChangeStatus = false;
 
-    String CurrentCycleId = "", message = "", DriverName = "", DriverCompanyId = "", TruckNo = "";;
+    String CurrentCycleId = "0", message = "", DriverName = "", DriverCompanyId = "", TruckNo = "";;
     int DRIVER_JOB_STATUS;
     private TextToSpeech textToSpeech;
 
@@ -227,23 +228,19 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 isSingleDriver = false;
             }
             isNorthCanada  =  SharedPref.IsNorthCanada(context);
+            CurrentCycleId  = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
 
             if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
                 DriverType = Constants.MAIN_DRIVER_TYPE;     // Single Driver Type and Position is 0
-                CurrentCycleId  = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+
                 isHaulExcptn    = SharedPref.get16hrHaulExcptn(context);
                 isAdverseExcptn = SharedPref.getAdverseExcptn(context);
             } else {                // If Current driver is Co Driver
                 DriverType = Constants.CO_DRIVER_TYPE;
-                CurrentCycleId  = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, context);
                 isHaulExcptn    = SharedPref.get16hrHaulExcptnCo(context);
                 isAdverseExcptn = SharedPref.getAdverseExcptnCo(context);
             }
 
-            if(CurrentCycleId.equalsIgnoreCase("null") || CurrentCycleId.equalsIgnoreCase("-1")
-                    || CurrentCycleId.length() == 0 ){
-                CurrentCycleId = Globally.USA_WORKING_7_DAYS;
-            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -347,7 +344,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                     boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
                     boolean isAutoDrive = SharedPref.isAutoDrive(context);
 
-                    if (!currentJob.equals("") && currentJob.equals(String.valueOf(DRIVER_JOB_STATUS))) {  // reason of this check: some times latest entry was not saved in 18 days array due to unknown/strange error. thats why wrong auto status entry was saved from app. So we need to add this check for safe side.
+                    // !currentJob.equals("") &&
+                    if (currentJob.equals(String.valueOf(DRIVER_JOB_STATUS))) {  // reason of this check: some times latest entry was not saved in 18 days array due to unknown/strange error. thats why wrong auto status entry was saved from app. So we need to add this check for safe side.
                         // Check If vehicle is ELD Type
                         if (!isPersonal && isAutoDrive && VehicleSpeed != -1) {
                             try {
@@ -451,19 +449,15 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                         boolean isApplicable = false;
 
-                                        if (connectionType == constants.API) {
-                                            if (VehicleSpeed <= OnDutySpeedLimit ) {    //&& GPSVehicleSpeed <= OnDutySpeedLimit
+                                        /*if (connectionType == constants.API) {
+                                            if (VehicleSpeed <= OnDutySpeedLimit ) {
                                                 isApplicable = true;
                                             }
-                                        } else if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
-                                            if (OBDVehicleSpeed <= OnDutySpeedLimit ) { //&& GPSVehicleSpeed <= OnDutySpeedLimit
+                                        } else*/ if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
+                                            if (OBDVehicleSpeed <= OnDutySpeedLimit ) {
                                                 isApplicable = true;
                                             }
-                                        } /*else {
-                                            if (GPSVehicleSpeed <= OnDutySpeedLimit) {
-                                                isApplicable = true;
-                                            }
-                                        }*/
+                                        }
 
 
                                         if (isApplicable) {
@@ -740,6 +734,13 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
 
                         }
+                    }else{
+                        // ---------------
+                        JSONArray driverSavedArray = constants.GetDriversSavedArray(context,  MainDriverPref, CoDriverPref);
+                        if(driverSavedArray.length() == 0) {
+                            sendBroadCast(false, false, true);
+                        }
+
                     }
 
                 } catch (Exception e) {
@@ -846,7 +847,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
             if (!IsAOBRDAuto) {
                 if(message.equals("Please change your status from Driving to other duty status due to vehicle is not moving.")){
-                    sendBroadCast(false, true);
+                    sendBroadCast(false, true, false);
                 }
                 serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, isEldToast, AlertMsg, "");
             }
@@ -855,7 +856,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
             // --------- Change Wrong Status Automatically -----------
             if (BackgroundLocationService.IsAutoChange == true) {  //&& BackgroundLocationService.IsAutoLogSaved == false
-                ChangeWrongStatusAutomatically(dbHelper, hMethods, driverLogArray, currentDateTime, currentUTCTime, CHANGE_STATUS, serviceResponse);
+                if(SharedPref.isAutoDrive(context)) {
+                    ChangeWrongStatusAutomatically(dbHelper, hMethods, driverLogArray, currentDateTime, currentUTCTime, CHANGE_STATUS, serviceResponse);
+                }else{
+                    BackgroundLocationService.IsAutoChange = false;
+                }
             } else {
 
                 JSONArray notificationArray = notificationMethod.getSavedNotificationArray(Integer.valueOf(DriverId), dbHelper);
@@ -917,7 +922,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                             String.valueOf(DriverId), "", "", "", "","",
                             CurrentCycleId, "", "false", isViolation,
                             "false", String.valueOf(OBDVehicleSpeed),
-                            String.valueOf(GPSVehicleSpeed), SharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus, false,
+                            "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                            SharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus, false,
                             Global, isHaulExcptn, false,
                             "" + isAdverseExcptn,
                             "", LocationType, "", isNorthCanada, hMethods, dbHelper);
@@ -1145,7 +1151,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             LocationType = SharedPref.getLocMalfunctionType( context);
         }
 
-        CurrentCycleId = hMethods.CheckStringNull(CurrentCycleId);
         trailorNumber = SharedPref.getTrailorNumber( context);
 
         if(!isViolationStr.equalsIgnoreCase("true") ){
@@ -1227,7 +1232,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         Globally.LONGITUDE,
                         isAutomatic,
                         String.valueOf(OBDVehicleSpeed),
-                        String.valueOf(GPSVehicleSpeed),
+                        "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated now GPS status is sending in this parameter
                         plateNo,
                         String.valueOf(isHaulExcptn),
                         "false",
@@ -1371,7 +1376,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 TruckNo,
                 isAutomatic,
                 String.valueOf(OBDVehicleSpeed),
-                String.valueOf(GPSVehicleSpeed),
+                "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                 plateNo,
                 isHaulExcptn,
                 false,
@@ -1419,7 +1424,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         TruckNo,
                         isAutomatic,
                         String.valueOf(OBDVehicleSpeed),
-                        String.valueOf(GPSVehicleSpeed),
+                        "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                         plateNo,
                         isHaulExcptn,
                         false,
@@ -1434,7 +1439,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 driverLogArray.put(driverLogArray.length()-1, updateViolationJson);
             }catch (Exception e){
                 e.printStackTrace();
-                constants.saveAppUsageLog("Exception occurred when changed to " + DriverStatusId, false, false, obdUtil);
+                constants.saveAppUsageLog("ServiceCycle- Exception occurred when changed to " + DriverStatusId, false, false, obdUtil);
             }
 
         }else{
@@ -1457,7 +1462,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         constants.saveOdometer(DriverStatusId, String.valueOf(DriverId), DeviceId, driver18DaysLogArray,
                 odometerhMethod, hMethods, dbHelper, context);
         constants.IsAlreadyViolation = false;
-        sendBroadCast(true, false);
+        sendBroadCast(true, false, false);
 
         if(TabAct.host.getCurrentTab() != 0) {   // this parameter is used to auto dismiss engine restart alert because driver was not confirming and status is changed due to speed at Tab Host activity.
             Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
@@ -1474,15 +1479,19 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
 
 
-    private void sendBroadCast(boolean IsAutoStatusSaved, boolean changedToOther){
+    private void sendBroadCast(boolean IsAutoStatusSaved, boolean changedToOther, boolean IsNeedToUpdate18DaysLog){
         try {
             Intent intent = new Intent(ConstantsKeys.IsIgnitionOn);
             intent.putExtra(ConstantsKeys.IsIgnitionOn, false);
-            intent.putExtra(ConstantsKeys.IsAutoStatusSaved, IsAutoStatusSaved);
-            intent.putExtra(ConstantsKeys.ChangedToOthers, changedToOther);
-            intent.putExtra(ConstantsKeys.PersonalUse75Km, PersonalUse75Km);
-            intent.putExtra(ConstantsKeys.IsOBDStatusUpdate, false);
-            intent.putExtra(ConstantsKeys.IsPcYmAlertChangeStatus, isPcYmAlertChangeStatus);    // this parameter is used to auto dismiss engine restart alert because driver was not confirming and status is changed due to speed at EldFragment.
+            if(IsNeedToUpdate18DaysLog){
+                intent.putExtra(ConstantsKeys.IsNeedToUpdate18DaysLog, IsNeedToUpdate18DaysLog);
+            }else{
+                intent.putExtra(ConstantsKeys.IsAutoStatusSaved, IsAutoStatusSaved);
+                intent.putExtra(ConstantsKeys.ChangedToOthers, changedToOther);
+                intent.putExtra(ConstantsKeys.PersonalUse75Km, PersonalUse75Km);
+                intent.putExtra(ConstantsKeys.IsOBDStatusUpdate, false);
+                intent.putExtra(ConstantsKeys.IsPcYmAlertChangeStatus, isPcYmAlertChangeStatus);    // this parameter is used to auto dismiss engine restart alert because driver was not confirming and status is changed due to speed at EldFragment.
+            }
 
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }catch (Exception e){

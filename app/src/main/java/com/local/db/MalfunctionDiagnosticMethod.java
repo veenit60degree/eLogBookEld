@@ -110,7 +110,7 @@ public class MalfunctionDiagnosticMethod {
 
 
 
-    public JSONObject GetJsonFromList(String DriverId, String DeviceId, String VIN, String UnitNo, String CompanyId,
+    public JSONObject GetMalDiaEventJson(String DriverId, String DeviceId, String VIN, String UnitNo, String CompanyId,
                                       String EngineHours, String StartOdometer, String EndOdometer, String EventDateTime,
                                       String DiagnosticType, String MalfunctionDefinition )  {
 

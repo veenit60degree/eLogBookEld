@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -179,25 +180,16 @@ public class VehicleDialogLogin  extends Dialog {
         }
 
 
-
- /*       // Spinner click listener
-        remarkSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        LinearLayout loginTruckLay = (LinearLayout)findViewById(R.id.loginTruckLay);
+        loginTruckLay.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SelectedPosition = position;
-
-                if(position == 0){
-                    ChangeBtnJob.setBackgroundResource(R.drawable.gray_selector);
-                }else{
-                    ChangeBtnJob.setBackgroundResource(R.drawable.green_selector);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onClick(View view) {
+                HideKeyboard();
+                searchableSpinner.hideEdit();
             }
         });
-*/
+
+
         logoutTruckPopupTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -218,6 +210,7 @@ public class VehicleDialogLogin  extends Dialog {
 
         HideKeyboard();
     }
+
 
 
     private OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
@@ -249,6 +242,13 @@ public class VehicleDialogLogin  extends Dialog {
         }
     };
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        searchableSpinner.hideEdit();
+
+    }
 
     void HideKeyboard() {
         try {
@@ -358,5 +358,7 @@ public class VehicleDialogLogin  extends Dialog {
 
         }
     };
+
+
 
 }
