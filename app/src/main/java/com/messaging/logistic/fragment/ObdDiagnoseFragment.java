@@ -164,7 +164,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             obdDataTxtView.setText(getString(R.string.no_obd_settings));
         }
 
-     /*   final Button testBtn = (Button) rootView.findViewById(R.id.testBtn);
+        final Button testBtn = (Button) rootView.findViewById(R.id.testBtn);
         testBtn.setVisibility(View.VISIBLE);
         if(BackgroundLocationService.OBD_DISCONNECTED){
             testBtn.setText("OBD Connected");
@@ -175,16 +175,33 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         testBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+               // String message = "";
                 if(BackgroundLocationService.OBD_DISCONNECTED){
                     BackgroundLocationService.OBD_DISCONNECTED = false;
                     testBtn.setText("OBD Disconnect");
+
+                   // message = "*TS01,861641041996397,015448020921,GPS:3;N49.112521;W122.520018;102;300;1.28,STT:C242;0,MGR:232512842,ADC:0;14.06;1;51.27;2;4.34,CAN:0B00F00414A2A2942800F4A20B00FEC1F2AE6702F2AE67020B00FEE099A0180099A018000B00FEEE8156602FFFFF44FF0B00F003CCFA25FFFF0C80FF0B00FEEFA2FFFF49FFFFFFFA0B00FEF6FF19584BFFFFFFFF0B00FEF7FFFFFFFF1A01FFFF0B00FEFCFFEFFFFFFFFFFFFF,EGT:11721003,EVT:1#";
                 }else{
                     BackgroundLocationService.OBD_DISCONNECTED = true;
                     testBtn.setText("OBD Connected");
+
+                  //  message = "*TS01,861641041996397,015555020921,CAN:0B00F004047D7DA62B00F47D0B00FEC180B0670280B067020B00FEF1FFF16FFCFFFF00FF0B00FEF6FF1A4E4DFFFFFFFF0B00FEEE80544B2FFFFF46FF0B00FEEFA9FFFF51FFFFFFFA0B00FEFCFFEFFFFFFFFFFFFF0B00FEF2000000FB0E06FFFF0B00FEE0A9A01800A9A018000B00FEBF8E717C7D757577760B00FD098014FC032933F803#";
+
                 }
+
+               /* try{
+                    OBDDeviceData data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
+                    JSONObject simObj = new JSONObject(data.toString());
+                    simNumber = simObj.getString("SIM");
+                    obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlBlueFont + "<b>Sim Number: </b>" +simNumber + closeFont));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }*/
+
+
             }
         });
-*/
+
 
     }
 

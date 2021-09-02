@@ -4824,7 +4824,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             SharedPref.getHighPrecisionOdometer(getActivity()),
                             SharedPref.getHighPrecisionOdometer(getActivity()),
                             Global.GetCurrentDateTime(), constants.MissingDataElementDiagnostic,
-                            getString(R.string.ignore_to_save_loc) + " " + Global.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal)));
+                            getString(R.string.ignore_to_save_loc) + " " + Global.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal)),
+                            false, "", "", "");
 
 
                     // save Occurred Mal/Dia events locally to get details later for clear them

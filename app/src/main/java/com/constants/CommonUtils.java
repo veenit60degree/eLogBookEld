@@ -29,18 +29,6 @@ public class CommonUtils {
 		int SingleDriverMenuWidth;
 		int DualDriverMenuWidth;
 
-/*		TelephonyManager manager = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			if (Objects.requireNonNull(manager).getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
-				Globally.ShowLocalNotification(mContext, "Screen Dimensions", "DisplayMetrics IsTablet: " + Constants.isTabletDevice(mContext) +
-						"\nTelephonyManager: Tablet \nPixels: " + ""+metrics.widthPixels + "x" + metrics.heightPixels, 2003);
-			} else {
-				Globally.ShowLocalNotification(mContext, "Screen Dimensions", "DisplayMetrics IsTablet: " + Constants.isTabletDevice(mContext) +
-						"\nTelephonyManager: Mobile Phone \nPixels: " + ""+metrics.widthPixels + "x" + metrics.heightPixels, 2003);
-			}
-		}*/
-
-
 		if(Globally.isTablet(mContext)) {
 
 			//Globally.ShowLocalNotification(mContext, "ALS SideMenu", "Tablet density pixel: " + densityDpi, 2003);

@@ -610,6 +610,7 @@ public class Constants {
         return inputValue;
     }
 
+
     public static boolean CheckNullBoolean(JSONObject json, String inputValue) {
         boolean val = false;
         try {
@@ -3438,7 +3439,7 @@ public class Constants {
     // m = If driver enter manual loc after position malfunction occur
     // e = if position malfunction occur more then 60 min
 
-    public boolean isLocationMalfunctionOccured(Context context){
+    public boolean isPositionMalfunctionEvent(Context context){
         boolean isMalfunction = false;
         int ObdStatus = SharedPref.getObdStatus(context);
         try {

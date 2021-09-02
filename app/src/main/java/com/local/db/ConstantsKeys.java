@@ -455,6 +455,14 @@ public class ConstantsKeys {
     public static String CompanyStartDateTime           = "CompanyStartDateTime";
     public static String CompanyEndDateTime             = "CompanyEndDateTime";
 
+    public static String DriverStartDateTime           = "DriverStartDateTime";
+    public static String DriverEndDateTime             = "DriverEndDateTime";
+
+    public static String IsCleared                      = "IsCleared";
+    public static String ClearedTime                    = "ClearedTime";
+    public static String ClearedTimeOdometer            = "ClearedTimeOdometer";
+    public static String ClearedTimeEngineHours         = "ClearedTimeEngineHours";
+
     public static String IsShowOnMobileApp              = "IsShowOnMobileApp";
     public static String NewsTitle                      = "NewsTitle";
     public static String NewsDescription                = "NewsDescription";
