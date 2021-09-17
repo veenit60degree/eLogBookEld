@@ -13,8 +13,11 @@ import android.text.Html;
 
 import androidx.core.app.NotificationCompat;
 
+import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -103,7 +106,6 @@ public class NotificationManagerSmart {
         NotificationManager notificationManager = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(ID_SMALL_NOTIFICATION, notification);
     }
-
 
 
 

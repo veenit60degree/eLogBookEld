@@ -2746,7 +2746,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     private void saveByteSignLocally(String SignImageInBytes){
         // Add signed parameters with values into the json object and put into the json Array.
         JSONObject CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DRIVER_ID, DeviceId, global.PROJECT_ID, LogDate,
-                SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, sharedPref.getLocMalfunctionType(getActivity())  );
+                SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, sharedPref.getLocationEventType(getActivity())  );
         CertifyLogArray.put(CertifyLogObj);
 
         // Insert/Update Certify Log table

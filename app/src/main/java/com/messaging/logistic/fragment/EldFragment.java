@@ -2713,11 +2713,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     }
                                 }
                             }
-                           /* } else {
-                                OpenLocationDialog(OFF_DUTY, OldSelectedStatePos);
-                            }*/
+
                         }  else {
-                            if (constants.isLocMalfunctionEvent(getActivity(), DriverType)) {
+                            if (SharedPref.isLocDiagnosticOccur(getActivity()) && Globally.LATITUDE.length() < 5) { //constants.isLocMalfunctionEvent(getActivity(), DriverType)
                                 // DriverLocationDialog.updateViewTV.performClick();
                                 OpenLocationDialog(OFF_DUTY, OldSelectedStatePos, true);
                             } else {
@@ -2789,7 +2787,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             }
 
                         } else{
-                            if(constants.isLocMalfunctionEvent(getActivity(), DriverType)){
+                            if(SharedPref.isLocDiagnosticOccur(getActivity()) && Globally.LATITUDE.length() < 5){  //constants.isLocMalfunctionEvent(getActivity(), DriverType)
                                 OpenLocationDialog(SLEEPER, OldSelectedStatePos, true);
                             }else {
                                 DisableJobViews();
@@ -3183,7 +3181,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
 
         } else{
-            if(constants.isLocMalfunctionEvent(getActivity(), DriverType)){
+            if(SharedPref.isLocDiagnosticOccur(getActivity()) && Globally.LATITUDE.length() < 5){ //constants.isLocMalfunctionEvent(getActivity(), DriverType)
                 //  DriverLocationDialog.updateViewTV.performClick();
                 OpenLocationDialog(DRIVING, OldSelectedStatePos, true);
             }else {
@@ -3271,7 +3269,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
 
         } else {
-            if (constants.isLocMalfunctionEvent(getActivity(), DriverType)) {
+            if (SharedPref.isLocDiagnosticOccur(getActivity()) && Globally.LATITUDE.length() < 5) {   // constants.isLocMalfunctionEvent(getActivity(), DriverType)
                 OpenLocationDialog(ON_DUTY, OldSelectedStatePos, true);
             } else {
                 DisableJobViews();
@@ -3561,9 +3559,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             if (Global.isConnected(getActivity())) {
                                 GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
                             }
+                        }else if (intent.getBooleanExtra(ConstantsKeys.IsUpdateMalDiaInfoWindow, false) == true) {
+                            setMalfnDiagnEventInfo();
                         }
                     }
-
+                    setMalfnDiagnEventInfo();
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -3681,6 +3681,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         boolean isLogSavedInSyncTable = false;
         String statusStr = "";
+
+
         try {
 
             String address = "", wasViolation = "false", ViolationReason = "", DriverName = "";
@@ -3689,6 +3691,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
             DateTime currentDateTime = Global.getDateTimeObj(CurrentDeviceDate, false);    // Current Date Time
             DateTime currentUTCDateTime = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), true);
+
+            if (SharedPref.isLocMalfunctionOccur(getActivity()) ) { //constants.isLocMalfunctionEvent(context, DriverType)
+                LocationType = SharedPref.getLocationEventType(getActivity());
+            }else if (SharedPref.isLocDiagnosticOccur(getActivity()) && Globally.LATITUDE.length() < 5){
+                LocationType = SharedPref.getLocationEventType(getActivity());
+            }else{
+                LocationType = "";
+            }
 
             getExceptionStatus();
             try {
@@ -4025,7 +4035,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     getActivity()), false);
             DateTime currentDate = Global.getDateTimeObj(Global.getCurrentDate(), false);
 
-            int dayDiff = Days.daysBetween(lastRecordSavedTime.toLocalDate(), currentDate.toLocalDate()).getDays();
+            int dayDiff = (int) Constants.getDateTimeDuration(lastRecordSavedTime, currentDate).getStandardDays();
+            //Days.daysBetween(lastRecordSavedTime.toLocalDate(), currentDate.toLocalDate()).getDays();
 
             if(dayDiff == 0){
                 int minDiff = currentDate.getMinuteOfDay() - lastRecordSavedTime.getMinuteOfDay();
@@ -4823,33 +4834,48 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             SharedPref.getObdEngineHours(getActivity()),
                             SharedPref.getHighPrecisionOdometer(getActivity()),
                             SharedPref.getHighPrecisionOdometer(getActivity()),
-                            Global.GetCurrentDateTime(), constants.MissingDataElementDiagnostic,
+                            Global.GetCurrentUTCTimeFormat(), constants.MissingDataDiagnostic,
                             getString(R.string.ignore_to_save_loc) + " " + Global.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal)),
                             false, "", "", "");
 
 
                     // save Occurred Mal/Dia events locally to get details later for clear them
-                    JSONArray malArrayEvent = malfunctionDiagnosticMethod.getSavedMalDiagstcArrayEvents(Integer.parseInt(DRIVER_ID), dbHelper);
+                  /*  JSONArray malArrayEvent = malfunctionDiagnosticMethod.getSavedMalDiagstcArrayEvents(Integer.parseInt(DRIVER_ID), dbHelper);
                     malArrayEvent.put(newOccuredEventObj);
                     malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(Integer.parseInt(DRIVER_ID), dbHelper, malArrayEvent);
-
+*/
                     // save Occurred event locally until not posted to server
                     JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DRIVER_ID), dbHelper);
                     malArray.put(newOccuredEventObj);
                     malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DRIVER_ID), dbHelper, malArray);
 
-                    MalfunctionDefinition = constants.ConstLocationMissing;
+                    MalfunctionDefinition = Constants.ConstLocationMissing;
+
+                    // save malfunction entry in duration table
+                    malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, Global.GetCurrentUTCTimeFormat(),
+                            Constants.MissingDataDiagnostic, getActivity());
+
 
                     Globally.PlayNotificationSound(getActivity());
                     Global.ShowLocalNotification(getActivity(),
                                                     getResources().getString(R.string.missing_data_element),
                                                     getResources().getString(R.string.missing_event_occured_desc), 2091);
 
+                    LocationType = "x";
+                    SharedPref.setLocationEventType(LocationType, getActivity());
+
+                   // SharedPref.saveLocDiagnosticStatus(true, Globally.GetCurrentDateTime(), Globally.GetCurrentUTCTimeFormat(), getActivity());
+
+                    SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
+                            SharedPref.isMalfunctionOccur(getActivity()), true,
+                            SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+
+                    setMalfnDiagnEventInfo();
 
                 }
 
                 isLocMalfunction = false;
-                LocationType = SharedPref.getLocMalfunctionType(getActivity());
+                LocationType = SharedPref.getLocationEventType(getActivity());
                 saveInAobrdMalfnModeStatus(JobType);
 
             }
@@ -4870,9 +4896,22 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             if (City.length() > 0) {
 
-                if(isMalfunction && SharedPref.getLocMalfunctionType( getContext()).equals("x")){
-                    isLocMalfunction = constants.isLocMalfunctionEvent(getActivity(), DriverType);
-                    LocationType = "m";
+                if(isMalfunction  && Globally.LATITUDE.length() < 5) {
+                    if (SharedPref.isLocMalfunctionOccur(getActivity())) {
+                        LocationType = "e";
+                    }else{
+                        LocationType = "m";
+                        if(SharedPref.isLocDiagnosticOccur(getActivity())){
+
+                            Constants.isClearMissingCompEvent = true;
+                            SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+                            startService();
+
+                        }
+
+                    }
+                    isLocMalfunction = true;
+                    SharedPref.setLocationEventType(LocationType, getActivity());
                 }
 
                 try {
@@ -4892,6 +4931,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
         }
     }
+
 
 
     void SaveTrailerLocally(String trailerNumber) {
@@ -5025,7 +5065,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         String lastItemEndTime = hMethods.getLastStatusDateTime(driverLogArray);
                         DateTime lastObjDateTime = Globally.getDateTimeObj(lastItemEndTime, false ).minusHours(Math.abs(offsetFromUTC));
 
-                        int dayDiff = Days.daysBetween(lastObjDateTime.toLocalDate(), currentDateTime.toLocalDate()).getDays();
+                        int dayDiff = (int) Constants.getDateTimeDuration(lastObjDateTime, currentDateTime).getStandardDays();
+                        //Days.daysBetween(lastObjDateTime.toLocalDate(), currentDateTime.toLocalDate()).getDays();
 
                         // get last item of array
                         JSONObject lastObj = (JSONObject) driverLogArray.get(driverLogArray.length()-1);
@@ -5727,6 +5768,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         params.put(ConstantsKeys.DeviceId, DeviceId);
         params.put(ConstantsKeys.VIN, VIN);
         params.put(ConstantsKeys.CreatedDate, CreatedDate);
+        params.put(ConstantsKeys.CompanyId, DriverCompanyId);
         params.put(ConstantsKeys.IsCertifyLog, "false");
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER, params, GetOdometer,
@@ -6447,9 +6489,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
                         if (SharedPref.GetNewLoginStatus(getActivity())) {
-                            Constants.isEldHome = true;
 
+                            Constants.isEldHome = true;
                             SharedPref.SetNewLoginStatus(false, getActivity());
+
+                            Constants.isCallMalDiaEvent = true;
+                            SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+                            startService();
+
 
                             String updatePopupDate = SharedPref.GetUpdateAppDialogTime(getActivity());
                             if(!updatePopupDate.equals(SelectedDate)){
@@ -6581,12 +6628,17 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                // ctPatInspectionMethod.DriverCtPatInsp18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, new JSONArray());
                                // recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, new JSONArray());
 
+                                Constants.isCallMalDiaEvent = true;
+                                SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+                                startService();
 
                             }
 
                             if (!obj.isNull("Data")) {
                                 JSONObject dataJObject = new JSONObject(obj.getString("Data"));
-                                driverPermissionMethod.DriverPermissionHelper(Integer.valueOf(DRIVER_ID), dbHelper, dataJObject);
+                                driverPermissionMethod.
+
+                                DriverPermissionHelper(Integer.valueOf(DRIVER_ID), dbHelper, dataJObject);
 
                                 boolean IsCertifyMandatory = false;
                                 if(dataJObject.has(ConstantsKeys.IsCertifyMandatory)) {
@@ -6630,6 +6682,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                 if(dataJObject.has(ConstantsKeys.IsOdoCalculationAllowed) && !dataJObject.isNull(ConstantsKeys.IsOdoCalculationAllowed)){
                                     SharedPref.SetOdoCalculationAllowed(dataJObject.getBoolean(ConstantsKeys.IsOdoCalculationAllowed), getActivity());
+                                }else{
+                                    SharedPref.SetOdoCalculationAllowed(false, getActivity());
                                 }
 
                                 if(dataJObject.has(ConstantsKeys.PowerComplianceMal)){
@@ -6641,6 +6695,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                             getActivity());
                                 }
 
+
                                 int ObdPreference = Constants.OBD_PREF_WIFI;
                                 if(dataJObject.has(ConstantsKeys.ObdPreference) && !dataJObject.isNull(ConstantsKeys.ObdPreference) ) {
                                     ObdPreference = dataJObject.getInt(ConstantsKeys.ObdPreference);
@@ -6648,11 +6703,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                     if(ObdPreference != savedObdPref){
                                         if(ObdPreference == Constants.OBD_PREF_BLE){
-                                            SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Global.getCurrentDate(), getActivity());
+                                            SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Global.getCurrentDate(), Global.GetCurrentUTCTimeFormat(), getActivity());
                                         }else if(ObdPreference == Constants.OBD_PREF_WIRED){
-                                            SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, Global.getCurrentDate(), getActivity());
+                                            SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, Global.getCurrentDate(), Global.GetCurrentUTCTimeFormat(), getActivity());
                                         }else{
-                                            SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, Global.getCurrentDate(), getActivity());
+                                            SharedPref.SaveObdStatus(Constants.WIFI_DISCONNECTED, Global.getCurrentDate(), Global.GetCurrentUTCTimeFormat(), getActivity());
                                         }
 
                                         constants.saveAppUsageLog("ObdPreference: From " + savedObdPref + " to " + ObdPreference, false, false, obdUtil);
@@ -6666,7 +6721,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     }
 
                                 }else{
-                                    SharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getActivity());
+                                    SharedPref.SetObdPreference(SharedPref.getObdPreference(getActivity()), getActivity());
                                 }
 
                                 setObdStatus(false);
@@ -6674,7 +6729,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 if(IsTruckChange){
                                     if(ObdPreference == Constants.OBD_PREF_BLE && SharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED){
                                         // set obd disconnection time is current time for diagnostic/malfunction event.
-                                        SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Global.getCurrentDate(), getActivity());
+                                        SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Global.getCurrentDate(),
+                                                Global.GetCurrentUTCTimeFormat(), getActivity());
                                     }
                                     startService();
                                     setObdStatus(false);
@@ -7343,7 +7399,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 if(certifyAlertTime.length() > 0){
                     DateTime savedDate = Global.getDateTimeObj(certifyAlertTime, false);
                     DateTime currentDate = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), false);
-                    int dayDiff = Days.daysBetween(savedDate.toLocalDate(), currentDate.toLocalDate()).getDays();
+                    int dayDiff = (int) Constants.getDateTimeDuration(savedDate, currentDate).getStandardDays();
+                    //Days.daysBetween(savedDate.toLocalDate(), currentDate.toLocalDate()).getDays();
                     if(dayDiff == 0){
                         int hourDiff = currentDate.getHourOfDay() - savedDate.getHourOfDay();
                         if(hourDiff < 4){

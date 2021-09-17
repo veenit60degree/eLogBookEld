@@ -252,6 +252,7 @@ public class ConstantsKeys {
     public static String IsOBDStatusUpdate              = "IsOBDStatusUpdate";
     public static String IsPcYmAlertChangeStatus        = "IsPcYmAlertChangeStatus";
     public static String IsNeedToUpdate18DaysLog        = "IsNeedToUpdate18DaysLog";
+    public static String IsUpdateMalDiaInfoWindow       = "IsUpdateMalDiaInfoWindow";
 
 
     public static String IsUnidentified                 = "IsUnidentified";
@@ -260,6 +261,12 @@ public class ConstantsKeys {
     public static String SuggestedEdit                  = "SuggestedEdit";
     public static String IsLocMalfunction               = "IsLocMalfunction";
     public static String LocMalfunctionOccurTime        = "LocMalfunctionOccurTime";
+    public static String LocMalfunctionOccurUtcTime     = "LocMalfunctionOccurUtcTime";
+
+    public static String IsLocDiagnostic                = "IsLocDiagnostic";
+    public static String LocDiaOccurTime                = "LocDiaOccurTime";
+    public static String LocDiaOccurUtcTime             = "LocDiaOccurUtcTime";
+    public static String LocDiaOccurTimeForMal          = "LocDiaOccurTimeForMal";
 
     public static String EngSyncDiagnstc                = "EngSyncDiagnstc";
     public static String EngSyncDiagnstcCo              = "EngSyncDiagnstcCo";
@@ -295,6 +302,14 @@ public class ConstantsKeys {
 
 
     public static String EventDateTime                  = "EventDateTime";
+    public static String EventEndDateTime               = "EventEndDateTime";
+    public static String IsClearEvent                   = "IsClearEvent";
+
+    public static String ClearOdometer                  = "ClearOdometer";
+    public static String ClearEngineHours               = "ClearEngineHours";
+    public static String ClearEventDateTime             = "ClearEventDateTime";
+
+
     public static String EngineHours                    = "EngineHours";
     public static String Miles                          = "Miles";
     public static String DetectionDataEventCode         = "DetectionDataEventCode";
@@ -446,6 +461,7 @@ public class ConstantsKeys {
     public static String ExecutionTime                  = "ExecutionTime";
     public static String Date_Time                      = "DateTime";
     public static String TotalMin                       = "TotalMin";
+    public static String TotalMinutes                   = "TotalMinutes";
 
     public static String EquipmentNumber                = "EquipmentNumber";
     public static String TotalKm                        = "TotalKm";
@@ -458,10 +474,18 @@ public class ConstantsKeys {
     public static String DriverStartDateTime           = "DriverStartDateTime";
     public static String DriverEndDateTime             = "DriverEndDateTime";
 
+/*
     public static String IsCleared                      = "IsCleared";
     public static String ClearedTime                    = "ClearedTime";
     public static String ClearedTimeOdometer            = "ClearedTimeOdometer";
     public static String ClearedTimeEngineHours         = "ClearedTimeEngineHours";
+*/
+
+    public static String IsCleared                      = "IsClearEvent";
+    public static String ClearedTime                    = "ClearEventDateTime";
+    public static String ClearedTimeOdometer            = "ClearOdometer";
+    public static String ClearedTimeEngineHours         = "ClearEngineHours";
+
 
     public static String IsShowOnMobileApp              = "IsShowOnMobileApp";
     public static String NewsTitle                      = "NewsTitle";

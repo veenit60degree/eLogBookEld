@@ -14,6 +14,7 @@
     <string name="terms_of_service">terms of service </string>
     <string name="obd_config">OBD Configuration</string>
     <string name="obd_diagnose">OBD Diagnose</string>
+    <string name="mal_dia_history">Events (Mal/Dia) History</string>
     <string name="child_text">LOAD#661\n3785 BOUL LAURIER EST,QUEBEC,CA\n\nLOAD#NISD662\n3785 BOUL LAURIER EST,QUEBEC,CA</string>
     <string name="title_activity_maps_activityyy">Map</string>
     <string name="obd_connection_desc">OBD not connected!! Connect your phone with OBD wifi connection. </string>
@@ -234,6 +235,34 @@
     <string name="want_change_cycle">Do you want to change your cycle from </string>
     <string name="want_change_op_zone">Do you want to change your operating zone from </string>
 
+    <string name="pos_mal_title">Positioning malfunction</string>
+    <string name="pos_mal_def">ELD records a positioning compliance malfunction when it fails to acquire a valid position measurement within five miles of the commercial motor vehicle\'s movement, after 60 minutes has elapsed.</string>
+
+    <string name="eng_sync_dia_title">Engine synchronization data diagnostic event</string>
+    <string name="eng_sync_dia_def">Engine synchronization data diagnostic events occur when an ELD loses ECM connectivity to any of the required data sources (engine power status, vehicle motion status, miles driven, and engine hours) and can no longer acquire updated values for the required ELD parameters within five seconds of the need.</string>
+
+    <string name="eng_sync_mal_title">Engine synchronization data malfunction event</string>
+    <string name="eng_sync_mal_def">Engine synchronization compliance malfunctions occur when ECM connectivity to any of the required data sources (engine power status, vehicle motion status, miles driven, and engine hours) is lost for more than 30 minutes during a 24-hour period aggregated across all driver profiles.</string>
+
+    <string name="unidentified_title">Unidentified record event</string>
+    <string name="unidentified_def">Unidentified driving records data diagnostic</string>
+
+    <string name="other_dia_title">Other ELD diagnostic event</string>
+    <string name="other_dia_def">Other "ELD identified diagnostic" event</string>
+
+
+    <string name="event_cleared">Event Cleared</string>
+    <string name="power_dia_title">Power Compliance Diagnostic Event</string>
+    <string name="power_dia_def">Power data diagnostic events occur when an ELD is not powered and fully functional within one minute of the vehicle\'s engine receiving power and does not remain powered for as long as the vehicle\'s engine stays powered.</string>
+
+    <string name="power_mal_title">Power Compliance Malfunction Event</string>
+    <string name="power_mal_def">Power compliance malfunctions occur when an ELD is not powered for an aggregated in-motion driving time of 30 minutes or more over a 24-hour period across all driver profiles</string>
+
+    <string name="missing_data_dia_title">Missing Data Diagnostic Event</string>
+    <string name="missing_data_dia_def">A missing required data elements data diagnostic event occurs when any required data field is missing at the time of its recording.A data transfer compliance malfunction occurs when the ELD stays in the unconfirmed data transfer mode following the next three consecutive monitoring checks.</string>
+
+    <string name="loc_miss_event">Location Missing Event</string>
+
     <string name="eng_sync_dia_event">Engine sync diagnostic event</string>
     <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>
     <string name="eng_sync_dia_occured_ble_desc">Engine sync diagnostic event occurred due to bluetooth OBD disconnected.</string>
@@ -244,9 +273,15 @@
     <string name="power_comp_mal_occured">Power compliance malfunction occurred</string>
     <string name="eng_sync_dia_occured">Engine sync diagnostic occurred</string>
     <string name="eng_sync_mal_occured">Engine sync compliance malfunction occurred</string>
+    <string name="missing_data_event">Missing positioning compliance</string>
+    <string name="missing_pos_comp_event">Missing positioning compliance event</string>
+    <string name="missing_data_event_desc">Positioning compliance missing data event occurred</string>
+    <string name="not_get_valid_loc">Not able to get valid location since last 8 km.</string>
     <string name="pos_mal_occured">Position malfunction occurred</string>
     <string name="pos_mal_occured_desc">Position malfunction occurred due to location missing.</string>
     <string name="ignore_to_save_loc">Driver ignore to save location in </string>
+    <string name="power_dia_clear_desc">Power diagnostic event has been cleared.</string>
+    <string name="eng_sync_dia_clear_desc">Engine Sync data compliance event has been cleared.</string>
     <string name="hos_limitation">New HOS Limitations</string>
     <string name="hos_limitation_old">Old HOS Limitations</string>
     <string name="ELDViewLogUs">ELD View Log</string>
@@ -486,8 +521,10 @@
     <string name="update">Update</string>
     <string name="update_loc">Update Location</string>
     <string name="enter_manual_loc">Enter Manual Location</string>
-    <string name="loc_mal_occur">Location malfunction occured</string>
+    <string name="loc_mal_occur">Location malfunction occurred</string>
     <string name="loc_mal">Location Malfunction</string>
+    <string name="position_com_mal_occur">Positioning compliance malfunction occurred</string>
+    <string name="missing_data_dia_occur">Missing required data diagnostic event occurred</string>
 
     <string name="save_location">Save Location</string>
     <string name="save">Save</string>

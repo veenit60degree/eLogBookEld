@@ -913,9 +913,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 if (ChangedDriverStatus == DRIVING || ChangedDriverStatus == ON_DUTY) {
 
                     String LocationType = "";
-                    if (constants.isLocMalfunctionEvent(context, DriverType)) {
-                        // SharedPref.setLocMalfunctionType("m", getContext());
-                        LocationType = SharedPref.getLocMalfunctionType(context);
+                    if (SharedPref.isLocMalfunctionOccur(context) || SharedPref.isLocDiagnosticOccur(context)) { //constants.isLocMalfunctionEvent(context, DriverType)
+                        // SharedPref.setLocationEventType("m", getContext());
+                        LocationType = SharedPref.getLocationEventType(context);
                     }
 
                     JSONArray logArray = constants.AddNewStatusInList("", String.valueOf(ChangedDriverStatus), "", "no_address",
@@ -1147,8 +1147,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
         String DriverStatusId = "", isPersonal = "", isYardMove = "", trailorNumber = "", isAutomatic = "", LocationType = "";
 
-        if(constants.isLocMalfunctionEvent(context, DriverType)){
-            LocationType = SharedPref.getLocMalfunctionType( context);
+        if(SharedPref.isLocMalfunctionOccur(context) || SharedPref.isLocDiagnosticOccur(context)){   //constants.isLocMalfunctionEvent(context, DriverType)
+            LocationType = SharedPref.getLocationEventType( context);
         }
 
         trailorNumber = SharedPref.getTrailorNumber( context);

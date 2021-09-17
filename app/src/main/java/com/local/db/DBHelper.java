@@ -44,6 +44,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_MAL_DIA_OCCURRED_TIME = "tbl_mal_dia_occurred_time";
     public static final String TABLE_POWER_COMP_MAL_DIA    = "tbl_power_comp_mal_dia";
     public static final String TABLE_DEFERRAL_RULE         = "tbl_deferral_rule";
+    public static final String TABLE_MAl_DIA_EVENT_DURATION= "tbl_mal_dia_event_duration";
+    public static final String TABLE_POSITION_DIA_MAL      = "tbl_position_dia_mal";
+
 
 
     public static final String DRIVER_ID_KEY              = "driver_id";
@@ -74,6 +77,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String MAL_DIA_OCCURRED_TIME_LIST  = "oDriver_mal_diagnstc_occurred_list";
     public static final String POWER_COMP_MAL_DIA_LIST     = "oDriver_power_comp_mal_dia_list";
     public static final String DEFERRAL_RULE_LIST          = "oDriver_deferral_rule_list";
+    public static final String MAl_DIA_EVENT_DURATION_LIST = "oDriver_mal_dia_event_dur_list";
+    public static final String POSITION_MAl_DIA_EVENT_LIST = "oDriver_position_mal_dia_list";
 
 
     public DBHelper(Context context) {
@@ -183,6 +188,13 @@ public class DBHelper extends SQLiteOpenHelper {
                 DRIVER_ID_KEY + " INTEGER, " +  DEFERRAL_RULE_LIST + " TEXT )"
         );
 
+        db.execSQL( "CREATE TABLE " + TABLE_MAl_DIA_EVENT_DURATION + "(" +
+                PROJECT_ID_KEY + " INTEGER, " +  MAl_DIA_EVENT_DURATION_LIST + " TEXT )"
+        );
+
+        db.execSQL( "CREATE TABLE " + TABLE_POSITION_DIA_MAL + "(" +
+                PROJECT_ID_KEY + " INTEGER, " +  POSITION_MAl_DIA_EVENT_LIST + " TEXT )"
+        );
 
     }
 
@@ -213,6 +225,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAL_DIA_OCCURRED_TIME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POWER_COMP_MAL_DIA);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DEFERRAL_RULE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAl_DIA_EVENT_DURATION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSITION_DIA_MAL);
 
         onCreate(db);
     }
@@ -459,7 +473,23 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /*  Create malfunction & diagnostic vents duration table event occurred time if not exist.*/
+    public void CreateMalDiaDurationTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL( "CREATE TABLE " + TABLE_MAl_DIA_EVENT_DURATION + "(" +
+                PROJECT_ID_KEY + " INTEGER, " +  MAl_DIA_EVENT_DURATION_LIST + " TEXT )"
+        );
 
+    }
+
+    /*  Create positioning malfunction & diagnostic table event occurred time if not exist.*/
+    public void CreatePositioningMalDiaTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL( "CREATE TABLE " + TABLE_POSITION_DIA_MAL + "(" +
+                PROJECT_ID_KEY + " INTEGER, " +  POSITION_MAl_DIA_EVENT_LIST + " TEXT )"
+        );
+
+    }
 
 
 
@@ -824,7 +854,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Insert Mal/Dia events duration Log -------------------- */
+    public boolean InsertMalDiaDurationLog(int ProjectId, JSONArray jsonArray) {
 
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PROJECT_ID_KEY, ProjectId);
+        contentValues.put(MAl_DIA_EVENT_DURATION_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_MAl_DIA_EVENT_DURATION, null, contentValues);
+        return true;
+    }
+
+
+    /* ---------------------- Insert positioning Mal/Dia events Log -------------------- */
+    public boolean InsertPositioningMalDiaLog(int ProjectId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PROJECT_ID_KEY, ProjectId);
+        contentValues.put(POSITION_MAl_DIA_EVENT_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_POSITION_DIA_MAL, null, contentValues);
+        return true;
+    }
 
 
 
@@ -1178,6 +1233,33 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Update mal/dia duration events Log -------------------- */
+    public boolean UpdateMalDiaDurationLog(int ProjectId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PROJECT_ID_KEY, ProjectId);
+        contentValues.put(MAl_DIA_EVENT_DURATION_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_MAl_DIA_EVENT_DURATION, contentValues, PROJECT_ID_KEY + " = ? ", new String[] { Integer.toString(ProjectId) } );
+        return true;
+    }
+
+
+    /* ---------------------- Update positioning mal/dia duration events Log -------------------- */
+    public boolean UpdatePositioningMalDiaLog(int ProjectId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PROJECT_ID_KEY, ProjectId);
+        contentValues.put(POSITION_MAl_DIA_EVENT_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_POSITION_DIA_MAL, contentValues, PROJECT_ID_KEY + " = ? ", new String[] { Integer.toString(ProjectId) } );
+        return true;
+    }
+
 
 
 
@@ -1401,6 +1483,23 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+
+
+    /* ---------------------- Get Mal/Dia Events Duration logs-------------------- */
+    public Cursor getMalDiaDurationLog(int ProjectId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_MAl_DIA_EVENT_DURATION + " WHERE " +
+                PROJECT_ID_KEY + "=?", new String[]{Integer.toString(ProjectId)});
+        return res;
+    }
+
+    /* ---------------------- Get positioning Mal/Dia Events logs-------------------- */
+    public Cursor getPositioningMalDiaLog(int ProjectId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_POSITION_DIA_MAL + " WHERE " +
+                PROJECT_ID_KEY + "=?", new String[]{Integer.toString(ProjectId)});
+        return res;
+    }
 
 
 
@@ -1681,6 +1780,15 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ------ Delete Deferral time Log Table ------ */
+    public void DeleteMalDiaDurationTable() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_MAl_DIA_EVENT_DURATION);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
 
@@ -1782,6 +1890,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if(!isTableExists(TABLE_DEFERRAL_RULE)) {
             CreateDefferalTable();
+        }
+
+        if(!isTableExists(TABLE_MAl_DIA_EVENT_DURATION)) {
+            CreateMalDiaDurationTable();
+        }
+
+        if(!isTableExists(TABLE_POSITION_DIA_MAL)) {
+            CreatePositioningMalDiaTable();
         }
 
     }

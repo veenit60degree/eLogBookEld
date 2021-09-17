@@ -683,16 +683,6 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
        // boolean IsAOBRDAutomatic        = SharedPref.IsAOBRDAutomatic(getActivity());
         boolean IsAOBRD                 = SharedPref.IsAOBRD(getActivity());
 
-
-      /*  if (!IsAOBRD || IsAOBRDAutomatic) {
-            Constants.isEldHome = false;
-            Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                getActivity().startForegroundService(Globally.serviceIntent);
-            }
-            getActivity().startService(Globally.serviceIntent);
-        }*/
-
         try {
             if (shareDialog != null && shareDialog.isShowing()) {
                 shareDialog.dismiss();

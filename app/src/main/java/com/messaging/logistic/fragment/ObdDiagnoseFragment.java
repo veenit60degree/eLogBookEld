@@ -157,8 +157,8 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (Bluetooth)");
             wifiObdLay.setVisibility(View.GONE);
         }else {
+            bleObdTxtView.setText(getString(R.string.wired_tablettt));
             EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (Wired)");
-            bleObdTxtView.setVisibility(View.GONE);
             wifiObdLay.setVisibility(View.GONE);
             responseRawTxtView.setVisibility(View.INVISIBLE);
             obdDataTxtView.setText(getString(R.string.no_obd_settings));
@@ -197,6 +197,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 }catch (Exception e){
                     e.printStackTrace();
                 }*/
+
 
 
             }
@@ -244,20 +245,32 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             }catch (Exception e){
                 e.printStackTrace();
             }
-            if(SharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED){
-                bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
-            }else{
-                //<b>Device Name:</b> SMBLE-000066<br/><b>MAC Address:</b> C4:64:E3:54:EF:03<br/><br/><b>Sequence Id:</b> 01B5<br/><b>Event Type:</b> 0<br/><b>Event Code:</b> 1<br/><b>Date:</b> 072821<br/><b>Time:</b> 112943<br/><b>Latest ACC ON time:</b> 072821112943<br/><b>Event Data:</b> OnTime<br/><b>Vehicle Speed:</b> 0<br/><b>Engine RPM:</b> 0<br/><b>Odometer:</b> 0<br/><b>Engine Hours:</b> 0<br/><b>VIN Number:</b> <br/><b>Latitude:</b> 30.70728<br/><b>Longitude:</b> 76.68493<br/><b>Distance since Last located:</b> 0<br/><b>Driver ID:</b> <br/><b>Version:</b>1<br/>
-                if(!data.contains("MAC Address")) {
-                    bleObdTxtView.setText(getString(R.string.connect_ble_obd));
-                }else{
-                    bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
-                }
-            }
+
 
             if (SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI ) {
                 String rawdata = intent.getStringExtra("raw_message");
                 responseRawTxtView.setText(rawdata);
+            }else if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIRED){
+                int lastObdStatus = SharedPref.getObdStatus(getActivity());
+                if(lastObdStatus == Constants.WIRED_CONNECTED){
+                    bleObdTxtView.setText(getString(R.string.wired_tablet_connected));
+                }else if(lastObdStatus == Constants.WIRED_DISCONNECTED){
+                    bleObdTxtView.setText(getString(R.string.wired_tablet_disconnected));
+                }else{
+                    bleObdTxtView.setText(getString(R.string.wired_tablet_conn_error));
+                }
+
+            }else{
+                if(SharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED){
+                    bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
+                }else{
+                    //<b>Device Name:</b> SMBLE-000066<br/><b>MAC Address:</b> C4:64:E3:54:EF:03<br/><br/><b>Sequence Id:</b> 01B5<br/><b>Event Type:</b> 0<br/><b>Event Code:</b> 1<br/><b>Date:</b> 072821<br/><b>Time:</b> 112943<br/><b>Latest ACC ON time:</b> 072821112943<br/><b>Event Data:</b> OnTime<br/><b>Vehicle Speed:</b> 0<br/><b>Engine RPM:</b> 0<br/><b>Odometer:</b> 0<br/><b>Engine Hours:</b> 0<br/><b>VIN Number:</b> <br/><b>Latitude:</b> 30.70728<br/><b>Longitude:</b> 76.68493<br/><b>Distance since Last located:</b> 0<br/><b>Driver ID:</b> <br/><b>Version:</b>1<br/>
+                    if(!data.contains("MAC Address")) {
+                        bleObdTxtView.setText(getString(R.string.connect_ble_obd));
+                    }else{
+                        bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
+                    }
+                }
             }
         }
     };

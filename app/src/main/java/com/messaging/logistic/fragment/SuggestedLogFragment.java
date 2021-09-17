@@ -716,18 +716,23 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                     isEditedLog = logObj.getBoolean(ConstantsKeys.IsEdited);
                 }
 
+                String StartLatitude = "", StartLongitude = "";
+                if(logObj.has(ConstantsKeys.StartLatitude))
+                    StartLatitude = logObj.getString(ConstantsKeys.StartLatitude);
+
+                if(logObj.has(ConstantsKeys.StartLongitude))
+                    StartLongitude = logObj.getString(ConstantsKeys.StartLongitude);
+
 
                 if(DRIVER_JOB_STATUS == constants.ON_DUTY) {
                     driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, "",
                             isViolation, "", "", Duration, "", "","", logObj.getBoolean(ConstantsKeys.Personal),
-                            isEditedLog,  logObj.getBoolean(ConstantsKeys.YardMove), logObj.getString(ConstantsKeys.StartLatitude),
-                            logObj.getString(ConstantsKeys.StartLongitude) );
+                            isEditedLog,  logObj.getBoolean(ConstantsKeys.YardMove), StartLatitude, StartLongitude );
                 }else{
                     driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, "",
                             isViolation, "", "", Duration, "", "","",
                             logObj.getBoolean(ConstantsKeys.Personal),
-                            isEditedLog, logObj.getBoolean(ConstantsKeys.YardMove), logObj.getString(ConstantsKeys.StartLatitude),
-                            logObj.getString(ConstantsKeys.StartLongitude));
+                            isEditedLog, logObj.getBoolean(ConstantsKeys.YardMove), StartLatitude, StartLongitude);
                 }
 
                 if(isEdited){
@@ -862,6 +867,27 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     }
 
 
+    void clearRecall(JSONArray dataArray){
+        try{
+            if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+                if (dataArray.length() > 0 && SharedPref.isSuggestedEditOccur(getActivity())) {
+                    SharedPref.setSuggestedRecallStatus(false, getActivity());
+                } else {
+                    SharedPref.setSuggestedRecallStatus(true, getActivity());
+                }
+            }else{
+                if (dataArray.length() > 0 && SharedPref.isSuggestedEditOccurCo(getActivity())) {
+                    SharedPref.setSuggestedRecallStatusCo(false, getActivity());
+                } else {
+                    SharedPref.setSuggestedRecallStatusCo(true, getActivity());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
     VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback() {
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -890,6 +916,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         try {
                             SuggestedFragmentActivity.dataArray = new JSONArray(obj.getString(ConstantsKeys.Data));
                             parseEditedData(SuggestedFragmentActivity.dataArray.toString(), false);
+
                         }catch (Exception e){e.printStackTrace();}
 
                         break;
@@ -909,6 +936,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                             removeSelectedDateFromList();
 
                         }
+                        clearRecall(SuggestedFragmentActivity.dataArray);
 
                         break;
 
@@ -922,6 +950,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         globally.EldScreenToast(confirmCertifyBtn, Message, getResources().getColor(R.color.color_eld_theme));
 
                         removeSelectedDateFromList();
+                        clearRecall(SuggestedFragmentActivity.dataArray);
 
                         break;
 

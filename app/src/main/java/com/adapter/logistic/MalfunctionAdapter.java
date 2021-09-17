@@ -29,7 +29,6 @@ import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.MalfncnDiagnstcViewPager;
-import com.messaging.logistic.fragment.MalfunctionFragment;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
 
@@ -104,38 +103,46 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         TextView seqIdMalTxtVw = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
         TextView originMalTxtVw = (TextView) convertView.findViewById(R.id.originMalTxtVw);
 
-        if(childData.getDriverZoneEventDate().length() > 10) {
-            String date = globally.dateConversionMalfunction(childData.getDriverZoneEventDate());   //EventDateTime()
-            timeMalTxtVw.setText(date);
-        }else {
-            timeMalTxtVw.setText( "");
-        }
+        try{
+            if(childData.getDriverZoneEventDate().length() > 10) {
+                String date = globally.dateConversionMalfunction(childData.getDriverZoneEventDate());   //EventDateTime()
+                timeMalTxtVw.setText(date);
+            }else {
+                timeMalTxtVw.setText( "");
+            }
 
-       // statusMalTxtVw.setText(childData.getMalfunctionDefinition());
-        engHoursMalTxtVw.setText(childData.getEngineHours());
-        originMalTxtVw.setText("");
-        originMalTxtVw.setVisibility(View.GONE);
+           // statusMalTxtVw.setText(childData.getMalfunctionDefinition());
+            engHoursMalTxtVw.setText(childData.getEngineHours());
+            originMalTxtVw.setText("");
+            originMalTxtVw.setVisibility(View.GONE);
 
-        if(childData.getHexaSequenceNo().length() > 0){
-            seqIdMalTxtVw.setText(childData.getHexaSequenceNo());
-        }else{
-            seqIdMalTxtVw.setText(childData.getSequenceNo());
-        }
-        if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
-            double miles = Double.parseDouble(childData.getMiles());
-            String milesInKm = constants.Convert2DecimalPlacesDouble(constants.milesToKm(miles));
-            vehMilesMalTxtVw.setText(milesInKm);
-        }else{
-            vehMilesMalTxtVw.setText(childData.getMiles());
-        }
+            if(childData.getHexaSequenceNo().length() > 0){
+                seqIdMalTxtVw.setText(childData.getHexaSequenceNo());
+            }else{
+                seqIdMalTxtVw.setText(childData.getSequenceNo());
+            }
+            if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
+                if(childData.getMiles().equals("--") || childData.getMiles().length() == 0){
+                    vehMilesMalTxtVw.setText("--");
+                }else {
+                    double miles = Double.parseDouble(childData.getMiles());
+                    String milesInKm = constants.Convert2DecimalPlacesDouble(constants.milesToKm(miles));
+                    vehMilesMalTxtVw.setText(milesInKm);
+                }
+            }else{
+                vehMilesMalTxtVw.setText(childData.getMiles());
+            }
 
-        LinearLayout malfunctionChildLay = (LinearLayout)convertView.findViewById(R.id.malfunctionChildLay);
-        if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).size() -1 ) {
-            malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
-        }else{
-            malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
-        }
+            LinearLayout malfunctionChildLay = (LinearLayout)convertView.findViewById(R.id.malfunctionChildLay);
+            if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).size() -1 ) {
+                malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
+            }else{
+                malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
+            }
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return convertView;
     }
 
@@ -247,19 +254,23 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             holder.malfunctionChildMainLay.setVisibility(View.GONE);
         }
 
-        if(constants.isValidInteger(headerModel.getEventCode() ) ){
-                    // EventCode value is an String is Diagnostic
-            if(!SharedPref.IsClearDiagnostic(_context)){
-                holder.clearEventBtn.setVisibility(View.GONE);
-            }else{
-                holder.clearEventBtn.setVisibility(View.VISIBLE);
-            }
-        }else{
-                    // EventCode value is an String is malfunction
-            if(!SharedPref.IsClearMalfunction(_context)){
-                holder.clearEventBtn.setVisibility(View.GONE);
-            }else{
-                holder.clearEventBtn.setVisibility(View.VISIBLE);
+        if(headerModel.isCleared() || headerModel.isOffline()){
+            holder.clearEventBtn.setVisibility(View.GONE);
+        }else {
+            if (constants.isValidInteger(headerModel.getEventCode())) {
+                // EventCode value is an String is Diagnostic
+                if (!SharedPref.IsClearDiagnostic(_context)) {
+                    holder.clearEventBtn.setVisibility(View.GONE);
+                } else {
+                    holder.clearEventBtn.setVisibility(View.VISIBLE);
+                }
+            } else {
+                // EventCode value is an String is malfunction
+                if (!SharedPref.IsClearMalfunction(_context)) {
+                    holder.clearEventBtn.setVisibility(View.GONE);
+                } else {
+                    holder.clearEventBtn.setVisibility(View.VISIBLE);
+                }
             }
         }
 
@@ -417,7 +428,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                 progressDialog.dismiss();
 
 
-            globally.EldScreenToast(MalfunctionFragment.invisibleMalfnBtn, error,
+            globally.EldScreenToast(MalfncnDiagnstcViewPager.invisibleMalfnBtn, error,
                     _context.getResources().getColor(R.color.colorVoilation));
         }
 

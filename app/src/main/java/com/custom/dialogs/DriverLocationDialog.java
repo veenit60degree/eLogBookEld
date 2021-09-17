@@ -207,26 +207,18 @@ public class DriverLocationDialog extends Dialog {
                 });
 
 
-             /*   String text1 = getContext().getResources().getString(R.string.enter_manual_loc) + " ("+
-                        getContext().getResources().getString(R.string.loc_mal_occur) + ")";
-
-              //  TitleTV.setTextAppearance(getContext(), R.style.fontForLocMalTitleMobile);
-                SpannableString spanString =  new SpannableString(text1);
-                final StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
-               // spanString.setSpan(new RelativeSizeSpan(1.10f), 0,21, 0); // set size
-                spanString.setSpan(new RelativeSizeSpan(0.80f), 23,51, 0); // set size
-                spanString.setSpan(boldSpan, 0, 21, Spannable.SPAN_INCLUSIVE_INCLUSIVE); // set text style
-                spanString.setSpan(new ForegroundColorSpan(Color.RED), 23, 51, 0);// set color
-                TitleTV.setText(spanString, TextView.BufferType.SPANNABLE);
-*/
-
                 TitleTV.setText(getContext().getResources().getString(R.string.enter_manual_loc) );
                 btnCancelLoadingJob.setText(getContext().getResources().getString(R.string.ignore_location));
                 btnLoadingJob.setText(getContext().getResources().getString(R.string.save_location));
                 dismissTxtView.setText(Html.fromHtml("<u>" + getContext().getResources().getString(R.string.cancel) +"</u>"));
                 dismissTxtView.setVisibility(View.VISIBLE);
+
+
                 malfunctionEventTV.setVisibility(View.VISIBLE);
 
+                if(SharedPref.isLocMalfunctionOccur(getContext()) == false){
+                    malfunctionEventTV.setText(getContext().getResources().getString(R.string.missing_data_dia_occur) );
+                }
                 malfunctionEventTV.startAnimation(malfunctionAnim);
 
             }

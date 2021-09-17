@@ -577,7 +577,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
         params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
         params.put(ConstantsKeys.LogDate, LogDate);
-        params.put(ConstantsKeys.LocationType, SharedPref.getLocMalfunctionType(getActivity()));
+        params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(getActivity()));
 
         ChangeCycleRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_DRIVER_CYCLE , params, ChangeCycle,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);

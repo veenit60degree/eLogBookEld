@@ -43,7 +43,8 @@ public class CheckIsUpdateReady extends AsyncTask<Void, String, String> {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d("CheckIsUpdateReady", "UnknownHostException");
+            //e.printStackTrace();
         }
         return newVersion;
     }

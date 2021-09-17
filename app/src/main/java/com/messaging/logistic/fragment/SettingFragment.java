@@ -544,8 +544,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         adverseSwitchButton.setChecked(isAdverseExcptn);
         deferralSwitchButton.setChecked(isDeferral);
 
-        if(constants.isLocMalfunctionEvent(getActivity(), DriverType) && SharedPref.getLocMalfunctionType( getContext()).equals("x")){
-            // SharedPref.setLocMalfunctionType("m", getContext());
+        if(constants.isLocMalfunctionEvent(getActivity(), DriverType) && SharedPref.getLocationEventType( getContext()).equals("x")){
+            // SharedPref.setLocationEventType("m", getContext());
             LocationType = "m";
         }
 
@@ -1551,7 +1551,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         params.put(ConstantsKeys.DriverTimeZone, DriverTimeZone);
         params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
         params.put(ConstantsKeys.LogDate, LogDate);
-        params.put(ConstantsKeys.LocationType, SharedPref.getLocMalfunctionType(getActivity()));
+        params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(getActivity()));
 
         ChangeCycleRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_DRIVER_CYCLE , params, ChangeCycle,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);
@@ -1581,7 +1581,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         params.put(ConstantsKeys.Latitude, Latitude);
         params.put(ConstantsKeys.Longitude, Longitude);
         params.put(ConstantsKeys.PowerUnitNumber, PowerUnitNumber);
-        params.put(ConstantsKeys.LocationType, SharedPref.getLocMalfunctionType(getActivity()));
+        params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(getActivity()));
 
         OperatingZoneRequest.executeRequest(com.android.volley.Request.Method.POST, APIs.CHANGE_OPERATING_ZONE , params, OperatingZone,
                 Constants.SocketTimeout10Sec,  ResponseCallBack, ErrorCallBack);

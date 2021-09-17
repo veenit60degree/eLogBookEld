@@ -261,6 +261,18 @@ public class SharedPref {
 
 
 
+    // Set Obd Status -------------------
+    public static void SaveObdStatus( int value, String time, String utcTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("ObdStatus", value);
+        editor.putString("ObdStatusTime", time);
+        editor.putString("ObdStatusUtcTime", utcTime);
+        editor.commit();
+    }
+
+
+
     // Get Obd Status -------------------
     public static int getObdStatus( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -268,11 +280,18 @@ public class SharedPref {
     }
 
 
-    // Get Obd Status -------------------
+    // Get last recorded time of Obd Status -------------------
     public static String getObdLastStatusTime( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("ObdStatusTime", "");
     }
+
+    // Get last recorded utc time of Obd Status -------------------
+    public static String getObdLastStatusUtcTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ObdStatusUtcTime", "");
+    }
+
 
 
     // Set Wired Obd Call Time  -------------------
@@ -294,41 +313,25 @@ public class SharedPref {
     // Get Obd Status -------------------
     public static String getObdSourceName( Context context) {
         String source = "";
-       switch (getObdStatus(context)){
-           case Constants.WIRED_CONNECTED:
-           case Constants.WIRED_DISCONNECTED:
-           case Constants.WIRED_IGNITION_OFF:
-
+       switch (SharedPref.getObdPreference(context)){
+           case Constants.OBD_PREF_WIRED:
                source = Constants.WiredOBD;
 
             break;
 
-           case Constants.WIFI_CONNECTED:
-           case Constants.WIFI_DISCONNECTED:
-
+           case Constants.OBD_PREF_WIFI:
                source = Constants.WifiOBD;
-
             break;
 
-           case Constants.BLE_CONNECTED:
-           case Constants.BLE_DISCONNECTED:
-
+           case Constants.OBD_PREF_BLE:
                source = Constants.BleObd;
-
             break;
 
        }
         return source;
     }
 
-    // Set Obd Status -------------------
-    public static void SaveObdStatus( int value, String time, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("ObdStatus", value);
-        editor.putString("ObdStatusTime", time);
-        editor.commit();
-    }
+
 
 
 
@@ -1577,22 +1580,23 @@ public class SharedPref {
     }
 
 
-    public static void SetTruckIgnitionStatus( String ignitionStatus, String ignitionSource, String lastIgnitionTime,
-                                               String EngineHourMalDia, String OdometerMalDia, Context context) {
+    public static void SaveTruckInfoOnIgnitionChange( String ignitionStatus, String ignitionSource, String lastIgnitionTime,
+                                               String lastIgnitionUtcTime, String EngineHour, String Odometer, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.TruckIgnitionStatusMalDia, ignitionStatus);
         editor.putString(Constants.IgnitionSourceMalDia, ignitionSource);
         editor.putString(Constants.IgnitionTimeMalDia, lastIgnitionTime);
-        editor.putString(Constants.EngineHourMalDia, EngineHourMalDia);
-        editor.putString(Constants.OdometerMalDia, OdometerMalDia);
+        editor.putString(Constants.IgnitionUtcTimeMalDia, lastIgnitionUtcTime);
+        editor.putString(Constants.EngineHourMalDia, EngineHour);
+        editor.putString(Constants.OdometerMalDia, Odometer);
 
         editor.commit();
     }
 
 
     // Get Truck ignition Status -------------------
-    public static String GetTruckIgnitionStatus( String key, Context context) {
+    public static String GetTruckInfoOnIgnitionChange( String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, "");
     }
@@ -1925,46 +1929,6 @@ public class SharedPref {
 
 
 
-    // Get Unidentified occure status  -------------------
-    public static boolean isUnidentifiedOccur( Context context) {
-        if(context != null) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            return preferences.getBoolean(ConstantsKeys.IsUnidentified, false);
-        }else{
-            return false;
-        }
-    }
-
-    // Get Malfunction occur status -------------------
-    public static boolean isMalfunctionOccur( Context context) {
-        if(context != null) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            return preferences.getBoolean(ConstantsKeys.IsMalfunction, false);
-        }else {
-            return false;
-        }
-    }
-
-    // Get Diagnostic occur status -------------------
-    public static boolean isDiagnosticOccur( Context context) {
-        if(context != null) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            return preferences.getBoolean(ConstantsKeys.IsDiagnostic, false);
-        }else {
-            return false;
-        }
-    }
-
-    // Get Suggested Edit status  -------------------
-    public static boolean isSuggestedEditOccur( Context context) {
-        if(context != null) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            return preferences.getBoolean(ConstantsKeys.SuggestedEdit, false);
-        }else{
-            return false;
-        }
-    }
-
 
     // Save Engine sync diagnostic status  -------------------
     public static void saveEngSyncDiagnstcStatus( boolean IsEngSyncDia, Context context) {
@@ -2016,10 +1980,11 @@ public class SharedPref {
 
 
     // Save Power Malfunction status  -------------------
-    public static void savePowerMalfunctionOccurStatus( boolean IsEngSyncDia, String time, Context context) {
+    public static void savePowerMalfunctionOccurStatus( boolean IsEngSyncMal, boolean isEngSynDia, String time, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(ConstantsKeys.PowerMalfunction, IsEngSyncDia);
+        editor.putBoolean(ConstantsKeys.PowerMalfunction, IsEngSyncMal);
+        editor.putBoolean(ConstantsKeys.PowerDiagnstc, isEngSynDia);
         editor.putString(ConstantsKeys.PowerMalfunctionTimeOcc, time);
         editor.commit();
     }
@@ -2033,6 +1998,17 @@ public class SharedPref {
             return false;
         }
     }
+
+    // Get power Diagnostic status -------------------
+    public static boolean isPowerDiagnosticOccurred( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.PowerDiagnstc, false);
+        }else {
+            return false;
+        }
+    }
+
 
     // Get power Malfunction occurred time  -------------------
     public static String getPowerMalOccTime( Context context) {
@@ -2067,12 +2043,13 @@ public class SharedPref {
 
 
 
-    // Save lacation malfunction status  -------------------
-    public static void saveLocMalfunctionOccurStatus( boolean IsLocMalfunction, String time, Context context) {
+    // Save location malfunction status  -------------------
+    public static void saveLocMalfunctionOccurStatus( boolean IsLocMalfunction, String time, String utcTime, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(ConstantsKeys.IsLocMalfunction, IsLocMalfunction);
         editor.putString(ConstantsKeys.LocMalfunctionOccurTime, time);
+        editor.putString(ConstantsKeys.LocMalfunctionOccurUtcTime, utcTime);
 
         editor.commit();
     }
@@ -2087,6 +2064,7 @@ public class SharedPref {
         }
     }
 
+
     // Get location Malfunction occured time -------------------
     public static String getLocMalfunctionOccuredTime( Context context) {
         if(context != null) {
@@ -2096,6 +2074,61 @@ public class SharedPref {
             return "";
         }
     }
+
+    // Get location Malfunction occured utc time -------------------
+    public static String getLocMalfunctionOccuredUtcTime( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.LocMalfunctionOccurUtcTime, "");
+        }else {
+            return "";
+        }
+    }
+
+
+    // Save location Diagnostic status  -------------------
+    public static void saveLocDiagnosticStatus( boolean IsLocDiagnostic, String time, String utcTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsLocDiagnostic, IsLocDiagnostic);
+        editor.putString(ConstantsKeys.LocDiaOccurTime, time);
+        editor.putString(ConstantsKeys.LocDiaOccurUtcTime, utcTime);
+        editor.commit();
+    }
+
+    // Get location Diagnostic occurred status -------------------
+    public static boolean isLocDiagnosticOccur( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsLocDiagnostic, false);
+        }else {
+            return false;
+        }
+    }
+
+
+    // Get location Diagnostic occured time -------------------
+    public static String getLocDiagnosticOccuredTime( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.LocDiaOccurTime, "");
+        }else {
+            return "";
+        }
+    }
+
+    // Get location Diagnostic occured utc time -------------------
+    public static String getLocDiagnosticOccuredUtcTime( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.LocDiaOccurUtcTime, "");
+        }else {
+            return "";
+        }
+    }
+
+
+
 
     // Save alert status settings -------------------
     public static void setEldOccurences( boolean IsUnidentified, boolean IsMalfunction, boolean IsDiagnostic,
@@ -2109,6 +2142,49 @@ public class SharedPref {
 
         editor.commit();
     }
+
+
+    // Get Unidentified occure status  -------------------
+    public static boolean isUnidentifiedOccur( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsUnidentified, false);
+        }else{
+            return false;
+        }
+    }
+
+    // Get Malfunction occur status -------------------
+    public static boolean isMalfunctionOccur( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsMalfunction, false);
+        }else {
+            return false;
+        }
+    }
+
+    // Get Diagnostic occur status -------------------
+    public static boolean isDiagnosticOccur( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.IsDiagnostic, false);
+        }else {
+            return false;
+        }
+    }
+
+    // Get Suggested Edit status  -------------------
+    public static boolean isSuggestedEditOccur( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.SuggestedEdit, false);
+        }else{
+            return false;
+        }
+    }
+
+
 
     //  Get suggested recall status-------------------
     public static boolean isSuggestedRecall( Context context) {
@@ -2408,7 +2484,7 @@ public class SharedPref {
 
 
     // Set wired Obd Odometer -------------------
-    public static void SetWiredObdOdometer( String value, Context context) {
+    public static void SetObdOdometer( String value, Context context) {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -2417,7 +2493,7 @@ public class SharedPref {
     }
 
     // Get wired Obd Odometer -------------------
-    public static String getWiredObdOdometer(Context context) {
+    public static String getObdOdometer(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("wired_obd_odometer", "0");
 
@@ -2489,6 +2565,37 @@ public class SharedPref {
     }
 
 
+    // Set Clear Event Called Time  -------------------
+    public static void setClearEventCallTime(String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ClearEventCalledTime", savedTime);
+        editor.commit();
+    }
+
+    // Get Clear Event last Called Time -------------------
+    public static String getClearEventCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ClearEventCalledTime", "");
+    }
+
+
+    // Set Eng Sync Clear Event Called Time  -------------------
+    public static void setEngSyncClearEventCallTime(String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("EngSyncClearEventCalledTime", savedTime);
+        editor.commit();
+    }
+
+    // Get Eng Sync Clear Event last Called Time -------------------
+    public static String getEngSyncClearEventCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("EngSyncClearEventCalledTime", "");
+    }
+
+
+
 
     // Set Malfunction Called Time  -------------------
     public static void setMalfCallTime(String savedTime, Context context) {
@@ -2517,6 +2624,22 @@ public class SharedPref {
     public static String getEngSyncLastCallTime(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(ConstantsKeys.MalCalledLastTime, "");
+    }
+
+
+
+    // Set Obd Write Called Time   -------------------
+    public static void setObdWriteCallTime(String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ObdWriteCallTime", savedTime);
+        editor.commit();
+    }
+
+    // Get Obd Write Called Time  -------------------
+    public static String getObdWriteCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ObdWriteCallTime", "");
     }
 
 
@@ -2562,13 +2685,14 @@ public class SharedPref {
 
 
     // Set Ecm Obd location with time  -------------------
-    public static void setEcmObdLocationWithTime( String lat, String lon, String odometer, String time, Context context) {
+    public static void setEcmObdLocationWithTime( String lat, String lon, String odometer, String time, String utcTime, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("ecmObdLat", lat);
         editor.putString("ecmObdLon", lon);
         editor.putString("ecmOdometer", odometer);
         editor.putString("ecmObdTime", time);
+        editor.putString("ecmObdUtcTime", utcTime);
 
         editor.commit();
     }
@@ -2598,9 +2722,15 @@ public class SharedPref {
         return preferences.getString("ecmObdTime", "");
     }
 
+    // Get Ecm Obd UTCTime of last saved location -------------------
+    public static String getEcmObdUtcTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ecmObdUtcTime", "");
+    }
+
 
     // save Location Malfunction Type (x,m,e) -------------------
-    public static void setLocMalfunctionType( String type, Context context) {
+    public static void setLocationEventType( String type, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("ecmMalfunctionType", type);
@@ -2609,7 +2739,7 @@ public class SharedPref {
     }
 
     // Get Location Malfunction Type -------------------
-    public static String getLocMalfunctionType(Context context) {
+    public static String getLocationEventType(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("ecmMalfunctionType", "");
     }

@@ -855,7 +855,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				params.put(ConstantsKeys.TruckEquipment, TRUCK_NUMBER);
 				params.put(ConstantsKeys.CompanyId, DriverCompanyId);
 				params.put(ConstantsKeys.VIN, VIN);
-				params.put(ConstantsKeys.LocationType, SharedPref.getLocMalfunctionType(context));
+				params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(context));
 				params.put(ConstantsKeys.EngineHours,  SharedPref.getObdEngineHours(context));
 				params.put(ConstantsKeys.CrntOdodmeter, constants.meterToKm(SharedPref.getHighPrecisionOdometer(context)));
 				params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);

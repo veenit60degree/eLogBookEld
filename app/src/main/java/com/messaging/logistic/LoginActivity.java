@@ -561,7 +561,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setLastUsageDataSavedTime("", getApplicationContext());
 			SharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
 			SharedPref.SetAfterLoginConfStatus(false, getApplicationContext());
-			SharedPref.SaveObdStatus(Constants.NO_CONNECTION,  "", getApplicationContext());
+			SharedPref.SaveObdStatus(Constants.NO_CONNECTION,  "", "", getApplicationContext());
 			SharedPref.setRefreshDataTime("", getApplicationContext());
 			SharedPref.setDayStartOdometer("0", "", getApplicationContext());
 			SharedPref.setCertifyAlertViewTime("", getApplicationContext());
@@ -576,9 +576,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setVehilceMovingStatus(false, getApplicationContext());
 			SharedPref.SetObdEngineHours("0", getApplicationContext());
 			SharedPref.saveHighPrecisionOdometer("", "", getApplicationContext());
-			SharedPref.setEcmObdLocationWithTime("0", "0", "0", "", getApplicationContext());
-			SharedPref.setLocMalfunctionType("", getApplicationContext());
-			SharedPref.saveLocMalfunctionOccurStatus(false, "", getApplicationContext());
+			SharedPref.setEcmObdLocationWithTime("0", "0", "0", "","", getApplicationContext());
+			SharedPref.setLocationEventType("", getApplicationContext());
+			SharedPref.saveLocMalfunctionOccurStatus(false, "", "",getApplicationContext());
 			SharedPref.SetCycleRequestStatusCo(false, getApplicationContext());
 			SharedPref.SetCycleRequestStatusMain(false, getApplicationContext());
 			SharedPref.SetCycleRequestAlertViewStatus(false, getApplicationContext());
@@ -592,8 +592,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setDeferralForMain(false, "", "0", getApplicationContext());
 			SharedPref.setDeferralForCo(false, "", "0", getApplicationContext());
 			SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
+			//SharedPref.saveLocDiagnosticStatus(false, "", "", getApplicationContext());
 
-			//SharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, getApplicationContext());
 			constants.saveMalfncnStatus(getApplicationContext(), false);
 
 		}catch (Exception e){

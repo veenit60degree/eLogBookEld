@@ -98,7 +98,7 @@ public class ObdDataInfoDialog extends Dialog {
                     "<b>Speed:</b> " + SharedPref.getVss(getContext()) + "<br/>" +
                     "<b>RPM:</b> " + SharedPref.getRPM(getContext()) + "<br/>" +
                     "<b>EngineHours:</b> " + SharedPref.getObdEngineHours(getContext()) + "<br/>" +
-                    "<b>OdometerInKm:</b> " + SharedPref.getWiredObdOdometer(getContext()) + "<br/>" +
+                    "<b>OdometerInKm:</b> " + SharedPref.getObdOdometer(getContext()) + "<br/>" +
                     "<b>OdometerInMeter:</b> " + SharedPref.getHighPrecisionOdometer(getContext()) + "<br/>" ;
 
 

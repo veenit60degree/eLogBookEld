@@ -126,14 +126,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         requestQueue        = Volley.newRequestQueue(this);
         alsConnRequestQueue = Volley.newRequestQueue(this);
 
-        /*Constants.isEldHome = true;
-        Intent serviceIntent = new Intent(TabAct.this, BackgroundLocationService.class);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        }
-        startService(serviceIntent);
-*/
-
         vehicleList = new ArrayList<>();
         isTabActOnCreate = true;
         IsTablet = global.isTablet(this);
@@ -629,10 +621,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         switch (v.getId()){
 
             case R.id.wiredObdDataBtn:
-                //  StartStopServer(WifiOBD);
-              /*  Globally.DriverSwitchAlert(TabAct.this,"Alert !!",
-                        "Please change your status to On Duty due to vehicle is not moving", "Ok");
-*/
 
                 if(alertDialog != null) {
                     if(alertDialog.isShowing()){

@@ -1341,7 +1341,7 @@ public class HelperMethods {
                 IsViolation = false;
 
                 //  diff = DayDiffSplitMethod(currentDate , startDateTime);
-                diff = Days.daysBetween(startDateTime.toLocalDate(), currentDate.toLocalDate()).getDays();
+                diff = (int) Constants.getDateTimeDuration(startDateTime, currentDate).getStandardDays();
                 if(diff < daysDiff ) {
                     driverLogJson = new JSONObject();
 

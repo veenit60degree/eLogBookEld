@@ -684,7 +684,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
     void checkDiagnosticEventsForClear(String compareStartDate){
 
-        try {
+      /*  try {
             ArrayList<String> eventList = new ArrayList<>();
             int minDiffPlusMinus = 5;
             DateTime selectedLogDate = Global.getDateTimeObj(compareStartDate, false);
@@ -718,7 +718,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             }
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
     }
 
 
@@ -756,7 +756,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
                     if(flag == ClearDiagnosticEvents){
                         // update event array
-                        malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(DriverId, dbHelper, malfnJsonArray);
+                      //  malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(DriverId, dbHelper, malfnJsonArray);
                     }else {
                         Global.EldScreenToast(CertifyViewLogFragment.saveSignatureBtn, Message, context.getResources().getColor(R.color.colorPrimary));
 

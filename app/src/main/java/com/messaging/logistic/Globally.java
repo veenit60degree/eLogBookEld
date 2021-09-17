@@ -2251,7 +2251,6 @@ public class Globally {
 			SharedPref.SetUpdateAppDialogTime("", c);
 			SharedPref.setLastCalledWiredCallBack(0, c);
 			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , c);
-			//SharedPref.SetObdPreference(Constants.OBD_PREF_WIFI, c);
 
 			ClearSqliteDB(c);
 

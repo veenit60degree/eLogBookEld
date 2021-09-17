@@ -70,10 +70,10 @@
             android:id="@+id/deleteHistoryBtn"
             android:layout_width="@dimen/view_height_50"
             android:layout_height="@dimen/view_height_40"
-            android:padding="@dimen/margin_short_5"
-            android:src="@drawable/delete_red"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:padding="@dimen/margin_short_5"
+            android:src="@drawable/delete_red"
 
             />
 

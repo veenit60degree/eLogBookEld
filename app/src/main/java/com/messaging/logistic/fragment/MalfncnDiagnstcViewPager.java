@@ -1,8 +1,11 @@
 package com.messaging.logistic.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.util.Log;
 import android.view.InflateException;
@@ -10,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,15 +22,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.adapter.logistic.MalfunctionAdapter;
 import com.adapter.logistic.TabLayoutAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.SaveDriverLogPost;
 import com.constants.SaveLogJsonObj;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
@@ -39,6 +47,7 @@ import com.local.db.MalfunctionDiagnosticMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
+import com.models.MalDiaEventModel;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
 
@@ -60,6 +69,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     TabLayoutAdapter tabAdapter;
     ViewPager MalDiaViewPager;
     RelativeLayout rightMenuBtn, eldMenuLay;
+    LinearLayout confirmCertifyLay;
 
     DBHelper dbHelper;
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
@@ -68,9 +78,11 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     static TextView noRecordMalTV, noRecordDiaTV;
     static ExpandableListView malfunctionExpandList, diagnosticExpandList;
 
+    boolean isOnCreate = true;
     String DriverId = "", DeviceId = "", VIN = "", FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId;
     Map<String, String> params;
     VolleyRequest GetMalfunctionEvents;
+    SaveDriverLogPost saveDriverLogPost;
     Globally globally;
 
     List<MalfunctionModel> malfunctionChildList = new ArrayList<>();
@@ -86,6 +98,9 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     SaveLogJsonObj clearRecordPost;
     ProgressDialog progressDialog;
     Constants constants;
+    boolean refreshButtonCLicked = false;
+
+
 
     private int[] tabIcons = {
             R.drawable.original_log_icon,
@@ -119,6 +134,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
         GetMalfunctionEvents  = new VolleyRequest(getActivity());
         clearRecordPost   = new SaveLogJsonObj(getActivity(), apiResponse );
+        saveDriverLogPost       = new SaveDriverLogPost(getActivity(), saveLogRequestResponse);
+
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading ...");
 
@@ -137,6 +154,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
         rightMenuBtn = (RelativeLayout) rootView.findViewById(R.id.rightMenuBtn);
         eldMenuLay   = (RelativeLayout) rootView.findViewById(R.id.eldMenuLay);
+        confirmCertifyLay   = (LinearLayout)rootView.findViewById(R.id.confirmCertifyLay);
 
         malfunctionEventFragment = new MalfunctionEventFragment();
         diagnosticEventFragment = new DiagnosticEventFragment();
@@ -194,19 +212,24 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 }
             }
 
-            if (SharedPref.IsAOBRD(getActivity())) {
-                dateActionBarTV.setText(Html.fromHtml("<b><u>AOBRD</u></b>"));
-            } else {
-                dateActionBarTV.setText(Html.fromHtml("<b><u>ELD</u></b>"));
-            }
+            dateActionBarTV.setText(Html.fromHtml("<b><u>View History</u></b>"));
 
 
             if (globally.isConnected(getContext())) {
-                GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
-            } else {
+                confirmCertifyLay.setVisibility(View.VISIBLE);
+                JSONArray malArray1 = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.valueOf(DriverId), dbHelper);
 
-                boolean isDiagnostic;
-                boolean isMalfunction;
+                if (malArray1.length() > 0) {
+                    saveDriverLogPost.PostDriverLogData(malArray1, APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout30Sec, false, false, 1, 0);
+                }else{
+                    GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+                }
+
+            } else {
+                confirmCertifyLay.setVisibility(View.GONE);
+
+                final boolean isDiagnostic;
+                final boolean isMalfunction;
                 if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
                     isDiagnostic = SharedPref.isDiagnosticOccur(getActivity());
                     isMalfunction = SharedPref.isMalfunctionOccur(getActivity());
@@ -216,21 +239,61 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     isMalfunction = SharedPref.isMalfunctionOccurCo(getActivity());
                 }
 
-                if (isDiagnostic && !isMalfunction) {
-                    setPagerAdapter(1, false);
-                } else {
-                    setPagerAdapter(0, false);
+                if(isOnCreate){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            viewOfflineData(isDiagnostic, isMalfunction);
+                        }
+                    }, 700);
+
+                }else{
+                    viewOfflineData(isDiagnostic, isMalfunction);
                 }
 
-
-                globally.EldScreenToast(confirmCertifyTV, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             }
         }catch (Exception e){
             e.printStackTrace();
         }
 
+        isOnCreate = false;
     }
 
+
+    void parseOfflineDuration(){
+        JSONArray malArray1 = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.valueOf(DriverId), dbHelper);
+
+    }
+
+
+
+    void viewOfflineData(boolean isDiagnostic, boolean isMalfunction){
+        try{
+            JSONArray malDiaArray = malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper);
+
+            Log.d("malDiaArray", "malDiaArray: " + malDiaArray);
+
+                if (isDiagnostic && !isMalfunction) {
+                    if(malDiaArray.length() > 0) {
+                        showOfflineData(malDiaArray, 1);
+                    }else {
+                         setPagerAdapter(1, false);
+                    }
+                } else {
+                    if(malDiaArray.length() > 0) {
+                        showOfflineData(malDiaArray, 0);
+                    }else {
+                         setPagerAdapter(0, false);
+                    }
+                }
+
+                if(malDiaArray.length() == 0) {
+                    globally.EldScreenToast(confirmCertifyTV, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
+                }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     // Add Fragments to Tabs ViewPager for each Tabs
     private void setPagerAdapter(int position, final boolean isUpdateFromApi){
 
@@ -296,16 +359,16 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     private void refreshAdapterOnPageChange(int position, boolean isUpdateFromApi){
         if(position == 0){
             // notify malfunction adapter
-            if(noRecordMalTV != null) {
+            //if(noRecordMalTV != null) {
                 notifyMalfunctionAdapter(noRecordMalTV, malfunctionExpandList,
-                        malfunctionHeaderList, malfunctionChildHashMap, isUpdateFromApi, true);
-            }
+                        malfunctionHeaderList, malfunctionChildHashMap);
+           // }
         }else{
             // notify diagnostic adapter
-            if(noRecordDiaTV != null) {
+           // if(noRecordDiaTV != null) {
                 notifyMalfunctionAdapter(noRecordDiaTV, diagnosticExpandList,
-                        diagnosticHeaderList, diagnosticChildHashMap, isUpdateFromApi, false);
-            }
+                        diagnosticHeaderList, diagnosticChildHashMap);
+           // }
         }
 
         updateMalDiagnostic(malfunctionHeaderList, true, isUpdateFromApi);
@@ -400,15 +463,33 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 break;
 
             case R.id.invisibleMalfnDiaBtn:
+                refreshButtonCLicked = true;
                 GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
                 break;
 
             case R.id.dateActionBarTV:
-                TabAct.host.setCurrentTab(0);
+               // TabAct.host.setCurrentTab(0);
+
+                MoveFragment(new MalfunctionDiagnosticHistoryFragment());
+
                 break;
 
 
         }
+    }
+
+
+
+    private void MoveFragment(Fragment fragment){
+        FragmentManager fragManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTran = fragManager.beginTransaction();
+        fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
+                android.R.anim.fade_in,android.R.anim.fade_out);
+        fragmentTran.add(R.id.job_fragment, fragment);
+        fragmentTran.addToBackStack("obd_diagnose");
+        fragmentTran.commit();
+
+
     }
 
 
@@ -523,7 +604,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
             malfunctionActionBar    = (RelativeLayout)view.findViewById(R.id.malfunctionActionBar);
             diagnosticExpandList    = (ExpandableListView)view.findViewById(R.id.malfunctionExpandList);
-            noRecordDiaTV              = (TextView)view.findViewById(R.id.noRecordTV);
+            noRecordDiaTV           = (TextView)view.findViewById(R.id.noRecordTV);
 
             malfunctionActionBar.setVisibility(View.GONE);
         }
@@ -534,10 +615,10 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
     void checkLocMalfunction(){
         boolean isLocMalfunctionOccur = SharedPref.isLocMalfunctionOccur(getActivity());
-        String malfunctionType = SharedPref.getLocMalfunctionType(getActivity());
+        String malfunctionType = SharedPref.getLocationEventType(getActivity());
         if(isLocMalfunctionOccur && (malfunctionType.equals("m") || malfunctionType.equals("x"))){
             malfunctionHeaderList.add(new MalfunctionHeaderModel(
-                    "Invalid Location Occur", "1", getString(R.string.loc_mal)));
+                    "Positioning Compliance Event", "1", getString(R.string.loc_mal), false, true));
             malfunctionChildList.add(new MalfunctionModel(
                     SharedPref.getCountryCycle("CountryCycle", getActivity()),
                     SharedPref.getVINNumber( getActivity()),
@@ -598,7 +679,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     diagnosticChildHashMap      = new HashMap<>();
                     malfunctionChildList        = new ArrayList<>();
 
-                    checkLocMalfunction();
+                  //  checkLocMalfunction();
 
                     for(int  i = 0 ; i < malfunctionArray.length() ; i++){
                         malfunctionChildList = new ArrayList<>();
@@ -607,7 +688,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                         MalfunctionHeaderModel headerModel = new MalfunctionHeaderModel(
                                 mainObj.getString(ConstantsKeys.EventName),
                                 mainObj.getString(ConstantsKeys.EventCode),
-                                mainObj.getString(ConstantsKeys.Definition)
+                                mainObj.getString(ConstantsKeys.Definition),
+                               false, false
 
                         );
 
@@ -639,6 +721,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                                     HexaSequenceNumber,
                                     objItem.getString(ConstantsKeys.Id)
 
+
                             );
                             // add data in child list
                             malfunctionChildList.add(malfunctionModel);
@@ -656,18 +739,19 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                             malfunctionChildHashMap.put(mainObj.getString(ConstantsKeys.EventCode), malfunctionChildList);
 
                         }
-
-
-
                     }
 
-                    try {
-                        if (malfunctionHeaderList.size() == 0) {
-                            malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+                    if(refreshButtonCLicked) {
+                        try {
+                            if (malfunctionHeaderList.size() == 0) {
+                                constants.resetMalDiaEvents(getActivity());
+                                //malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    }catch (Exception e){
-                        e.printStackTrace();
                     }
+
                 } else {
                     malfunctionHeaderList = new ArrayList<>();
                     malfunctionChildList = new ArrayList<>();
@@ -675,7 +759,10 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     diagnosticHeaderList = new ArrayList<>();
                     diagnosticChildHashMap = new HashMap<>();
 
-                    checkLocMalfunction();
+                    if(refreshButtonCLicked) {
+                        checkLocMalfunction();
+                        constants.resetMalDiaEvents(getActivity());
+                    }
                 }
 
                 setPagerAdapter(MalDiaViewPager.getCurrentItem(), true);
@@ -683,6 +770,21 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            // Check all events if not posted to server. Then avoid refresh data
+            boolean isUnposted = malfunctionDiagnosticMethod.isUnPostAnyEvent(DriverId, dbHelper);
+            if(refreshButtonCLicked && isUnposted) {
+                Constants.isCallMalDiaEvent = true;
+                SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+
+                Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    getActivity().startForegroundService(serviceIntent);
+                }
+                getActivity().startService(serviceIntent);
+            }
+
+            refreshButtonCLicked = false;
         }
     };
 
@@ -765,17 +867,50 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
 
 
+
+    /* ---------------------- Save Log Request Response ---------------- */
+    DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int driver_id, int flag, int inputDataLength) {
+
+            String status = "";
+            try {
+                JSONObject obj = new JSONObject(response);
+                status = obj.getString("Status");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            if (status.equals("true")) {
+                malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DriverId), dbHelper, new JSONArray());
+
+                GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+            }else{
+                GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+            }
+
+
+        }
+        @Override
+        public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
+            Log.d("errorrr ", ">>>error dialog: " );
+        }
+    };
+
+
+
     private void notifyMalfunctionAdapter(TextView noDataEldTV, ExpandableListView listView,
                                           List<MalfunctionHeaderModel> headerList,
-                                          HashMap<String, List<MalfunctionModel>> childHashMap,
-                                          boolean isUpdateFromApi, boolean isMalfunctionUpdate){
+                                          HashMap<String, List<MalfunctionModel>> childHashMap){
 
-        if(childHashMap.size() > 0){
-            noDataEldTV.setVisibility(View.GONE);
-        }else{
-            noDataEldTV.setVisibility(View.VISIBLE);
+        if(noDataEldTV != null) {
+            if (childHashMap.size() > 0) {
+                noDataEldTV.setVisibility(View.GONE);
+            } else {
+                noDataEldTV.setVisibility(View.VISIBLE);
+            }
         }
-
         try {
             MalfunctionAdapter adapter = new MalfunctionAdapter(getActivity(), DriverId, headerList, childHashMap);
             listView.setAdapter(adapter);
@@ -787,6 +922,75 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
     }
 
+
+
+    void showOfflineData(JSONArray malfunctionArray, int position){
+        try{
+            malfunctionHeaderList       = new ArrayList<>();
+            malfunctionChildHashMap     = new HashMap<>();
+            diagnosticHeaderList        = new ArrayList<>();
+            diagnosticChildHashMap      = new HashMap<>();
+            malfunctionChildList        = new ArrayList<>();
+
+
+            for(int  i = 0 ; i < malfunctionArray.length() ; i++){
+                malfunctionChildList        = new ArrayList<>();
+
+                JSONObject mainObj = (JSONObject)malfunctionArray.get(i);
+                String EventType = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
+                boolean IsClearEvent = mainObj.getBoolean(ConstantsKeys.IsClearEvent);
+
+                if(IsClearEvent == false) {
+                    MalDiaEventModel eventModel = constants.getMalDiaEventDetails(getActivity(), EventType);
+
+                    MalfunctionHeaderModel headerModel = new MalfunctionHeaderModel(
+                            eventModel.getEventTitle(), EventType, eventModel.getEventDesc(),
+                            IsClearEvent, true);
+
+                    DateTime EventDateTime = globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventDateTime), false);
+                    String driverTimeZone = String.valueOf(EventDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
+
+                    String EngHrs = "";
+                    if (mainObj.has(ConstantsKeys.ClearEngineHours)) {
+                        EngHrs = mainObj.getString(ConstantsKeys.ClearEngineHours);
+                    }
+                    // Child array event
+                    MalfunctionModel malfunctionModel = new MalfunctionModel(
+                            Country,
+                            VIN,
+                            CompanyId,
+                            mainObj.getString(ConstantsKeys.EventDateTime),
+                            EngHrs,
+                            "--", "", "", "",
+                            "", "", "", "",
+                            driverTimeZone, "--", "--", ""
+                    );
+
+                    // add data in child list
+                    malfunctionChildList.add(malfunctionModel);
+
+
+                    boolean isDiagnostic = constants.isValidInteger(EventType);
+
+                    // add data in header list
+                    if (isDiagnostic) {   // Valid integer is Diagnostic
+                        diagnosticHeaderList.add(headerModel);
+                        diagnosticChildHashMap.put(EventType, malfunctionChildList);
+
+                    } else { // InValid integer is Malfunction
+                        malfunctionHeaderList.add(headerModel);
+                        malfunctionChildHashMap.put(EventType, malfunctionChildList);
+
+                    }
+                }
+            }
+
+            setPagerAdapter(position, false);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
 }

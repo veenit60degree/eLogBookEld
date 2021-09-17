@@ -49,6 +49,7 @@ import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.CanadaDutyStatusModel;
 import com.models.EldDataModelNew;
+import com.models.MalDiaEventModel;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
 import com.models.NotificationHistoryModel;
@@ -66,6 +67,8 @@ import com.shared.pref.NotificationPref;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.Duration;
+import org.joda.time.Hours;
 import org.joda.time.Minutes;
 import org.joda.time.Seconds;
 import org.json.JSONArray;
@@ -95,9 +98,9 @@ import webapi.LocalCalls;
 
 public class Constants {
 
-    public static int OBD_PREF_WIFI     = 1;
-    public static int OBD_PREF_WIRED    = 2;
-    public static int OBD_PREF_BLE      = 3;
+    public static final int OBD_PREF_WIFI     = 1;
+    public static final int OBD_PREF_WIRED    = 2;
+    public static final int OBD_PREF_BLE      = 3;
 
     public static boolean IsAlreadyViolation = false;
     public static boolean IsHomePageOnCreate;
@@ -167,14 +170,24 @@ public class Constants {
     public static String DiagnosticEvent = "Diagnostic";
     public static String MalfunctionEvent = "Malfunction";
 
-    public static String PositionComplianceMalfunction  = "L";
-    public static String MissingDataElementDiagnostic   = "3";
-    public static String ConstLocationMissing           = "LM";
-    public static String PowerComplianceMalfunction     = "P";
-    public static String PowerDataDiagnostic            = "1";
 
-    public static String ConstEngineSyncDiaEvent        = "2";
-    public static String ConstEngineSyncMalEvent        = "E";
+    // Mal/Dia defination
+    public static String ConstLocationMissing           = "LM";
+
+    public static String PowerComplianceDiagnostic      = "1";
+    public static String EngineSyncDiagnosticEvent      = "2";
+    public static String MissingDataDiagnostic          = "3";
+    public static String UnIdentifiedDrivingDiagnostic  = "5";
+
+    public static String PowerComplianceMalfunction     = "P";
+    public static String EngineSyncMalfunctionEvent     = "E";
+    public static String PositionComplianceMalfunction  = "L";
+
+
+
+
+
+
 
 
     public static final int MAIN_DRIVER_TYPE    = 0;
@@ -224,6 +237,7 @@ public class Constants {
     public static String TruckIgnitionStatusMalDia = "TruckIgnitionStatusMalDia";
     public static String IgnitionSourceMalDia = "IgnitionSourceMalDia";
     public static String IgnitionTimeMalDia = "LastIgnitionTimeMalDia";
+    public static String IgnitionUtcTimeMalDia = "LastIgnitionUtcTimeMalDia";
     public static String EngineHourMalDia = "EngineHourMalDia";
     public static String OdometerMalDia = "OdometerMalDia";
 
@@ -248,6 +262,8 @@ public class Constants {
     public static boolean IsAlsServerResponding = true;
     public static boolean isClaim   = false;
     public static boolean isEldHome   = false;
+    public static boolean isCallMalDiaEvent   = false;
+    public static boolean isClearMissingCompEvent   = false;
     public static boolean isPcYmAlertButtonClicked   = false;
 
     public static int OFF_DUTY = 1;
@@ -354,6 +370,30 @@ public class Constants {
     public static final int ALS_TERMS_COND        = 14;
     public static final int LOGOUT                = 2;
     public static final int VERSION               = 13;
+
+
+
+    public MalDiaEventModel getMalDiaEventDetails(Context context, String EventCode){
+        MalDiaEventModel eventModel;
+       if(EventCode.equals(PositionComplianceMalfunction)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.pos_mal_title), context.getString(R.string.pos_mal_def));
+       }else if(EventCode.equals(MissingDataDiagnostic)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.missing_data_dia_title), context.getString(R.string.missing_data_dia_def));
+       }else if(EventCode.equals(PowerComplianceMalfunction)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.power_mal_title), context.getString(R.string.power_mal_def));
+       }else if(EventCode.equals(PowerComplianceDiagnostic)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.power_dia_title), context.getString(R.string.power_dia_def));
+       }else if(EventCode.equals(EngineSyncDiagnosticEvent)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.eng_sync_dia_title), context.getString(R.string.eng_sync_dia_def));
+       }else if(EventCode.equals(EngineSyncMalfunctionEvent)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.eng_sync_mal_title), context.getString(R.string.eng_sync_mal_def));
+       }else if(EventCode.equals(UnIdentifiedDrivingDiagnostic)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.unidentified_title), context.getString(R.string.unidentified_def));
+       }else{
+           eventModel = new MalDiaEventModel(context.getString(R.string.loc_miss_event), context.getString(R.string.pos_mal_occured_desc));
+       }
+        return eventModel;
+    }
 
 
     public List<SlideMenuModel> getSlideMenuList(Context context, boolean isOdometerFromObd, boolean isunIdentified, boolean isMalfunction, String version){
@@ -1118,7 +1158,7 @@ public class Constants {
     public static String meterToKm(String odometer){
         try {
             double meter = Double.parseDouble(odometer);
-            odometer = ""+(meter * 0.001);
+            odometer =  Convert2DecimalPlacesDouble(meter * 0.001);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1131,7 +1171,8 @@ public class Constants {
         try {
             DateTime savedDateTime = Globally.getDateTimeObj(savedDate, false);
             DateTime currentDateTime = Globally.getDateTimeObj(currentDate, false);
-            dayDiff = Days.daysBetween(savedDateTime.toLocalDate(), currentDateTime.toLocalDate()).getDays();
+            dayDiff = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardDays();
+            //Days.daysBetween(savedDateTime.toLocalDate(), currentDateTime.toLocalDate()).getDays();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1139,6 +1180,33 @@ public class Constants {
         return dayDiff;
     }
 
+
+    public static int getMinDiff(String savedDate, String currentDate){
+        int minDiff = -1;
+        try {
+            DateTime savedDateTime = Globally.getDateTimeObj(savedDate, false);
+            DateTime currentDateTime = Globally.getDateTimeObj(currentDate, false);
+            minDiff = (int) getDateTimeDuration(savedDateTime, currentDateTime).getStandardMinutes();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return minDiff;
+    }
+
+
+    public static int getHourDiff(String savedDate, String currentDate){
+        int dayDiff = -1;
+        try {
+            DateTime savedDateTime = Globally.getDateTimeObj(savedDate, false);
+            DateTime currentDateTime = Globally.getDateTimeObj(currentDate, false);
+            dayDiff = (int) getDateTimeDuration(savedDateTime, currentDateTime).getStandardDays(); //Hours.hoursBetween(savedDateTime.toLocalDate(), currentDateTime.toLocalDate()).getHours();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return dayDiff;
+    }
 
     public int getDateTitleCount(List<CanadaDutyStatusModel> logList){
         int count = 0;
@@ -1445,7 +1513,8 @@ public class Constants {
                     DateTime savedDateTime = global.getDateTimeObj(timeStampStr, false);
                     DateTime currentDateTime = global.getDateTimeObj(currentDate, false);
 
-                    int timeInSecnd = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();    //Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
+                    int timeInSecnd = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
+                    //Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
                     speedInKm = (odometerDistance / 1000.0f) / (timeInSecnd / 3600.0f);
                     // speedInKm = odometerDistance / timeInSecnd;
 
@@ -1618,7 +1687,8 @@ public class Constants {
         boolean isLocMissing = false;
         try {
             boolean IsCurrentDate;
-            int dayDiff = Days.daysBetween(selectedDateTime.toLocalDate(), currentDateTime.toLocalDate()).getDays();
+            int dayDiff = (int) Constants.getDateTimeDuration(selectedDateTime, currentDateTime).getStandardDays();
+            //Days.daysBetween(selectedDateTime.toLocalDate(), currentDateTime.toLocalDate()).getDays();
             if(dayDiff == 0){
                 IsCurrentDate = true;
             }else{
@@ -1944,7 +2014,7 @@ public class Constants {
     }
 
 
-    public String Convert2DecimalPlacesDouble(double value) {
+    public static String Convert2DecimalPlacesDouble(double value) {
         try{
             return String.format("%.2f", value);
         }catch (Exception e){
@@ -2449,7 +2519,8 @@ public class Constants {
             DateTime savedDateTime = Globally.getDateTimeObj(lastRestartTime, false);
             DateTime currentDateTime = Globally.getDateTimeObj(currentDate, false);
 
-            minDiff = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();  // Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
+            minDiff = (int) getDateTimeDuration(savedDateTime, currentDateTime).getStandardMinutes();
+            //Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -2795,6 +2866,8 @@ public class Constants {
 
         return obj;
     }
+
+
 
 
     public static JSONObject getMalfunctionRecordsInArray(
@@ -3234,7 +3307,7 @@ public class Constants {
 
                 String odometerValue ;
                 if (ObdStatus == Constants.WIRED_CONNECTED) {
-                    odometerValue = SharedPref.getWiredObdOdometer(context);
+                    odometerValue = SharedPref.getObdOdometer(context);
                 } else {
                     odometerValue = SharedPref.GetWifiObdOdometer(context);   // get odometer value from wifi obd
                 }
@@ -3333,48 +3406,40 @@ public class Constants {
         String eventStatus = "";
 
         try {
-            String lastIgnitionStatus = SharedPref.GetTruckIgnitionStatus(Constants.TruckIgnitionStatusMalDia, context);
+            String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, context);
             if (lastIgnitionStatus.equals("OFF")) {
-                boolean isCurrentEngHourGreater = false;
-                boolean isOdometerDiffValid = false;
-                String lastSavedTime = SharedPref.GetTruckIgnitionStatus(Constants.IgnitionTimeMalDia, context);
+                float engineHrDiffInMin = 0; //, odoDiff = 0;
+
+                String lastSavedTime = SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionTimeMalDia, context);
                 if (lastSavedTime.length() > 10) {
-                    String lastOdometer = SharedPref.GetTruckIgnitionStatus(Constants.OdometerMalDia, context);
-                    String lastEngineHour = SharedPref.GetTruckIgnitionStatus(Constants.EngineHourMalDia, context);
+                   // String lastOdometer = SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, context);
+                    String lastEngineHour = SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, context);
 
                     int minDiff = minDiff(lastSavedTime, global, context);
                     if (minDiff > 0) {
+
                         if (isValidFloat(lastEngineHour) && isValidFloat(obdEngineHours)) {
-
-                            int lastEngineHourInt = global.MinFromHourOnly(Math.round(Float.parseFloat(lastEngineHour)));
-                            int currEngineHourInt = global.MinFromHourOnly(Math.round(Float.parseFloat(obdEngineHours)));
-                            if (currEngineHourInt > lastEngineHourInt) {
-                                isCurrentEngHourGreater = true;
-                            }
+                           float lastEngineHrFloat = Float.parseFloat(lastEngineHour) * 60;
+                           float currentEngineHrFloat = Float.parseFloat(obdEngineHours) * 60;
+                            engineHrDiffInMin = currentEngineHrFloat - lastEngineHrFloat;
                         }
 
-                        if (isValidFloat(currentHighPrecisionOdometer) && isValidFloat(lastOdometer)) {
-                            float odoDiff = Float.parseFloat(meterToKm(currentHighPrecisionOdometer)) - Float.parseFloat(meterToKm(lastOdometer));
-                            if (odoDiff >= 2) {
-                                isOdometerDiffValid = true;
-                            }
-                        }
+                       /* if (isValidFloat(currentHighPrecisionOdometer) && isValidFloat(lastOdometer)) {
+                            odoDiff = Float.parseFloat(meterToKm(currentHighPrecisionOdometer)) - Float.parseFloat(meterToKm(lastOdometer));
+                        }*/
 
-                        if (isCurrentEngHourGreater || isOdometerDiffValid) {
+                        if (engineHrDiffInMin >  1) {    //|| odoDiff >= 2
 
-                            int earlierEventTime = malfunctionDiagnosticMethod.getTotalPowerComplianceMin(dbHelper);
-                            int totalMinDia = minDiff + earlierEventTime;
                             DateTime currentTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
 
-                            // DateTime lastSavedDateTime = global.getDateTimeObj(lastSavedTime, false);
-                            /*malfunctionDiagnosticMethod.updateOccEventTimeLog(currentTime, DriverId,
-                                    SharedPref.getVINNumber(context), lastSavedDateTime, currentTime,
-                                    context.getResources().getString(R.string.PwrComplianceEvent), ConstantsKeys.PowerDiagnstc,
-                                    dbHelper, context);*/
+                            // add/update dia/mal occured time in powerMalDia table
+                            malfunctionDiagnosticMethod.updatePowerOccEventLog(currentTime, engineHrDiffInMin, dbHelper);
 
-                            malfunctionDiagnosticMethod.updatePowerOccEventLog(currentTime, dbHelper);
+                            double previousLocDiaTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(PowerComplianceDiagnostic, dbHelper);
+                            int earlierEventTime = malfunctionDiagnosticMethod.getTotalPowerComplianceMin(dbHelper);
+                            engineHrDiffInMin = engineHrDiffInMin + (int)previousLocDiaTime; // add earlier diagnostic time within 24 hr with current time
 
-                            if (totalMinDia >= 20) {  // malfunction event time is 30 min
+                            if (engineHrDiffInMin >= 30) {  // Temp add 30. Actual malfunction event time is 60 min
 
                                 if(isPowerCompMalAllowed) {
                                     if (SharedPref.isPowerMalfunctionOccurred(context)) {
@@ -3388,39 +3453,43 @@ public class Constants {
                                                     context.getResources().getString(R.string.power_comp_mal_occured), 2093);
 
                                             // Save power mal status with updated time
-                                            SharedPref.savePowerMalfunctionOccurStatus(true, global.GetCurrentDateTime(), context);
-
+                                            SharedPref.savePowerMalfunctionOccurStatus( true,
+                                                    SharedPref.isPowerDiagnosticOccurred(context),  global.getCurrentDate(), context);
                                         }
                                     } else {
-                                        eventStatus = MalfunctionEvent;
-                                        Globally.PlayNotificationSound(context);
-                                        global.ShowLocalNotification(context,
-                                                context.getResources().getString(R.string.malfunction_events),
-                                                context.getResources().getString(R.string.power_comp_mal_occured), 2093);
+                                        if (SharedPref.isPowerMalfunctionOccurred(context) == false) {
+                                            eventStatus = MalfunctionEvent;
+                                            Globally.PlayNotificationSound(context);
+                                            global.ShowLocalNotification(context,
+                                                    context.getResources().getString(R.string.malfunction_events),
+                                                    context.getResources().getString(R.string.power_comp_mal_occured), 2093);
 
-                                        // Save power mal status with updated time
-                                        SharedPref.savePowerMalfunctionOccurStatus(true, global.GetCurrentDateTime(), context);
-
+                                            // Save power mal status with updated time
+                                            SharedPref.savePowerMalfunctionOccurStatus( true,
+                                                    SharedPref.isPowerDiagnosticOccurred(context),  global.getCurrentDate(), context);
+                                        }
                                     }
                                 }
 
                             } else {
                                 if (isPowerCompDiaAllowed) {
-                                    eventStatus = DiagnosticEvent;
+                                    eventStatus = DiagnosticEvent ;
                                     Globally.PlayNotificationSound(context);
                                     global.ShowLocalNotification(context,
                                             context.getResources().getString(R.string.dia_event),
                                             context.getResources().getString(R.string.power_dia_occured), 2092);
 
-                                    SharedPref.savePowerMalfunctionOccurStatus(false, global.GetCurrentDateTime(), context);
+                                    SharedPref.savePowerMalfunctionOccurStatus(
+                                            SharedPref.isPowerMalfunctionOccurred(context),
+                                            true,  global.getCurrentDate(), context);
+
                                 }
 
-                                // save updated values with truck ignition status
-                                SharedPref.SetTruckIgnitionStatus(ignitionStatus, WiredOBD, global.getCurrentDate(), obdEngineHours, currentHighPrecisionOdometer, context);
                             }
                         }
-                    }else{
-                        SharedPref.savePowerMalfunctionOccurStatus(false, global.GetCurrentDateTime(), context);
+                        // save updated values with truck ignition status
+                        SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, WiredOBD, global.getCurrentDate(), global.GetCurrentUTCTimeFormat(), obdEngineHours, currentHighPrecisionOdometer, context);
+
                     }
 
                 }
@@ -3432,15 +3501,23 @@ public class Constants {
         return eventStatus;
     }
 
+    public static Duration getDateTimeDuration(DateTime selectedDateTime, DateTime currentTime){
+        Duration duration = new Duration(selectedDateTime, currentTime);
+        return duration;
+    }
 
+   /* public Duration getDateTimeDurationPublic(DateTime selectedDateTime, DateTime currentTime){
+        Duration duration = new Duration(selectedDateTime, currentTime);
+        return duration;
+    }*/
 
     // ------------- Malfunction status ---------------
     // x = when no loc or valid position for 8 km
     // m = If driver enter manual loc after position malfunction occur
     // e = if position malfunction occur more then 60 min
 
-    public boolean isPositionMalfunctionEvent(Context context){
-        boolean isMalfunction = false;
+    public String isPositionMalfunctionEvent(MalfunctionDiagnosticMethod malfunctionDiagnosticMethod, DBHelper dbHelper, Context context){
+        String PositionComplianceStatus = "";
         int ObdStatus = SharedPref.getObdStatus(context);
         try {
             if (ObdStatus == Constants.WIRED_CONNECTED ||
@@ -3456,39 +3533,56 @@ public class Constants {
                         double odometerDistance = Double.parseDouble(currentOdometer) - Double.parseDouble(lastOdometer);
                         odometerDistance = odometerDistance / 1000;
 
-                        if (SharedPref.isLocMalfunctionOccur(context)) {
-                            DateTime malfunctionOccurTime = Globally.getDateTimeObj(SharedPref.getLocMalfunctionOccuredTime(context), false);
-                            DateTime currentTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
-                            int minDiff = Minutes.minutesBetween(malfunctionOccurTime, currentTime).getMinutes();  // Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
 
-                            if (minDiff >= 30) {   //temp value 30 for testing. After 60 min it will become e type on loc mal
-                                SharedPref.setLocMalfunctionType("e", context);
-                            } else {
-                                if (odometerDistance >= 8) {
-                                    if(!SharedPref.getLocMalfunctionType(context).equals("m")) {
-                                        SharedPref.setLocMalfunctionType("x", context);
-                                    }
-                                }
+                        if (odometerDistance >= 8) {
+                            if(SharedPref.isLocDiagnosticOccur(context) == false) {// Save Position malfunction event status if earlier status was false
+                                SharedPref.saveLocDiagnosticStatus(true, Globally.GetCurrentDateTime(),
+                                        Globally.GetCurrentUTCTimeFormat(), context);
+
+                                PositionComplianceStatus = "D";
+
+                                // update array for last 24 hours only before add new event
+                                malfunctionDiagnosticMethod.clearEventsMoreThen1Day(dbHelper);
+
+                                JSONArray array = malfunctionDiagnosticMethod.AddNewItemInPositionArray(ConstLocationMissing, dbHelper);
+                                malfunctionDiagnosticMethod.PositioningMalDiaHelper(dbHelper, array);
+
                             }
 
-                            isMalfunction = true;
+                            if(SharedPref.isLocMalfunctionOccur(context) == false) {
+                                DateTime malfunctionOccurTime = Globally.getDateTimeObj(SharedPref.getLocDiagnosticOccuredTime(context), false);
+                                DateTime currentTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+                                double minDiff = getDateTimeDuration(malfunctionOccurTime, currentTime).getStandardMinutes();
+                                        //Minutes.minutesBetween(malfunctionOccurTime, currentTime).getMinutes();
+                               // double previousLocDiaTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(MissingDataDiagnostic, dbHelper);
+                               // double previousLocMalTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(PositionComplianceMalfunction, dbHelper);
+                                double previousOccEventTime = malfunctionDiagnosticMethod.getLast24HourLocDiaEventsInMin(ConstLocationMissing, dbHelper);
 
-                        } else {
-                            if (odometerDistance >= 8) {
+                                minDiff = minDiff + previousOccEventTime;
 
-                                if(!SharedPref.getLocMalfunctionType(context).equals("m")) {
-                                    SharedPref.setLocMalfunctionType("x", context);
+                                if (minDiff >= 30) {   //temp value 20 for testing. After 60 min it will become e type on loc mal
+                                    // Save Position malfunction event status if earlier status was false
+                                    SharedPref.saveLocMalfunctionOccurStatus(true, Globally.GetCurrentDateTime(),
+                                            Globally.GetCurrentUTCTimeFormat(), context);
+                                    saveMalfncnStatus(context, true);
+                                    PositionComplianceStatus = "M";
+
+                                    // update array for last 24 hours only before add new event
+                                    malfunctionDiagnosticMethod.clearEventsMoreThen1Day(dbHelper);
+
+                                    JSONArray array = malfunctionDiagnosticMethod.AddNewItemInPositionArray(PositionComplianceMalfunction, dbHelper);
+                                    malfunctionDiagnosticMethod.PositioningMalDiaHelper(dbHelper, array);
+
                                 }
-                                isMalfunction = true;
-                            } else {
-                                SharedPref.setLocMalfunctionType("", context);
                             }
-
 
                         }
 
-                        isLocMalOccurDueToTime(context, true, isMalfunction);
-
+                    }else{
+                        if(Globally.LATITUDE.length() < 5 ) {
+                            SharedPref.setEcmObdLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE,
+                                    currentOdometer, Globally.GetCurrentDateTime(), Globally.GetCurrentUTCTimeFormat(), context);
+                        }
                     }
                 }
             }
@@ -3496,43 +3590,20 @@ public class Constants {
             e.printStackTrace();
         }
 
-        return isMalfunction;
+        return PositionComplianceStatus;
     }
 
 
-    public boolean isLocMalOccurDueToTime(Context context, boolean isSaveMalfunctionStatus, boolean isDistanceMalfncn ){
-        boolean isMalfunction = false;
-        String lastSavedDate    = SharedPref.getEcmObdTime(context);
-        if (lastSavedDate.length() > 10) {
-            DateTime currentDate = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
-            DateTime savedDateTime = Globally.getDateTimeObj(lastSavedDate, false);
-            int minDiff = Minutes.minutesBetween(savedDateTime, currentDate).getMinutes();
-
-            if(minDiff > 60){  // set val as "e" when time will be greater then 1 hour
-                SharedPref.setLocMalfunctionType("e", context);
-                isMalfunction = true;
-            }else{
-                boolean isLocMalfunctionOccur = SharedPref.isLocMalfunctionOccur(context);
-                String malfunctionType = SharedPref.getLocMalfunctionType(context);
-                if(isLocMalfunctionOccur && malfunctionType.equals("m")){
-                    SharedPref.setLocMalfunctionType("m", context);
-                    isMalfunction = true;
-                }
-            }
-
-            if(isSaveMalfunctionStatus) {
-                if(isMalfunction == false) {
-                    SharedPref.setLocMalfunctionType("", context);
-                    saveDiagnstcStatus(context, isDistanceMalfncn);
-                }else{
-                    saveMalfncnStatus(context, isMalfunction);
-                }
-            }
-
-        }
-
-        return isMalfunction;
+    public void resetMalDiaEvents(Context context){
+        saveMalfncnStatus(context, false);
+        saveDiagnstcStatus(context, false);
+        SharedPref.saveEngSyncDiagnstcStatus(false, context);
+        SharedPref.saveEngSyncMalfunctionStatus(false, context);
+        SharedPref.savePowerMalfunctionOccurStatus(false, false, "", context);
+       // SharedPref.saveLocDiagnosticStatus(false, "", "",context);
+        SharedPref.saveLocMalfunctionOccurStatus(false, "", "", context);
     }
+
 
 
     public void saveDiagnstcStatus(Context context, boolean isDiagnosticOccur){
@@ -3833,7 +3904,8 @@ public class Constants {
                 DateTime savedDateTime = Globally.getDateTimeObj(timeStampStr, false);
                 DateTime currentDateTime = Globally.getDateTimeObj(currentDate, false);
 
-                int timeInSecnd = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();    //Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
+                int timeInSecnd = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
+                //Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
                 speedInKm = ( odometerDistance/1000.0f ) / ( timeInSecnd/3600.0f );
                 // speedInKm = odometerDistance / timeInSecnd;
 
@@ -3868,8 +3940,8 @@ public class Constants {
                 if(savedDateTime.isAfter(currentDateTime)){
                     SharedPref.saveHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
                 }
-                timeInMin = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
-
+               // timeInMin = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
+                timeInMin = (int) getDateTimeDuration(savedDateTime, currentDateTime).getStandardMinutes();
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -4057,7 +4129,8 @@ public class Constants {
 
 
     public static int getMinDiff(DateTime StartTime, DateTime EndTime){
-        int dayDiff = Days.daysBetween(StartTime.toLocalDate(), EndTime.toLocalDate()).getDays();
+        int dayDiff = (int) Constants.getDateTimeDuration(StartTime, EndTime).getStandardDays();
+        //Days.daysBetween(StartTime.toLocalDate(), EndTime.toLocalDate()).getDays();
         if(dayDiff > 0){
             int startDateMin = StartTime.getMinuteOfDay();
             int endDateMin = EndTime.getMinuteOfDay();
@@ -4173,6 +4246,11 @@ public class Constants {
         return isAllowed;
     }
 
+    public static boolean isDiagnosticEvent(String EventCode){
+        return (EventCode.equals(MissingDataDiagnostic) || EventCode.equals(PowerComplianceDiagnostic) || EventCode.equals(EngineSyncDiagnosticEvent));
+    }
+
+
     public void checkBleConnection(){
 
         try {
@@ -4232,7 +4310,8 @@ public class Constants {
 
             if (deferralDate.length() > 15) {
                 DateTime deferralDateTime = Globally.getDateTimeObj(deferralDate, false);
-                int daysDiff = Days.daysBetween(deferralDateTime.toLocalDate(), currentDate.toLocalDate()).getDays();
+                int daysDiff = (int) Constants.getDateTimeDuration(deferralDateTime, currentDate).getStandardDays();
+                //Days.daysBetween(deferralDateTime.toLocalDate(), currentDate.toLocalDate()).getDays();
 
                 if (daysDiff == 1) {
                     if (deferralDay == 1) {

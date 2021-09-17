@@ -44,8 +44,8 @@ public class ObdCommonUtils {
             if(savedDateTime.isAfter(currentDateTime)){
                 SharedPref.setMalfCallTime(CurrentDate, context);
             }
-            // int timeInMin = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
-            timeInSec = Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
+            timeInSec = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
+            //Seconds.secondsBetween(savedDateTime, currentDateTime).getSeconds();
 
             if(timeInSec >= TimeIntervalInSeconds) {
                 double odometerDistance = Double.parseDouble(CurrentOdometer) - Double.parseDouble(previousOdometer);

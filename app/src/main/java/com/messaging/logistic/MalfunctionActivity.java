@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.messaging.logistic.fragment.MalfncnDiagnstcViewPager;
-import com.messaging.logistic.fragment.MalfunctionFragment;
 
 public class MalfunctionActivity extends FragmentActivity {
 

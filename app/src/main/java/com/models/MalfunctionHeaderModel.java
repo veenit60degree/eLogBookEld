@@ -5,11 +5,16 @@ public class MalfunctionHeaderModel {
     String EventName;
     String EventCode;
     String EventDesc;
+    boolean IsCleared;
+    boolean IsOffline;
 
-    public MalfunctionHeaderModel(String eventName, String eventCode, String eventDesc) {
+    public MalfunctionHeaderModel(String eventName, String eventCode, String eventDesc,
+                                  boolean isCleared, boolean isOffline) {
         EventName = eventName;
         EventCode = eventCode;
         EventDesc = eventDesc;
+        IsCleared = isCleared;
+        IsOffline = isOffline;
     }
 
     public String getEventName() {
@@ -24,4 +29,11 @@ public class MalfunctionHeaderModel {
         return EventDesc;
     }
 
+    public boolean isCleared() {
+        return IsCleared;
+    }
+
+    public boolean isOffline() {
+        return IsOffline;
+    }
 }

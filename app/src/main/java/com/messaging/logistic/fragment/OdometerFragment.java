@@ -491,9 +491,10 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
-         params.put(ConstantsKeys.VIN, VIN );
-        // params.put("CreatedDate", CreatedDate);
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.VIN, VIN );
+        params.put(ConstantsKeys.CreatedDate, CreatedDate);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
         params.put(ConstantsKeys.IsCertifyLog, "false");
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER , params, GetOdometerss,
@@ -510,8 +511,8 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
-         params.put(ConstantsKeys.VIN, VIN );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.VIN, VIN );
         params.put(ConstantsKeys.StartOdometer, StartOdometer );
         params.put(ConstantsKeys.EndOdometer, EndOdometer );
         params.put(ConstantsKeys.DistanceType, DistanceType );

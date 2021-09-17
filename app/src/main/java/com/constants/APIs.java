@@ -58,13 +58,14 @@ public class APIs {
     public static String REJECT_UNIDENTIFIED_RECORD	  	    = DOMAIN_URL_ALS + "RejectUnidentifiedRecord";
     public static String REJECT_COMPANY_ASSIGNED_RECORD	  	= DOMAIN_URL_ALS + "RejectCompanyAssignedRecord";
     public static String CLEAR_MALFNCN_DIAGSTC_EVENT	  	= DOMAIN_URL_ALS + "ClearMalfunctionAndDiagnosticEvent";
+    public static String CLEAR_MALFNCN_DIAGSTC_EVENT_BY_DATE= DOMAIN_URL_ALS + "ClearMalfunctionAndDiagnosticEventByDate";  // for offline records
     public static String CHANGE_STATUS_SUGGESTED_EDIT       = DOMAIN_URL_ALS + "ChangeStatusSuggestedEdit";
     public static String GET_CYCLE_CHANGE_REQUESTS          = DOMAIN_URL_ALS + "GetCycleChangeRequests";
     public static String CHANGE_DRIVER_CYCLE                = DOMAIN_URL_ALS + "ChangeDriverCycle";
     public static String CHANGE_OPERATING_ZONE              = DOMAIN_URL_ALS + "SaveOperatingZone";
     public static String MALFUNCTION_DIAGNOSTIC_EVENT       = DOMAIN_URL_ALS + "AddMalfunctionAndDiagnosticEvent";
     public static String SAVE_DEFFERAL_EVENT                = DOMAIN_URL_ALS + "SaveDefferalEvent";
-
+    public static String GET_MALFUNCTION_LIST_BY_TRUCK      = DOMAIN_URL_ALS + "GetMalfunctionListByTruck";
 
     /*-------- ELD API ----------*/
     public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";

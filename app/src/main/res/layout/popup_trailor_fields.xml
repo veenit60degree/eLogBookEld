@@ -85,7 +85,7 @@
                 android:id="@+id/malfunctionEventTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/loc_mal_occur"
+                android:text="@string/position_com_mal_occur"
                 android:layout_centerHorizontal="true"
                 android:textSize="@dimen/text_size_16"
                 android:textColor="@color/colorVoilation"
