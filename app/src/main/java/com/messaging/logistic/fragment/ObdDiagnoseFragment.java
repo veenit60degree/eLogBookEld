@@ -319,9 +319,8 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                     } else {
                         globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
                     }
-                }else{
-                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.chanage_obd_pref_sett_ble), getResources().getColor(R.color.colorVoilation));
                 }
+
                 break;
 
             case R.id.button2:

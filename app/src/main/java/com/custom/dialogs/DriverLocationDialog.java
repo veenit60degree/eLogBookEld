@@ -154,9 +154,7 @@ public class DriverLocationDialog extends Dialog {
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 locationSpinner.setAdapter(dataAdapter);
 
-                if(Position != -1) {
-                    locationSpinner.setSelection(Position);
-                }else{
+                if(Position == -1) {
                     City = location;
                     CityNameEditText.setText(City);
                     CityNameEditText.setSelection(City.length());

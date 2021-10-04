@@ -914,7 +914,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                     String LocationType = "";
                     if (SharedPref.isLocMalfunctionOccur(context) || SharedPref.isLocDiagnosticOccur(context)) { //constants.isLocMalfunctionEvent(context, DriverType)
-                        // SharedPref.setLocationEventType("m", getContext());
                         LocationType = SharedPref.getLocationEventType(context);
                     }
 

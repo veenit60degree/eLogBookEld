@@ -36,6 +36,7 @@
     <color name="hos_cardview_shadow">#3284E529</color>
     <color name="hos_distance">#0ACDFC</color>
     <color name="hos_status">#00BFA5</color>
+    <color name="hos_progress_newbg">#0ACDFC</color>
     <color name="hos_location">#0A83FC</color>
     <color name="hos_remaining">#6F6F6F</color>
     <color name="bluee_login_hover">#199cdd</color>

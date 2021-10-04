@@ -445,9 +445,15 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                             }
                         } else {
                             if (selectedCountry.equals("CAN")) {
+
                                 if (isValidEmailPattern(canEmailEditText)) {
-                                    ServiceCheck = "false";
-                                    CheckValdation0(MailCheck, ServiceCheck);
+                                    if (checkboxEmail.isChecked()) {
+                                        ServiceCheck = "false";
+                                        CheckValdation0(MailCheck, ServiceCheck);
+                                    }else{
+                                        sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
+                                        globally.EldScreenToast(shareDriverLogBtn, "Please select Email for data transmission.", getContext().getResources().getColor(R.color.colorVoilation));
+                                    }
                                 } else {
                                     sendLogScrollView.fullScroll(ScrollView.FOCUS_UP);
                                     canEmailEditText.requestFocus();

@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.adapter.logistic.MalfunctionAdapter;
+import com.adapter.logistic.MalfunctionHistoryAdapter;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
@@ -47,6 +48,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
     DBHelper dbHelper;
     Constants constants;
+    Globally globally;
 
     List<MalfunctionModel> malfunctionChildList = new ArrayList<>();
 
@@ -54,6 +56,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
     private HashMap<String, List<MalfunctionModel>> diagnosticChildHashMap = new HashMap<>();
 
     String DriverId = "", VIN = "", Country, OffsetFromUTC, CompanyId;
+    MalfunctionHeaderModel headerModel = null;
 
 
     @Override
@@ -81,6 +84,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
 
     void initView(View view) {
 
+        globally = new Globally();
         constants = new Constants();
         dbHelper = new DBHelper(getActivity());
         malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
@@ -124,50 +128,19 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                 diagnosticChildHashMap      = new HashMap<>();
                 malfunctionChildList        = new ArrayList<>();
 
+                // Adding same type events in single group for Expandable ListView
+                parseListInHashMap(malDiaArray, Constants.PowerComplianceDiagnostic);
+                parseListInHashMap(malDiaArray, Constants.PowerComplianceMalfunction);
 
-                for(int  i = 0 ; i < malDiaArray.length() ; i++){
-                    malfunctionChildList        = new ArrayList<>();
+                parseListInHashMap(malDiaArray, Constants.EngineSyncDiagnosticEvent);
+                parseListInHashMap(malDiaArray, Constants.EngineSyncMalfunctionEvent);
 
-                    JSONObject mainObj = (JSONObject)malDiaArray.get(i);
-                    String EventType = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
-                    boolean IsClearEvent = mainObj.getBoolean(ConstantsKeys.IsClearEvent);
+                parseListInHashMap(malDiaArray, Constants.MissingDataDiagnostic);
+                parseListInHashMap(malDiaArray, Constants.PositionComplianceMalfunction);
 
-                    if(IsClearEvent == true) {
-                        MalDiaEventModel eventModel = constants.getMalDiaEventDetails(getActivity(), EventType);
-
-                        MalfunctionHeaderModel headerModel = new MalfunctionHeaderModel(
-                                eventModel.getEventTitle(), EventType, eventModel.getEventDesc(),
-                                IsClearEvent, true);
-
-                        DateTime EventDateTime = Globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventDateTime), false);
-                        String driverTimeZone = String.valueOf(EventDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
-
-                        String EngHrs = "";
-                        if (mainObj.has(ConstantsKeys.ClearEngineHours)) {
-                            EngHrs = mainObj.getString(ConstantsKeys.ClearEngineHours);
-                        }
-                        // Child array event
-                        MalfunctionModel malfunctionModel = new MalfunctionModel(
-                                Country,
-                                VIN,
-                                CompanyId,
-                                mainObj.getString(ConstantsKeys.EventDateTime),
-                                EngHrs,
-                                "--", "", "", "",
-                                "", "", "", "",
-                                driverTimeZone, "--", "--", ""
-                        );
-
-                        // add data in child list
-                        malfunctionChildList.add(malfunctionModel);
+                parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
 
 
-                        // add data in header list
-                            diagnosticHeaderList.add(headerModel);
-                            diagnosticChildHashMap.put(EventType, malfunctionChildList);
-
-                    }
-                }
 
                 notifyMalfunctionAdapter(noRecordTV, diagnosticExpandList, diagnosticHeaderList, diagnosticChildHashMap);
 
@@ -177,6 +150,104 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
 
 
 
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    void parseListInHashMap(JSONArray malDiaArray, String EventType){
+        try{
+            headerModel = null;
+            malfunctionChildList        = new ArrayList<>();
+
+            for(int  i = 0 ; i < malDiaArray.length() ; i++){
+
+                JSONObject mainObj = (JSONObject)malDiaArray.get(i);
+                String DetectionDataEventCode = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
+
+                if(EventType.equals(DetectionDataEventCode)) {
+                    if (globally.isSingleDriver(getActivity())) {
+                        parseData(mainObj, i);
+                    } else {
+
+                        String DrId = mainObj.getString(ConstantsKeys.DriverId);
+
+                        if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
+                                DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
+                                DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)) {
+                            parseData(mainObj, i);
+                        } else {
+                            if (DrId.equals(DriverId)) {
+                                parseData(mainObj, i);
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            // add data in header list
+            if(headerModel != null) {
+                diagnosticHeaderList.add(headerModel);
+                diagnosticChildHashMap.put(EventType, malfunctionChildList);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void parseData(JSONObject mainObj, int position){
+        try {
+
+            String EventType = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
+            boolean IsClearEvent = mainObj.getBoolean(ConstantsKeys.IsClearEvent);
+
+            if (IsClearEvent == true) {
+                MalDiaEventModel eventModel = constants.getMalDiaEventDetails(getActivity(), EventType);
+
+                headerModel = new MalfunctionHeaderModel(
+                        eventModel.getEventTitle(), EventType, eventModel.getEventDesc(),
+                        IsClearEvent, true, "" + position);
+
+                DateTime EventDateTime = Globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventDateTime), false);
+                String driverTimeZone = String.valueOf(EventDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
+
+                String EngHrs = "0", StartOdometer = "0";
+                if (mainObj.has(ConstantsKeys.ClearEngineHours)) {
+                    EngHrs = mainObj.getString(ConstantsKeys.ClearEngineHours);
+                }
+
+                if (mainObj.has(ConstantsKeys.StartOdometer)) {
+                    StartOdometer = mainObj.getString(ConstantsKeys.StartOdometer);
+
+                }
+
+                String TotalMinutes = "--";
+                if(mainObj.has(ConstantsKeys.TotalMinutes)){
+                    TotalMinutes = mainObj.getString(ConstantsKeys.TotalMinutes);
+                }
+
+                // Child array event
+                MalfunctionModel malfunctionModel = new MalfunctionModel(
+                        Country,
+                        VIN,
+                        CompanyId,
+                        mainObj.getString(ConstantsKeys.EventDateTime),
+                        EngHrs,
+                        StartOdometer,
+                        mainObj.getString(ConstantsKeys.DetectionDataEventCode),
+                        "", "",
+                        "", "", "", "",
+                        driverTimeZone, "--", "--", TotalMinutes   //TotalMinutes value is passing in getId()
+                );
+
+                // add data in child list
+                malfunctionChildList.add(malfunctionModel);
+
+            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -196,7 +267,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
             }
         }
         try {
-            MalfunctionAdapter adapter = new MalfunctionAdapter(getActivity(), DriverId, headerList, childHashMap);
+            MalfunctionHistoryAdapter adapter = new MalfunctionHistoryAdapter(getActivity(), DriverId, headerList, childHashMap);
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }catch (Exception e){

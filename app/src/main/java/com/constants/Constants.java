@@ -102,6 +102,24 @@ public class Constants {
     public static final int OBD_PREF_WIRED    = 2;
     public static final int OBD_PREF_BLE      = 3;
 
+
+    // Mal/Dia defination
+    public static String ConstLocationMissing           = "LM";
+
+    public static String PowerComplianceDiagnostic      = "1";
+    public static String EngineSyncDiagnosticEvent      = "2";
+    public static String MissingDataDiagnostic          = "3";
+    public static String UnIdentifiedDrivingDiagnostic  = "5";
+
+    public static String PowerComplianceMalfunction     = "P";
+    public static String EngineSyncMalfunctionEvent     = "E";
+    public static String PositionComplianceMalfunction  = "L";
+
+
+
+
+
+
     public static boolean IsAlreadyViolation = false;
     public static boolean IsHomePageOnCreate;
 
@@ -169,21 +187,6 @@ public class Constants {
     public static String DataMalfunction = "Data_Malfunction";
     public static String DiagnosticEvent = "Diagnostic";
     public static String MalfunctionEvent = "Malfunction";
-
-
-    // Mal/Dia defination
-    public static String ConstLocationMissing           = "LM";
-
-    public static String PowerComplianceDiagnostic      = "1";
-    public static String EngineSyncDiagnosticEvent      = "2";
-    public static String MissingDataDiagnostic          = "3";
-    public static String UnIdentifiedDrivingDiagnostic  = "5";
-
-    public static String PowerComplianceMalfunction     = "P";
-    public static String EngineSyncMalfunctionEvent     = "E";
-    public static String PositionComplianceMalfunction  = "L";
-
-
 
 
 
@@ -1026,6 +1029,92 @@ public class Constants {
     }
 
 
+    public String calculateLocalOdometersDistance(Context context){
+
+        String distance = "";
+        try{
+
+            String dayStartSavedDate    = SharedPref.getDayStartSavedTime(context);
+            String dayStartOdometerStr  = SharedPref.getDayStartOdometer(context);
+            String currentOdometerStr   = SharedPref.getObdOdometer(context);
+
+            if(dayStartSavedDate.length() > 0) {
+                int dayDiff = getDayDiff(dayStartSavedDate, Globally.GetCurrentDateTime());
+                if (dayDiff == 0) {
+                    /*if (SharedPref.getObdStatus(context) == WIRED_CONNECTED || SharedPref.getObdStatus(context) == WIFI_CONNECTED
+                            || SharedPref.getObdStatus(context) == BLE_CONNECTED) {
+                        if (currentOdometerStr.contains(".")) {
+                            currentOdometerStr = "" + Double.valueOf(currentOdometerStr) * 1000;
+                        }
+                    }*/
+
+                    double currentOdoInMiles  = meterToMiles(Double.parseDouble(currentOdometerStr));
+                    double dayStartOdoInMiles = Double.parseDouble(dayStartOdometerStr);  // ALREADY SAVED IN MILES
+                    double distanceInMiles    = currentOdoInMiles - dayStartOdoInMiles;
+
+                    String milesDiff    = getBeforeDecimalValue(Convert2DecimalPlacesDouble(distanceInMiles));
+                    String currMiles    = getBeforeDecimalValue(Convert2DecimalPlacesDouble(currentOdoInMiles));
+                    String startMiles   = getBeforeDecimalValue(Convert2DecimalPlacesDouble(dayStartOdoInMiles));
+
+
+                    distance = "(" + startMiles + " - " + currMiles + ") = <b>" + milesDiff + " Miles </b>";
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return distance;
+    }
+
+
+    public String getBeforeDecimalValue(String value){
+        try {
+            String[] distanceArray = value.split("\\.");
+            if(distanceArray.length > 0){
+                value = distanceArray[0];
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    public String getOdometersDistance(Context context){
+
+        String distance = "";
+        try{
+
+            String dayStartSavedDate    = SharedPref.getDayStartSavedTime(context);
+            String dayStartOdometerStr  = SharedPref.getDayStartOdometer(context);
+            String currentOdometerStr   = SharedPref.getObdOdometer(context);   //"1179791980";
+
+            if(dayStartSavedDate.length() > 0) {
+                int dayDiff = getDayDiff(dayStartSavedDate, Globally.GetCurrentDateTime());
+                if (dayDiff == 0) {
+                    /*if (SharedPref.getObdStatus(context) == WIRED_CONNECTED || SharedPref.getObdStatus(context) == WIFI_CONNECTED
+                            || SharedPref.getObdStatus(context) == BLE_CONNECTED) {
+                        if (currentOdometerStr.contains(".")) {
+                            currentOdometerStr = "" + Double.valueOf(currentOdometerStr) * 1000;
+                        }
+                    }*/
+
+                    double currentOdoInMiles  = meterToMiles(Double.parseDouble(currentOdometerStr));
+                    double dayStartOdoInMiles = Double.parseDouble(dayStartOdometerStr);    // ALREADY SAVED IN MILES
+                    double distanceInMiles    = currentOdoInMiles - dayStartOdoInMiles;
+
+                 //   distance    = Convert2DecimalPlacesDouble(distanceInMiles) + " Miles";
+                    distance = getBeforeDecimalValue(Convert2DecimalPlacesDouble(distanceInMiles)) + " Miles";
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return distance;
+    }
+
+
     public JSONArray GetDriverSavedArray(Context context) {
         int listSize = 0;
         JSONArray DriverJsonArray = new JSONArray();
@@ -1141,24 +1230,57 @@ public class Constants {
         return distanceInMiles * 1.609344f;    //1.60934
     }
 
-    public static double kmToMiles(double distanceInKm) {
+    public static String kmToMiles(String odometer) {
         // double miles=distanceInKm/1.609;
-        return distanceInKm * 0.621371;
+        try {
+            double km = Double.parseDouble(odometer);
+            odometer =  Convert2DecimalPlacesDouble(km * 0.621371);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return odometer ;
     }
 
 
-    public static int meterToMiles(int meters){
-        double meters2miles = 1609.344;
-        int miles = (int) (meters / meters2miles);
-       // Log.d("miles", "miles: " + miles);
+    public static String kmToMeter(String odometerInKm) {
+        try {
+            double km = Double.parseDouble(odometerInKm);
+            odometerInKm = "" + (km * 1000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        return miles;
+        return odometerInKm ;
+    }
+
+
+    public static double meterToMiles(double distance){
+        try {
+            double meters2miles = 1609.344;
+            distance = (distance / meters2miles);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return distance;
     }
 
     public static String meterToKm(String odometer){
         try {
             double meter = Double.parseDouble(odometer);
             odometer =  Convert2DecimalPlacesDouble(meter * 0.001);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return odometer;
+    }
+
+
+    public static String meterToKmWithObd(String odometer){
+        try {
+            double meter = Double.parseDouble(odometer);
+            odometer =  String.valueOf(meter * 0.001);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -2021,8 +2143,22 @@ public class Constants {
             e.printStackTrace();
             return ""+value;
         }
-
     }
+
+    public  boolean isValidData(String data){
+        boolean isValid = false;
+        try{
+            if(!data.equals("--") && !data.equals("0")) {
+                if(Double.parseDouble(data) > 0){
+                    return true;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return isValid;
+    }
+
 
     public String getCpuUsage() {
 
@@ -3305,12 +3441,18 @@ public class Constants {
                 int lastJobStatus = hMethods.getSecondLastJobStatus(driver18DaysLogArray);
                 int currentJobStatus = Integer.valueOf(DriverStatusId);
 
-                String odometerValue ;
-                if (ObdStatus == Constants.WIRED_CONNECTED) {
-                    odometerValue = SharedPref.getObdOdometer(context);
-                } else {
-                    odometerValue = SharedPref.GetWifiObdOdometer(context);   // get odometer value from wifi obd
+                String odometerValue = SharedPref.getObdOdometer(context);
+                try{
+                    Double odometer = meterToMiles(Double.parseDouble(SharedPref.getObdOdometer(context)));
+                    odometerValue = String.valueOf(odometer);
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+                /*  if (ObdStatus == Constants.WIRED_CONNECTED) {
+                    odometerValue = SharedPref.getObdOdometer(context);
+              } else {
+                    odometerValue = SharedPref.GetWifiObdOdometer(context);   // get odometer value from wifi obd
+                }*/
 
                 if (!odometerValue.equals("0")) {
                     if ((currentJobStatus == ON_DUTY || currentJobStatus == DRIVING) && (lastJobStatus == OFF_DUTY || lastJobStatus == SLEEPER) ||
@@ -3395,25 +3537,52 @@ public class Constants {
     }
 
 
+    public String getPowerDiaMalOccurredTime(String PowerEventStatus){
+       String occurredTime = "";
+        try {
+            int minDiff = 0;
+            String[] dataArray = PowerEventStatus.split(",");
+            if (dataArray.length > 1) {
+                minDiff = (int) Double.parseDouble(dataArray[1]);
+            }
+
+            DateTime currentDate = Globally.GetCurrentUTCDateTime();
+            occurredTime = currentDate.minusMinutes(minDiff).toString();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return occurredTime;
+    }
+
 
     // ------------- Check Power Diagnostic/Malfunction status ---------------
     public String isPowerDiaMalOccurred(String currentHighPrecisionOdometer, String ignitionStatus,
                                          String obdEngineHours, String DriverId, Globally global,
                                          MalfunctionDiagnosticMethod malfunctionDiagnosticMethod,
                                         boolean isPowerCompMalAllowed , boolean isPowerCompDiaAllowed,
-                                         Context context, DBHelper dbHelper){
+                                         Context context, Constants constants, DBHelper dbHelper,
+                                        DriverPermissionMethod driverPermissionMethod, Utils obdUtil){
 
         String eventStatus = "";
-
         try {
             String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, context);
-            if (lastIgnitionStatus.equals("OFF")) {
-                float engineHrDiffInMin = 0; //, odoDiff = 0;
+            String lastEngineHour = SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, context);
+
+            if (!lastIgnitionStatus.equals("ON")) {
+
+                constants.saveObdData("PowerDiaEvent - Ignition- " + lastIgnitionStatus +
+                                ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour,  ""
+                        , "", currentHighPrecisionOdometer,
+                        currentHighPrecisionOdometer, "", ignitionStatus, "", "",
+                        String.valueOf(-1), obdEngineHours, "", "",
+                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
+
+                double engineHrDiffInMin = 0; //, odoDiff = 0;
 
                 String lastSavedTime = SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionTimeMalDia, context);
                 if (lastSavedTime.length() > 10) {
                    // String lastOdometer = SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, context);
-                    String lastEngineHour = SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, context);
 
                     int minDiff = minDiff(lastSavedTime, global, context);
                     if (minDiff > 0) {
@@ -3430,22 +3599,22 @@ public class Constants {
 
                         if (engineHrDiffInMin >  1) {    //|| odoDiff >= 2
 
-                            DateTime currentTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
+                            //DateTime currentTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
 
                             // add/update dia/mal occured time in powerMalDia table
-                            malfunctionDiagnosticMethod.updatePowerOccEventLog(currentTime, engineHrDiffInMin, dbHelper);
+                           // malfunctionDiagnosticMethod.updatePowerOccEventLog(currentTime, engineHrDiffInMin, dbHelper);
 
                             double previousLocDiaTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(PowerComplianceDiagnostic, dbHelper);
-                            int earlierEventTime = malfunctionDiagnosticMethod.getTotalPowerComplianceMin(dbHelper);
-                            engineHrDiffInMin = engineHrDiffInMin + (int)previousLocDiaTime; // add earlier diagnostic time within 24 hr with current time
+                           // int earlierEventTime = malfunctionDiagnosticMethod.getTotalPowerComplianceMin(dbHelper);
+                            double totalDuration = engineHrDiffInMin + previousLocDiaTime; // add earlier diagnostic time within 24 hr with current time
 
-                            if (engineHrDiffInMin >= 30) {  // Temp add 30. Actual malfunction event time is 60 min
+                            if (totalDuration >= 30) {  // Temp add 30. Actual malfunction event time is 60 min
 
                                 if(isPowerCompMalAllowed) {
                                     if (SharedPref.isPowerMalfunctionOccurred(context)) {
                                         int dayDiff = getDayDiff(SharedPref.getPowerMalOccTime(context), global.GetCurrentDateTime());
                                         if (dayDiff > 0) {
-                                            eventStatus = MalfunctionEvent;
+                                            eventStatus = MalfunctionEvent + ","+engineHrDiffInMin;
 
                                             Globally.PlayNotificationSound(context);
                                             global.ShowLocalNotification(context,
@@ -3458,7 +3627,7 @@ public class Constants {
                                         }
                                     } else {
                                         if (SharedPref.isPowerMalfunctionOccurred(context) == false) {
-                                            eventStatus = MalfunctionEvent;
+                                            eventStatus = MalfunctionEvent + ","+engineHrDiffInMin;
                                             Globally.PlayNotificationSound(context);
                                             global.ShowLocalNotification(context,
                                                     context.getResources().getString(R.string.malfunction_events),
@@ -3473,7 +3642,7 @@ public class Constants {
 
                             } else {
                                 if (isPowerCompDiaAllowed) {
-                                    eventStatus = DiagnosticEvent ;
+                                    eventStatus = DiagnosticEvent + ","+engineHrDiffInMin;
                                     Globally.PlayNotificationSound(context);
                                     global.ShowLocalNotification(context,
                                             context.getResources().getString(R.string.dia_event),
@@ -3488,18 +3657,143 @@ public class Constants {
                             }
                         }
                         // save updated values with truck ignition status
-                        SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, WiredOBD, global.getCurrentDate(), global.GetCurrentUTCTimeFormat(), obdEngineHours, currentHighPrecisionOdometer, context);
+                        SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, WiredOBD, global.getCurrentDate(),
+                                global.GetCurrentUTCTimeFormat(), obdEngineHours, currentHighPrecisionOdometer, context);
+
+                        constants.saveObdData("wired_obd",  "Save Truck Info - MethodCall1 - Ignition: " + ignitionStatus ,
+                                "", currentHighPrecisionOdometer,
+                                currentHighPrecisionOdometer, "", ignitionStatus, "", "-1",
+                                String.valueOf(-1), obdEngineHours,  Globally.GetCurrentDateTime(), "",
+                                DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
 
                     }
 
+                }else{
+                    // save 1st entry if no data in SharedPref
+                    SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, WiredOBD, global.getCurrentDate(),
+                            global.GetCurrentUTCTimeFormat(), obdEngineHours, currentHighPrecisionOdometer, context);
+
+                    constants.saveObdData("wired_obd",  "Save Truck Info - MethodCall2 - Ignition: " + ignitionStatus ,
+                            "", currentHighPrecisionOdometer,
+                            currentHighPrecisionOdometer, "", ignitionStatus, "", "-1",
+                            String.valueOf(-1), obdEngineHours,  Globally.GetCurrentDateTime(), "",
+                            DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
+
                 }
 
+            }else{
+                // save updated values with truck ignition status
+                SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, WiredOBD, global.getCurrentDate(),
+                        global.GetCurrentUTCTimeFormat(), obdEngineHours, currentHighPrecisionOdometer, context);
+
+
+               /* constants.saveObdData("wired_obd",  "Save Truck Info - MethodCall3 - Ignition: " + ignitionStatus ,
+                        "", currentHighPrecisionOdometer,
+                        currentHighPrecisionOdometer, "", ignitionStatus, "", "-1",
+                        String.valueOf(-1), obdEngineHours,  Globally.GetCurrentDateTime(), "",
+                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
+*/
             }
+
         }catch (Exception e){
             e.printStackTrace();
+
+            constants.saveObdData("wired_obd",  "Save Truck Info - MethodCall4 - Exception: " + e.toString() ,
+                    "", currentHighPrecisionOdometer,
+                    currentHighPrecisionOdometer, "", ignitionStatus, "", "-1",
+                    String.valueOf(-1), obdEngineHours,  Globally.GetCurrentDateTime(), "",
+                    DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
         }
         return eventStatus;
     }
+
+
+
+    public void saveObdData(String source, String vin, String odometer, String HighPrecisionOdometer,
+                             String obdOdometerInMeter, String correctedData, String ignition, String rpm,
+                             String speed, String speedCalculated, String EngineHours, String timeStamp,
+                             String previousDate, String DriverId, DBHelper dbHelper,
+                            DriverPermissionMethod driverPermissionMethod, Utils obdUtil){
+
+        boolean isDeviceLogEnabled = driverPermissionMethod.isDeviceLogEnabled(DriverId, dbHelper);
+
+        if(isDeviceLogEnabled) {
+
+            JSONObject obj = new JSONObject();
+            try {
+
+                obj.put(obdSource, source);
+              //  obj.put(obdOdometer, odometer);
+                obj.put(obdHighPrecisionOdo, HighPrecisionOdometer);
+
+                if (source.equals(Constants.WifiOBD)) {
+
+                    obj.put(WheelBasedVehicleSpeed, speed);
+
+                    if (correctedData.trim().length() > 0) {
+                        obj.put(CorrectedData, correctedData);
+                    }
+
+                    try {
+                        String[] array = obdOdometerInMeter.split(",  ");
+                        if (array.length > 0) {
+                            obj.put(PreviousLogDate, previousDate);
+                            obj.put(CurrentLogDate, Globally.GetCurrentDateTime());
+
+                            obj.put(DecodedData, array[0]);
+
+                            if(array.length > 1) {
+                                obj.put(obdCalculatedSpeed, array[1]);
+                            }
+                        } else {
+                            obj.put(CurrentLogDate, Globally.GetCurrentDateTime());
+                            obj.put(DecodedData, obdOdometerInMeter);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else {
+                    if (source.equals(ApiData) || source.equals(OfflineData)) {
+                        obj.put(obdDetail, obdOdometerInMeter);
+                        obj.put(LastRecordTime, timeStamp);
+                    } else {
+                        //obj.put("OdometerInMeter", obdOdometerInMeter);
+                       // obj.put(ObdRecordTime, timeStamp);
+                       // obj.put(PreviousLogDate, previousDate);
+                        obj.put(CurrentLogDate, Globally.GetCurrentDateTime());
+                    }
+
+                    obj.put(calculatedSpeed, speedCalculated);
+                    obj.put(obdSpeed, speed);
+                    obj.put(obdVINNumber, vin);
+                }
+
+                obj.put(obdEngineHours, EngineHours);
+                obj.put(obdIgnitionStatus, ignition);
+                obj.put(obdRPM, rpm);
+                obj.put(apiReturnedSpeed, apiReturnedSpeed);
+                obj.put(ConstantsKeys.Latitude, Globally.LATITUDE);
+                obj.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+
+                Globally.OBD_DataArray.put(obj);
+                obdUtil.writeToLogFile(obj.toString());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+
+
 
     public static Duration getDateTimeDuration(DateTime selectedDateTime, DateTime currentTime){
         Duration duration = new Duration(selectedDateTime, currentTime);
@@ -3516,7 +3810,7 @@ public class Constants {
     // m = If driver enter manual loc after position malfunction occur
     // e = if position malfunction occur more then 60 min
 
-    public String isPositionMalfunctionEvent(MalfunctionDiagnosticMethod malfunctionDiagnosticMethod, DBHelper dbHelper, Context context){
+    public String isPositionMalfunctionEvent(String DriverId, MalfunctionDiagnosticMethod malfunctionDiagnosticMethod, DBHelper dbHelper, Context context){
         String PositionComplianceStatus = "";
         int ObdStatus = SharedPref.getObdStatus(context);
         try {
@@ -3544,7 +3838,11 @@ public class Constants {
                                 // update array for last 24 hours only before add new event
                                 malfunctionDiagnosticMethod.clearEventsMoreThen1Day(dbHelper);
 
-                                JSONArray array = malfunctionDiagnosticMethod.AddNewItemInPositionArray(ConstLocationMissing, dbHelper);
+                                String ObdEngineHours =  SharedPref.getObdEngineHours(context);
+                                String ObdOdometer = SharedPref.getObdOdometer(context);
+
+                                JSONArray array = malfunctionDiagnosticMethod.AddNewItemInPositionArray( DriverId, ConstLocationMissing,
+                                                        ObdEngineHours, ObdOdometer, dbHelper);
                                 malfunctionDiagnosticMethod.PositioningMalDiaHelper(dbHelper, array);
 
                             }
@@ -3560,7 +3858,7 @@ public class Constants {
 
                                 minDiff = minDiff + previousOccEventTime;
 
-                                if (minDiff >= 30) {   //temp value 20 for testing. After 60 min it will become e type on loc mal
+                                if (minDiff >= 30) {   //temp value 30 for testing. After 60 min it will become e type on loc mal
                                     // Save Position malfunction event status if earlier status was false
                                     SharedPref.saveLocMalfunctionOccurStatus(true, Globally.GetCurrentDateTime(),
                                             Globally.GetCurrentUTCTimeFormat(), context);
@@ -3570,7 +3868,11 @@ public class Constants {
                                     // update array for last 24 hours only before add new event
                                     malfunctionDiagnosticMethod.clearEventsMoreThen1Day(dbHelper);
 
-                                    JSONArray array = malfunctionDiagnosticMethod.AddNewItemInPositionArray(PositionComplianceMalfunction, dbHelper);
+                                    String ObdEngineHours =  SharedPref.getObdEngineHours(context);
+                                    String ObdOdometer = SharedPref.getObdOdometer(context);
+
+                                    JSONArray array = malfunctionDiagnosticMethod.AddNewItemInPositionArray( DriverId, PositionComplianceMalfunction,
+                                                            ObdEngineHours, ObdOdometer, dbHelper);
                                     malfunctionDiagnosticMethod.PositioningMalDiaHelper(dbHelper, array);
 
                                 }
@@ -4194,18 +4496,19 @@ public class Constants {
     public boolean isActionAllowedWithCoDriver(Context context, DBHelper dbHelper, HelperMethods hMethods, Globally Global, String DRIVER_ID){
         boolean isAllowed = true;
         int ObdStatus = SharedPref.getObdStatus(context);
-        if((ObdStatus == Constants.WIRED_CONNECTED ||
-                ObdStatus == Constants.WIFI_CONNECTED ||
-                ObdStatus == Constants.BLE_CONNECTED) &&
-                SharedPref.isVehicleMoving(context) ){
-            isAllowed = false;
-        }
-        boolean isCoDriverInDrYMPC = hMethods.isCoDriverInDrYMPC(context, Global, DRIVER_ID, dbHelper);
+        if(SharedPref.IsAppRestricted(context)) {
+            if ((ObdStatus == Constants.WIRED_CONNECTED ||
+                    ObdStatus == Constants.WIFI_CONNECTED ||
+                    ObdStatus == Constants.BLE_CONNECTED) &&
+                    SharedPref.isVehicleMoving(context)) {
+                isAllowed = false;
+            }
+            boolean isCoDriverInDrYMPC = hMethods.isCoDriverInDrYMPC(context, Global, DRIVER_ID, dbHelper);
 
-        if(isCoDriverInDrYMPC && isAllowed == false){
-            isAllowed = true;
+            if (isCoDriverInDrYMPC && isAllowed == false) {
+                isAllowed = true;
+            }
         }
-
         return isAllowed;
     }
 
@@ -4217,21 +4520,29 @@ public class Constants {
         boolean isAllowed = true;
         int ObdStatus = SharedPref.getObdStatus(context);
         boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
-        if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
-                || ObdStatus == Constants.BLE_CONNECTED) && isVehicleMoving ){
-            isAllowed = false;
+        if(SharedPref.IsAppRestricted(context)) {
+            if ((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
+                    || ObdStatus == Constants.BLE_CONNECTED) && isVehicleMoving) {
+                isAllowed = false;
+            }else{
+                isAllowed = true;
+            }
         }
-        return true;
+        return isAllowed;
     }
 
     public boolean isObdConnected(Context context){
-        boolean isObdConnected = false;
-        if (SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED
-                || SharedPref.getObdStatus(context) == Constants.BLE_CONNECTED){
-            isObdConnected = true;
+        boolean isObdConnected = true;
+        if(SharedPref.IsAppRestricted(context)){
+            if (SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED
+                    || SharedPref.getObdStatus(context) == Constants.BLE_CONNECTED){
+                isObdConnected = true;
+            }else{
+                isObdConnected = false;
+            }
         }
 
-        return true;
+        return isObdConnected;
     }
 
 

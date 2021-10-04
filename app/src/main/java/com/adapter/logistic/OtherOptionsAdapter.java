@@ -174,10 +174,12 @@ public class OtherOptionsAdapter extends BaseAdapter {
                 break;
 
             case Constants.OBD:
-               /* if(SharedPref.getObdStatus(context) != Constants.WIFI_CONNECTED && SharedPref.getObdStatus(context) != Constants.WIRED_CONNECTED &&
-                        SharedPref.getObdStatus(context) != Constants.BLE_CONNECTED){
+                if(SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED ||
+                        SharedPref.getObdStatus(context) == Constants.BLE_CONNECTED){
+
+                }else{
                     makeViewHighlighed(imgView, titleView, errorView);
-                }*/
+                }
                 break;
 
             case Constants.MISSING_LOCATION:

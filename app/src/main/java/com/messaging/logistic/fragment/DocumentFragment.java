@@ -156,7 +156,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
 
         // ---------- PDF offline commented code -----------
-        //  getLocalDocuments(true);
+          getLocalDocuments(true);
 
         if(Globally.isConnected(getActivity())){
             try {
@@ -467,7 +467,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
                                 // ---------- PDF offline commented code -----------
                                 // Save pdf file in SD card if not saved
-                                //   saveDocLocally(i);
+                                   saveDocLocally(i);
 
                             }
 

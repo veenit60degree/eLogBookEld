@@ -29,7 +29,7 @@
 
         <ListView
             android:id="@+id/otherFeatureListView"
-            android:layout_width="@dimen/view_height_250"
+            android:layout_width="@dimen/view_height_280"
             android:layout_height="wrap_content"
             android:divider="@null"
 

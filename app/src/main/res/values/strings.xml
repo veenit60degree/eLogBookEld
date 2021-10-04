@@ -14,7 +14,7 @@
     <string name="terms_of_service">terms of service </string>
     <string name="obd_config">OBD Configuration</string>
     <string name="obd_diagnose">OBD Diagnose</string>
-    <string name="mal_dia_history">Events (Mal/Dia) History</string>
+    <string name="mal_dia_history">Mal/Dia Events History</string>
     <string name="child_text">LOAD#661\n3785 BOUL LAURIER EST,QUEBEC,CA\n\nLOAD#NISD662\n3785 BOUL LAURIER EST,QUEBEC,CA</string>
     <string name="title_activity_maps_activityyy">Map</string>
     <string name="obd_connection_desc">OBD not connected!! Connect your phone with OBD wifi connection. </string>
@@ -244,8 +244,8 @@
     <string name="eng_sync_mal_title">Engine synchronization data malfunction event</string>
     <string name="eng_sync_mal_def">Engine synchronization compliance malfunctions occur when ECM connectivity to any of the required data sources (engine power status, vehicle motion status, miles driven, and engine hours) is lost for more than 30 minutes during a 24-hour period aggregated across all driver profiles.</string>
 
-    <string name="unidentified_title">Unidentified record event</string>
-    <string name="unidentified_def">Unidentified driving records data diagnostic</string>
+    <string name="unidentified_title">Unidentified driving records data diagnostic event</string>
+    <string name="unidentified_def">An unidentified driving records data diagnostic event occurs when more than 30 minutes of driving time for an unidentified driver is recorded within a 24-hour period.</string>
 
     <string name="other_dia_title">Other ELD diagnostic event</string>
     <string name="other_dia_def">Other "ELD identified diagnostic" event</string>
@@ -264,15 +264,23 @@
     <string name="loc_miss_event">Location Missing Event</string>
 
     <string name="eng_sync_dia_event">Engine sync diagnostic event</string>
-    <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>
-    <string name="eng_sync_dia_occured_ble_desc">Engine sync diagnostic event occurred due to bluetooth OBD disconnected.</string>
-    <string name="missing_event_occured_desc">Missing data element diagnostic occurred</string>
+   <!-- <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>-->
+    <string name="eng_sync_dia_occured_desc">Engine synchronization data diagnostic event occurred.</string>
+    <string name="eng_sync_dia_clear_desc">Engine synchronization data diagnostic event has been cleared.</string>
+    <string name="eng_sync_mal_clear_desc">Engine synchronization compliance malfunction event has been cleared.</string>
+    <string name="power_dia_clear_desc">Power data diagnostic event has been cleared.</string>
+    <string name="power_mal_clear_desc">Power compliance malfunction event has been cleared.</string>
+
+    <string name="missing_data_dia_clear_desc">Missing required data element data diagnostic event has been cleared.</string>
+    <string name="pos_mal_clear_desc">Positioning compliance malfunction event has been cleared.</string>
+
+    <string name="missing_event_occured_desc">Missing required data element data diagnostic event occurred</string>
     <string name="missing_data_element">Missing Data Diagnostic</string>
     <string name="dia_event_occured">Diagnostic event occurred</string>
     <string name="power_dia_occured">Power data diagnostic event occurred</string>
     <string name="power_comp_mal_occured">Power compliance malfunction occurred</string>
     <string name="eng_sync_dia_occured">Engine sync diagnostic occurred</string>
-    <string name="eng_sync_mal_occured">Engine sync compliance malfunction occurred</string>
+    <string name="eng_sync_mal_occured">Engine synchronization compliance malfunction occurred</string>
     <string name="missing_data_event">Missing positioning compliance</string>
     <string name="missing_pos_comp_event">Missing positioning compliance event</string>
     <string name="missing_data_event_desc">Positioning compliance missing data event occurred</string>
@@ -280,8 +288,7 @@
     <string name="pos_mal_occured">Position malfunction occurred</string>
     <string name="pos_mal_occured_desc">Position malfunction occurred due to location missing.</string>
     <string name="ignore_to_save_loc">Driver ignore to save location in </string>
-    <string name="power_dia_clear_desc">Power diagnostic event has been cleared.</string>
-    <string name="eng_sync_dia_clear_desc">Engine Sync data compliance event has been cleared.</string>
+
     <string name="hos_limitation">New HOS Limitations</string>
     <string name="hos_limitation_old">Old HOS Limitations</string>
     <string name="ELDViewLogUs">ELD View Log</string>
@@ -355,12 +362,13 @@
     <string name="distance_last_coor">Distance Last Coord</string>
     <string name="dis_last_coord">Dis Last Coord</string>
     <string name="distance_acc">Distance (Acc)</string>
-    <string name="hrs_acc">Hrs (Acc)</string>
+    <string name="hrs_acc">Hrs (Elapsed)</string>
     <string name="Distance_total">Distance (Total)</string>
     <string name="hours_total">Hours (Total)</string>
     <string name="RecordStatus">Record Status</string>
     <string name="RecordOrigin">Record Origin</string>
     <string name="seq_no">Seq. No.</string>
+    <string name="seq_id">Seq. ID</string>
 
     <string name="WorkShiftStart">Work Shift Start (HH:MM)</string>
     <string name="WorkShiftEnd">Work Shift End (HH:MM)</string>
@@ -440,6 +448,7 @@
     <string name="CurrentOperatingZone">Current Operating Zone</string>
     <string name="total_hrs">Total Hrs</string>
     <string name="total_hrs_in_work">(In Work Shift)</string>
+    <string name="seven_or_fourteen">(7 or 14)</string>
     <string name="in_cycle">(In Cycle)</string>
     <string name="remaining_hrs">Remaining Hrs</string>
     <string name="off_duty_time_deff">Off Duty Time defferal </string>
@@ -450,7 +459,7 @@
     <string name="ELD_ID">ELD Identifier</string>
     <string name="ELD_Provider">ELD Provider</string>
     <string name="ELD_Certification">ELD Certification ID</string>
-    <string name="ELD_Auth">ELD Authentication ID</string>
+    <string name="ELD_Auth">ELD Authentication Value</string>
     <string name="CanadaELDViewLog">Canada ELD View Log</string>
 
     <string name="Reminder">Reminder !!</string>
@@ -470,7 +479,7 @@
     <string name="Affixed_seal_hint">Affixed seals Person</string>
     <string name="Physical_intgrty_hint">Physical integrity Person</string>
 
-    <string name="MissingLoc">Missing Location</string>
+    <string name="MissingLoc">Missing Locations</string>
     <string name="view_less">View Less</string>
     <string name="view_more">View More</string>
     <string name="date">Date </string>
@@ -531,7 +540,7 @@
     <string name="save_and_certify">Save &amp; Certify</string>
     <string name="certified">Certified</string>
     <string name="uncertified">Uncertified</string>
-    <string name="uncertify_log">UnCertified Logs</string>
+    <string name="uncertify_log">Uncertified Logs</string>
     <string name="certify">Certify</string>
     <string name="Logout_confirmation">Logout</string>
     <string name="Logout">Logout</string>
@@ -899,16 +908,26 @@
     <string name="dot_mode_canada">DOT MODE (Canada)</string>
     <string name="data_malfunction">Data recording compliance malfunction detected</string>
     <string name="malfunction">Data Malfunction</string>
-    <string name="malf_and_dia">Malfunction &amp; Dia..</string>
-    <string name="malf_and_diagnostic">Malfunction &amp; Diagnostic</string>
+    <string name="malf_and_dia">Mal &amp; Dia Events</string>
+    <string name="malf_and_diagnostic">Malfunction &amp; Diagnostic Events</string>
     <string name="malfunction_and_dia">Data Malfunction &amp; Diagnostic</string>
     <string name="malfunction_diag_occur">Malfunction &amp; Diagnostic events occurred</string>
     <string name="malfunction_occur">Malfunction event occurred</string>
     <string name="diagnostic_occur">Diagnostic event occurred</string>
     <string name="malfunction_event">Malfunction event</string>
     <string name="dia_event">Diagnostic event</string>
-    <string name="malfunction_events">Malfunction Events</string>
-    <string name="dia_events">Diagnostic Events</string>
+
+    <string name="malfunction_events">Malfunction Event</string>
+    <string name="dia_events">Diagnostic Event</string>
+
+   <!-- <string name="power_dia_event_title">Power data diagnostic event</string>
+    <string name="power_dia_event_desc">Power data diagnostic event occurred.</string>
+    <string name="power_mal_event_title">Power compliance malfunction</string>
+    <string name="power_mal_event_desc">Power compliance malfunction event occurred.</string>
+-->
+    <string name="missing_loc">Missing location</string>
+    <string name="pos_mal_event_desc">Positioning compliance malfunction occurred.</string>
+    <string name="pos_dia_event_desc">We are not receiving valid location since last 8 km.</string>
 
     <string name="connect">Connect</string>
     <string name="connected">Connected</string>

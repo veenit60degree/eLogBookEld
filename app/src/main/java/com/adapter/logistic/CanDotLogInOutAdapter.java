@@ -171,12 +171,18 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
     private void showDateView(String lastItemDate, String EventDateTime, TextView view, boolean isDirectVisibile){
         if(isDirectVisibile){
             view.setVisibility(View.VISIBLE);
-            view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+            //view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+            if(EventDateTime.length() >= 19) {
+                view.setText(EventDateTime.substring(11, 19));
+            }
         }else{
             int dayDiff = constants.getDayDiff(lastItemDate, EventDateTime);
             if (dayDiff != 0) {
                 view.setVisibility(View.VISIBLE);
-                view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+               // view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                if(EventDateTime.length() >= 19) {
+                    view.setText(EventDateTime.substring(11, 19));
+                }
             }
         }
     }

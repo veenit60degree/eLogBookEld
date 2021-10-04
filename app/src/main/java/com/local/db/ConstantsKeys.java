@@ -537,6 +537,7 @@ public class ConstantsKeys {
     public static String StartLocationKm                = "StartLocationKm";
     public static String IsOdoCalculationAllowed        = "IsOdoCalculationAllowed";
     public static String IsEngineRestarted              = "IsEngineRestarted";
+    public static String IsAppRestricted                = "IsAppRestricted";
     public static String LocReceivedFromObd             = "LocReceivedFromObd";
 
 
@@ -546,6 +547,9 @@ public class ConstantsKeys {
     public static String obdCurrentIgnition             = "obdCurrentIgnition";
     public static String obdType                        = "obdType";
     public static String obdTime                        = "obdTime";
+    public static String IsEventUpdate                  = "IsEventUpdate";
+    public static String IsLocalEventUpdate             = "IsLocalEventUpdate";
+
 
     public static String GeoLocation                    = "GeoLocation";
     public static String StatusName                     = "StatusName";

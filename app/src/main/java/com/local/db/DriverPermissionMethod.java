@@ -68,7 +68,7 @@ public class DriverPermissionMethod {
                 try {
                     isDeviceLogEnabled = logPermissionObj.getBoolean(ConstantsKeys.IsDeviceDebugLogEnable);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                  //  e.printStackTrace();
                 }
             }
 

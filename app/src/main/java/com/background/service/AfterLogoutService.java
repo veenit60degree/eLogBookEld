@@ -647,29 +647,30 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         boolean isConnected = HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac());
 
-        if (!bluetoothAdapter.isEnabled()) {
-            bluetoothAdapter.enable();
-        }else{
-            if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
+        try {
+            if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
+                bluetoothAdapter.enable();
+            } else {
+                if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {
 
-                if (!mIsScanning && !isConnected) {
+                    if (!mIsScanning && !isConnected) {
 
-                    // ignore scan after 3 attempts if device not found
-                    if(bleScanCount < 3) {
-                        StartScanHtBle();
-                    }else{
-                        if(bleScanCount == 3) {
-                            bleScanCount++;
-                            HTBleSdk.Companion.getInstance().stopHTBleScan();
+                        // ignore scan after 3 attempts if device not found
+                        if (bleScanCount < 3) {
+                            StartScanHtBle();
+                        } else {
+                            if (bleScanCount == 3) {
+                                bleScanCount++;
+                                HTBleSdk.Companion.getInstance().stopHTBleScan();
+                            }
                         }
+
+
                     }
 
-
                 }
-
             }
-        }
-
+        }catch (Exception e){}
     }
 
 

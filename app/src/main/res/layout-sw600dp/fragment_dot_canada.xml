@@ -190,9 +190,55 @@
 
             />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/dot_titles_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/margin_15"
+            android:paddingTop="@dimen/margin_10"
+            android:paddingRight="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_10"
 
 
+            >
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/DriverName"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_17"
+                android:textStyle="bold"
+
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/DriverID"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_17"
+                android:textStyle="bold"
+
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/exempt_driver_status"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_17"
+                android:textStyle="bold"
+
+                />
+
+
+        </LinearLayout>
 
 
     </LinearLayout>
@@ -305,61 +351,7 @@
     </LinearLayout>
 
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/dot_titles_bg"
-        android:paddingTop="@dimen/margin_10"
-        android:paddingBottom="@dimen/margin_10"
-        android:paddingRight="@dimen/margin_10"
-        android:paddingLeft="@dimen/margin_15"
-
-
-        >
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_17"
-            android:textColor="@color/colorPrimary"
-            android:text="@string/DriverName"
-            android:textStyle="bold"
-            android:layout_weight="1"
-
-            />
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_17"
-            android:textColor="@color/colorPrimary"
-            android:text="@string/DriverID"
-            android:textStyle="bold"
-            android:layout_weight="1"
-
-            />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_17"
-            android:textColor="@color/colorPrimary"
-            android:text="@string/exempt_driver_status"
-            android:textStyle="bold"
-            android:layout_weight="1"
-
-            />
-
-
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -986,16 +978,38 @@
 
 
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_17"
-                android:textColor="@color/colorPrimary"
-                android:text="@string/current_cycleee"
-                android:textStyle="bold"
+                android:orientation="horizontal"
                 android:layout_weight="1"
+                >
 
-                />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_17"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/current_cycleee"
+                    android:textStyle="bold"
+
+
+                    />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_short_3"
+                    android:text="@string/seven_or_fourteen"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/text_size_12"
+
+
+                    />
+
+            </LinearLayout>
+
 
 
 

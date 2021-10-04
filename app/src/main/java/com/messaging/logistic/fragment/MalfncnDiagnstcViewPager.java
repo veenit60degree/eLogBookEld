@@ -1,8 +1,10 @@
 package com.messaging.logistic.fragment;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +26,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.adapter.logistic.MalfunctionAdapter;
@@ -174,6 +177,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         setPagerAdapter(0, false);
 
         cancelCertifyBtn.setVisibility(View.GONE);
+        confirmCertifyBtn.setVisibility(View.GONE);
         confirmCertifyBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
         invisibleMalfnBtn.setOnClickListener(this);
@@ -194,11 +198,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
 
-        DriverId                = SharedPref.getDriverId( getActivity());
-        VIN                     = SharedPref.getVINNumber(getActivity());
-        Country                 = constants.getCountryName(getActivity());
-        OffsetFromUTC           = DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity());
-        CompanyId               = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+        getDriverInfo();
         DateTime currentDate    = globally.getDateTimeObj(globally.GetCurrentDateTime(), false);
         String CurrentCycleId   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
 
@@ -257,13 +257,62 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         }
 
         isOnCreate = false;
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter(ConstantsKeys.IsEventUpdate));
+
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(progressReceiver);
     }
 
 
-    void parseOfflineDuration(){
-        JSONArray malArray1 = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.valueOf(DriverId), dbHelper);
-
+    void getDriverInfo(){
+        DriverId                = SharedPref.getDriverId( getActivity());
+        VIN                     = SharedPref.getVINNumber(getActivity());
+        Country                 = constants.getCountryName(getActivity());
+        OffsetFromUTC           = DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity());
+        CompanyId               = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
     }
+
+
+    private BroadcastReceiver progressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+             try {
+
+                 boolean IsEventUpdate = intent.getBooleanExtra(ConstantsKeys.IsEventUpdate, false);
+                 if (IsEventUpdate) {
+                     boolean  IsLocalEventUpdate =  intent.getBooleanExtra(ConstantsKeys.IsLocalEventUpdate, false);
+                     if(IsLocalEventUpdate) {
+                         final boolean isDiagnostic;
+                         final boolean isMalfunction;
+                         if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+                             isDiagnostic = SharedPref.isDiagnosticOccur(getActivity());
+                             isMalfunction = SharedPref.isMalfunctionOccur(getActivity());
+                         } else {
+                             isDiagnostic = SharedPref.isDiagnosticOccurCo(getActivity());
+                             isMalfunction = SharedPref.isMalfunctionOccurCo(getActivity());
+                         }
+
+                         viewOfflineData(isDiagnostic, isMalfunction);
+                     }else{
+                         getDriverInfo();
+                         GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+                     }
+
+                 }
+
+            }catch (Exception e){
+                 e.printStackTrace();
+             }
+        }
+    };
+
 
 
 
@@ -618,7 +667,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         String malfunctionType = SharedPref.getLocationEventType(getActivity());
         if(isLocMalfunctionOccur && (malfunctionType.equals("m") || malfunctionType.equals("x"))){
             malfunctionHeaderList.add(new MalfunctionHeaderModel(
-                    "Positioning Compliance Event", "1", getString(R.string.loc_mal), false, true));
+                    "Positioning Compliance Event", "1", getString(R.string.loc_mal), false, true, "-1"));
             malfunctionChildList.add(new MalfunctionModel(
                     SharedPref.getCountryCycle("CountryCycle", getActivity()),
                     SharedPref.getVINNumber( getActivity()),
@@ -689,7 +738,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                                 mainObj.getString(ConstantsKeys.EventName),
                                 mainObj.getString(ConstantsKeys.EventCode),
                                 mainObj.getString(ConstantsKeys.Definition),
-                               false, false
+                               false, false, ""+i
 
                         );
 
@@ -708,7 +757,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                                     objItem.getString(ConstantsKeys.CompanyId),
                                     objItem.getString(ConstantsKeys.EventDateTime),
                                     objItem.getString(ConstantsKeys.EngineHours),
-                                    objItem.getString(ConstantsKeys.Miles),
+                                    objItem.getString(ConstantsKeys.StartOdometer),
                                     objItem.getString(ConstantsKeys.DetectionDataEventCode),
                                     objItem.getString(ConstantsKeys.MasterDetectionDataEventId),
                                     objItem.getString(ConstantsKeys.EventCode),
@@ -719,7 +768,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                                     objItem.getString(ConstantsKeys.DriverZoneEventDate),
                                     objItem.getString(ConstantsKeys.SEQUENCE_NO),
                                     HexaSequenceNumber,
-                                    objItem.getString(ConstantsKeys.Id)
+                                    "--"
 
 
                             );
@@ -916,7 +965,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }catch (Exception e){
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
 
@@ -934,55 +983,34 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
 
             for(int  i = 0 ; i < malfunctionArray.length() ; i++){
-                malfunctionChildList        = new ArrayList<>();
+                    malfunctionChildList        = new ArrayList<>();
 
                 JSONObject mainObj = (JSONObject)malfunctionArray.get(i);
-                String EventType = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
-                boolean IsClearEvent = mainObj.getBoolean(ConstantsKeys.IsClearEvent);
 
-                if(IsClearEvent == false) {
-                    MalDiaEventModel eventModel = constants.getMalDiaEventDetails(getActivity(), EventType);
 
-                    MalfunctionHeaderModel headerModel = new MalfunctionHeaderModel(
-                            eventModel.getEventTitle(), EventType, eventModel.getEventDesc(),
-                            IsClearEvent, true);
+                // get status by driver wise
 
-                    DateTime EventDateTime = globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventDateTime), false);
-                    String driverTimeZone = String.valueOf(EventDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
+                if (globally.isSingleDriver(getActivity())) {
+                    parseData(mainObj, i);
+                }else{
 
-                    String EngHrs = "";
-                    if (mainObj.has(ConstantsKeys.ClearEngineHours)) {
-                        EngHrs = mainObj.getString(ConstantsKeys.ClearEngineHours);
+                    String DrId = mainObj.getString(ConstantsKeys.DriverId);
+                    String DetectionDataEventCode = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
+
+                    if(DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
+                            DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
+                            DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)){
+                        parseData(mainObj, i);
+                    }else {
+                        if (DrId.equals(DriverId)) {
+                            parseData(mainObj, i);
+                        }
                     }
-                    // Child array event
-                    MalfunctionModel malfunctionModel = new MalfunctionModel(
-                            Country,
-                            VIN,
-                            CompanyId,
-                            mainObj.getString(ConstantsKeys.EventDateTime),
-                            EngHrs,
-                            "--", "", "", "",
-                            "", "", "", "",
-                            driverTimeZone, "--", "--", ""
-                    );
 
-                    // add data in child list
-                    malfunctionChildList.add(malfunctionModel);
-
-
-                    boolean isDiagnostic = constants.isValidInteger(EventType);
-
-                    // add data in header list
-                    if (isDiagnostic) {   // Valid integer is Diagnostic
-                        diagnosticHeaderList.add(headerModel);
-                        diagnosticChildHashMap.put(EventType, malfunctionChildList);
-
-                    } else { // InValid integer is Malfunction
-                        malfunctionHeaderList.add(headerModel);
-                        malfunctionChildHashMap.put(EventType, malfunctionChildList);
-
-                    }
                 }
+
+
+
             }
 
             setPagerAdapter(position, false);
@@ -993,4 +1021,77 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     }
 
 
+    private void parseData(JSONObject mainObj, int position){
+        try{
+            String EventType = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
+            boolean IsClearEvent = mainObj.getBoolean(ConstantsKeys.IsClearEvent);
+
+            if (IsClearEvent == false) {
+                MalDiaEventModel eventModel = constants.getMalDiaEventDetails(getActivity(), EventType);
+
+                MalfunctionHeaderModel headerModel = new MalfunctionHeaderModel(
+                        eventModel.getEventTitle(), EventType, eventModel.getEventDesc(),
+                        IsClearEvent, true, "" + position);
+
+                DateTime EventDateTime = globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventDateTime), false);
+                String driverTimeZone = String.valueOf(EventDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
+
+                String EngHrs = "", StartOdometer = "0";
+                if (mainObj.has(ConstantsKeys.ClearEngineHours)) {
+                    EngHrs = mainObj.getString(ConstantsKeys.ClearEngineHours);
+                }
+
+                if (mainObj.has(ConstantsKeys.StartOdometer)) {
+                    StartOdometer = mainObj.getString(ConstantsKeys.StartOdometer); //constants.kmToMiles(
+
+                }
+
+                String TotalMinutes = "--";
+                if(mainObj.has(ConstantsKeys.TotalMinutes)){
+                    TotalMinutes = mainObj.getString(ConstantsKeys.TotalMinutes);
+                }
+                // Child array event
+                MalfunctionModel malfunctionModel = new MalfunctionModel(
+                        Country,
+                        VIN,
+                        CompanyId,
+                        mainObj.getString(ConstantsKeys.EventDateTime),
+                        EngHrs,
+                        StartOdometer,
+                        mainObj.getString(ConstantsKeys.DetectionDataEventCode),
+                        "", "",
+                        "", "", "", "",
+                        driverTimeZone, "--", "--", TotalMinutes   //TotalMinutes value is passing in getId()
+                );
+
+
+                    /*String EngineHours;
+                    String Miles;
+                    String DetectionDataEventCode;
+                    String EventCode;
+                    String Reason;
+                    */
+
+                // add data in child list
+                malfunctionChildList.add(malfunctionModel);
+
+
+                boolean isDiagnostic = constants.isValidInteger(EventType);
+
+                // add data in header list
+                if (isDiagnostic) {   // Valid integer is Diagnostic
+                    diagnosticHeaderList.add(headerModel);
+                    diagnosticChildHashMap.put(EventType, malfunctionChildList);
+
+                } else { // InValid integer is Malfunction
+                    malfunctionHeaderList.add(headerModel);
+                    malfunctionChildHashMap.put(EventType, malfunctionChildList);
+
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

@@ -215,7 +215,7 @@
         android:id="@+id/seqNoDotTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/seq_no"
+        android:text="@string/seq_id"
         android:textStyle="bold"
         android:paddingLeft="@dimen/margin_short_2"
         android:textSize="@dimen/text_size_16"

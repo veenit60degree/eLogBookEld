@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_18"
             android:textColor="@color/active_status_bg"
-            android:text="@string/sequenceId"
+            android:text="@string/Duration"
             android:gravity="center_horizontal"
             android:layout_weight="1"
 

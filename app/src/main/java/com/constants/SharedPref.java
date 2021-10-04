@@ -791,6 +791,31 @@ public class SharedPref {
 
     }
 
+
+    // Set App Restricted status -------------------
+    public static void SetAppRestrictedStatus( boolean IsAppRestricted, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsAppRestricted, IsAppRestricted);
+        editor.commit();
+    }
+
+
+
+    // Get App Restricted Status  -------------------
+    public static boolean IsAppRestricted(Context context) {
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsAppRestricted, false);
+        }
+        return isRecord;
+
+
+    }
+
+
     // Get Unidentified Records alert view Status for co driver-------------------
     public static boolean getUnidentifiedAlertViewStatusCo( Context context) {
 
@@ -2577,6 +2602,21 @@ public class SharedPref {
     public static String getClearEventCallTime(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("ClearEventCalledTime", "");
+    }
+
+
+    // Set Clear malfunction Event Called Time  -------------------
+    public static void setClearMalCallTime(String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ClearMalCalledTime", savedTime);
+        editor.commit();
+    }
+
+    // Get Clear malfunction event last Called Time -------------------
+    public static String getClearMalCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("ClearMalCalledTime", "");
     }
 
 

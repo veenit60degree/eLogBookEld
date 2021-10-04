@@ -753,11 +753,11 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             enginePwrDotListView.setAdapter(canDotEnginePowerAdapter);
         }catch (Exception e){}
 
-      /*  try {
+        try {
             canDotUnAssignedVehAdapter = new CanDotUnAssignedVehAdapter(getActivity(), UnAssignedVehicleList);
             unIdnfdVehDotListView.setAdapter(canDotUnAssignedVehAdapter);
         }catch (Exception e){}
-*/
+
 
 
         try {
@@ -788,13 +788,14 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             if(LoginLogoutList.size() > 0){
                 HeaderViewCount = LoginLogoutList.get(LoginLogoutList.size()-1).getHeaderViewCount();
             }
-            int dividerHeight = constants.intToPixel(getActivity(), remAnotnDotListView.getDividerHeight());
+            int dividerHeight = 1; //remAnotnDotListView.getDividerHeight();
+            int dividerHeightInPx = constants.intToPixel(getActivity(), dividerHeight);
             final int DutyStatusListHeight = getHeight(inspectionLayHeight, DutyStatusList, headerViewHeight, dividerHeight);
-            final int LoginLogoutListHeight = getHeight(inspectionLayHeight, LoginLogoutList, headerViewHeight * HeaderViewCount, dividerHeight);
+            final int LoginLogoutListHeight = getHeight(inspectionLayHeight, LoginLogoutList, headerViewHeight, dividerHeight);
             final int CommentsRemarksListHeight = getHeight(inspectionLayHeight, CommentsRemarksList, 1, dividerHeight);
             final int CycleOpZoneListHeight = getHeight(inspectionLayHeight, CycleOpZoneList, headerViewHeight, dividerHeight);
             final int EnginePowerListHeight = getHeight(inspectionLayHeight, EnginePowerList, headerViewHeight, dividerHeight);
-           // final int UnIdenfdVehListHeight = (inspectionLayHeight * UnAssignedVehicleList.size()+1) + headerViewHeight;
+            final int UnIdenfdVehListHeight = (inspectionLayHeight * UnAssignedVehicleList.size()+1) + headerViewHeight + (dividerHeight * UnAssignedVehicleList.size());
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -804,7 +805,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CommentsRemarksListHeight));
                     cycleOpZoneDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CycleOpZoneListHeight));
                     enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, EnginePowerListHeight));
-                 //   unIdnfdVehDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, UnIdenfdVehListHeight));
+                    unIdnfdVehDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, UnIdenfdVehListHeight));
 
                 }
             }, 500);
@@ -1051,7 +1052,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             currTotalEngTV.setText(currTotalEng);
 
 
-            String currentCycle = "";
+        /*    String currentCycle = "";
             if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
 
                 if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
@@ -1066,7 +1067,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     currentCycle = "CAN Cycle \n" + DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleName, getActivity());
                 }
             }
-            curreCycleCTV.setText(currentCycle);
+            curreCycleCTV.setText(currentCycle);*/
 
             JSONObject DriverLogDetailModelObj = new JSONObject(dataObj.getString("DriverLogDetailModel"));
             JSONObject RulesApiModelNewCanadaObj = new JSONObject(DriverLogDetailModelObj.getString("RulesApiModelNewCanada"));
@@ -1172,7 +1173,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                         CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList, true);
                         EnginePowerList = constants.parseCanadaDotInList(enginePowerArray, true);
 
-                       // UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
+                        UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
 
                         setdataOnAdapter();
                         setDataOnTextView(dataObj);

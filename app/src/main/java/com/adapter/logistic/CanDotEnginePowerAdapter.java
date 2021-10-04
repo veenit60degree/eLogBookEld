@@ -95,12 +95,20 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
         try {
             if (position == 0) {
                 holder.dateTimeDiffEngineTV.setVisibility(View.VISIBLE);
-                holder.dateTimeDiffEngineTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+               // holder.dateTimeDiffEngineTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                if(EventDateTime.length() >= 19) {
+                    holder.dateTimeDiffEngineTV.setText(EventDateTime.substring(11, 19));
+                }
             } else {
                 int dayDiff = constants.getDayDiff(itemsList.get(position-1).getDateTimeWithMins(), EventDateTime);
                 if (dayDiff != 0){
                     holder.dateTimeDiffEngineTV.setVisibility(View.VISIBLE);
-                    holder.dateTimeDiffEngineTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                   // holder.dateTimeDiffEngineTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+
+                    if(EventDateTime.length() >= 19) {
+                        holder.dateTimeDiffEngineTV.setText(EventDateTime.substring(11, 19));
+                    }
+
                 }
             }
         }catch (Exception e){

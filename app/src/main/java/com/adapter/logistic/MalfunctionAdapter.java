@@ -100,7 +100,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         TextView statusMalTxtVw = (TextView) convertView.findViewById(R.id.statusMalTxtVw);
         TextView vehMilesMalTxtVw = (TextView) convertView.findViewById(R.id.vehMilesMalTxtVw);
         TextView engHoursMalTxtVw = (TextView) convertView.findViewById(R.id.engHoursMalTxtVw);
-        TextView seqIdMalTxtVw = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
+        TextView durationTxtVw = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
         TextView originMalTxtVw = (TextView) convertView.findViewById(R.id.originMalTxtVw);
 
         try{
@@ -116,21 +116,25 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             originMalTxtVw.setText("");
             originMalTxtVw.setVisibility(View.GONE);
 
-            if(childData.getHexaSequenceNo().length() > 0){
+          /*  if(childData.getHexaSequenceNo().length() > 0){
                 seqIdMalTxtVw.setText(childData.getHexaSequenceNo());
             }else{
                 seqIdMalTxtVw.setText(childData.getSequenceNo());
-            }
+            }*/
+            durationTxtVw.setText(childData.getId() + " min");   //TotalMinutes value is passing in getId()
+
+            String distance = childData.getMiles();
             if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
-                if(childData.getMiles().equals("--") || childData.getMiles().length() == 0){
+                if(distance.equals("--") || distance.length() == 0){
                     vehMilesMalTxtVw.setText("--");
                 }else {
-                    double miles = Double.parseDouble(childData.getMiles());
-                    String milesInKm = constants.Convert2DecimalPlacesDouble(constants.milesToKm(miles));
-                    vehMilesMalTxtVw.setText(milesInKm);
+                   // double miles = Double.parseDouble(distance);
+                   // String milesInKm = constants.Convert2DecimalPlacesDouble(constants.milesToKm(miles));
+                  //  vehMilesMalTxtVw.setText(constants.getBeforeDecimalValue(milesInKm));
+                    vehMilesMalTxtVw.setText(distance);
                 }
             }else{
-                vehMilesMalTxtVw.setText(childData.getMiles());
+                vehMilesMalTxtVw.setText(distance); //constants.getBeforeDecimalValue(
             }
 
             LinearLayout malfunctionChildLay = (LinearLayout)convertView.findViewById(R.id.malfunctionChildLay);
@@ -254,7 +258,14 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             holder.malfunctionChildMainLay.setVisibility(View.GONE);
         }
 
-        if(headerModel.isCleared() || headerModel.isOffline()){
+        if(headerModel.getEventCode().equals(Constants.UnIdentifiedDrivingDiagnostic) && headerModel.isOffline() == false){
+            holder.clearEventBtn.setVisibility(View.VISIBLE);
+        }else{
+            holder.clearEventBtn.setVisibility(View.GONE);
+        }
+
+
+   /*     if(headerModel.isCleared() || headerModel.isOffline()){
             holder.clearEventBtn.setVisibility(View.GONE);
         }else {
             if (constants.isValidInteger(headerModel.getEventCode())) {
@@ -272,7 +283,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                     holder.clearEventBtn.setVisibility(View.VISIBLE);
                 }
             }
-        }
+        }*/
 
 
         holder.clearEventBtn.setOnClickListener(new View.OnClickListener() {

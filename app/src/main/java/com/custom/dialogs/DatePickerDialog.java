@@ -86,6 +86,10 @@ public class DatePickerDialog extends Dialog {
         Calendar calendar       = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getDefault());
 
+        setDateJob = (Button)findViewById(R.id.setDate);
+        setDateJob.setText("Show Details");
+
+
         int DRIVER_ID           = Integer.valueOf(SharedPref.getDriverId(getContext()));
         JSONObject logPermissionObj    = driverPermissionMethod.getDriverPermissionObj(DRIVER_ID, dbHelper);
         IsDot                   = SharedPref.IsDOT(getContext());
@@ -110,6 +114,9 @@ public class DatePickerDialog extends Dialog {
                     DriverPermitMaxDays = 7;
                 }
 
+                if(cycleArray[1].equals("sendLog")){
+                    setDateJob.setText("Select Date");
+                }
             } else {
                 DriverPermitMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, IsDot);
             }
@@ -127,8 +134,6 @@ public class DatePickerDialog extends Dialog {
             datePicker.updateDate(selectedYear, selectedMonth - 1, selectedDay);    // yy mm dd
         }
 
-        setDateJob = (Button)findViewById(R.id.setDate);
-        setDateJob.setText("Show Details");
 
         setDateJob.setOnClickListener(new DateJobListener());
 

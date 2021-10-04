@@ -36,6 +36,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.background.service.BackgroundLocationService;
 import com.custom.dialogs.LoginDialog;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
@@ -44,7 +45,9 @@ import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.local.db.RecapViewMethod;
+import com.messaging.logistic.EldActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
@@ -101,6 +104,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	private Vector<AlertDialog> vectorDialogs = new Vector<AlertDialog>();
 	RecapViewMethod recapViewMethod;
 	DriverPermissionMethod driverPermissionMethod;
+	MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
 
 
 	public Slidingmenufunctions() {
@@ -119,6 +123,8 @@ public class Slidingmenufunctions implements OnClickListener {
 		global			 = new Globally();
 		hMethod			 = new HelperMethods();
 		dbHelper 		 = new DBHelper(context);
+		malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
+
 		saveDriverLogPost = new SaveDriverLogPost(context, saveLogRequestResponse);
 		dialog			 = new ProgressDialog(context);
 
@@ -174,7 +180,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void listItemClick(int status){
 
-		//boolean isActionAllowedWithCoDriver = constants.isActionAllowedWithCoDriver(context, dbHelper, hMethod, global, SharedPref.getDriverId(context));
+		boolean isActionAllowedWithCoDriver = constants.isActionAllowedWithCoDriver(context, dbHelper, hMethod, global, SharedPref.getDriverId(context));
 
 		switch (status){
 
@@ -184,11 +190,11 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.PTI_INSPECTION:
-				//if(isActionAllowedWithCoDriver) {
+				if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(4);
-				/*}else{
+				}else{
 					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
-				}*/
+				}
 				break;
 
 			case Constants.CT_PAT_INSPECTION:
@@ -751,6 +757,13 @@ public class Slidingmenufunctions implements OnClickListener {
 							RefreshActivity();
 							global.hideKeyboardView(context, PasswordEditText);
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
+
+
+							Constants.isCallMalDiaEvent = true;
+							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
+							startService();
+
+
 						}else{
 							global.EldScreenToast(UsernameEditText, "Incorrect Password", eldWarningColor );
 						}
@@ -767,6 +780,13 @@ public class Slidingmenufunctions implements OnClickListener {
 
 							RefreshActivity();
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
+
+
+							Constants.isCallMalDiaEvent = true;
+							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
+							startService();
+
+
 						}else{
 							global.EldScreenToast(UsernameEditText, "Incorrect password", eldWarningColor );
 						}
@@ -778,6 +798,22 @@ public class Slidingmenufunctions implements OnClickListener {
 
 		}
 	}
+
+
+	private void startService(){
+
+		// update malfunction/diagnostic status with offline records
+		malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(global, constants, dbHelper, context);
+
+		Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
+		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			context.startForegroundService(serviceIntent);
+		}
+		context.startService(serviceIntent);
+
+	}
+
+
 
 
 	/*================== Logout User ===================*/

@@ -1,6 +1,7 @@
 package com.adapter.logistic;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,12 +97,18 @@ public class CanDotCycleOpZoneAdapter extends BaseAdapter {
         try {
             if (position == 0) {
                 holder.dateTimeDiffCycleTV.setVisibility(View.VISIBLE);
-                holder.dateTimeDiffCycleTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+              //  holder.dateTimeDiffCycleTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                if(EventDateTime.length() >= 19) {
+                    holder.dateTimeDiffCycleTV.setText(EventDateTime.substring(11, 19));
+                }
             } else {
                 int dayDiff = constants.getDayDiff(itemsList.get(position-1).getDateTimeWithMins(), EventDateTime);
                 if (dayDiff != 0){
                     holder.dateTimeDiffCycleTV.setVisibility(View.VISIBLE);
-                    holder.dateTimeDiffCycleTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                   // holder.dateTimeDiffCycleTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                    if(EventDateTime.length() >= 19) {
+                        holder.dateTimeDiffCycleTV.setText(EventDateTime.substring(11, 19));
+                    }
                 }
             }
         }catch (Exception e){
@@ -118,9 +125,7 @@ public class CanDotCycleOpZoneAdapter extends BaseAdapter {
             holder.dateCycleDotTV.setText(EventDateTime.substring(11, 19));
         }
 
-        holder.eventCycleEventTV.setText( constants.getCycleOpZoneEventName(
-                                                        itemsList.get(position).getEventType(),
-                                                        itemsList.get(position).getEventCode()) );
+        holder.eventCycleEventTV.setText(Html.fromHtml(itemsList.get(position).getRemarks()) ); // constants.getCycleOpZoneEventName( itemsList.get(position).getEventType(), itemsList.get(position).getEventCode())
 
         holder.geoLocCycleTV.setText(itemsList.get(position).getAnnotation());
         holder.latLongCycleTV.setText(constants.checkNullString(itemsList.get(position).getGPSLatitude()) + ", "+

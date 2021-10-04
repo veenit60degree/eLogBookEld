@@ -7,14 +7,16 @@ public class MalfunctionHeaderModel {
     String EventDesc;
     boolean IsCleared;
     boolean IsOffline;
+    String position;
 
     public MalfunctionHeaderModel(String eventName, String eventCode, String eventDesc,
-                                  boolean isCleared, boolean isOffline) {
+                                  boolean isCleared, boolean isOffline, String pos) {
         EventName = eventName;
         EventCode = eventCode;
         EventDesc = eventDesc;
         IsCleared = isCleared;
         IsOffline = isOffline;
+        position  = pos;
     }
 
     public String getEventName() {
@@ -35,5 +37,9 @@ public class MalfunctionHeaderModel {
 
     public boolean isOffline() {
         return IsOffline;
+    }
+
+    public String getPosition() {
+        return position;
     }
 }

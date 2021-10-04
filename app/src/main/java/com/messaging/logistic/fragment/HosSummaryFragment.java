@@ -32,6 +32,7 @@ import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
+import com.constants.CsvReader;
 import com.constants.InitilizeEldView;
 import com.constants.LoadingSpinImgView;
 import com.constants.SharedPref;
@@ -127,6 +128,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     boolean IsAOBRDAutomatic = true, isSingleDriver;
     boolean isRefreshBtnClicked = false, isMinOffDutyHoursSatisfied = false;
 
+    CsvReader csvReader;
     DateTime currentDateTime , currentUTCTime;
     List<String> StateArrayList;
     List<DriverLocationModel> StateList;
@@ -178,6 +180,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         initilizeEldView        = new InitilizeEldView();
         constants               = new Constants();
         global                  = new Globally();
+        csvReader               = new CsvReader();
         hMethods                = new HelperMethods();
         dbHelper                = new DBHelper(getActivity());
         localCalls              = new LocalCalls();
@@ -741,43 +744,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    void calculateLocalOdometersDistance(){
-        try{
 
-            String dayStartSavedDate    = SharedPref.getDayStartSavedTime(getActivity());
-            String dayStartOdometerStr  = SharedPref.getDayStartOdometer(getActivity());
-            String currentOdometerStr   = SharedPref.getHighPrecisionOdometer(getActivity());
-
-         //   dayStartOdometerStr = "0";
-         //   currentOdometerStr = "1145713860";
-
-            if(dayStartSavedDate.length() > 0) {
-                int dayDiff = constants.getDayDiff(dayStartSavedDate, global.getCurrentDate());
-                if (dayDiff == 0) {
-                    if (SharedPref.getObdStatus(getActivity()) == Constants.WIRED_CONNECTED || SharedPref.getObdStatus(getActivity()) == Constants.WIFI_CONNECTED
-                            || SharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED) {
-                        if (currentOdometerStr.contains(".")) {
-                            currentOdometerStr = "" + Double.parseDouble(currentOdometerStr) * 1000;
-                        }
-                    }
-
-                    int currentOdometerInMiles = constants.meterToMiles(Integer.valueOf(currentOdometerStr));
-                    int distanceInMiles = currentOdometerInMiles - Integer.valueOf(dayStartOdometerStr);
-
-                    String distanceAndVin = "(" + dayStartOdometerStr + " - " + currentOdometerInMiles + ") = <b>" + distanceInMiles + " Miles </b>";
-                    hosDistanceTV.setText(Html.fromHtml(distanceAndVin));
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
+// hosDistanceTV.setText(Html.fromHtml(distanceAndVin));
     void CycleTimeCalculation(boolean isUpdateUI ) {
 
         try {
 
-            calculateLocalOdometersDistance();
+            hosDistanceTV.setText(Html.fromHtml(constants.calculateLocalOdometersDistance(getActivity())));
 
             if (isUpdateUI && global.isConnected(getActivity())) {
                 GetAddFromLatLng();
@@ -878,7 +851,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     setProgressbarValues(shiftCircularView, shiftUsedTimeTV, UsedShiftHoursInt, LeftShiftHoursInt);
                     setProgressViolationColor(shiftCircularView, LeftShiftHoursInt);
 
-                    hosLocationTV.setText(Globally.LATITUDE + ", "+ Globally.LONGITUDE);
+                    hosLocationTV.setText(csvReader.getShortestAddress(getActivity()));
 
                     // set Engine hour
                    /* String engineHours = SharedPref.getObdEngineHours(getActivity());
@@ -1110,7 +1083,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                             hosLocationTV.setText(AddressLine);
                                         } else {
                                             if(Globally.LATITUDE.length() > 4) {
-                                                hosLocationTV.setText(Globally.LATITUDE + ", " + Globally.LONGITUDE);
+                                                hosLocationTV.setText(csvReader.getShortestAddress(getActivity()));
                                             }
                                         }
 

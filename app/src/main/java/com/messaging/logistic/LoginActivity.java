@@ -592,7 +592,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setDeferralForMain(false, "", "0", getApplicationContext());
 			SharedPref.setDeferralForCo(false, "", "0", getApplicationContext());
 			SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
-			//SharedPref.saveLocDiagnosticStatus(false, "", "", getApplicationContext());
+			SharedPref.SaveTruckInfoOnIgnitionChange("", "","", "",
+								"0", "0", getApplicationContext());
 
 			constants.saveMalfncnStatus(getApplicationContext(), false);
 

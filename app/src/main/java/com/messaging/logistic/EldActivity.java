@@ -1,5 +1,7 @@
 package com.messaging.logistic;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,11 +12,13 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.background.service.BackgroundLocationService;
 import com.constants.Constants;
 import com.constants.ExitStrategy;
 import com.constants.SharedPref;
 import com.custom.dialogs.LoginDialog;
 import com.driver.details.DriverConst;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.fragment.EldFragment;
 
 /**
@@ -160,6 +164,7 @@ public class EldActivity extends FragmentActivity  {
                                     fragManager.popBackStack();
                                 }
                                 isOnStart = false;
+
 
                             } else {
                                 globally.EldScreenToast(UsernameEditText, "Incorrect password", getResources().getColor(R.color.colorSleeper));

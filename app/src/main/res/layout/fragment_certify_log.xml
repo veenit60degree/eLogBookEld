@@ -325,12 +325,11 @@
                         android:id="@+id/certifyDistanceTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
                         android:text="@string/mileage"
                         android:textColor="@color/color_eld_theme"
-                        android:layout_centerVertical="true"
                         android:textSize="@dimen/text_size_16"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/certifyDistanceTV"

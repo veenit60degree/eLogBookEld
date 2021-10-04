@@ -545,7 +545,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         deferralSwitchButton.setChecked(isDeferral);
 
         if(constants.isLocMalfunctionEvent(getActivity(), DriverType) && SharedPref.getLocationEventType( getContext()).equals("x")){
-            // SharedPref.setLocationEventType("m", getContext());
             LocationType = "m";
         }
 

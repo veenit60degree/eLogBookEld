@@ -47,6 +47,7 @@ import com.android.volley.toolbox.Volley;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
+import com.constants.CsvReader;
 import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
@@ -149,6 +150,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     JSONArray inspectionUnPostedArray = new JSONArray();
     SaveDriverLogPost saveInspectionPost;
     Constants constants;
+    CsvReader csvReader;
 
 
     @Override
@@ -167,6 +169,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     void initView(View view) {
 
+        csvReader = new CsvReader();
         constants = new Constants();
         hMethods = new HelperMethods();
         inspectionMethod = new InspectionMethod();
@@ -368,7 +371,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             locInspTitleTV.setText("Enter City");
             AobrdLocLay.setVisibility(View.VISIBLE);
             locInspectionTV.setVisibility(View.GONE);
-            changeLocBtn.setVisibility(View.GONE);
 
             cityEditText.setText(EldFragment.City);
             cityEditText.setSelection(EldFragment.City.length());
@@ -378,6 +380,14 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 Country = StateList.get(EldFragment.OldSelectedStatePos).getCountry();
             }
 
+            if(Globally.LATITUDE.length() < 5){
+                changeLocBtn.setVisibility(View.VISIBLE);
+            }else{
+                if(Globally.isConnected(getActivity()) == false)
+                    locInspectionTV.setText(csvReader.getShortestAddress(getActivity()));
+
+                changeLocBtn.setVisibility(View.GONE);
+            }
         }else {
             locInspTitleTV.setText(getResources().getString(R.string.loc_of_inspection));
             AobrdLocLay.setVisibility(View.GONE);
@@ -435,12 +445,14 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             JSONObject lastItemJson = hMethods.GetLastJsonFromArray(driverLogArray);
 
             Location = lastItemJson.getString(ConstantsKeys.StartLocation);
-            if(Location.contains("null"))
-                Location = Globally.LATITUDE + ", " + Globally.LONGITUDE;
-
+            if(Location.contains("null") || Location.equals(getString(R.string.no_location_found))) {
+                Location = csvReader.getShortestAddress(getActivity());
+                changeLocBtn.setVisibility(View.VISIBLE);
+            }
             if (Globally.isConnected(getActivity()) && Globally.LATITUDE.length() > 5) {
                 GetAddFromLatLng(Globally.LATITUDE, Globally.LONGITUDE);
             }else{
+                locInspectionTV.setText(csvReader.getShortestAddress(getActivity()));
                 changeLocBtn.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
@@ -1293,6 +1305,10 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         if(isLocationChange){
             Location = locInspectionTV.getText().toString().trim();
+        }else{
+            if(Location.length() == 0){
+                Location = locInspectionTV.getText().toString().trim();
+            }
         }
 
         isLocationChange = false;
@@ -1526,7 +1542,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                                     Location    = dataJObject.getString(ConstantsKeys.Location);
 
                                     if (Country.contains("China") || Country.contains("Russia") || Country.contains("null")) {
-                                        Location = Globally.LATITUDE + ","+Globally.LONGITUDE;
+                                        Location = csvReader.getShortestAddress(getActivity());
+                                        changeLocBtn.setVisibility(View.VISIBLE);
                                     }/*else {
                                         if (!Location.contains(Country)) {
                                             Location = dataJObject.getString(ConstantsKeys.Location) + ", " + Country;

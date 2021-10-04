@@ -13,6 +13,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -1943,12 +1944,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         distance = 0;
                     }
 
-
-                    EngineMileage =  new DecimalFormat("##.##").format(distance);
-                    certifyDistanceTV.setText(EngineMileage + " miles ");
+                    EngineMileage =  constants.getOdometersDistance(getActivity());  // new DecimalFormat("##.##").format(distance);
+                    certifyDistanceTV.setText(EngineMileage);
                 }else {
                     CalculateCycleTime(selectedDateTime, selectedUtcTime, isSingleDriver, false);
-                    certifyDistanceTV.setText("0");
+                    certifyDistanceTV.setText("--");
                 }
 
                 if(isExceptionEnabledForDay){
