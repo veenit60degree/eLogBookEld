@@ -574,13 +574,15 @@
                         >
 
 
-
                         <at.grabner.circleprogress.CircleProgressView
                             android:id="@+id/statusCircularView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_short_3"
                             android:layout_centerInParent="true"
+                            android:layout_marginStart="@dimen/margin_short_3"
+                            android:layout_marginTop="@dimen/margin_short_3"
+                            android:layout_marginEnd="@dimen/margin_short_3"
+                            android:layout_marginBottom="@dimen/margin_short_3"
                             CircleProgressView:cpv_autoTextSize="true"
                             CircleProgressView:cpv_barColor="@color/hos_current_status"
                             CircleProgressView:cpv_barWidth="@dimen/margin_10"
@@ -592,13 +594,12 @@
                             CircleProgressView:cpv_seekMode="true"
                             CircleProgressView:cpv_showUnit="true"
                             CircleProgressView:cpv_spinColor="@color/hos_current_status"
+
                             CircleProgressView:cpv_textColor="@color/hos_current_status"
                             CircleProgressView:cpv_textScale="0"
                             CircleProgressView:cpv_unitColor="@color/white"
                             CircleProgressView:cpv_unitPosition="right_top"
-                            CircleProgressView:cpv_unitScale="0"
-
-                            />
+                            CircleProgressView:cpv_unitScale="0" />
 
 
 

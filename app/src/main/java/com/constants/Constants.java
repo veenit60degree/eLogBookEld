@@ -79,6 +79,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -116,8 +117,8 @@ public class Constants {
     public static String PositionComplianceMalfunction  = "L";
 
 
-
-
+    public static int PowerEngSyncMalOccTime            = 30;   // in min
+    public static int PositioningMalOccTime             = 60;   // in min
 
 
     public static boolean IsAlreadyViolation = false;
@@ -269,6 +270,9 @@ public class Constants {
     public static boolean isClearMissingCompEvent   = false;
     public static boolean isPcYmAlertButtonClicked   = false;
 
+    public static boolean isDriverSwitchEvent   = false;
+    public static String lastDriverId = "0";
+
     public static int OFF_DUTY = 1;
     public static int SLEEPER  = 2;
     public static int DRIVING  = 3;
@@ -303,6 +307,7 @@ public class Constants {
     public static int SocketTimeout3Sec  = 3000;   // 3 seconds
     public static int SocketTimeout4Sec  = 4000;   // 3 seconds
     public static int SocketTimeout5Sec  = 5000;   // 5 seconds
+    public static int SocketTimeout6Sec  = 6000;   // 6 seconds
     public static int SocketTimeout8Sec  = 8000;   // 8 seconds
     public static int SocketTimeout10Sec = 10000;   // 10 seconds
     public static int SocketTimeout15Sec = 15000;   // 15 seconds
@@ -1266,16 +1271,45 @@ public class Constants {
         return distance;
     }
 
+    public static String meterToMilesWith2DecPlaces(String distance){
+        String miles = distance;
+        try {
+            double meter = Double.parseDouble(distance);
+            double meters2miles = 1609.344;
+            meter = (meter / meters2miles);
+            miles =  Convert2DecimalPlacesDouble(meter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return miles;
+    }
+
     public static String meterToKm(String odometer){
         try {
             double meter = Double.parseDouble(odometer);
-            odometer =  Convert2DecimalPlacesDouble(meter * 0.001);
+          //  odometer =  Convert2DecimalPlacesDouble(meter * 0.001);
+            meter = meter * 0.001;
+            odometer = ""+ meter ;
         }catch (Exception e){
             e.printStackTrace();
         }
         return odometer;
     }
 
+
+
+    public static String meterToKmWith2DecPlaces(String odometer){
+        try {
+            double meter = Double.parseDouble(odometer);
+            meter = meter * 0.001;
+            odometer =  Convert2DecimalPlacesDouble(meter);
+           // odometer = ""+ meter ;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return odometer;
+    }
 
     public static String meterToKmWithObd(String odometer){
         try {
@@ -2137,15 +2171,32 @@ public class Constants {
 
 
     public static String Convert2DecimalPlacesDouble(double value) {
+        String strValue = "";
         try{
-            return String.format("%.2f", value);
+            strValue = String.format("%.2f", value);
         }catch (Exception e){
             e.printStackTrace();
-            return ""+value;
+            strValue = ""+value;
         }
+
+        return strValue;
     }
 
-    public  boolean isValidData(String data){
+    public boolean isExponentialValue(String str) {
+        String CHAR1 = ".";             //   check for the presence of at least one letter
+        String CHAR2 =  "[0-9]+";       //   check for the presence of at least one number
+        String CHAR3 =  "[A-Za-z]";     //   check that only numbers and letters compose this string
+
+        if( str.contains(CHAR1) || (str.matches(CHAR2) && str.matches(CHAR3))){
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
+
+    public boolean isValidData(String data){
         boolean isValid = false;
         try{
             if(!data.equals("--") && !data.equals("0")) {
@@ -3290,13 +3341,32 @@ public class Constants {
                 DateTimeWithMins = DateTimeWithMins.substring(0, 19);
             }*/
 
+            int EventType = obj.getInt(ConstantsKeys.EventType);
+            int EventCode = obj.getInt(ConstantsKeys.EventCode);
+            String remarks = obj.getString(ConstantsKeys.Remarks);
+
+            if(EventType == 21){
+                if (EventCode == 1){
+                    remarks = "Cycle 1 (7 days)";
+                }else if (EventCode == 2){
+                    remarks = "Cycle 2  (14 days)";
+                }else if (EventCode == 3){
+                    remarks = "US (60/7)";
+                }else if (EventCode == 4) {
+                    remarks = "US (70/8)";
+                }else{
+                    remarks = "United State";
+                }
+            }
+
+
             CanadaDutyStatusModel dutyModel = new CanadaDutyStatusModel(
                     CheckDateFormat(obj.getString(ConstantsKeys.DateTimeWithMins)),
                     CheckDateFormat(obj.getString(ConstantsKeys.EventUTCTimeStamp)),
                     CheckNullBString(obj.getString(ConstantsKeys.DriverStatusID)),
 
-                    obj.getInt(ConstantsKeys.EventType),
-                    obj.getInt(ConstantsKeys.EventCode),
+                    EventType,
+                    EventCode,
                     CheckNullBString(obj.getString(ConstantsKeys.DutyMinutes)),
 
                     CheckNullBString(obj.getString(ConstantsKeys.Annotation)),
@@ -3323,7 +3393,7 @@ public class Constants {
                     CheckNullBString(obj.getString(ConstantsKeys.DriverLogId)),
                     CheckNullBString(obj.getString(ConstantsKeys.Truck)),
                     CheckNullBString(obj.getString(ConstantsKeys.Trailor)),
-                    CheckNullBString(obj.getString(ConstantsKeys.Remarks)),
+                    CheckNullBString(remarks),
                     CheckNullBString(obj.getString(ConstantsKeys.DriverId)),
 
                     obj.getBoolean(ConstantsKeys.IsPersonal),
@@ -3443,22 +3513,17 @@ public class Constants {
 
                 String odometerValue = SharedPref.getObdOdometer(context);
                 try{
-                    Double odometer = meterToMiles(Double.parseDouble(SharedPref.getObdOdometer(context)));
-                    odometerValue = String.valueOf(odometer);
+                    Double odometer = meterToMiles(Double.parseDouble(odometerValue));
+                    odometerValue = BigDecimal.valueOf(odometer).toPlainString();
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                /*  if (ObdStatus == Constants.WIRED_CONNECTED) {
-                    odometerValue = SharedPref.getObdOdometer(context);
-              } else {
-                    odometerValue = SharedPref.GetWifiObdOdometer(context);   // get odometer value from wifi obd
-                }*/
 
                 if (!odometerValue.equals("0")) {
                     if ((currentJobStatus == ON_DUTY || currentJobStatus == DRIVING) && (lastJobStatus == OFF_DUTY || lastJobStatus == SLEEPER) ||
                             (currentJobStatus == OFF_DUTY || currentJobStatus == SLEEPER) && (lastJobStatus == DRIVING || lastJobStatus == ON_DUTY)) {
 
-                        odometerhMethod.AddOdometerAutomatically(DriverId, DeviceId, String.valueOf(odometerValue), DriverStatusId, dbHelper, context);
+                        odometerhMethod.AddOdometerAutomatically(DriverId, DeviceId, odometerValue, DriverStatusId, dbHelper, context);
 
                     }
                 }
@@ -3556,7 +3621,7 @@ public class Constants {
 
 
     // ------------- Check Power Diagnostic/Malfunction status ---------------
-    public String isPowerDiaMalOccurred(String currentHighPrecisionOdometer, String ignitionStatus,
+    public String  isPowerDiaMalOccurred(String currentHighPrecisionOdometer, String ignitionStatus,
                                          String obdEngineHours, String DriverId, Globally global,
                                          MalfunctionDiagnosticMethod malfunctionDiagnosticMethod,
                                         boolean isPowerCompMalAllowed , boolean isPowerCompDiaAllowed,
@@ -3587,28 +3652,20 @@ public class Constants {
                     int minDiff = minDiff(lastSavedTime, global, context);
                     if (minDiff > 0) {
 
-                        if (isValidFloat(lastEngineHour) && isValidFloat(obdEngineHours)) {
-                           float lastEngineHrFloat = Float.parseFloat(lastEngineHour) * 60;
-                           float currentEngineHrFloat = Float.parseFloat(obdEngineHours) * 60;
-                            engineHrDiffInMin = currentEngineHrFloat - lastEngineHrFloat;
-                        }
+                        engineHrDiffInMin = getEngineHourDiff(lastEngineHour, obdEngineHours);
 
                        /* if (isValidFloat(currentHighPrecisionOdometer) && isValidFloat(lastOdometer)) {
                             odoDiff = Float.parseFloat(meterToKm(currentHighPrecisionOdometer)) - Float.parseFloat(meterToKm(lastOdometer));
                         }*/
 
-                        if (engineHrDiffInMin >  1) {    //|| odoDiff >= 2
+                        if (engineHrDiffInMin >  1) {
 
-                            //DateTime currentTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
-
-                            // add/update dia/mal occured time in powerMalDia table
-                           // malfunctionDiagnosticMethod.updatePowerOccEventLog(currentTime, engineHrDiffInMin, dbHelper);
 
                             double previousLocDiaTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(PowerComplianceDiagnostic, dbHelper);
                            // int earlierEventTime = malfunctionDiagnosticMethod.getTotalPowerComplianceMin(dbHelper);
                             double totalDuration = engineHrDiffInMin + previousLocDiaTime; // add earlier diagnostic time within 24 hr with current time
 
-                            if (totalDuration >= 30) {  // Temp add 30. Actual malfunction event time is 60 min
+                            if (totalDuration >= PowerEngSyncMalOccTime) {
 
                                 if(isPowerCompMalAllowed) {
                                     if (SharedPref.isPowerMalfunctionOccurred(context)) {
@@ -3658,7 +3715,10 @@ public class Constants {
                         }
                         // save updated values with truck ignition status
                         SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, WiredOBD, global.getCurrentDate(),
-                                global.GetCurrentUTCTimeFormat(), obdEngineHours, currentHighPrecisionOdometer, context);
+                                global.GetCurrentUTCTimeFormat(),
+                                SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, context),
+                                SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, context),
+                                context);
 
                         constants.saveObdData("wired_obd",  "Save Truck Info - MethodCall1 - Ignition: " + ignitionStatus ,
                                 "", currentHighPrecisionOdometer,
@@ -3711,6 +3771,27 @@ public class Constants {
     }
 
 
+    public float getEngineHourDiff(String lastEngineHour, String currentEngineHour){
+        float engineHourDiff = 0;
+
+        if (isValidFloat(lastEngineHour) && isValidFloat(currentEngineHour)) {
+            float lastEngineHrFloat = Float.parseFloat(lastEngineHour) * 60;
+            float currentEngineHrFloat = Float.parseFloat(currentEngineHour) * 60;
+            engineHourDiff = currentEngineHrFloat - lastEngineHrFloat;
+        }
+
+        return engineHourDiff;
+    }
+
+
+    public boolean isMalfunction(String EventCode){
+        if(EventCode.equals(Constants.PowerComplianceMalfunction) || EventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
+                EventCode.equals(Constants.PositionComplianceMalfunction)){
+            return true;
+        }else {
+            return false;
+        }
+    }
 
     public void saveObdData(String source, String vin, String odometer, String HighPrecisionOdometer,
                              String obdOdometerInMeter, String correctedData, String ignition, String rpm,
@@ -3858,7 +3939,7 @@ public class Constants {
 
                                 minDiff = minDiff + previousOccEventTime;
 
-                                if (minDiff >= 30) {   //temp value 30 for testing. After 60 min it will become e type on loc mal
+                                if (minDiff >= PositioningMalOccTime) {
                                     // Save Position malfunction event status if earlier status was false
                                     SharedPref.saveLocMalfunctionOccurStatus(true, Globally.GetCurrentDateTime(),
                                             Globally.GetCurrentUTCTimeFormat(), context);
@@ -3904,37 +3985,38 @@ public class Constants {
         SharedPref.savePowerMalfunctionOccurStatus(false, false, "", context);
        // SharedPref.saveLocDiagnosticStatus(false, "", "",context);
         SharedPref.saveLocMalfunctionOccurStatus(false, "", "", context);
+
     }
 
 
 
     public void saveDiagnstcStatus(Context context, boolean isDiagnosticOccur){
-        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+      //  if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
             SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(context),
                     SharedPref.isMalfunctionOccur(context),
                     isDiagnosticOccur,
                     SharedPref.isSuggestedEditOccur(context), context);
-        }else{
+      //  }else{
             SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccurCo(context),
                     SharedPref.isMalfunctionOccurCo(context),
                     isDiagnosticOccur,
                     SharedPref.isSuggestedEditOccurCo(context), context);
-        }
+       // }
 
     }
 
     public void saveMalfncnStatus(Context context, boolean isMalfncnOccur){
-        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+       // if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
             SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(context),
                     isMalfncnOccur,
                     SharedPref.isDiagnosticOccur(context),
                     SharedPref.isSuggestedEditOccur(context), context);
-        }else{
+     /*   }else{
             SharedPref.setEldOccurencesCo(SharedPref.isUnidentifiedOccurCo(context),
                     isMalfncnOccur,
                     SharedPref.isDiagnosticOccurCo(context),
                     SharedPref.isSuggestedEditOccurCo(context), context);
-        }
+        }*/
 
     }
 

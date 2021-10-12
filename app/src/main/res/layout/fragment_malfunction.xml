@@ -8,10 +8,9 @@
 
     <include
         android:id="@+id/malfunctionActionBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         layout="@layout/actionbar_eld"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <ExpandableListView
         android:id="@+id/malfunctionExpandList"

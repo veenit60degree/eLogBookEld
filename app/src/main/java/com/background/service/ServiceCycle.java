@@ -590,11 +590,18 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 }
 
                                                 if (VehicleSpeed >= DrivingSpeedLimit ) {
+
+                                                    if (BackgroundLocationService.IsAutoChange){
+                                                        dismissEngineRestartDialog(true);
+                                                    }
                                                     Constants.isPcYmAlertButtonClicked = false;
                                                     LastStatus = "_YMNotConfirmed_From_" + DRIVER_JOB_STATUS;
                                                     CHANGED_STATUS = DRIVING;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                             driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+
+
+
                                                 }
 
 
@@ -684,7 +691,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 message = "Duty status switched to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
 
                                             } else {
-                                                LastStatus = "_PU_NotConfirmedAfterLogin" ;
+
+                                                dismissEngineRestartDialog(true);
+                                                LastStatus = "_PU_NotConfirmedAfterEngineRestart" ;
 
                                                 // set value false when status will be changed to driving.
                                                 SharedPref.SetTruckStartLoginStatus(false, context);
@@ -1463,20 +1472,24 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         constants.IsAlreadyViolation = false;
         sendBroadCast(true, false, false);
 
-        if(TabAct.host.getCurrentTab() != 0) {   // this parameter is used to auto dismiss engine restart alert because driver was not confirming and status is changed due to speed at Tab Host activity.
-            Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
-            intent.putExtra(ConstantsKeys.PersonalUse75Km, false);
-            intent.putExtra(ConstantsKeys.IsPcYmAlertChangeStatus, isPcYmAlertChangeStatus);
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-        }
-
-        isPcYmAlertChangeStatus = false;
-
         Log.d("Saved Status", "--- service DriverStatusId: "+DriverStatusId);
 
     }
 
 
+    void dismissEngineRestartDialog(boolean status){
+        try{
+            // this parameter is used to auto dismiss engine restart alert because driver was not confirming and status is changed due to speed at Tab Host activity.
+                Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                intent.putExtra(ConstantsKeys.PersonalUse75Km, false);
+                intent.putExtra(ConstantsKeys.IsPcYmAlertChangeStatus, status);
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+            isPcYmAlertChangeStatus = false;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private void sendBroadCast(boolean IsAutoStatusSaved, boolean changedToOther, boolean IsNeedToUpdate18DaysLog){
         try {

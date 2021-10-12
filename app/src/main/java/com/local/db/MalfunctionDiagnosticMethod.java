@@ -27,10 +27,10 @@ public class MalfunctionDiagnosticMethod {
 
 
     /*-------------------- GET MALFUNCTION & DIAGNOSTIC LOG SAVED Array -------------------- */
-    public JSONArray getSavedMalDiagstcArray(int DriverId, DBHelper dbHelper){
+    public JSONArray getSavedMalDiagstcArray( DBHelper dbHelper){
 
         JSONArray logArray = new JSONArray();
-        Cursor rs = dbHelper.getMalfunctionDiagnosticLog(DriverId);
+        Cursor rs = dbHelper.getMalfunctionDiagnosticLog(Globally.PROJECT_ID_INT);
 
         if(rs != null && rs.getCount() > 0) {
             rs.moveToFirst();
@@ -51,15 +51,15 @@ public class MalfunctionDiagnosticMethod {
     }
 
     /*-------------------- MALFUNCTION & DIAGNOSTIC DB Helper -------------------- */
-    public void MalfnDiagnstcLogHelper( int driverId, DBHelper dbHelper, JSONArray eventArray){
+    public void MalfnDiagnstcLogHelper(DBHelper dbHelper, JSONArray eventArray){
 
-        Cursor rs = dbHelper.getMalfunctionDiagnosticLog(driverId);
+        Cursor rs = dbHelper.getMalfunctionDiagnosticLog(Globally.PROJECT_ID_INT);
 
         if(rs != null & rs.getCount() > 0) {
             rs.moveToFirst();
-            dbHelper.UpdateMalfunctionDiagnosticLog(driverId, eventArray );        // UPDATE MALFUNCTION & DIAGNOSTIC LOG ARRAY
+            dbHelper.UpdateMalfunctionDiagnosticLog(Globally.PROJECT_ID_INT, eventArray );        // UPDATE MALFUNCTION & DIAGNOSTIC LOG ARRAY
         }else{
-            dbHelper.InsertMalfncnDiagnosticLog( driverId, eventArray  );      // INSERT MALFUNCTION & DIAGNOSTIC LOG ARRAY
+            dbHelper.InsertMalfncnDiagnosticLog( Globally.PROJECT_ID_INT, eventArray  );      // INSERT MALFUNCTION & DIAGNOSTIC LOG ARRAY
         }
         if (!rs.isClosed()) {
             rs.close();
@@ -105,11 +105,11 @@ public class MalfunctionDiagnosticMethod {
 
 
 
-    public boolean isUnPostedOfflineEvent(String DriverId, String EventType, DBHelper dbHelper){
+    public boolean isUnPostedOfflineEvent(String EventType, DBHelper dbHelper){
 
         boolean isUnpostedEvent = false;
         try{
-            JSONArray malArray = getSavedMalDiagstcArray(Integer.parseInt(DriverId), dbHelper);
+            JSONArray malArray = getSavedMalDiagstcArray( dbHelper);
             for(int i = malArray.length()-1 ; i >= 0; i-- ){
                 JSONObject obj = (JSONObject) malArray.get(i);
                 if(obj.getString(ConstantsKeys.DiagnosticType).equals(EventType) && obj.getBoolean(ConstantsKeys.IsCleared) == false){
@@ -125,10 +125,10 @@ public class MalfunctionDiagnosticMethod {
 
 
     // Check all events if not posted to server.
-    public boolean isUnPostAnyEvent(String DriverId, DBHelper dbHelper){
+    public boolean isUnPostAnyEvent( DBHelper dbHelper){
         boolean isUnpostedEvent = false;
         try{
-            JSONArray malArray = getSavedMalDiagstcArray(Integer.parseInt(DriverId), dbHelper);
+            JSONArray malArray = getSavedMalDiagstcArray( dbHelper);
             for(int i = malArray.length()-1 ; i >= 0; i-- ){
                 JSONObject obj = (JSONObject) malArray.get(i);
                 if(obj.getString(ConstantsKeys.DiagnosticType).equals(Constants.MissingDataDiagnostic) && obj.getBoolean(ConstantsKeys.IsCleared) == false){
@@ -154,7 +154,7 @@ public class MalfunctionDiagnosticMethod {
         // online clear event object
     public JSONArray updateOfflineUnPostedMalDiaEvent(String DriverId, String EventType, String Remarks,
                                                       DBHelper dbHelper, Context context)  {
-        JSONArray malArray = getSavedMalDiagstcArray(Integer.parseInt(DriverId), dbHelper);
+        JSONArray malArray = getSavedMalDiagstcArray(dbHelper);
         try {
             for(int i = malArray.length()-1 ; i >= 0; i-- ){
                 JSONObject malfnDiagnstcObj = (JSONObject) malArray.get(i);
@@ -176,7 +176,7 @@ public class MalfunctionDiagnosticMethod {
         }
 
         // update array in db
-        MalfnDiagnstcLogHelper(Integer.parseInt(DriverId), dbHelper, malArray);
+        MalfnDiagnstcLogHelper(dbHelper, malArray);
 
         return malArray;
     }
@@ -377,10 +377,29 @@ public class MalfunctionDiagnosticMethod {
     }
 
 
-
+    public JSONArray getEventsDateWise(String selectedDate, DBHelper dbHelper){
+        JSONArray array = new JSONArray();
+        try {
+            JSONArray eventArray = getMalDiaDurationArray(dbHelper);
+            for(int i = 0 ; i < eventArray.length() ; i++){
+                JSONObject obj = (JSONObject) eventArray.get(i);
+                String EventDateTime = obj.getString(ConstantsKeys.EventDateTime);
+                if(EventDateTime.length() > 10){
+                    EventDateTime = EventDateTime.substring(0, 10);
+                    if(selectedDate.equals(EventDateTime)){
+                        array.put(obj);
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return array;
+    }
 
     public JSONObject getNewMalDiaDurationObj(String DriverId, String EventDateTime, String EventEndDateTime, String DetectionDataEventCode,
-                                           int TotalMinutes, boolean IsClearEvent , String ClearEngineHours, String ClearOdometer, String StartOdometer){
+                                           int TotalMinutes, boolean IsClearEvent , String ClearEngineHours, String ClearOdometer,
+                                              String StartOdometer, String startEngineHours){
         JSONObject obj = new JSONObject();
         try{
             obj.put(ConstantsKeys.DriverId, DriverId);
@@ -392,6 +411,7 @@ public class MalfunctionDiagnosticMethod {
             obj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
             obj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
             obj.put(ConstantsKeys.StartOdometer, StartOdometer);
+            obj.put(ConstantsKeys.EngineHours, startEngineHours);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -447,14 +467,27 @@ public class MalfunctionDiagnosticMethod {
     }
 
 
-    public void addNewMalDiaEventInDurationArray(DBHelper dbHelper, String DriverId, String EventDateTime, String EventEndDateTime, String DetectionDataEventCode,
-                                                    Context context){
+    public void addNewMalDiaEventInDurationArray(DBHelper dbHelper, String DriverId, String EventDateTime, String EventEndDateTime,
+                                                 String DetectionDataEventCode, Constants constants, Context context){
         try{
             String ClearEngineHours = SharedPref.getObdEngineHours(context);
             String ClearOdometer = SharedPref.getObdOdometer(context);
             JSONArray array = getMalDiaDurationArray(dbHelper);
-            JSONObject newItemObj = getNewMalDiaDurationObj(DriverId, EventDateTime, EventEndDateTime, DetectionDataEventCode, 0,
-                    false, ClearEngineHours, ClearOdometer,  SharedPref.getObdOdometer(context));
+            JSONObject newItemObj;
+            String lastSavedOdometer = SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, context);
+            String lastSavedEngHr =  SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, context);
+            String currentOdometer = SharedPref.getObdOdometer(context);
+            String currentEngHr = SharedPref.getObdEngineHours(context);
+            double engineHrDiffInMin = constants.getEngineHourDiff(lastSavedEngHr, currentEngHr);
+
+            if(DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic) || DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ) {
+                newItemObj = getNewMalDiaDurationObj(DriverId, EventDateTime, EventEndDateTime, DetectionDataEventCode, (int)engineHrDiffInMin,
+                        false, ClearEngineHours, ClearOdometer, lastSavedOdometer, lastSavedEngHr);
+            }else{
+                newItemObj = getNewMalDiaDurationObj(DriverId, EventDateTime, EventEndDateTime, DetectionDataEventCode, 0,
+                        false, ClearEngineHours, ClearOdometer, currentOdometer, currentEngHr);
+            }
+
             if(DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic)){
                 newItemObj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
                 newItemObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
@@ -475,18 +508,27 @@ public class MalfunctionDiagnosticMethod {
         try{
             JSONArray eventsArray = getMalDiaDurationArray(dbHelper);
 
-            for (int i = 0; i < eventsArray.length() ; i++) {
+            for (int i = eventsArray.length()-1; i >=0 ; i--) {
                 JSONObject eventObj = (JSONObject) eventsArray.get(i);
-                String DetectionDataEventCode = eventObj.getString(ConstantsKeys.DetectionDataEventCode);
-                int lastEventMinutes = 0;
-                if(eventObj.has(ConstantsKeys.TotalMinutes)){
-                    lastEventMinutes = eventObj.getInt(ConstantsKeys.TotalMinutes);
-                }
+                String EventDateTime = eventObj.getString(ConstantsKeys.EventDateTime);
+
+                DateTime eventTime = Globally.getDateTimeObj(EventDateTime, false);
+                long hourDiff = Constants.getDateTimeDuration(eventTime, Globally.GetCurrentUTCDateTime()).getStandardHours();
+                if (hourDiff <= 24) {
+                    String DetectionDataEventCode = eventObj.getString(ConstantsKeys.DetectionDataEventCode);
+                    int lastEventMinutes = 0;
+                    if(eventObj.has(ConstantsKeys.TotalMinutes)){
+                        lastEventMinutes = eventObj.getInt(ConstantsKeys.TotalMinutes);
+                    }
 
 
-                if(DetectionDataEventCode.equals(EventType)){
-                    totalMin = totalMin + lastEventMinutes;
+                    if(DetectionDataEventCode.equals(EventType)){
+                        totalMin = totalMin + lastEventMinutes;
+                    }
+                }else{
+                    break;
                 }
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -499,7 +541,7 @@ public class MalfunctionDiagnosticMethod {
 
 
 // update Malfunction/Diagnostic enable/disable Status
-    public void updateMalfDiaStatusForEnable(Globally global, Constants constants, DBHelper dbHelper, Context context){
+    public void updateMalfDiaStatusForEnable(String DriverId, Globally global, Constants constants, DBHelper dbHelper, Context context){
 
         try {
             JSONArray array = getMalDiaDurationArray(dbHelper);
@@ -544,15 +586,14 @@ public class MalfunctionDiagnosticMethod {
                     UpdateStatus(IsClearEvent, DetectionDataEventCode, EventDateTime, EventEndDateTime, driverZoneDate, constants, context);
                 }else{
 
-                    String DrId = obj.getString(ConstantsKeys.DriverId);
-                    String DriverId = SharedPref.getDriverId(context);
+                    String EventDriverId = obj.getString(ConstantsKeys.DriverId);
 
                     if(DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
                             DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
                             DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)){
                         UpdateStatus(IsClearEvent, DetectionDataEventCode, EventDateTime, EventEndDateTime, driverZoneDate, constants, context);
                     }else {
-                        if (DrId.equals(DriverId)) {
+                        if (DriverId.equals(EventDriverId)) {
                             UpdateStatus(IsClearEvent, DetectionDataEventCode, EventDateTime, EventEndDateTime, driverZoneDate, constants, context);
                         }
                     }
@@ -574,8 +615,8 @@ public class MalfunctionDiagnosticMethod {
                         String EventEndDateTime, DateTime driverZoneDate, Constants constants, Context context){
         if(!IsClearEvent) {
             if (DetectionDataEventCode.equals(Constants.MissingDataDiagnostic)) {
-                //SharedPref.saveLocDiagnosticStatus(true, driverZoneDate.toString(), EventDateTime, context);
-                // constants.saveDiagnstcStatus(context, true);
+                SharedPref.saveLocDiagnosticStatus(true, driverZoneDate.toString(), EventDateTime, context);
+                 constants.saveDiagnstcStatus(context, true);
             } else if (DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic)) {
                 SharedPref.savePowerMalfunctionOccurStatus(
                         SharedPref.isPowerMalfunctionOccurred(context),
@@ -603,13 +644,13 @@ public class MalfunctionDiagnosticMethod {
         }
 
     }
-    private JSONObject getJsonObjForClearEvent(String EventDateTime, String DataEventCode, boolean IsClearEvent,
-                                               JSONObject eventObj, Context context){
+    private JSONObject getJsonObjForClearEvent(String DriverId, String EventDateTime, String DataEventCode, boolean IsClearEvent,
+                                               JSONObject eventObj, boolean isAlreadyCleared, Context context){
         JSONObject clearObj = new JSONObject();
 
         try{
 
-            clearObj.put(ConstantsKeys.DriverId, SharedPref.getDriverId(context));
+            clearObj.put(ConstantsKeys.DriverId, DriverId);
             clearObj.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, context));
             clearObj.put(ConstantsKeys.UnitNo, DriverConst.GetDriverTripDetails(DriverConst.Truck, context));
             clearObj.put(ConstantsKeys.EventDateTime, EventDateTime);
@@ -620,61 +661,101 @@ public class MalfunctionDiagnosticMethod {
                 TotalMinutes = eventObj.getInt(ConstantsKeys.TotalMinutes);
             }
 
-            if(TotalMinutes > 0){
-                String EventEndDateTime = "", ClearEngineHours = "", ClearOdometer = "";
+            String EventEndDateTime = "", ClearEngineHours = "", ClearOdometer = "";
 
-                if(eventObj.has(ConstantsKeys.EventEndDateTime)){
-                    EventEndDateTime = eventObj.getString(ConstantsKeys.EventEndDateTime);
-                }else if(eventObj.has(ConstantsKeys.ClearEventDateTime)){
-                    EventEndDateTime = eventObj.getString(ConstantsKeys.ClearEventDateTime);
-                }
-                if(EventEndDateTime.length() == 0){
-                    DateTime endTime = Globally.getDateTimeObj(EventDateTime, false);
-                    EventEndDateTime = endTime.plusMinutes(TotalMinutes).toString();
-                }
-
-                if(eventObj.has(ConstantsKeys.ClearEngineHours)){
-                    ClearEngineHours = eventObj.getString(ConstantsKeys.ClearEngineHours);
-                }
-                if(eventObj.has(ConstantsKeys.ClearOdometer)){
-                    ClearOdometer = eventObj.getString(ConstantsKeys.ClearOdometer);
-                }
+            if(isAlreadyCleared){   // some times multiple events occurred with same event thats why we are clearing wth same time other events
+                clearObj.put(ConstantsKeys.TotalMinutes, 0);
+                clearObj.put(ConstantsKeys.ClearEventDateTime, EventDateTime);
+                clearObj.put(ConstantsKeys.EventEndDateTime, EventDateTime);
 
                 clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
-                clearObj.put(ConstantsKeys.TotalMinutes, TotalMinutes);
-                clearObj.put(ConstantsKeys.ClearEventDateTime, EventEndDateTime);
                 clearObj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
                 clearObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
 
-            }else {
-                if (DataEventCode.equals(Constants.PowerComplianceDiagnostic)) {
-                    String EventEndDateTime = "";
+            }else{
+                if(TotalMinutes > 0){
+
                     if(eventObj.has(ConstantsKeys.EventEndDateTime)){
                         EventEndDateTime = eventObj.getString(ConstantsKeys.EventEndDateTime);
+                    }else if(eventObj.has(ConstantsKeys.ClearEventDateTime)){
+                        EventEndDateTime = eventObj.getString(ConstantsKeys.ClearEventDateTime);
                     }
-                    if(EventEndDateTime.length() < 10){
-                        EventEndDateTime = Globally.GetCurrentUTCTimeFormat();
-                    }
-                    DateTime EventDate = Globally.getDateTimeObj(EventDateTime, false);
-                    DateTime EventEndDate = Globally.getDateTimeObj(EventEndDateTime, false);
-                    int minDiff = Constants.getMinDiff(EventDate, EventEndDate);
 
-                    clearObj.put(ConstantsKeys.TotalMinutes, minDiff);
+                    if (!DataEventCode.equals(Constants.PowerComplianceDiagnostic)) {
+                        if (EventEndDateTime.length() == 0) {
+                            DateTime endTime = Globally.getDateTimeObj(EventDateTime, false);
+                            EventEndDateTime = endTime.plusMinutes(TotalMinutes).toString();
+                        }
+                    }
+                    if(eventObj.has(ConstantsKeys.ClearEngineHours)){
+                        ClearEngineHours = eventObj.getString(ConstantsKeys.ClearEngineHours);
+                    }
+                    if(eventObj.has(ConstantsKeys.ClearOdometer)){
+                        ClearOdometer = eventObj.getString(ConstantsKeys.ClearOdometer);
+                    }
+
+                    clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
+                    clearObj.put(ConstantsKeys.TotalMinutes, TotalMinutes);
                     clearObj.put(ConstantsKeys.ClearEventDateTime, EventEndDateTime);
+                    clearObj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
+                    clearObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
 
+                    if (DataEventCode.equals(Constants.PowerComplianceDiagnostic)) {
+                        if(eventObj.has(ConstantsKeys.EngineHours)) {
+                            clearObj.put(ConstantsKeys.EngineHours, eventObj.getString(ConstantsKeys.EngineHours));
+                        }
+
+                        clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
+                        clearObj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
+                        clearObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
+                    }else{
+                        clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
+                        clearObj.put(ConstantsKeys.ClearEngineHours, SharedPref.getObdEngineHours(context));
+                        clearObj.put(ConstantsKeys.ClearOdometer, SharedPref.getObdOdometer(context));
+                    }
                 }else {
-                    DateTime EventDate = Globally.getDateTimeObj(EventDateTime, false);
-                    DateTime currentTime = Globally.GetCurrentUTCDateTime();
-                    int minDiff = Constants.getMinDiff(EventDate, currentTime);
+                    if (DataEventCode.equals(Constants.PowerComplianceDiagnostic)) {
+                        if (eventObj.has(ConstantsKeys.EventEndDateTime)) {
+                            EventEndDateTime = eventObj.getString(ConstantsKeys.EventEndDateTime);
+                        }
+                        if (EventEndDateTime.length() < 10) {
+                            EventEndDateTime = Globally.GetCurrentUTCTimeFormat();
+                        }
+                        //  DateTime EventDate = Globally.getDateTimeObj(EventDateTime, false);
+                        //  DateTime EventEndDate = Globally.getDateTimeObj(EventEndDateTime, false);
+                        // int minDiff = Constants.getMinDiff(EventDate, EventEndDate);
 
-                    clearObj.put(ConstantsKeys.EventEndDateTime, currentTime.toString());
-                    clearObj.put(ConstantsKeys.TotalMinutes, minDiff);
-                    clearObj.put(ConstantsKeys.ClearEventDateTime, currentTime.toString());
+                        clearObj.put(ConstantsKeys.TotalMinutes, TotalMinutes);
+                        clearObj.put(ConstantsKeys.ClearEventDateTime, EventEndDateTime);
+
+                        if (eventObj.has(ConstantsKeys.ClearEngineHours)) {
+                            ClearEngineHours = eventObj.getString(ConstantsKeys.ClearEngineHours);
+                        }
+                        if (eventObj.has(ConstantsKeys.ClearOdometer)) {
+                            ClearOdometer = eventObj.getString(ConstantsKeys.ClearOdometer);
+                        }
+
+                        clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
+                        clearObj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
+                        clearObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
+
+
+                    } else {
+                        DateTime EventDate = Globally.getDateTimeObj(EventDateTime, false);
+                        DateTime currentTime = Globally.GetCurrentUTCDateTime();
+                        int minDiff = Constants.getMinDiff(EventDate, currentTime);
+
+                        clearObj.put(ConstantsKeys.EventEndDateTime, currentTime.toString());
+                        clearObj.put(ConstantsKeys.TotalMinutes, minDiff);
+                        clearObj.put(ConstantsKeys.ClearEventDateTime, currentTime.toString());
+
+                        clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
+                        clearObj.put(ConstantsKeys.ClearEngineHours, SharedPref.getObdEngineHours(context));
+                        clearObj.put(ConstantsKeys.ClearOdometer, SharedPref.getObdOdometer(context));
+
+                    }
+
                 }
-
-                clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
-                clearObj.put(ConstantsKeys.ClearEngineHours, SharedPref.getObdEngineHours(context));
-                clearObj.put(ConstantsKeys.ClearOdometer, SharedPref.getObdOdometer(context));
 
             }
             clearObj.put(ConstantsKeys.StartOdometer, eventObj.getString(ConstantsKeys.StartOdometer));
@@ -685,64 +766,75 @@ public class MalfunctionDiagnosticMethod {
     }
 
 
-    public JSONArray updateAutoClearEvent(DBHelper dbHelper, String EventCode, boolean isClear, boolean isUpdate, Context context){
+    public JSONArray updateAutoClearEvent(DBHelper dbHelper, String DriverId, String EventCode, boolean isClear,
+                                                boolean isUpdate, Context context){
+
+        boolean isAlreadyCleared = false;
 
         JSONArray eventClearArray = new JSONArray();
         try {
             DateTime currentDateTime = Globally.GetCurrentUTCDateTime();
             JSONArray eventArray = getMalDiaDurationArray(dbHelper);
-            for(int i = 0 ; i < eventArray.length() ; i++) {
+            for(int i = eventArray.length()-1 ; i >= 0  ; i--) {
                 JSONObject obj = (JSONObject) eventArray.get(i);
                 String EventDateTime = obj.getString(ConstantsKeys.EventDateTime);
                 String DataEventCode = obj.getString(ConstantsKeys.DetectionDataEventCode);
+                String EventDriverId      = obj.getString(ConstantsKeys.DriverId);
 
-                boolean IsClearEvent = false;
-                if(obj.has(ConstantsKeys.IsClearEvent)){
-                    IsClearEvent = obj.getBoolean(ConstantsKeys.IsClearEvent);
-                }
+                if(EventDriverId.equals(DriverId)) {
+                    boolean IsClearEvent = false;
+                    if (obj.has(ConstantsKeys.IsClearEvent)) {
+                        IsClearEvent = obj.getBoolean(ConstantsKeys.IsClearEvent);
+                    }
 
-                if(EventCode.length() > 0){ // means clear selected Event only
+                    if (EventCode.length() > 0) { // means clear selected Event only
 
-                    if(!IsClearEvent ){
-                        if(EventCode.equals(DataEventCode) ) {
-                            if(Constants.isDiagnosticEvent(EventCode)) {
+                        if (!IsClearEvent) {
+                            if (EventCode.equals(DataEventCode)) {
+                                if (Constants.isDiagnosticEvent(EventCode)) {
 
-                               JSONObject clearObj = getJsonObjForClearEvent(EventDateTime, DataEventCode, isClear, obj, context);
+                                    JSONObject clearObj = getJsonObjForClearEvent(DriverId, EventDateTime, DataEventCode, isClear,
+                                                                obj, isAlreadyCleared, context);
 
-                               if(clearObj.getInt(ConstantsKeys.TotalMinutes) >= 0) {
-                                   eventClearArray.put(clearObj);
-                               }
-                                eventArray.put(i, clearObj);
-
-                            }else {
-                                DateTime eventTime = Globally.getDateTimeObj(EventDateTime, false);
-                                long hourDiff = Constants.getDateTimeDuration(eventTime, currentDateTime).getStandardHours();
-                                if(hourDiff >= 24 ) {
-                                    JSONObject clearObj = getJsonObjForClearEvent(EventDateTime, DataEventCode, isClear, obj, context);
-
-                                    if(clearObj.getInt(ConstantsKeys.TotalMinutes) >= 0) {
+                                    if (clearObj.getInt(ConstantsKeys.TotalMinutes) >= 0) {
                                         eventClearArray.put(clearObj);
                                     }
                                     eventArray.put(i, clearObj);
 
+                                    isAlreadyCleared = true;
+                                } else {
+                                    DateTime eventTime = Globally.getDateTimeObj(EventDateTime, false);
+                                    long hourDiff = Constants.getDateTimeDuration(eventTime, currentDateTime).getStandardHours();
+                                    if (hourDiff >= 24) {
+                                        JSONObject clearObj = getJsonObjForClearEvent(DriverId, EventDateTime, DataEventCode, isClear,
+                                                                    obj, isAlreadyCleared, context);
+
+                                        if (clearObj.getInt(ConstantsKeys.TotalMinutes) >= 0) {
+                                            eventClearArray.put(clearObj);
+                                        }
+                                        eventArray.put(i, clearObj);
+
+                                        isAlreadyCleared = true;
+                                    }
                                 }
                             }
+
                         }
+                    } else {  // clear all events those are 24 hour old
+                        if (IsClearEvent) {
+                            eventArray.remove(i);
+                        } else {
+                            DateTime eventTime = Globally.getDateTimeObj(EventDateTime, false);
+                            long hourDiff = Constants.getDateTimeDuration(eventTime, currentDateTime).getStandardHours();
+                            if (hourDiff >= 24) {
+                                JSONObject clearObj = getJsonObjForClearEvent(DriverId, EventDateTime, DataEventCode,
+                                                            isClear, obj, isAlreadyCleared, context);
 
-                    }
-                }else{  // clear all events those are 24 hour old
-                    if(IsClearEvent) {
-                        eventArray.remove(i);
-                    }else{
-                        DateTime eventTime = Globally.getDateTimeObj(EventDateTime, false);
-                        long hourDiff = Constants.getDateTimeDuration(eventTime, currentDateTime).getStandardHours();
-                        if (hourDiff >= 24) {
-                            JSONObject clearObj = getJsonObjForClearEvent(EventDateTime, DataEventCode, isClear, obj, context);
-
-                            if (clearObj.getInt(ConstantsKeys.TotalMinutes) >= 0) {
-                                eventClearArray.put(clearObj);
+                                if (clearObj.getInt(ConstantsKeys.TotalMinutes) >= 0) {
+                                    eventClearArray.put(clearObj);
+                                }
+                                eventArray.put(i, clearObj);
                             }
-                            eventArray.put(i, clearObj);
                         }
                     }
                 }
@@ -761,7 +853,32 @@ public class MalfunctionDiagnosticMethod {
     }
 
 
+    public String getEventOccurredActualDriverid(DBHelper dbHelper, String EventCode){
 
+        String DriverId = "";
+            try {
+                JSONArray eventArray = getMalDiaDurationArray(dbHelper);
+                for (int i = eventArray.length()-1; i >= 0; i--) {
+                    JSONObject obj = (JSONObject) eventArray.get(i);
+
+                    String DataEventCode = obj.getString(ConstantsKeys.DetectionDataEventCode);
+                    boolean isCleared = false;
+                    if(obj.has(ConstantsKeys.IsClearEvent)){
+                        isCleared = obj.getBoolean(ConstantsKeys.IsClearEvent);
+                    }
+                    if (EventCode.equals(DataEventCode) && isCleared == false) {
+                        DriverId = obj.getString(ConstantsKeys.DriverId);
+                        break;
+                    }
+
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return DriverId;
+    }
 
 
 
@@ -805,6 +922,33 @@ public class MalfunctionDiagnosticMethod {
 
 
 
+    // get last switched driver Id status for clear
+    public boolean IsLastSwitchedDriverEngSyncEvent(String lastSwitchedDriverId, String ClearEventCode, DBHelper dbHelper){
+        boolean hasEventForClear = false;
+        try {
+
+            JSONArray eventArray = getMalDiaDurationArray(dbHelper);
+            for (int i = eventArray.length()-1; i >= 0; i--) {
+                JSONObject obj = (JSONObject) eventArray.get(i);
+                String DriverId = obj.getString(ConstantsKeys.DriverId);
+                String DataEventCode = obj.getString(ConstantsKeys.DetectionDataEventCode);
+                boolean isCleared = false;
+                if(obj.has(ConstantsKeys.IsClearEvent)){
+                    isCleared = obj.getBoolean(ConstantsKeys.IsClearEvent);
+                }
+                if (ClearEventCode.equals(DataEventCode) && DriverId.equals(lastSwitchedDriverId) && isCleared == false) {
+                    hasEventForClear = true;
+                    break;
+                }
+
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return hasEventForClear;
+    }
 
 
 
@@ -853,7 +997,7 @@ public class MalfunctionDiagnosticMethod {
     public JSONArray AddNewItemInPositionArray(String  DriverId, String EventCode, String engHour, String odometer, DBHelper dbHelper){
 
         JSONObject newObj = getNewMalDiaDurationObj( DriverId, Globally.GetCurrentDateTime(), "",
-                                EventCode, 0, false, engHour, odometer, odometer);
+                                EventCode, 0, false, engHour, odometer, odometer, engHour);
         JSONArray array = getPositioningMalDiaArray(dbHelper);
         array.put(newObj);
 
@@ -990,7 +1134,7 @@ public class MalfunctionDiagnosticMethod {
                 }
                 DateTime lastCallDateTime = Globally.getDateTimeObj(clearEventLastCallTime, false);
 
-                // Checking after 3 min
+                // Checking after 1 min
                 long minDiff = Constants.getDateTimeDuration(lastCallDateTime, currentTime).getStandardMinutes();
                 if (minDiff > 0) {
                     // update call time
@@ -999,11 +1143,11 @@ public class MalfunctionDiagnosticMethod {
                     JSONArray getDurationArray = getMalDiaDurationArray(dbHelper);
                     for (int i = 0; i < getDurationArray.length() ; i++) {
                         JSONObject eventObj = (JSONObject) getDurationArray.get(i);
-                        DateTime selectedDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.EventDateTime), false);
-                        DateTime currentUtcDate = Globally.GetCurrentUTCDateTime();
-                        long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardHours();
+                   //     DateTime selectedDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.EventDateTime), false);
+                     //   DateTime currentUtcDate = Globally.GetCurrentUTCDateTime();
+                      //  long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardHours();
 
-                        if(hourDiff >= 24){
+                      //  if(hourDiff >= 24){
                             String DetectionDataEventCode = eventObj.getString(ConstantsKeys.DetectionDataEventCode);
                             boolean isCleared = false;
                             if(eventObj.has(ConstantsKeys.IsClearEvent)){
@@ -1023,7 +1167,7 @@ public class MalfunctionDiagnosticMethod {
                                 }
                             }
 
-                        }
+                      //  }
                     }
                 }
             }

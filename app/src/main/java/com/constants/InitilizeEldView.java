@@ -46,7 +46,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-                perDayTxtVw.setText("(as per day)");
+               // perDayTxtVw.setText("(as per day)");
                 break;
 
             case EldFragment.SLEEPER:   //2
@@ -55,7 +55,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-                perDayTxtVw.setText("(as per day)");
+               // perDayTxtVw.setText("(as per day)");
                 break;
 
             case EldFragment.DRIVING:   //3
@@ -64,7 +64,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-                perDayTxtVw.setText("(as per shift)");
+               // perDayTxtVw.setText("(as per shift)");
                 break;
 
             case EldFragment.ON_DUTY:   //4
@@ -73,7 +73,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-                perDayTxtVw.setText("(as per shift)");
+               // perDayTxtVw.setText("(as per shift)");
                 break;
 
             default:
@@ -82,7 +82,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.GONE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-                perDayTxtVw.setText("(as per day)");
+              //  perDayTxtVw.setText("(as per day)");
                 break;
         }
     }

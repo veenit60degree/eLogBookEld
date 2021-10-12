@@ -113,7 +113,12 @@ public class EldNotificationDialog extends Dialog  {
                 }
 
             }
-            notificationDescTV.setText(notiDesc);
+
+            if(notiDesc.trim().length() > 0) {
+                notificationDescTV.setText(notiDesc);
+            }else{
+                dismiss();
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

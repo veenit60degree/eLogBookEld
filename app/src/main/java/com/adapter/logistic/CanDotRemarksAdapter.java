@@ -87,10 +87,11 @@ public class CanDotRemarksAdapter extends BaseAdapter {
         holder.remarksAnoDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String eventTime = itemsList.get(position).getDateTimeWithMins();
-        holder.dateRemarksDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(eventTime));
-      /*  if(eventTime.length() > 16) {
+        holder.dateRemarksDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(eventTime, Globally.DateFormat_mm_dd_yy));
+
+       if(eventTime.length() > 16) {
             holder.timeDotTV.setText(eventTime.substring(11, 16));
-        }*/
+        }
 
         if(eventTime.length() >= 19) {
             holder.timeDotTV.setText(eventTime.substring(11, 19));

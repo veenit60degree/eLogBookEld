@@ -399,7 +399,7 @@
                             android:textColor="@color/whiteee"
                             android:padding="0dp"
                             android:textSize="@dimen/text_size_17"
-                            android:text="@string/per_day"
+                            android:text="@string/per_shift"
 
                             />
 
@@ -975,13 +975,13 @@
                     android:id="@+id/asPerDateSleepTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color_eld_theme"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginRight="@dimen/margin_short_3"
                     android:paddingBottom="@dimen/margin_short_7"
-                    android:layout_alignParentBottom="true"
+                    android:text="@string/per_shift"
+                    android:textColor="@color/color_eld_theme"
                     android:textSize="@dimen/text_size_11"
-                    android:text="@string/per_day"
 
                     />
 
@@ -1053,13 +1053,13 @@
                     android:id="@+id/asPerDateOffDutyTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color_eld_theme"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginRight="@dimen/margin_short_3"
                     android:paddingBottom="@dimen/margin_short_7"
-                    android:layout_alignParentBottom="true"
+                    android:text="@string/per_shift"
+                    android:textColor="@color/color_eld_theme"
                     android:textSize="@dimen/text_size_11"
-                    android:text="@string/per_day"
 
                     />
 

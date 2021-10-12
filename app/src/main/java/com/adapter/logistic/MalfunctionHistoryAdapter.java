@@ -87,7 +87,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final MalfunctionModel childData = _listDataChild.get(_listDataHeader.get(groupPosition).getPosition()).get(childPosition);
+        final MalfunctionModel childData = _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).get(childPosition);
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
@@ -100,46 +100,69 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         TextView vehMilesMalTxtVw = (TextView) convertView.findViewById(R.id.vehMilesMalTxtVw);
         TextView engHoursMalTxtVw = (TextView) convertView.findViewById(R.id.engHoursMalTxtVw);
         TextView totalMinTxtVw = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
-        TextView originMalTxtVw = (TextView) convertView.findViewById(R.id.originMalTxtVw);
+        TextView endTimeMalTxtVw = (TextView) convertView.findViewById(R.id.endTimeMalTxtVw);
+
+        endTimeMalTxtVw.setVisibility(View.VISIBLE);
 
         try{
             if(childData.getDriverZoneEventDate().length() > 10) {
                 String date = globally.dateConversionMalfunction(childData.getDriverZoneEventDate());   //EventDateTime()
                 timeMalTxtVw.setText(date);
             }else {
-                timeMalTxtVw.setText( "");
+                timeMalTxtVw.setText( "--");
             }
 
-            // statusMalTxtVw.setText(childData.getMalfunctionDefinition());
+            if(childData.getDetectionDataEventCode().equals(Constants.PowerComplianceDiagnostic)){
+                endTimeMalTxtVw.setText(childData.getHexaSequenceNo());   // passing start engine hour value in this parameter
+            }else {
+                if (childData.getDriverZoneEventDate().length() > 10) {
+                    String date = globally.dateConversionMalfunction(childData.getToDateTime());
+                    endTimeMalTxtVw.setText(date);
+                } else {
+                    endTimeMalTxtVw.setText("--");
+                }
+            }
+
+
             engHoursMalTxtVw.setText(childData.getEngineHours());
-            originMalTxtVw.setText("");
-            originMalTxtVw.setVisibility(View.GONE);
+
 
             /*if(childData.getHexaSequenceNo().length() > 0){
                 seqIdMalTxtVw.setText(childData.getHexaSequenceNo());
             }else{
                 seqIdMalTxtVw.setText(childData.getSequenceNo());
             }*/
+          if(constants.isMalfunction(childData.getDetectionDataEventCode())){
+              totalMinTxtVw.setVisibility(View.GONE);
+         }else {
+              if (childData.getId().equals("--")) {
+                  totalMinTxtVw.setText(childData.getId());
+              } else {
+                  totalMinTxtVw.setText(childData.getId() + " min");   //TotalMinutes value is passing in getId()
+              }
+          }
+            String distance = childData.getMiles(); //constants.getBeforeDecimalValue();
 
-            totalMinTxtVw.setText(childData.getId() + " min");   //TotalMinutes value is passing in getId()
+            try {
+                if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
+                    if (distance.equals("0") || distance.length() == 0) {
+                        vehMilesMalTxtVw.setText("--");
+                    } else {
+                        // double miles = Double.parseDouble(distance);
+                        // String milesInKm = constants.Convert2DecimalPlacesDouble(constants.milesToKm(miles));
 
-            String distance = childData.getMiles();
-            if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
-                if(distance.equals("--") || distance.length() == 0){
-                    vehMilesMalTxtVw.setText("--");
-                }else {
-                   /* double miles = Double.parseDouble(distance);
-                    String milesInKm = constants.Convert2DecimalPlacesDouble(constants.milesToKm(miles));
-                    vehMilesMalTxtVw.setText(constants.getBeforeDecimalValue(milesInKm));
-*/
-                    vehMilesMalTxtVw.setText(distance);
+                        setVehicleView(vehMilesMalTxtVw, distance);
+                    }
+                } else {
+                    setVehicleView(vehMilesMalTxtVw, distance);
                 }
-            }else{
-                vehMilesMalTxtVw.setText(distance); //constants.getBeforeDecimalValue(distance)
+            }catch (Exception e){
+                setVehicleView(vehMilesMalTxtVw, distance);
             }
 
+
             LinearLayout malfunctionChildLay = (LinearLayout)convertView.findViewById(R.id.malfunctionChildLay);
-            if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getPosition()).size() -1 ) {
+            if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).size() -1 ) {
                 malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
             }else{
                 malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
@@ -151,9 +174,38 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    void setVehicleView(TextView view, String distance){
+        if(distance.length() <= 1){
+            view.setText("--");
+        }else{
+            if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
+                if(distance.contains(".")){
+                    distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
+                }else {
+                    distance = constants.meterToKmWith2DecPlaces(distance);
+                }
+                view.setText(distance);
+            }else{
+                if(distance.contains(".")){
+                    distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
+                }else{
+                    distance = constants.meterToMilesWith2DecPlaces(distance);
+                }
+
+                view.setText(distance);
+            }
+
+        }
+    }
+
+
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition).getPosition()) .size();
+        int size=0;
+        if(this._listDataChild.get(this._listDataHeader.get(groupPosition).getEventCode()) !=null)
+            size = this._listDataChild.get(this._listDataHeader.get(groupPosition).getEventCode()).size();
+        return size;
+
     }
 
 
@@ -176,7 +228,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
 
     public class GroupViewHolder {
-        TextView timeMalTxtVw, statusMalTxtVw, vehMilesMalTxtVw, engHoursMalTxtVw, seqIdMalTxtVw, originMalTxtVw;
+        TextView timeMalTxtVw, endTimeMalTxtVw, statusMalTxtVw, vehMilesMalTxtVw, engHoursMalTxtVw, seqIdMalTxtVw;
         TextView malfHeaderTxtVw, clearEventBtn;
         ImageView groupIndicatorBtn, malfncnInfoImgView;
         RelativeLayout malfunctionChildMainLay;
@@ -203,7 +255,11 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             holder.vehMilesMalTxtVw = (TextView) convertView.findViewById(R.id.vehMilesMalTxtVw);
             holder.engHoursMalTxtVw = (TextView) convertView.findViewById(R.id.engHoursMalTxtVw);
             holder.seqIdMalTxtVw = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
-            holder.originMalTxtVw = (TextView) convertView.findViewById(R.id.originMalTxtVw);
+            holder.endTimeMalTxtVw = (TextView) convertView.findViewById(R.id.endTimeMalTxtVw);
+
+
+
+            holder.endTimeMalTxtVw.setVisibility(View.VISIBLE);
 
             holder.clearEventBtn = (TextView) convertView.findViewById(R.id.clearEventBtn);
             holder.malfHeaderTxtVw = (TextView) convertView.findViewById(R.id.malfHeaderTxtVw);
@@ -218,11 +274,17 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             holder = (GroupViewHolder) convertView.getTag();
         }
 
+        holder.timeMalTxtVw.setText(_context.getString(R.string.Start_time));
+        if(headerModel.getEventCode().equals(Constants.PowerComplianceDiagnostic)){
+            holder.endTimeMalTxtVw.setText(_context.getString(R.string.Start_eng_hr));
+        }
 
+        if(constants.isMalfunction(headerModel.getEventCode())){
+            holder.seqIdMalTxtVw.setVisibility(View.GONE);
+        }
 
         setViewTextColorWithStyle(holder.timeMalTxtVw, holder.statusMalTxtVw, holder.vehMilesMalTxtVw,
-                holder.engHoursMalTxtVw, holder.seqIdMalTxtVw, holder.originMalTxtVw);
-        holder.originMalTxtVw.setVisibility(View.GONE);
+                holder.engHoursMalTxtVw, holder.seqIdMalTxtVw, holder.endTimeMalTxtVw);
 
 
         holder.malfHeaderTxtVw.setText(headerModel.getEventName());
@@ -291,7 +353,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
                     selectedPos = groupPosition;
                     malfunctionDialog = new MalfunctionDialog(_context,
-                            _listDataChild.get(_listDataHeader.get(groupPosition).getPosition()),
+                            _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()),
                             new MalfunctionDiagnosticListener());
                     malfunctionDialog.show();
                 }else{
@@ -306,7 +368,8 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         holder.malfncnInfoImgView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                confirmationDialog.ShowAlertDialog(_listDataHeader.get(groupPosition).getEventName(), _listDataHeader.get(groupPosition).getEventDesc(),
+                confirmationDialog.ShowAlertDialog(_listDataHeader.get(groupPosition).getEventName(),
+                        _listDataHeader.get(groupPosition).getEventDesc(),
                         _context.getResources().getString(R.string.dismiss), "",
                         101, positiveCallBack, negativeCallBack);
             }
@@ -340,20 +403,20 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
 
     private void setViewTextColorWithStyle(TextView timeMalTxtVw, TextView statusMalTxtVw, TextView vehMilesMalTxtVw,
-                                           TextView engHoursMalTxtVw, TextView seqIdMalTxtVw, TextView originMalTxtVw){
+                                           TextView engHoursMalTxtVw, TextView seqIdMalTxtVw, TextView endTimeMalTxtVw){
         timeMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee )); //blue_button
         // statusMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
         vehMilesMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
         engHoursMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
         seqIdMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
-        originMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
+        endTimeMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
 
         timeMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         //  statusMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         vehMilesMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         engHoursMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         seqIdMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
-        originMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
+        endTimeMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
 
       /*  int textSize =  constants.intToPixel(_context, R.dimen.text_size_15);
         timeMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
@@ -361,7 +424,6 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         vehMilesMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
         engHoursMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
         seqIdMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
-        originMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
 */
     }
 

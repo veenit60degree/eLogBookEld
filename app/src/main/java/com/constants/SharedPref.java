@@ -2605,6 +2605,20 @@ public class SharedPref {
     }
 
 
+    // Set Engine Sync malfunction Event Called Time  -------------------
+    public static void setEngSyncMalEventCallTime(String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("EngSyncMalEventCallTime", savedTime);
+        editor.commit();
+    }
+
+    // Get Engine Sync malfunction Event last Called Time -------------------
+    public static String getEngSyncMalEventCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("EngSyncMalEventCallTime", "");
+    }
+
     // Set Clear malfunction Event Called Time  -------------------
     public static void setClearMalCallTime(String savedTime, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

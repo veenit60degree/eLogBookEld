@@ -4864,16 +4864,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(Integer.parseInt(DRIVER_ID), dbHelper, malArrayEvent);
 */
                     // save Occurred event locally until not posted to server
-                    JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.parseInt(DRIVER_ID), dbHelper);
+                    JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
                     malArray.put(newOccuredEventObj);
-                    malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DRIVER_ID), dbHelper, malArray);
+                    malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, malArray);
 
                     MalfunctionDefinition = Constants.ConstLocationMissing;
 
                     // save malfunction entry in duration table
                     malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, DRIVER_ID,
                             Global.GetCurrentUTCTimeFormat(), Global.GetCurrentUTCTimeFormat(),
-                            Constants.MissingDataDiagnostic, getActivity());
+                            Constants.MissingDataDiagnostic, constants, getActivity());
 
 
                     Globally.PlayNotificationSound(getActivity());
@@ -5214,8 +5214,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         SharedPref.setDriverStatusId("" + DRIVER_JOB_STATUS, getActivity());
 
-        TotalOffDutyHoursInt        = hMethods.GetOffDutyTime(currentDayArray);
-        TotalSleeperBerthHoursInt   = hMethods.GetSleeperTime(currentDayArray);
+       // TotalOffDutyHoursInt        = hMethods.GetOffDutyTime(currentDayArray);
+      //  TotalSleeperBerthHoursInt   = hMethods.GetSleeperTime(currentDayArray);
 
         oDriverLogDetail            = hMethods.getSavedLogList(Integer.valueOf(DRIVER_ID), currentDateTime, currentUTCTime, dbHelper);
 
@@ -5258,11 +5258,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         isHaulExcptn, isAdverseExcptn, IsNorthCanada,
                         rulesVersion, dbHelper);
 
-                LeftWeekOnDutyHoursInt = (int) RulesObj.getCycleRemainingMinutes();
-                TotalOnDutyHoursInt = (int) RemainingTimeObj.getOnDutyUsedMinutes();   // hMethods.GetOnDutyTime(currentDayArray);
-                TotalDrivingHoursInt = (int) RemainingTimeObj.getDrivingUsedMinutes();  // hMethods.GetDrivingTime(currentDayArray);
-                LeftDayOnDutyHoursInt = (int) RemainingTimeObj.getOnDutyRemainingMinutes();
-                LeftDayDrivingHoursInt = (int) RemainingTimeObj.getDrivingRemainingMinutes();
+                LeftWeekOnDutyHoursInt      = (int) RulesObj.getCycleRemainingMinutes();
+                TotalOnDutyHoursInt         = (int) RemainingTimeObj.getOnDutyUsedMinutes();   // hMethods.GetOnDutyTime(currentDayArray);
+                TotalDrivingHoursInt        = (int) RemainingTimeObj.getDrivingUsedMinutes();  // hMethods.GetDrivingTime(currentDayArray);
+                LeftDayOnDutyHoursInt       = (int) RemainingTimeObj.getOnDutyRemainingMinutes();
+                LeftDayDrivingHoursInt      = (int) RemainingTimeObj.getDrivingRemainingMinutes();
+                TotalSleeperBerthHoursInt   = (int)RemainingTimeObj.getSleeperUsedMinutes();
+                TotalOffDutyHoursInt        = (int)RemainingTimeObj.getOffDutyUsedMinutes();
 
                 shiftRemainingMinutes = (int) RemainingTimeObj.getShiftRemainingMinutes();
                 shiftUsedMinutes = (int) RemainingTimeObj.getShiftUsedMinutes();

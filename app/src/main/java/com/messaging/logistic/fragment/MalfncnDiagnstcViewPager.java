@@ -58,6 +58,7 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +81,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     DiagnosticEventFragment diagnosticEventFragment;
     static TextView noRecordMalTV, noRecordDiaTV;
     static ExpandableListView malfunctionExpandList, diagnosticExpandList;
+    MalfunctionHeaderModel headerModel = null;
 
     boolean isOnCreate = true;
     String DriverId = "", DeviceId = "", VIN = "", FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId;
@@ -183,6 +185,14 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         invisibleMalfnBtn.setOnClickListener(this);
         dateActionBarTV.setOnClickListener(this);
 
+      /*  try {
+            String data = "[{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-09-23T15:51:07\",\"EventEndDateTime\":\"2021-09-24T10:23:51.303\",\"DetectionDataEventCode\":\"5\",\"TotalMinutes\":1112,\"IsClearEvent\":false,\"ClearEngineHours\":\"0\",\"ClearOdometer\":\"\",\"StartOdometer\":\"0\",\"EngineHours\":\"0\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-09-24T17:58:49\",\"EventEndDateTime\":\"2021-09-24T23:54:50.103\",\"DetectionDataEventCode\":\"5\",\"TotalMinutes\":356,\"IsClearEvent\":false,\"ClearEngineHours\":\"0\",\"ClearOdometer\":\"\",\"StartOdometer\":\"0\",\"EngineHours\":\"0\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-09-27T17:11:56\",\"EventEndDateTime\":\"2021-09-28T14:16:12.393\",\"DetectionDataEventCode\":\"5\",\"TotalMinutes\":1265,\"IsClearEvent\":false,\"ClearEngineHours\":\"0\",\"ClearOdometer\":\"\",\"StartOdometer\":\"0\",\"EngineHours\":\"0\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-09-28T19:03:05\",\"EventEndDateTime\":\"2021-09-29T08:08:15.51\",\"DetectionDataEventCode\":\"5\",\"TotalMinutes\":785,\"IsClearEvent\":false,\"ClearEngineHours\":\"0\",\"ClearOdometer\":\"\",\"StartOdometer\":\"0\",\"EngineHours\":\"0\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-09-29T21:20:46\",\"EventEndDateTime\":\"2021-09-30T21:17:35.277\",\"DetectionDataEventCode\":\"5\",\"TotalMinutes\":1437,\"IsClearEvent\":false,\"ClearEngineHours\":\"0\",\"ClearOdometer\":\"\",\"StartOdometer\":\"0\",\"EngineHours\":\"0\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-09-30T20:54:31\",\"EventEndDateTime\":\"2021-10-01T09:47:35.307\",\"DetectionDataEventCode\":\"5\",\"TotalMinutes\":773,\"IsClearEvent\":false,\"ClearEngineHours\":\"0\",\"ClearOdometer\":\"\",\"StartOdometer\":\"0\",\"EngineHours\":\"0\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-04T19:06:27\",\"EventEndDateTime\":\"2021-10-04T19:08:29\",\"DetectionDataEventCode\":\"2\",\"TotalMinutes\":2,\"IsClearEvent\":true,\"ClearEngineHours\":\"23887.3\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1182596.465\",\"EngineHours\":\"23887.3\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-04T19:23:19\",\"EventEndDateTime\":\"2021-10-04T19:24:20\",\"DetectionDataEventCode\":\"2\",\"TotalMinutes\":1,\"IsClearEvent\":true,\"ClearEngineHours\":\"23887.6\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1182597.16\",\"EngineHours\":\"23887.6\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-04T20:04:24\",\"EventEndDateTime\":\"2021-10-05T17:07:16.237\",\"DetectionDataEventCode\":\"P\",\"TotalMinutes\":1263,\"IsClearEvent\":true,\"ClearEngineHours\":\"23887.7\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1.18259719E9\",\"EngineHours\":\"23887.7\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-04T23:35:55\",\"EventEndDateTime\":\"2021-10-05T21:18:10.06\",\"DetectionDataEventCode\":\"5\",\"TotalMinutes\":1303,\"IsClearEvent\":false,\"ClearEngineHours\":\"0\",\"ClearOdometer\":\"\",\"StartOdometer\":\"0\",\"EngineHours\":\"0\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-05T20:45:43\",\"EventEndDateTime\":\"2021-10-05T21:02:40\",\"DetectionDataEventCode\":\"2\",\"TotalMinutes\":17,\"IsClearEvent\":true,\"ClearEngineHours\":\"23896.25\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1182911.5250000001\",\"EngineHours\":\"23896.25\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-06T21:02:07\",\"EventEndDateTime\":\"2021-10-06T21:08:24\",\"DetectionDataEventCode\":\"2\",\"TotalMinutes\":6,\"IsClearEvent\":true,\"ClearEngineHours\":\"23900.35\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1183016.635\",\"EngineHours\":\"23900.35\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-06T21:21:06\",\"EventEndDateTime\":\"2021-10-06T22:31:04.467\",\"DetectionDataEventCode\":\"2\",\"TotalMinutes\":70,\"IsClearEvent\":true,\"ClearEngineHours\":\"23900.6\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1183025.84\",\"EngineHours\":\"23900.6\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-06T21:24:13\",\"EventEndDateTime\":\"2021-10-07T19:27:09.027\",\"DetectionDataEventCode\":\"E\",\"TotalMinutes\":1323,\"IsClearEvent\":true,\"ClearEngineHours\":\"23900.6\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1183025.84\",\"EngineHours\":\"23900.6\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-06T22:15:45\",\"EventEndDateTime\":\"2021-10-06T22:26:47\",\"DetectionDataEventCode\":\"1\",\"TotalMinutes\":11,\"IsClearEvent\":true,\"ClearEngineHours\":\"23900.6\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1.18302584E9\",\"EngineHours\":\"23900.6\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-06T22:31:22\",\"EventEndDateTime\":\"2021-10-07T19:27:09.027\",\"DetectionDataEventCode\":\"5\",\"TotalMinutes\":1256,\"IsClearEvent\":false,\"ClearEngineHours\":\"0\",\"ClearOdometer\":\"\",\"StartOdometer\":\"0\",\"EngineHours\":\"0\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-06T23:58:45\",\"EventEndDateTime\":\"2021-10-07T23:02:28.293\",\"DetectionDataEventCode\":\"P\",\"TotalMinutes\":1384,\"IsClearEvent\":true,\"ClearEngineHours\":\"23901.65\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1.183043785E9\",\"EngineHours\":\"23901.65\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-07T18:49:08\",\"EventEndDateTime\":\"2021-10-08T07:15:47.77\",\"DetectionDataEventCode\":\"5\",\"TotalMinutes\":746,\"IsClearEvent\":false,\"ClearEngineHours\":\"0\",\"ClearOdometer\":\"\",\"StartOdometer\":\"0\",\"EngineHours\":\"0\"},{\"DriverId\":\"127945\",\"EventDateTime\":\"2021-10-08T00:08:19\",\"EventEndDateTime\":\"2021-10-08T00:08:19\",\"DetectionDataEventCode\":\"2\",\"TotalMinutes\":0,\"IsClearEvent\":false,\"ClearEngineHours\":\"23908.5\",\"ClearOdometer\":\"\",\"StartOdometer\":\"1183258.57\",\"EngineHours\":\"23908.5\"}]";
+            JSONArray durationArray = new JSONArray(data);
+            //durationArray.remove(durationArray.length() - 1);
+            malfunctionDiagnosticMethod.MalDiaDurationHelper(dbHelper, durationArray);
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
     }
 
 
@@ -198,6 +208,10 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
 
+
+        // update mal/dia status for enable disable according to log
+        malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, globally, constants, dbHelper, getActivity());
+
         getDriverInfo();
         DateTime currentDate    = globally.getDateTimeObj(globally.GetCurrentDateTime(), false);
         String CurrentCycleId   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
@@ -212,44 +226,24 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 }
             }
 
-            dateActionBarTV.setText(Html.fromHtml("<b><u>View History</u></b>"));
+            dateActionBarTV.setText(Html.fromHtml("<b><u>View Events</u></b>"));
 
 
             if (globally.isConnected(getContext())) {
                 confirmCertifyLay.setVisibility(View.VISIBLE);
-                JSONArray malArray1 = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(Integer.valueOf(DriverId), dbHelper);
+                JSONArray malArray1 = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
 
                 if (malArray1.length() > 0) {
                     saveDriverLogPost.PostDriverLogData(malArray1, APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout30Sec, false, false, 1, 0);
                 }else{
-                    GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+                    loadData();
+                   // GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
                 }
 
             } else {
                 confirmCertifyLay.setVisibility(View.GONE);
 
-                final boolean isDiagnostic;
-                final boolean isMalfunction;
-                if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-                    isDiagnostic = SharedPref.isDiagnosticOccur(getActivity());
-                    isMalfunction = SharedPref.isMalfunctionOccur(getActivity());
-
-                } else {
-                    isDiagnostic = SharedPref.isDiagnosticOccurCo(getActivity());
-                    isMalfunction = SharedPref.isMalfunctionOccurCo(getActivity());
-                }
-
-                if(isOnCreate){
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            viewOfflineData(isDiagnostic, isMalfunction);
-                        }
-                    }, 700);
-
-                }else{
-                    viewOfflineData(isDiagnostic, isMalfunction);
-                }
+                loadData();
 
             }
         }catch (Exception e){
@@ -260,6 +254,32 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter(ConstantsKeys.IsEventUpdate));
 
+    }
+
+
+    void loadData(){
+        final boolean isDiagnostic;
+        final boolean isMalfunction;
+        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+            isDiagnostic = SharedPref.isDiagnosticOccur(getActivity());
+            isMalfunction = SharedPref.isMalfunctionOccur(getActivity());
+
+        } else {
+            isDiagnostic = SharedPref.isDiagnosticOccurCo(getActivity());
+            isMalfunction = SharedPref.isMalfunctionOccurCo(getActivity());
+        }
+
+        if(isOnCreate){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    viewOfflineData(isDiagnostic, isMalfunction, false);
+                }
+            }, 700);
+
+        }else{
+            viewOfflineData(isDiagnostic, isMalfunction, false);
+        }
     }
 
 
@@ -284,7 +304,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         public void onReceive(Context context, Intent intent) {
 
              try {
-
+                 getDriverInfo();
                  boolean IsEventUpdate = intent.getBooleanExtra(ConstantsKeys.IsEventUpdate, false);
                  if (IsEventUpdate) {
                      boolean  IsLocalEventUpdate =  intent.getBooleanExtra(ConstantsKeys.IsLocalEventUpdate, false);
@@ -299,10 +319,10 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                              isMalfunction = SharedPref.isMalfunctionOccurCo(getActivity());
                          }
 
-                         viewOfflineData(isDiagnostic, isMalfunction);
+                         viewOfflineData(isDiagnostic, isMalfunction, IsLocalEventUpdate);
                      }else{
-                         getDriverInfo();
-                         GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+
+                        // GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
                      }
 
                  }
@@ -316,7 +336,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
 
 
-    void viewOfflineData(boolean isDiagnostic, boolean isMalfunction){
+    void viewOfflineData(boolean isDiagnostic, boolean isMalfunction, boolean isReceiverUpdate){
         try{
             JSONArray malDiaArray = malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper);
 
@@ -328,11 +348,31 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     }else {
                          setPagerAdapter(1, false);
                     }
+                    if(isReceiverUpdate){
+                        MalDiaViewPager.setCurrentItem(0);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                MalDiaViewPager.setCurrentItem(1);
+                            }
+                        }, 100);
+                    }
                 } else {
+
                     if(malDiaArray.length() > 0) {
                         showOfflineData(malDiaArray, 0);
                     }else {
                          setPagerAdapter(0, false);
+                    }
+
+                    if(isReceiverUpdate){
+                        MalDiaViewPager.setCurrentItem(1);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                MalDiaViewPager.setCurrentItem(0);
+                            }
+                        }, 100);
                     }
                 }
 
@@ -514,6 +554,9 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             case R.id.invisibleMalfnDiaBtn:
                 refreshButtonCLicked = true;
                 GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+
+                refreshEventDataFromService();
+
                 break;
 
             case R.id.dateActionBarTV:
@@ -527,6 +570,22 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         }
     }
 
+
+    protected void refreshEventDataFromService(){
+        try {
+            Constants.isCallMalDiaEvent = true;
+            SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+
+            // call service onStart command to call event data to refresh
+            Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                getActivity().startForegroundService(serviceIntent);
+            }
+            getActivity().startService(serviceIntent);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
     private void MoveFragment(Fragment fragment){
@@ -734,7 +793,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                         malfunctionChildList = new ArrayList<>();
 
                         JSONObject mainObj = (JSONObject)malfunctionArray.get(i);
-                        MalfunctionHeaderModel headerModel = new MalfunctionHeaderModel(
+                        headerModel = new MalfunctionHeaderModel(
                                 mainObj.getString(ConstantsKeys.EventName),
                                 mainObj.getString(ConstantsKeys.EventCode),
                                 mainObj.getString(ConstantsKeys.Definition),
@@ -821,7 +880,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             }
 
             // Check all events if not posted to server. Then avoid refresh data
-            boolean isUnposted = malfunctionDiagnosticMethod.isUnPostAnyEvent(DriverId, dbHelper);
+            boolean isUnposted = malfunctionDiagnosticMethod.isUnPostAnyEvent(dbHelper);
             if(refreshButtonCLicked && isUnposted) {
                 Constants.isCallMalDiaEvent = true;
                 SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
@@ -932,11 +991,11 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             }
 
             if (status.equals("true")) {
-                malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(Integer.parseInt(DriverId), dbHelper, new JSONArray());
+                malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, new JSONArray());
 
-                GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+              //  GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
             }else{
-                GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
+               // GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
             }
 
 
@@ -973,7 +1032,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
 
 
-    void showOfflineData(JSONArray malfunctionArray, int position){
+    void showOfflineData(JSONArray malDiaArray, int position){
         try{
             malfunctionHeaderList       = new ArrayList<>();
             malfunctionChildHashMap     = new HashMap<>();
@@ -981,37 +1040,17 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             diagnosticChildHashMap      = new HashMap<>();
             malfunctionChildList        = new ArrayList<>();
 
+            // Adding same type events in single group for Expandable ListView
+            parseListInHashMap(malDiaArray, Constants.PowerComplianceDiagnostic);
+            parseListInHashMap(malDiaArray, Constants.PowerComplianceMalfunction);
 
-            for(int  i = 0 ; i < malfunctionArray.length() ; i++){
-                    malfunctionChildList        = new ArrayList<>();
+            parseListInHashMap(malDiaArray, Constants.EngineSyncDiagnosticEvent);
+            parseListInHashMap(malDiaArray, Constants.EngineSyncMalfunctionEvent);
 
-                JSONObject mainObj = (JSONObject)malfunctionArray.get(i);
+            parseListInHashMap(malDiaArray, Constants.MissingDataDiagnostic);
+            parseListInHashMap(malDiaArray, Constants.PositionComplianceMalfunction);
 
-
-                // get status by driver wise
-
-                if (globally.isSingleDriver(getActivity())) {
-                    parseData(mainObj, i);
-                }else{
-
-                    String DrId = mainObj.getString(ConstantsKeys.DriverId);
-                    String DetectionDataEventCode = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
-
-                    if(DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
-                            DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
-                            DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)){
-                        parseData(mainObj, i);
-                    }else {
-                        if (DrId.equals(DriverId)) {
-                            parseData(mainObj, i);
-                        }
-                    }
-
-                }
-
-
-
-            }
+            parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
 
             setPagerAdapter(position, false);
 
@@ -1021,7 +1060,61 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     }
 
 
-    private void parseData(JSONObject mainObj, int position){
+
+
+    void parseListInHashMap(JSONArray malDiaArray, String EventType){
+        try{
+            headerModel = null;
+            malfunctionChildList        = new ArrayList<>();
+
+            for(int  i = 0 ; i < malDiaArray.length() ; i++){
+
+                JSONObject mainObj = (JSONObject)malDiaArray.get(i);
+                String DetectionDataEventCode = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
+
+                if(EventType.equals(DetectionDataEventCode)) {
+                    if (globally.isSingleDriver(getActivity())) {
+                        parseData(mainObj);
+                    } else {
+
+                        String DrId = mainObj.getString(ConstantsKeys.DriverId);
+
+                        if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
+                                DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
+                                DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)) {
+                            parseData(mainObj);
+                        } else {
+                            if (DrId.equals(DriverId)) {
+                                parseData(mainObj);
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            // add data in header list
+            if(headerModel != null) {
+                boolean isDiagnostic = constants.isValidInteger(EventType);
+                // add data in header list
+                if (isDiagnostic) {   // Valid integer is Diagnostic
+                    diagnosticHeaderList.add(headerModel);
+                    diagnosticChildHashMap.put(EventType, malfunctionChildList);
+
+                } else { // InValid integer is Malfunction
+                    malfunctionHeaderList.add(headerModel);
+                    malfunctionChildHashMap.put(EventType, malfunctionChildList);
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+    private void parseData(JSONObject mainObj){
         try{
             String EventType = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
             boolean IsClearEvent = mainObj.getBoolean(ConstantsKeys.IsClearEvent);
@@ -1029,9 +1122,9 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             if (IsClearEvent == false) {
                 MalDiaEventModel eventModel = constants.getMalDiaEventDetails(getActivity(), EventType);
 
-                MalfunctionHeaderModel headerModel = new MalfunctionHeaderModel(
+                headerModel = new MalfunctionHeaderModel(
                         eventModel.getEventTitle(), EventType, eventModel.getEventDesc(),
-                        IsClearEvent, true, "" + position);
+                        IsClearEvent, true, "" + malfunctionChildList.size());
 
                 DateTime EventDateTime = globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventDateTime), false);
                 String driverTimeZone = String.valueOf(EventDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
@@ -1046,10 +1139,24 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                 }
 
-                String TotalMinutes = "--";
-                if(mainObj.has(ConstantsKeys.TotalMinutes)){
-                    TotalMinutes = mainObj.getString(ConstantsKeys.TotalMinutes);
+                try {
+                    if(constants.isExponentialValue(StartOdometer)){
+                        StartOdometer = BigDecimal.valueOf(Double.parseDouble(StartOdometer)).toPlainString();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
+                String TotalMinutes = "--";
+
+                if(EventType.equals(Constants.PowerComplianceDiagnostic) || EventType.equals(Constants.PowerComplianceMalfunction)){
+                    if(mainObj.has(ConstantsKeys.TotalMinutes)){
+                        TotalMinutes = mainObj.getString(ConstantsKeys.TotalMinutes);
+                    }
+                }else{
+                    TotalMinutes = ""+constants.getMinDifference(mainObj.getString(ConstantsKeys.EventDateTime), globally.GetCurrentUTCTimeFormat());
+                }
+
                 // Child array event
                 MalfunctionModel malfunctionModel = new MalfunctionModel(
                         Country,
@@ -1064,30 +1171,11 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                         driverTimeZone, "--", "--", TotalMinutes   //TotalMinutes value is passing in getId()
                 );
 
-
-                    /*String EngineHours;
-                    String Miles;
-                    String DetectionDataEventCode;
-                    String EventCode;
-                    String Reason;
-                    */
-
                 // add data in child list
                 malfunctionChildList.add(malfunctionModel);
 
 
-                boolean isDiagnostic = constants.isValidInteger(EventType);
 
-                // add data in header list
-                if (isDiagnostic) {   // Valid integer is Diagnostic
-                    diagnosticHeaderList.add(headerModel);
-                    diagnosticChildHashMap.put(EventType, malfunctionChildList);
-
-                } else { // InValid integer is Malfunction
-                    malfunctionHeaderList.add(headerModel);
-                    malfunctionChildHashMap.put(EventType, malfunctionChildList);
-
-                }
             }
 
         }catch (Exception e){

@@ -111,7 +111,8 @@ public class Globally {
 	static String DateFormatMalfunction				= "MMM dd, hh:mm a";
 	static String DateFormatMMM_dd_yyyy				= "MMM dd, yyyy";
 	static String DateFormatMMMM_ddd_dd				= "MMMM,MMM,EEEE";
-	static String DateFormat_dd_MMM_yyyy			= "dd MMM, yyyy";
+	public static String DateFormat_dd_MMM_yyyy		= "dd MMM, yyyy";
+	public static String DateFormat_mm_dd_yy		= "MM-dd-yy";
 
 	public static String DateFormatWithMillSec 		= "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'";
 	public static String[] MONTHS 					= {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -137,6 +138,7 @@ public class Globally {
 
 	/*-------- Project ID ----------*/
 	public static String PROJECT_ID                           = "1";
+	public static int PROJECT_ID_INT                          = 1;
 
 	/*-------- DRIVER STATUS ----------*/
 	public static String OFF_DUTY              				  = "1";
@@ -800,9 +802,9 @@ public class Globally {
 	}
 
 	// Convert default DateTime format to MM/dd/yyyy date format
-	public static String ConvertDateFormatddMMMyyyy(String time) {
+	public static String ConvertDateFormatddMMMyyyy(String time, String outputDateFormat) {
 		SimpleDateFormat inputFormat = new SimpleDateFormat(DateFormat);
-		SimpleDateFormat outputFormat = new SimpleDateFormat(DateFormat_dd_MMM_yyyy);
+		SimpleDateFormat outputFormat = new SimpleDateFormat(outputDateFormat);
 
 		Date date = null;
 		String str = "";

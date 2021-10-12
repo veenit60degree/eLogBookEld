@@ -114,17 +114,13 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-       /* if(EventDateTime.length() > 16) {
-            holder.dateDotTV.setText(EventDateTime.substring(11, 16));
-        }*/
-
 
         if(EventDateTime.length() >= 19) {
             holder.dateDotTV.setText(EventDateTime.substring(11, 19));
         }
 
 
-        //holder.dateDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins()) );
+      //  holder.dateDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime, Globally.DateFormat_mm_dd_yy) );
         holder.eventLoginDotTV.setText(constants.getLoginLogoutEventName(
                                                         itemsList.get(position).getEventType(),
                                                         itemsList.get(position).getEventCode() ));
@@ -171,18 +167,18 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
     private void showDateView(String lastItemDate, String EventDateTime, TextView view, boolean isDirectVisibile){
         if(isDirectVisibile){
             view.setVisibility(View.VISIBLE);
-            //view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
-            if(EventDateTime.length() >= 19) {
+            view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime, Globally.DateFormat_mm_dd_yy));
+            /*if(EventDateTime.length() >= 19) {
                 view.setText(EventDateTime.substring(11, 19));
-            }
+            }*/
         }else{
             int dayDiff = constants.getDayDiff(lastItemDate, EventDateTime);
             if (dayDiff != 0) {
                 view.setVisibility(View.VISIBLE);
-               // view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
-                if(EventDateTime.length() >= 19) {
+                view.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime, Globally.DateFormat_mm_dd_yy));
+                /*if(EventDateTime.length() >= 19) {
                     view.setText(EventDateTime.substring(11, 19));
-                }
+                }*/
             }
         }
     }

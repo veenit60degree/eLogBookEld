@@ -91,7 +91,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	ProgressDialog dialog;
 	DBHelper dbHelper;
 	HelperMethods hMethod;
-	int DriverId, DriverStatus, DRIVING = 3 ;
+	int DriverId, DriverStatus;
 	MainDriverEldPref MainDriverPref;
 	CoDriverEldPref CoDriverPref;
 	Constants constants;
@@ -749,6 +749,8 @@ public class Slidingmenufunctions implements OnClickListener {
 
 							if(loginDialog != null)
 								loginDialog.dismiss();
+
+							Constants.lastDriverId = SharedPref.getDriverId(context);
 							MainDriverView(context);
 							ParseLoginDetails.setUserDefault(DriverConst.SingleDriver, context);
 							usernameTV.setText(DriverConst.GetDriverDetails( DriverConst.DriverName, context));
@@ -759,7 +761,7 @@ public class Slidingmenufunctions implements OnClickListener {
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
 
 
-							Constants.isCallMalDiaEvent = true;
+							Constants.isDriverSwitchEvent = true;
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 							startService();
 
@@ -773,6 +775,8 @@ public class Slidingmenufunctions implements OnClickListener {
 
 							if(loginDialog != null)
 								loginDialog.dismiss();
+
+							Constants.lastDriverId = SharedPref.getDriverId(context);
 							CoDriverView(context, false);
 							ParseLoginDetails.setUserDefault( DriverConst.TeamDriver, context);
 							usernameTV.setText(DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, context));
@@ -782,7 +786,7 @@ public class Slidingmenufunctions implements OnClickListener {
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
 
 
-							Constants.isCallMalDiaEvent = true;
+							Constants.isDriverSwitchEvent = true;
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 							startService();
 
@@ -803,7 +807,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	private void startService(){
 
 		// update malfunction/diagnostic status with offline records
-		malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(global, constants, dbHelper, context);
+		//malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(global, constants, dbHelper, context);
 
 		Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
 		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -885,6 +889,11 @@ public class Slidingmenufunctions implements OnClickListener {
 			@Override
 			protected Map<String, String> getParams()
 			{
+				String odometer = SharedPref.getHighPrecisionOdometer(context);
+				try {
+					odometer = constants.getBeforeDecimalValue(constants.meterToKm(odometer));
+				}catch (Exception e){}
+
 				Map<String,String> params = new HashMap<String, String>();
 				params.put(ConstantsKeys.DriverId, DriverId);
 				params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
@@ -893,7 +902,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				params.put(ConstantsKeys.VIN, VIN);
 				params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(context));
 				params.put(ConstantsKeys.EngineHours,  SharedPref.getObdEngineHours(context));
-				params.put(ConstantsKeys.CrntOdodmeter, constants.meterToKm(SharedPref.getHighPrecisionOdometer(context)));
+				params.put(ConstantsKeys.CrntOdodmeter, odometer);
 				params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);
 				params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 

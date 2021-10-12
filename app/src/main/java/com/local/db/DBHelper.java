@@ -782,12 +782,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     /* ---------------------- Insert malfunction & diagnostic events  Log -------------------- */
-    public boolean InsertMalfncnDiagnosticLog(int DriverId, JSONArray jsonArray) {
+    public boolean InsertMalfncnDiagnosticLog(int ProjectId, JSONArray jsonArray) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(DRIVER_ID_KEY, ProjectId);
         contentValues.put(MALFUNCTION_DIANOSTIC_LIST, String.valueOf(jsonArray));
 
         db.insert(TABLE_MALFUNCTION_DIANOSTIC, null, contentValues);
@@ -1162,15 +1162,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     /* ---------------------- Update Malfunction & Diagnostic Log -------------------- */
-    public boolean UpdateMalfunctionDiagnosticLog(int DriverId, JSONArray jsonArray) {
+    public boolean UpdateMalfunctionDiagnosticLog(int ProjectId, JSONArray jsonArray) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(DRIVER_ID_KEY, ProjectId);
         contentValues.put(MALFUNCTION_DIANOSTIC_LIST, String.valueOf(jsonArray));
 
-        db.update(TABLE_MALFUNCTION_DIANOSTIC, contentValues, DRIVER_ID_KEY + " = ? ", new String[] { Integer.toString(DriverId) } );
+        db.update(TABLE_MALFUNCTION_DIANOSTIC, contentValues, DRIVER_ID_KEY + " = ? ", new String[] { Integer.toString(ProjectId) } );
         return true;
     }
 

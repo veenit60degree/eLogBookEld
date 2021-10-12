@@ -765,10 +765,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             int viewHeight = eventDotETV.getHeight();
             if(viewHeight > 0) {
                 if (global.isTablet(getActivity())) {
-                    inspectionLayHeight = viewHeight + 25;
+                    inspectionLayHeight = viewHeight + 22;
                     headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) +10;
                 } else {
-                    inspectionLayHeight = viewHeight + 30;
+                    inspectionLayHeight = viewHeight + 28;
                     headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) ;
                 }
 
@@ -784,12 +784,12 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             }
 
 
-            int HeaderViewCount = 1;
+            /*int HeaderViewCount = 1;
             if(LoginLogoutList.size() > 0){
                 HeaderViewCount = LoginLogoutList.get(LoginLogoutList.size()-1).getHeaderViewCount();
-            }
+            }*/
             int dividerHeight = 1; //remAnotnDotListView.getDividerHeight();
-            int dividerHeightInPx = constants.intToPixel(getActivity(), dividerHeight);
+           // int dividerHeightInPx = constants.intToPixel(getActivity(), dividerHeight);
             final int DutyStatusListHeight = getHeight(inspectionLayHeight, DutyStatusList, headerViewHeight, dividerHeight);
             final int LoginLogoutListHeight = getHeight(inspectionLayHeight, LoginLogoutList, headerViewHeight, dividerHeight);
             final int CommentsRemarksListHeight = getHeight(inspectionLayHeight, CommentsRemarksList, 1, dividerHeight);
@@ -992,7 +992,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     void setDataOnTextView(JSONObject dataObj){
         try{
-            dateRodsTV.setText(global.ConvertDateFormatddMMMyyyy(dataObj.getString("RecordDate")));
+            dateRodsTV.setText(global.ConvertDateFormatddMMMyyyy(dataObj.getString("RecordDate"), Globally.DateFormat_dd_MMM_yyyy));
             dayStartTimeTV.setText(dataObj.getString("PeriodStartingTime"));
             timeZoneCTV.setText(dataObj.getString("TimeZone"));
             currLocCTV.setText(Html.fromHtml(dataObj.getString("CurrentLocation")) );

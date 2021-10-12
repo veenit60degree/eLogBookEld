@@ -14,7 +14,7 @@
     <string name="terms_of_service">terms of service </string>
     <string name="obd_config">OBD Configuration</string>
     <string name="obd_diagnose">OBD Diagnose</string>
-    <string name="mal_dia_history">Mal/Dia Events History</string>
+    <string name="mal_dia_history">Events History</string>
     <string name="child_text">LOAD#661\n3785 BOUL LAURIER EST,QUEBEC,CA\n\nLOAD#NISD662\n3785 BOUL LAURIER EST,QUEBEC,CA</string>
     <string name="title_activity_maps_activityyy">Map</string>
     <string name="obd_connection_desc">OBD not connected!! Connect your phone with OBD wifi connection. </string>
@@ -773,6 +773,7 @@
     <string name="ClickToWA">Click To WhatsApp</string>
     <string name="Close">Close</string>
     <string name="Clear">Clear</string>
+    <string name="ClearTime">Clear Time</string>
     <string name="ClearAll">Clear all</string>
     <string name="DeleteAll">Delete all</string>
 
@@ -808,6 +809,7 @@
     <string name="Status">Status</string>
     <string name="Status_colon">Status:</string>
     <string name="currentStatus">Current Status</string>
+    <string name="Start_eng_hr">Start Engine Hours</string>
     <string name="Start_time">Start Time</string>
     <string name="End_time">End Time</string>
     <string name="Duration">Duration</string>

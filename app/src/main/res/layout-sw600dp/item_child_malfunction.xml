@@ -35,6 +35,19 @@
 
 
         <TextView
+            android:id="@+id/endTimeMalTxtVw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_16"
+            android:textColor="@color/active_status_bg"
+            android:text="@string/End_time"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            android:visibility="gone"
+
+            />
+
+        <TextView
             android:id="@+id/statusMalTxtVw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -73,6 +86,10 @@
             />
 
 
+
+
+
+
         <TextView
             android:id="@+id/seqIdMalTxtVw"
             android:layout_width="match_parent"
@@ -86,17 +103,6 @@
             />
 
 
-        <TextView
-            android:id="@+id/originMalTxtVw"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_16"
-            android:textColor="@color/active_status_bg"
-            android:text="@string/origin"
-            android:gravity="center_horizontal"
-            android:layout_weight="1"
-
-            />
 
     </LinearLayout>
 

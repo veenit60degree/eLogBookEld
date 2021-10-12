@@ -19,9 +19,11 @@ import com.adapter.logistic.MalfunctionAdapter;
 import com.adapter.logistic.MalfunctionHistoryAdapter;
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.custom.dialogs.DatePickerDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -33,6 +35,7 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,20 +46,25 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
     View rootViewDia;
     RelativeLayout malfunctionActionBar, eldMenuLay, rightMenuBtn;
     ExpandableListView diagnosticExpandList;
-    TextView noRecordTV, EldTitleTV;
-    ImageView eldMenuBtn;
+    TextView noRecordTV, EldTitleTV, dateActionBarTV;
+    ImageView eldMenuBtn, previousDateBtn, nextDateBtn;;
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
     DBHelper dbHelper;
+    HelperMethods hMethods;
     Constants constants;
     Globally globally;
+    String EventDateTime = "", CurrentCycleId = "";
+    int UsaMaxDays   = 7;
+    int CanMaxDays   = 14;
+    int MaxDays;
 
     List<MalfunctionModel> malfunctionChildList = new ArrayList<>();
-
     List<MalfunctionHeaderModel> diagnosticHeaderList = new ArrayList<>();
     private HashMap<String, List<MalfunctionModel>> diagnosticChildHashMap = new HashMap<>();
 
     String DriverId = "", VIN = "", Country, OffsetFromUTC, CompanyId;
     MalfunctionHeaderModel headerModel = null;
+    DatePickerDialog dateDialog;
 
 
     @Override
@@ -84,24 +92,27 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
 
     void initView(View view) {
 
-        globally = new Globally();
-        constants = new Constants();
-        dbHelper = new DBHelper(getActivity());
+        globally    = new Globally();
+        constants   = new Constants();
+        dbHelper    = new DBHelper(getActivity());
+        hMethods    = new HelperMethods();
+
         malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
 
         malfunctionActionBar    = (RelativeLayout)view.findViewById(R.id.malfunctionActionBar);
-        eldMenuLay      = (RelativeLayout)view.findViewById(R.id.eldMenuLay);
-        rightMenuBtn   = (RelativeLayout)view.findViewById(R.id.rightMenuBtn);
+        eldMenuLay              = (RelativeLayout)view.findViewById(R.id.eldMenuLay);
+        rightMenuBtn            = (RelativeLayout)view.findViewById(R.id.rightMenuBtn);
 
         diagnosticExpandList    = (ExpandableListView)view.findViewById(R.id.malfunctionExpandList);
-        noRecordTV           = (TextView)view.findViewById(R.id.noRecordTV);
-        EldTitleTV      = (TextView) view.findViewById(R.id.EldTitleTV);
+        noRecordTV              = (TextView)view.findViewById(R.id.noRecordTV);
+        EldTitleTV              = (TextView) view.findViewById(R.id.EldTitleTV);
+        dateActionBarTV         = (TextView) view.findViewById(R.id.dateActionBarTV);
 
-        eldMenuBtn      = (ImageView)view.findViewById(R.id.eldMenuBtn);
+        eldMenuBtn              = (ImageView)view.findViewById(R.id.eldMenuBtn);
+        previousDateBtn         = (ImageView)view.findViewById(R.id.previousDate);
+        nextDateBtn             = (ImageView)view.findViewById(R.id.nextDateBtn);
+
         eldMenuBtn.setImageResource(R.drawable.back_white);
-
-        EldTitleTV.setText(getResources().getString(R.string.mal_dia_history) );
-        rightMenuBtn.setVisibility(View.GONE);
 
         DriverId                = SharedPref.getDriverId( getActivity());
         VIN                     = SharedPref.getVINNumber(getActivity());
@@ -110,16 +121,35 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
         CompanyId               = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
 
 
-        viewOfflineData();
+        EventDateTime = globally.GetCurrentDeviceDate();
+        CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
 
+        if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
+            MaxDays = UsaMaxDays;
+        }else{
+            MaxDays = CanMaxDays;
+        }
 
+        viewOfflineData(EventDateTime);
+        previousDateBtn.setVisibility(View.VISIBLE);
+        rightMenuBtn.setVisibility(View.GONE);
+        dateActionBarTV.setVisibility(View.VISIBLE);
+
+        dateActionBarTV.setText(EventDateTime);
+        EldTitleTV.setText(getResources().getString(R.string.mal_dia_history) );
+
+        previousDateBtn.setOnClickListener(this);
+        nextDateBtn.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
+        dateActionBarTV.setOnClickListener(this);
+
     }
 
 
-    void viewOfflineData(){
+    void viewOfflineData(String selectedDate){
         try{
-            JSONArray malDiaArray = malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper);
+            selectedDate = globally.ConvertDateFormatyyyy_MM_dd(selectedDate);
+            JSONArray malDiaArray = malfunctionDiagnosticMethod.getEventsDateWise(selectedDate, dbHelper);  //getMalDiaDurationArray(dbHelper);
 
             Log.d("malDiaArray", "malDiaArray: " + malDiaArray);
 
@@ -210,19 +240,40 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
 
                 headerModel = new MalfunctionHeaderModel(
                         eventModel.getEventTitle(), EventType, eventModel.getEventDesc(),
-                        IsClearEvent, true, "" + position);
+                        IsClearEvent, true, "" + malfunctionChildList.size());
 
+                String driverEndTimeZone = "";
                 DateTime EventDateTime = Globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventDateTime), false);
                 String driverTimeZone = String.valueOf(EventDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
 
-                String EngHrs = "0", StartOdometer = "0";
+
+                if(mainObj.has(ConstantsKeys.EventEndDateTime) && mainObj.getString(ConstantsKeys.EventEndDateTime).length() > 15) {
+                    DateTime EventEndDateTime = Globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventEndDateTime), false);
+                    driverEndTimeZone = String.valueOf(EventEndDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
+                }else{
+                    if(EventType.equals(Constants.PowerComplianceDiagnostic) || EventType.equals(Constants.PowerComplianceMalfunction)){
+                        driverEndTimeZone = driverTimeZone;
+                    }
+                }
+
+                String EngHrs = "0", StartOdometer = "0", StartEngineHours = "0";
                 if (mainObj.has(ConstantsKeys.ClearEngineHours)) {
                     EngHrs = mainObj.getString(ConstantsKeys.ClearEngineHours);
                 }
 
                 if (mainObj.has(ConstantsKeys.StartOdometer)) {
                     StartOdometer = mainObj.getString(ConstantsKeys.StartOdometer);
+                }
+                if (mainObj.has(ConstantsKeys.EngineHours)) {
+                    StartEngineHours = mainObj.getString(ConstantsKeys.EngineHours);
+                }
 
+                try {
+                    if(constants.isExponentialValue(StartOdometer)){
+                        StartOdometer = BigDecimal.valueOf(Double.parseDouble(StartOdometer)).toPlainString();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
 
                 String TotalMinutes = "--";
@@ -240,8 +291,8 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                         StartOdometer,
                         mainObj.getString(ConstantsKeys.DetectionDataEventCode),
                         "", "",
-                        "", "", "", "",
-                        driverTimeZone, "--", "--", TotalMinutes   //TotalMinutes value is passing in getId()
+                        "", "", "", driverEndTimeZone,  // passing event end date into to date
+                        driverTimeZone, "--", StartEngineHours, TotalMinutes   //TotalMinutes value is passing in getId()
                 );
 
                 // add data in child list
@@ -282,9 +333,114 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+
+            case R.id.dateActionBarTV:
+                ShowDateDialog();
+                break;
+
+
             case R.id.eldMenuLay:
                 getParentFragmentManager().popBackStack();
                 break;
+
+            case R.id.previousDate:
+                VisibleHideNextPrevView("prev");
+                OnDateSelectionView(EventDateTime);
+                break;
+
+            case R.id.nextDateBtn:
+                VisibleHideNextPrevView("next");
+                OnDateSelectionView(EventDateTime);
+                break;
+
+
         }
     }
+
+
+
+    void ShowDateDialog(){
+        try {
+            if (dateDialog != null && dateDialog.isShowing())
+                dateDialog.dismiss();
+
+            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, EventDateTime, new DateListener());
+            dateDialog.show();
+        }catch (final IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private class DateListener implements DatePickerDialog.DatePickerListener{
+        @Override
+        public void JobBtnReady(String SelectedDate, String dayOfTheWeek, String MonthFullName, String MonthShortName, int dayOfMonth) {
+
+            try {
+                if (dateDialog != null && dateDialog.isShowing())
+                    dateDialog.dismiss();
+            }catch (final IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+            EventDateTime = SelectedDate;
+            VisibleHideNextPrevView("");
+            OnDateSelectionView(SelectedDate);
+
+        }
+    }
+
+
+
+
+
+    private void OnDateSelectionView(String SelectedDate){
+        EventDateTime  = SelectedDate;
+        dateActionBarTV.setText(SelectedDate);
+        //10/03/2021
+
+        // Get Local Saved Data
+        viewOfflineData(EventDateTime);
+
+    }
+
+
+    void VisibleHideNextPrevView(String click){
+        String selectedDateStr = globally.ConvertDateFormat(EventDateTime);
+        String currentDateStr = globally.ConvertDateFormat(globally.GetCurrentDeviceDate());
+        DateTime selectedDateTime = new DateTime(globally.getDateTimeObj(selectedDateStr, false) );
+        DateTime currentDateTime = new DateTime(globally.getDateTimeObj(currentDateStr, false) );
+
+        if(click.equals("next")){
+            selectedDateTime = selectedDateTime.plusDays(1);
+            EventDateTime = globally.ConvertDateFormatMMddyyyy(selectedDateTime.toString());
+        }else if(click.equals("prev")){
+            selectedDateTime = selectedDateTime.minusDays(1);
+            EventDateTime = globally.ConvertDateFormatMMddyyyy(selectedDateTime.toString());
+        }
+
+        int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
+        DOTBtnVisibility(DaysDiff, MaxDays);
+    }
+
+    private void DOTBtnVisibility(int DaysDiff, int MaxDays){
+
+        if(DaysDiff == 0){
+            nextDateBtn.setVisibility(View.GONE);
+            previousDateBtn.setVisibility(View.VISIBLE);
+        }else if(DaysDiff == MaxDays){
+            previousDateBtn.setVisibility(View.GONE);
+            nextDateBtn.setVisibility(View.VISIBLE);
+        }else{
+            nextDateBtn.setVisibility(View.VISIBLE);
+            previousDateBtn.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+
+
 }

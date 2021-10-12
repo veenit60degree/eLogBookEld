@@ -100,20 +100,20 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
         try {
             if (position == 0) {
                 holder.dateTimeDiffTV.setVisibility(View.VISIBLE);
-               // holder.dateTimeDiffTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                holder.dateTimeDiffTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime, Globally.DateFormat_mm_dd_yy));
 
-                if(EventDateTime.length() >= 19) {
+                /*if(EventDateTime.length() >= 19) {
                     holder.dateTimeDiffTV.setText(EventDateTime.substring(11, 19));
-                }
+                }*/
             } else {
                 int dayDiff = constants.getDayDiff(itemsList.get(position-1).getDateTimeWithMins(), EventDateTime);
                 if (dayDiff != 0){
                     holder.dateTimeDiffTV.setVisibility(View.VISIBLE);
-                  //  holder.dateTimeDiffTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime));
+                    holder.dateTimeDiffTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime, Globally.DateFormat_mm_dd_yy));
 
-                    if(EventDateTime.length() >= 19) {
+                    /*if(EventDateTime.length() >= 19) {
                         holder.dateTimeDiffTV.setText(EventDateTime.substring(11, 19));
-                    }
+                    }*/
 
                 }
             }

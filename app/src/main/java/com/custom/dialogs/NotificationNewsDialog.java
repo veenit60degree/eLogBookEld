@@ -71,6 +71,9 @@ public class NotificationNewsDialog extends Dialog {
             }
         });
 
+        if(newsList.size() == 0){
+            dismiss();
+        }
         Button notificationOkBtn = (Button)findViewById(R.id.notificationOkBtn);
         notificationOkBtn.setOnClickListener(new View.OnClickListener() {
             @Override

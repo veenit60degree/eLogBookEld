@@ -263,12 +263,6 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
             previousDateBtn.setVisibility(View.VISIBLE);
         }
 
-       /* if(!isDOT){
-            previousDateBtn.setVisibility(View.GONE);
-            nextDateBtn.setVisibility(View.GONE);
-        }*/
-
-
     }
 
 
