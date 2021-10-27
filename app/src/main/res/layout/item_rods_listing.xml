@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/gray_default"
+    >
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_45"
+        android:gravity="center_vertical">
+
+
+        <TextView
+            android:id="@+id/rodsFromDateTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:paddingLeft="@dimen/margin_15"
+            android:text="@string/download_logs_Createddate"
+            android:textColor="@color/color_eld_theme"
+            android:textSize="@dimen/text_size_15" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/margin_10"
+            android:orientation="horizontal"
+
+            >
+
+            <RelativeLayout
+                android:id="@+id/shareLogImgView"
+                android:layout_width="@dimen/view_height_45"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:background="@drawable/gray_eld_selector"
+                android:padding="@dimen/margin_12"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+
+
+                    android:src="@drawable/share" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/downloadLogImgView"
+                android:layout_width="@dimen/view_height_45"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:background="@drawable/gray_eld_selector"
+                android:padding="@dimen/margin_10"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+
+                    android:src="@drawable/download" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/rodsFileViewLay"
+                android:layout_width="@dimen/view_height_45"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin_short_5"
+                android:background="@drawable/gray_eld_selector"
+                android:padding="@dimen/margin_12"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/view" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/shareProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+
+            />
+    </RelativeLayout>
+
+
+</RelativeLayout>

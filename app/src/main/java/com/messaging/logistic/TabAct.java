@@ -202,7 +202,6 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                     boolean isFreshLogin = SharedPref.GetNewLoginStatus(TabAct.this);
                     boolean IsCCMTACertified = SharedPref.IsCCMTACertified(TabAct.this);
                     boolean IsELDNotification = intent.getBooleanExtra(ConstantsKeys.IsELDNotification, false);
-                    String ELDNotification = intent.getStringExtra(ConstantsKeys.DriverELDNotificationList);
 
                     if (IsCCMTACertified && isSuggestedEdit && isFreshLogin == false) {
                         Intent i = new Intent(TabAct.this, SuggestedFragmentActivity.class);
@@ -228,6 +227,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                                         eldNotificationDialog.dismiss();
                                     }
 
+                                    String ELDNotification = intent.getStringExtra(ConstantsKeys.DriverELDNotificationList);
                                     eldNotificationDialog = new EldNotificationDialog(TabAct.this, ELDNotification, true);
                                     eldNotificationDialog.show();
 
@@ -437,8 +437,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
         alertDialog = new AlertDialog.Builder(TabAct.this).create();
-        alertDialog.setTitle(Html.fromHtml("Alert !!"));
-        alertDialog.setMessage(Html.fromHtml("Please change your status to On Duty due to vehicle is not moving"));
+        alertDialog.setTitle(Html.fromHtml(getString(R.string.confirm_vin)));
+        alertDialog.setMessage(Html.fromHtml(getString(R.string.confirm_vin_desc)));
         alertDialog.setButton(Html.fromHtml("Ok"), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -615,22 +615,37 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     }
 
 
+/*    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        SharedPref.SetWrongVinAlertView(false, getApplicationContext());
+
+    }*/
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
 
             case R.id.wiredObdDataBtn:
+                try {
+                    if (getApplicationContext() != null && alertDialog != null) {
+                        if (alertDialog.isShowing()) {
+                            alertDialog.dismiss();
+                        }
+                        alertDialog.show();
 
-                if(alertDialog != null) {
-                    if(alertDialog.isShowing()){
-                        alertDialog.dismiss();
-                    }else {
-                        if(BackgroundLocationService.IsAutoChange == false)
-                            alertDialog.show();
+                        /*else {
+                            if (BackgroundLocationService.IsAutoChange == false) {
+                                if (SharedPref.getVss(TabAct.this) < 8) {
+                                    alertDialog.show();
+                                }
+                            }
+                        }*/
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-
 
 
                 break;

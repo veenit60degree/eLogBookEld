@@ -3,14 +3,44 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/baseline_light_mode_20.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/baseline_volume_off_24.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/baseline_volume_up_18.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/blue_default_selector.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/blue_new_default.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/blue_new_drawable.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/blue_new_hover.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/blue_top_corner_drawable.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/certify_border.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/check_intenet_drawable.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/checkbox_terms_drawable.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/checkbox_terms_mobile.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/date_picker_border.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/gray_background_drawable.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/gray_eld_default.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/gray_eld_drawable.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/gray_eld_hover.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/gray_eld_selector.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/gray_hover.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/media_white_drawable.xml" value="0.12" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/outline_light_mode_20.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_border.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_cardview_default.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_cardview_hover.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_cardview_left_default.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_cardview_left_hover.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_cardview_left_selector.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_default.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_hover.xml" value="0.536" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/actionbar_eld.xml" value="0.72" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/activity_edit_log_compare.xml" value="0.39503205128205127" />
-        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/activity_eld_new.xml" value="0.4358974358974359" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/activity_eld_new.xml" value="0.6" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/dialog_deferral.xml" value="0.42788461538461536" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/dialog_other_options.xml" value="0.4567307692307692" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/fragment_dot_canada.xml" value="0.536" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/fragment_dot_us.xml" value="0.536" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/fragment_obd_diagnose.xml" value="0.4326923076923077" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/hos_summary.xml" value="0.4" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/item_child_malfunction.xml" value="0.536" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/item_cycle_op_zone_dot.xml" value="0.4765625" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/item_duty_status_change_dot.xml" value="0.536" />
@@ -18,11 +48,17 @@
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/item_header_malfunction.xml" value="0.3998397435897436" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/item_login_logout_dot.xml" value="0.4765625" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/item_no_selection_view.xml" value="0.44871794871794873" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/item_noti_history.xml" value="0.47115384615384615" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/item_rods_listing.xml" value="0.190625" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/login_activity.xml" value="0.4110576923076923" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/noti_history_fragment.xml" value="0.40064102564102566" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/popup_generaterods.xml" value="0.190625" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/popup_notification.xml" value="0.3998397435897436" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/popup_trailor_fields.xml" value="0.42628205128205127" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/popup_vehicle_list.xml" value="0.3685897435897436" />
-        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/settings_fragment.xml" value="0.40865384615384615" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/settings_fragment.xml" value="0.4" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/slide_menu.xml" value="0.123046875" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw600dp/webview_activity.xml" value="0.190625" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/actionbar_eld.xml" value="0.4" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/activity_edit_log_compare.xml" value="0.16837431693989072" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/activity_eld_new.xml" value="0.18579234972677597" />
@@ -32,17 +68,23 @@
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/fragment_dot_canada.xml" value="0.264" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/fragment_dot_us.xml" value="0.1366120218579235" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/fragment_obd_diagnose.xml" value="0.1680327868852459" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/fragment_rods_logs.xml" value="0.190625" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/hos_summary.xml" value="0.17418032786885246" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/item_child_malfunction.xml" value="0.264" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/item_cycle_op_zone_dot.xml" value="0.190625" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/item_duty_status_change_dot.xml" value="0.16" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/item_engine_power_dot.xml" value="0.190625" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/item_login_logout_dot.xml" value="0.190625" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/item_no_selection_view.xml" value="0.190625" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/item_rods_listing.xml" value="0.190625" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/noti_history_fragment.xml" value="0.17076502732240437" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/popup_generaterods.xml" value="0.190625" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/popup_notification.xml" value="0.17042349726775957" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/popup_trailor_fields.xml" value="0.18169398907103826" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/popup_vehicle_list.xml" value="0.18989071038251365" />
-        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/settings_fragment.xml" value="0.13797814207650272" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/settings_fragment.xml" value="0.2" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/slide_menu.xml" value="0.1" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout-sw720dp/webview_activity.xml" value="0.190625" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/actionbar_eld.xml" value="0.2" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/activity_edit_log_compare.xml" value="0.24003623188405798" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/activity_eld_new.xml" value="0.264" />
@@ -60,7 +102,9 @@
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/fragment_malfunction.xml" value="0.2427536231884058" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/fragment_obd_diagnose.xml" value="0.1897644927536232" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/frame_layout.xml" value="0.13020833333333334" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/hos_summary.xml" value="0.264" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/hos_summary_one.xml" value="0.23324275362318841" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/include_ask_login.xml" value="0.23233695652173914" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/include_drive_daily_info.xml" value="0.22282608695652173" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/inspection_fragment.xml" value="0.1897644927536232" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_child_malfunction.xml" value="0.264" />
@@ -77,16 +121,21 @@
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_notification.xml" value="0.2259963768115942" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_permission_info.xml" value="0.2441123188405797" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_remarks_ano_dot.xml" value="0.15208333333333332" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/item_rods_listing.xml" value="0.25416666666666665" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/items_job_detail.xml" value="0.2536231884057971" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/login_activity.xml" value="0.23233695652173914" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/noti_history_fragment.xml" value="0.21195652173913043" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_datepicker.xml" value="0.223731884057971" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_generaterods.xml" value="0.25416666666666665" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_notification.xml" value="0.2259963768115942" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_permission_info.xml" value="0.2441123188405797" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_share_log.xml" value="0.25416666666666665" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_trailor_fields.xml" value="0.24094202898550723" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_update_app.xml" value="0.25416666666666665" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_vehicle_list.xml" value="0.22282608695652173" />
-        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/settings_fragment.xml" value="0.18297101449275363" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/settings_fragment.xml" value="0.2" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/slide_menu.xml" value="0.21603260869565216" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/webview_activity.xml" value="0.25416666666666665" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/searchablespinner/src/main/res/layout-sw600dp/view_list.xml" value="0.44871794871794873" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/searchablespinner/src/main/res/layout-sw600dp/view_searchable_spinner.xml" value="0.44871794871794873" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/searchablespinner/src/main/res/layout-sw720dp/view_searchable_spinner.xml" value="0.264" />

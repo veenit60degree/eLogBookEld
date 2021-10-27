@@ -364,7 +364,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
             if (dateDialog != null && dateDialog.isShowing())
                 dateDialog.dismiss();
 
-            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, EventDateTime, new DateListener());
+            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, EventDateTime, new DateListener(), false);
             dateDialog.show();
         }catch (final IllegalArgumentException e) {
             e.printStackTrace();

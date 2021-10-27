@@ -23,6 +23,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.StrictMode;
+
+import androidx.multidex.BuildConfig;
 import androidx.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -79,6 +81,9 @@ public class UILApplication extends Application {
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
 		}
+
+		if(BuildConfig.DEBUG)
+			StrictMode.enableDefaults();
 
 		StrictMode.ThreadPolicy old = StrictMode.getThreadPolicy();
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder(old)

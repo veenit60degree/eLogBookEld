@@ -48,6 +48,9 @@ public class DriverLogModel {
     private String MalfunctionDefinition;
     private boolean IsNorthCanada;
     private boolean isNewRecord;
+    private boolean IsCycleChanged;
+    private String StartOdometerInKm;
+    private String EndOdometerInKm;
 
 
     public DriverLogModel() {
@@ -93,6 +96,10 @@ public class DriverLogModel {
         this.MalfunctionDefinition = logModel.getMalfunctionDefinition();
         this.IsNorthCanada = logModel.IsNorthCanada();
         this.isNewRecord    = logModel.IsNewRecord();
+        this.IsCycleChanged = logModel.IsCycleChanged();
+        this.StartOdometerInKm = logModel.getStartOdometerInKm();
+        this.EndOdometerInKm = logModel.getEndOdometerInKm();
+
     }
 
     public void setDriverLogId(long driverLogId) {
@@ -430,6 +437,27 @@ public class DriverLogModel {
         isNewRecord = IsNewRecord;
     }
 
+    public boolean IsCycleChanged() {
+        return IsCycleChanged;
+    }
 
+    public void setCycleChanged(boolean cycleChanged) {
+        IsCycleChanged = cycleChanged;
+    }
 
+    public String getStartOdometerInKm() {
+        return StartOdometerInKm;
+    }
+
+    public void setStartOdometerInKm(String startOdometerInKm) {
+        StartOdometerInKm = startOdometerInKm;
+    }
+
+    public String getEndOdometerInKm() {
+        return EndOdometerInKm;
+    }
+
+    public void setEndOdometerInKm(String endOdometerInKm) {
+        EndOdometerInKm = endOdometerInKm;
+    }
 }

@@ -155,30 +155,13 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
         }
 
 
-        // ---------- PDF offline commented code -----------
-          getLocalDocuments(true);
-
-        if(Globally.isConnected(getActivity())){
-            try {
-                // ---------- PDF offline commented code -----------
-                //Thread.sleep(500);
-            }catch (Exception e){}
-
-            GetEldDocDetails();
-        }else{
-            noDataEldTV.setVisibility(View.VISIBLE);
-            //global.showToast(noDataEldTV, Globally.CHECK_INTERNET_MSG);
-            Toast.makeText(getActivity(), global.CHECK_INTERNET_MSG, Toast.LENGTH_LONG).show();
-        }
-
-
         notiHistoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 // ---------- PDF offline commented code -----------
 
-               /* getLocalDocuments(false);
+                getLocalDocuments(false);
                 int docPos = getFilePositionFromLocalDir(position);
 
                 // position comparision is for local files. because files are fetching from storage and they are getting in the list in different order as compared to json file (from API).
@@ -188,8 +171,8 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                 }else {
                     checkFileBeforeView(docPos);
                 }
-*/
-                displayPdfFromUrl(position);
+
+                //displayPdfFromUrl(position);
 
             }
         });
@@ -520,6 +503,14 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onResume() {
         super.onResume();
+
+        getLocalDocuments(true);
+        if(Globally.isConnected(getActivity())){
+            GetEldDocDetails();
+        }else{
+            noDataEldTV.setVisibility(View.VISIBLE);
+        }
+
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter("download_pdf_progress"));
     }
 

@@ -46,11 +46,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_DEFERRAL_RULE         = "tbl_deferral_rule";
     public static final String TABLE_MAl_DIA_EVENT_DURATION= "tbl_mal_dia_event_duration";
     public static final String TABLE_POSITION_DIA_MAL      = "tbl_position_dia_mal";
+    public static final String TABLE_UNIDENTIFIED_RECORDS  = "tbl_unidentified_record";
+    public static final String TABLE_DOWNLOADEDLOGS_USA_RECORDS     = "tbl_downloadedlogs_usa_record";
+    public static final String TABLE_DOWNLOADEDLOGS_CANADA_RECORDS  = "tbl_downloadedlogs_canada_record";
 
 
 
     public static final String DRIVER_ID_KEY              = "driver_id";
     public static final String PROJECT_ID_KEY             = "project_id";
+    public static final String COMPANY_ID_KEY             = "company_id";
 
     public static final String DRIVER_LOG_LIST            = "oDriver_Log_Detail_List";
     public static final String SHIPMENT_LIST              = "oDriver_shipment_List";
@@ -79,6 +83,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String DEFERRAL_RULE_LIST          = "oDriver_deferral_rule_list";
     public static final String MAl_DIA_EVENT_DURATION_LIST = "oDriver_mal_dia_event_dur_list";
     public static final String POSITION_MAl_DIA_EVENT_LIST = "oDriver_position_mal_dia_list";
+    public static final String UNIDENTIFIED_RECORD_LIST    = "oDriver_unidentified_record_list";
+    public static final String DOWNLOADLOGS_USA_RECORD_LIST       = "oDriver_downloadlogs_usa_record_list";
+    public static final String DOWNLOADLOGS_CANADA_RECORD_LIST    = "oDriver_downloadlogs_canada_record_list";
+
 
 
     public DBHelper(Context context) {
@@ -196,6 +204,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 PROJECT_ID_KEY + " INTEGER, " +  POSITION_MAl_DIA_EVENT_LIST + " TEXT )"
         );
 
+
+        db.execSQL( "CREATE TABLE " + TABLE_UNIDENTIFIED_RECORDS + "(" +
+                COMPANY_ID_KEY + " INTEGER, " +  UNIDENTIFIED_RECORD_LIST + " TEXT )"
+        );
+
+        db.execSQL( "CREATE TABLE " + TABLE_DOWNLOADEDLOGS_USA_RECORDS + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  DOWNLOADLOGS_USA_RECORD_LIST + " TEXT )"
+        );
+
+        db.execSQL( "CREATE TABLE " + TABLE_DOWNLOADEDLOGS_CANADA_RECORDS + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  DOWNLOADLOGS_CANADA_RECORD_LIST + " TEXT )"
+        );
+
     }
 
     @Override
@@ -227,6 +248,9 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DEFERRAL_RULE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAl_DIA_EVENT_DURATION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSITION_DIA_MAL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_UNIDENTIFIED_RECORDS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOWNLOADEDLOGS_USA_RECORDS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOWNLOADEDLOGS_CANADA_RECORDS);
 
         onCreate(db);
     }
@@ -490,6 +514,40 @@ public class DBHelper extends SQLiteOpenHelper {
         );
 
     }
+
+
+
+    /* -- Create unidentified record  table if not exist.*/
+    public void CreateUnidentifiedRecordTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("CREATE TABLE " + TABLE_UNIDENTIFIED_RECORDS + "(" +
+                COMPANY_ID_KEY + " INTEGER, " + UNIDENTIFIED_RECORD_LIST + " TEXT )"
+        );
+    }
+
+    /* -- Create downloadLogs Usa record  table if not exist.*/
+    public void CreateDownloadLogsUsaRecordTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("CREATE TABLE " + TABLE_DOWNLOADEDLOGS_USA_RECORDS + "(" +
+                DRIVER_ID_KEY + " INTEGER, " + DOWNLOADLOGS_USA_RECORD_LIST + " TEXT )"
+        );
+    }
+
+    /* -- Create downloadLogs Canada record  table if not exist.*/
+    public void CreateDownloadLogsCanadaRecordTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("CREATE TABLE " + TABLE_DOWNLOADEDLOGS_CANADA_RECORDS + "(" +
+                DRIVER_ID_KEY + " INTEGER, " + DOWNLOADLOGS_CANADA_RECORD_LIST + " TEXT )"
+        );
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -883,6 +941,51 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Insert Unidentified events  Log -------------------- */
+    public boolean InsertUnidetifiedRecordLog(int DriverId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COMPANY_ID_KEY, DriverId);
+        contentValues.put(UNIDENTIFIED_RECORD_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_UNIDENTIFIED_RECORDS, null, contentValues);
+        return true;
+    }
+
+    /* ---------------------- Insert downloadLogs events  Log -------------------- */
+    public boolean InsertDownloadLogsUsaRecordLog(int DriverId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(DOWNLOADLOGS_USA_RECORD_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_DOWNLOADEDLOGS_USA_RECORDS, null, contentValues);
+        return true;
+    }
+
+    /* ---------------------- Insert downloadLogs events  Log -------------------- */
+    public boolean InsertDownloadLogsCanadaRecordLog(int DriverId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(DOWNLOADLOGS_CANADA_RECORD_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_DOWNLOADEDLOGS_CANADA_RECORDS, null, contentValues);
+        return true;
+    }
+
+
+
+
+
+
+
     //=======================================================================================================================
 
     /* ---------------------- Update Driver Log -------------------- */
@@ -1262,6 +1365,52 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Update Unidentified Log -------------------- */
+    public boolean UpdateUnidentifiedRecordLog(int CompanyId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COMPANY_ID_KEY, CompanyId);
+        contentValues.put(UNIDENTIFIED_RECORD_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_UNIDENTIFIED_RECORDS, contentValues, COMPANY_ID_KEY + " = ? ", new String[] { Integer.toString(CompanyId) } );
+        return true;
+    }
+
+    /* ---------------------- Update downloaded Usa Log -------------------- */
+    public boolean UpdateDownloadedUsaRecordLog(int CompanyId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, CompanyId);
+        contentValues.put(DOWNLOADLOGS_USA_RECORD_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_DOWNLOADEDLOGS_USA_RECORDS, contentValues, DRIVER_ID_KEY + " = ? ", new String[] { Integer.toString(CompanyId) } );
+        return true;
+    }
+
+    /* ---------------------- Update downloaded Canada Log -------------------- */
+    public boolean UpdateDownloadedCanadaRecordLog(int CompanyId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, CompanyId);
+        contentValues.put(DOWNLOADLOGS_CANADA_RECORD_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_DOWNLOADEDLOGS_CANADA_RECORDS, contentValues, DRIVER_ID_KEY + " = ? ", new String[] { Integer.toString(CompanyId) } );
+        return true;
+    }
+
+
+
+
+
+
+
+
 
 
     //=======================================================================================================================
@@ -1500,6 +1649,33 @@ public class DBHelper extends SQLiteOpenHelper {
                 PROJECT_ID_KEY + "=?", new String[]{Integer.toString(ProjectId)});
         return res;
     }
+
+
+
+    /* ---------------------- Get unidentified event log-------------------- */
+    public Cursor getUnidentifiedRecordLog(int CompanyId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_UNIDENTIFIED_RECORDS + " WHERE " +
+                COMPANY_ID_KEY + "=?", new String[]{Integer.toString(CompanyId)});
+        return res;
+    }
+
+    /* ---------------------- Get downloaded logs Usa event log-------------------- */
+    public Cursor getDownloadedLogsUsaRecord(int CompanyId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_DOWNLOADEDLOGS_USA_RECORDS + " WHERE " +
+                DRIVER_ID_KEY + "=?", new String[]{Integer.toString(CompanyId)});
+        return res;
+    }
+
+    /* ---------------------- Get downloaded logs Canada event log-------------------- */
+    public Cursor getDownloadedLogsCanadaRecord(int CompanyId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_DOWNLOADEDLOGS_CANADA_RECORDS + " WHERE " +
+                DRIVER_ID_KEY + "=?", new String[]{Integer.toString(CompanyId)});
+        return res;
+    }
+
 
 
 
@@ -1791,6 +1967,41 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ------ Delete Unidentified  Log Table ------ */
+    public void DeleteUnidentifiedRecordTable() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_UNIDENTIFIED_RECORDS);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /* ------ Delete Downloaded Log Usa Table ------ */
+    public void DeleteDownloadedLogsUsaRecordTable() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_DOWNLOADEDLOGS_USA_RECORDS);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /* ------ Delete Downloaded Log Canada Table ------ */
+    public void DeleteDownloadedLogsCanadaRecordTable() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_DOWNLOADEDLOGS_CANADA_RECORDS);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+    // =====================================================================================================
 
     /* ---------------------- Create table if table does not exist -------------------- */
     public void CheckAllTableExistingStatus(){
@@ -1899,6 +2110,20 @@ public class DBHelper extends SQLiteOpenHelper {
         if(!isTableExists(TABLE_POSITION_DIA_MAL)) {
             CreatePositioningMalDiaTable();
         }
+
+
+        if(!isTableExists(TABLE_UNIDENTIFIED_RECORDS)) {
+            CreateUnidentifiedRecordTable();
+        }
+
+        if(!isTableExists(TABLE_DOWNLOADEDLOGS_USA_RECORDS)) {
+            CreateDownloadLogsUsaRecordTable();
+        }
+
+        if(!isTableExists(TABLE_DOWNLOADEDLOGS_CANADA_RECORDS)) {
+            CreateDownloadLogsCanadaRecordTable();
+        }
+
 
     }
 

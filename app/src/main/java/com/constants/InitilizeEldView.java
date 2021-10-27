@@ -46,7 +46,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-               // perDayTxtVw.setText("(as per day)");
+                perDayTxtVw.setText("(AS PER CURRENT STATUS)");
                 break;
 
             case EldFragment.SLEEPER:   //2
@@ -55,7 +55,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-               // perDayTxtVw.setText("(as per day)");
+                perDayTxtVw.setText("(AS PER CURRENT STATUS)");
                 break;
 
             case EldFragment.DRIVING:   //3
@@ -64,7 +64,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-               // perDayTxtVw.setText("(as per shift)");
+                perDayTxtVw.setText("(AS PER SHIFT)");
                 break;
 
             case EldFragment.ON_DUTY:   //4
@@ -73,7 +73,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-               // perDayTxtVw.setText("(as per shift)");
+                perDayTxtVw.setText("(AS PER SHIFT)");
                 break;
 
             default:
@@ -82,7 +82,7 @@ public class InitilizeEldView {
                 usedHourLay.setVisibility(View.GONE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
-              //  perDayTxtVw.setText("(as per day)");
+                perDayTxtVw.setText("(AS PER CURRENT STATUS)");
                 break;
         }
     }
@@ -249,6 +249,7 @@ public class InitilizeEldView {
         timeView.setTextColor(Color.parseColor(SkyBlueColor));
 
         jobTypeView.setTextColor(Color.parseColor(EldThemeColor));
+
         asPerShiftOrDayView.setTextColor(Color.parseColor(EldThemeColor));
 
         if(IsPersonalAllowed && SharedPref.isPersonalUse75KmCrossed(context) == false) {

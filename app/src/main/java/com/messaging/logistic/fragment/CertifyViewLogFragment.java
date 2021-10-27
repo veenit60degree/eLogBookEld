@@ -1053,7 +1053,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         int ObdStatus = sharedPref.getObdStatus(getActivity());
         if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
                 || ObdStatus == Constants.BLE_CONNECTED) && engineHours.length() > 1) {
-             EngineHourTV.setText(engineHours);
+             EngineHourTV.setText(constants.Convert1DecimalPlacesDouble(Double.parseDouble(engineHours)));
         }else{
             EngineHourTitle.setVisibility(View.GONE);
         }
@@ -1182,7 +1182,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 if(dateDialog != null && dateDialog.isShowing())
                     dateDialog.dismiss();
 
-                dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, LogDate, new DateListener());
+                dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, LogDate, new DateListener(), false);
                 dateDialog.show();
                 break;
 
@@ -1937,12 +1937,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 if(  LogDate.equals(CurrentDate) ) {    //DayStartLat != 0.0 && CurrentLat != 0.0 &&
 
                     CalculateCycleTime(selectedDateTime, selectedUtcTime, isSingleDriver, true);
-
-                    JSONArray latLonArray = latLongHelper.getSavedLatLonArray(dbHelper);
-                    double distance = constants.CalculateRouteDistance( latLonArray, "M");
-                    if(Double.isNaN(distance)){     // Check Nan (Not a number). It occurs when -ve value calculated in Math.sqrt() function
-                        distance = 0;
-                    }
 
                     EngineMileage =  constants.getOdometersDistance(getActivity());  // new DecimalFormat("##.##").format(distance);
                     certifyDistanceTV.setText(EngineMileage);

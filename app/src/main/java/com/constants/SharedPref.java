@@ -54,6 +54,30 @@ public class SharedPref {
     }
 
 
+    // Save Total Personal use Odometer For the Day -----------
+    public static void setTotalPUOdometerForDay(String odometer, String time, Context context){
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("TotalPUOdometerForDay", odometer);
+        editor.putString("PUOdometerDate", time);
+        editor.commit();
+
+    }
+
+
+    // Get Total Personal use Odometer For the Day -------------------
+    public static String getTotalPUOdometerForDay( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("TotalPUOdometerForDay", "0");
+    }
+
+    // Get selected day for Personal use Odometer  -------------------
+    public static String getSelectedDayForPuOdometer( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("PUOdometerDate", "");
+    }
+
 
     public static void setVehilceMovingStatus(boolean status, Context context){
 
@@ -85,9 +109,26 @@ public class SharedPref {
     // Get VIN Number -------------------
     public static String getVINNumber( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("VIN", "false");
+        return preferences.getString("VIN", "");
     }
 
+
+    // Save VIN Number to check at logout time
+    public static void setLastSavedVINNumber(String VIN, Context context){
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("LastSavedVin", VIN);
+        editor.commit();
+
+    }
+
+
+    // Get VIN Number to confirm with current VIN at logout time-------------------
+    public static String getLastSavedVINNumber( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("LastSavedVin", "");
+    }
 
 
     // Set UTC Time Zone -------------------
@@ -306,6 +347,20 @@ public class SharedPref {
     public static String getWiredObdCallTime( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("WiredObdCallTime", "");
+    }
+
+    // Set Wrong Vin Alert View status  -------------------
+    public static void SetWrongVinAlertView( boolean status, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("WrongVinAlertStatus", status);
+        editor.commit();
+    }
+
+    // Get Wrong Vin Alert View status -------------------
+    public static boolean IsWrongVinAlertView( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("WrongVinAlertStatus", false);
     }
 
 
@@ -2494,7 +2549,7 @@ public class SharedPref {
 
 
     // Set obd data Time Stamp -------------------
-    public static void setTimeStamp( String value, Context context) {
+    public static void setContinueSpeedZeroTime( String value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("TimeStamp", value);
@@ -2502,7 +2557,7 @@ public class SharedPref {
     }
 
     // Set obd data Time Stamp -------------------
-    public static String getTimeStamp(Context context) {
+    public static String getContinueSpeedZeroTime(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("TimeStamp", "--");
     }
@@ -2525,6 +2580,21 @@ public class SharedPref {
     }
 
 
+    // Set wired Obd Odometer in miles -------------------
+    public static void SetObdOdometerInMiles( String value, Context context) {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("wired_obd_odometer_miles", value);
+        editor.commit();
+    }
+
+    // Get wired Obd Odometer in miles-------------------
+    public static String getObdOdometerInMiles(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("wired_obd_odometer_miles", "0");
+
+    }
 
 
 
@@ -2546,20 +2616,28 @@ public class SharedPref {
 
 
     // Set Day start Odometer value  -------------------
-    public static void setDayStartOdometer( String odometer, String savedTime, Context context) {
+    public static void setDayStartOdometer( String odometerKM,  String odometerMiles, String savedTime, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("dayStartOdometer", odometer);
+        editor.putString("dayStartOdometerKm", odometerKM);
+        editor.putString("dayStartOdometerMiles", odometerMiles);
         editor.putString("dayStartSavedTime", savedTime);
         editor.commit();
     }
 
 
-    // Get Day start Odometer value -------------------
-    public static String getDayStartOdometer(Context context) {
+    // Get Day start Odometer value in km -------------------
+    public static String getDayStartOdometerKm(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("dayStartOdometer", "0");
+        return preferences.getString("dayStartOdometerKm", "0");
     }
+
+    // Get Day start Odometer value in miles -------------------
+    public static String getDayStartOdometerMiles(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("dayStartOdometerMiles", "0");
+    }
+
 
     // Get Day start Odometer Saved time -------------------
     public static String getDayStartSavedTime(Context context) {
@@ -2603,6 +2681,37 @@ public class SharedPref {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("ClearEventCalledTime", "");
     }
+
+
+    // Set power Clear Event Called Time  -------------------
+    public static void setPowerClearEventCallTime(String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("PowerClearEventCalledTime", savedTime);
+        editor.commit();
+    }
+
+    // Get power Clear Event last Called Time -------------------
+    public static String getPowerClearEventCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("PowerClearEventCalledTime", "");
+    }
+
+
+    // Set power Clear Event Called Time  -------------------
+    public static void setEngineClearEventCallTime(String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("EngClearEventCalledTime", savedTime);
+        editor.commit();
+    }
+
+    // Get power Clear Event last Called Time -------------------
+    public static String getEngineClearEventCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("EngClearEventCalledTime", "");
+    }
+
 
 
     // Set Engine Sync malfunction Event Called Time  -------------------
@@ -2860,6 +2969,69 @@ public class SharedPref {
     public static String getLastUsageDataSavedTime( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(Constants.DATA_USAGE_TIME, "");
+    }
+
+
+
+    // Set UnAssigned Vehicle Miles Id -------------------
+    public static void setUnAssignedVehicleMilesId( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("UnAssignedVehicleMilesId", value);
+        editor.commit();
+    }
+    // GetUnAssigned Vehicle Miles Id  -------------------
+    public static String getUnAssignedVehicleMilesId( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("UnAssignedVehicleMilesId", "");
+    }
+
+    // Set  IntermediateLog Id -------------------
+    public static void setIntermediateLogId( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("IntermediateLogId", value);
+        editor.commit();
+    }
+    // Get  IntermediateLog Id -------------------
+    public static String getIntermediateLogId( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("IntermediateLogId", "");
+    }
+
+
+    // Set UnIdentified Last saved Duty Status -------------------
+    public static void setUnIdenLastDutyStatus( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("UnIdentifiedLastDutyStatus", value);
+        editor.commit();
+    }
+
+
+    // Get UnIdentified Last saved Duty Status -------------------
+    public static String getUnIdenLastDutyStatus( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("UnIdentifiedLastDutyStatus", "");
+    }
+
+
+    // Set UnidentifiedRecord Intermediate Record -------------------
+    public static void SaveUnidentifiedIntermediateRecord( String startOdometer, String startTime,String startLatitude,String startLongitude,String startEngineSecond, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.UnidenStartOdometer, startOdometer);
+        editor.putString(ConstantsKeys.UnidenStartTime, startTime);
+        editor.putString(ConstantsKeys.UnidenStartLatitude, startLatitude);
+        editor.putString(ConstantsKeys.UnidenStartLongitude, startLongitude);
+        editor.putString(ConstantsKeys.UnidenStartEngineSeconds, startEngineSecond);
+        editor.commit();
+    }
+
+
+    public static String getUnidentifiedIntermediateRecord( String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "");
     }
 
 

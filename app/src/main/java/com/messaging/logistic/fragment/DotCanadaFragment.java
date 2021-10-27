@@ -53,6 +53,7 @@ import com.constants.VolleyRequest;
 import com.constants.WebAppInterface;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.DotOtherOptionDialog;
+import com.custom.dialogs.GenerateRodsDialog;
 import com.custom.dialogs.ShareDriverLogDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
@@ -129,10 +130,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     List<CanadaDutyStatusModel> EnginePowerList = new ArrayList();
     List<UnAssignedVehicleModel> UnAssignedVehicleList = new ArrayList<>();
 
+    GenerateRodsDialog generateRodsDialog;
     DatePickerDialog dateDialog;
     ShareDriverLogDialog shareDialog;
     List<String> StateArrayList = new ArrayList<>();
     List<DriverLocationModel> StateList = new ArrayList<>();
+    List<String> countryList = new ArrayList<>();
+
 
     int SelectedDayOfMonth  = 0;
     int UsaMaxDays          = 7;
@@ -149,14 +153,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     String DefaultLine      = " <g class=\"event \">\n";
 
     String DriverId = "", DeviceId = "";
-    String htmlAppendedText = "", LogDate = "", CurrentDate = "", LogSignImage = "";
+    String htmlAppendedText = "", LogDate = "", CurrentDate = "", LogSignImage = "", selectedCountryRods = "";
 
     String TotalOnDutyHours         = "00:00";
     String TotalDrivingHours        = "00:00";
     String TotalOffDutyHours        = "00:00";
     String TotalSleeperBerthHours   = "00:00";
 
-    boolean isTabClicked = false;
 
     int inspectionLayHeight = 0;
     int hLineX1         = 0;
@@ -285,6 +288,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         initilizeWebView();
         ReloadWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
 
+        countryList.add("Select");
+        countryList.add("CANADA");
+        countryList.add("USA");
 
         if (global.isConnected(getActivity())) {
 
@@ -467,7 +473,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 if(dateDialog != null && dateDialog.isShowing())
                     dateDialog.dismiss();
 
-                dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, LogDate, new DateListener());
+                dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, LogDate, new DateListener(), false);
                 dateDialog.show();
 
                 break;
@@ -635,15 +641,57 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         @Override
         public void ItemClickReady(int position) {
+
             if(position == 0){
+                MoveFragment(LogDate);
+            }else if(position == 1){
+                shareDriverLogDialog();
+
+            }else if(position == 2){
+                generateRodsDialog = new GenerateRodsDialog(getActivity(), countryList, new GenerateRodsListner(),
+                                        DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity()));
+                generateRodsDialog.show();
+            }else {
+                MoveDownloadLogFragment();
+            }
+
+          /*  if(position == 0){
                 MoveFragment(LogDate);
             }else{
                 shareDriverLogDialog();
 
-            }
+            }*/
         }
     }
 
+
+    private class GenerateRodsListner implements GenerateRodsDialog.RodsListner {
+        @Override
+        public void ChangeRodsReady(String Title, int position,String checkedMode,Date fromDate,Date toDate) {
+
+            try {
+//
+                selectedCountryRods = countryList.get(position);
+                SimpleDateFormat parseDate = new SimpleDateFormat(Globally.DateFormatHalf);
+                String currentParseDatetime = parseDate.format(toDate);
+                String lastParseDatetime =  parseDate.format(fromDate);
+                if(selectedCountryRods == Globally.USA_CYCLE) {
+                    DownloadPdfLog(Globally.USA_CYCLE,Globally.LOG_TYPE_ELD,lastParseDatetime,currentParseDatetime);
+                    Globally.EldScreenToast(rootView, "Please wait,file download in progress.", getContext().getResources().getColor(R.color.color_eld_theme));
+                }else{
+                    if(!checkedMode.equals("")){
+                        DownloadPdfLog(Globally.CANADA_CYCLE,checkedMode,lastParseDatetime,currentParseDatetime);
+                        Globally.EldScreenToast(rootView, "Please wait,file download in progress.", getContext().getResources().getColor(R.color.color_eld_theme));
+                    }
+                }
+                generateRodsDialog.cancel();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
 
     private class DateListener implements DatePickerDialog.DatePickerListener{
         @Override
@@ -675,6 +723,40 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             }
 
         }
+    }
+
+
+
+    void DownloadPdfLog(String country,String logtype,String fromDate,String toDate) {
+
+        params = new HashMap<String, String>();
+        params.put(ConstantsKeys.DriverId, DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()));
+        params.put(ConstantsKeys.FromDate, fromDate);
+        params.put(ConstantsKeys.ToDate, toDate);
+        params.put(ConstantsKeys.Country, country);
+        params.put(ConstantsKeys.LogType, logtype);
+
+        GetDotLogRequest.executeRequest(Request.Method.POST, APIs.DownloadPdfCanadaLog, params, 101,
+                Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
+    }
+
+    private void MoveDownloadLogFragment(){
+        DownloadRodsFragment logFragment = new DownloadRodsFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("cycle", Globally.CANADA_CYCLE);
+        logFragment.setArguments(bundle);
+
+
+        FragmentManager fragManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTran = fragManager.beginTransaction();
+        fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
+                android.R.anim.fade_in,android.R.anim.fade_out);
+        fragmentTran.add(R.id.job_fragment, logFragment);
+        fragmentTran.addToBackStack("inspection");
+        fragmentTran.commit();
+
+
     }
 
 

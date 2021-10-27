@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -133,7 +134,7 @@ public class Globally {
 
 
 	public static Intent serviceIntent;
-
+	public static DownloadManager downloadManager;
 
 
 	/*-------- Project ID ----------*/
@@ -159,6 +160,15 @@ public class Globally {
 	public static String CANADA_CYCLE_2_NAME                  = "C 120/14";
 	public static String USA_WORKING_6_DAYS_NAME              = "U 60/7";
 	public static String USA_WORKING_7_DAYS_NAME              = "U 70/8";
+
+	public static String USA_CYCLE                            = "USA";
+	public static String CANADA_CYCLE                         = "CAN";
+	public static String LOG_TYPE_ELD                         = "ELD";
+	public static String LOG_TYPE_AOBRD                       = "AOBRD";
+	public static String GENERATE_RODS_TITLE                  = "Generate RODS";
+
+
+
 
 	public static String CANADA_SOUTH_OPERATION_NAME          = "Canada South 60°N (";
 	public static String CANADA_NORTH_OPERATION_NAME          = "Canada North 60°N (";
@@ -1348,6 +1358,51 @@ public class Globally {
 	}
 
 
+	public ArrayList<String> getGeneratedLogDocs(Context context){
+		ArrayList<String> docList = new ArrayList<String>();
+
+		String path = context.getExternalFilesDir(null).toString()+"/Logistic/GenerateRods";
+		Log.d("Files", "Path: " + path);
+		File directory = new File(path);
+		File[] files = directory.listFiles();
+		if(files != null) {
+			Log.d("Files", "Size: "+ files.length);
+			for (int i = 0; i < files.length; i++) {
+				docList.add(files[i].getName());
+				Log.d("Files", "FileName:" + files[i].getName());
+			}
+		}
+		return  docList;
+	}
+
+	public static File getAlsGenerateRodsPath(Context context){
+		File apkStorageDir = new File(context.getExternalFilesDir(null),"/Logistic/GenerateRods");
+
+		// Create the storage directory if it does not exist
+		if (!apkStorageDir.exists()) {
+			if (!apkStorageDir.mkdirs()) {
+				Log.d("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				return null;
+			}
+		}
+
+		return apkStorageDir;
+	}
+
+	public static File getAlsGenerateRodsDummyPath(Context context){
+		File apkStorageDir = new File(context.getExternalFilesDir(null),"/Logistic/GenerateRodsDummy");
+
+		// Create the storage directory if it does not exist
+		if (!apkStorageDir.exists()) {
+			if (!apkStorageDir.mkdirs()) {
+				Log.d("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				return null;
+			}
+		}
+
+		return apkStorageDir;
+	}
+
 	public static boolean isExternalStorageAvailable() {
 		String extStorageState = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(extStorageState)) {
@@ -1950,6 +2005,11 @@ public class Globally {
 					alertDialog.dismiss();
 				}
 			}else{
+
+				if(alertDialog != null && alertDialog.isShowing()){
+					alertDialog.dismiss();
+				}
+
 				alertDialog.setTitle(Html.fromHtml(title));
 				alertDialog.setMessage(Html.fromHtml(msg));
 
@@ -2317,10 +2377,10 @@ public class Globally {
 
 		try {
 				DriverConst.SetDriverLoginDetails( "", "", c);
-				DriverConst.SetDriverDetails( "", "", "", "", "", "","", "", c);
+				//DriverConst.SetDriverDetails( "", "", "", "", "", "","", "", c);
 				DriverConst.SetDriverCurrentCycle("NoCycle", "0", c);
 				DriverConst.SetDriverSettings("", "","", "","", "", "", "", "" , c);
-				DriverConst.SetDriverTripDetails( "", "", "", "", "", "", "", "", "", "", "", "","", "", "", c);
+				//DriverConst.SetDriverTripDetails( "", "", "", "", "", "", "", "", "", "", "", "","", "", "", c);
 				DriverConst.SetDriverLogDetails( "", "", "", "", "", "", "", "", "", "","", "", "", "", "", c);
 
 		} catch (Exception e) {    }

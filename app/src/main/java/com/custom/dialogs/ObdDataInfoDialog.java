@@ -17,6 +17,8 @@ import androidx.annotation.RequiresApi;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.HosSummaryFragment;
@@ -26,9 +28,17 @@ import java.util.TimerTask;
 
 public class ObdDataInfoDialog extends Dialog {
 
-    public ObdDataInfoDialog(Context cxt) {
+    String DriverId;
+    int offsetFromUTC;
+    HelperMethods hMethods;
+    DBHelper dbHelper;
+
+    public ObdDataInfoDialog(Context cxt, String DriverId) {
         super(cxt);
         context = cxt;
+        this.DriverId = DriverId;
+
+
     }
 
     long MIN_TIME_BW_UPDATES = 3000;  // 3 Sec
@@ -36,7 +46,8 @@ public class ObdDataInfoDialog extends Dialog {
     private Timer mTimer;
     TextView obdInfo;
     Context context;
-
+    Constants constants;
+    Globally globally;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +55,13 @@ public class ObdDataInfoDialog extends Dialog {
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.item_malfunctions);
+
+        constants = new Constants();
+        hMethods = new HelperMethods();
+        dbHelper = new DBHelper(context);
+        globally = new Globally();
+
+        offsetFromUTC = (int) globally.GetTimeZoneOffSet();
 
         obdInfo = (TextView) findViewById(R.id.malfDefTxtView);
 
@@ -81,11 +99,15 @@ public class ObdDataInfoDialog extends Dialog {
     }
 
 
+
     private void showObdData(final TextView view){
            String info = "<br/><br/> OBD not connected";
 
             int OBD_LAST_STATUS = SharedPref.getObdStatus(getContext());
-            if(OBD_LAST_STATUS == Constants.WIRED_CONNECTED || OBD_LAST_STATUS == Constants.BLE_CONNECTED) {
+            double AccumulativePersonalDistance =  constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC, Globally.GetCurrentJodaDateTime(),
+                    Globally.GetCurrentUTCDateTime(), hMethods, dbHelper, context);
+
+        if(OBD_LAST_STATUS == Constants.WIRED_CONNECTED || OBD_LAST_STATUS == Constants.BLE_CONNECTED) {
                 String obdType = "";
                 if(OBD_LAST_STATUS == Constants.WIRED_CONNECTED) {
                     obdType = "Wired Tablet";
@@ -99,7 +121,8 @@ public class ObdDataInfoDialog extends Dialog {
                     "<b>RPM:</b> " + SharedPref.getRPM(getContext()) + "<br/>" +
                     "<b>EngineHours:</b> " + SharedPref.getObdEngineHours(getContext()) + "<br/>" +
                     "<b>OdometerInKm:</b> " + SharedPref.getObdOdometer(getContext()) + "<br/>" +
-                    "<b>OdometerInMeter:</b> " + SharedPref.getHighPrecisionOdometer(getContext()) + "<br/>" ;
+                    "<b>OdometerInMeter:</b> " + SharedPref.getHighPrecisionOdometer(getContext()) + "<br/>" +
+                    "<b>Accumulative Personal Distance:</b> " + AccumulativePersonalDistance + "<br/>";
 
 
             }

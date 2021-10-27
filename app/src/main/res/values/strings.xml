@@ -14,6 +14,10 @@
     <string name="terms_of_service">terms of service </string>
     <string name="obd_config">OBD Configuration</string>
     <string name="obd_diagnose">OBD Diagnose</string>
+    <string name="download_logs">Downloaded Logs</string>
+    <string name="rods_log_type">Log Type</string>
+    <string name="Generate_Rods">Generate RODS</string>
+
     <string name="mal_dia_history">Events History</string>
     <string name="child_text">LOAD#661\n3785 BOUL LAURIER EST,QUEBEC,CA\n\nLOAD#NISD662\n3785 BOUL LAURIER EST,QUEBEC,CA</string>
     <string name="title_activity_maps_activityyy">Map</string>
@@ -52,13 +56,14 @@
     <string name="DefectsNotCorrected">Defects Not Corrected</string>
     <string name="DefectsNeedToCorrected">Defects need not to be corrected for safe operation</string>
 
-    <string name="per_day">(as per day)</string>
-    <string name="per_shift">(as per shift)</string>
+    <string name="per_day">(AS PER DAY)</string>
+    <string name="per_shift">(AS PER SHIFT)</string>
     <string name="Deferralenabled">Deferral rule enabled</string>
     <string name="advrs_excptn_enabled">Adverse exception enabled</string>
     <string name="haul_excptn_enabled">16 hour short haul exception enabled</string>
     <string name="cycle_change_check">You can change Cycle in Sleeper/OffDuty.</string>
     <string name="op_zone_change_check">You can change Operating Zone in Driving/OnDuty.</string>
+    <string name="setting_soundbrightness">Adjust Sound and Brightness</string>
 
     <string name="AdjustTimeZone">Adjust TimeZone</string>
     <string name="AdjustTime">Adjust Time</string>
@@ -147,6 +152,9 @@
     <string name="ble_not_supported">BLE not supported on this device</string>
     <string name="bt_unavailable">Bluetooth unavailable</string>
     <string name="bt_disabled">Bluetooth disabled, turn on and restart</string>
+
+    <string name="South">South</string>
+    <string name="North">North</string>
 
     <string name="OperatingZoneSouth">South of latitude 60°N in Canada</string>
     <string name="OperatingZoneNorth">North of latitude 60°N in Canada</string>
@@ -496,6 +504,9 @@
     <string name="onduty_seven_days_last_seven">Total hours onduty last 7 days (---)</string>
 
     <string name="stop_vehicle_alert">Please stop your vehicle first to take this action.</string>
+    <string name="not_change_status_from">You can\'t change your status from </string>
+    <string name="until_not_conn_with_ecm">until ELD is not connected with ECM.</string>
+
     <string name="logout_speed_alert">You can\'t logout while vehicle is moving. Please stop your vehicle first.</string>
     <string name="login_speed_alert">You can\'t login while vehicle is moving. Please stop your vehicle first.</string>
     <string name="enter_different_user_co">Please enter different username for Co-Driver</string>
@@ -558,6 +569,17 @@
     <string name="statusNotChangedFromDriving">You can\'t change the status from Driving while vehicle is moving.</string>
     <string name="other_suggested_log">You have suggested review log for other date also.</string>
     <string name="view_other_suggested_log">View other logs</string>
+
+
+    <string name="hos_per_shift">PER SHIFT</string>
+    <string name="hos_driving_shift">Driving</string>
+    <string name="hos_OnDuty_shift">OnDuty</string>
+    <string name="hos_per_Day">PER DAY</string>
+    <string name="hos_perDay_offduty">Off Duty</string>
+
+    <string name="us_cycle_7days">US 60/7</string>
+    <string name="us_cycle_7days_hos">(US 60/7)</string>
+    <string name="hos_northsouthTV">North/South</string>
 
     <string name="temp_DATE">21 jun 2017</string>
     <string name="temp_time">0 hr 0 m</string>
@@ -671,6 +693,7 @@
     <string name="Unloading">Unloading</string>
     <string name="yard_move">Yard Move</string>
     <string name="yard_move_validation">You already saved Yard Move status.</string>
+    <string name="no_per_bright_settings">You do not have permission for brightness settings.</string>
     <string name="yard_move_not_allowed">You have no permission for Yard Move. Please contact your company.</string>
     <string name="personal_not_allowed">You have no permission for Personal Use. Please contact your company.</string>
     <string name="share_not_allowed">You have no permission for Send Log. Please contact your company.</string>
@@ -776,6 +799,7 @@
     <string name="ClearTime">Clear Time</string>
     <string name="ClearAll">Clear all</string>
     <string name="DeleteAll">Delete all</string>
+    <string name="download_logs_Createddate">Created Date</string>
 
     <string name="YardMove">Yard Move</string>
     <string name="title">Title</string>
@@ -835,6 +859,8 @@
     <string name="wired_tablet_disconnected">Wired Tablet disconnected</string>
     <string name="wired_tablet_conn_error">Wired Tablet connection error</string>
     <string name="wifi_obd">WiFi OBD</string>
+    <string name="confirm_vin">Confirm VIN Number</string>
+    <string name="confirm_vin_desc">OBD VIN number is not matching with the company provided VIN. Please confirm from your company.</string>
     <string name="obd_device_connected">Device Connected</string>
     <string name="obd_device_disconnected">Device disconnected</string>
     <string name="obd_wifi">WiFi OBD Connected</string>
@@ -846,6 +872,10 @@
     <string name="BleObdNotConnected">Bluetooth OBD is not connecting. Restart you app and try to connect it again.</string>
     <string name="obd_not_connected">OBD not connected</string>
     <string name="wifi_active">WIFI OBD is connected</string>
+
+    <string name="VinMatched">VIN Matched</string>
+    <string name="VinMismatched">VIN Mismatched</string>
+
     <string name="wifi_inactive">WIFI OBD is not working</string>
     <string name="wifi_status_disabled">Device WIFI is disabled. Please turned ON it.</string>
     <string name="ble_active">Bluetooth OBD is connected</string>

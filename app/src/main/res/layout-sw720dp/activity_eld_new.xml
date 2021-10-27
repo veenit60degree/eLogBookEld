@@ -399,7 +399,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/whiteee"
                             android:padding="0dp"
-                            android:textSize="@dimen/text_size_21"
+                            android:textSize="@dimen/text_size_14"
                             android:text="@string/per_shift"
 
                             />
@@ -808,13 +808,13 @@
                     android:id="@+id/asPerShiftOnDutyTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color_eld_theme"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginRight="@dimen/margin_short_5"
                     android:paddingBottom="@dimen/margin_13"
-                    android:layout_alignParentBottom="true"
-                    android:textSize="@dimen/text_size_14"
                     android:text="@string/per_shift"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_14"
 
                     />
 
@@ -890,13 +890,13 @@
                     android:id="@+id/asPerShiftDrivingTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color_eld_theme"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginRight="@dimen/margin_short_5"
                     android:paddingBottom="@dimen/margin_13"
-                    android:layout_alignParentBottom="true"
-                    android:textSize="@dimen/text_size_14"
                     android:text="@string/per_shift"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_14"
 
                     />
 
@@ -950,22 +950,19 @@
                     />
 
 
-
-                <TextView
+              <!--  <TextView
                     android:id="@+id/sleeperTxtVw"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/Sleeper"
-                    android:layout_marginRight="@dimen/margin_12"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
-                    android:textColor="@color/color_eld_theme"
-                    android:textSize="@dimen/text_size_18"
+                    android:layout_marginRight="@dimen/margin_12"
+                    android:text="@string/Sleeper"
                     android:textAllCaps="true"
+                    android:textColor="@color/color_eld_theme"
 
-                    />
-
+                    android:textSize="@dimen/text_size_18" />
+-->
 
                 <TextView
                     android:id="@+id/asPerDateSleepTV"
@@ -975,7 +972,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginRight="@dimen/margin_short_5"
                     android:paddingBottom="@dimen/margin_13"
-                    android:text="@string/per_shift"
+                    android:text="@string/per_day"
                     android:textColor="@color/color_eld_theme"
                     android:textSize="@dimen/text_size_14"
 
@@ -1029,20 +1026,18 @@
                     android:visibility="gone"
                     />
 
-
+<!--
                 <TextView
                     android:id="@+id/offDutyTxtVw"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/Off_Duty"
-                    android:layout_marginRight="@dimen/margin_12"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
-                    android:textColor="@color/color_eld_theme"
-                    android:textSize="@dimen/text_size_18"
+                    android:layout_marginRight="@dimen/margin_12"
+                    android:text="@string/Off_Duty"
                     android:textAllCaps="true"
-                    />
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_18" />-->
 
 
                 <TextView
@@ -1053,7 +1048,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginRight="@dimen/margin_short_5"
                     android:paddingBottom="@dimen/margin_13"
-                    android:text="@string/per_shift"
+                    android:text="@string/per_day"
                     android:textColor="@color/color_eld_theme"
                     android:textSize="@dimen/text_size_14"
 

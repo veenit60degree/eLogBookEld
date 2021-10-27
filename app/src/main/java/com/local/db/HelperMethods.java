@@ -112,6 +112,44 @@ public class HelperMethods {
         return endDateTime;
     }
 
+    public int getLastStatusDuration(JSONArray driverLogArray){
+        int endDateTime = 0;
+        try {
+            if(driverLogArray.length() > 0){
+                JSONObject obj = (JSONObject)driverLogArray.get(driverLogArray.length()-1);
+
+                int DriverStatusId = obj.getInt(ConstantsKeys.DriverStatusId);
+                String StartTime = obj.getString(ConstantsKeys.StartDateTime);
+                DateTime StartDateTime = Globally.getDateTimeObj(StartTime, false);
+                DateTime EndDateTime = Globally.GetCurrentJodaDateTime();
+                endDateTime = (int)Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
+
+                // 2021-10-26T00:00:00.000Z
+                String dayStartTime = StartTime.split("T")[1].substring(0,5);
+                Log.d("time", "time: " +StartTime.split("T")[1]);
+
+
+                if(dayStartTime.equals("00:00")){
+                    JSONObject obj2 = (JSONObject)driverLogArray.get(driverLogArray.length()-2);
+                    int DriverStatusIdSecondLast = obj2.getInt(ConstantsKeys.DriverStatusId);
+                    if(DriverStatusIdSecondLast == DriverStatusId) {
+                        DateTime StartDateTimeSecondObj = Globally.getDateTimeObj(obj2.getString(ConstantsKeys.StartDateTime), false);
+                        DateTime EndDateTimeSecondObj = Globally.getDateTimeObj(obj2.getString(ConstantsKeys.EndDateTime), false);
+                        int secondObjDiff = (int) Constants.getDateTimeDuration(StartDateTimeSecondObj, EndDateTimeSecondObj).getStandardMinutes();
+                        endDateTime = endDateTime + secondObjDiff;
+                    }
+
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return endDateTime;
+    }
+
+
 
     public boolean isDrivingAllowedWithCoDriver(Context context, Globally Global, String selectedDriverId, boolean isDriveChanging, DBHelper dbHelper){
         boolean isDrivingAllowed = true;
@@ -296,7 +334,8 @@ public class HelperMethods {
                                     String GPSSpeed, String PlateNumber, boolean isHaulException,
                                     boolean isShortHaulUpdate, String decesionSource,   String isAdverseException,
                                     String adverseExceptionRemark, String LocationType, String malAddInfo,
-                                    boolean IsNorthCanada, String StartLocationKm){
+                                    boolean IsNorthCanada, String StartLocationKm, boolean IsCycleChanged,
+                                    String StartOdometer, String EndOdometer){
 
         JSONObject driverLogJson = new JSONObject();
 
@@ -352,6 +391,10 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.MalfunctionDefinition, malAddInfo);
             driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
             driverLogJson.put(ConstantsKeys.StartLocationKm, StartLocationKm);
+            driverLogJson.put(ConstantsKeys.IsCycleChanged, IsCycleChanged);
+
+            driverLogJson.put(ConstantsKeys.EndOdometerInKm, EndOdometer);
+            driverLogJson.put(ConstantsKeys.StartOdometerInKm,  StartOdometer);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -583,7 +626,8 @@ public class HelperMethods {
 
 
     //  Update Last log date time in Array for end date time
-    public JSONObject UpdateLastJsonFromArray(JSONArray logArray, String endDateTime, String utcEndDateTime, double totalMin){
+    public JSONObject UpdateLastJsonFromArray(JSONArray logArray, String endDateTime, String utcEndDateTime,
+                                              double totalMin, String EndOdometer){
         JSONObject driverLogJson = new JSONObject();
         try {
             if(logArray.length() > 0){
@@ -639,7 +683,7 @@ public class HelperMethods {
 
                 if(logObj.has(ConstantsKeys.DriverName))
                     DriverName = logObj.getString(ConstantsKeys.DriverName);
-                else
+
 
                 if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                     IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -702,6 +746,9 @@ public class HelperMethods {
 
                 driverLogJson.put(ConstantsKeys.MalfunctionDefinition, malAddInfo);
                 driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
+
+                driverLogJson.put(ConstantsKeys.EndOdometerInKm, EndOdometer);
+                driverLogJson.put(ConstantsKeys.StartOdometerInKm,  logObj.getString(ConstantsKeys.StartOdometerInKm));
 
             }
         }catch (Exception e){
@@ -832,7 +879,13 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.MalfunctionDefinition, "");
                 driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
-
+                if(logObj.has(ConstantsKeys.StartOdometerInKm)) {
+                    driverLogJson.put(ConstantsKeys.StartOdometerInKm, logObj.getString(ConstantsKeys.StartOdometerInKm));
+                    driverLogJson.put(ConstantsKeys.EndOdometerInKm, logObj.getString(ConstantsKeys.EndOdometerInKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
+                    driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -964,7 +1017,13 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.MalfunctionDefinition, "");
                 driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
-
+                if(logObj.has(ConstantsKeys.StartOdometerInKm)) {
+                    driverLogJson.put(ConstantsKeys.StartOdometerInKm, logObj.getString(ConstantsKeys.StartOdometerInKm));
+                    driverLogJson.put(ConstantsKeys.EndOdometerInKm, logObj.getString(ConstantsKeys.EndOdometerInKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
+                    driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1077,7 +1136,13 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.MalfunctionDefinition, "");
                 driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
-
+                if(logObj.has(ConstantsKeys.StartOdometerInKm)) {
+                    driverLogJson.put(ConstantsKeys.StartOdometerInKm, logObj.getString(ConstantsKeys.StartOdometerInKm));
+                    driverLogJson.put(ConstantsKeys.EndOdometerInKm, logObj.getString(ConstantsKeys.EndOdometerInKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
+                    driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+                }
 
             }
         }catch (Exception e){
@@ -1212,6 +1277,14 @@ public class HelperMethods {
             sameStatusJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
             sameStatusJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
 
+            if(lastItemJson.has(ConstantsKeys.StartOdometerInKm)) {
+                sameStatusJson.put(ConstantsKeys.StartOdometerInKm, lastItemJson.getString(ConstantsKeys.StartOdometerInKm));
+                sameStatusJson.put(ConstantsKeys.EndOdometerInKm, lastItemJson.getString(ConstantsKeys.EndOdometerInKm));
+            }else{
+                sameStatusJson.put(ConstantsKeys.StartOdometerInKm, "0");
+                sameStatusJson.put(ConstantsKeys.EndOdometerInKm, "0");
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1340,8 +1413,8 @@ public class HelperMethods {
                 CurrentCycleId = 1;
                 IsViolation = false;
 
-                //  diff = DayDiffSplitMethod(currentDate , startDateTime);
-                diff = (int) Constants.getDateTimeDuration(startDateTime, currentDate).getStandardDays();
+                //  diff = ;
+                diff = DayDiffSplitMethod(currentDate , startDateTime);  //(int) Constants.getDateTimeDuration(startDateTime, currentDate).getStandardDays();
                 if(diff < daysDiff ) {
                     driverLogJson = new JSONObject();
 
@@ -1490,6 +1563,14 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.LocationType, LocationType);
                     driverLogJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
                     driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
+
+                    if(logObj.has(ConstantsKeys.StartOdometerInKm)) {
+                        driverLogJson.put(ConstantsKeys.StartOdometerInKm, logObj.getString(ConstantsKeys.StartOdometerInKm));
+                        driverLogJson.put(ConstantsKeys.EndOdometerInKm, logObj.getString(ConstantsKeys.EndOdometerInKm));
+                    }else{
+                        driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
+                        driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+                    }
 
                     parseArray.put(driverLogJson);
 
@@ -1647,6 +1728,14 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.LocationType, LocationType);
             driverLogJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
             driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
+
+            if(logObj.has(ConstantsKeys.StartOdometerInKm)) {
+                driverLogJson.put(ConstantsKeys.StartOdometerInKm, logObj.getString(ConstantsKeys.StartOdometerInKm));
+                driverLogJson.put(ConstantsKeys.EndOdometerInKm, logObj.getString(ConstantsKeys.EndOdometerInKm));
+            }else{
+                driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
+                driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+            }
 
             parseArray.put(driverLogJson);
 
@@ -1885,6 +1974,14 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.LocationType, LocationType);
                     driverLogJson.put(ConstantsKeys.MalfunctionDefinition, MalfunctionDefinition);
                     driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
+
+                    if(logObj.has(ConstantsKeys.StartOdometerInKm)) {
+                        driverLogJson.put(ConstantsKeys.StartOdometerInKm, logObj.getString(ConstantsKeys.StartOdometerInKm));
+                        driverLogJson.put(ConstantsKeys.EndOdometerInKm, logObj.getString(ConstantsKeys.EndOdometerInKm));
+                    }else{
+                        driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
+                        driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+                    }
 
                     parseArray.put(driverLogJson);
                 }
@@ -2280,7 +2377,7 @@ public class HelperMethods {
     }
 
     /*-------------------- GET DRIVER SELECTED MODEL -------------------- */
-    public  DriverLog GetSelectedLogModel( JSONObject json, DateTime end, DateTime endUtc, boolean isLastElement){
+    public DriverLog GetSelectedLogModel( JSONObject json, DateTime end, DateTime endUtc, boolean isLastElement){
 
         DriverLog driverLogModel = new DriverLog();
         try {
@@ -2325,6 +2422,12 @@ public class HelperMethods {
 
             driverLogModel.setYardMove(json.getBoolean(ConstantsKeys.YardMove));
             driverLogModel.setPersonal(json.getBoolean(ConstantsKeys.Personal));
+
+            if(json.has(ConstantsKeys.IsCycleChanged) && !json.isNull(ConstantsKeys.IsCycleChanged)) {
+                driverLogModel.setCycleChanged(json.getBoolean(ConstantsKeys.IsCycleChanged));
+            }else{
+                driverLogModel.setCycleChanged(false);
+            }
 
             driverLogModel.setCurrentCyleId(CurrentCycleId);
 
@@ -2692,6 +2795,23 @@ public class HelperMethods {
     }
 
 
+    public RulesResponseObject getRemainingHosTime(DateTime currentDate, DateTime currentUTCDate,
+                                                final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver,
+                                                int DriverId, int LastStatus, boolean isOldRecord, boolean isHaulException, boolean isAdverseException,
+                                                boolean isNorthCanada, int rulesVersion, DBHelper dbHelper){
+
+        LocalCalls CallDriverRule = new LocalCalls();
+
+        List<DriverLog> oDriverLog3DaysList = getNumberOffDaysLog(DriverId, 3, currentDate, currentUTCDate, dbHelper);   // 3 days log list
+        oDriverLog3DaysList.get(oDriverLog3DaysList.size()-1).setCurrentCyleId(eldCyclesId);
+        DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
+                offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException, isNorthCanada,
+                rulesVersion, oDriverLog3DaysList);  //oDriverLog3DaysList
+
+        return CallDriverRule.calculateDailyMinutes(oDriverDetailRemaining);
+
+    }
+
 
     public RulesResponseObject getDailyOffLeftMinutes(DateTime currentDate, DateTime currentUTCDate,
                                                       final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver,
@@ -3046,7 +3166,10 @@ public class HelperMethods {
                         logModel.getLocationType(),
                         logModel.getMalfunctionDefinition(),
                         logModel.IsNorthCanada(),
-                        logModel.getStartLocationKm()
+                        logModel.getStartLocationKm(),
+                        logModel.IsCycleChanged(),
+                        logModel.getStartOdometerInKm(),
+                        logModel.getEndOdometerInKm()
                 );
                 obj.put(ConstantsKeys.isNewRecord, logModel.IsNewRecord());
                 array.put(obj);
@@ -3335,7 +3458,8 @@ public class HelperMethods {
                                MainDriverEldPref MainDriverPref, CoDriverEldPref CoDriverPref,
                                EldSingleDriverLogPref eldSharedPref, EldCoDriverLogPref coEldSharedPref,
                                SyncingMethod syncingMethod,
-                               Globally Global, HelperMethods hMethods, DBHelper dbHelper, Context context ) {
+                               Globally Global, HelperMethods hMethods, DBHelper dbHelper, Context context,
+                               boolean IsCycleChanged) {
 
         boolean isViolation = false, IsYardMove = false;
         String address = "", wasViolation = "false", ViolationReason = "", isPersonal = "false";
@@ -3424,8 +3548,8 @@ public class HelperMethods {
                         SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                         Global, isHaulExcptn, isShortHaulUpdate,
                         ""+isAdverseExcptn,
-                        AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada,
-                        hMethods, dbHelper);
+                        AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, IsCycleChanged,
+                        SharedPref.getObdOdometer(context), hMethods, dbHelper);
 
 
                 String CurrentDate = Global.GetCurrentDateTime();
@@ -3541,7 +3665,8 @@ public class HelperMethods {
                     SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                     Global, isHaulExcptn, isShortHaulUpdate,
                     ""+isAdverseExcptn,
-                    AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, hMethods, dbHelper);
+                    AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, IsCycleChanged,
+                    SharedPref.getObdOdometer(context), hMethods, dbHelper);
 
 
 
@@ -3595,6 +3720,229 @@ public class HelperMethods {
         }
 
         return DriverJsonArray;
+    }
+
+
+
+
+    // ===================================== UnIdentified records =====================================
+
+    /*-------------------- GET UNIDENTIFIED SAVED Array -------------------- */
+    public JSONArray getSavedUnidentifiedLogArray(int companyId, DBHelper dbHelper){
+
+        JSONArray logArray = new JSONArray();
+
+        try {
+            Cursor rs = dbHelper.getUnidentifiedRecordLog(companyId);
+
+            if(rs != null && rs.getCount() > 0) {
+                rs.moveToFirst();
+                String logList = rs.getString(rs.getColumnIndex(DBHelper.UNIDENTIFIED_RECORD_LIST));
+                logArray = new JSONArray(logList);
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return logArray;
+
+    }
+
+
+    public void UnidentifiedRecordLogHelper( int companyId, DBHelper dbHelper, JSONArray driverLogArray){
+
+        Cursor rs = dbHelper.getUnidentifiedRecordLog(companyId);
+
+        try {
+            if (rs != null & rs.getCount() > 0) {
+                rs.moveToFirst();
+                dbHelper.UpdateUnidentifiedRecordLog(companyId, driverLogArray);        // UPDATE DRIVER LOG
+            } else {
+                dbHelper.InsertUnidetifiedRecordLog(companyId, driverLogArray);      // INSERT DRIVER LOG
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public JSONArray getUnpostedLogArray(int companyId, DBHelper dbHelper){
+        JSONArray unPostedArray = new JSONArray();
+           try{
+               JSONArray array = getSavedUnidentifiedLogArray(companyId, dbHelper);
+               for(int i = 0 ; i < array.length() ; i++){
+                    JSONObject obj = (JSONObject) array.get(i);
+                    if(obj.getBoolean(ConstantsKeys.IsUploadedUnIdenRecord) == false){
+                        unPostedArray.put(obj);
+                    }
+               }
+           }catch (Exception e){
+               e.printStackTrace();
+           }
+
+           return unPostedArray;
+    }
+
+
+    public void updateUploadedStatusInArray(String CompanyId, DBHelper dbHelper){
+
+        JSONArray updatedArray = new JSONArray();
+        try{
+            JSONArray unIdentifiedLogArray = getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
+
+            for(int i = 0; i < unIdentifiedLogArray.length() ; i++){
+                JSONObject obj = (JSONObject) unIdentifiedLogArray.get(i);
+                obj.put(ConstantsKeys.IsUploadedUnIdenRecord, true);
+
+                updatedArray.put(obj);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        // update Array in db helper
+        UnidentifiedRecordLogHelper(Integer.parseInt(CompanyId), dbHelper, updatedArray);
+    }
+
+    public boolean getIntermediateStatus(JSONArray array){
+        boolean IntermediateUpdate = false;
+        try{
+            if (array.length() > 0) {
+                for (int i = array.length()-1 ; i >= 0 ; i--) {
+                    try {
+                        JSONObject obj = array.getJSONObject(i);
+                        IntermediateUpdate = obj.getBoolean(ConstantsKeys.Intermediate);
+                        break;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return IntermediateUpdate;
+    }
+
+    public JSONObject updateLastRecordOfUnIdentifiedLog(JSONArray unIdentifiedLogArray, String EndTime, String EndOdometer,
+                                                      String lat, String lon, String engineSec){
+        JSONObject updatedObj = null;
+        try{
+
+            if(unIdentifiedLogArray.length() > 0){
+                int lastIndex = unIdentifiedLogArray.length()-1;
+                updatedObj = (JSONObject) unIdentifiedLogArray.get(lastIndex);
+
+                updatedObj.put(ConstantsKeys.StatusEndTime, EndTime);
+                updatedObj.put(ConstantsKeys.EndOdometer, EndOdometer);
+                updatedObj.put(ConstantsKeys.EndLatitude, lat);
+                updatedObj.put(ConstantsKeys.EndLongitude, lon);
+                updatedObj.put(ConstantsKeys.EndEngineSeconds, engineSec);
+                updatedObj.put(ConstantsKeys.IsUploadedUnIdenRecord, false);
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return updatedObj;
+    }
+
+
+
+    /*-------------------- GET DOWNLOADED LOGS USA SAVED Array -------------------- */
+    public JSONArray getSavedDownlodedLogUsaArray(int driverId, DBHelper dbHelper){
+
+        JSONArray logArray = new JSONArray();
+
+        try {
+            Cursor rs = dbHelper.getDownloadedLogsUsaRecord(driverId);
+
+            if(rs != null && rs.getCount() > 0) {
+                rs.moveToFirst();
+                String logList = rs.getString(rs.getColumnIndex(DBHelper.DOWNLOADLOGS_USA_RECORD_LIST));
+                logArray = new JSONArray(logList);
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return logArray;
+
+    }
+
+
+    public void DownloadedUsaRecordLogHelper( int driverId, DBHelper dbHelper, JSONArray driverLogArray){
+
+        Cursor rs = dbHelper.getDownloadedLogsUsaRecord(driverId);
+
+        try {
+            if (rs != null & rs.getCount() > 0) {
+                rs.moveToFirst();
+                dbHelper.UpdateDownloadedUsaRecordLog(driverId, driverLogArray);        // UPDATE DRIVER LOG
+            } else {
+                dbHelper.InsertDownloadLogsUsaRecordLog(driverId, driverLogArray);      // INSERT DRIVER LOG
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /*-------------------- GET DOWNLOADED LOGS CANADA SAVED Array -------------------- */
+    public JSONArray getSavedDownlodedLogCanadaArray(int driverId, DBHelper dbHelper){
+
+        JSONArray logArray = new JSONArray();
+
+        try {
+            Cursor rs = dbHelper.getDownloadedLogsCanadaRecord(driverId);
+
+            if(rs != null && rs.getCount() > 0) {
+                rs.moveToFirst();
+                String logList = rs.getString(rs.getColumnIndex(DBHelper.DOWNLOADLOGS_CANADA_RECORD_LIST));
+                logArray = new JSONArray(logList);
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return logArray;
+
+    }
+
+
+    public void DownloadedCanadaRecordLogHelper( int driverId, DBHelper dbHelper, JSONArray driverLogArray){
+
+        Cursor rs = dbHelper.getDownloadedLogsCanadaRecord(driverId);
+
+        try {
+            if (rs != null & rs.getCount() > 0) {
+                rs.moveToFirst();
+                dbHelper.UpdateDownloadedCanadaRecordLog(driverId, driverLogArray);        // UPDATE DRIVER LOG
+            } else {
+                dbHelper.InsertDownloadLogsCanadaRecordLog(driverId, driverLogArray);      // INSERT DRIVER LOG
+            }
+            if (!rs.isClosed()) {
+                rs.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

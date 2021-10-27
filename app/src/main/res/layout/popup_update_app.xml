@@ -45,14 +45,14 @@
                 android:id="@+id/logoutTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/logout"
-                android:textSize="@dimen/text_size_17"
-                android:textColor="@color/black_hos"
                 android:layout_alignParentRight="true"
-                android:paddingRight="@dimen/margin_short_5"
-                android:paddingLeft="@dimen/margin_short_5"
-                android:paddingBottom="@dimen/margin_short_5"
                 android:gravity="center_horizontal"
+                android:paddingLeft="@dimen/margin_short_5"
+                android:paddingRight="@dimen/margin_short_5"
+                android:paddingBottom="@dimen/margin_short_5"
+                android:text="@string/logout"
+                android:textColor="@color/black_hos"
+                android:textSize="@dimen/text_size_17"
 
                 />
 

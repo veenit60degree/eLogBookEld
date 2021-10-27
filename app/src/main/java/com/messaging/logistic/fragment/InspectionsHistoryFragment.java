@@ -271,7 +271,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
             if (dateDialog != null && dateDialog.isShowing())
                 dateDialog.dismiss();
 
-            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, InspectionDateTime, new DateListener());
+            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, InspectionDateTime, new DateListener(), false);
             dateDialog.show();
         }catch (final IllegalArgumentException e) {
             e.printStackTrace();
@@ -406,7 +406,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId);
+        params.put(ConstantsKeys.DeviceId, DeviceId);
         params.put("Inspection.InspectionDateTime", DateTime );
 
         GetInspectionsRequest.executeRequest(Request.Method.POST, APIs.GET_SAVED_INSPECTION, params, 1,

@@ -57,8 +57,9 @@ public class DatePickerDialog extends Dialog {
     RecapViewMethod recapViewMethod;
     HelperMethods hMethods;
     Globally global;
+    boolean isGenerateRods = false;
 
-    public DatePickerDialog(Context context, String currentCycleId, String selectedDate, DatePickerListener readyListener) {
+    public DatePickerDialog(Context context, String currentCycleId, String selectedDate, DatePickerListener readyListener,boolean isRods) {
         super(context);
         CurrentCycleId = currentCycleId;
         SelectedDate = selectedDate;
@@ -66,6 +67,7 @@ public class DatePickerDialog extends Dialog {
 
         hMethods = new HelperMethods();
         global = new Globally();
+        isGenerateRods = isRods;
     }
 
 
@@ -109,9 +111,9 @@ public class DatePickerDialog extends Dialog {
                 CurrentCycleId = cycleArray[0];
 
                 if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
-                    DriverPermitMaxDays = 14;
+                    DriverPermitMaxDays =  isGenerateRods == true ?  15: 14;
                 } else {
-                    DriverPermitMaxDays = 7;
+                    DriverPermitMaxDays = isGenerateRods == true ? 8 :7;
                 }
 
                 if(cycleArray[1].equals("sendLog")){

@@ -1,6 +1,7 @@
 include ':searchablespinner'
 include ':SlidingLibrary'
 include ':CircleProgressView'
+include ':pdfViewer'
 include ':ink'
 include ':app'
 rootProject.name = "eLogBookEld"

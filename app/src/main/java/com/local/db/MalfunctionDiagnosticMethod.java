@@ -781,7 +781,8 @@ public class MalfunctionDiagnosticMethod {
                 String DataEventCode = obj.getString(ConstantsKeys.DetectionDataEventCode);
                 String EventDriverId      = obj.getString(ConstantsKeys.DriverId);
 
-                if(EventDriverId.equals(DriverId)) {
+                int dayDiff = Constants.getDayDiff(EventDateTime, Globally.GetCurrentDateTime());
+                if(dayDiff != 0 || EventDriverId.equals(DriverId)) {
                     boolean IsClearEvent = false;
                     if (obj.has(ConstantsKeys.IsClearEvent)) {
                         IsClearEvent = obj.getBoolean(ConstantsKeys.IsClearEvent);

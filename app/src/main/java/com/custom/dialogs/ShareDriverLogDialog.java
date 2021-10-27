@@ -608,7 +608,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 cycleId = "3";
             }
 
-            dateDialog = new DatePickerDialog(getContext(), cycleId + ",sendLog", globally.GetCurrentDeviceDate(), new DateListener());
+            dateDialog = new DatePickerDialog(getContext(), cycleId + ",sendLog", globally.GetCurrentDeviceDate(), new DateListener(), false);
             dateDialog.show();
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();

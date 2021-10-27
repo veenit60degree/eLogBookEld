@@ -383,9 +383,15 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             if(Globally.LATITUDE.length() < 5){
                 changeLocBtn.setVisibility(View.VISIBLE);
             }else{
-                if(Globally.isConnected(getActivity()) == false)
-                    locInspectionTV.setText(csvReader.getShortestAddress(getActivity()));
+                if(Globally.isConnected(getActivity()) == false) {
+                  if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+                      locInspectionTV.setText(csvReader.getShortestAddress(getActivity()));
+                }else{
+                      locInspectionTV.setText(Globally.LATITUDE + "," + Globally.LONGITUDE);
+                }
 
+
+                }
                 changeLocBtn.setVisibility(View.GONE);
             }
         }else {
@@ -446,13 +452,22 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             Location = lastItemJson.getString(ConstantsKeys.StartLocation);
             if(Location.contains("null") || Location.equals(getString(R.string.no_location_found))) {
-                Location = csvReader.getShortestAddress(getActivity());
+                if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+                    Location = csvReader.getShortestAddress(getActivity());
+                }else{
+                    Location = Globally.LATITUDE + "," + Globally.LONGITUDE;
+                }
                 changeLocBtn.setVisibility(View.VISIBLE);
             }
             if (Globally.isConnected(getActivity()) && Globally.LATITUDE.length() > 5) {
                 GetAddFromLatLng(Globally.LATITUDE, Globally.LONGITUDE);
             }else{
-                locInspectionTV.setText(csvReader.getShortestAddress(getActivity()));
+                if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+                    locInspectionTV.setText(csvReader.getShortestAddress(getActivity()));
+                }else{
+                    locInspectionTV.setText(Globally.LATITUDE + "," + Globally.LONGITUDE);
+                }
+
                 changeLocBtn.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
@@ -980,7 +995,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             if (dateDialog != null && dateDialog.isShowing())
                 dateDialog.dismiss();
 
-            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, SelectedDatee, new DateListener());
+            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, SelectedDatee, new DateListener(), false);
             dateDialog.show();
         }catch (final IllegalArgumentException e) {
             e.printStackTrace();
@@ -1517,6 +1532,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
                             Globally.TRUCK_NUMBER = tempTruck;
                             SharedPref.setVINNumber(VIN_NUMBER, getActivity());
+                            SharedPref.setLastSavedVINNumber(VIN_NUMBER, getActivity());
+
                             EldFragment.VehicleId = vehicleList.get(VehListPosition).getVehicleId();
                             SharedPref.setVehicleId(EldFragment.VehicleId , getActivity());
                             powerInspectionTV.setText(tempTruck);
@@ -1542,7 +1559,12 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                                     Location    = dataJObject.getString(ConstantsKeys.Location);
 
                                     if (Country.contains("China") || Country.contains("Russia") || Country.contains("null")) {
-                                        Location = csvReader.getShortestAddress(getActivity());
+                                        if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+                                            Location = csvReader.getShortestAddress(getActivity());
+                                        }else{
+                                            Location = Globally.LATITUDE + "," + Globally.LONGITUDE;
+                                        }
+
                                         changeLocBtn.setVisibility(View.VISIBLE);
                                     }/*else {
                                         if (!Location.contains(Country)) {

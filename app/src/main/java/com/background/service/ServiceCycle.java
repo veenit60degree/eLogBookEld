@@ -480,13 +480,13 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 }
 
                                                 if (ContinueSpeedCounter >= OnDutyInterval) {
-                                                    try {
+                                                  /*  try {
                                                         if (UILApplication.isActivityVisible()) {
                                                             TabAct.speedAlertBtn.performClick();
                                                         }
                                                     }catch (Exception e){
                                                         e.printStackTrace();
-                                                    }
+                                                    }*/
                                                     LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                             driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, isEldToast, IsAOBRDAutoDrive);
@@ -655,8 +655,13 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                             isPcYmAlertChangeStatus = true;
                                             CHANGED_STATUS = DRIVING;
+
+                                            dismissEngineRestartDialog(true);
+
                                             ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                     driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+
+
                                         }
 
                                     }
@@ -735,6 +740,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                 BackgroundLocationService.IsAutoChange = true;
                                 message = " Duty status switched to DRIVING due to not confirming Personal use status.";
                                 LastStatus = "_PU_NotConfirmedByDriver ";
+
+                                dismissEngineRestartDialog(true);
 
                                 CHANGED_STATUS = DRIVING;
                                 ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
@@ -826,7 +833,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             OnDutySpeedLimit    = DriverConst.getCoDriverConfiguredTime(DriverConst.CoOnDutySpeed, context);
         }
 
-        if(OnDutyInterval > 4){
+        if(OnDutyInterval > 5){
             OnDutyInterval--;
         }
     }
@@ -934,7 +941,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                             SharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus, false,
                             Global, isHaulExcptn, false,
                             "" + isAdverseExcptn,
-                            "", LocationType, "", isNorthCanada, hMethods, dbHelper);
+                            "", LocationType, "", isNorthCanada, false,
+                            SharedPref.getObdOdometer(context), hMethods, dbHelper);
 
                     String CurrentDate = Global.GetCurrentDateTime();
                     String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
@@ -1340,7 +1348,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             e.printStackTrace();
         }
 
-        JSONObject lastItemUpdatedJson = hMethods.UpdateLastJsonFromArray(driverLogArray, StartDeviceCurrentTime, StartUTCCurrentTime,  LastJobTotalMin);
+        JSONObject lastItemUpdatedJson = hMethods.UpdateLastJsonFromArray(driverLogArray, StartDeviceCurrentTime, StartUTCCurrentTime,
+                                            LastJobTotalMin, SharedPref.getObdOdometer(context));
 
         if(City.length() != 0 && State.length() != 0){
             address = City + ", " + State + ", " + Country;
@@ -1391,7 +1400,10 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 connectionSource + LastStatus,
                 ""+isAdverseExcptn,
                 "", LocationType,
-                "", isNorthCanada,address
+                "", isNorthCanada, address,
+                false,
+                SharedPref.getObdOdometer(context),
+                SharedPref.getObdOdometer(context)
 
         );
 
@@ -1439,7 +1451,10 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         connectionSource + LastStatus,
                         ""+isAdverseExcptn,
                        "", LocationType,
-                        "", isNorthCanada, address
+                        "", isNorthCanada, address,
+                        false,
+                        SharedPref.getObdOdometer(context),
+                        SharedPref.getObdOdometer(context)
 
                 );
 

@@ -42,6 +42,7 @@ import com.constants.VolleyRequest;
 import com.constants.WebAppInterface;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.DotOtherOptionDialog;
+import com.custom.dialogs.GenerateRodsDialog;
 import com.custom.dialogs.ShareDriverLogDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
@@ -104,12 +105,14 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     ScrollViewExt dotScrollView;
     SwitchMultiButton usDotSwitchBtn;
 
+    GenerateRodsDialog generateRodsDialog;
     DatePickerDialog dateDialog;
     ShareDriverLogDialog shareDialog;
     List<String> StateArrayList = new ArrayList<>();
     List<DriverLocationModel> StateList = new ArrayList<>();
     List<DotDataModel> dotLogList;
     List<ShipmentModel> shipmentLogList;
+    List<String> countryList = new ArrayList<>();
 
     VolleyRequest GetDotLogRequest;
     Map<String, String> params;
@@ -120,7 +123,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     String INDIAN_URL       = "http://182.73.78.171:8286/";
    // String PRODUCTION_URL   = "https://alsrealtime.com/";
    // String logUrl = PRODUCTION_URL + "DriverLog/MobileELDView?driverId=";
-    String LogDate, DayName, MonthFullName , MonthShortName , CurrentCycleId;
+    String LogDate, DayName, MonthFullName , MonthShortName , CurrentCycleId, selectedCountryRods = "";
     String CurrentDate, CountryCycle, DRIVER_ID, DeviceId ;
     String DefaultLine      = " <g class=\"event \">\n";
 
@@ -210,6 +213,10 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
         initilizeTextView(view);
         getBundleData();
+
+        countryList.add("Select");
+        countryList.add("CANADA");
+        countryList.add("USA");
 
         WebSettings webSettings = dotGraphWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -421,7 +428,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 if(dateDialog != null && dateDialog.isShowing())
                     dateDialog.dismiss();
 
-                dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, LogDate, new DateListener());
+                dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, LogDate, new DateListener(), false);
                 dateDialog.show();
 
                 break;
@@ -620,12 +627,79 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         public void ItemClickReady(int position) {
             if(position == 0){
                 MoveFragment(LogDate);
-            }else{
+            }else if(position == 1){
                 shareDriverLogDialog();
-
+            }else if(position == 2){
+                generateRodsDialog = new GenerateRodsDialog(getActivity(), countryList, new GenerateRodsListner(),
+                        DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity()));
+                generateRodsDialog.show();
+            }else {
+                MoveDownloadLogFragment();
             }
         }
     }
+
+
+    private class GenerateRodsListner implements GenerateRodsDialog.RodsListner {
+        @Override
+        public void ChangeRodsReady(String Title, int position,String checkedMode,Date fromDate,Date toDate) {
+
+            try {
+//
+                selectedCountryRods = countryList.get(position);
+                SimpleDateFormat parseDate = new SimpleDateFormat(Globally.DateFormatHalf);
+                String currentParseDatetime = parseDate.format(toDate);
+                String lastParseDatetime =  parseDate.format(fromDate);
+                if(selectedCountryRods == Globally.USA_CYCLE) {
+                    DownloadPdfLog(Globally.USA_CYCLE,Globally.LOG_TYPE_ELD,lastParseDatetime,currentParseDatetime);
+                    Globally.EldScreenToast(rootView, "Please wait file download in progress.", getContext().getResources().getColor(R.color.color_eld_theme));
+                }else{
+                    if(!checkedMode.equals("")){
+                        DownloadPdfLog(Globally.CANADA_CYCLE,checkedMode,lastParseDatetime,currentParseDatetime);
+                        Globally.EldScreenToast(rootView, "Please wait file download in progress.", getContext().getResources().getColor(R.color.color_eld_theme));
+                    }
+                }
+                generateRodsDialog.cancel();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+
+    void DownloadPdfLog(String country,String logtype,String fromDate,String toDate) {
+
+        params = new HashMap<String, String>();
+        params.put(ConstantsKeys.DriverId, DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()));
+        params.put(ConstantsKeys.FromDate, fromDate);
+        params.put(ConstantsKeys.ToDate, toDate);
+        params.put(ConstantsKeys.Country, country);
+        params.put(ConstantsKeys.LogType, logtype);
+
+        GetDotLogRequest.executeRequest(Request.Method.POST, APIs.DownloadPdfCanadaLog, params, 101,
+                Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
+    }
+
+
+    private void MoveDownloadLogFragment(){
+        DownloadRodsFragment logFragment = new DownloadRodsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("cycle", Globally.USA_CYCLE);
+        logFragment.setArguments(bundle);
+
+        FragmentManager fragManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTran = fragManager.beginTransaction();
+        fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
+                android.R.anim.fade_in,android.R.anim.fade_out);
+        fragmentTran.add(R.id.job_fragment, logFragment);
+        fragmentTran.addToBackStack("inspection");
+        fragmentTran.commit();
+
+
+    }
+
 
     private class DateListener implements DatePickerDialog.DatePickerListener{
         @Override
@@ -654,7 +728,6 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
             }else{
                 global.EldScreenToast(eldMenuLay, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
-                //webViewErrorDisplay();
             }
 
         }

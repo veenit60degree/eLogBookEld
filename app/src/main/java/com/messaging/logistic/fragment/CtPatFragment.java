@@ -419,7 +419,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
             if (dateDialog != null && dateDialog.isShowing())
                 dateDialog.dismiss();
 
-            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, SelectedDatee, new DateListener());
+            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, SelectedDatee, new DateListener(), false);
             dateDialog.show();
         }catch (final IllegalArgumentException e) {
             e.printStackTrace();

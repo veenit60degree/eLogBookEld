@@ -371,7 +371,7 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
             if (dateDialog != null && dateDialog.isShowing())
                 dateDialog.dismiss();
 
-            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, SelectedDate, new DateListener());
+            dateDialog = new DatePickerDialog(getActivity(), CurrentCycleId, SelectedDate, new DateListener(), false);
             dateDialog.show();
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();

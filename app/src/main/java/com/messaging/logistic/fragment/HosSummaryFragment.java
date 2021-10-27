@@ -745,7 +745,6 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     }
 
 
-// hosDistanceTV.setText(Html.fromHtml(distanceAndVin));
     void CycleTimeCalculation(boolean isUpdateUI ) {
 
         try {
@@ -916,7 +915,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         switch (v.getId()){
 
             case R.id.obdHosInfoImg:
-                ObdDataInfoDialog obdDialog = new ObdDataInfoDialog(getActivity());
+                ObdDataInfoDialog obdDialog = new ObdDataInfoDialog(getActivity(), DriverId);
                 obdDialog.show();
 
                 break;
@@ -1117,13 +1116,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                             hosDistanceTV.setText(Html.fromHtml(distance));
 
                                             // saved day start odometer locally to calculate distance
-                                            SharedPref.setDayStartOdometer(StartOdometer, global.GetCurrentDateTime(), getActivity());
+                                            //SharedPref.setDayStartOdometer(StartOdometer, global.GetCurrentDateTime(), getActivity());
 
                                         }
 
                                     }
                                 } catch (Exception e) {
-                                    //  hosDistanceTV.setText(Html.fromHtml(" <b>" + "-- </b>" ));
                                     e.printStackTrace();
                                 }
                                 break;

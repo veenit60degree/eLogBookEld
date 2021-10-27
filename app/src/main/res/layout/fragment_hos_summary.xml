@@ -142,19 +142,17 @@
                             />
 
 
-
                         <TextView
                             android:id="@+id/breakUsedTimeTV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/hos_break_time"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/text_size_17"
+                            android:layout_centerInParent="true"
                             android:layout_gravity="center_horizontal"
                             android:gravity="center_horizontal"
-                            android:layout_centerInParent="true"
+                            android:textColor="@color/hos_break_time"
+                            android:textSize="@dimen/text_size_17"
 
-                            />
+                            android:textStyle="bold" />
 
 
                     </RelativeLayout>
@@ -273,33 +271,33 @@
                         >
 
 
-
-                    <at.grabner.circleprogress.CircleProgressView
-                        android:id="@+id/shiftCircularView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin_short_3"
-                        android:layout_centerInParent="true"
-                        CircleProgressView:cpv_autoTextSize="true"
-                        CircleProgressView:cpv_barColor="@color/hos_shift"
-                        CircleProgressView:cpv_barWidth="@dimen/margin_10"
-                        CircleProgressView:cpv_innerContourSize="0dp"
-                        CircleProgressView:cpv_maxValue="100"
-                        CircleProgressView:cpv_outerContourSize="0dp"
-                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
-                        CircleProgressView:cpv_rimWidth="@dimen/margin_10"
-                        CircleProgressView:cpv_seekMode="true"
-                        CircleProgressView:cpv_showUnit="true"
-                        CircleProgressView:cpv_spinColor="@color/hos_shift"
-                        CircleProgressView:cpv_textColor="@color/hos_shift"
-                        CircleProgressView:cpv_textScale="0"
-                        CircleProgressView:cpv_unitColor="@color/white"
-                        CircleProgressView:cpv_unitPosition="right_top"
-                        CircleProgressView:cpv_unitScale="0"
+                        <at.grabner.circleprogress.CircleProgressView
+                            android:id="@+id/shiftCircularView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginStart="@dimen/margin_short_3"
+                            android:layout_marginTop="@dimen/margin_short_3"
+                            android:layout_marginEnd="@dimen/margin_short_3"
+                            android:layout_marginBottom="@dimen/margin_short_3"
+                            CircleProgressView:cpv_autoTextSize="true"
+                            CircleProgressView:cpv_barColor="@color/hos_shift"
+                            CircleProgressView:cpv_barWidth="@dimen/margin_10"
+                            CircleProgressView:cpv_innerContourSize="0dp"
+                            CircleProgressView:cpv_maxValue="100"
+                            CircleProgressView:cpv_outerContourSize="0dp"
+                            CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
+                            CircleProgressView:cpv_rimWidth="@dimen/margin_10"
+                            CircleProgressView:cpv_seekMode="true"
+                            CircleProgressView:cpv_showUnit="true"
+                            CircleProgressView:cpv_spinColor="@color/hos_shift"
 
 
-
-                        />
+                            CircleProgressView:cpv_textColor="@color/hos_shift"
+                            CircleProgressView:cpv_textScale="0"
+                            CircleProgressView:cpv_unitColor="@color/white"
+                            CircleProgressView:cpv_unitPosition="right_top"
+                            CircleProgressView:cpv_unitScale="0" />
 
 
 
@@ -432,7 +430,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:layout_margin="@dimen/margin_short_3"
+                            android:layout_marginStart="@dimen/margin_short_3"
+                            android:layout_marginTop="@dimen/margin_short_3"
+                            android:layout_marginEnd="@dimen/margin_short_3"
+                            android:layout_marginBottom="@dimen/margin_short_3"
                             CircleProgressView:cpv_autoTextSize="true"
                             CircleProgressView:cpv_barColor="@color/hos_cycle"
                             CircleProgressView:cpv_barWidth="@dimen/margin_10"
@@ -444,14 +445,13 @@
                             CircleProgressView:cpv_seekMode="true"
                             CircleProgressView:cpv_showUnit="true"
                             CircleProgressView:cpv_spinColor="@color/hos_cycle"
+
+
                             CircleProgressView:cpv_textColor="@color/hos_cycle"
                             CircleProgressView:cpv_textScale="0"
                             CircleProgressView:cpv_unitColor="@color/white"
                             CircleProgressView:cpv_unitPosition="right_top"
-                            CircleProgressView:cpv_unitScale="0"
-
-
-                            />
+                            CircleProgressView:cpv_unitScale="0" />
 
 
                         <TextView

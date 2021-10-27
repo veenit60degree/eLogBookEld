@@ -52,6 +52,8 @@ import com.driver.details.ParseLoginDetails;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
 
@@ -68,6 +70,7 @@ import java.util.Map;
 public class LoginActivity extends FragmentActivity implements OnClickListener, GoogleApiClient.ConnectionCallbacks,
 		GoogleApiClient.OnConnectionFailedListener{
 
+	public static boolean isDriving = false;
 	EditText userNameText, passwordText, coDriverUserNameText, coDriverPasswordText;
 	TextView driverTitleTV, appVersion, appTypeView;
 	RelativeLayout mainLoginLayout, loginLayout, userTypeLayout, loginCoDriverLayout, loginScrollChildLay;
@@ -445,6 +448,16 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		IsLoginSuccess = false;
 		loginBtn.setEnabled(true);
 
+
+		startService();
+
+		UILApplication.activityResumed();
+
+
+	}
+
+
+	private void startService(){
 		/*========= Start Logout Service to check truck is moving in logout=============*/
 		try {
 			Intent serviceIntent = new Intent(LoginActivity.this, AfterLogoutService.class);
@@ -455,12 +468,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-
-		UILApplication.activityResumed();
-
-
 	}
-
 
 
 	@Override
@@ -555,6 +563,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 	private void resetValues(){
 		try {
+			HelperMethods hMethods  = new HelperMethods();
+			DBHelper dbHelper 		= new DBHelper(LoginActivity.this);
+			String  CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
+
 			SharedPref.setVINNumber( "", getApplicationContext());
 			SharedPref.SetCycleOfflineDetails("[]", getApplicationContext());
 			SharedPref.SetNewLoginStatus(true, getApplicationContext());
@@ -563,7 +575,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.SetAfterLoginConfStatus(false, getApplicationContext());
 			SharedPref.SaveObdStatus(Constants.NO_CONNECTION,  "", "", getApplicationContext());
 			SharedPref.setRefreshDataTime("", getApplicationContext());
-			SharedPref.setDayStartOdometer("0", "", getApplicationContext());
+			SharedPref.setDayStartOdometer("0", "0", "", getApplicationContext());
 			SharedPref.setCertifyAlertViewTime("", getApplicationContext());
 			SharedPref.setEldOccurences(false, false, false, false, getApplicationContext());
 			SharedPref.setEldOccurencesCo(false, false, false, false, getApplicationContext());
@@ -594,8 +606,20 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
 			SharedPref.SaveTruckInfoOnIgnitionChange("", "","", "",
 								"0", "0", getApplicationContext());
+			SharedPref.setUnIdenLastDutyStatus("", getApplicationContext());
+			SharedPref.SaveUnidentifiedIntermediateRecord("", "", "", "", "", getApplicationContext());
+			SharedPref.setUnAssignedVehicleMilesId("", getApplicationContext());
+			SharedPref.setIntermediateLogId("", getApplicationContext());
+			SharedPref.setTotalPUOdometerForDay("0","", getApplicationContext());
+			SharedPref.SetWrongVinAlertView(false, getApplicationContext());
 
 			constants.saveMalfncnStatus(getApplicationContext(), false);
+
+			// clear array in table
+			if(CompanyId.length() > 0) {
+				hMethods.UnidentifiedRecordLogHelper(Integer.parseInt(CompanyId), dbHelper, new JSONArray());
+			}
+
 
 		}catch (Exception e){
 			e.printStackTrace();
@@ -603,11 +627,23 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	}
 
 
+	void clearUnIdentifiedRecordBeforeLogin(){
+		String LastDutyStatus = SharedPref.getUnIdenLastDutyStatus(getApplicationContext());
+
+		if(LastDutyStatus.equals("DR") || LastDutyStatus.equals("OD")){
+			SharedPref.SetPingStatus(ConstantsKeys.ClearUnIdentifiedData, LoginActivity.this);
+			startService();
+		}
+	}
+
 	void LoginUser(final String DeviceId, final String username, final String pass, final String CoDriverUsername,
 				   final String CoDriverPassword, final String TeamDriverType, final String OSType,
 				   final String DeviceSimInfo, final String Sim2) {
 
 		if(SharedPref.isLoginAllowed(LoginActivity.this)) {
+
+
+			clearUnIdentifiedRecordBeforeLogin();
 
 			loginBtn.setEnabled(false);
 			try {
@@ -1081,6 +1117,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				break;
 
 			case R.id.mainDriverBtn:
+
+				if(isDriving){
+					isDriving = false;
+				}else{
+					isDriving = true;
+				}
 
 				if(SharedPref.isLoginAllowed(LoginActivity.this)) {
 					LoginUserType = DriverConst.SingleDriver;

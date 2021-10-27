@@ -10,5 +10,6 @@ public class ConstantEvent {
     public final static String ACTION_GATT_DISCONNECTED = "ACTION_GATT_DISCONNECTED";
     public final static String ACTION_GATT_SERVICES_DISCOVERED = "ACTION_GATT_SERVICES_DISCOVERED";
     public final static String ACTION_DATA_AVAILABLE = "ACTION_DATA_AVAILABLE";
+    public final static String ACTION_QUERY_DATA_AVAILABLE = "ACTION_QUERY_DATA_AVAILABLE";
     public final static String ACTION_DATA_RESPONSE = "ACTION_DATA_RESPONSE";
 }

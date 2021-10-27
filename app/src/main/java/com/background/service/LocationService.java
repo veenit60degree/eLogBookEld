@@ -15,6 +15,9 @@ import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.constants.SharedPref;
+import com.messaging.logistic.Globally;
+
 
 /**
  * Created by kumar on 1/6/2017.
@@ -22,7 +25,7 @@ import android.widget.Toast;
 
 public class LocationService extends Service {
     public static final String BROADCAST_ACTION = "Hello World";
-    private static final int ONE_MINUTES = 10000  ; //000 * 60 * 1;
+    private static final int LOC_DURATION = 3000  ;
     public LocationManager locationManager;
     public MyLocationListener listener;
     public Location previousBestLocation = null;
@@ -34,18 +37,38 @@ public class LocationService extends Service {
     public void onCreate() {
         super.onCreate();
         intent = new Intent(BROADCAST_ACTION);
+
+        initilizeLocationManager();
     }
 
+    void initilizeLocationManager(){
+        try {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            listener = new MyLocationListener();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // return;
+            }
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOC_DURATION, 5, listener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOC_DURATION, 5, listener);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        listener = new MyLocationListener();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-           // return;
+        if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
+                !SharedPref.getPassword(getApplicationContext()).equals("")) {
+            Log.e("Log", "--stop");
+            stopForeground(true);
+            stopSelf();
+
+        }else{
+            if(locationManager == null){
+                initilizeLocationManager();
+            }
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 5, listener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 5, listener);
 
         return START_STICKY;
     }
@@ -63,8 +86,8 @@ public class LocationService extends Service {
 
         // Check whether the new location fix is newer or older
         long timeDelta = location.getTime() - currentBestLocation.getTime();
-        boolean isSignificantlyNewer = timeDelta > ONE_MINUTES;
-        boolean isSignificantlyOlder = timeDelta < -ONE_MINUTES;
+        boolean isSignificantlyNewer = timeDelta > LOC_DURATION;
+        boolean isSignificantlyOlder = timeDelta < -LOC_DURATION;
         boolean isNewer = timeDelta > 0;
 
         // If it's been more than two minutes since the current location, use the new location
@@ -115,23 +138,14 @@ public class LocationService extends Service {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager.removeUpdates(listener);
+        if(locationManager != null && listener != null) {
+            locationManager.removeUpdates(listener);
+            locationManager = null;
+            listener = null;
+        }
+
     }
 
-    public static Thread performOnBackgroundThread(final Runnable runnable) {
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    runnable.run();
-                } finally {
-
-                }
-            }
-        };
-        t.start();
-        return t;
-    }
 
 
 
@@ -142,37 +156,33 @@ public class LocationService extends Service {
         public void onLocationChanged(final Location loc)
         {
             Log.i("onLocationChanged", "Location: " + loc.getLatitude());
-            if(isBetterLocation(loc, previousBestLocation)) {
-                loc.getLatitude();
-                loc.getLongitude();
-                intent.putExtra("Latitude", loc.getLatitude());
-                intent.putExtra("Longitude", loc.getLongitude());
-                intent.putExtra("Provider", loc.getProvider());
-                sendBroadcast(intent);
+            Globally.LATITUDE = "" + loc.getLatitude();
+            Globally.LONGITUDE = "" + loc.getLongitude();
+
+            if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
+                    !SharedPref.getPassword(getApplicationContext()).equals("")) {
+                Log.e("Log", "--stop");
+                stopForeground(true);
+                stopSelf();
 
             }
+
         }
 
-        public void onProviderDisabled(String provider)
-        {
-            if(getApplicationContext() != null) {
-                Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
-            }
-        }
+        public void onProviderDisabled(String provider)  {
+            Globally.LATITUDE = "" ;
+            Globally.LONGITUDE = "" ;
 
-
-        public void onProviderEnabled(String provider)
-        {
-            if(getApplicationContext() != null) {
-                Toast.makeText(getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
-            }
+            Log.d("onProviderDisabled", "Gps Disabled" );
         }
 
 
-        public void onStatusChanged(String provider, int status, Bundle extras)
-        {
-
+        public void onProviderEnabled(String provider)  {
+            Log.d("onProviderEnabled", "Gps Enabled" );
         }
+
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {  }
 
     }
 }

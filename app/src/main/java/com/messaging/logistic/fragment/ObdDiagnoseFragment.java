@@ -165,7 +165,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         }
 
         final Button testBtn = (Button) rootView.findViewById(R.id.testBtn);
-       // testBtn.setVisibility(View.VISIBLE);
+        testBtn.setVisibility(View.GONE);
         if(BackgroundLocationService.OBD_DISCONNECTED){
             testBtn.setText("OBD Connected");
         }else{

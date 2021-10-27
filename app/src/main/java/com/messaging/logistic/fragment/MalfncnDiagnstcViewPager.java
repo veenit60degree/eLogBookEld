@@ -376,9 +376,6 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     }
                 }
 
-                if(malDiaArray.length() == 0) {
-                    globally.EldScreenToast(confirmCertifyTV, globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
-                }
         }catch (Exception e){
             e.printStackTrace();
         }

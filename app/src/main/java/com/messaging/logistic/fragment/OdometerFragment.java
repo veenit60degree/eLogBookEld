@@ -687,6 +687,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
                     Global.EldScreenToast(saveReadingBtn, "Odometer reading saved.", getResources().getColor(R.color.colorSleeper));
                 }
                 SharedPref.setVINNumber(VIN_NUMBER, getActivity());
+                SharedPref.setLastSavedVINNumber(VIN_NUMBER, getActivity());
 
                 if (ReadingType.equals("end")) {
                     EldFragment.IsStartReading  = false;

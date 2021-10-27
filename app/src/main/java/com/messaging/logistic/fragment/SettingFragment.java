@@ -4,21 +4,26 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -29,11 +34,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -114,8 +121,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView, canEditImgView, usEditImgView;
     LoadingSpinImgView settingSpinImgVw;
     RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn,
-            obdDiagnoseBtn, docBtn, deferralRuleLay;
-    LinearLayout settingsMainLay;
+            obdDiagnoseBtn, docBtn, deferralRuleLay, brightnessSoundEditBtn, settingsMainLay, actionbarMainLay;
     SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton;
     List<CycleModel> CanCycleList;
     List<CycleModel> UsaCycleList;
@@ -192,6 +198,23 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     boolean isAdverseExcptn = false;
     boolean isDeferral = false;
     boolean isCoDriverSync = false;
+
+
+    private int brightness;
+    //Content resolver used as a handle to the system's settings
+    private ContentResolver cResolver;
+    //Window object, that will store a reference to the current window
+    private Window window;
+    int maxVolume=1;
+    AudioManager audioManager;
+    int[] volume = new int[1];
+    int brightnessMode;
+
+    SeekBar showBrightnessSeekBar,showVolumeSeekBar;
+    CardView brightnessCardView;
+    LinearLayout settingsParentView;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -274,8 +297,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         opZoneTmgView        = (ImageView)v.findViewById(R.id.opZoneTmgView);
         canEditImgView       = (ImageView)v.findViewById(R.id.canEditImgView);
         usEditImgView        = (ImageView)v.findViewById(R.id.usEditImgView);
+
         settingSpinImgVw     = (LoadingSpinImgView)v.findViewById(R.id.settingSpinImgVw);
 
+        brightnessSoundEditBtn= (RelativeLayout)v.findViewById(R.id.brightnessSoundEditBtn);
         haulExceptionLay     = (RelativeLayout) v.findViewById(R.id.haulExceptionLay);
         checkAppUpdateBtn    = (RelativeLayout) v.findViewById(R.id.checkAppUpdateBtn);
         eldMenuLay           = (RelativeLayout) v.findViewById(R.id.eldMenuLay);
@@ -286,12 +311,18 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         deferralRuleLay      = (RelativeLayout) v.findViewById(R.id.deferralRuleLay);
 
         rightMenuBtn         = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
-        settingsMainLay      = (LinearLayout)v.findViewById(R.id.settingsMainLay);
+        settingsMainLay      = (RelativeLayout)v.findViewById(R.id.settingsMainLay);
+        actionbarMainLay     = (RelativeLayout)v.findViewById(R.id.actionbarMainLay);
+        settingsParentView   = (LinearLayout)v.findViewById(R.id.settingsParentView);
 
         downloadProgressBar  = (CircularProgressBar) v.findViewById(R.id.downloadProgressBar);
         deferralSwitchButton   = (SwitchCompat)v.findViewById(R.id.deferralSwitchButton);
         haulExceptnSwitchButton = (SwitchCompat)v.findViewById(R.id.haulExceptnSwitchButton);
         adverseSwitchButton = (SwitchCompat)v.findViewById(R.id.adverseSwitchButton);
+
+        showBrightnessSeekBar = (SeekBar)v.findViewById(R.id.sbBrightness);
+        showVolumeSeekBar     = (SeekBar)v.findViewById(R.id.sbVolume);
+        brightnessCardView    = (CardView)v.findViewById(R.id.brightnessCardView);
 
         rightMenuBtn.setVisibility(View.GONE);
         settingSpinImgVw.setImageResource(R.drawable.sync_settings);
@@ -497,6 +528,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         operatingZoneTV.setOnClickListener(this);
         caCycleTV.setOnClickListener(this);
         usCycleTV.setOnClickListener(this);
+        brightnessSoundEditBtn.setOnClickListener(this);
+        settingsParentView.setOnClickListener(this);
+        actionbarMainLay.setOnClickListener(this);
 
         caCycleSpinner.setOnItemSelectedListener(this);
         usCycleSpinner.setOnItemSelectedListener(this);
@@ -971,13 +1005,23 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
             case R.id.eldMenuLay:
+                brightnessCardView.setVisibility(View.GONE);
+                if(brightnessCardView.getVisibility() == View.VISIBLE) {
+                    brightnessCardView.setVisibility(View.GONE);
+                }
+
                 TabAct.sliderLay.performClick();
+
                 break;
 
             case R.id.dateActionBarTV:
                // TabAct.host.setCurrentTab(0);
+                brightnessCardView.setVisibility(View.GONE);
+                if(brightnessCardView.getVisibility() == View.VISIBLE) {
+                    brightnessCardView.setVisibility(View.GONE);
+                }
 
-                ObdDataInfoDialog dialog = new ObdDataInfoDialog(getActivity());
+                ObdDataInfoDialog dialog = new ObdDataInfoDialog(getActivity(), DriverId );
                 dialog.show();
 
                 break;
@@ -985,13 +1029,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
             case R.id.SyncDataBtn:
-
+                brightnessCardView.setVisibility(View.GONE);
                 // isStoragePermissionGranted();
                 SyncData();
 
                 break;
 
             case R.id.checkInternetBtn:
+                brightnessCardView.setVisibility(View.GONE);
                 progressDialog.show();
                 //CheckConnectivity CheckConnectivity = new CheckConnectivity(getActivity());
                 checkConnectivity.ConnectivityRequest(CheckInternetConnection, ConnectivityInterface);
@@ -1000,7 +1045,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
             case R.id.checkAppUpdateBtn:
-
+                brightnessCardView.setVisibility(View.GONE);
                 if(IsDownloading){
 
                     if (confirmationDialog != null && confirmationDialog.isShowing())
@@ -1040,7 +1085,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
             case R.id.obdDiagnoseBtn:
-
+                brightnessCardView.setVisibility(View.GONE);
                 ObdDiagnoseFragment obdDiagnoseFragment = new ObdDiagnoseFragment();
                 MoveFragment(obdDiagnoseFragment);
 
@@ -1054,18 +1099,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 break;
 
             case R.id.haulExceptionLay:
+                brightnessCardView.setVisibility(View.GONE);
                 //  ObdConfigFragment wiredObdFragment = new ObdConfigFragment();
                 //  MoveFragment(wiredObdFragment);
                 break;
 
             case R.id.docBtn:
+                brightnessCardView.setVisibility(View.GONE);
                 DocumentFragment helpFragment = new DocumentFragment();
                 MoveFragment(helpFragment);
                 break;
 
 
             case R.id.caCycleTV:
-
+                brightnessCardView.setVisibility(View.GONE);
                 if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
 
                     if(constants.isActionAllowed(getActivity())) {
@@ -1087,7 +1134,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
             case R.id.usCycleTV:
-
+                brightnessCardView.setVisibility(View.GONE);
                     if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
 
                         if(constants.isActionAllowed(getActivity())) {
@@ -1107,8 +1154,23 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 break;
 
 
-            case R.id.operatingZoneTV:
+            case R.id.brightnessSoundEditBtn:
 
+                setSoundSettings();
+                setBrightnessSettings();
+
+                break;
+
+            case R.id.settingsParentView:
+                brightnessCardView.setVisibility(View.GONE);
+                break;
+
+            case R.id.actionbarMainLay:
+                brightnessCardView.setVisibility(View.GONE);
+                break;
+
+            case R.id.operatingZoneTV:
+                brightnessCardView.setVisibility(View.GONE);
                     if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
                         if(constants.isActionAllowed(getActivity())) {
                             if(isSleepOffDuty() == false) {
@@ -1125,6 +1187,167 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 break;
 
 
+        }
+    }
+
+
+    private void setBrightnessSettings(){
+        if(brightnessCardView.getVisibility() == View.VISIBLE) {
+            brightnessCardView.setVisibility(View.GONE);
+        }else{
+            brightnessCardView.setVisibility(View.VISIBLE);
+        }
+        cResolver = getActivity().getContentResolver();
+
+        //Get the current window
+        window =  getActivity().getWindow();
+
+        //Set the seekbar range between 0 and 255
+        showBrightnessSeekBar.setMax(255);
+        //Set the seek bar progress to 1
+        showBrightnessSeekBar.setKeyProgressIncrement(1);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.System.canWrite(getActivity())){
+                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                startActivity(intent);
+            }
+        }
+
+        try
+        {
+            //Get the current system brightness
+            brightness = Settings.System.getInt(cResolver, Settings.System.SCREEN_BRIGHTNESS);
+            brightnessMode = Settings.System.getInt(cResolver, Settings.System.SCREEN_BRIGHTNESS_MODE);
+//                    Settings.System.putInt(cResolver, "SCREEN_BRIGHTNESS_MODE", Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+        }
+        catch (Settings.SettingNotFoundException e)
+        {
+            //Throw an error case it couldn't be retrieved
+            Log.e("Error", "Cannot access system brightness");
+            e.printStackTrace();
+        }
+
+        showBrightnessSeekBar.setProgress(brightness);
+
+        showBrightnessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                boolean settingsCanWrite = false;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    settingsCanWrite = Settings.System.canWrite(getActivity());
+                }
+
+                if(settingsCanWrite) {
+                    //Set the system brightness using the brightness variable value
+                    Settings.System.putInt(cResolver, Settings.System.SCREEN_BRIGHTNESS, brightness);
+                    //Get the current window attributes
+                    WindowManager.LayoutParams layoutpars = window.getAttributes();
+                    //Set the brightness of this window
+                    layoutpars.screenBrightness = brightness / (float) 255;
+                    //Apply attribute changes to this window
+                    window.setAttributes(layoutpars);
+
+                    /////    1 Means Auto brightness on and 0 Means Auto brightness off . In Auto on seek bar setting not work //////////
+
+                    if (brightnessMode == 1) {
+                        Globally.showToast(rootView, "Please turn off auto brightness for this setting");
+                    }
+                }else{
+                    global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.no_per_bright_settings), getResources().getColor(R.color.colorVoilation));
+                }
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //Nothing handled here
+            }
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                //Set the minimal brightness level
+                //if seek bar is 20 or any value below
+                if (progress <= 20) {
+                    //Set the brightness to 20
+                    brightness = 20;
+                } else //brightness is greater than 20
+                {
+                    //Set brightness variable based on the progress bar
+                    brightness = progress;
+                }
+                //Calculate the brightness percentage
+                float perc = (brightness / (float) 255) * 100;
+
+            }
+
+        });
+
+    }
+
+
+    private void setSoundSettings(){
+        try {
+
+            audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+            //set max progress according to volume
+            showVolumeSeekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+            //get current volume
+            showVolumeSeekBar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+            //Set the seek bar progress to 1
+            showVolumeSeekBar.setKeyProgressIncrement(1);
+            //get max volume
+            maxVolume = showVolumeSeekBar.getMax();
+            showVolumeSeekBar.setMax(maxVolume);
+
+
+            showVolumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    Log.e("Volume:", "ponStopTrackingTouch ");
+                    // seekBar.setProgress(volume[0]);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress,
+                                              boolean fromUser) {
+                    // volume[0] = progress;
+
+//                            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.ADJUST_SAME);
+                    if(volume[0] < progress) {
+                        Log.e("Volume:", "progress raise: " + progress);
+                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
+
+                    }else{
+                        Log.e("Volume:", "progress lower: " + progress);
+                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND);
+                    }
+
+                    if(progress == 0){
+                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                AudioManager.ADJUST_MUTE, AudioManager.FLAG_PLAY_SOUND);
+                    }else if(progress == maxVolume){
+                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
+                    }
+
+                    volume[0] = progress;
+
+                }
+            });
+
+            if(volume[0] != audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)){
+                //volume changed put logic here
+                Log.e("Volume","dfsdf");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1209,7 +1432,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
                         LocationType, "", false, isNorthCanada, DriverType, constants,
                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                        syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
+                        syncingMethod, global, hMethods, dbHelper, getActivity(), false ) ;
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -1622,6 +1845,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     }
 
 
+    private void updateIsCycleChangeIn18DaysLog(){
+        try{
+           JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+            JSONObject lastObj = hMethods.GetLastJsonFromArray(driverLogArray);
+            lastObj.put(ConstantsKeys.IsCycleChanged, true);
+            driverLogArray.put(driverLogArray.length()-1, lastObj);
+
+            // update array in db helper
+            hMethods.DriverLogHelper( Integer.valueOf(DriverId), dbHelper, driverLogArray);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback() {
 
         @Override
@@ -1693,8 +1930,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     case ChangeCycle:
                         global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorPrimary));
 
-
                         saveUpdatedCycleData();
+
+                        updateIsCycleChangeIn18DaysLog();
 
                         break;
 
@@ -2022,7 +2260,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
                                         LocationType, "", true, isNorthCanada, DriverType, constants,
                                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                                        syncingMethod, global, hMethods, dbHelper, getActivity());
+                                        syncingMethod, global, hMethods, dbHelper, getActivity(), false);
 
                             } else {
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.halu_excp_not_eligible), getResources().getColor(R.color.colorVoilation));

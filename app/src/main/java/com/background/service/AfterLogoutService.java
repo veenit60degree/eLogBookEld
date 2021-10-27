@@ -1,7 +1,11 @@
 package com.background.service;
 
+import static com.messaging.logistic.Globally.DateFormat;
+import static com.messaging.logistic.Globally.GetCurrentUTCTimeFormat;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
@@ -30,20 +34,30 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.android.volley.VolleyError;
 import com.ble.util.BleUtil;
 import com.ble.util.ConstantEvent;
 import com.ble.util.EventBusInfo;
+import com.constants.APIs;
+import com.constants.CheckConnectivity;
 import com.constants.Constants;
+import com.constants.SaveUnidentifiedRecord;
 import com.constants.SharedPref;
 import com.constants.ShellUtils;
 import com.constants.TcpClient;
+import com.constants.VolleyRequest;
+import com.driver.details.DriverConst;
 import com.htstart.htsdk.HTBleSdk;
 import com.htstart.htsdk.bluetooth.HTBleData;
 import com.htstart.htsdk.bluetooth.HTBleDevice;
 import com.htstart.htsdk.bluetooth.HTModeSP;
 import com.htstart.htsdk.minterface.HTBleScanListener;
 import com.htstart.htsdk.minterface.IReceiveListener;
+import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
+import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
 import com.messaging.logistic.UILApplication;
 import com.notifications.NotificationManagerSmart;
@@ -51,9 +65,15 @@ import com.wifi.settings.WiFiConfig;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -69,19 +89,37 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     String ServerPackage = "com.als.obd";
     String ServerService = "com.als.obd.services.MainService";
-    String ignitionStatus = "", truckRPM = "";
+    String ignitionStatus = "", truckRPM = "", currentHighPrecisionOdometer = "";
     String noObd = "obd not connected";
     String AlertMsg = "Your vehicle is moving and there is no driver login in eLog book";
     String AlertMsgSpeech = "Your vehicle is moving and there is no driver login in e log book";
 
     String TAG_OBD = "OBD Service";
     private static final long TIME_INTERVAL_WIFI  = 10 * 1000;   // 10 sec
-    private static final long TIME_INTERVAL_WIRED = 2 * 1000;   // 2 sec
-    private static final long TIME_INTERVAL_LIMIT = 70000;
+    private static final long TIME_INTERVAL_WIRED = 3 * 1000;   // 3 sec
+    private static final long TIME_INTERVAL_LIMIT = 270000; // show notification after 1.5 min
 
     String TAG = "Service";
     boolean isStopService = false;
     double lastVehSpeed = -1;
+
+    int ThreshHoldSpeed = 8;
+    int intermediateRecordTime = 60; // intermediate record time is 60 min
+
+    boolean isTempTimeValidate = true;
+    String TempTimeAtStart = "", CompanyId = "", TruckID = "", TempStatus = "";
+    String LastDutyStatus = "", StatusStartTime = "";   //, CurrentDutyStatus = "";
+    String VinNumber = "", UnAssignedVehicleMilesId = "", IntermediateLogId = "", EngineSeconds = "";
+    VolleyRequest truckListApi,companyListApi;
+    SaveUnidentifiedRecord SaveUpdateUnidentifiedApi;
+    boolean Intermediate = false;
+    boolean IntermediateUpdate = false;
+    CheckConnectivity checkConnectivity;
+    HelperMethods hMethods;
+    DBHelper dbHelper;
+    Globally global;
+    JSONArray unPostedLogArray = new JSONArray();
+
 
     private TextToSpeech textToSpeech;
     TcpClient tcpClient;
@@ -108,11 +146,15 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     boolean isBleObdRespond = false;
 
     int bleScanCount = 0;
+    int ObdPreference;
 
     private BluetoothAdapter mBTAdapter;
     private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
     private LinkedList<HTBleData> mHtblData = new LinkedList<>();
+    Intent locServiceIntent;
 
+    double tempOdo = 1179876199;  //1.090133595E9
+    double tempEngHour = 22999.95;
 
 
 
@@ -137,19 +179,22 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         this.replyTo = new Messenger(new IncomingHandler());
         BindConnection();
 
-        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+        ObdPreference = SharedPref.getObdPreference(getApplicationContext());
+
+        initUnidentifiedObj();
+
+        if(ObdPreference == Constants.OBD_PREF_BLE) {
             initBleListener();
             checkPermissionsBeforeScanBle();
         }else{
             checkWiredObdConnection();
         }
 
-
+        SharedPref.setContinueSpeedZeroTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
         SharedPref.saveBleScanCount(0, getApplicationContext());
         mTimer.schedule(timerTask, TIME_INTERVAL_WIFI, TIME_INTERVAL_WIFI);
 
     }
-
 
 
 
@@ -166,14 +211,219 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 ignitionStatus = bundle.getString(constants.OBD_IgnitionStatus);
                 truckRPM = bundle.getString(constants.OBD_RPM);
                 speed = bundle.getInt(constants.OBD_Vss);
+                EngineSeconds = bundle.getString(constants.OBD_EngineHours);
+                VinNumber = bundle.getString(constants.OBD_VINNumber);
+
+                if(bundle.getString(constants.OBD_HighPrecisionOdometer) != null) {
+                    currentHighPrecisionOdometer = bundle.getString(constants.OBD_HighPrecisionOdometer);
+                }
+
             }catch (Exception e){
                 e.printStackTrace();
             }
 
-            // ---------------- temp data ---------------------
-            //  ignitionStatus = "ON"; truckRPM = "35436"; speed = 10;
 
+            // ---------------- temp data ---------------------
+          /*  ignitionStatus = "ON"; truckRPM = "35436";
+            VinNumber = SharedPref.getLastSavedVINNumber(getApplicationContext());
+            if(LoginActivity.isDriving) {
+                speed = 10;
+                tempOdo = tempOdo + 50;
+                tempEngHour = tempEngHour + .20;
+            }else{
+                speed = 0;
+            }
+
+            currentHighPrecisionOdometer = "" + BigDecimal.valueOf(tempOdo).toPlainString();
+            EngineSeconds = ""+tempEngHour;
+*/
+
+            //========================================================
+            isWiredCallBackCalled = true;
             checkObdDataWithRule(speed);
+        }
+    }
+
+
+
+    private void initUnidentifiedObj(){
+        try{
+
+            hMethods            = new HelperMethods();
+            dbHelper            = new DBHelper(getApplicationContext());
+            global              = new Globally();
+            TruckID             = DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext());
+            CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
+
+            IntermediateLogId           = SharedPref.getIntermediateLogId(getApplicationContext());
+            UnAssignedVehicleMilesId    = SharedPref.getUnAssignedVehicleMilesId(getApplicationContext());
+
+
+
+            truckListApi        = new VolleyRequest(getApplicationContext());
+            companyListApi      = new VolleyRequest(getApplicationContext());
+
+
+            checkConnectivity       = new CheckConnectivity(getApplicationContext());
+            SaveUpdateUnidentifiedApi = new SaveUnidentifiedRecord(getApplicationContext(), ResponseCallBack);
+            if(CompanyId.length() > 0) {
+                unPostedLogArray = hMethods.getUnpostedLogArray(Integer.parseInt(CompanyId), dbHelper);
+                TempTimeAtStart = Globally.GetCurrentUTCTimeFormat();
+
+                if (unPostedLogArray.length() > 0) {
+                    if (Globally.isConnected(getApplicationContext())) {
+                        SaveAndUpdateUnidentifiedRecordsApi(unPostedLogArray);
+                    }
+
+                }
+
+                try {
+
+                    JSONArray UnidentifiedLogArray = hMethods.getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
+                    if (UnidentifiedLogArray.length() > 0) {
+                        isTempTimeValidate = false;
+                        JSONObject obj = (JSONObject) UnidentifiedLogArray.get(UnidentifiedLogArray.length() - 1);
+                        StatusStartTime = obj.getString(ConstantsKeys.UTCStartDateTime);
+                        LastDutyStatus = obj.getString(ConstantsKeys.DutyStatus);
+
+                    }else {
+                        LastDutyStatus = SharedPref.getUnIdenLastDutyStatus(getApplicationContext());
+
+                        isTempTimeValidate = true;
+                        SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, "", getApplicationContext());
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+    private void checkObdDataWithRule(int speed){
+        try {
+
+            if (SharedPref.getUserName(getApplicationContext()).equals("") &&
+                    SharedPref.getPassword(getApplicationContext()).equals("")) {
+
+                if(SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED ||
+                        SharedPref.getObdStatus(getApplicationContext()) == Constants.BLE_CONNECTED) {
+
+                    if (ignitionStatus.equals("ON") && !truckRPM.equals("0")) {
+                        SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", "", getApplicationContext());
+
+                        String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
+                        if(savedDate.length() == 0){
+                            savedDate = Globally.GetCurrentUTCTimeFormat();
+                            SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, savedDate, getApplicationContext());
+                        }
+
+                        if (speed >= 8 && lastVehSpeed >= 8) {
+
+                            long count = SharedPref.getLastCalledWiredCallBack(getApplicationContext());
+
+                            if (count == 0) {
+                                Globally.PlaySound(getApplicationContext());
+
+                                Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", "Vehicle Speed: " + speed + " "
+                                        + AlertMsg, 2003);
+                                SpeakOutMsg(AlertMsgSpeech);
+
+                            }
+
+                            if (count >= TIME_INTERVAL_LIMIT) {
+                                // reset call back count
+                                count = 0;
+                                SharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
+                            }else{
+                                // save count --------------
+                                SharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
+                            }
+
+
+                            if(SharedPref.IsAppRestricted(getApplicationContext())) {
+                                SharedPref.setLoginAllowedStatus(false, getApplicationContext());
+                            }
+
+
+                            if(TruckID.length() > 0 && CompanyId.length() > 0) {
+                                if (isTempTimeValidate) {
+                                    if (constants.minDiffFromUTC(savedDate, global, getApplicationContext()) > 0) {
+                                        SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+                                        ChangeTempUnidentifiedStatus();
+
+                                        isTempTimeValidate = false;
+                                    }
+                                } else {
+                                    SharedPref.setContinueSpeedZeroTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+
+                                    if (constants.minDiffFromUTC(savedDate, global, getApplicationContext()) > 0) {
+                                        SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+                                        UnidentifiedStatusChange(speed, 0);
+                                    }
+
+                                }
+                            }
+                        } else {
+                            SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+                            if(TruckID.length() > 0 && CompanyId.length() > 0) {
+
+                                if (isTempTimeValidate == false) {
+                                    String lastSavedTime = SharedPref.getContinueSpeedZeroTime(getApplicationContext());
+                                    int continueSpeedZeroDiff = constants.minDiffFromUTC(lastSavedTime, global, getApplicationContext());
+                                    UnidentifiedStatusChange(speed, continueSpeedZeroDiff);
+                                }
+
+                                if (isTempTimeValidate && constants.minDiffFromUTC(savedDate, global, getApplicationContext()) >= 1) {
+                                    isTempTimeValidate = false;
+                                }
+
+                            }
+                        }
+                        lastVehSpeed = speed;
+
+                        // ping wired server to get data
+                        if( ObdPreference == Constants.OBD_PREF_WIRED &&
+                                SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
+                            CallWired(TIME_INTERVAL_WIRED);
+                        }
+
+                    } else {
+                        lastVehSpeed = -1;
+                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+                        if( ObdPreference == Constants.OBD_PREF_WIRED ) {
+                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED ||
+                                    SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
+                                SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "",  "", getApplicationContext());
+                                CallWired(TIME_INTERVAL_WIFI);
+                            }
+                        }
+                    }
+                }else{
+                    lastVehSpeed = -1;
+                    SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+                    if( ObdPreference == Constants.OBD_PREF_WIRED ) {
+                        SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "",  "", getApplicationContext());
+                        CallWired(Constants.SocketTimeout5Sec);
+                    }
+                }
+
+            }else{
+                lastVehSpeed = -1;
+                SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -184,7 +434,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    isWiredCallBackCalled = true;
                     StartStopServer(constants.WiredOBD);
                 }
             }, time);
@@ -197,14 +446,30 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         if (obdShell.result == 0) {
             if (obdShell.successMsg.contains("USB_DCP")) {
+
+                if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED){
+                    StartStopServer(constants.WiredOBD);
+                }
+
                 // Connected State
                 SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", "", getApplicationContext());
+
             } else {
                 // Disconnected State. Save only when last status was not already disconnected
                 SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "", "", getApplicationContext());
+                isWiredCallBackCalled = false;
             }
         } else {
             // Error
+            isWiredCallBackCalled = false;
+            SharedPref.SaveObdStatus(Constants.WIRED_ERROR, "", "", getApplicationContext());
+
+            //  temp values for testing
+          /* if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED){
+                StartStopServer(constants.WiredOBD);
+            }
+            SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", "", getApplicationContext());
+*/
         }
 
     }
@@ -235,108 +500,38 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
 
-    private void checkObdDataWithRule(int speed){
-        try {
-
-            if (SharedPref.getUserName(getApplicationContext()).equals("") &&
-                    SharedPref.getPassword(getApplicationContext()).equals("")) {
-
-                if(SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED ||
-                        SharedPref.getObdStatus(getApplicationContext()) == Constants.BLE_CONNECTED) {
-
-                    if (ignitionStatus.equals("ON") && !truckRPM.equals("0")) {
-                        SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", "", getApplicationContext());
-                        if (speed > 8 && lastVehSpeed > 8) {
-                           // SharedPref.setLoginAllowedStatus(false, getApplicationContext());
-
-                            long count = SharedPref.getLastCalledWiredCallBack(getApplicationContext());
-                            if (count == 0) {
-                                SharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
-                                Globally.PlaySound(getApplicationContext());
-
-                                if(UILApplication.isActivityVisible()){
-                                    signInAlertDialog();
-                                }else {
-                                   // Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", AlertMsg, 2003);
-
-                                    Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD", "Vehicle Speed: " +speed + " "
-                                            + AlertMsg, 2003);
-
-                                    SpeakOutMsg(AlertMsgSpeech);
-                                }
-
-                            }
-
-                            if (count >= TIME_INTERVAL_LIMIT) {
-                                // reset call back count
-                                count = 0;
-                            }
-
-                            // save count --------------
-                            SharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
-
-                        } else {
-                            SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-                        }
-                        lastVehSpeed = speed;
-
-                        // ping wired server to get data
-                        if( SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED &&
-                                SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
-                            CallWired(TIME_INTERVAL_WIRED);
-                        }
-
-                    } else {
-                        lastVehSpeed = -1;
-                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-
-                        if( SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
-                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED ||
-                                    SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
-                                SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "",  "", getApplicationContext());
-                                CallWired(TIME_INTERVAL_WIFI);
-                            }
-                        }
-                    }
-                }else{
-                    lastVehSpeed = -1;
-                    SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-
-                    if( SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED ) {
-                        SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, "",  "", getApplicationContext());
-                        CallWired(Constants.SocketTimeout5Sec);
-                    }
-                }
-
-            }else{
-                lastVehSpeed = -1;
-                SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-
-            }
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.i("service", "---------onStartCommand Service");
 
-        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-            initHtBle();
-        }else if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
-            StartStopServer(constants.WiredOBD);
-        }else{
-            checkWifiOBDConnection();
+        String pingStatus = SharedPref.isPing(getApplicationContext());
+        if(pingStatus.equals(ConstantsKeys.ClearUnIdentifiedData)){
+            EndOnDutyOrDrivingRecords();
+        }else {
+            if (ObdPreference == Constants.OBD_PREF_BLE) {
+                initHtBle();
+            } else if (ObdPreference == Constants.OBD_PREF_WIRED) {
+                StartStopServer(constants.WiredOBD);
+            } else {
+                checkWifiOBDConnection();
+            }
+
+
+            try {
+                // call location service
+                locServiceIntent = new Intent(getApplicationContext(), LocationService.class);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(locServiceIntent);
+                }
+                startService(locServiceIntent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
-
+        SharedPref.SetPingStatus("", getApplicationContext());
 
         //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
         return START_STICKY;
@@ -361,16 +556,25 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             }else{
 
                 // communicate with wired OBD server app with Message
-                if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                if(ObdPreference == Constants.OBD_PREF_BLE) {
                     checkPermissionsBeforeScanBle();
-                }else if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
-                    if(SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED ){
+                }else if(ObdPreference == Constants.OBD_PREF_WIRED) {
+
+                    checkWiredObdConnection();
+
+                    if(isWiredCallBackCalled == false && SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED){
                         StartStopServer(constants.WiredOBD);
                     }else{
-                        if(isWiredCallBackCalled == false){
-                            StartStopServer(constants.WiredOBD);
+                        String obdLastCallDate = SharedPref.getWiredObdCallTime(getApplicationContext());
+                        if (obdLastCallDate.length() > 10) {
+                            int lastCalledMinDiff = constants.getMinDifference(obdLastCallDate, Globally.GetCurrentDateTime());
+                            if (lastCalledMinDiff > 3) {
+                                SharedPref.SetWiredObdCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
+                                StartStopServer(constants.WiredOBD);
+                            }
                         }
                     }
+
                 }else{
                     checkWifiOBDConnection();
                 }
@@ -556,28 +760,28 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                         if (WheelBasedVehicleSpeed > 8 && lastVehSpeed > 8) {
                                             long count = SharedPref.getLastCalledWiredCallBack(getApplicationContext());
                                             if (count == 0) {
-                                                //  SharedPref.setLoginAllowedStatus(false, getApplicationContext());
-                                                SharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
 
                                                 Globally.PlaySound(getApplicationContext());
+                                                Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD",
+                                                        "Vehicle Speed: " + (int) WheelBasedVehicleSpeed + " " + AlertMsg, 2003);
+                                                SpeakOutMsg(AlertMsgSpeech);
 
-                                                if (UILApplication.isActivityVisible()) {
-                                                    signInAlertDialog();
-                                                } else {
-                                                    Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD",
-                                                            "Vehicle Speed: " + (int) WheelBasedVehicleSpeed + " " + AlertMsg, 2003);
-                                                    SpeakOutMsg(AlertMsgSpeech);
-                                                }
                                             }
 
                                             if (count >= TIME_INTERVAL_LIMIT) {
                                                 // reset call back count
                                                 count = 0;
+                                                // save count --------------
+                                                SharedPref.setLastCalledWiredCallBack(count, getApplicationContext());
+                                            }else{
+                                                // save count --------------
+                                                SharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
                                             }
 
-                                            // save count --------------
-                                            SharedPref.setLastCalledWiredCallBack(count + TIME_INTERVAL_WIRED, getApplicationContext());
 
+                                            if(SharedPref.IsAppRestricted(getApplicationContext())) {
+                                                SharedPref.setLoginAllowedStatus(false, getApplicationContext());
+                                            }
 
                                             //  Globally.ShowLogoutNotificationWithSound(getApplicationContext(), "ELD", AlertMsg, mNotificationManager);
                                         } else {
@@ -615,29 +819,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     };
 
 
-
-
-
-    private void signInAlertDialog(){
-
-        final Dialog picker = new Dialog(getApplicationContext());
-        picker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        picker.setContentView(R.layout.dialog_signin_vehicle);
-
-        final Button signInOkBtn = (Button)picker.findViewById(R.id.signInOkBtn);
-        signInOkBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                picker.dismiss();
-            }
-        });
-
-        if(getApplicationContext() != null) {
-            picker.show();
-        }
-
-    }
 
 
 
@@ -735,6 +916,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                 int VehicleSpeed = Integer.valueOf(htBleData.getVehicleSpeed());
                 truckRPM = htBleData.getEngineSpeed();
+                VinNumber = htBleData.getVIN_Number();
+                EngineSeconds = htBleData.getEngineHours();
+                currentHighPrecisionOdometer = htBleData.getOdoMeter();
+                Globally.LATITUDE = htBleData.getLatitude();
+                Globally.LONGITUDE = htBleData.getLongitude() ;
 
                 if(truckRPM.length() > 0) {
                     if (Integer.valueOf(truckRPM) > 0) {
@@ -825,7 +1011,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         }else{
             Log.d(TAG, "Service stopped");
 
-            if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+            if(ObdPreference == Constants.OBD_PREF_BLE) {
                 //  ------------- BLE OBD ----------
                 if(HTBleSdk.Companion.getInstance().isConnected(HTModeSP.INSTANCE.getDeviceMac())) {
                     EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, HTModeSP.INSTANCE.getDeviceMac()));
@@ -840,6 +1026,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 }
             }
 
+            if(locServiceIntent != null){
+                stopService(locServiceIntent);
+            }
+
             super.onDestroy();
 
         }
@@ -849,6 +1039,286 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     }
 
 
+
+
+    private void ChangeTempUnidentifiedStatus(){
+
+        try {
+
+            JSONArray savedUnidentifiedLogArray = hMethods.getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
+            JSONArray unPostedArray = hMethods.getUnpostedLogArray(Integer.parseInt(CompanyId), dbHelper);
+            LastDutyStatus = "DR";
+            StatusStartTime = Globally.GetCurrentUTCTimeFormat();
+            TempStatus = "";
+            UnAssignedVehicleMilesId = SharedPref.getUnAssignedVehicleMilesId(getApplicationContext());
+            IntermediateLogId = SharedPref.getIntermediateLogId(getApplicationContext());
+
+            String odometer = Constants.meterToKmWithObd(currentHighPrecisionOdometer);
+            JSONObject jsonObject = constants.getUnIdentifiedLogJSONObj(UnAssignedVehicleMilesId, CompanyId, VinNumber, TruckID,
+                    LastDutyStatus, StatusStartTime, "", Globally.LATITUDE, Globally.LONGITUDE, "", "",
+                    EngineSeconds, "", odometer, "", Intermediate,
+                    IntermediateUpdate, "0", false);
+
+            SharedPref.SaveUnidentifiedIntermediateRecord(odometer, Globally.GetCurrentUTCTimeFormat(), Globally.LATITUDE, Globally.LONGITUDE,
+                    EngineSeconds, getApplicationContext());
+
+            SharedPref.setUnIdenLastDutyStatus(LastDutyStatus, getApplicationContext());
+            savedUnidentifiedLogArray.put(jsonObject);
+            unPostedArray.put(jsonObject);
+
+            hMethods.UnidentifiedRecordLogHelper(Integer.parseInt(CompanyId), dbHelper, savedUnidentifiedLogArray);
+
+            if (Globally.isConnected(getApplicationContext())) {
+                SaveAndUpdateUnidentifiedRecordsApi(unPostedArray);
+            }
+
+            Globally.PlaySound(getApplicationContext());
+
+            Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD",
+                    "UnIdentified driving record occurred" , 2005);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+
+    private void UnidentifiedStatusChange(int obdSpeed, int continueSpeedZeroDiff) {
+
+        try {
+           /* if (LastDutyStatus.equals("DR")) {
+                CurrentDutyStatus = ThreshHoldSpeed == 0 ? "OD" : "DR";
+            } else {
+                CurrentDutyStatus = obdSpeed >= ThreshHoldSpeed ? "DR" : "OD";
+            }*/
+
+            boolean isDriving = (LastDutyStatus.equals("OD") && obdSpeed >= ThreshHoldSpeed);   //CurrentDutyStatus.equals("DR") &&
+            boolean isOnDuty =  (LastDutyStatus.equals("DR") && obdSpeed == 0 && continueSpeedZeroDiff > 5);    //5  CurrentDutyStatus.equals("OD") &&
+
+            if (isDriving || isOnDuty) {
+                // clear last saved records
+                SharedPref.SaveUnidentifiedIntermediateRecord("", "", "", "", "",
+                        getApplicationContext());
+
+                UnAssignedVehicleMilesId = SharedPref.getUnAssignedVehicleMilesId(getApplicationContext());
+                IntermediateLogId = SharedPref.getIntermediateLogId(getApplicationContext());
+
+
+                JSONArray savedUnidentifiedLogArray = hMethods.getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
+                JSONArray unPostedArray = hMethods.getUnpostedLogArray(Integer.parseInt(CompanyId), dbHelper);
+
+                String odometer = Constants.meterToKmWithObd(currentHighPrecisionOdometer);
+                // get last update object from unPosted Unidentified Log array
+                JSONObject unPostedLogLastObj = hMethods.updateLastRecordOfUnIdentifiedLog(unPostedArray, Globally.GetCurrentUTCTimeFormat(),
+                        odometer, Globally.LATITUDE, Globally.LONGITUDE, EngineSeconds);
+
+                if (unPostedLogLastObj != null && unPostedArray.length() > 0) {
+                    unPostedArray.put(unPostedArray.length() - 1, unPostedLogLastObj);
+                }
+
+
+                // get last update object from posted/unposted Unidentified Log array
+                JSONObject savedUnidentifiedLogLastObj = hMethods.updateLastRecordOfUnIdentifiedLog(savedUnidentifiedLogArray, Globally.GetCurrentUTCTimeFormat(),
+                        odometer, Globally.LATITUDE, Globally.LONGITUDE, EngineSeconds);
+
+                if (savedUnidentifiedLogLastObj != null && savedUnidentifiedLogArray.length() > 0) {
+                    savedUnidentifiedLogArray.put(savedUnidentifiedLogArray.length() - 1, savedUnidentifiedLogLastObj);
+
+                    if(unPostedArray.length() == 0){
+                        unPostedArray.put(savedUnidentifiedLogLastObj);
+                    }
+                }
+
+                Intermediate = false;
+                IntermediateUpdate = false;
+                StatusStartTime = Globally.GetCurrentUTCTimeFormat();
+
+                if (isDriving) {
+                    LastDutyStatus = "DR";
+                } else {
+                    LastDutyStatus = "OD";
+                }
+
+                JSONObject jsonObject = constants.getUnIdentifiedLogJSONObj(UnAssignedVehicleMilesId, CompanyId, VinNumber, TruckID,
+                        LastDutyStatus, StatusStartTime, "", Globally.LATITUDE, Globally.LONGITUDE, "", "",
+                        EngineSeconds, "", odometer, "", Intermediate,
+                        IntermediateUpdate, IntermediateLogId, false);
+
+
+                SharedPref.setUnIdenLastDutyStatus(LastDutyStatus, getApplicationContext());
+                savedUnidentifiedLogArray.put(jsonObject);
+                unPostedArray.put(jsonObject);
+                hMethods.UnidentifiedRecordLogHelper(Integer.parseInt(CompanyId), dbHelper, savedUnidentifiedLogArray);
+
+                if (Globally.isConnected(getApplicationContext())) {
+                    SaveAndUpdateUnidentifiedRecordsApi(unPostedArray);
+                }
+
+                Globally.PlaySound(getApplicationContext());
+
+                Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD",
+                        "UnIdentified record occurred due to vehicle start but not moving" , 2005);
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        // Check intermediate records while Driving.............
+        IntermediateRecords();
+
+    }
+
+
+
+
+    private void IntermediateRecords() {
+
+        try {
+
+            String startTime = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartTime, getApplicationContext());
+            if (startTime.length() > 10) {
+
+                int timeDiff = constants.minDiffFromUTC(startTime, global, getApplicationContext());
+                if (timeDiff >= intermediateRecordTime && LastDutyStatus.equals("DR")) {
+                    JSONArray SavedUnidentifiedLogArray = hMethods.getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
+                    JSONArray unPostedArray             = hMethods.getUnpostedLogArray(Integer.parseInt(CompanyId), dbHelper);
+
+                    LastDutyStatus = "DR";
+
+                    String startOdometer = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartOdometer, getApplicationContext());
+                    String startLatitude = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartLatitude, getApplicationContext());
+                    String startLongitude = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartLongitude, getApplicationContext());
+                    String startEngineSeconds = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartEngineSeconds, getApplicationContext());
+
+                    Intermediate = true;
+                    IntermediateUpdate = true;  //hMethods.getIntermediateUpdateStatus(SavedUnidentifiedLogArray);
+                    UnAssignedVehicleMilesId = SharedPref.getUnAssignedVehicleMilesId(getApplicationContext());
+                    IntermediateLogId = SharedPref.getIntermediateLogId(getApplicationContext());
+
+                    String odometer = Constants.meterToKmWithObd(currentHighPrecisionOdometer);
+                    JSONObject jsonObject = constants.getUnIdentifiedLogJSONObj(UnAssignedVehicleMilesId, CompanyId, VinNumber, TruckID,
+                            LastDutyStatus, startTime, Globally.GetCurrentUTCTimeFormat(), startLatitude, startLongitude,
+                            Globally.LATITUDE, Globally.LONGITUDE, startEngineSeconds, EngineSeconds,
+                            startOdometer, odometer, Intermediate,
+                            IntermediateUpdate, IntermediateLogId, false);
+
+                    SharedPref.setUnIdenLastDutyStatus(LastDutyStatus, getApplicationContext());
+                    SavedUnidentifiedLogArray.put(jsonObject);
+                    unPostedArray.put(jsonObject);
+                    hMethods.UnidentifiedRecordLogHelper(Integer.parseInt(CompanyId), dbHelper, SavedUnidentifiedLogArray);
+
+                    SharedPref.SaveUnidentifiedIntermediateRecord(odometer, Globally.GetCurrentUTCTimeFormat(),
+                            Globally.LATITUDE, Globally.LONGITUDE, EngineSeconds, getApplicationContext());
+
+                    if (Globally.isConnected(getApplicationContext())) {
+                        SaveAndUpdateUnidentifiedRecordsApi(unPostedArray);
+                    }
+
+
+                    Globally.PlaySound(getApplicationContext());
+
+                    Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD",
+                            "Intermediate record occurred" , 2005);
+
+
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private void EndOnDutyOrDrivingRecords() {
+
+        try {
+
+            String startTime = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartTime, getApplicationContext());
+
+            JSONArray SavedUnidentifiedLogArray = hMethods.getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
+            JSONArray unPostedArray             = hMethods.getUnpostedLogArray(Integer.parseInt(CompanyId), dbHelper);
+
+            String LastDutyStatus = SharedPref.getUnIdenLastDutyStatus(getApplicationContext());
+
+            String startOdometer = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartOdometer, getApplicationContext());
+            String startLatitude = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartLatitude, getApplicationContext());
+            String startLongitude = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartLongitude, getApplicationContext());
+            String startEngineSeconds = SharedPref.getUnidentifiedIntermediateRecord(ConstantsKeys.UnidenStartEngineSeconds, getApplicationContext());
+
+            UnAssignedVehicleMilesId = SharedPref.getUnAssignedVehicleMilesId(getApplicationContext());
+            IntermediateLogId = SharedPref.getIntermediateLogId(getApplicationContext());
+            Intermediate = false;
+            IntermediateUpdate = false;
+
+            String odometer = Constants.meterToKmWithObd(currentHighPrecisionOdometer);
+            JSONObject jsonObject = constants.getUnIdentifiedLogJSONObj(UnAssignedVehicleMilesId, CompanyId, VinNumber, TruckID,
+                    LastDutyStatus, startTime, Globally.GetCurrentUTCTimeFormat(), startLatitude, startLongitude,
+                    Globally.LATITUDE, Globally.LONGITUDE, startEngineSeconds, EngineSeconds,
+                    startOdometer, odometer, Intermediate,
+                    IntermediateUpdate, IntermediateLogId, false);
+
+            SharedPref.setUnIdenLastDutyStatus(LastDutyStatus, getApplicationContext());
+            SavedUnidentifiedLogArray.put(jsonObject);
+            unPostedArray.put(jsonObject);
+            hMethods.UnidentifiedRecordLogHelper(Integer.parseInt(CompanyId), dbHelper, SavedUnidentifiedLogArray);
+
+            SharedPref.SaveUnidentifiedIntermediateRecord(odometer, Globally.GetCurrentUTCTimeFormat(),
+                    Globally.LATITUDE, Globally.LONGITUDE, EngineSeconds, getApplicationContext());
+
+            if (Globally.isConnected(getApplicationContext())) {
+                SaveAndUpdateUnidentifiedRecordsApi(unPostedArray);
+            }
+
+            Globally.ShowLogoutSpeedNotification(getApplicationContext(), "ALS ELD",
+                    "UnIdentified driving record ended." , 2005);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private void SaveAndUpdateUnidentifiedRecordsApi(JSONArray unPostedLogArray) {
+        SaveUpdateUnidentifiedApi.PostDriverLogData(unPostedLogArray, APIs.ADD_UNIDENTIFIED_RECORD, Constants.SocketTimeout20Sec,103);
+    }
+
+
+    VolleyRequest.VolleyCallback ResponseCallBack = new VolleyRequest.VolleyCallback() {
+
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        public void getResponse(String response, int flag) {
+
+            try {
+                JSONObject obj = new JSONObject(response);
+                String status = obj.getString(ConstantsKeys.Status);
+
+                if (SharedPref.getUserName(getApplicationContext()).equals("") && SharedPref.getPassword(getApplicationContext()).equals("")) {
+                    if (status.equalsIgnoreCase("true")) {
+                        JSONObject resultJson = obj.getJSONObject(ConstantsKeys.Data);
+                        UnAssignedVehicleMilesId = resultJson.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+                        IntermediateLogId = resultJson.getString(ConstantsKeys.IntermediateLogId);
+                        SharedPref.setUnAssignedVehicleMilesId(UnAssignedVehicleMilesId, getApplicationContext());
+                        SharedPref.setIntermediateLogId(IntermediateLogId, getApplicationContext());
+
+                        // update array in table
+                        hMethods.updateUploadedStatusInArray(CompanyId, dbHelper);
+                        // hMethods.UnidentifiedRecordLogHelper(Integer.parseInt(CompanyId),dbHelper, new JSONArray());
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    };
 
 
 }

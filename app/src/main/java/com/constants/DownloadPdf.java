@@ -88,7 +88,10 @@ public class DownloadPdf  extends Service {
             super.onPreExecute();
 
             try{
-                folder      = Globally.getAlsDocPath(getApplicationContext()).toString();
+                File outputDir = getApplicationContext().getExternalCacheDir(); // context being the Activity pointer
+                folder = String.valueOf(outputDir);
+
+               // folder      = Globally.getAlsDocPath(getApplicationContext()).toString();
                 fileName    = "/" + version + "_" + title + ".pdf"; //number +"_" +
                 File doc = new File(folder + fileName);
                 if(doc != null && doc.isFile()) {
@@ -107,8 +110,10 @@ public class DownloadPdf  extends Service {
 
             int count;
             try {
+
                 URL url = new URL(urls[0]);
                 URLConnection connection = url.openConnection();
+                connection.setConnectTimeout(300000);   // 5 min interval for connection timeout due to few heavy files
                 connection.connect();
                 // getting file length
                 int lengthOfFile = connection.getContentLength();
@@ -176,6 +181,8 @@ public class DownloadPdf  extends Service {
             Log.d(TAG, "onPostExecute");
             stopSelf();
 
+            checkFileExist(result);
+
             // Display File path after downloading
             Intent intent = new Intent("download_pdf_progress");
             intent.putExtra("percentage", 100);
@@ -189,6 +196,33 @@ public class DownloadPdf  extends Service {
         }
     }
 
+
+    void checkFileExist(String result){
+        if(result.contains("Downloading failed")){
+            String path = result.split("__")[0];
+            String from = getApplicationContext().getExternalCacheDir().toString();
+            File directory = new File(from);
+            File[] files = directory.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].getAbsolutePath().equals(path)) {
+                    files[i].delete();
+                }
+            }
+        }else{
+            String from = getApplicationContext().getExternalCacheDir().toString();
+            File directory = new File(from);
+            File[] files = directory.listFiles();
+            for (int i = 0; i < files.length; i++) {
+
+                if (files[i].getAbsolutePath().equals(result)) {
+                    File pathOriginal = new File(Globally.getAlsDocPath(getApplicationContext()).getAbsolutePath());
+                    Log.d("Files", "FileName:" + pathOriginal + "/" + files[i].getName());
+                    files[i].renameTo(new File(pathOriginal + "/" + files[i].getName()));
+                }
+
+            }
+        }
+    }
 
 
 }

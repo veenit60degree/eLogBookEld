@@ -49,6 +49,8 @@ public class DotOtherOptionDialog extends Dialog {
         ArrayList<String> list = new ArrayList<>();
         list.add(getContext().getString(R.string.view_inspections));
         list.add(getContext().getString(R.string.Send_Log));
+        list.add(getContext().getString(R.string.Generate_Rods));
+        list.add(getContext().getString(R.string.download_logs));
 
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 getContext(),R.layout.item_other_options, R.id.otherFeatureTxtView, list);

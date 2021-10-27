@@ -26,17 +26,14 @@
         >
 
 
-
-
         <ImageView
             android:id="@+id/askLoginIV"
             android:layout_width="@dimen/view_height_190"
             android:layout_height="@dimen/view_height_100"
-            android:src="@drawable/als_logo"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/margin_10"
             android:layout_marginTop="@dimen/view_height_50"
-            />
+            android:layout_marginBottom="@dimen/margin_10"
+            android:src="@drawable/als_logo" />
 
 
 

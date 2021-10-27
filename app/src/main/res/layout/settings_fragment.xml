@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/settingsMainLay"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -9,12 +10,11 @@
     >
 
 
-<include
-    android:id="@+id/actionbarMainLay"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    layout="@layout/actionbar_eld"
-    />
+    <include
+        android:id="@+id/actionbarMainLay"
+        layout="@layout/actionbar_eld"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
     <ScrollView
@@ -25,11 +25,14 @@
         android:paddingRight="@dimen/margin_15"
         android:paddingTop="@dimen/margin_20"
         android:paddingBottom="@dimen/margin_20"
+        android:layout_below="@+id/actionbarMainLay"
         android:scrollbars="none"
 
         >
 
+
         <LinearLayout
+            android:id="@+id/settingsParentView"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -299,20 +302,21 @@
                     android:id="@+id/operatingZoneTV"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/text_size_17"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:paddingRight="@dimen/margin_20"
+                    android:gravity="center_vertical"
                     android:paddingLeft="@dimen/margin_10"
-                    />
+                    android:paddingRight="@dimen/margin_20"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/text_size_17" />
 
 
 
 
 
             </RelativeLayout>
+
+
 
         </LinearLayout>
 
@@ -471,6 +475,48 @@
 
 
 
+
+            <RelativeLayout
+                android:id="@+id/brightnessSoundEditBtn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_45"
+                android:paddingRight="@dimen/margin_15"
+
+                >
+
+                <TextView
+                    android:id="@+id/brightness"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/margin_12"
+                    android:text="@string/setting_soundbrightness"
+                    android:textColor="@color/bluee_login"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold" />
+
+
+                <ImageView
+                    android:layout_width="@dimen/view_height_38"
+                    android:layout_height="@dimen/view_height_38"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/margin_short_2"
+                    android:src="@drawable/sound_brightness" />
+
+            </RelativeLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_short_1"
+                android:background="@color/gray_updated_divider_color"
+                android:layout_marginLeft="@dimen/margin_12"
+                android:layout_marginRight="@dimen/margin_15"
+                />
+
+
+
             <RelativeLayout
                 android:id="@+id/docBtn"
                 android:layout_width="match_parent"
@@ -490,12 +536,11 @@
                     />
 
 
-
                 <ImageView
                     android:layout_width="@dimen/view_height_38"
                     android:layout_height="@dimen/view_height_38"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/document"
 
                     />
@@ -755,8 +800,163 @@
 
         </LinearLayout>
 
+
+
     </ScrollView>
 
 
 
-</LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:paddingRight="@dimen/view_height_40"
+        android:layout_centerVertical="true"
+
+
+        >
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/brightnessCardView"
+            android:layout_width="@dimen/view_height_100"
+            android:layout_height="@dimen/view_height_200"
+            card_view:cardCornerRadius="@dimen/margin_10"
+            card_view:cardBackgroundColor="@color/white"
+            app:cardElevation="@dimen/margin_short_2"
+            app:cardUseCompatPadding="true"
+            android:visibility="gone"
+
+            >
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:gravity="center"
+                >
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="@dimen/view_height_50"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent"
+                    android:gravity="center"
+                    >
+
+                    <ImageView
+                        android:id="@+id/highBrightnessImg"
+                        android:layout_width="@dimen/margin_20"
+                        android:layout_height="@dimen/margin_20"
+                        android:src="@drawable/baseline_light_mode_20"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_140"
+                        android:background="@color/transparent"
+                        android:gravity="center"
+                        >
+
+                        <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+                            android:layout_width="@dimen/view_height_50"
+                            android:layout_height="match_parent">
+
+
+
+                            <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+                                android:id="@+id/sbBrightness"
+                                android:layout_width="@dimen/view_height_50"
+                                android:layout_height="match_parent"
+                                android:max="100"
+                                android:progress="0"
+                                android:rotation="270"
+                                app:seekBarRotation="CW270" />
+
+
+
+
+
+
+
+                        </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
+                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/lowBrightnessImg"
+                        android:layout_width="@dimen/margin_20"
+                        android:layout_height="@dimen/margin_20"
+                        android:src="@drawable/outline_light_mode_20"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="@dimen/margin_short_2"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent"
+                    android:gravity="center"
+                    >
+
+                    <ImageView
+                        android:id="@+id/highVolumeImg"
+                        android:layout_width="@dimen/margin_20"
+                        android:layout_height="@dimen/margin_20"
+                        android:src="@drawable/baseline_volume_up_18"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_140"
+                        android:background="@color/transparent"
+                        android:gravity="center"
+                        >
+
+                        <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+                            android:layout_width="@dimen/view_height_50"
+                            android:layout_height="match_parent">
+
+                            <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+                                android:id="@+id/sbVolume"
+                                android:layout_width="@dimen/view_height_50"
+                                android:layout_height="match_parent"
+                                android:max="16"
+                                android:progress="0"
+                                android:rotation="270"
+                                app:seekBarRotation="CW270" />
+
+                        </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
+                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/lowVolumeImg"
+                        android:layout_width="@dimen/margin_20"
+                        android:layout_height="@dimen/margin_20"
+                        android:src="@drawable/baseline_volume_off_24"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="@dimen/margin_short_2"
+                        />
+                </LinearLayout>
+
+
+
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+
+
+</RelativeLayout>

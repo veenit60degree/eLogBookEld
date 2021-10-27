@@ -21,18 +21,14 @@ public class APIs {
     static String ALS_DOMAIN_INDIAN_OPEN = "http://182.73.78.171:8286/api/LogisticsApi/";
     static String ELD_DOMAIN_INDIAN_OPEN = "http://182.73.78.171:8287/api/ELDAPI/";
 
-    static String ALS_DOMAIN_INDIAN      = "http://192.168.0.2:8286/api/LogisticsApi/";       //  http://103.66.204.26
-    static String ELD_DOMAIN_INDIAN      = "http://192.168.0.2:8287/api/ELDAPI/";             //http://182.73.78.171:8287
-
-
-    static String ALS_DOMAIN_DEV_NEW     = "http://104.167.9.210:43850/api/LogisticsApi/";
-    static String ELD_DOMAIN_DEV_NEW     = "http://104.167.9.210:43851/api/ELDAPI/";
+    static String ALS_DOMAIN_INDIAN      = "http://192.168.0.10:8952/api/LogisticsApi/";       //  http://103.66.204.26
+    static String ELD_DOMAIN_INDIAN      = "http://192.168.0.10:8251/api/ELDAPI/";             //http://182.73.78.171:8287
 
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_DEV ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_DEV ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
 
@@ -66,6 +62,12 @@ public class APIs {
     public static String MALFUNCTION_DIAGNOSTIC_EVENT       = DOMAIN_URL_ALS + "AddMalfunctionAndDiagnosticEvent";
     public static String SAVE_DEFFERAL_EVENT                = DOMAIN_URL_ALS + "SaveDefferalEvent";
     public static String GET_MALFUNCTION_LIST_BY_TRUCK      = DOMAIN_URL_ALS + "GetMalfunctionListByTruck";
+    public static String ADD_UNIDENTIFIED_RECORD            = DOMAIN_URL_ALS + "AddUnIdentifiedRecord";
+    public static String GET_ODOMETER_DETAIL_IN_PU          = DOMAIN_URL_ALS + "GetOdometerDetailInPersonalUSE";
+    public static String DownloadPdfCanadaLog               = DOMAIN_URL_ALS + "DownloadPdfCanadaLog";
+    public static String GetListOfPdfCanadaLogs             = DOMAIN_URL_ALS + "GetListOfPdfCanadaLogs";
+    public static String GenerateLink                       = DOMAIN_URL_ALS + "GenerateLink";
+
 
     /*-------- ELD API ----------*/
     public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";

@@ -62,6 +62,11 @@ public class ConstantsKeys {
     public static String City               = "City";
     public static String State              = "State";
     public static String Country            = "Country";
+    public static String LogType            = "LogType";
+
+    public static String EldInspectionLogId = "EldInspectionLogId";
+    public static String ShareId            = "ShareId";
+
 
     public static String Inspection            = "Inspection";
     public static String InspectionIssueTypeId = "InspectionIssueTypeId";
@@ -150,6 +155,8 @@ public class ConstantsKeys {
     public static String LocationType           = "LocationType";
     public static String DeferralOffTime        = "DeferralOff_dutyTime";
     public static String DayCount               = "DayCount";
+    public static String StartOdometerKM        = "StartOdometerKM";
+    public static String StartOdometerMiles     = "StartOdometerMiles";
 
 
     // --------------------- Inspection params -------------------------
@@ -282,7 +289,8 @@ public class ConstantsKeys {
     public static String PowerDataDiag                  = "PowerDataDiag";
     public static String EnginSyncDiag                  = "EnginSyncDiag";
 
-    public static String TimingCompMal                  = "TimingCompMal";
+    public static String StartOdometerInKm              = "StartOdometerInKm";
+    public static String EndOdometerInKm                = "EndOdometerInKm";
 
 
     public static String IsUnidentifiedCo               = "IsUnidentifiedCo";
@@ -420,6 +428,7 @@ public class ConstantsKeys {
     public static String SendDate                       = "SendDate";
     public static String Status                         = "Status";
     public static String Data                           = "Data";
+    public static String ClearUnIdentifiedData          = "ClearUnIdentifiedData";
     public static String SaveOfflineData                = "SaveOfflineData";
     public static String DriverLogDate                  = "DriverLogDate";
     public static String SuggestedEditModel             = "SuggestedEditModel";
@@ -473,6 +482,23 @@ public class ConstantsKeys {
 
     public static String DriverStartDateTime           = "DriverStartDateTime";
     public static String DriverEndDateTime             = "DriverEndDateTime";
+
+    public static String LastDutyStatus             = "LastDutyStatus";
+    public static String StatusStartTime             = "StatusStartTime";
+    public static String StatusEndTime             = "StatusEndTime";
+    public static String StartEngineSeconds             = "StartEngineSeconds";
+    public static String EndEngineSeconds             = "EndEngineSeconds";
+    public static String  Intermediate            = "Intermediate";
+    public static String IntermediateUpdate             = "IntermediateUpdate";
+    public static String IntermediateLogId             = "IntermediateLogId";
+    public static String IsUploadedUnIdenRecord        = "IsUploadedUnIdenRecord";
+
+
+    public static String UnidenStartOdometer               = "UnidenStartOdometer";
+    public static String UnidenStartLatitude               = "UnidenStartLatitude";
+    public static String UnidenStartLongitude               = "UnidenStartLongitude";
+    public static String UnidenStartTime                   = "UnidenStartTime";
+    public static String UnidenStartEngineSeconds          = "UnidenStartEngineSeconds";
 
 /*
     public static String IsCleared                      = "IsCleared";
@@ -539,8 +565,9 @@ public class ConstantsKeys {
     public static String IsEngineRestarted              = "IsEngineRestarted";
     public static String IsAppRestricted                = "IsAppRestricted";
     public static String LocReceivedFromObd             = "LocReceivedFromObd";
+    public static String IsCycleChanged                 = "IsCycleChanged";
 
-
+    public static String IsDismissDialog                = "IsDismissDialog";
     public static String ChangedToOthers                = "ChangedToOthers";
     public static String IsAutoStatusSaved              = "IsAutoStatusSaved";
     public static String IsIgnitionOn                   = "IsIgnitionOn";

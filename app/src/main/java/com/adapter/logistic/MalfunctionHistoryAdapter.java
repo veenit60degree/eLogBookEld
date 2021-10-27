@@ -124,7 +124,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             }
 
 
-            engHoursMalTxtVw.setText(childData.getEngineHours());
+            engHoursMalTxtVw.setText(constants.Convert1DecimalPlacesDouble(Double.parseDouble(childData.getEngineHours())));
 
 
             /*if(childData.getHexaSequenceNo().length() > 0){

@@ -64,7 +64,11 @@ public class MyReceiveListener implements IReceiveListener {
      */
     @Override
     public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
-        EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
+        if (htBleData.getEventType() == 0 && htBleData.getEventCode() == 1) {
+            EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
+        } else {
+            EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_QUERY_DATA_AVAILABLE, address, uuid, htBleData));
+        }
     }
 
     /**

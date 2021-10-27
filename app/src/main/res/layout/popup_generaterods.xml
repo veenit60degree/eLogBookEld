@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="540dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/white_full_border"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:layout_marginTop="@dimen/margin_15"
+    android:layout_marginBottom="@dimen/margin_15"
+    android:layout_marginRight="@dimen/view_height_70"
+    android:layout_marginLeft="@dimen/view_height_70"
+    android:layout_gravity="center"
+    >
+
+
+
+
+    <LinearLayout
+        android:id="@+id/shareLogMainLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="@dimen/margin_short_8"
+        android:paddingRight="@dimen/margin_short_7"
+        android:gravity="center"
+        >
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Generate_Rods"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_size_23"
+            android:gravity="center"
+            android:paddingLeft="@dimen/margin_15"
+            android:layout_marginBottom="@dimen/margin_15"
+            android:layout_marginTop="@dimen/margin_15"
+
+            />
+
+        <ScrollView
+            android:id="@+id/sendLogScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/shareLogChildLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/margin_10"
+                >
+
+
+
+
+
+                <LinearLayout
+                    android:id="@+id/countryLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/view_height_37"
+                    android:orientation="horizontal"
+                    android:layout_marginRight="@dimen/margin_10"
+
+                    >
+
+                    <TextView
+                        android:layout_width="@dimen/view_height_95"
+                        android:layout_height="wrap_content"
+                        android:text="@string/country"
+                        android:textColor="@color/color_eld_theme"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_17"
+                        android:layout_marginLeft="@dimen/margin_short_5"
+                        android:layout_marginRight="@dimen/margin_10"
+                        android:layout_gravity="center_vertical"
+                        />
+
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/view_height_140"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:background="@drawable/edittext_black_hover"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_11"
+                        >
+
+                        <ImageView
+                            android:id="@+id/countryFlagImgView"
+                            android:layout_width="@dimen/margin_27"
+                            android:layout_height="@dimen/margin_27"
+                            android:layout_centerVertical="true"
+                            android:padding="@dimen/margin_short_2"
+                            android:src="@drawable/no_flag"
+
+                            />
+
+
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_15"
+                            android:layout_height="@dimen/margin_15"
+                            android:src="@drawable/arrow_down_black"
+                            android:layout_gravity="center_vertical"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            />
+
+
+                        <Spinner
+                            android:id="@+id/countrySpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_centerVertical="true"
+                            style="@style/spinner_style_country"
+
+                            />
+
+                    </RelativeLayout>
+
+
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/selectCheckboxLay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/margin_20"
+
+                    >
+
+                    <TextView
+                        android:id="@+id/dataTransTxtView"
+                        android:layout_width="@dimen/view_height_95"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rods_log_type"
+                        android:textColor="@color/color_eld_theme"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:paddingRight="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_2"
+                        android:textSize="@dimen/text_size_17"
+                        android:layout_marginLeft="@dimen/margin_short_5"
+                        android:layout_marginRight="@dimen/margin_10"
+                        />
+
+
+
+                    <CheckBox
+                        android:id="@+id/checkboxAbord"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/eld_checkbox_mobile_drawable"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/aobrd"
+                        android:textSize="@dimen/text_size_17"
+                        android:layout_marginLeft="@dimen/margin_short_5"
+                        android:layout_marginRight="@dimen/margin_short_5"
+                        android:textColor="@color/color_eld_theme"
+                        android:paddingLeft="@dimen/margin_short_5"
+                        android:checked="false"
+
+                        />
+
+
+
+
+                    <CheckBox
+                        android:id="@+id/checkboxEld"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/eld_checkbox_mobile_drawable"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/eld"
+                        android:textSize="@dimen/text_size_17"
+                        android:textColor="@color/color_eld_theme"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:paddingLeft="@dimen/margin_short_5"
+
+                        />
+
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingRight="@dimen/margin_10"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginRight="@dimen/margin_short_5"
+                        android:layout_weight="1"
+
+                        >
+                        <TextView
+                            android:layout_width="@dimen/view_height_95"
+                            android:layout_height="wrap_content"
+                            android:text="@string/from_date"
+                            android:textColor="@color/color_eld_theme"
+                            android:textSize="@dimen/text_size_17"
+                            />
+
+                        <TextView
+                            android:id="@+id/startDateTv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/date_format"
+                            android:textColor="@color/black"
+                            android:singleLine="true"
+                            android:paddingLeft="@dimen/margin_short_8"
+                            android:paddingRight="@dimen/margin_short_8"
+                            android:paddingTop="@dimen/margin_short_5"
+                            android:paddingBottom="@dimen/margin_short_5"
+                            android:textSize="@dimen/text_size_17"
+                            android:layout_marginLeft="@dimen/margin_short_5"
+                            android:background="@drawable/edittext_black_hover"
+
+                            />
+
+
+                    </LinearLayout>
+
+
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/margin_short_9"
+                        android:layout_weight="1"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/to_date"
+                            android:textColor="@color/color_eld_theme"
+                            android:textSize="@dimen/text_size_17"
+
+                            />
+
+                        <TextView
+                            android:id="@+id/endDateTv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/date_format"
+                            android:textColor="@color/black"
+                            android:singleLine="true"
+                            android:paddingLeft="@dimen/margin_short_8"
+                            android:paddingRight="@dimen/margin_short_8"
+                            android:paddingTop="@dimen/margin_short_5"
+                            android:paddingBottom="@dimen/margin_short_5"
+                            android:textSize="@dimen/text_size_17"
+                            android:layout_marginLeft="@dimen/margin_short_5"
+                            android:background="@drawable/edittext_black_hover"
+
+                            />
+
+
+                    </LinearLayout>
+
+
+
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/logBtnLay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="@dimen/view_height_45"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:layout_marginBottom="@dimen/margin_20"
+                    >
+
+
+                    <LinearLayout
+                        android:id="@+id/cancelDriverLogBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/view_height_39"
+                        android:orientation="horizontal"
+                        android:paddingLeft="@dimen/margin_15"
+                        android:paddingRight="@dimen/margin_15"
+                        android:gravity="center"
+                        android:background="@drawable/gray_selector"
+                        android:layout_marginRight="@dimen/margin_18"
+
+                        >
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_17"
+                            android:layout_height="@dimen/margin_17"
+                            android:src="@drawable/cancel_log"
+                            android:layout_marginRight="@dimen/margin_10"
+                            />
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cancel"
+                            android:textColor="@color/whiteee"
+                            android:textSize="@dimen/text_size_17"
+                            android:gravity="center_horizontal"
+
+                            />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/shareDriverLogBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/view_height_39"
+                        android:orientation="horizontal"
+                        android:paddingLeft="@dimen/margin_21"
+                        android:paddingRight="@dimen/margin_21"
+                        android:gravity="center"
+                        android:background="@drawable/blue_scale_btn_selector"
+
+
+                        >
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_17"
+                            android:layout_height="@dimen/margin_17"
+                            android:src="@drawable/send_log_new"
+                            android:layout_marginRight="@dimen/margin_10"
+                            />
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Generate"
+                            android:textColor="@color/whiteee"
+                            android:textSize="@dimen/text_size_17"
+                            android:gravity="center_horizontal"
+
+
+                            />
+
+                    </LinearLayout>
+
+
+
+
+
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+
+
+
+    <ProgressBar
+        android:id="@+id/sendLogProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+
+</RelativeLayout>
