@@ -75,6 +75,8 @@
     <color name="eld_gray_bg_theme">#30000000</color>
     <color name="color_eld_bg">#4E4E4E</color>  <!--1A3561-->
     <color name="red_eld">#CD2329</color>
+    <color name="gray_light">#FAFBFD</color>
+
 
     <color name="red_save_log">#E22848</color>
     <color name="red_cancel_log">#E1271C</color>

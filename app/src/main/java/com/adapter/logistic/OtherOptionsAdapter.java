@@ -186,6 +186,13 @@ public class OtherOptionsAdapter extends BaseAdapter {
              case Constants.UN_CERTIFY_LOG:
                 makeViewHighlighed(imgView, titleView, errorView);
                 break;
+
+            case Constants.VIN:
+                if(Constants.isValidVinFromObd(context) == false){
+                    makeViewHighlighed(imgView, titleView, errorView);
+                }
+
+                break;
         }
     }
 

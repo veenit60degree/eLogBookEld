@@ -35,6 +35,7 @@ public class ConstantsKeys {
     public static String CurrentCycleId     = "CurrentCycleId";
     public static String IsViolation        = "IsViolation";
     public static String IsInternet         = "IsInternet";
+    public static String IsVehicleInMotion  = "IsVehicleInMotion";
 
 
     public static String ViolationReason        = "ViolationReason";
@@ -288,6 +289,8 @@ public class ConstantsKeys {
 
     public static String PowerDataDiag                  = "PowerDataDiag";
     public static String EnginSyncDiag                  = "EnginSyncDiag";
+    public static String UnidentifiedDataDiag           = "UnidentifiedDataDiag";
+    public static String UnidentifiedOccTime            = "UnidentifiedOccTime";
 
     public static String StartOdometerInKm              = "StartOdometerInKm";
     public static String EndOdometerInKm                = "EndOdometerInKm";

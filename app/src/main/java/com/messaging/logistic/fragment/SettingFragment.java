@@ -11,10 +11,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
@@ -50,7 +50,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.VolleyError;
-import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.AsyncResponse;
 import com.constants.CheckConnectivity;
@@ -119,9 +118,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     Spinner caCycleSpinner, usCycleSpinner, timeZoneSpinner;
     Button SettingSaveBtn;
     ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView, canEditImgView, usEditImgView;
-    LoadingSpinImgView settingSpinImgVw;
+    LoadingSpinImgView settingSpinImgVw, downloadBlinkIV;
     RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn,
-            obdDiagnoseBtn, docBtn, deferralRuleLay, brightnessSoundEditBtn, settingsMainLay, actionbarMainLay;
+            obdDiagnoseBtn, docBtn, deferralRuleLay, brightnessSoundEditBtn, settingsMainLay, actionbarMainLay, updateBlinkLayout;
+    LinearLayout canCycleLayout, usaCycleLayout, timeZoneLayout;
     SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton;
     List<CycleModel> CanCycleList;
     List<CycleModel> UsaCycleList;
@@ -226,7 +226,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 parent.removeView(rootView);
         }
         try {
-            rootView = inflater.inflate(R.layout.settings_fragment, container, false);
+            rootView = inflater.inflate(R.layout.fragment_settings, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         } catch (InflateException e) {
             e.printStackTrace();
@@ -298,9 +298,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         canEditImgView       = (ImageView)v.findViewById(R.id.canEditImgView);
         usEditImgView        = (ImageView)v.findViewById(R.id.usEditImgView);
 
+        downloadBlinkIV      = (LoadingSpinImgView)v.findViewById(R.id.downloadBlinkIV);
         settingSpinImgVw     = (LoadingSpinImgView)v.findViewById(R.id.settingSpinImgVw);
 
-        brightnessSoundEditBtn= (RelativeLayout)v.findViewById(R.id.brightnessSoundEditBtn);
+        brightnessSoundEditBtn= (RelativeLayout)v.findViewById(R.id.soundbrightnessBtn);
         haulExceptionLay     = (RelativeLayout) v.findViewById(R.id.haulExceptionLay);
         checkAppUpdateBtn    = (RelativeLayout) v.findViewById(R.id.checkAppUpdateBtn);
         eldMenuLay           = (RelativeLayout) v.findViewById(R.id.eldMenuLay);
@@ -309,11 +310,17 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         obdDiagnoseBtn       = (RelativeLayout) v.findViewById(R.id.obdDiagnoseBtn);
         docBtn               = (RelativeLayout) v.findViewById(R.id.docBtn);
         deferralRuleLay      = (RelativeLayout) v.findViewById(R.id.deferralRuleLay);
+        updateBlinkLayout    = (RelativeLayout) v.findViewById(R.id.updateBlinkLayout);
 
         rightMenuBtn         = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
         settingsMainLay      = (RelativeLayout)v.findViewById(R.id.settingsMainLay);
         actionbarMainLay     = (RelativeLayout)v.findViewById(R.id.actionbarMainLay);
+
         settingsParentView   = (LinearLayout)v.findViewById(R.id.settingsParentView);
+        canCycleLayout      = (LinearLayout)v.findViewById(R.id.canCycleLayout);
+        usaCycleLayout      = (LinearLayout)v.findViewById(R.id.usaCycleLayout);
+        timeZoneLayout      = (LinearLayout)v.findViewById(R.id.timeZoneLayout);
+
 
         downloadProgressBar  = (CircularProgressBar) v.findViewById(R.id.downloadProgressBar);
         deferralSwitchButton   = (SwitchCompat)v.findViewById(R.id.deferralSwitchButton);
@@ -325,7 +332,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         brightnessCardView    = (CardView)v.findViewById(R.id.brightnessCardView);
 
         rightMenuBtn.setVisibility(View.GONE);
-        settingSpinImgVw.setImageResource(R.drawable.sync_settings);
+        settingSpinImgVw.setImageResource(R.drawable.sync_data_spin);
+        downloadBlinkIV.setImageResource(R.drawable.update_icon);
+
         dateActionBarTV.setVisibility(View.VISIBLE);
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
         dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));
@@ -503,9 +512,13 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 if(IsDownloading) {
                     checkAppUpdateTV.startAnimation(fadeViewAnim);
                     downloadHintImgView.startAnimation(fadeViewAnim);
+                   // downloadBlinkIV.startAnimation();
                 }else {
                     fadeViewAnim.cancel();
-                    downloadHintImgView.setVisibility(View.GONE);
+                    downloadBlinkIV.stopAnimation();
+                    updateBlinkLayout.setVisibility(View.GONE);
+                  //  downloadHintImgView.setVisibility(View.GONE);
+                  //  updateAppDownloadIV.setVisibility(View.GONE);
                 }
             }
 
@@ -525,12 +538,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         obdDiagnoseBtn.setOnClickListener(this);
         docBtn.setOnClickListener(this);
         haulExceptionLay.setOnClickListener(this);
-        operatingZoneTV.setOnClickListener(this);
-        caCycleTV.setOnClickListener(this);
-        usCycleTV.setOnClickListener(this);
         brightnessSoundEditBtn.setOnClickListener(this);
         settingsParentView.setOnClickListener(this);
         actionbarMainLay.setOnClickListener(this);
+        canCycleLayout.setOnClickListener(this);
+        usaCycleLayout.setOnClickListener(this);
+        timeZoneLayout.setOnClickListener(this);
 
         caCycleSpinner.setOnItemSelectedListener(this);
         usCycleSpinner.setOnItemSelectedListener(this);
@@ -1111,7 +1124,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 break;
 
 
-            case R.id.caCycleTV:
+            case R.id.canCycleLayout:
                 brightnessCardView.setVisibility(View.GONE);
                 if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
 
@@ -1133,7 +1146,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 break;
 
 
-            case R.id.usCycleTV:
+            case R.id.usaCycleLayout:
                 brightnessCardView.setVisibility(View.GONE);
                     if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
 
@@ -1154,7 +1167,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 break;
 
 
-            case R.id.brightnessSoundEditBtn:
+            case R.id.soundbrightnessBtn:
 
                 setSoundSettings();
                 setBrightnessSettings();
@@ -1169,7 +1182,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 brightnessCardView.setVisibility(View.GONE);
                 break;
 
-            case R.id.operatingZoneTV:
+
+
+            case R.id.timeZoneLayout:
                 brightnessCardView.setVisibility(View.GONE);
                     if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
                         if(constants.isActionAllowed(getActivity())) {
@@ -1467,9 +1482,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             IsDownloading = false;
             fadeViewAnim.cancel();
 
-            downloadProgressBar.setVisibility(View.GONE);
-            downloadHintImgView.setVisibility(View.GONE);
-            updateAppDownloadIV.setVisibility(View.VISIBLE);
+            updateBlinkLayout.setVisibility(View.GONE);
+           // downloadHintImgView.setVisibility(View.GONE);
+          //  updateAppDownloadIV.setVisibility(View.GONE);
 
             checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
 
@@ -1505,6 +1520,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     if(IsLogPermission) {
                         DriverLogFile = global.GetSavedFile(getActivity(), ConstantsKeys.ViolationTest, "txt");
 
+                        // use only testing time with DEV domain
+                        postDriverLogForTestingInDev();
+
                         // Save Cycle record in file on local storage
                         try {
                             JSONArray cycleArray = new JSONArray(SharedPref.GetCycleDetails(getActivity()));
@@ -1516,9 +1534,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         }
                     }
 
-                    // Sync driver log API data to server with SAVE_LOG_TEXT_FILE (SAVE sync data service)
-                    SyncDataUpload syncDataUpload = new SyncDataUpload(getActivity(), DriverId, syncingFile, DriverLogFile, cycleUpdationRecordFile, IsLogPermission, asyncResponse );
-                    syncDataUpload.execute();
+                    if ((syncingFile != null && syncingFile.exists()) || (DriverLogFile != null && DriverLogFile.exists())) {
+                        // Sync driver log API data to server with SAVE_LOG_TEXT_FILE (SAVE sync data service)
+                        SyncDataUpload syncDataUpload = new SyncDataUpload(getActivity(), DriverId, syncingFile, DriverLogFile, cycleUpdationRecordFile, IsLogPermission, asyncResponse );
+                        syncDataUpload.execute();
+                    }else{
+                        settingSpinImgVw.stopAnimation();
+                        global.EldScreenToast(SyncDataBtn, "No data available for syncing.", getResources().getColor(R.color.colorSleeper));
+                    }
+
 
                 }
             } else {
@@ -1531,6 +1555,23 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         }
     };
 
+    // use only testing time with DEV domain
+    void postDriverLogForTestingInDev(){
+        try {
+            if (APIs.DOMAIN_URL_ALS.contains("dev.alsrealtime.com")) {
+                if (DriverLogFile == null || !DriverLogFile.exists()) {
+                    IsLogPermission = true;
+                    JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+                    Globally.SaveFileInSDCard(ConstantsKeys.ViolationTest, driverLogArray.toString(), true, getActivity());
+                    DriverLogFile = global.GetSavedFile(getActivity(), ConstantsKeys.ViolationTest, "txt");
+
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
     private BroadcastReceiver progressReceiver = new BroadcastReceiver() {
@@ -1540,35 +1581,52 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             long percentage     = intent.getIntExtra("percentage", 0);
             ApkFilePath         = intent.getStringExtra("path");
             boolean isCompleted = intent.getBooleanExtra("isCompleted", false);
+            boolean IsInterrupted = intent.getBooleanExtra("isInterrupted", false);
 
             if(percentage >= progressPercentage) {
                 //  IsDownloading = true;
                 downloadProgressBar.setProgress(percentage);
                 progressPercentage = percentage;
             }
-            if(isCompleted){
+
+            if(isCompleted || IsInterrupted){
 
                 fadeViewAnim.cancel();
+                downloadBlinkIV.stopAnimation();
 
                 IsDownloading = false;
-                downloadProgressBar.setVisibility(View.GONE);
-                downloadHintImgView.setVisibility(View.GONE);
-                updateAppDownloadIV.setVisibility(View.VISIBLE);
 
-                if(ApkFilePath.equals("Downloading failed.")){
-                    global.EldScreenToast(SyncDataBtn, ApkFilePath, getResources().getColor(R.color.colorSleeper));
+                if(ApkFilePath.equals("Downloading failed.") || IsInterrupted){
+                    if(IsInterrupted) {
+                        global.EldScreenToast(SyncDataBtn, "Downloading cancelled", getResources().getColor(R.color.colorSleeper));
+                    }else{
+                        global.EldScreenToast(SyncDataBtn, ApkFilePath, getResources().getColor(R.color.colorSleeper));
+                    }
                     ApkFilePath = "";
                     ExistingApkVersionCode = "";
                     ExistingApkVersionName = "";
                     checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
                 }else{
-                    global.EldScreenToast(SyncDataBtn, "Downloading completed.", getResources().getColor(R.color.colorPrimary));
+                    global.EldScreenToast(SyncDataBtn, "Downloading completed", getResources().getColor(R.color.colorPrimary));
                     checkAppUpdateTV.setText(getResources().getString(R.string.install_updates));
 
                     if (ApkFilePath.length() > 0) {
                         InstallApp(ApkFilePath);
                     }
                 }
+
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        updateBlinkLayout.setVisibility(View.GONE);
+                      //  downloadHintImgView.setVisibility(View.GONE);
+                      //  updateAppDownloadIV.setVisibility(View.GONE);
+                    }
+                }, 500);
+
+
             }
 
         }
@@ -1653,6 +1711,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
         IsDownloading = true;
         downloadProgressBar.setProgress(0);
+        updateBlinkLayout.setVisibility(View.VISIBLE);
         downloadProgressBar.setVisibility(View.VISIBLE);
         downloadHintImgView.setVisibility(View.VISIBLE);
         updateAppDownloadIV.setVisibility(View.GONE);
@@ -1662,7 +1721,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         progressPercentage = 0;
         checkAppUpdateTV.startAnimation(fadeViewAnim);
         downloadHintImgView.startAnimation(fadeViewAnim);
-
+        downloadBlinkIV.startAnimation();
 
         Intent serviceIntent = new Intent(getActivity(), downloadAppService.getClass());
         serviceIntent.putExtra("url", url);
@@ -2134,7 +2193,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         isNorthCanada  =  SharedPref.IsNorthCanada(getActivity());
         if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ){
             caCurrentCycleTV.setVisibility(View.VISIBLE);
-            usCurrentCycleTV.setVisibility(View.GONE);
+            usCurrentCycleTV.setVisibility(View.INVISIBLE);
             operatingZoneTV.setText("");
             opZoneTmgView.setVisibility(View.VISIBLE);
             canEditImgView.setVisibility(View.VISIBLE);
@@ -2147,7 +2206,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 operatingZoneTV.setText(getString(R.string.OperatingZoneSouth));
             }
         }else{
-            caCurrentCycleTV.setVisibility(View.GONE);
+            caCurrentCycleTV.setVisibility(View.INVISIBLE);
             usCurrentCycleTV.setVisibility(View.VISIBLE);
             opZoneTmgView.setVisibility(View.INVISIBLE);
             canEditImgView.setVisibility(View.GONE);

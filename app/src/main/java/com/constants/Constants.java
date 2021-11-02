@@ -472,9 +472,9 @@ public class Constants {
         }
 
         if(isValidVinFromObd(context)){
-            optionsList.add(new OtherOptionsModel(R.drawable.eld_malfunction, VIN, context.getResources().getString(R.string.VinMatched)));
+            optionsList.add(new OtherOptionsModel(R.drawable.vin_obd, VIN, context.getResources().getString(R.string.VinMatched)));
         }else{
-            optionsList.add(new OtherOptionsModel(R.drawable.eld_malfunction, VIN, context.getResources().getString(R.string.VinMismatched)));
+            optionsList.add(new OtherOptionsModel(R.drawable.vin_obd, VIN, context.getResources().getString(R.string.VinMismatched)));
         }
 
         return optionsList;
@@ -658,7 +658,7 @@ public class Constants {
     }
 
     
-    public boolean isValidVinFromObd(Context context){
+    public static boolean isValidVinFromObd(Context context){
         String VINNumberFromApi = SharedPref.getVINNumber(context);
         String obdReceivedVin = SharedPref.getVehicleVin(context);
         if(obdReceivedVin.equals("") || obdReceivedVin.equals(VINNumberFromApi)){

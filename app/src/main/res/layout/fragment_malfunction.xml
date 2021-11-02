@@ -14,17 +14,17 @@
 
     <ExpandableListView
         android:id="@+id/malfunctionExpandList"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:divider="@color/transparent"
-        android:childDivider="@color/white"
-        android:groupIndicator="@null"
-        android:dividerHeight="@dimen/margin_short_0"
+        android:layout_height="match_parent"
         android:layout_below="@+id/malfunctionActionBar"
         android:layout_marginLeft="@dimen/margin_12"
         android:layout_marginTop="@dimen/margin_short_4"
-        android:layout_marginBottom="@dimen/margin_12"
         android:layout_marginRight="@dimen/margin_12"
+        android:layout_marginBottom="@dimen/margin_12"
+        android:childDivider="@color/white"
+        android:divider="@color/transparent"
+        android:dividerHeight="@dimen/margin_short_0"
+        android:groupIndicator="@null"
 
 
         />

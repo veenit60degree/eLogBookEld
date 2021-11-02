@@ -1575,7 +1575,7 @@ public class Globally {
 		try {
 			SavedFileName = FileNameStr(fileType, DriverName, Is18DaysLog);
 			if(isExternalStorageAvailable()) {
-				myFile = GetSavedFile(context, SavedFileName, "txt"); //new File("/sdcard/"+filename);
+				myFile = GetSavedFile(context, SavedFileName, "txt");
 				myFile.createNewFile();
 
 				FileOutputStream fOut = new FileOutputStream(myFile);
@@ -2311,7 +2311,7 @@ public class Globally {
 			SharedPref.setServiceOnDestoryStatus(true, c);
 			SharedPref.SetTruckStartLoginStatus(true, c);
 			SharedPref.SetUpdateAppDialogTime("", c);
-			SharedPref.setLastCalledWiredCallBack(0, c);
+			SharedPref.setNotiShowTime("", c);
 			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , c);
 
 			ClearSqliteDB(c);
@@ -2368,6 +2368,7 @@ public class Globally {
 			SharedPref.SetOBDPingAllowedStatus(false, c);
 			SharedPref.SetAutoDriveStatus(false, c);
 			SharedPref.SaveConnectionInfo("", "", c);
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2440,6 +2441,8 @@ public class Globally {
 				dbHelper.DeleteMalfunctionDiagnosticTable1();
 				dbHelper.DeleteMalDiaOccTimeTable();
 				dbHelper.DeletePowerComplianceTable();
+				//dbHelper.DeleteUnidentifiedLogoutTable();
+				dbHelper.DeleteMalDiaDurationTable();
 
 			}catch (Exception e){
 				e.printStackTrace();

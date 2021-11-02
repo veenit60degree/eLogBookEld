@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.adapter.logistic.UnIdentifiedListingAdapter;
 import com.android.volley.Request;
@@ -73,7 +74,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     final int RejectCompanyRecords  = 103;
     UnidentifiedDialog unidentifiedDialog;
     ProgressDialog progressDialog;
-
+    RecyclerView notiHistoryRecyclerView;
 
 
     @Override
@@ -117,6 +118,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         rightMenuBtn            = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         eldMenuLay              = (RelativeLayout) view.findViewById(R.id.eldMenuLay);
         unIdentifiedTopLay      = (RelativeLayout) view.findViewById(R.id.unIdentifiedTopLay);
+        notiHistoryRecyclerView = (RecyclerView)view.findViewById(R.id.notiHistoryRecyclerView);
 
         checkboxUnIdentifiedRecord = (CheckBox)view.findViewById(R.id.checkboxUnIdentifiedRecord);
 
@@ -129,6 +131,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         unIdentifiedTopLay.setVisibility(View.VISIBLE);
         unIdentifiedListView.setVisibility(View.VISIBLE);
         rightMenuBtn.setVisibility(View.GONE);
+        notiHistoryRecyclerView.setVisibility(View.GONE);
         dateActionBarTV.setVisibility(View.VISIBLE);
         dateActionBarTV.setBackgroundResource(R.drawable.transparent);
         dateActionBarTV.setTextColor(getResources().getColor(R.color.whiteee));

@@ -736,14 +736,13 @@
                         />
 
 
-
                     <ImageView
                         android:id="@+id/updateAppDownloadIV"
                         android:layout_width="@dimen/view_height_38"
                         android:layout_height="@dimen/view_height_38"
-                        android:src="@drawable/download"
-                        android:layout_centerVertical="true"
                         android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/download"
 
                         />
 

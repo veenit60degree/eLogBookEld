@@ -110,6 +110,12 @@ public class EldNotificationDialog extends Dialog  {
                     }else{
                         notiDesc = notiDesc + ". Yard Move has been disabled.\n";
                     }
+                }else if(SettingName.equals("IsExemptDriver")){
+                    if(isNotiRead.equalsIgnoreCase("true")) {
+                        notiDesc = notiDesc + ". ELD Exemption has been enabled.\n";
+                    }else{
+                        notiDesc = notiDesc + ". ELD Exemption has been disabled.\n";
+                    }
                 }
 
             }

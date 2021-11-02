@@ -173,47 +173,9 @@
 
 
 
-                <TextView
-                    android:id="@+id/viewHistoryBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/summaryBtn"
-                    android:text="@string/view_history"
-                    android:textColor="@color/active_status_bg"
-                    android:textSize="@dimen/text_size_14"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/summary_btn_selector"
-                    android:paddingTop="@dimen/margin_short_8"
-                    android:paddingBottom="@dimen/margin_short_9"
-                    android:paddingLeft="@dimen/margin_22"
-                    android:paddingRight="@dimen/margin_22"
-                    android:layout_marginRight="@dimen/margin_10"
-                    android:visibility="gone"
-
-                    />
 
 
 
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_toRightOf="@+id/remainingTimeTopTV"
-                    android:layout_toLeftOf="@+id/calLay"
-
-                    >
-
-
-                    <ImageView
-                        android:id="@+id/connectionStatusImgView"
-                        android:layout_width="@dimen/view_height_100"
-                        android:layout_height="@dimen/margin_28"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="@dimen/margin_short_3"
-                        />
-
-                </RelativeLayout>
 
 
                 <RelativeLayout
@@ -274,6 +236,30 @@
                     android:layout_marginRight="@dimen/margin_short_5"
                     android:layout_marginTop="@dimen/margin_short_3"
                     />
+
+
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_toRightOf="@+id/remainingTimeTopTV"
+                    android:layout_toLeftOf="@+id/calLay"
+
+                    >
+
+
+                    <ImageView
+                        android:id="@+id/connectionStatusImgView"
+                        android:layout_width="@dimen/view_height_100"
+                        android:layout_height="@dimen/margin_28"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/margin_short_3"
+                        android:src="@drawable/wifi_obd_active"
+
+                        />
+
+                </RelativeLayout>
 
 
 
@@ -398,7 +384,7 @@
                             android:textColor="@color/whiteee"
                             android:padding="0dp"
                             android:textSize="@dimen/text_size_12"
-                            android:text="@string/per_shift"
+                            android:text="@string/as_per_curr_status"
 
                             />
 

@@ -172,51 +172,6 @@
 
 
 
-                <TextView
-                    android:id="@+id/viewHistoryBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/summaryBtn"
-                    android:text="@string/view_history"
-                    android:textColor="@color/active_status_bg"
-                    android:textSize="@dimen/text_size_18"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/summary_btn_selector"
-                    android:paddingTop="@dimen/margin_12"
-                    android:paddingBottom="@dimen/margin_12"
-                    android:paddingLeft="@dimen/margin_26"
-                    android:paddingRight="@dimen/margin_26"
-                    android:layout_marginRight="@dimen/margin_10"
-                    android:visibility="gone"
-
-                    />
-
-
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_toRightOf="@+id/remainingTimeTopTV"
-                    android:layout_toLeftOf="@+id/calLay"
-                    android:paddingRight="@dimen/margin_15"
-                    android:layout_marginRight="@dimen/margin_short_6"
-
-                    >
-
-
-                <ImageView
-                    android:id="@+id/connectionStatusImgView"
-                    android:layout_width="@dimen/view_height_150"
-                    android:layout_height="@dimen/view_height_37"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="@dimen/margin_short_2"
-                    android:paddingTop="@dimen/margin_short_4"
-
-
-                    />
-
-                </RelativeLayout>
 
 
 
@@ -278,6 +233,34 @@
                     android:layout_marginRight="@dimen/margin_short_5"
                     />
 
+
+
+
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_toRightOf="@+id/remainingTimeTopTV"
+                    android:layout_toLeftOf="@+id/calLay"
+                    android:paddingRight="@dimen/margin_15"
+                    android:layout_marginRight="@dimen/margin_short_6"
+
+                    >
+
+
+                    <ImageView
+                        android:id="@+id/connectionStatusImgView"
+                        android:layout_width="@dimen/view_height_150"
+                        android:layout_height="@dimen/view_height_37"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/margin_short_2"
+                        android:paddingTop="@dimen/margin_short_4"
+                        android:src="@drawable/wifi_obd_active"
+
+                        />
+
+                </RelativeLayout>
 
 
             </RelativeLayout>
@@ -400,7 +383,7 @@
                             android:textColor="@color/whiteee"
                             android:padding="0dp"
                             android:textSize="@dimen/text_size_14"
-                            android:text="@string/per_shift"
+                            android:text="@string/as_per_curr_status"
 
                             />
 

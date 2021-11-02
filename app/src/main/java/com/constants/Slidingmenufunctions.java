@@ -253,17 +253,6 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void logoutEvent(){
 		if(constants.isActionAllowed(context)){
-			boolean isExemptDriver = false;
-			if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
-				isExemptDriver = SharedPref.IsExemptDriverMain(context);
-			} else {
-				isExemptDriver = SharedPref.IsExemptDriverCo(context);
-			}
-
-			if(isExemptDriver && context != null){
-				Toast.makeText(context, context.getResources().getString(R.string.exempt_reminder_desc), Toast.LENGTH_LONG).show();
-			}
-
 			if(isSignPending()){
 				certifyLogAlert();
 			}else {
@@ -822,6 +811,19 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	/*================== Logout User ===================*/
 	void LogoutUser(final String DriverId){
+
+		dialog.setMessage("Logging out..");
+		boolean isExemptDriver;
+		if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+			isExemptDriver = SharedPref.IsExemptDriverMain(context);
+		} else {
+			isExemptDriver = SharedPref.IsExemptDriverCo(context);
+		}
+		if(isExemptDriver && context != null){
+			Toast.makeText(context, context.getResources().getString(R.string.exempt_logout_desc), Toast.LENGTH_LONG).show();
+		}
+
+
 		final String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
 		final String TRUCK_NUMBER = DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
 		final String VIN = DriverConst.GetDriverTripDetails(DriverConst.VIN, context);

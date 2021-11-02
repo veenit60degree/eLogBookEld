@@ -46,6 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_DEFERRAL_RULE         = "tbl_deferral_rule";
     public static final String TABLE_MAl_DIA_EVENT_DURATION= "tbl_mal_dia_event_duration";
     public static final String TABLE_POSITION_DIA_MAL      = "tbl_position_dia_mal";
+    public static final String TABLE_UNIDENTIFIED_LOGOUT_EVENT    = "tbl_unidentified_logout_event";
     public static final String TABLE_UNIDENTIFIED_RECORDS  = "tbl_unidentified_record";
     public static final String TABLE_DOWNLOADEDLOGS_USA_RECORDS     = "tbl_downloadedlogs_usa_record";
     public static final String TABLE_DOWNLOADEDLOGS_CANADA_RECORDS  = "tbl_downloadedlogs_canada_record";
@@ -83,6 +84,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String DEFERRAL_RULE_LIST          = "oDriver_deferral_rule_list";
     public static final String MAl_DIA_EVENT_DURATION_LIST = "oDriver_mal_dia_event_dur_list";
     public static final String POSITION_MAl_DIA_EVENT_LIST = "oDriver_position_mal_dia_list";
+    public static final String UNIDENTIFIED_LOGOUT_EVENT_LIST     = "oDriver_unidentified_logout_list";
+
     public static final String UNIDENTIFIED_RECORD_LIST    = "oDriver_unidentified_record_list";
     public static final String DOWNLOADLOGS_USA_RECORD_LIST       = "oDriver_downloadlogs_usa_record_list";
     public static final String DOWNLOADLOGS_CANADA_RECORD_LIST    = "oDriver_downloadlogs_canada_record_list";
@@ -204,6 +207,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 PROJECT_ID_KEY + " INTEGER, " +  POSITION_MAl_DIA_EVENT_LIST + " TEXT )"
         );
 
+        db.execSQL( "CREATE TABLE " + TABLE_UNIDENTIFIED_LOGOUT_EVENT + "(" +
+                COMPANY_ID_KEY + " INTEGER, " +  UNIDENTIFIED_LOGOUT_EVENT_LIST + " TEXT )"
+        );
+
 
         db.execSQL( "CREATE TABLE " + TABLE_UNIDENTIFIED_RECORDS + "(" +
                 COMPANY_ID_KEY + " INTEGER, " +  UNIDENTIFIED_RECORD_LIST + " TEXT )"
@@ -248,6 +255,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DEFERRAL_RULE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAl_DIA_EVENT_DURATION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSITION_DIA_MAL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_UNIDENTIFIED_LOGOUT_EVENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_UNIDENTIFIED_RECORDS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOWNLOADEDLOGS_USA_RECORDS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOWNLOADEDLOGS_CANADA_RECORDS);
@@ -515,6 +523,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+
+    /*  Create Unidentified Logout Event table event occurred time if not exist.*/
+    public void CreateUnidentifiedLogoutEventTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL( "CREATE TABLE " + TABLE_UNIDENTIFIED_LOGOUT_EVENT + "(" +
+                COMPANY_ID_KEY + " INTEGER, " +  UNIDENTIFIED_LOGOUT_EVENT_LIST + " TEXT )"
+        );
+
+    }
 
 
     /* -- Create unidentified record  table if not exist.*/
@@ -940,8 +957,22 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ---------------------- Insert Unidentified logout events  Log -------------------- */
+    public boolean InsertUnidentifiedLogoutRecordLog(int CompanyId, JSONArray jsonArray) {
 
-    /* ---------------------- Insert Unidentified events  Log -------------------- */
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COMPANY_ID_KEY, CompanyId);
+        contentValues.put(UNIDENTIFIED_LOGOUT_EVENT_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_UNIDENTIFIED_LOGOUT_EVENT, null, contentValues);
+        return true;
+    }
+
+
+
+    /* ---------------------- Insert Unidentified DR/OD events  Log -------------------- */
     public boolean InsertUnidetifiedRecordLog(int DriverId, JSONArray jsonArray) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1365,6 +1396,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Update Unidentified logout events Log -------------------- */
+    public boolean UpdateUnidentifiedLogoutRecordLog(int CompanyId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COMPANY_ID_KEY, CompanyId);
+        contentValues.put(UNIDENTIFIED_LOGOUT_EVENT_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_UNIDENTIFIED_LOGOUT_EVENT, contentValues, COMPANY_ID_KEY + " = ? ", new String[] { Integer.toString(CompanyId) } );
+        return true;
+    }
+
+
     /* ---------------------- Update Unidentified Log -------------------- */
     public boolean UpdateUnidentifiedRecordLog(int CompanyId, JSONArray jsonArray) {
 
@@ -1651,14 +1696,24 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ---------------------- Get unidentified logout event log-------------------- */
+    public Cursor getUnidentifiedLogoutRecordLog(int CompanyId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_UNIDENTIFIED_LOGOUT_EVENT + " WHERE " +
+                COMPANY_ID_KEY + "=?", new String[]{Integer.toString(CompanyId)});
+        return res;
+    }
 
-    /* ---------------------- Get unidentified event log-------------------- */
+
+
+    /* ---------------------- Get unidentified event DR/OD log-------------------- */
     public Cursor getUnidentifiedRecordLog(int CompanyId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_UNIDENTIFIED_RECORDS + " WHERE " +
                 COMPANY_ID_KEY + "=?", new String[]{Integer.toString(CompanyId)});
         return res;
     }
+
 
     /* ---------------------- Get downloaded logs Usa event log-------------------- */
     public Cursor getDownloadedLogsUsaRecord(int CompanyId) {
@@ -1967,11 +2022,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    /* ------ Delete Unidentified  Log Table ------ */
-    public void DeleteUnidentifiedRecordTable() {
+    /* ------ Delete Unidentified logout Log Table ------ */
+    public void DeleteUnidentifiedLogoutTable() {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            db.execSQL("DELETE FROM "+ TABLE_UNIDENTIFIED_RECORDS);
+            db.execSQL("DELETE FROM "+ TABLE_UNIDENTIFIED_LOGOUT_EVENT);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -2109,6 +2164,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if(!isTableExists(TABLE_POSITION_DIA_MAL)) {
             CreatePositioningMalDiaTable();
+        }
+
+        if(!isTableExists(TABLE_UNIDENTIFIED_LOGOUT_EVENT)) {
+            CreateUnidentifiedLogoutEventTable();
         }
 
 

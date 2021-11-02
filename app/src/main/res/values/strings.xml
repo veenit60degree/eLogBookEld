@@ -58,6 +58,7 @@
 
     <string name="per_day">(AS PER DAY)</string>
     <string name="per_shift">(AS PER SHIFT)</string>
+    <string name="as_per_curr_status">(AS PER CURRENT STATUS)</string>
     <string name="Deferralenabled">Deferral rule enabled</string>
     <string name="advrs_excptn_enabled">Adverse exception enabled</string>
     <string name="haul_excptn_enabled">16 hour short haul exception enabled</string>
@@ -472,6 +473,7 @@
 
     <string name="Reminder">Reminder !!</string>
     <string name="exempt_reminder_desc">You are logged in as a Exempt Driver.</string>
+    <string name="exempt_logout_desc">You are logging out as a Exempt Driver.</string>
     <string name="sealNoAtArrival">Seal number of container at arrival</string>
     <string name="sealNoAtDeparture">Seal number of container at departure</string>
 
@@ -875,7 +877,7 @@
 
     <string name="VinMatched">VIN Matched</string>
     <string name="VinMismatched">VIN Mismatched</string>
-
+    <string name="VinMismatchedDesc">Please contact support team as truck\'s VIN is not matching with Truck Details saved on Server</string>
     <string name="wifi_inactive">WIFI OBD is not working</string>
     <string name="wifi_status_disabled">Device WIFI is disabled. Please turned ON it.</string>
     <string name="ble_active">Bluetooth OBD is connected</string>

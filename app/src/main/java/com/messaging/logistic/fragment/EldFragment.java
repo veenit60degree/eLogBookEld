@@ -164,7 +164,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     public static TextView summaryBtn;
     int DRIVER_JOB_STATUS = 1, SWITCH_VIEW = 1, oldStatusView = 0, DriverType = 0;
     TextView dateTv, nameTv, jobTypeTxtVw, perDayTxtVw, jobTimeTxtVw, jobTimeRemngTxtVw, EldTitleTV,
-            timeRemainingTxtVw, invisibleTxtVw, viewHistoryBtn;
+            timeRemainingTxtVw, invisibleTxtVw;
     TextView tractorTv, trailorTv, coDriverTv, otherOptionBadgeView;
     TextView onDutyViolationTV, drivingViolationTV, sleeperViolationTV, offDutyViolationTV;
     TextView onDutyTimeTxtVw, drivingTimeTxtVw, sleeperTimeTxtVw, offDutyTimeTxtVw;
@@ -572,7 +572,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         calendarBtn.setOnClickListener(this);
         sendReportBtn.setOnClickListener(this);
         yardMoveBtn.setOnClickListener(this);
-        viewHistoryBtn.setOnClickListener(this);
         certifyLogBtn.setOnClickListener(this);
         OnDutyBtn.setOnClickListener(this);
         DrivingBtn.setOnClickListener(this);
@@ -888,7 +887,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         timeRemainingTxtVw      = (TextView) view.findViewById(R.id.timeRemainingTxtVw);
         perDayTxtVw             = (TextView) view.findViewById(R.id.perDayTxtVw);
         EldTitleTV              = (TextView) view.findViewById(R.id.EldTitleTV);
-        viewHistoryBtn          = (TextView) view.findViewById(R.id.viewHistoryBtn);
         refreshTitleTV          = (TextView) view.findViewById(R.id.refreshTitleTV);
 
         dateTv                  = (TextView) view.findViewById(R.id.dateTv);
@@ -1184,13 +1182,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
                                 }
-                            }/*else{
-                                connectionStatusImgView.setImageResource(R.drawable.obd_inactive);
-                                connectionStatusImgView.startAnimation(connectionStatusAnimation);
-                                if (isToastShowing) {
-                                    Global.EldToastWithDuration4Sec(connectionStatusImgView, getResources().getString(R.string.obd_data_connection_desc), getResources().getColor(R.color.colorSleeper) );
-                                }
-                            }*/
+                            }
                         }
                     }
                 });
@@ -1708,7 +1700,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 boolean isMissingLoc = constants.isLocationMissing(DRIVER_ID, CurrentCycleId, driverPermissionMethod,
                         recapViewMethod, Global, hMethods, dbHelper, logPermissionObj, getActivity());
 
-                if (isPendingNotifications | isUnCertified || isMissingLoc) {
+                if (isPendingNotifications | isUnCertified || isMissingLoc || !Constants.isValidVinFromObd(getContext())) {
                     otherOptionBadgeView.setVisibility(View.VISIBLE);
                 } else {
                     otherOptionBadgeView.setVisibility(View.GONE);
@@ -2190,11 +2182,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     void shareDriverLogDialog() {
 
         if(getActivity() != null) {
-            if (!IsAOBRD || IsAOBRDAutomatic) {
+         /*   if (!IsAOBRD || IsAOBRDAutomatic) {
                 Constants.isEldHome = false;
                 startService();
             }
-
+*/
             try {
                 if (shareDialog != null && shareDialog.isShowing()) {
                     shareDialog.dismiss();
@@ -3945,7 +3937,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     savedSyncedArray = notificationMethod.ReverseArray(reverseArray);
                 }
 
-                Log.d("savedSyncedArray", "savedSyncedArray: " +savedSyncedArray);
+              //  Log.d("savedSyncedArray", "savedSyncedArray: " +savedSyncedArray);
 
                 savedSyncedArray.put(newObj);
                 syncingMethod.SyncingLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, savedSyncedArray);
@@ -5420,12 +5412,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         DrivingRemainingTime    = LeftDriving;
         OnDutyRemainingTime     = LeftOnDuty;
 
-        int asPerCurrentStatus          = hMethods.getLastStatusDuration(driverLogArray);
-        String currentStatusViewInput   = Global.FinalValue(asPerCurrentStatus);
-        jobTimeTxtVw.setText(currentStatusViewInput);
 
         if (DRIVER_JOB_STATUS == DRIVING) {
-           // jobTimeTxtVw.setText(TotalDriving);
+
             jobTimeRemngTxtVw.setText(LeftDriving);
 
             if (isViolation && ViolatioMsg.length() > 0) {
@@ -5451,6 +5440,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }else {
             jobTimeTxtVw.setText(TotalOffDutyPerShift);
         }*/
+
+        int asPerCurrentStatus          = hMethods.getLastStatusDuration(driverLogArray, DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal));
+        String currentStatusViewInput   = Global.FinalValue(asPerCurrentStatus);
+        jobTimeTxtVw.setText(currentStatusViewInput);
+
         remainingTimeTopTV.setText(Html.fromHtml("Cycle time left <b>" + LeftCycleTime + "</b>"));
         if (CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) && SharedPref.IsNorthCanada(getActivity())) {
             currentCycleTxtView.setText(CurrentCycle + " (N)");
@@ -6401,6 +6395,15 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 SharedPref.setDayStartOdometer(dataObj.getString(ConstantsKeys.StartOdometerKM),
                                         dataObj.getString(ConstantsKeys.StartOdometerMiles),
                                             Global.GetCurrentDeviceDate(), getActivity());
+
+
+                                constants.saveObdData("OdometerDetail", "PersonalUse Km: " + dataObj.getString(ConstantsKeys.TotalKM) +
+                                                ",StartOdometerKM: " + dataObj.getString(ConstantsKeys.StartOdometerKM) + ",StartOdometerMiles: " +
+                                                dataObj.getString(ConstantsKeys.StartOdometerMiles), "", "",
+                                        "", "", "", "", "0",
+                                        "-1", "", Global.GetCurrentDeviceDate(), Global.GetCurrentDeviceDate(),
+                                        DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
+
                             }
                         }catch (Exception e){
                             e.printStackTrace();

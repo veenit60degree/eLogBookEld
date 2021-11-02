@@ -132,7 +132,7 @@ public class SplashActivity extends Activity implements
         }
 
         SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-        SharedPref.setLastCalledWiredCallBack(0, getApplicationContext());
+        SharedPref.setNotiShowTime("", getApplicationContext());
 
         Constants.isPcYmAlertButtonClicked = false;
 

@@ -37,7 +37,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/margin_short_5"
+        android:paddingTop="@dimen/margin_10"
+        android:paddingBottom="@dimen/margin_short_5"
         android:orientation="horizontal"
         >
 
@@ -47,13 +48,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_weight="0.4"
+        android:layout_marginLeft="@dimen/margin_10"
+
         >
 
 
                <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/view_height_158"
-                   android:background="@color/transparent"
+                android:layout_width="wrap_content"
+                   android:layout_height="@dimen/view_height_160"
+                android:background="@drawable/white_left"
+                android:layout_marginBottom="@dimen/margin_10"
+
         >
 
 
@@ -113,17 +118,16 @@
                                    android:textStyle="bold" />
 
 
-
                                <TextView
                                    android:id="@+id/statusNewInfoTV"
                                    android:layout_width="wrap_content"
                                    android:layout_height="wrap_content"
-                                   android:textColor="@color/colorPrimary"
                                    android:layout_gravity="center_horizontal"
                                    android:paddingLeft="@dimen/margin_short_5"
-                                   android:paddingRight="@dimen/margin_short_5"
                                    android:paddingTop="@dimen/margin_short_5"
+                                   android:paddingRight="@dimen/margin_short_5"
                                    android:textAllCaps="false"
+                                   android:textColor="@color/colorPrimary"
                                    android:textSize="@dimen/text_size_8"
 
                                    />
@@ -140,8 +144,7 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="@dimen/view_height_160"
-            android:background="@color/transparent"
-
+            android:background="@drawable/white_left"
             >
 
             <androidx.cardview.widget.CardView
@@ -210,10 +213,11 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/view_height_160"
                 android:orientation="horizontal"
                 android:layout_weight="0.5"
-                android:background="@color/transparent"
+                android:background="@color/white"
+                android:layout_marginBottom="@dimen/margin_10"
                 >
 
 
@@ -484,16 +488,18 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/view_height_160"
                     android:layout_weight="0.5"
-                    android:background="@color/transparent"
+                    android:background="@color/white"
 
                     >
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+
+                        >
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/hosPerDayDrivingCardView"
@@ -579,8 +585,8 @@
                                         CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
                                         CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
                                         CircleProgressView:cpv_innerContourSize="0dp"
-                                        CircleProgressView:cpv_maxValue="100"
 
+                                        CircleProgressView:cpv_maxValue="100"
                                         CircleProgressView:cpv_outerContourSize="0dp"
                                         CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
                                         CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
@@ -811,14 +817,17 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="0.4"
+            android:layout_marginRight="@dimen/margin_10"
             >
 
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/view_height_160"
                 android:layout_weight="0.5"
-                android:background="@color/transparent"
+                android:background="@drawable/white_right"
+                android:layout_marginBottom="@dimen/margin_short_9"
+
 
                 >
 
@@ -906,18 +915,12 @@
                 </androidx.cardview.widget.CardView>
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/margin_short_1"
-                android:background="@color/transparent"
-                />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/view_height_158"
                 android:layout_weight="0.5"
-                android:background="@color/transparent"
-                android:layout_marginBottom="@dimen/margin_short_2"
+                android:background="@drawable/white_right"
 
                 >
 
@@ -928,7 +931,9 @@
                     android:visibility="invisible"
                     app:cardElevation="@dimen/margin_short_1"
                     app:cardUseCompatPadding="true"
-                    card_view:cardCornerRadius="@dimen/margin_10">
+                    card_view:cardCornerRadius="@dimen/margin_10"
+
+                    >
 
 
                     <LinearLayout
@@ -1045,6 +1050,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_65"
         android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/margin_short_5"
+        android:layout_marginRight="@dimen/margin_short_5"
 
 
 

@@ -151,8 +151,22 @@
         android:textSize="@dimen/text_size_25"
         android:layout_margin="@dimen/margin_10"
         android:visibility="gone"
+
         />
 
+
+    <ImageView
+        android:id="@+id/loginBleStatusBtn"
+        android:layout_width="@dimen/view_height_80"
+        android:layout_height="@dimen/view_height_80"
+        android:src="@drawable/ble_ic"
+        android:layout_alignParentRight="true"
+        android:padding="@dimen/margin_15"
+        android:layout_marginRight="@dimen/view_height_60"
+        android:layout_marginTop="@dimen/margin_10"
+        android:visibility="gone"
+
+        />
 
 
 

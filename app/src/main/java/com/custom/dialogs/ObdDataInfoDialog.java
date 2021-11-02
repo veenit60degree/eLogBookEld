@@ -11,7 +11,6 @@ import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -21,7 +20,6 @@ import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.HosSummaryFragment;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -122,7 +120,7 @@ public class ObdDataInfoDialog extends Dialog {
                     "<b>EngineHours:</b> " + SharedPref.getObdEngineHours(getContext()) + "<br/>" +
                     "<b>OdometerInKm:</b> " + SharedPref.getObdOdometer(getContext()) + "<br/>" +
                     "<b>OdometerInMeter:</b> " + SharedPref.getHighPrecisionOdometer(getContext()) + "<br/>" +
-                    "<b>Accumulative Personal Distance:</b> " + AccumulativePersonalDistance + "<br/>";
+                    "<b>Accumulative Personal Distance:</b> " + constants.Convert2DecimalPlacesDouble(AccumulativePersonalDistance) + " km <br/>";
 
 
             }

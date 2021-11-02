@@ -1078,7 +1078,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                         if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
                                 DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
-                                DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)) {
+                                DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction) ||
+                                DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)) {
                             parseData(mainObj);
                         } else {
                             if (DrId.equals(DriverId)) {

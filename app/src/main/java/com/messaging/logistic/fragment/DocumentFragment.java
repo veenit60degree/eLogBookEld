@@ -40,6 +40,7 @@ import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
 import com.models.HelpDocModel;
+import com.rajat.pdfviewer.PdfViewerActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -161,7 +162,6 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
                 // ---------- PDF offline commented code -----------
 
-                getLocalDocuments(false);
                 int docPos = getFilePositionFromLocalDir(position);
 
                 // position comparision is for local files. because files are fetching from storage and they are getting in the list in different order as compared to json file (from API).
@@ -259,16 +259,18 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             localDocList.add(docModel);
 
 
-
-
+            if(localDocList.size() > 0){
+                noDataEldTV.setVisibility(View.GONE);
+            }else {
+                noDataEldTV.setVisibility(View.VISIBLE);
+            }
             try {
                 if (isLoad) {
                     helpDocAdapter = new HelpDocAdapter(getActivity(), localDocList);
                     notiHistoryListView.setAdapter(helpDocAdapter);
-                    noDataEldTV.setVisibility(View.GONE);
                 }
             } catch (Exception e) {
-                noDataEldTV.setVisibility(View.VISIBLE);
+               e.printStackTrace();
             }
         }
 
@@ -278,29 +280,16 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
     void documentViewerFragment(String filePath, String filename ){
         File file = new File(filePath );    //Environment.getExternalStorageDirectory().getAbsolutePath()+ "/Logistic/AlsDoc/" + fileName);
-        Uri photoURI = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
+     //   Uri photoURI = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
 
         try {
 
-            PdfWebViewFragment pdfViewFragment = new PdfWebViewFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("file", photoURI.toString());
-            bundle.putString("filename", filename);
-            bundle.putString("filePath", filePath);
-            pdfViewFragment.setArguments(bundle);
-
-            FragmentManager fragManager = getActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTran = fragManager.beginTransaction();
-            fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,
-                    android.R.anim.fade_in,android.R.anim.fade_out);
-            fragmentTran.add(R.id.job_fragment, pdfViewFragment);
-            fragmentTran.addToBackStack("pdf_view");
-            fragmentTran.commit();
-
-
-            //    private void MoveFragment(String file , String filePath, String url, String fileName){
-
-
+            startActivity(
+                    PdfViewerActivity.Companion.launchPdfFromPath(
+                            getActivity(), String.valueOf(file),
+                            "Title", "dir",true,false
+                    )
+            );
 
 
         }catch (Exception e){
@@ -505,10 +494,9 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
         super.onResume();
 
         getLocalDocuments(true);
+
         if(Globally.isConnected(getActivity())){
             GetEldDocDetails();
-        }else{
-            noDataEldTV.setVisibility(View.VISIBLE);
         }
 
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter("download_pdf_progress"));

@@ -112,41 +112,37 @@ public class HelperMethods {
         return endDateTime;
     }
 
-    public int getLastStatusDuration(JSONArray driverLogArray){
-        int endDateTime = 0;
+    public int getLastStatusDuration(JSONArray driverLogArray, int currentStatus, boolean isPer){
+        int StatusDuration = 0;
         try {
-            if(driverLogArray.length() > 0){
-                JSONObject obj = (JSONObject)driverLogArray.get(driverLogArray.length()-1);
+            for(int i = driverLogArray.length()-1 ; i >= 0 ; i--){
+                JSONObject obj = (JSONObject)driverLogArray.get(i);
 
                 int DriverStatusId = obj.getInt(ConstantsKeys.DriverStatusId);
-                String StartTime = obj.getString(ConstantsKeys.StartDateTime);
-                DateTime StartDateTime = Globally.getDateTimeObj(StartTime, false);
-                DateTime EndDateTime = Globally.GetCurrentJodaDateTime();
-                endDateTime = (int)Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
+                boolean isPersonal = obj.getBoolean(ConstantsKeys.Personal);
+                if(DriverStatusId == currentStatus && isPer == isPersonal) {
 
-                // 2021-10-26T00:00:00.000Z
-                String dayStartTime = StartTime.split("T")[1].substring(0,5);
-                Log.d("time", "time: " +StartTime.split("T")[1]);
-
-
-                if(dayStartTime.equals("00:00")){
-                    JSONObject obj2 = (JSONObject)driverLogArray.get(driverLogArray.length()-2);
-                    int DriverStatusIdSecondLast = obj2.getInt(ConstantsKeys.DriverStatusId);
-                    if(DriverStatusIdSecondLast == DriverStatusId) {
-                        DateTime StartDateTimeSecondObj = Globally.getDateTimeObj(obj2.getString(ConstantsKeys.StartDateTime), false);
-                        DateTime EndDateTimeSecondObj = Globally.getDateTimeObj(obj2.getString(ConstantsKeys.EndDateTime), false);
-                        int secondObjDiff = (int) Constants.getDateTimeDuration(StartDateTimeSecondObj, EndDateTimeSecondObj).getStandardMinutes();
-                        endDateTime = endDateTime + secondObjDiff;
+                    DateTime StartDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.StartDateTime), false);
+                    DateTime EndDateTime;   // = Globally.getDateTimeObj(obj.getString(ConstantsKeys.EndDateTime), false);
+                    if(i == driverLogArray.length()-1) {
+                        EndDateTime = Globally.GetCurrentJodaDateTime();
+                    }else{
+                        EndDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.EndDateTime), false);
                     }
 
+                    StatusDuration = StatusDuration + (int) Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
+                }else{
+                    break;
                 }
+                // 2021-10-26T00:00:00.000Z
+
             }
 
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        return endDateTime;
+        return StatusDuration;
     }
 
 

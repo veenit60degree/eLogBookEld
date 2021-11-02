@@ -2059,6 +2059,37 @@ public class SharedPref {
 
 
 
+    // Save Unidentified event status  -------------------
+    public static void saveUnidentifiedEventStatus( boolean isUnidentifiedDia, String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.UnidentifiedDataDiag, isUnidentifiedDia);
+        editor.putString(ConstantsKeys.UnidentifiedOccTime, time);
+        editor.commit();
+    }
+
+    // Get Unidentified event status -------------------
+    public static boolean isUnidentifiedDiaEvent( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.UnidentifiedDataDiag, false);
+        }else {
+            return false;
+        }
+    }
+
+    // Get Unidentified event occurred time  -------------------
+    public static String getUnidentifiedDiaOccTime( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.UnidentifiedOccTime, "");
+        }else {
+            return "";
+        }
+    }
+
+
+
     // Save Power Malfunction status  -------------------
     public static void savePowerMalfunctionOccurStatus( boolean IsEngSyncMal, boolean isEngSynDia, String time, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -2829,20 +2860,20 @@ public class SharedPref {
 
 
 
-    // Save Last Called Wired Call Back count
-    public static void setLastCalledWiredCallBack(long count, Context context){
+    // Save notification show time in logout service
+    public static void setNotiShowTime(String count, Context context){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("WiredCallBack", count);
+        editor.putString("NotiShowTime", count);
         editor.commit();
 
     }
 
 
-    // Get Last Called Wired Call Backs count -------------------
-    public static long getLastCalledWiredCallBack( Context context) {
+    // Get notification show time in logout service -------------------
+    public static String getNotiShowTime( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getLong("WiredCallBack", 0);
+        return preferences.getString("NotiShowTime", "");
     }
 
 

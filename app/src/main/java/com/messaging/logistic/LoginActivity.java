@@ -3,12 +3,16 @@ package com.messaging.logistic;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.util.Log;
@@ -16,6 +20,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +35,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -75,7 +82,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	TextView driverTitleTV, appVersion, appTypeView;
 	RelativeLayout mainLoginLayout, loginLayout, userTypeLayout, loginCoDriverLayout, loginScrollChildLay;
 	Button loginBtn, mainDriverBtn, CoDriverBtn, coDriverLoginBtn;
-	ImageView backImgView, wifiImgBtn;
+	ImageView backImgView, wifiImgBtn, loginBleStatusBtn;
 	ProgressDialog progressDialog;
 	//private BroadcastReceiver mRegistrationBroadcastReceiver;
 	ProgressBar progressBarLogin;
@@ -83,13 +90,14 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	String StrSingleUserame = "", StrSinglePass = "", StrCoDriverUsername = "", StrCoDriverPass = "", StrOSType = "", AppVersion = "";
 	String status = "", message = "", deviceType = "";
 	Anim animation;
-	boolean IsLoginSuccess = false, IsTablet = false;
+	boolean IsLoginSuccess = false, IsTablet = false, IsBleConnected = false;
 	String Sim1 = "", Sim2 = "", DeviceSimInfo = "";
 	Constants constants;
 	Globally global;
 	Utils obdUtil;
 	RetryPolicy policy;
 	RequestQueue queue;
+	Animation connectionStatusAnimation;
 
 
 	@Override
@@ -135,6 +143,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 		backImgView 			= (ImageView) findViewById(R.id.backImgView);
 		wifiImgBtn 				= (ImageView) findViewById(R.id.wifiImgBtn);
+		loginBleStatusBtn		= (ImageView) findViewById(R.id.loginBleStatusBtn);
 
 		loginScrollChildLay	= (RelativeLayout) findViewById(R.id.loginScrollChildLay);
 		mainLoginLayout 		= (RelativeLayout) findViewById(R.id.mainLoginLayout);
@@ -142,6 +151,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		userTypeLayout 			= (RelativeLayout) findViewById(R.id.userTypeLayout);
 		loginCoDriverLayout 	= (RelativeLayout) findViewById(R.id.loginCoDriverLayout);
 		//mTelephonyManager 	= (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+		connectionStatusAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+		connectionStatusAnimation.setDuration(1500);
 
 		backImgView.setVisibility(View.GONE);
 		progressBarLogin.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FFFFFF"), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -192,6 +204,38 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			loginCoDriverLayout.setBackgroundColor(getResources().getColor(R.color.gray_background));
 		}
 
+
+		connectionStatusAnimation.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				try {
+					if(getApplicationContext() != null) {
+
+						if(IsBleConnected){
+							connectionStatusAnimation.cancel();
+							loginBleStatusBtn.setAlpha(1f);
+							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
+
+						}else{
+							loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+						}
+
+					}
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+		});
+
+
 		mainLoginLayout.setOnClickListener(this);
 		loginLayout.setOnClickListener(this);
 		loginBtn.setOnClickListener(this);
@@ -200,6 +244,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		backImgView.setOnClickListener(this);
 		wifiImgBtn.setOnClickListener(this);
 		coDriverLoginBtn.setOnClickListener(this);
+		loginBleStatusBtn.setOnClickListener(this);
 
 		passwordText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -236,7 +281,73 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	}
 
 
-    public static boolean isImmersiveAvailable() {
+
+	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		IsLoginSuccess = false;
+		loginBtn.setEnabled(true);
+
+
+		if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE){
+			loginBleStatusBtn.setVisibility(View.VISIBLE);
+
+			if(!IsBleConnected){
+				loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+			}
+
+		}
+
+		startService();
+
+		UILApplication.activityResumed();
+
+
+		LocalBroadcastManager.getInstance(LoginActivity.this).registerReceiver( progressReceiver, new IntentFilter(ConstantsKeys.IsEventUpdate));
+
+	}
+
+
+
+
+
+
+	private BroadcastReceiver progressReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			try{
+
+				boolean IsEventUpdate = intent.getBooleanExtra(ConstantsKeys.IsEventUpdate, false);
+				if(IsEventUpdate){
+					if(intent.getBooleanExtra(ConstantsKeys.Status, false)){
+						if(!IsBleConnected){
+							global.ShowLocalNotification(getApplicationContext(),
+									getString(R.string.BluetoothOBD),
+									getString(R.string.obd_ble), 2081);
+						}
+
+						IsBleConnected = true;
+						loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
+					}else{
+						IsBleConnected = false;
+						loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
+						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+					}
+
+				}
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+
+		}
+	};
+
+
+
+	public static boolean isImmersiveAvailable() {
         return Build.VERSION.SDK_INT >= 19;
     }
 
@@ -440,22 +551,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 
 
-	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		IsLoginSuccess = false;
-		loginBtn.setEnabled(true);
-
-
-		startService();
-
-		UILApplication.activityResumed();
-
-
-	}
-
 
 	private void startService(){
 		/*========= Start Logout Service to check truck is moving in logout=============*/
@@ -475,7 +570,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	protected void onPause() {
 		super.onPause();
 		UILApplication.activityPaused();
-
+		LocalBroadcastManager.getInstance(LoginActivity.this).unregisterReceiver(progressReceiver);
 	}
 
 	protected void onStop() {
@@ -1098,6 +1193,14 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	public void onClick(View v) {
 		switch (v.getId()) {
 
+			case R.id.loginBleStatusBtn:
+				if(!IsBleConnected) {
+					SharedPref.SetPingStatus("ble_start", getApplicationContext());
+					loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+					startService();
+				}
+				break;
+
 			case R.id.mainLoginLayout:
 				global.hideKeyboard(LoginActivity.this, mainLoginLayout);
 				break;
@@ -1140,6 +1243,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 
 			case R.id.CoDriverBtn:
+				if(isDriving){
+					isDriving = false;
+				}else{
+					isDriving = true;
+				}
+
 				if(SharedPref.isLoginAllowed(LoginActivity.this)) {
 					LoginUserType = DriverConst.TeamDriver;
 					loginBtn.setText("Next");

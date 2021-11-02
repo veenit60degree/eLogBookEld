@@ -3099,7 +3099,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                                         String logModel = dataObj.getString("DriverLogModel");
 
-                                        if(unPostedLogArray.length() == 0){
+                                        if(unPostedLogArray.length() == 0 && !logModel.equals("null")){
                                             if(selectedArray.length() != new JSONArray(logModel).length()){
                                                 GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
                                             }

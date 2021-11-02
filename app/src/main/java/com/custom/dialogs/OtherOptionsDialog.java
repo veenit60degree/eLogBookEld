@@ -150,12 +150,13 @@ public class OtherOptionsDialog extends Dialog {
                 Log.d("itemClick", "itemClick: " + position);
 
                 switch (otherOptionList.get(position).getStatus()) {
-                    case 0:
+
+                    case Constants.NOTIFICATION:
                         TabAct.host.setCurrentTab(3);
                         dismiss();
                         break;
 
-                    case 1:
+                    case Constants.GPS:
                         if (isGps) {
                             Globally.EldScreenToast(EldFragment.refreshLogBtn, getContext().getResources().getString(R.string.gps_already_enabled),
                                     getContext().getResources().getColor(R.color.color_eld_theme));
@@ -166,18 +167,18 @@ public class OtherOptionsDialog extends Dialog {
 
                         break;
 
-                    case 2:
+                    case Constants.MALFUNCTION:
                         TabAct.host.setCurrentTab(12);
                         dismiss();
                         break;
 
-                    case 3:
+                    case Constants.UNIDENTIFIED:
                         TabAct.host.setCurrentTab(11);
                         dismiss();
                         break;
 
 
-                    case 4:
+                    case Constants.SUGGESTED_LOGS:
                         if (Globally.isConnected(getContext())) {
                             GetSuggestedRecords();
                         } else {
@@ -188,7 +189,7 @@ public class OtherOptionsDialog extends Dialog {
 
                         break;
 
-                    case 5:
+                    case Constants.OBD:
 
                         if(SharedPref.getObdStatus(getContext()) == Constants.WIFI_DISCONNECTED || SharedPref.getObdStatus(getContext()) == Constants.WIFI_CONNECTED){
                             getContext().startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
@@ -197,9 +198,42 @@ public class OtherOptionsDialog extends Dialog {
                         dismiss();
                         break;
 
-                    case 6:
-                    case 7:
+                    case Constants.MISSING_LOCATION:
+                    case Constants.UN_CERTIFY_LOG:
                         EldFragment.moveToCertifyPopUpBtn.performClick();
+                        dismiss();
+                        break;
+
+                    case Constants.VIN:
+
+                        if(Constants.isValidVinFromObd(getContext()) == false){
+                            Globally.EldToastWithDuration4Sec(EldFragment.refreshLogBtn, getContext().getResources().getString(R.string.VinMismatchedDesc),
+                                    getContext().getResources().getColor(R.color.colorVoilation));
+                        }else{
+                            String vin = SharedPref.getVehicleVin(getContext());
+                            if(vin.length() <= 5){
+                                vin = SharedPref.getVINNumber(getContext());
+
+                                int OBD_LAST_STATUS = SharedPref.getObdStatus(getContext());
+                                if (OBD_LAST_STATUS == constants.WIRED_CONNECTED || OBD_LAST_STATUS == constants.BLE_CONNECTED ||
+                                        OBD_LAST_STATUS == constants.WIFI_CONNECTED){
+                                    Globally.EldToastWithDuration4Sec(EldFragment.refreshLogBtn, "Not able to receive VIN information from Truck",
+                                            getContext().getResources().getColor(R.color.warning));
+                                }else{
+                                    Globally.EldToastWithDuration4Sec(EldFragment.refreshLogBtn, "Truck VIN Number is: " + vin,
+                                            getContext().getResources().getColor(R.color.colorPrimary));
+                                }
+
+                            }else{
+                                Globally.EldToastWithDuration4Sec(EldFragment.refreshLogBtn, "Truck VIN Number is: " + vin,
+                                        getContext().getResources().getColor(R.color.colorPrimary));
+
+                            }
+
+
+
+                        }
+
                         dismiss();
                         break;
 

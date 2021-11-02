@@ -82,6 +82,7 @@ public class DownloadAppService extends Service {
     class DownloadingTask extends AsyncTask<String, String, String> {
         private String fileName;
         private String folder;
+        boolean IsInterrupt = false;
 
         @Override
         protected void onPreExecute() {
@@ -139,6 +140,7 @@ public class DownloadAppService extends Service {
                     if(SharedPref.getAsyncCancelStatus(getApplicationContext())) {
                         cancel(true);
                         DeleteFile(folder + fileName);
+                        IsInterrupt = true;
                         break;
                     }
 
@@ -172,6 +174,8 @@ public class DownloadAppService extends Service {
                 intent.putExtra("percentage", Progress);
                 intent.putExtra("path", "");
                 intent.putExtra("isCompleted", false);
+                intent.putExtra("isInterrupted", IsInterrupt);
+
                 LocalBroadcastManager.getInstance(DownloadAppService.this).sendBroadcast(intent);
             }catch (Exception e){
                 e.printStackTrace();
@@ -186,6 +190,7 @@ public class DownloadAppService extends Service {
 
             if (result.equals("Downloading failed.")) {
                 DeleteFile(folder + fileName);
+                IsInterrupt = true;
             }
 
             // Display File path after downloading
@@ -193,6 +198,8 @@ public class DownloadAppService extends Service {
             intent.putExtra("percentage", 100);
             intent.putExtra("path", result);
             intent.putExtra("isCompleted", true);
+            intent.putExtra("isInterrupted", IsInterrupt);
+
             LocalBroadcastManager.getInstance(DownloadAppService.this).sendBroadcast(intent);
 
 

@@ -369,10 +369,11 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
                 setProgressbarValues(shiftCircularView, perShiftUsedTimeTV, UsedShiftHoursInt, LeftShiftHoursInt);
                 setProgressbarValues(perShiftCurrentDrivingCircularView, perShiftUsedDrivingTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
                 setProgressbarValues(perShiftCurrentOnDutyCircularView, perShiftUsedOnDutyTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
-                setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt);
-                setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt, LeftDayOffDutyDrivingHoursInt);
+                setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt, false);
+                setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt,
+                        LeftDayOffDutyDrivingHoursInt, true);
                 if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)) {
-                    setProgressbarValuesDayWise(perDayCurrentDrivingCircularView, perDayUsedDrivingTV, UsedDayDrivingHoursInt, LeftDayDrivingHoursInt);
+                    setProgressbarValuesDayWise(perDayCurrentDrivingCircularView, perDayUsedDrivingTV, UsedDayDrivingHoursInt, LeftDayDrivingHoursInt, false);
                 }
 
                 if(LeftShiftHoursInt > 0 && LeftShiftHoursInt <= 30){
@@ -393,7 +394,6 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
                     sendLogHosBtn.setCardBackgroundColor(getResources().getColor(R.color.silver));
                 }
 
-             //   setSBOffView();
 
             }
         });
@@ -484,9 +484,10 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
             CycleTimeCalculation(true);
             getCycleHours();
             setBreakProgress();
-            setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt);
-            setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt, LeftDayOffDutyDrivingHoursInt);
-            setProgressbarValuesDayWise(perDayCurrentDrivingCircularView, perDayUsedDrivingTV, UsedDayDrivingHoursInt, LeftDayDrivingHoursInt);
+            setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt, false);
+            setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt,
+                    LeftDayOffDutyDrivingHoursInt, true);
+            setProgressbarValuesDayWise(perDayCurrentDrivingCircularView, perDayUsedDrivingTV, UsedDayDrivingHoursInt, LeftDayDrivingHoursInt, false);
             setProgressbarValues(perShiftCurrentDrivingCircularView, perShiftUsedDrivingTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
             setProgressbarValues(perShiftCurrentOnDutyCircularView, perShiftUsedOnDutyTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
 
@@ -510,13 +511,6 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
 
             perDayCurrentOffDutyCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
 
-           /* if(LeftDayOffDutyDrivingHoursInt > 80 && LeftDayOffDutyDrivingHoursInt <= 120){
-                perDayCurrentOffDutyCircularView.setBarColor(getResources().getColor(R.color.colorVoilation));
-            }else if(LeftDayOffDutyDrivingHoursInt > 40 && LeftDayOffDutyDrivingHoursInt <= 80){
-                perDayCurrentOffDutyCircularView.setBarColor(getResources().getColor(R.color.colorSleeper));
-            }else{
-                perDayCurrentOffDutyCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
-            }*/
 
         }catch (Exception e){
             e.printStackTrace();
@@ -540,8 +534,9 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
             CycleTimeCalculation(true);
             getCycleHours();
             setBreakProgress();
-            setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt);
-            setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt, LeftDayOffDutyDrivingHoursInt);
+            setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt, false);
+            setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt,
+                    LeftDayOffDutyDrivingHoursInt, true);
             setProgressbarValues(perShiftCurrentDrivingCircularView, perShiftUsedDrivingTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
             setProgressbarValues(perShiftCurrentOnDutyCircularView, perShiftUsedOnDutyTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
 
@@ -653,7 +648,7 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
         reportView.setText(Html.fromHtml(getHtmlText("U " + global.FinalValue(usedHour), "R " + global.FinalValue(leftHour))));
     }
 
-    void setProgressbarValuesDayWise(CircleProgressView progressView, TextView reportView, int usedHour, int leftHour){
+    void setProgressbarValuesDayWise(CircleProgressView progressView, TextView reportView, int usedHour, int leftHour, boolean isOffDutyCircle){
         //     value settings
 
         if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
@@ -679,12 +674,15 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
         }
 
 
-        if(leftHour <= 0){
-            progressView.setBarColor(getResources().getColor(R.color.colorVoilation));
-        }else{
+        if(isOffDutyCircle){
             progressView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+        }else {
+            if (leftHour <= 0) {
+                progressView.setBarColor(getResources().getColor(R.color.colorVoilation));
+            } else {
+                progressView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+            }
         }
-
 
     }
 
@@ -857,20 +855,13 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
 
                     case OFF_DUTY:
 
-                      /*   if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
-                             setProgressbarValues(perShiftCurrentOffDutyCircularView, perShiftUsedOffDutyTV, UsedDayOffDutyHoursInt, TotalOffDutyHour);
-                        }else {
-//                             setProgressbarValues(perShiftCurrentOffDutyCircularView, perShiftUsedOffDutyTV, UsedDayOffDutyHoursInt, TotalOffDutyHour);
-                         }*/
-
-
-                        setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt, LeftDayOffDutyDrivingHoursInt);
+                        setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt, LeftDayOffDutyDrivingHoursInt, true);
 
                     case SLEEPER:
 
-                        if (usedAndRemainingTimeSB != null) {
+                       /* if (usedAndRemainingTimeSB != null) {
                             setSBOffView(); //(int) usedAndRemainingTimeSB.getSleeperBirthMinutes(), (int) usedAndRemainingTimeSB.getSleeperUsedMinutes()
-                        }
+                        }*/
                         break;
 
 
@@ -882,7 +873,7 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
                         setProgressbarValues(perShiftCurrentDrivingCircularView, perShiftUsedDrivingTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
 
                         if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)) {
-                            setProgressbarValuesDayWise(perDayCurrentDrivingCircularView, perDayUsedDrivingTV, UsedDayDrivingHoursInt, LeftDayDrivingHoursInt);
+                            setProgressbarValuesDayWise(perDayCurrentDrivingCircularView, perDayUsedDrivingTV, UsedDayDrivingHoursInt, LeftDayDrivingHoursInt, false);
 
                             if(LeftDayDrivingHoursInt > 0 && LeftDayDrivingHoursInt <= 30){
                                 perShiftCurrentDrivingCircularView.setBarColor(getResources().getColor(R.color.colorSleeper));
@@ -902,7 +893,7 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
 
                         // OnDuty value settings
                         setProgressbarValues(perShiftCurrentOnDutyCircularView, perShiftUsedOnDutyTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
-                        setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt);
+                        setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt, false);
                         break;
 
                 }

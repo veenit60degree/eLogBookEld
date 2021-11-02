@@ -121,8 +121,8 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
         CompanyId               = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
 
 
-        EventDateTime = globally.GetCurrentDeviceDate();
-        CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        EventDateTime           = globally.GetCurrentDeviceDate();
+        CurrentCycleId          = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
 
         if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
             MaxDays = UsaMaxDays;
