@@ -113,7 +113,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
     View rootView;
-    TextView actionBarTitle, caCycleTV, usCycleTV, timeZoneTV, dateActionBarTV, checkAppUpdateTV, haulExpTxtView, haulExcptnTxtVw;
+    TextView actionBarTitle, caCycleTV, usCycleTV, timeZoneTV, dateActionBarTV, checkAppUpdateTV, haulExpTxtView, haulExcptnTxtVw,adverseExpTxtView,adverseCanadaExpTxtView,deferralTxtView;
     TextView caCurrentCycleTV, usCurrentCycleTV, operatingZoneTV;
     Spinner caCycleSpinner, usCycleSpinner, timeZoneSpinner;
     Button SettingSaveBtn;
@@ -122,7 +122,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn,
             obdDiagnoseBtn, docBtn, deferralRuleLay, brightnessSoundEditBtn, settingsMainLay, actionbarMainLay, updateBlinkLayout;
     LinearLayout canCycleLayout, usaCycleLayout, timeZoneLayout;
-    SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton;
+    SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton,adverseCanadaSwitchButton;
     List<CycleModel> CanCycleList;
     List<CycleModel> UsaCycleList;
     List<TimeZoneModel> TimeZoneList;
@@ -286,6 +286,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         operatingZoneTV      = (TextView)v.findViewById(R.id.operatingZoneTV);
         caCurrentCycleTV     = (TextView)v.findViewById(R.id.caCurrentCycleTV);
         usCurrentCycleTV     = (TextView)v.findViewById(R.id.usCurrentCycleTV);
+        adverseExpTxtView     = (TextView)v.findViewById(R.id.adverseExpTxtView);
+        adverseCanadaExpTxtView  = (TextView)v.findViewById(R.id.adverseCanadaExpTxtView);
+        deferralTxtView          = (TextView)v.findViewById(R.id.deferralTxtView);
 
         caCycleSpinner       = (Spinner)v.findViewById(R.id.caCycleSpinner);
         usCycleSpinner       = (Spinner)v.findViewById(R.id.usCycleSpinner);
@@ -326,6 +329,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         deferralSwitchButton   = (SwitchCompat)v.findViewById(R.id.deferralSwitchButton);
         haulExceptnSwitchButton = (SwitchCompat)v.findViewById(R.id.haulExceptnSwitchButton);
         adverseSwitchButton = (SwitchCompat)v.findViewById(R.id.adverseSwitchButton);
+        adverseCanadaSwitchButton  = (SwitchCompat) v.findViewById(R.id.adverseCanadaSwitchButton);
 
         showBrightnessSeekBar = (SeekBar)v.findViewById(R.id.sbBrightness);
         showVolumeSeekBar     = (SeekBar)v.findViewById(R.id.sbVolume);
@@ -363,43 +367,47 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if(buttonView.isPressed()) {
-                    if (isChecked) {
-                        List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId),
-                                global.GetCurrentJodaDateTime(),
-                                global.GetCurrentUTCDateTime(), dbHelper);
+                    if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ){
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_usa_cycle_check), getResources().getColor(R.color.colorSleeper));
+                        buttonView.setChecked(false);
+                    }else {
+                        if (isChecked) {
+                            List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId),
+                                    global.GetCurrentJodaDateTime(),
+                                    global.GetCurrentUTCDateTime(), dbHelper);
 
-                        DriverDetail oDriverDetail = hMethods.getDriverList(global.GetCurrentJodaDateTime(),
-                                global.GetCurrentUTCDateTime(), Integer.valueOf(DriverId),
-                                (int) global.GetTimeZoneOffSet(), Integer.valueOf(CurrentCycleId),
-                                global.isSingleDriver(getActivity()),
-                                Integer.valueOf(SharedPref.getDriverStatusId(getActivity())), false,
-                                isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                                SharedPref.GetRulesVersion(getActivity()), oDriverLogDetail);
+                            DriverDetail oDriverDetail = hMethods.getDriverList(global.GetCurrentJodaDateTime(),
+                                    global.GetCurrentUTCDateTime(), Integer.valueOf(DriverId),
+                                    (int) global.GetTimeZoneOffSet(), Integer.valueOf(CurrentCycleId),
+                                    global.isSingleDriver(getActivity()),
+                                    Integer.valueOf(SharedPref.getDriverStatusId(getActivity())), false,
+                                    isHaulExcptn, isAdverseExcptn, isNorthCanada,
+                                    SharedPref.GetRulesVersion(getActivity()), oDriverLogDetail);
 
-                        RulesResponseObject deferralObj = localCalls.IsEligibleDeferralRule(oDriverDetail);
+                            RulesResponseObject deferralObj = localCalls.IsEligibleDeferralRule(oDriverDetail);
 
-                        if (deferralObj.isDeferralEligible()) {
+                            if (deferralObj.isDeferralEligible()) {
 
-                            leftOffOrSleeperMin = (int) deferralObj.getLeftOffOrSleeperMinutes();
+                                leftOffOrSleeperMin = (int) deferralObj.getLeftOffOrSleeperMinutes();
 
-                            try {
-                                if (deferralDialog != null && deferralDialog.isShowing())
-                                    deferralDialog.dismiss();
+                                try {
+                                    if (deferralDialog != null && deferralDialog.isShowing())
+                                        deferralDialog.dismiss();
 
-                                deferralDialog = new DeferralDialog(getActivity(), leftOffOrSleeperMin, 1, new DeferralListener());
-                                deferralDialog.show();
+                                    deferralDialog = new DeferralDialog(getActivity(), leftOffOrSleeperMin, 1, new DeferralListener());
+                                    deferralDialog.show();
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            } else {
+                                buttonView.setChecked(false);
+                                global.EldScreenToast(SyncDataBtn, getString(R.string.notEligForDef), getResources().getColor(R.color.colorVoilation));
                             }
-
                         } else {
-                            buttonView.setChecked(false);
-                            global.EldScreenToast(SyncDataBtn, getString(R.string.notEligForDef), getResources().getColor(R.color.colorVoilation));
-                        }
-                    }else{
-                        buttonView.setChecked(true);
-                        global.EldScreenToast(SyncDataBtn, getString(R.string.defWillAutoDis), getResources().getColor(R.color.warning));
+                            buttonView.setChecked(true);
+                            global.EldScreenToast(SyncDataBtn, getString(R.string.defWillAutoDis), getResources().getColor(R.color.warning));
 
                        /* if(DriverType == Constants.MAIN_DRIVER_TYPE) {
                             SharedPref.setDeferralForMain(false, getActivity());
@@ -414,6 +422,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 syncingMethod, global, hMethods, dbHelper, getActivity() ) ;
 
 */
+                        }
                     }
                 }
             }
@@ -426,24 +435,30 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                 if(buttonView.isPressed()) {
 
-                    if (isChecked) {
-                        getExceptionStatus();
+                    if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ){
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_canada_cycle_check), getResources().getColor(R.color.colorSleeper));
+                        buttonView.setChecked(false);
+                    }else {
 
-                        if(!isAdverseExcptn) {
-                            if(isAllowToEnableException(DriverId)) {
-                                haulExceptionAlert();
-                            }else{
+                        if (isChecked) {
+                            getExceptionStatus();
+
+                            if (!isAdverseExcptn) {
+                                if (isAllowToEnableException(DriverId)) {
+                                    haulExceptionAlert();
+                                } else {
+                                    buttonView.setChecked(false);
+                                    global.EldScreenToast(SyncDataBtn, exceptionDesc, getResources().getColor(R.color.colorSleeper));
+                                }
+
+                            } else {
                                 buttonView.setChecked(false);
-                                global.EldScreenToast(SyncDataBtn, exceptionDesc, getResources().getColor(R.color.colorSleeper));
+                                global.EldScreenToast(SyncDataBtn, getString(R.string.already_enable_excp), getResources().getColor(R.color.colorSleeper));
                             }
-
-                        }else{
-                            buttonView.setChecked(false);
-                            global.EldScreenToast(SyncDataBtn, getString(R.string.already_enable_excp), getResources().getColor(R.color.colorSleeper));
+                        } else {
+                            global.EldScreenToast(SyncDataBtn, getString(R.string.haul_excp_reset_auto), getResources().getColor(R.color.colorSleeper));
+                            buttonView.setChecked(true);
                         }
-                    } else {
-                        global.EldScreenToast(SyncDataBtn, getString(R.string.haul_excp_reset_auto), getResources().getColor(R.color.colorSleeper));
-                        buttonView.setChecked(true);
                     }
                 }
             }
@@ -454,39 +469,63 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if(buttonView.isPressed()) {
-                    if (isChecked) {
+                    if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ){
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_canada_cycle_check), getResources().getColor(R.color.colorSleeper));
+                        buttonView.setChecked(false);
+                    }else {
+                        if (isChecked) {
 
-                        getExceptionStatus();
-                        if(!isHaulExcptn) {
+                            getExceptionStatus();
+                            if (!isHaulExcptn) {
 
-                            if(isAllowToEnableException(DriverId)) {
-                                try {
-                                    if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
-                                        adverseRemarksDialog.dismiss();
+                                if (isAllowToEnableException(DriverId)) {
+                                    try {
+                                        if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
+                                            adverseRemarksDialog.dismiss();
 
-                                    adverseRemarksDialog = new AdverseRemarksDialog(getActivity(), true,
-                                            false, false, new RemarksListener());
-                                    adverseRemarksDialog.show();
+                                        adverseRemarksDialog = new AdverseRemarksDialog(getActivity(), true,
+                                                false, false, new RemarksListener());
+                                        adverseRemarksDialog.show();
 
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    buttonView.setChecked(false);
+                                    global.EldScreenToast(SyncDataBtn, exceptionDesc, getResources().getColor(R.color.colorSleeper));
                                 }
-                            }else{
-                                buttonView.setChecked(false);
-                                global.EldScreenToast(SyncDataBtn, exceptionDesc, getResources().getColor(R.color.colorSleeper));
-                            }
 
-                        }else{
-                            buttonView.setChecked(false);
-                            global.EldScreenToast(SyncDataBtn, getString(R.string.already_enable_excp), getResources().getColor(R.color.colorSleeper));
+                            } else {
+                                buttonView.setChecked(false);
+                                global.EldScreenToast(SyncDataBtn, getString(R.string.already_enable_excp), getResources().getColor(R.color.colorSleeper));
+                            }
+                        } else {
+                            global.EldScreenToast(SyncDataBtn, getString(R.string.excp_reset_auto), getResources().getColor(R.color.colorSleeper));
+                            buttonView.setChecked(true);
                         }
-                    } else {
-                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_reset_auto), getResources().getColor(R.color.colorSleeper));
-                        buttonView.setChecked(true);
                     }
                 }
             }
         });
+
+        adverseCanadaSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(buttonView.isPressed()) {
+                     global.EldScreenToast(SyncDataBtn, "Can't enabled now", getResources().getColor(R.color.colorSleeper));
+                        buttonView.setChecked(false);
+//                    if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ){
+//                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_usa_cycle_check), getResources().getColor(R.color.colorSleeper));
+//                        buttonView.setChecked(false);
+//                    }else {
+//                     //
+//                    }
+                }
+            }
+        });
+
+
 
         /*
 
@@ -590,6 +629,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         haulExceptnSwitchButton.setChecked(isHaulExcptn);
         adverseSwitchButton.setChecked(isAdverseExcptn);
         deferralSwitchButton.setChecked(isDeferral);
+
+        if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ){
+            adverseCanadaExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
+            deferralTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
+            haulExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
+            adverseExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
+        }else {
+            haulExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
+            adverseExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
+            adverseCanadaExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
+            deferralTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
+        }
+
+
 
         if(constants.isLocMalfunctionEvent(getActivity(), DriverType) && SharedPref.getLocationEventType( getContext()).equals("x")){
             LocationType = "m";
@@ -718,6 +771,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         changedCycleName    = global.USA_WORKING_6_DAYS_NAME;
                     }
                 }
+
 
                 if (global.isConnected(getActivity())) {
                     changeCycleRequest(DriverId, DeviceId, CompanyId, "",
@@ -1250,7 +1304,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             public void onStopTrackingTouch(SeekBar seekBar) {
 
                 boolean settingsCanWrite = false;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     settingsCanWrite = Settings.System.canWrite(getActivity());
                 }
 
@@ -2198,7 +2252,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             opZoneTmgView.setVisibility(View.VISIBLE);
             canEditImgView.setVisibility(View.VISIBLE);
             usEditImgView.setVisibility(View.GONE);
-           // deferralRuleLay.setVisibility(View.VISIBLE);
+            deferralRuleLay.setVisibility(View.VISIBLE);
 
             if(isNorthCanada) {
                 operatingZoneTV.setText(getString(R.string.OperatingZoneNorth));
@@ -2212,7 +2266,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             canEditImgView.setVisibility(View.GONE);
             usEditImgView.setVisibility(View.VISIBLE);
             operatingZoneTV.setText(getString(R.string.OperatingZoneUS));
-            deferralRuleLay.setVisibility(View.GONE);
+            deferralRuleLay.setVisibility(View.VISIBLE);
         }
     }
 

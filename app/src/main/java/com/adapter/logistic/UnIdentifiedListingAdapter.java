@@ -83,6 +83,7 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
             holder.unIdenRecordDescTV = (TextView)convertView.findViewById(R.id.unIdenRecordDescTV);
             holder.requestedByTxtVw = (TextView)convertView.findViewById(R.id.requestedByTxtVw);
             holder.unIdenRecorTimeTV = (TextView)convertView.findViewById(R.id.unIdenRecorTimeTV);
+            holder.unIdenRecordStatusTV = (TextView)convertView.findViewById(R.id.unIdenRecordStatusTV);
 
             holder.checkboxUnIdentifiedRecord = (CheckBox)convertView.findViewById(R.id.checkboxUnIdentifiedRecord);
             holder.unIdentifiedDtailView    = (RelativeLayout)convertView.findViewById(R.id.unIdentifiedDtailView) ;
@@ -94,10 +95,23 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
         }
 
         String startDate = Globally.dateConversionMalfunction(unIdentifiedList.get(position).getStartDateTime());   //Globally.convertToMonNameFormat(unIdentifiedList.get(position).getStartDateTime() );
-        String endDate = Globally.dateConversionMalfunction(unIdentifiedList.get(position).getEndDateTime()); //Globally.convertToMonNameFormat(unIdentifiedList.get(position).getEndDateTime() );
+        String endDate = unIdentifiedList.get(position).getEndDateTime();
+        if(endDate.equals("null")){
+            endDate = "";
+        }
+        if(endDate.length() > 10) {
+            endDate = Globally.dateConversionMalfunction(endDate); //Globally.convertToMonNameFormat(unIdentifiedList.get(position).getEndDateTime() );
+        }
         holder.unIdenRecordDescTV.setText(startDate + " - "+endDate);
 
        holder.unIdenRecorTimeTV.setText("");
+       String DutyStatus = unIdentifiedList.get(position).getDutyStatus();
+       if(DutyStatus.equals("OD")){
+           DutyStatus = "ON";
+       }
+       if(DutyStatus.equals("DR") || DutyStatus.equals("ON")){
+           holder.unIdenRecordStatusTV.setText("(" + DutyStatus + ")");
+       }
 
         if(unIdentifiedList.get(position).isCompanyAssigned()){
             holder.requestedByTxtVw.setVisibility(View.VISIBLE);
@@ -244,7 +258,7 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
     }
 
     public class ViewHolder {
-        TextView unIdenDistanceTV, unIdenRecordDescTV, requestedByTxtVw, unIdenRecorTimeTV;
+        TextView unIdenDistanceTV, unIdenRecordDescTV, requestedByTxtVw, unIdenRecorTimeTV, unIdenRecordStatusTV;
         CheckBox checkboxUnIdentifiedRecord;
         RelativeLayout unIdentifiedDtailView;
 

@@ -11,9 +11,11 @@ import android.webkit.WebView;
 import android.widget.Button;
 
 import com.constants.ConstantHtml;
+import com.constants.Constants;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.fragment.EldFragment;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +30,7 @@ public class EditLogPreviewDialog extends Dialog {
         public void EditPreviewReady();
     }
 
+    Constants constants;
     HelperMethods hMethods;
     JSONArray driverLogList;
     private EditLogPreviewListener readyListener;
@@ -72,6 +75,7 @@ public class EditLogPreviewDialog extends Dialog {
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        constants           = new Constants();
         hMethods            = new HelperMethods();
         btnSavePreviewLog   = (Button) findViewById(R.id.btnSavePreviewLog);
         btnCancelPreviewLog = (Button) findViewById(R.id.btnCancelPreviewLog);
@@ -109,10 +113,10 @@ public class EditLogPreviewDialog extends Dialog {
 
     void LoadWebView(){
 
-        String TotalOnDutyHours        = Globally.FinalValue(hMethods.GetOnDutyTime(driverLogList));
-        String  TotalDrivingHours       = Globally.FinalValue(hMethods.GetDrivingTime(driverLogList));
-        String TotalOffDutyHours       = Globally.FinalValue(hMethods.GetOffDutyTime(driverLogList));
-        String TotalSleeperBerthHours  = Globally.FinalValue(hMethods.GetSleeperTime(driverLogList));
+        String TotalOnDutyHours        = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(driverLogList, constants, EldFragment.ON_DUTY));
+        String TotalDrivingHours       = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(driverLogList, constants, EldFragment.DRIVING));
+        String TotalOffDutyHours       = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(driverLogList, constants, EldFragment.OFF_DUTY));
+        String TotalSleeperBerthHours  = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(driverLogList, constants, EldFragment.SLEEPER));
 
         String CloseTag = HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
 

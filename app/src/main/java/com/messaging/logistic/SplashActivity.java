@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Window;
 import android.widget.RelativeLayout;
@@ -114,6 +115,8 @@ public class SplashActivity extends Activity implements
         Constants.IsAlsServerResponding = true;
         Constants.IsHomePageOnCreate = true;
 
+      //  String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
+        //Log.d("DeviceID", android_id);
         // check availability of play services
         if (!global.checkPlayServices(getApplicationContext())) {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

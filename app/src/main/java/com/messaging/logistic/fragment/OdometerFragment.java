@@ -322,7 +322,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
                                 String manualInputOdometer = odometerEditTxt.getText().toString().trim();
                                 if (manualInputOdometer.contains(".")) {
-                                    manualInputOdometer = manualInputOdometer.split(".")[0];
+                                    manualInputOdometer = manualInputOdometer.split("\\.")[0];
                                 }
 
                                 if (ReadingType.equals("end")) {
@@ -642,7 +642,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
                 //  StartOdoInt = 0; EndOdoInt = 0;
                 if (StartOdometer.trim().length() > 0) {
                     if (StartOdometer.contains(".")) {
-                        StartOdometer = StartOdometer.split(".")[0];
+                        StartOdometer = StartOdometer.split("\\.")[0];
                     }
                     StartOdoInt = Long.parseLong(StartOdometer);
                 } else {
@@ -652,7 +652,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
                 if (EndOdometer.trim().length() > 0) {
                     if (EndOdometer.contains(".")) {
-                        EndOdometer = EndOdometer.split(".")[0];
+                        EndOdometer = EndOdometer.split("\\.")[0];
                     }
                     EndOdoInt = Long.parseLong(EndOdometer);
                 } else {

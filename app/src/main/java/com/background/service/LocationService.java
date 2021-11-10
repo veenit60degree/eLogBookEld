@@ -156,8 +156,11 @@ public class LocationService extends Service {
         public void onLocationChanged(final Location loc)
         {
             Log.i("onLocationChanged", "Location: " + loc.getLatitude());
-            Globally.LATITUDE = "" + loc.getLatitude();
-            Globally.LONGITUDE = "" + loc.getLongitude();
+
+            if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
+                Globally.LATITUDE = "" + loc.getLatitude();
+                Globally.LONGITUDE = "" + loc.getLongitude();
+            }
 
             if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
                     !SharedPref.getPassword(getApplicationContext()).equals("")) {

@@ -681,7 +681,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setVehicleVin("", getApplicationContext());
 			SharedPref.setDriverStatusId("", getApplicationContext());
 			SharedPref.setVehilceMovingStatus(false, getApplicationContext());
-			SharedPref.SetObdEngineHours("0", getApplicationContext());
 			SharedPref.saveHighPrecisionOdometer("", "", getApplicationContext());
 			SharedPref.setEcmObdLocationWithTime("0", "0", "0", "","", getApplicationContext());
 			SharedPref.setLocationEventType("", getApplicationContext());
@@ -709,6 +708,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.SetWrongVinAlertView(false, getApplicationContext());
 
 			constants.saveMalfncnStatus(getApplicationContext(), false);
+			SharedPref.SetObdOdometer("0", getApplicationContext());
+			SharedPref.SetObdEngineHours("0", getApplicationContext());
 
 			// clear array in table
 			if(CompanyId.length() > 0) {
@@ -801,6 +802,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 								SharedPref.SetRulesVersion(rulesVersion, getApplicationContext());
 
 								if (status.equalsIgnoreCase("true")) {
+
+									global.DisConnectBleDevice(LoginActivity.this);
 
 									if (!obj.isNull("Data")) {
 										loginResponseData = obj.getString("Data");
@@ -1221,11 +1224,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			case R.id.mainDriverBtn:
 
-				if(isDriving){
-					isDriving = false;
-				}else{
-					isDriving = true;
-				}
+				isDriving = false;
 
 				if(SharedPref.isLoginAllowed(LoginActivity.this)) {
 					LoginUserType = DriverConst.SingleDriver;

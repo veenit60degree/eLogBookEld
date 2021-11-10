@@ -856,7 +856,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                     }
                 }
 
-                if (EventType == 1 ) {  //|| EventType == 2
+                if (EventType == 1 ) {
                     OldStatus = DRIVER_JOB_STATUS;
                 }
 

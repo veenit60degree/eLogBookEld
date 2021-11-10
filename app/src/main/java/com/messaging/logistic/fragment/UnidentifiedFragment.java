@@ -458,7 +458,9 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                                         objItem.getString(ConstantsKeys.AssignedUnidentifiedRecordsId),
                                         false,
                                         objItem.getString(ConstantsKeys.StartLocationKM),
-                                        objItem.getString(ConstantsKeys.EndLocationKM)
+                                        objItem.getString(ConstantsKeys.EndLocationKM),
+                                        objItem.getString(ConstantsKeys.DutyStatus),
+                                        objItem.getBoolean(ConstantsKeys.Intermediate)
                                         );
 
                                 unIdentifiedRecordList.add(model);
@@ -491,7 +493,9 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                                         Constants.CheckNullString(objItem.getString(ConstantsKeys.AssignedUnidentifiedRecordsId)),
                                         true,
                                          Constants.CheckNullString(objItem.getString(ConstantsKeys.StartLocationKM)),
-                                         Constants.CheckNullString(objItem.getString(ConstantsKeys.EndLocationKM))
+                                         Constants.CheckNullString(objItem.getString(ConstantsKeys.EndLocationKM)),
+                                        objItem.getString(ConstantsKeys.DutyStatus),
+                                        objItem.getBoolean(ConstantsKeys.Intermediate)
                                 );
 
                                 unIdentifiedRecordList.add(model);

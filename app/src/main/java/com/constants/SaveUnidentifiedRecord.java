@@ -70,7 +70,7 @@ public class SaveUnidentifiedRecord
             @Override
             public byte[] getBody() throws AuthFailureError {
                 try {
-                    // Log.d("certify", "certify Data: " + driverLogData.toString());
+                     Log.d("certify", "certify Data: " + driverLogData.toString());
                     return driverLogData.toString().getBytes("utf-8");
                 } catch (UnsupportedEncodingException uee) {
                     VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",

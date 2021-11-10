@@ -42,7 +42,7 @@ public class InitilizeEldView {
                 else
                     jobTypeTxtVw.setText("Off Duty");
 
-                remainingLay.setVisibility(View.GONE);
+               // remainingLay.setVisibility(View.GONE);
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
@@ -51,7 +51,7 @@ public class InitilizeEldView {
 
             case EldFragment.SLEEPER:   //2
                 jobTypeTxtVw.setText("Sleeper");
-                remainingLay.setVisibility(View.GONE);
+              //  remainingLay.setVisibility(View.GONE);
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
@@ -60,7 +60,7 @@ public class InitilizeEldView {
 
             case EldFragment.DRIVING:   //3
                 jobTypeTxtVw.setText("Driving");
-                remainingLay.setVisibility(View.VISIBLE);
+              //  remainingLay.setVisibility(View.VISIBLE);
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
@@ -69,7 +69,7 @@ public class InitilizeEldView {
 
             case EldFragment.ON_DUTY:   //4
                 jobTypeTxtVw.setText("On Duty");
-                remainingLay.setVisibility(View.VISIBLE);
+                //remainingLay.setVisibility(View.VISIBLE);
                 usedHourLay.setVisibility(View.VISIBLE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");
@@ -78,7 +78,7 @@ public class InitilizeEldView {
 
             default:
                 jobTypeTxtVw.setText("Off Duty");
-                remainingLay.setVisibility(View.GONE);
+                //remainingLay.setVisibility(View.GONE);
                 usedHourLay.setVisibility(View.GONE);
                 jobTimeTxtVw.setText("");
                 jobTimeRemngTxtVw.setText("");

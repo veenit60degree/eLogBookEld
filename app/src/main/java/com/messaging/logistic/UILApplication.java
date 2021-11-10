@@ -31,6 +31,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;
 
 import com.google.android.gms.security.ProviderInstaller;
+import com.htstart.htsdk.HTBleSdk;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -76,6 +77,10 @@ public class UILApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+
+		HTBleSdk.Companion.getInstance().initHTBleSDK(this, "com.messaging.logistic");
+		HTBleSdk.Companion.getInstance().setDebugLogcatEvent(false);
 
 		if (Globally.Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());

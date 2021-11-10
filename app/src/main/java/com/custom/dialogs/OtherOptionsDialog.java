@@ -147,7 +147,7 @@ public class OtherOptionsDialog extends Dialog {
         otherFeatureListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Log.d("itemClick", "itemClick: " + position);
+               // Log.d("itemClick", "itemClick: " + position);
 
                 switch (otherOptionList.get(position).getStatus()) {
 

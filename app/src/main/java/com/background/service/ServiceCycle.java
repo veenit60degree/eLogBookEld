@@ -157,7 +157,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
         boolean isDrivingAllowed = hMethods.isDrivingAllowedWithCoDriver(context, Global, ""+DriverId, false, dbHelper);
         if(isDrivingAllowed == false && VehicleSpeed >= 8){
-            Log.d("isDrivingAllowed", "Driving not Allowed"  );
+          //  Log.d("isDrivingAllowed", "Driving not Allowed"  );
             SharedPref.setDrivingAllowedStatus(false, Global.GetCurrentDateTime(), context);
         }else {
             SharedPref.setDrivingAllowedStatus(true, "", context);
@@ -1487,7 +1487,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         constants.IsAlreadyViolation = false;
         sendBroadCast(true, false, false);
 
-        Log.d("Saved Status", "--- service DriverStatusId: "+DriverStatusId);
+       // Log.d("Saved Status", "--- service DriverStatusId: "+DriverStatusId);
 
     }
 

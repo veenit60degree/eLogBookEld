@@ -93,6 +93,21 @@
 
 
         <TextView
+            android:id="@+id/unIdenRecordStatusTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_eld_theme"
+            android:textSize="@dimen/text_size_24"
+            android:paddingTop="@dimen/margin_23"
+            android:paddingRight="@dimen/margin_25"
+            android:textStyle="bold"
+            android:layout_toLeftOf="@+id/unIdenArrow"
+            android:layout_marginRight="@dimen/margin_16"
+
+            />
+
+
+        <TextView
             android:id="@+id/unIdenRecorTimeTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -119,10 +134,9 @@
             android:id="@+id/unIdentifiedDtailView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@id/checkboxUnIdentifiedRecord"
             android:layout_marginLeft="@dimen/margin_20"
-            android:background="@color/transparent"
-            >
+            android:layout_toRightOf="@id/checkboxUnIdentifiedRecord"
+            android:background="@color/transparent">
 
 
         </RelativeLayout>

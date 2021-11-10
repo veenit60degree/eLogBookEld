@@ -969,6 +969,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 }
 
+
                 String startDateTime = logObj.getString("StartTime");
                 String endDateTime = logObj.getString("EndTime");
 
@@ -1118,7 +1119,14 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                     currTotalDis = engineObj.getString("EndOdometer");
                     currTotalEng = engineObj.getString("EndEngineHours");
-
+                   
+                    try {
+                        if (currTotalEng.length() > 0) {
+                            currTotalEng = constants.Convert1DecimalPlacesDouble(Double.parseDouble(currTotalEng));
+                        }
+                    }catch (Exception e){
+                        currTotalEng = engineObj.getString("EndEngineHours");
+                    }
                 }
 
             }else{

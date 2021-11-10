@@ -33,8 +33,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:paddingTop="@dimen/margin_short_5"
             android:layout_weight="0.2"
+            android:paddingLeft="@dimen/margin_short_2"
+            android:paddingRight="@dimen/margin_short_2"
+
             >
 
 
@@ -43,9 +45,9 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_weight="0.4"
-                android:layout_marginLeft="@dimen/margin_15"
+                android:layout_marginLeft="@dimen/margin_short_8"
                 android:layout_marginTop="@dimen/margin_10"
-                android:layout_marginBottom="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_short_5"
 
                 >
 
@@ -55,7 +57,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.1"
                     android:background="@drawable/white_left"
-                    android:layout_marginBottom="@dimen/margin_15"
+                    android:layout_marginBottom="@dimen/margin_short_8"
                     >
 
 
@@ -217,7 +219,7 @@
                 android:weightSum="1"
                 android:layout_weight="0.2"
                 android:layout_marginTop="@dimen/margin_10"
-                android:layout_marginBottom="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_short_5"
                 >
 
 
@@ -227,7 +229,7 @@
                     android:orientation="horizontal"
                     android:layout_weight="0.5"
                     android:background="@color/white"
-                    android:layout_marginBottom="@dimen/margin_15"
+                    android:layout_marginBottom="@dimen/margin_short_8"
 
                     >
 
@@ -267,8 +269,8 @@
                                     android:textStyle="bold" />
 
                                 <RelativeLayout
-                                    android:layout_width="@dimen/view_height_120"
-                                    android:layout_height="@dimen/view_height_120"
+                                    android:layout_width="@dimen/view_height_110"
+                                    android:layout_height="@dimen/view_height_110"
                                     android:layout_gravity="center_horizontal">
                                     <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
 
@@ -278,7 +280,10 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerInParent="true"
-                                        android:layout_margin="@dimen/margin_short_3"
+                                        android:layout_marginStart="@dimen/margin_short_3"
+                                        android:layout_marginTop="@dimen/margin_short_3"
+                                        android:layout_marginEnd="@dimen/margin_short_3"
+                                        android:layout_marginBottom="@dimen/margin_short_3"
                                         CircleProgressView:cpv_autoTextSize="true"
                                         CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
                                         CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
@@ -289,14 +294,13 @@
                                         CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
                                         CircleProgressView:cpv_seekMode="true"
                                         CircleProgressView:cpv_showUnit="true"
+
                                         CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
                                         CircleProgressView:cpv_textColor="@color/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
                                         CircleProgressView:cpv_unitPosition="right_top"
-                                        CircleProgressView:cpv_unitScale="0"
-
-                                        />
+                                        CircleProgressView:cpv_unitScale="0" />
 
 
                                     <TextView
@@ -308,9 +312,8 @@
                                         android:gravity="center_horizontal"
                                         android:textColor="@color/hos_used_time"
                                         android:textSize="@dimen/text_size_17"
-                                        android:textStyle="bold"
 
-                                        />
+                                        android:textStyle="bold" />
 
 
                                 </RelativeLayout>
@@ -352,8 +355,8 @@
                                     android:textStyle="bold" />
 
                                 <RelativeLayout
-                                    android:layout_width="@dimen/view_height_120"
-                                    android:layout_height="@dimen/view_height_120"
+                                    android:layout_width="@dimen/view_height_110"
+                                    android:layout_height="@dimen/view_height_110"
                                     android:layout_gravity="center_horizontal">
                                     <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
 
@@ -436,8 +439,8 @@
                                     android:textStyle="bold" />
 
                                 <RelativeLayout
-                                    android:layout_width="@dimen/view_height_120"
-                                    android:layout_height="@dimen/view_height_120"
+                                    android:layout_width="@dimen/view_height_110"
+                                    android:layout_height="@dimen/view_height_110"
                                     android:layout_gravity="center_horizontal">
                                     <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
 
@@ -498,6 +501,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
                     android:background="@color/white"
+
 
                     >
 
@@ -573,8 +577,8 @@
 
 
                                 <RelativeLayout
-                                    android:layout_width="@dimen/view_height_120"
-                                    android:layout_height="@dimen/view_height_120"
+                                    android:layout_width="@dimen/view_height_110"
+                                    android:layout_height="@dimen/view_height_110"
                                     android:layout_gravity="center_horizontal">
                                     <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
 
@@ -597,9 +601,9 @@
                                         CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
                                         CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
                                         CircleProgressView:cpv_seekMode="true"
+
                                         CircleProgressView:cpv_showUnit="true"
                                         CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-
                                         CircleProgressView:cpv_textColor="@color/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
@@ -660,8 +664,8 @@
                                     />
 
                                 <RelativeLayout
-                                    android:layout_width="@dimen/view_height_120"
-                                    android:layout_height="@dimen/view_height_120"
+                                    android:layout_width="@dimen/view_height_110"
+                                    android:layout_height="@dimen/view_height_110"
                                     android:layout_gravity="center_horizontal"
                                     >
                                     <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
@@ -751,8 +755,8 @@
                                     />
 
                                 <RelativeLayout
-                                    android:layout_width="@dimen/view_height_120"
-                                    android:layout_height="@dimen/view_height_120"
+                                    android:layout_width="@dimen/view_height_110"
+                                    android:layout_height="@dimen/view_height_110"
                                     android:layout_gravity="center_horizontal"
                                     >
                                     <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
@@ -762,11 +766,8 @@
                                         android:id="@+id/perDayOffDutyCircularView"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_margin="@dimen/margin_short_3"
                                         android:layout_centerInParent="true"
-                                        android:layout_marginStart="@dimen/margin_short_3"
-                                        android:layout_marginTop="@dimen/margin_short_3"
-                                        android:layout_marginEnd="@dimen/margin_short_3"
-                                        android:layout_marginBottom="@dimen/margin_short_3"
                                         CircleProgressView:cpv_autoTextSize="true"
                                         CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
                                         CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
@@ -778,12 +779,13 @@
                                         CircleProgressView:cpv_seekMode="true"
                                         CircleProgressView:cpv_showUnit="true"
                                         CircleProgressView:cpv_spinColor="@color/hos_break_time"
-
                                         CircleProgressView:cpv_textColor="@color/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
                                         CircleProgressView:cpv_unitPosition="right_top"
-                                        CircleProgressView:cpv_unitScale="0" />
+                                        CircleProgressView:cpv_unitScale="0"
+
+                                        />
 
 
                                     <TextView
@@ -823,9 +825,9 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_weight="0.4"
-                android:layout_marginRight="@dimen/margin_15"
+                android:layout_marginRight="@dimen/margin_short_8"
                 android:layout_marginTop="@dimen/margin_10"
-                android:layout_marginBottom="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_short_5"
 
                 >
 
@@ -835,7 +837,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
                     android:background="@drawable/white_right"
-                    android:layout_marginBottom="@dimen/margin_15"
+                    android:layout_marginBottom="@dimen/margin_short_8"
 
 
                     >
@@ -868,8 +870,8 @@
                                 android:textStyle="bold" />
 
                             <RelativeLayout
-                                android:layout_width="@dimen/view_height_120"
-                                android:layout_height="@dimen/view_height_120"
+                                android:layout_width="@dimen/view_height_110"
+                                android:layout_height="@dimen/view_height_110"
                                 android:layout_gravity="center_horizontal">
                                 <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
 
@@ -943,55 +945,47 @@
                         >
 
 
-
-
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="vertical"
                             android:gravity="center"
-                            >
+                            android:orientation="vertical">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
                                 android:layout_gravity="center_horizontal"
                                 android:gravity="center_vertical"
-                                >
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
                                     android:text="@string/hos_cycle"
                                     android:textColor="@color/black_hos"
-                                    android:textStyle="bold"
                                     android:textSize="@dimen/text_size_19"
-                                    android:layout_gravity="center_horizontal"
-                                    />
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/hosCycleTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_vertical"
+                                    android:paddingLeft="@dimen/margin_short_5"
                                     android:text="@string/us_cycle_7days_hos"
                                     android:textColor="@color/holo_green_dark"
                                     android:textSize="@dimen/text_size_12"
                                     android:textStyle="normal"
-                                    android:paddingLeft="@dimen/margin_short_5"
-                                    android:visibility="visible"
-                                    />
+                                    android:visibility="visible" />
 
                             </LinearLayout>
 
 
                             <RelativeLayout
-                                android:layout_width="@dimen/view_height_120"
-                                android:layout_height="@dimen/view_height_120"
-                                android:layout_gravity="center_horizontal"
-                                >
+                                android:layout_width="@dimen/view_height_110"
+                                android:layout_height="@dimen/view_height_110"
+                                android:layout_gravity="center_horizontal">
                                 <!--android:background="@drawable/circular_progressbar_bg_drawable"-->
 
 
@@ -999,8 +993,11 @@
                                     android:id="@+id/cycleCircularView"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/margin_short_3"
                                     android:layout_centerInParent="true"
+                                    android:layout_marginStart="@dimen/margin_short_3"
+                                    android:layout_marginTop="@dimen/margin_short_3"
+                                    android:layout_marginEnd="@dimen/margin_short_3"
+                                    android:layout_marginBottom="@dimen/margin_short_3"
                                     CircleProgressView:cpv_autoTextSize="true"
                                     CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
                                     CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
@@ -1012,25 +1009,24 @@
                                     CircleProgressView:cpv_seekMode="true"
                                     CircleProgressView:cpv_showUnit="true"
                                     CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
+
                                     CircleProgressView:cpv_textColor="@color/hos_break_time"
                                     CircleProgressView:cpv_textScale="0"
                                     CircleProgressView:cpv_unitColor="@color/white"
                                     CircleProgressView:cpv_unitPosition="right_top"
-                                    CircleProgressView:cpv_unitScale="0"
-
-                                    />
+                                    CircleProgressView:cpv_unitScale="0" />
 
 
                                 <TextView
                                     android:id="@+id/hosUsedCycleTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@color/hos_used_time"
-                                    android:textStyle="bold"
-                                    android:textSize="@dimen/text_size_17"
+                                    android:layout_centerInParent="true"
                                     android:layout_gravity="center_horizontal"
                                     android:gravity="center_horizontal"
-                                    android:layout_centerInParent="true"
+                                    android:textColor="@color/hos_used_time"
+                                    android:textSize="@dimen/text_size_17"
+                                    android:textStyle="bold"
 
                                     />
 
@@ -1039,7 +1035,6 @@
 
 
                         </LinearLayout>
-
 
 
                     </androidx.cardview.widget.CardView>
@@ -1053,17 +1048,60 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_10"
+            android:layout_marginTop="@dimen/margin_short_2"
+            android:layout_marginRight="@dimen/margin_10"
+            android:layout_marginBottom="@dimen/margin_short_2"
+            android:background="@drawable/white_default"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_10">
 
 
+            <TextView
+                android:layout_width="@dimen/margin_short_5"
+                android:layout_height="@dimen/margin_short_5"
+                android:layout_marginLeft="@dimen/margin_13"
+                android:background="@drawable/circular_view_distance"
 
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/margin_short_5"
+                android:text="@string/AccumPersonalDis"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_17"
+                android:textStyle="bold"
+
+                />
+
+
+            <TextView
+                android:id="@+id/accPerDistanceTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/margin_12"
+                android:text="@string/temp_no_value"
+                android:textColor="@color/gray_hos"
+                android:textSize="@dimen/text_size_15" />
+
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/summaryBottomLay"
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_75"
             android:orientation="horizontal"
-            android:layout_marginRight="@dimen/margin_13"
-            android:layout_marginLeft="@dimen/margin_13"
+            android:layout_marginRight="@dimen/margin_short_5"
+            android:layout_marginLeft="@dimen/margin_short_5"
 
             >
 

@@ -270,6 +270,7 @@ public class ConstantsKeys {
     public static String IsLocMalfunction               = "IsLocMalfunction";
     public static String LocMalfunctionOccurTime        = "LocMalfunctionOccurTime";
     public static String LocMalfunctionOccurUtcTime     = "LocMalfunctionOccurUtcTime";
+    public static String UnidentifiedFromOBD            = "UnidentifiedFromOBD";
 
     public static String IsLocDiagnostic                = "IsLocDiagnostic";
     public static String LocDiaOccurTime                = "LocDiaOccurTime";

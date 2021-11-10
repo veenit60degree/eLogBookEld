@@ -779,10 +779,10 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             e.printStackTrace();
         }
 
-        TotalOnDutyHours        = Globally.FinalValue(hMethods.GetOnDutyTime(driverLogJsonArray));
-        TotalDrivingHours       = Globally.FinalValue(hMethods.GetDrivingTime(driverLogJsonArray));
-        TotalOffDutyHours       = Globally.FinalValue(hMethods.GetOffDutyTime(driverLogJsonArray));
-        TotalSleeperBerthHours  = Globally.FinalValue(hMethods.GetSleeperTime(driverLogJsonArray));
+        TotalOnDutyHours        = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(driverLogJsonArray, constants, EldFragment.ON_DUTY));
+        TotalDrivingHours       = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(driverLogJsonArray, constants, EldFragment.DRIVING));
+        TotalOffDutyHours       = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(driverLogJsonArray, constants, EldFragment.OFF_DUTY));
+        TotalSleeperBerthHours  = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(driverLogJsonArray, constants, EldFragment.SLEEPER));
 
         String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
         ReloadWebView(webView, CloseTag);

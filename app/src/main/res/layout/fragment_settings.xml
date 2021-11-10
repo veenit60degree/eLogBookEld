@@ -26,8 +26,9 @@
             android:id="@+id/settingsScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/margin_12"
-            android:paddingRight="@dimen/margin_12"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingRight="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_10"
             android:scrollbars="none"
             >
 
@@ -37,8 +38,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/transparent"
-                android:layout_marginTop="@dimen/margin_12"
-                android:layout_marginBottom="@dimen/margin_12"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_15"
                 android:weightSum="1"
                 >
 
@@ -58,7 +59,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/view_height_80"
                         android:layout_weight="0.5"
-                        android:layout_marginRight="@dimen/margin_12"
                         >
 
                         <RelativeLayout
@@ -273,7 +273,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/view_height_80"
                         android:layout_weight="0.5"
-                        android:layout_marginLeft="@dimen/margin_12"
                         >
 
                         <RelativeLayout
@@ -411,6 +410,7 @@
                                     android:textColor="@color/gray_category_color"
                                     android:textSize="@dimen/text_size_12"
                                     android:paddingLeft="@dimen/margin_10"
+                                    android:paddingRight="@dimen/margin_short_5"
                                     android:layout_gravity="center_vertical"
                                     />
 
@@ -439,6 +439,9 @@
                     android:background="@drawable/ripple_effect"
                     android:layout_weight="0.5"
                     android:layout_marginTop="@dimen/margin_20"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+
                     >
 
 
@@ -447,15 +450,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Category 1"
+                        android:text="@string/USA_Exemption"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/text_size_17"
                         android:paddingRight="@dimen/margin_20"
                         android:paddingLeft="@dimen/margin_10"
                         android:textStyle="bold"
                         android:paddingTop="@dimen/margin_10"
-                        android:paddingBottom="@dimen/margin_15"
-                        android:visibility="gone"
+                        android:paddingBottom="@dimen/margin_10"
+                        android:visibility="visible"
 
                         />
 
@@ -492,7 +495,7 @@
                             android:id="@+id/haulExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/take_16_hour_exc"
+                            android:text="@string/usa_take_16_hour_exc"
                             android:textColor="@color/gray_category_color"
                             android:textSize="@dimen/text_size_15"
                             android:layout_toRightOf="@+id/shortHaulImagView"
@@ -544,7 +547,7 @@
                             android:id="@+id/adverseExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/adverse_excp"
+                            android:text="@string/usa_adverse_excp"
                             android:textColor="@color/gray_category_color"
                             android:textSize="@dimen/text_size_15"
                             android:layout_toRightOf="@+id/adverseExpImgView"
@@ -574,14 +577,107 @@
                     </RelativeLayout>
 
 
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ripple_effect"
+                    android:layout_weight="0.5"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+
+
+                    >
+
+
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/CANADA_Exemption"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_17"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:textStyle="bold"
+                        android:paddingTop="@dimen/margin_10"
+                        android:paddingBottom="@dimen/margin_10"
+                        android:visibility="visible"
+
+                        />
+
+                    <RelativeLayout
+                        android:id="@+id/adverseCanadaExceptionLay"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_45"
+                        android:paddingLeft="@dimen/margin_10"
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/adverseCanadaExpImgView"
+                            android:layout_width="@dimen/view_height_30"
+                            android:layout_height="@dimen/view_height_30"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_adverse"
+                            >
+
+
+                            <ImageView
+                                android:layout_width="@dimen/margin_15"
+                                android:layout_height="@dimen/margin_15"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/adverse_exception" />
+                        </RelativeLayout>
+
+
+
+                        <TextView
+                            android:id="@+id/adverseCanadaExpTxtView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/canada_adverse_excp"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15"
+                            android:layout_toRightOf="@+id/adverseCanadaExpImgView"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:layout_centerVertical="true"
+                            />
+
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/adverseCanadaSwitchButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginRight="@dimen/margin_10"
+                            android:checked="false"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/colorWhite"
+                            android:textColorHighlight="@color/colorPrimary"
+                            app:theme="@style/Custom.Widget.SwitchCompat"
+
+                            app:thumbTextPadding="@dimen/margin_short_5" />
+
+
+
+
+                    </RelativeLayout>
+
+
                     <RelativeLayout
                         android:id="@+id/deferralRuleLay"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_45"
-                        android:paddingRight="@dimen/margin_15"
+                        android:paddingRight="@dimen/margin_10"
                         android:paddingLeft="@dimen/margin_10"
                         android:layout_marginBottom="@dimen/margin_10"
-                        android:visibility="gone"
+                        android:visibility="visible"
 
                         >
 
@@ -596,22 +692,22 @@
 
                             <ImageView
                                 android:id="@+id/deferalImgView"
-                                android:layout_width="16dp"
-                                android:layout_height="12dp"
+                                android:layout_width="@dimen/margin_15"
+                                android:layout_height="@dimen/margin_15"
                                 android:layout_centerInParent="true"
                                 android:src="@drawable/deferal_icon" />
                         </RelativeLayout>
+
                         <TextView
                             android:id="@+id/deferralTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/deferral_rule"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_15"
-                            android:paddingLeft="@dimen/margin_10"
                             android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/deferalLayout"
-                            />
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/canada_deferral_rule"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15" />
 
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/deferralSwitchButton"
@@ -626,6 +722,151 @@
 
                             />
 
+
+                    </RelativeLayout>
+
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ripple_effect"
+                    android:layout_weight="0.5"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+
+
+                    >
+
+
+                    <RelativeLayout
+                        android:id="@+id/docBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_45"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:background="@drawable/gray_light_selector"
+                        android:layout_margin="@dimen/margin_short_2"
+                        >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Category 1"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="@dimen/text_size_17"
+                            android:paddingRight="@dimen/margin_20"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:textStyle="bold"
+                            android:paddingTop="@dimen/margin_10"
+                            android:paddingBottom="@dimen/margin_10"
+                            android:visibility="gone"
+                            />
+
+                        <RelativeLayout
+                            android:id="@+id/documentLayout"
+                            android:layout_width="@dimen/view_height_30"
+                            android:layout_height="@dimen/view_height_30"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_document"
+                            >
+
+
+                            <ImageView
+                                android:id="@+id/documentImgView"
+                                android:layout_width="@dimen/margin_15"
+                                android:layout_height="@dimen/margin_15"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/document_icon" />
+                        </RelativeLayout>
+
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/documents"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15"
+                            android:layout_toRightOf="@+id/documentLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:layout_centerVertical="true"
+                            />
+
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_15"
+                            android:layout_height="@dimen/margin_15"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginRight="@dimen/margin_23"
+                            android:src="@drawable/arrow_next_unidentfied"
+                            android:tint="@color/gray_category_color"
+
+                            />
+
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/obdDiagnoseBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_45"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:background="@drawable/gray_light_selector"
+                        android:layout_margin="@dimen/margin_short_2"
+
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/obdDiagnoseLayout"
+                            android:layout_width="@dimen/view_height_30"
+                            android:layout_height="@dimen/view_height_30"
+                            android:background="@drawable/circle_shape_obd"
+                            android:layout_centerVertical="true"
+                            >
+
+
+                            <ImageView
+                                android:id="@+id/obdDiagnoseImgVw"
+                                android:layout_width="@dimen/margin_15"
+                                android:layout_height="@dimen/margin_15"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/malfunction_other"
+
+                                android:tint="@color/hos_distance" />
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/obdDiagnoseLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/obd_diagnose"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15" />
+
+
+
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_15"
+                            android:layout_height="@dimen/margin_15"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/arrow_next_unidentfied"
+                            android:tint="@color/gray_category_color"
+                            android:layout_marginRight="@dimen/margin_23"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+
+                            />
 
                     </RelativeLayout>
 
@@ -674,12 +915,9 @@
                             android:layout_centerVertical="true"
                             />
 
-
-
-
-
-
                     </RelativeLayout>
+
+
 
                     <RelativeLayout
                         android:id="@+id/soundbrightnessBtn"
@@ -730,7 +968,12 @@
                     </RelativeLayout>
 
 
+
+
                 </LinearLayout>
+
+
+
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -740,6 +983,10 @@
                     android:layout_weight="0.5"
                     android:layout_marginTop="@dimen/margin_20"
                     android:layout_marginBottom="@dimen/margin_20"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+
+
                     >
 
 
@@ -755,9 +1002,55 @@
                         android:paddingLeft="@dimen/margin_10"
                         android:textStyle="bold"
                         android:paddingTop="@dimen/margin_10"
-                        android:paddingBottom="@dimen/margin_15"
+                        android:paddingBottom="@dimen/margin_10"
                         android:visibility="gone"
                         />
+
+                    <RelativeLayout
+                        android:id="@+id/checkInternetBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_45"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:background="@drawable/gray_light_selector"
+                        android:layout_margin="@dimen/margin_short_2"
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/checkInternetLayout"
+                            android:layout_width="@dimen/view_height_30"
+                            android:layout_height="@dimen/view_height_30"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_checkinternet"
+                            >
+
+
+                            <ImageView
+                                android:id="@+id/checkInternetImgView"
+                                android:layout_width="@dimen/margin_15"
+                                android:layout_height="@dimen/margin_15"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/check_internet_icon" />
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/checkInternetLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/Internet_Status"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15" />
+
+
+
+
+
+
+                    </RelativeLayout>
+
 
                     <RelativeLayout
                         android:id="@+id/checkAppUpdateBtn"
@@ -865,171 +1158,6 @@
                                 />
 
                         </RelativeLayout>
-
-
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/docBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_45"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
-                        android:layout_margin="@dimen/margin_short_2"
-
-
-                        >
-
-                        <RelativeLayout
-                            android:id="@+id/documentLayout"
-                            android:layout_width="@dimen/view_height_30"
-                            android:layout_height="@dimen/view_height_30"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_document"
-                            >
-
-
-                            <ImageView
-                                android:id="@+id/documentImgView"
-                                android:layout_width="@dimen/margin_15"
-                                android:layout_height="@dimen/margin_15"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/document_icon" />
-                        </RelativeLayout>
-
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/documents"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_15"
-                            android:layout_toRightOf="@+id/documentLayout"
-                            android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
-
-
-                        <ImageView
-                            android:layout_width="@dimen/margin_15"
-                            android:layout_height="@dimen/margin_15"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerInParent="true"
-                            android:layout_marginRight="@dimen/margin_23"
-                            android:src="@drawable/arrow_next_unidentfied"
-                            android:tint="@color/gray_category_color"
-
-                            />
-
-
-
-                    </RelativeLayout>
-
-
-
-                    <RelativeLayout
-                        android:id="@+id/obdDiagnoseBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_45"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
-                        android:layout_margin="@dimen/margin_short_2"
-
-
-                        >
-
-                        <RelativeLayout
-                            android:id="@+id/obdDiagnoseLayout"
-                            android:layout_width="@dimen/view_height_30"
-                            android:layout_height="@dimen/view_height_30"
-                            android:background="@drawable/circle_shape_obd"
-                            android:layout_centerVertical="true"
-                            >
-
-
-                            <ImageView
-                                android:id="@+id/obdDiagnoseImgVw"
-                                android:layout_width="@dimen/margin_15"
-                                android:layout_height="@dimen/margin_15"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/malfunction_other"
-
-                                android:tint="@color/hos_distance" />
-                        </RelativeLayout>
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@+id/obdDiagnoseLayout"
-                            android:paddingLeft="@dimen/margin_10"
-                            android:text="@string/obd_diagnose"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_15" />
-
-
-
-
-                        <ImageView
-                            android:layout_width="@dimen/margin_15"
-                            android:layout_height="@dimen/margin_15"
-                            android:layout_centerInParent="true"
-                            android:src="@drawable/arrow_next_unidentfied"
-                            android:tint="@color/gray_category_color"
-                            android:layout_marginRight="@dimen/margin_23"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-
-                            />
-
-
-
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/checkInternetBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_45"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
-                        android:layout_margin="@dimen/margin_short_2"
-
-                        >
-
-                        <RelativeLayout
-                            android:id="@+id/checkInternetLayout"
-                            android:layout_width="@dimen/view_height_30"
-                            android:layout_height="@dimen/view_height_30"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_checkinternet"
-                            >
-
-
-                            <ImageView
-                                android:id="@+id/checkInternetImgView"
-                                android:layout_width="@dimen/margin_15"
-                                android:layout_height="@dimen/margin_15"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/check_internet_icon" />
-                        </RelativeLayout>
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@+id/checkInternetLayout"
-                            android:paddingLeft="@dimen/margin_10"
-                            android:text="@string/Internet_Status"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_15" />
-
-
-
 
 
 

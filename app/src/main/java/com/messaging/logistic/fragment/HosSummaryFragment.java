@@ -71,7 +71,7 @@ import models.DriverLog;
 import models.RulesResponseObject;
 import webapi.LocalCalls;
 
-public class NewHosSummaryFragment extends Fragment implements View.OnClickListener {
+public class HosSummaryFragment extends Fragment implements View.OnClickListener {
 
 
     View rootView;
@@ -79,7 +79,7 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
     TextView EldTitleTV, hosDistanceTV, hosLocationTV, hosOperatingZoneTV, statusNewInfoTV;
     TextView perShiftDrivingTV,perShiftOnDutyTV,perShiftNextBreakTV,perShiftTV,perDayDrivingTV,perDayOnDutyTV,perDayOffDutyTV,cycleTV,currentCycleHosTV,hosPerDayTv,hosCycleTV;
     TextView perShiftUsedDrivingTV,perShiftUsedOnDutyTV,perShiftUsedOffDutyTV,perShiftUsedTimeTV;
-    TextView perDayUsedDrivingTV,perDayUsedOnDutyTV,perDayUsedOffDutyTV,cycleUsedTimeTV,hosCycleTVUsa,offDutyRestTV;
+    TextView perDayUsedDrivingTV,perDayUsedOnDutyTV,perDayUsedOffDutyTV,cycleUsedTimeTV,hosCycleTVUsa,offDutyRestTV, accPerDistanceTv;
     ImageView eldMenuBtn,hosFlagImgView;
     LoadingSpinImgView loadingSpinEldIV;
     RelativeLayout eldMenuLay, obdHosInfoImg;
@@ -249,6 +249,7 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
         offDutyRestTV           = (TextView)v.findViewById(R.id.hos_OffDutyRestTV);
         hosOperatingZoneTV      = (TextView)v.findViewById(R.id.hosOperatingZoneTV);
         statusNewInfoTV         = (TextView)v.findViewById(R.id.statusNewInfoTV);
+        accPerDistanceTv        = (TextView)v.findViewById(R.id.accPerDistanceTv);
 
         hosFlagImgView       = (ImageView)v.findViewById(R.id.hosFlagView);
         loadingSpinEldIV     = (LoadingSpinImgView)v.findViewById(R.id.loadingSpinEldIV);
@@ -394,6 +395,7 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
                     sendLogHosBtn.setCardBackgroundColor(getResources().getColor(R.color.silver));
                 }
 
+                setAccPersonalDistanceOnView();
 
             }
         });
@@ -455,6 +457,17 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
         //Clear the Activity's bundle of the subsidiary fragments' bundles.
         outState.clear();
     }
+
+    void setAccPersonalDistanceOnView(){
+        try {
+            double AccumulativePersonalDistance = constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC, Globally.GetCurrentJodaDateTime(),
+                    Globally.GetCurrentUTCDateTime(), hMethods, dbHelper, getActivity());
+            accPerDistanceTv.setText(constants.Convert2DecimalPlacesDouble(AccumulativePersonalDistance) + " km");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     void setReverseCycleName(){
         if(CycleId.equals(Globally.CANADA_CYCLE_1) || CycleId.equals(Globally.CANADA_CYCLE_2)){
@@ -1042,7 +1055,7 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
                 minOffDutyUsedHours = (int) remainingTimeObj.getMinimumOffDutyUsedHours();
                 isMinOffDutyHoursSatisfied = remainingTimeObj.isMinimumOffDutyHoursSatisfied();
 
-                UsedSleeperHoursInt = hMethods.GetSleeperTime(currentDayArray);
+                UsedSleeperHoursInt = hMethods.GetDutyStatusTimeInterval(currentDayArray, constants, EldFragment.SLEEPER);
                 usedAndRemainingTimeSB = localCalls.getUsedAndRemainingTimeSB(oDriverDetail);
 
 
@@ -1092,6 +1105,7 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
 
                         hosLocationTV.setText(Globally.LATITUDE + ", "+ Globally.LONGITUDE);
 
+                        setAccPersonalDistanceOnView();
                     }
                 });
 
@@ -1110,6 +1124,8 @@ public class NewHosSummaryFragment extends Fragment implements View.OnClickListe
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void run() {
             CycleTimeCalculation(true);
+
+
         }
     }
 

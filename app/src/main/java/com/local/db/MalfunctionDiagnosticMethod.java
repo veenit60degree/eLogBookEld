@@ -1311,17 +1311,17 @@ public class MalfunctionDiagnosticMethod {
 
 
     public void saveVehicleMotionStatus(String StartOdometer, String startEngineHours, int CompanyId, String TruckID,
-                                        String VIN, DBHelper dbHelper, Context context){
+                                        String VIN, int vehicleSpeed, DBHelper dbHelper, Context context){
 
         try{
             double TotalMinutes = 0;
             JSONArray eventsArray = getUnidentifiedLogoutArray(CompanyId, dbHelper);
-
+//1179885
             for (int i = 0; i < eventsArray.length() ; i++) {
                 JSONObject eventObj = (JSONObject) eventsArray.get(i);
 
                 double eventDuration;
-                if(i == eventsArray.length()-1){
+                if(i == eventsArray.length()-1 && vehicleSpeed >= 8){
                     DateTime StartDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.StartDateTime), false);
                     DateTime EndDateTime = Globally.GetCurrentUTCDateTime();
                     eventDuration = Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
@@ -1336,7 +1336,7 @@ public class MalfunctionDiagnosticMethod {
                 JSONObject eventJsonObj = new JSONObject();
                 eventJsonObj.put(ConstantsKeys.EventDateTime, Globally.GetCurrentUTCTimeFormat());
                 eventJsonObj.put(ConstantsKeys.EventEndDateTime, "");
-                eventJsonObj.put(ConstantsKeys.DetectionDataEventCode, Constants.UnIdentifiedDrivingDiagnostic);
+                eventJsonObj.put(ConstantsKeys.DiagnosticType, Constants.UnIdentifiedDrivingDiagnostic);
                 eventJsonObj.put(ConstantsKeys.TotalMinutes, TotalMinutes);
                 eventJsonObj.put(ConstantsKeys.IsClearEvent, false);
                 eventJsonObj.put(ConstantsKeys.StartOdometer, StartOdometer);

@@ -477,6 +477,15 @@
     <string name="sealNoAtArrival">Seal number of container at arrival</string>
     <string name="sealNoAtDeparture">Seal number of container at departure</string>
 
+    <string name="excp_canada_cycle_check">You are not eligible in Canada Cycle</string>
+    <string name="excp_usa_cycle_check">You are not eligible in Usa Cycle</string>
+    <string name="canada_deferral_rule">Deferral of Daily Off-Duty Time (Canada South) SOR/2005-313 (16)</string>
+    <string name="usa_adverse_excp">Adverse Driving (USA) 395.1(b)(1)</string>
+    <string name="canada_adverse_excp">Adverse Driving (Canada) SOR/2005-313 (76)</string>
+    <string name="usa_take_16_hour_exc">16 Hour Short Haul 395.1(0)</string>
+    <string name="USA_Exemption">USA Exemptions</string>
+    <string name="CANADA_Exemption">CANADA Exemptions</string>
+
     <string name="who_conducted_security">Person who conducted security inspection upon arrival</string>
     <string name="who_conducted_followup">Person who conducted follow up security inspection</string>
     <string name="who_affixed_seal">Person who affixed seals</string>
@@ -632,13 +641,15 @@
     <string name="ym_end">YM End</string>
 
     <string name="youCanDefUpTo">You can defer up to </string>
-    <string name="ofOffdutyTime"> of OffDuty time.</string>
+    <string name="youRequireUpTo">You require up to </string>
+    <string name="ofOffdutyTime"> of minimum OffDuty time.</string>
     <string name="YouMustUseTom">You must use this tomorrow.</string>
     <string name="defWillAutoDis">It will be disabled automatically after 48 hours of start time of Deferral rule.</string>
     <string name="notEligForDef">You are not eligible for Deferral rule.</string>
 
     <string name="Day1ofDeferral">Day 1 of Deferral</string>
     <string name="Day2ofDeferral">Day 2 of Deferral</string>
+    <string name="DeferralTime">Deferred Time</string>
     <string name="ReviewConfirmDef">Review and confirm your off duty deferral</string>
     <string name="YestrdyYouDef">Yesterday you deferred some of off duty time that you must use today</string>
     <string name="youCanDef">You can defer up to 2 hours 0 min of OffDuty time. You must use this tomorrow.</string>
@@ -802,6 +813,7 @@
     <string name="ClearAll">Clear all</string>
     <string name="DeleteAll">Delete all</string>
     <string name="download_logs_Createddate">Created Date</string>
+    <string name="AccumPersonalDis">Accumulated Personal Distance Per Day:</string>
 
     <string name="YardMove">Yard Move</string>
     <string name="title">Title</string>

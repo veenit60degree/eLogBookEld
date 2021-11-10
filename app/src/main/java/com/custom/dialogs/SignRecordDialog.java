@@ -393,7 +393,7 @@ public class SignRecordDialog extends Dialog {
 
 
     private void setListSelectionRecord(boolean isSelected){
-        Log.d("recordSelectedList", "recordSelectedList: " + recordSelectedList);
+      //  Log.d("recordSelectedList", "recordSelectedList: " + recordSelectedList);
 
         if(recordSelectedList.size() > 0) {
             boolean isItemChecked = false;

@@ -298,7 +298,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.arrivalContNoEditTxt:
-                Log.d("onTouch", "editText on Touch");
+               // Log.d("onTouch", "editText on Touch");
                 arrivalContNoEditTxt.setEnabled(true);
                 arrivalContNoEditTxt.requestFocus();
                 arrivalContNoEditTxt.setFocusableInTouchMode(true);
@@ -585,7 +585,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         }catch (Exception e){
             e.printStackTrace();
         }
-        Log.d("data", "---data: " + data);
+      //  Log.d("data", "---data: " + data);
         return data;
 
     }

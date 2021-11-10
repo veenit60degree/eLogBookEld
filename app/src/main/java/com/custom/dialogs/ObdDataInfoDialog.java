@@ -102,8 +102,6 @@ public class ObdDataInfoDialog extends Dialog {
            String info = "<br/><br/> OBD not connected";
 
             int OBD_LAST_STATUS = SharedPref.getObdStatus(getContext());
-            double AccumulativePersonalDistance =  constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC, Globally.GetCurrentJodaDateTime(),
-                    Globally.GetCurrentUTCDateTime(), hMethods, dbHelper, context);
 
         if(OBD_LAST_STATUS == Constants.WIRED_CONNECTED || OBD_LAST_STATUS == Constants.BLE_CONNECTED) {
                 String obdType = "";
@@ -114,13 +112,14 @@ public class ObdDataInfoDialog extends Dialog {
                 }
 
             info = "<br/><br/><b>OBD Type:</b> " + obdType + "<br/><br/>" +
+
                     "<b>VIN:</b> " + SharedPref.getVehicleVin(getContext()) + "<br/>" +
                     "<b>Speed:</b> " + SharedPref.getVss(getContext()) + "<br/>" +
                     "<b>RPM:</b> " + SharedPref.getRPM(getContext()) + "<br/>" +
                     "<b>EngineHours:</b> " + SharedPref.getObdEngineHours(getContext()) + "<br/>" +
                     "<b>OdometerInKm:</b> " + SharedPref.getObdOdometer(getContext()) + "<br/>" +
-                    "<b>OdometerInMeter:</b> " + SharedPref.getHighPrecisionOdometer(getContext()) + "<br/>" +
-                    "<b>Accumulative Personal Distance:</b> " + constants.Convert2DecimalPlacesDouble(AccumulativePersonalDistance) + " km <br/>";
+                    "<b>OdometerInMeter:</b> " + SharedPref.getHighPrecisionOdometer(getContext()) + "<br/>"
+                   ;
 
 
             }

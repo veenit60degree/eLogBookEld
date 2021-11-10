@@ -45,7 +45,7 @@ public class CsvReader {
             e.printStackTrace();
         }
 
-        Log.d("list", "list: "+ list.size());
+     //   Log.d("list", "list: "+ list.size());
         return list;
 
     }

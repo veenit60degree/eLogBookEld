@@ -61,8 +61,6 @@ import java.util.Map;
 
 import lib.kingja.switchbutton.SwitchMultiButton;
 
-import static com.messaging.logistic.Globally.DateFormatHalf;
-import static com.messaging.logistic.Globally.GetCurrentUTCDateTime;
 import static com.messaging.logistic.Globally.GetStartDate;
 
 
@@ -220,7 +218,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
     void CallApiDownload(){
         String currentDatetime = Globally.GetCurrentUTCDate();
         String currentParseDatetime = Globally.ConvertDateFormatyyyy_MM_dd(currentDatetime);
-        DateTime lastSevenDays = GetStartDate(GetCurrentUTCDateTime(),30);
+        DateTime lastSevenDays = GetStartDate(Globally.GetCurrentJodaDateTime(),30);
         String lastParseDatetime = lastSevenDays.toString().substring(0,10);
         GetDownloadedPdfLog(CurrentCycle,lastParseDatetime,currentParseDatetime);
     }

@@ -363,6 +363,21 @@ public class SharedPref {
         return preferences.getBoolean("WrongVinAlertStatus", false);
     }
 
+    // SAve Unidentified status From OBD to create -------------------
+    public static void SetUnidentifiedFromOBDStatus( boolean status, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("UnidentifiedFromOBD", status);
+        editor.commit();
+    }
+
+    // Get Unidentified status From OBD to create -------------------
+    public static boolean IsUnidentifiedFromOBD( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("UnidentifiedFromOBD", false);
+    }
+
+
 
 
     // Get Obd Status -------------------

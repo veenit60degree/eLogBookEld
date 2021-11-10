@@ -1,6 +1,8 @@
 package com.models;
 
-public class UnAssignedVehicleModel {
+import java.util.Date;
+
+public class UnAssignedVehicleModel implements Comparable<UnAssignedVehicleModel>{
 
     String UnAssignedVehicleMilesId;
     String AssignedUnidentifiedRecordsId;
@@ -18,10 +20,11 @@ public class UnAssignedVehicleModel {
     String StartLocation;
     String EndLocation;
     String DutyStatus;
+    Date dateTime;
 
     public UnAssignedVehicleModel(String unAssignedVehicleMilesId, String assignedUnidentifiedRecordsId, String equipmentNumber, String VIN, String startOdometer,
                                   String endOdometer, String totalMiles, String totalKm, String driverZoneStartDateTime, String driverZoneEndDateTime, String statusId,
-                                  boolean isIntermediateLog, String hexaSeqNumber, String startLoc, String endLoc, String dutyStatus) {
+                                  boolean isIntermediateLog, String hexaSeqNumber, String startLoc, String endLoc, String dutyStatus, Date date) {
         UnAssignedVehicleMilesId = unAssignedVehicleMilesId;
         AssignedUnidentifiedRecordsId = assignedUnidentifiedRecordsId;
         EquipmentNumber = equipmentNumber;
@@ -38,7 +41,7 @@ public class UnAssignedVehicleModel {
         StartLocation = startLoc;
         EndLocation = endLoc;
         DutyStatus = dutyStatus;
-
+        dateTime = date;
 
     }
 
@@ -105,4 +108,24 @@ public class UnAssignedVehicleModel {
     public String getDutyStatus() {
         return DutyStatus;
     }
+
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Date datetime) {
+        this.dateTime = datetime;
+    }
+
+
+    @Override
+    public int compareTo(UnAssignedVehicleModel unAssignedVehicleModel) {
+        if(getDateTime().equals(unAssignedVehicleModel.getDateTime())){
+            return getHexaSeqNumber().compareTo(unAssignedVehicleModel.getHexaSeqNumber());
+        }else{
+            return getDateTime().compareTo(unAssignedVehicleModel.getDateTime());
+        }
+    }
+
+
 }

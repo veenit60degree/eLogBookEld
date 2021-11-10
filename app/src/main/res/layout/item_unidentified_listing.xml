@@ -43,16 +43,15 @@
             android:layout_marginRight="@dimen/margin_10"
             >
 
-        <TextView
-            android:id="@+id/unIdenDistanceTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/temp_distance"
-            android:textColor="@color/color_eld_theme"
-            android:textSize="@dimen/text_size_19"
-            android:textStyle="bold"
-            android:paddingBottom="@dimen/margin_short_1"
-            />
+            <TextView
+                android:id="@+id/unIdenDistanceTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/margin_short_1"
+                android:text="@string/temp_distance"
+                android:textColor="@color/color_eld_theme"
+                android:textSize="@dimen/text_size_19"
+                android:textStyle="bold" />
 
 
         <TextView
@@ -91,6 +90,20 @@
 
             />
 
+        <TextView
+            android:id="@+id/unIdenRecordStatusTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_eld_theme"
+            android:textSize="@dimen/text_size_16"
+            android:paddingTop="@dimen/margin_15"
+            android:paddingRight="@dimen/margin_short_8"
+            android:textStyle="bold"
+            android:layout_toLeftOf="@+id/unIdenArrow"
+            android:layout_marginRight="@dimen/margin_16"
+
+            />
+
 
         <TextView
             android:id="@+id/unIdenRecorTimeTV"
@@ -116,16 +129,13 @@
             />
 
 
-
-
         <RelativeLayout
             android:id="@+id/unIdentifiedDtailView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@id/checkboxUnIdentifiedRecord"
             android:layout_marginLeft="@dimen/margin_20"
-            android:background="@color/transparent"
-            >
+            android:layout_toRightOf="@id/checkboxUnIdentifiedRecord"
+            android:background="@color/transparent">
 
 
         </RelativeLayout>

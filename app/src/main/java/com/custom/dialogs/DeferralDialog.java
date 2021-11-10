@@ -58,6 +58,7 @@ public class DeferralDialog extends Dialog {
         TextView cancelDefTxtView       = (TextView)findViewById(R.id.cancelDefTxtView);
         TextView deferralTitleTV        = (TextView)findViewById(R.id.deferralTitleTV);
         TextView defTimeDurationTV      = (TextView)findViewById(R.id.defTimeDurationTV);
+        TextView timeToDefTv            = (TextView)findViewById(R.id.timeToDefTv);
 
         LinearLayout defConfirmBtn      = (LinearLayout) findViewById(R.id.defConfirmBtn);
 
@@ -67,17 +68,20 @@ public class DeferralDialog extends Dialog {
         String desc = "";
 
         if(deferralDays == 1) {
+
             desc = getContext().getString(R.string.youCanDefUpTo) +
                     defTime +
                     getContext().getString(R.string.ofOffdutyTime) +
                     getContext().getString(R.string.YouMustUseTom);
         }else{
-            desc = getContext().getString(R.string.youCanDefUpTo) +
-                    defTime +
+            String minOffDutyTime = " "+(hours + 8) + " hrs " + min + " mins ";
+            desc = getContext().getString(R.string.youRequireUpTo) +
+                    minOffDutyTime +
                     getContext().getString(R.string.ofOffdutyTime);
 
             cancelDefTxtView.setVisibility(View.GONE);
             deferralTitleTV.setText(getContext().getString(R.string.Day2ofDeferral));
+            timeToDefTv.setText(getContext().getString(R.string.DeferralTime));
         }
 
         defTimeDurationTV.setText(desc);

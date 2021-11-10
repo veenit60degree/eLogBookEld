@@ -546,7 +546,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         }catch (Exception e){
             e.printStackTrace();
         }
-        Log.d("data", "---data: " + data);
+       // Log.d("data", "---data: " + data);
         return data;
 
     }

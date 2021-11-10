@@ -345,7 +345,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         holder.clearEventBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("ClickEvent", "Clear Btn click Event");
+               // Log.d("ClickEvent", "Clear Btn click Event");
 
                 if(constants.isActionAllowed(_context)) {
                     if (malfunctionDialog != null && malfunctionDialog.isShowing())

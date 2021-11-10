@@ -254,7 +254,7 @@ public class Utils
             } catch (IOException e) {
                 e.printStackTrace();
             }
-             Log.d("wiredObdLog", "wiredObdLog: " + text);
+           //  Log.d("wiredObdLog", "wiredObdLog: " + text);
         }
 
         return text;

@@ -1908,10 +1908,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                 ParseJsonArray(selectedArray);
 
-                TotalOnDutyHours        = Globally.FinalValue(hMethods.GetOnDutyTime(selectedArray));
-                TotalDrivingHours       = Globally.FinalValue(hMethods.GetDrivingTime(selectedArray));
-                TotalOffDutyHours       = Globally.FinalValue(hMethods.GetOffDutyTime(selectedArray));
-                TotalSleeperBerthHours  = Globally.FinalValue(hMethods.GetSleeperTime(selectedArray));
+                TotalOnDutyHours        = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(selectedArray, constants, EldFragment.ON_DUTY));
+                TotalDrivingHours       = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(selectedArray, constants, EldFragment.DRIVING));
+                TotalOffDutyHours       = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(selectedArray, constants, EldFragment.OFF_DUTY));
+                TotalSleeperBerthHours  = Globally.FinalValue(hMethods.GetDutyStatusTimeInterval(selectedArray, constants, EldFragment.SLEEPER));
 
                 if(selectedArray.length() == 1){
                     GetCorrectTime(selectedArray, CurrentDate, LogDate);
@@ -2179,29 +2179,36 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                 remarks          = logObj.getString(ConstantsKeys.Remarks);
 
-
+                String endDateTimeStr = endDateTime;
+                int minDiff = 0;
                 if(logCount > 0 && logCount == driverLogJsonArray.length()-1 ) {
                     if(  LogDate.equals(CurrentDate) ) {
                         endDateTime = Globally.GetCurrentDateTime();
+                        minDiff = constants.getMinDiff(startDateTime, endDateTime, false);
                     }else{
-                        if(endDateTime.length() > 16 && endDateTime.substring(11,16).equals("00:00")){
-                            endDateTime = endDateTime.substring(0,11) + "23:59" +endDateTime.substring(16,endDateTime.length());
+                        if(endDateTimeStr.length() > 16 && endDateTimeStr.substring(11,16).equals("00:00")){
+                            endDateTimeStr = endDateTimeStr.substring(0,11) + "23:59" +endDateTimeStr.substring(16,endDateTimeStr.length());
                         }
+
+                        if(endDateTime.length() > 16 && endDateTime.substring(11,16).equals("00:00")){
+                            minDiff = constants.getMinDiff(startDateTime, endDateTime, false);
+                        }else{
+                            minDiff = constants.getMinDiff(startDateTime, endDateTime, true);
+                        }
+
                     }
-                    DateTime startDateT = Globally.getDateTimeObj(startDateTime, false);
-                    DateTime endDateT = Globally.getDateTimeObj(endDateTime, false);
-                    int minDiff = endDateT.getMinuteOfDay() - startDateT.getMinuteOfDay();
+
                     Duration = global.FinalValue(minDiff);
                 }
 
                 EldDriverLogModel driverLogModel;
                 if(DRIVER_JOB_STATUS == constants.ON_DUTY) {
-                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, currentCycleId,
+                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTimeStr, totalHours, currentCycleId,
                             isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm, remarks, YardMove,
                             IsAdverseException, IsShortHaulException, logObj.getString(ConstantsKeys.StartLatitude),
                             logObj.getString(ConstantsKeys.StartLongitude) );
                 }else{
-                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, currentCycleId,
+                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTimeStr, totalHours, currentCycleId,
                             isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm, remarks, isPersonal,
                             IsAdverseException, IsShortHaulException, logObj.getString(ConstantsKeys.StartLatitude),
                             logObj.getString(ConstantsKeys.StartLongitude));

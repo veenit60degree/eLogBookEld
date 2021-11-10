@@ -26,6 +26,8 @@ public class UnIdentifiedRecordModel {
     String StartLocationKm;
     String EndLocationKm;
 
+    String DutyStatus;
+    boolean Intermediate;
 
     public UnIdentifiedRecordModel(String equipmentNumber, String VIN, String startOdometer,
                                    String endOdometer, String totalMiles, String totalKm, String startDateTime,
@@ -33,7 +35,7 @@ public class UnIdentifiedRecordModel {
                                    String endLongitude, String startLocation, String endLocation, String driverStatusId,
                                    String remarks, String statusId, String unAssignedVehicleMilesId,
                                    String assignedUnidentifiedRecordsId, boolean isCompanyAssigned,
-                                   String startLocationKm, String endLocationKm) {
+                                   String startLocationKm, String endLocationKm, String dutyStatus, boolean intermediate) {
 
         EquipmentNumber = equipmentNumber;
         this.VIN = VIN;
@@ -58,6 +60,9 @@ public class UnIdentifiedRecordModel {
 
         StartLocationKm = startLocationKm;
         EndLocationKm = endLocationKm;
+
+        DutyStatus = dutyStatus;
+        Intermediate = intermediate;
 
     }
 
@@ -147,5 +152,13 @@ public class UnIdentifiedRecordModel {
 
     public String getEndLocationKm() {
         return EndLocationKm;
+    }
+
+    public String getDutyStatus() {
+        return DutyStatus;
+    }
+
+    public boolean isIntermediate() {
+        return Intermediate;
     }
 }

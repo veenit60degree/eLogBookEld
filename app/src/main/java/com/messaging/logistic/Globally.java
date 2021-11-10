@@ -46,6 +46,8 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.ble.util.ConstantEvent;
+import com.ble.util.EventBusInfo;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.Utils;
@@ -54,6 +56,7 @@ import com.driver.details.ParseLoginDetails;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.snackbar.Snackbar;
+import com.htstart.htsdk.HTBleSdk;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.messaging.logistic.fragment.EldFragment;
@@ -63,6 +66,7 @@ import com.shared.pref.CoNotificationPref;
 import com.shared.pref.MainDriverEldPref;
 import com.shared.pref.NotificationPref;
 
+import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -2315,8 +2319,10 @@ public class Globally {
 			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , c);
 
 			ClearSqliteDB(c);
-
 			Constants.ClearNotifications(c);
+
+			DisConnectBleDevice(c);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2325,6 +2331,19 @@ public class Globally {
 	}
 
 
+	public static void DisConnectBleDevice(Context context){
+		try{
+			if(SharedPref.getObdPreference(context) == Constants.OBD_PREF_BLE) {
+				if (HTBleSdk.Companion.getInstance().isConnected()) {
+					//EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, HTBleSdk.Companion.getInstance().getAddress()));
+					HTBleSdk.Companion.getInstance().disAllConnect();
+				}
+				HTBleSdk.Companion.getInstance().unRegisterCallBack();
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 	public static void ClearSqliteDB(Context c) {
 
 		try {

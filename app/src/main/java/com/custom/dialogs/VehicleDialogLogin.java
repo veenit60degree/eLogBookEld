@@ -156,13 +156,13 @@ public class VehicleDialogLogin  extends Dialog {
                 searchableSpinner.setStatusListener(new IStatusListener() {
                     @Override
                     public void spinnerIsOpening() {
-                        Log.d("spinnerIsOpening", "spinnerIsOpening" );
+                       // Log.d("spinnerIsOpening", "spinnerIsOpening" );
 
                     }
 
                     @Override
                     public void spinnerIsClosing() {
-                        Log.d("spinnerIsClosing", "spinnerIsClosing" );
+                        //Log.d("spinnerIsClosing", "spinnerIsClosing" );
                     }
                 });
 
@@ -216,7 +216,7 @@ public class VehicleDialogLogin  extends Dialog {
     private OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
         @Override
         public void onItemSelected(View view, int position, long id) {
-           Log.d("onItemSelected", "onItemSelected: " + position);
+          // Log.d("onItemSelected", "onItemSelected: " + position);
             SelectedPosition = position;
 
             Object object = searchableSpinner.getSelectedItem();
@@ -237,7 +237,7 @@ public class VehicleDialogLogin  extends Dialog {
 
         @Override
         public void onNothingSelected() {
-            Log.d("onNothingSelected", "onNothingSelected" );
+           // Log.d("onNothingSelected", "onNothingSelected" );
             saveBtnJob.setBackgroundResource(R.drawable.gray_selector);
         }
     };

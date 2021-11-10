@@ -10,17 +10,16 @@
     >
 
     <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        >
+        android:orientation="vertical">
 
         <include
             android:id="@+id/actionbarMainLay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             layout="@layout/actionbar_eld"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <ScrollView
             android:id="@+id/settingsScrollView"
@@ -28,67 +27,58 @@
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/margin_15"
             android:paddingRight="@dimen/margin_15"
-            android:paddingBottom="@dimen/margin_10"
-            android:scrollbars="none"
-            >
+            android:scrollbars="none">
 
             <LinearLayout
                 android:id="@+id/settingsParentView"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/transparent"
                 android:layout_marginTop="@dimen/margin_15"
-                android:layout_marginBottom="@dimen/margin_20"
-                android:weightSum="1"
-                >
+                android:layout_marginBottom="@dimen/margin_12"
+                android:background="@color/transparent"
+                android:orientation="vertical"
+                android:weightSum="1">
 
                 <LinearLayout
                     android:id="@+id/settingsLinearLay"
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/ripple_effect"
-                    android:paddingBottom="@dimen/margin_short_6"
+                    android:orientation="horizontal"
                     android:paddingTop="@dimen/margin_short_6"
-                    android:weightSum="1"
-                    >
+                    android:paddingBottom="@dimen/margin_short_6"
+                    android:weightSum="1">
 
                     <LinearLayout
-                        android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/view_height_100"
                         android:layout_weight="0.5"
-                        android:layout_marginRight="@dimen/margin_12"
-                        >
+                        android:orientation="horizontal">
 
                         <RelativeLayout
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="@dimen/margin_10"
                             android:layout_weight="0.3"
                             android:gravity="center_vertical"
-                            >
+                            android:orientation="horizontal">
 
                             <LinearLayout
                                 android:id="@+id/canCycleLayout"
-                                android:orientation="horizontal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                >
-
+                                android:orientation="horizontal">
 
 
                                 <TextView
                                     android:id="@+id/caCycle"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
                                     android:text="@string/can_cycle"
                                     android:textColor="@color/gray_text_color"
                                     android:textSize="@dimen/text_size_20"
                                     android:textStyle="bold"
-                                    android:layout_gravity="center"
 
                                     />
 
@@ -96,11 +86,10 @@
                                     android:id="@+id/canEditImgView"
                                     android:layout_width="@dimen/margin_18"
                                     android:layout_height="@dimen/margin_18"
-                                    android:src="@drawable/edit_log_icon"
-                                    android:layout_toRightOf="@+id/caCycleTV"
                                     android:layout_gravity="center"
                                     android:layout_marginLeft="@dimen/margin_10"
-                                    />
+                                    android:layout_toRightOf="@+id/caCycle"
+                                    android:src="@drawable/edit_log_icon" />
                             </LinearLayout>
 
                             <TextView
@@ -108,43 +97,38 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/canCycleLayout"
-                                android:paddingLeft="@dimen/view_height_30"
-                                android:paddingTop="@dimen/margin_short_1"
+                                android:paddingLeft="@dimen/margin_10"
                                 android:text="@string/current_cyclee"
                                 android:textColor="@color/color_eld_theme"
-                                android:textSize="@dimen/text_size_11"
+                                android:textSize="@dimen/text_size_12"
                                 android:textStyle="bold"
                                 android:visibility="invisible" />
 
                             <LinearLayout
-                                android:layout_below="@+id/caCurrentCycleTV"
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingTop="@dimen/margin_short_2"
-                                >
+                                android:layout_below="@+id/caCurrentCycleTV"
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/margin_short_1">
 
                                 <ImageView
                                     android:id="@+id/cycleImgView"
                                     android:layout_width="@dimen/margin_19"
                                     android:layout_height="@dimen/margin_19"
-                                    android:src="@drawable/recycle_icon"
-                                    android:tint="@color/color_eld_hover_theme"
                                     android:layout_gravity="center_vertical"
-                                    />
-
+                                    android:src="@drawable/recycle_icon"
+                                    android:tint="#2F55D4" />
 
 
                                 <TextView
                                     android:id="@+id/caCycleTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:paddingLeft="@dimen/margin_10"
                                     android:text="Cycle (120/14)"
                                     android:textColor="@color/gray_category_color"
-                                    android:textSize="@dimen/text_size_14"
-                                    android:paddingLeft="@dimen/margin_10"
-                                    android:layout_gravity="center_vertical"
-                                    />
+                                    android:textSize="@dimen/text_size_14" />
 
                             </LinearLayout>
 
@@ -163,32 +147,29 @@
                                 />
 
 
-
                         </RelativeLayout>
 
                         <RelativeLayout
-                            android:layout_toRightOf="@+id/cycleLayout"
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/cycleLayout"
                             android:layout_weight="0.3"
                             android:gravity="center_vertical"
-                            >
+                            android:orientation="horizontal">
 
                             <LinearLayout
                                 android:id="@+id/usaCycleLayout"
-                                android:orientation="horizontal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                >
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:id="@+id/usCycleTitle"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginRight="@dimen/margin_12"
                                     android:text="@string/usa_cycle"
                                     android:textColor="@color/gray_text_color"
-                                    android:layout_marginRight="@dimen/margin_12"
                                     android:textSize="@dimen/text_size_20"
                                     android:textStyle="bold" />
 
@@ -196,9 +177,9 @@
                                     android:id="@+id/usEditImgView"
                                     android:layout_width="@dimen/margin_18"
                                     android:layout_height="@dimen/margin_18"
-                                    android:src="@drawable/edit_log_icon"
-                                    android:layout_toRightOf="@+id/caCycleTitle"
                                     android:layout_gravity="center"
+                                    android:layout_toRightOf="@+id/usCycleTitle"
+                                    android:src="@drawable/edit_log_icon"
 
                                     />
                             </LinearLayout>
@@ -209,57 +190,50 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/usaCycleLayout"
                                 android:layout_gravity="center_vertical"
-                                android:paddingLeft="@dimen/view_height_30"
-                                android:paddingTop="@dimen/margin_short_1"
+                                android:paddingLeft="@dimen/margin_10"
                                 android:text="@string/current_cyclee"
                                 android:textColor="@color/color_eld_theme"
-                                android:textSize="@dimen/text_size_11"
+                                android:textSize="@dimen/text_size_12"
                                 android:textStyle="bold"
                                 android:visibility="invisible" />
 
-
-
                             <LinearLayout
-                                android:layout_below="@+id/usCurrentCycleTV"
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingTop="@dimen/margin_short_2"
-                                >
+                                android:layout_below="@+id/usCurrentCycleTV"
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/margin_short_1">
 
                                 <ImageView
                                     android:id="@+id/usImgView"
                                     android:layout_width="@dimen/margin_19"
                                     android:layout_height="@dimen/margin_19"
-                                    android:src="@drawable/recycle_icon"
                                     android:layout_gravity="center_vertical"
-                                    />
-
+                                    android:src="@drawable/recycle_icon" />
 
 
                                 <TextView
                                     android:id="@+id/usCycleTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:paddingLeft="@dimen/margin_10"
                                     android:text="Cycle (120/14)"
                                     android:textColor="@color/gray_category_color"
-                                    android:textSize="@dimen/text_size_14"
-                                    android:paddingLeft="@dimen/margin_10"
-                                    android:layout_gravity="center_vertical"
-                                    />
+                                    android:textSize="@dimen/text_size_14" />
 
                             </LinearLayout>
 
                             <Spinner
                                 android:id="@+id/usCycleSpinner"
+                                style="@style/spinner_style_transparent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/margin_15"
-                                android:layout_marginRight="@dimen/margin_15"
                                 android:layout_marginTop="@dimen/margin_15"
+                                android:layout_marginRight="@dimen/margin_15"
                                 android:paddingTop="@dimen/margin_short_7"
                                 android:paddingBottom="@dimen/margin_short_7"
-                                style="@style/spinner_style_transparent"
                                 android:visibility="gone"
 
                                 />
@@ -267,34 +241,27 @@
                         </RelativeLayout>
 
 
-
-
-
                     </LinearLayout>
 
                     <LinearLayout
-                        android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/view_height_100"
                         android:layout_weight="0.5"
-                        android:layout_marginLeft="@dimen/margin_12"
-                        >
+                        android:orientation="horizontal">
 
                         <RelativeLayout
                             android:id="@+id/cycleLayout"
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.3"
                             android:layout_marginLeft="@dimen/margin_10"
+                            android:layout_weight="0.3"
                             android:gravity="center_vertical"
-                            >
+                            android:orientation="horizontal">
 
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                >
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:id="@+id/timeZonetitle"
@@ -305,49 +272,44 @@
                                     android:textSize="@dimen/text_size_20"
                                     android:textStyle="bold" />
 
-
                             </LinearLayout>
 
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
-                                android:paddingTop="@dimen/margin_short_7"
-                                >
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/margin_short_7">
 
                                 <ImageView
                                     android:id="@+id/timeZoneImgView"
                                     android:layout_width="@dimen/margin_19"
                                     android:layout_height="@dimen/margin_19"
-                                    android:src="@drawable/timezone_icon"
                                     android:layout_gravity="center_vertical"
-                                    />
+                                    android:src="@drawable/timezone_icon" />
 
                                 <TextView
                                     android:id="@+id/timeZoneTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:paddingLeft="@dimen/margin_10"
                                     android:text="Cycle (120/14)"
                                     android:textColor="@color/gray_category_color"
-                                    android:textSize="@dimen/text_size_14"
-                                    android:paddingLeft="@dimen/margin_10"
-                                    android:layout_gravity="center_vertical"
-                                    />
+                                    android:textSize="@dimen/text_size_14" />
 
                             </LinearLayout>
 
-
                             <Spinner
                                 android:id="@+id/timeZoneSpinner"
+                                style="@style/spinner_style_transparent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/margin_15"
-                                android:layout_marginRight="@dimen/margin_15"
                                 android:layout_marginTop="@dimen/margin_15"
+                                android:layout_marginRight="@dimen/margin_15"
                                 android:paddingTop="@dimen/margin_short_7"
                                 android:paddingBottom="@dimen/margin_short_7"
-                                style="@style/spinner_style_transparent"
                                 android:visibility="gone"
 
                                 />
@@ -355,30 +317,27 @@
 
                         </RelativeLayout>
 
-
                         <RelativeLayout
-                            android:layout_toRightOf="@+id/cycleLayout"
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/cycleLayout"
                             android:layout_weight="0.3"
                             android:gravity="center_vertical"
-                            >
+                            android:orientation="horizontal">
 
                             <LinearLayout
                                 android:id="@+id/timeZoneLayout"
-                                android:orientation="horizontal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                >
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:id="@+id/operatingZoneT"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginRight="@dimen/margin_12"
                                     android:text="@string/Operating_zone"
                                     android:textColor="@color/gray_text_color"
-                                    android:layout_marginRight="@dimen/margin_12"
                                     android:textSize="@dimen/text_size_20"
                                     android:textStyle="bold" />
 
@@ -386,93 +345,83 @@
                                     android:id="@+id/opZoneTmgView"
                                     android:layout_width="@dimen/margin_19"
                                     android:layout_height="@dimen/margin_19"
-                                    android:src="@drawable/edit_log_icon"
-                                    android:layout_toRightOf="@+id/caCycleTitle"
                                     android:layout_gravity="center"
-                                    />
+                                    android:layout_toRightOf="@+id/operatingZoneT"
+                                    android:src="@drawable/edit_log_icon" />
 
                             </LinearLayout>
 
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
-                                android:paddingTop="@dimen/margin_short_7"
-                                >
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/margin_short_7">
 
                                 <ImageView
                                     android:id="@+id/opZoneimgView"
                                     android:layout_width="@dimen/margin_19"
                                     android:layout_height="@dimen/margin_19"
-                                    android:src="@drawable/operatingzone_icon"
                                     android:layout_gravity="center_vertical"
-                                    />
+                                    android:src="@drawable/operatingzone_icon" />
 
                                 <TextView
                                     android:id="@+id/operatingZoneTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:paddingLeft="@dimen/margin_10"
+                                    android:paddingRight="@dimen/margin_short_5"
                                     android:text="Cycle (120/14)"
                                     android:textColor="@color/gray_category_color"
-                                    android:textSize="@dimen/text_size_14"
-                                    android:paddingLeft="@dimen/margin_10"
-                                    android:layout_gravity="center_vertical"
-                                    />
+                                    android:textSize="@dimen/text_size_14" />
 
                             </LinearLayout>
 
 
-
                         </RelativeLayout>
 
-
                     </LinearLayout>
-
-
-
-
-
-
-
 
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/ripple_effect"
-                    android:layout_weight="0.5"
                     android:layout_marginTop="@dimen/margin_20"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/margin_short_8"
+                    android:paddingBottom="@dimen/margin_short_8"
+
+
                     >
-
-
-
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Category 1"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingBottom="@dimen/margin_10"
+                        android:text="@string/USA_Exemption"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/text_size_19"
-                        android:paddingRight="@dimen/margin_20"
-                        android:paddingLeft="@dimen/margin_10"
                         android:textStyle="bold"
-                        android:paddingTop="@dimen/margin_10"
-                        android:paddingBottom="@dimen/margin_15"
-                        android:visibility="gone"
+                        android:visibility="visible"
 
                         />
-
 
 
                     <RelativeLayout
                         android:id="@+id/haulExceptionLay"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
+                        android:gravity="center_vertical"
                         android:paddingLeft="@dimen/margin_10"
+
                         >
 
                         <RelativeLayout
@@ -481,6 +430,7 @@
                             android:layout_height="@dimen/view_height_40"
                             android:layout_centerVertical="true"
                             android:background="@drawable/circle_shape_short_haul"
+
                             >
 
 
@@ -492,32 +442,26 @@
                                 android:src="@drawable/shorthaul_icon" />
                         </RelativeLayout>
 
-
-
                         <TextView
                             android:id="@+id/haulExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/take_16_hour_exc"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_17"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/shortHaulImagView"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/usa_take_16_hour_exc"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
 
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/haulExceptnSwitchButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:checked="false"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
                             android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
+                            android:layout_centerInParent="true"
                             android:layout_marginRight="@dimen/margin_10"
-                            />
-
+                            android:checked="false"
+                            app:theme="@style/Custom.Widget.SwitchCompat" />
 
 
                     </RelativeLayout>
@@ -527,19 +471,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
                         android:paddingLeft="@dimen/margin_10"
+
                         >
 
                         <RelativeLayout
-                            android:id="@+id/adverseExpLayout"
+                            android:id="@+id/adverseExpImgView"
                             android:layout_width="@dimen/view_height_40"
                             android:layout_height="@dimen/view_height_40"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_adverse"
-                            >
+                            android:background="@drawable/circle_shape_adverse">
 
 
                             <ImageView
-                                android:id="@+id/adverseExpImgView"
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
@@ -547,18 +490,16 @@
                         </RelativeLayout>
 
 
-
                         <TextView
                             android:id="@+id/adverseExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/adverse_excp"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_17"
-                            android:layout_toRightOf="@+id/adverseExpLayout"
-                            android:paddingLeft="@dimen/margin_10"
                             android:layout_centerVertical="true"
-                            />
+                            android:layout_toRightOf="@+id/adverseExpImgView"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/usa_adverse_excp"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
 
 
                         <androidx.appcompat.widget.SwitchCompat
@@ -566,29 +507,113 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
+                            android:layout_centerInParent="true"
                             android:layout_marginRight="@dimen/margin_10"
                             android:checked="false"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
                             app:theme="@style/Custom.Widget.SwitchCompat"
+
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
 
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/margin_short_8"
+                    android:paddingBottom="@dimen/margin_short_8"
+
+
+                    >
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingBottom="@dimen/margin_10"
+                        android:text="@string/CANADA_Exemption"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_19"
+                        android:textStyle="bold"
+                        android:visibility="visible"
+
+                        />
+
+                    <RelativeLayout
+                        android:id="@+id/adverseCanadaExceptionLay"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_55"
+                        android:paddingLeft="@dimen/margin_10">
+
+                        <RelativeLayout
+                            android:id="@+id/adverseCanadaExpImgView"
+                            android:layout_width="@dimen/view_height_40"
+                            android:layout_height="@dimen/view_height_40"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_adverse">
+
+
+                            <ImageView
+                                android:layout_width="@dimen/margin_17"
+                                android:layout_height="@dimen/margin_17"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/adverse_exception" />
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:id="@+id/adverseCanadaExpTxtView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/adverseCanadaExpImgView"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/canada_adverse_excp"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
+
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/adverseCanadaSwitchButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginRight="@dimen/margin_10"
+                            android:checked="false"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/colorWhite"
+                            android:textColorHighlight="@color/colorPrimary"
+                            app:theme="@style/Custom.Widget.SwitchCompat"
+
+                            app:thumbTextPadding="@dimen/margin_short_5" />
 
 
                     </RelativeLayout>
+
 
                     <RelativeLayout
                         android:id="@+id/deferralRuleLay"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
-                        android:paddingRight="@dimen/margin_15"
                         android:layout_marginBottom="@dimen/margin_10"
                         android:paddingLeft="@dimen/margin_10"
-                        android:visibility="gone"
+                        android:paddingRight="@dimen/margin_10"
+                        android:visibility="visible"
 
                         >
 
@@ -597,40 +622,37 @@
                             android:layout_width="@dimen/view_height_40"
                             android:layout_height="@dimen/view_height_40"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_checkinternet"
-                            >
+                            android:background="@drawable/circle_shape_checkinternet">
 
 
                             <ImageView
                                 android:id="@+id/deferalImgView"
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
-                                android:src="@drawable/deferal_icon"
-                                android:layout_centerVertical="true"
-                                android:layout_centerHorizontal="true"
-                                />
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/deferal_icon" />
                         </RelativeLayout>
+
                         <TextView
                             android:id="@+id/deferralTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/deferral_rule"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_17"
-                            android:paddingLeft="@dimen/margin_10"
                             android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/deferalLayout"
-                            />
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/canada_deferral_rule"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
 
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/deferralSwitchButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
                             android:layout_centerInParent="true"
+                            android:layout_centerVertical="true"
                             android:checked="false"
                             app:theme="@style/Custom.Widget.SwitchCompat"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
 
 
                             />
@@ -639,69 +661,179 @@
                     </RelativeLayout>
 
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/margin_short_8"
+                    android:paddingBottom="@dimen/margin_short_8"
+
+                    >
+
 
                     <RelativeLayout
-                        android:id="@+id/SyncDataBtn"
+                        android:id="@+id/docBtn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
                         android:layout_margin="@dimen/margin_short_2"
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10">
 
-
-                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:paddingTop="@dimen/margin_10"
+                            android:paddingRight="@dimen/margin_20"
+                            android:paddingBottom="@dimen/margin_10"
+                            android:text="Category 1"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="@dimen/text_size_19"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
 
                         <RelativeLayout
-                            android:id="@+id/settingLayout"
+                            android:id="@+id/documentLayout"
                             android:layout_width="@dimen/view_height_40"
                             android:layout_height="@dimen/view_height_40"
-
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_sync"
-                            >
+                            android:background="@drawable/circle_shape_document">
 
 
-                            <com.constants.LoadingSpinImgView
-                                android:id="@+id/settingSpinImgVw"
+                            <ImageView
+                                android:id="@+id/documentImgView"
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
-
-                                android:src="@drawable/sync_data_spin" />
-
-
-
+                                android:src="@drawable/document_icon" />
                         </RelativeLayout>
-
 
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/synchronize_data"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_17"
-                            android:layout_toRightOf="@+id/settingLayout"
-                            android:paddingLeft="@dimen/margin_10"
                             android:layout_centerVertical="true"
-                            />
+                            android:layout_toRightOf="@+id/documentLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/documents"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
 
 
-
-
-
+                        <ImageView
+                            android:layout_width="@dimen/margin_17"
+                            android:layout_height="@dimen/margin_17"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginRight="@dimen/margin_23"
+                            android:src="@drawable/arrow_next_unidentfied"
+                            android:tint="@color/gray_category_color" />
 
                     </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/obdDiagnoseBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_55"
+                        android:layout_margin="@dimen/margin_short_2"
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10">
+
+                        <RelativeLayout
+                            android:id="@+id/obdDiagnoseLayout"
+                            android:layout_width="@dimen/view_height_40"
+                            android:layout_height="@dimen/view_height_40"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_obd">
+
+
+                            <ImageView
+                                android:id="@+id/obdDiagnoseImgVw"
+                                android:layout_width="@dimen/margin_17"
+                                android:layout_height="@dimen/margin_17"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/malfunction_other"
+
+                                android:tint="@color/hos_distance" />
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/obdDiagnoseLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/obd_diagnose"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
+
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_17"
+                            android:layout_height="@dimen/margin_17"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/margin_23"
+                            android:src="@drawable/arrow_next_unidentfied"
+                            android:tint="@color/gray_category_color" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/SyncDataBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_55"
+                        android:layout_margin="@dimen/margin_short_2"
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10">
+
+                        <RelativeLayout
+                            android:id="@+id/settingLayout"
+                            android:layout_width="@dimen/view_height_40"
+                            android:layout_height="@dimen/view_height_40"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_sync">
+
+                            <com.constants.LoadingSpinImgView
+                                android:id="@+id/settingSpinImgVw"
+                                android:layout_width="@dimen/margin_17"
+                                android:layout_height="@dimen/margin_17"
+
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/sync_data_spin" />
+
+
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/settingLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/synchronize_data"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
+
+                    </RelativeLayout>
+
 
                     <RelativeLayout
                         android:id="@+id/soundbrightnessBtn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
-                        android:paddingLeft="@dimen/margin_10"
+                        android:layout_margin="@dimen/margin_short_2"
                         android:layout_marginBottom="@dimen/margin_10"
                         android:background="@drawable/gray_light_selector"
-                        android:layout_margin="@dimen/margin_short_2"
-
+                        android:paddingLeft="@dimen/margin_10"
 
 
                         >
@@ -710,20 +842,16 @@
                             android:id="@+id/soundbrightnessBtnLayout"
                             android:layout_width="@dimen/view_height_40"
                             android:layout_height="@dimen/view_height_40"
-
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_soubright"
-                            >
+                            android:background="@drawable/circle_shape_soubright">
 
 
                             <ImageView
                                 android:id="@+id/soundbrightnessSoundImgView"
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
-                                android:src="@drawable/sound_bright"
-                                android:layout_centerVertical="true"
-                                android:layout_centerHorizontal="true"
-                                />
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/sound_bright" />
                         </RelativeLayout>
 
 
@@ -737,77 +865,106 @@
                             android:textColor="@color/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
-
-
-
-
-
                     </RelativeLayout>
-
 
                 </LinearLayout>
 
+
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/ripple_effect"
-                    android:layout_weight="0.5"
                     android:layout_marginTop="@dimen/margin_20"
                     android:layout_marginBottom="@dimen/margin_20"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/margin_short_8"
+                    android:paddingBottom="@dimen/margin_short_8"
 
                     >
-
-
 
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingBottom="@dimen/margin_10"
                         android:text="Category 2"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/text_size_19"
-                        android:paddingRight="@dimen/margin_20"
-                        android:paddingLeft="@dimen/margin_10"
                         android:textStyle="bold"
-                        android:paddingTop="@dimen/margin_10"
-                        android:paddingBottom="@dimen/margin_15"
-                        android:visibility="gone"
+                        android:visibility="gone" />
 
-                        />
+                    <RelativeLayout
+                        android:id="@+id/checkInternetBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_55"
+                        android:layout_margin="@dimen/margin_short_2"
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10"
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/checkInternetLayout"
+                            android:layout_width="@dimen/view_height_40"
+                            android:layout_height="@dimen/view_height_40"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_checkinternet">
+
+
+                            <ImageView
+                                android:id="@+id/checkInternetImgView"
+                                android:layout_width="@dimen/margin_17"
+                                android:layout_height="@dimen/margin_17"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/check_internet_icon" />
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/checkInternetLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/Internet_Status"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
+
+                    </RelativeLayout>
+
 
                     <RelativeLayout
                         android:id="@+id/checkAppUpdateBtn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
                         android:layout_margin="@dimen/margin_short_2"
-
-
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10"
 
                         >
+
 
                         <RelativeLayout
                             android:id="@+id/updateAppLayout"
                             android:layout_width="@dimen/view_height_40"
                             android:layout_height="@dimen/view_height_40"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_checkupdate"
-                            >
+                            android:background="@drawable/circle_shape_checkupdate">
 
 
                             <com.constants.LoadingSpinImgView
                                 android:id="@+id/downloadBlinkIV"
                                 android:layout_width="@dimen/margin_18"
                                 android:layout_height="@dimen/margin_18"
-
                                 android:layout_centerInParent="true"
                                 android:src="@drawable/update_icon" />
 
 
                         </RelativeLayout>
-
 
                         <TextView
                             android:id="@+id/checkAppUpdateTV"
@@ -865,7 +1022,9 @@
                                 app:maximum="100"
                                 app:progress="0"
                                 app:progressAnimationDuration="100"
-                                app:startAngle="270" />
+                                app:startAngle="270"
+
+                                />
 
 
                             <ImageView
@@ -874,7 +1033,7 @@
                                 android:layout_height="@dimen/margin_27"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
-                                android:layout_marginRight="@dimen/margin_short_7"
+                                android:layout_marginRight="@dimen/margin_short_2"
                                 android:src="@drawable/download_downward"
                                 android:tint="@color/update_app"
                                 android:visibility="gone"
@@ -884,178 +1043,7 @@
                         </RelativeLayout>
 
 
-
                     </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/docBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_55"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
-                        android:layout_margin="@dimen/margin_short_2"
-
-
-                        >
-
-                        <RelativeLayout
-                            android:id="@+id/documentLayout"
-                            android:layout_width="@dimen/view_height_40"
-                            android:layout_height="@dimen/view_height_40"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_document"
-                            >
-
-
-                            <ImageView
-                                android:id="@+id/documentImgView"
-                                android:layout_width="@dimen/margin_17"
-                                android:layout_height="@dimen/margin_17"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/document_icon" />
-                        </RelativeLayout>
-
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/documents"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_17"
-                            android:layout_toRightOf="@+id/documentLayout"
-                            android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
-
-
-                        <ImageView
-                            android:layout_width="@dimen/margin_17"
-                            android:layout_height="@dimen/margin_17"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerInParent="true"
-                            android:layout_marginRight="@dimen/margin_27"
-                            android:src="@drawable/arrow_next_unidentfied"
-                            android:tint="@color/gray_category_color"
-
-                            />
-
-
-
-                    </RelativeLayout>
-
-
-
-                    <RelativeLayout
-                        android:id="@+id/obdDiagnoseBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_55"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
-                        android:layout_margin="@dimen/margin_short_2"
-
-
-                        >
-
-                        <RelativeLayout
-                            android:id="@+id/obdDiagnoseLayout"
-                            android:layout_width="@dimen/view_height_40"
-                            android:layout_height="@dimen/view_height_40"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_obd"
-                            >
-
-
-                            <ImageView
-                                android:id="@+id/obdDiagnoseImgVw"
-                                android:layout_width="@dimen/margin_17"
-                                android:layout_height="@dimen/margin_17"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/malfunction_other"
-
-
-                                android:tint="@color/hos_distance" />
-                        </RelativeLayout>
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/obd_diagnose"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_17"
-                            android:layout_toRightOf="@+id/obdDiagnoseLayout"
-                            android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
-
-
-                        <ImageView
-                            android:layout_width="@dimen/margin_17"
-                            android:layout_height="@dimen/margin_17"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerInParent="true"
-                            android:layout_marginRight="@dimen/margin_27"
-                            android:src="@drawable/arrow_next_unidentfied"
-                            android:tint="@color/gray_category_color"
-
-                            />
-
-
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/checkInternetBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_55"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
-                        android:layout_margin="@dimen/margin_short_2"
-
-
-                        >
-
-                        <RelativeLayout
-                            android:id="@+id/checkInternetLayout"
-                            android:layout_width="@dimen/view_height_40"
-                            android:layout_height="@dimen/view_height_40"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_checkinternet"
-                            >
-
-
-                            <ImageView
-                                android:id="@+id/checkInternetImgView"
-                                android:layout_width="@dimen/margin_17"
-                                android:layout_height="@dimen/margin_17"
-                                android:src="@drawable/check_internet_icon"
-                                android:layout_centerVertical="true"
-                                android:layout_centerHorizontal="true"
-                                />
-                        </RelativeLayout>
-
-
-
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/Internet_Status"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_17"
-                            android:layout_toRightOf="@+id/checkInternetLayout"
-                            android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
-
-
-
-
-
-                    </RelativeLayout>
-
 
 
                 </LinearLayout>
@@ -1064,15 +1052,14 @@
                     android:id="@+id/settingSaveBtn"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/view_height_40"
+                    android:layout_marginLeft="@dimen/view_height_40"
+                    android:layout_marginTop="@dimen/view_height_60"
+                    android:layout_marginRight="@dimen/view_height_50"
+                    android:background="@drawable/red_btn_selector"
                     android:text="@string/save"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_17"
-                    android:layout_marginLeft="@dimen/view_height_40"
-                    android:layout_marginRight="@dimen/view_height_50"
-                    android:layout_marginTop="@dimen/view_height_60"
-                    android:background="@drawable/red_btn_selector"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
 
             </LinearLayout>
@@ -1144,8 +1131,6 @@
                             android:layout_width="@dimen/view_height_100"
                             android:layout_height="match_parent">
 
-
-
                             <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
                                 android:id="@+id/sbBrightness"
                                 android:layout_width="@dimen/view_height_100"
@@ -1155,14 +1140,10 @@
                                 android:rotation="270"
                                 app:seekBarRotation="CW270" />
 
-
-
-
-
-
-
                         </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
+
                     </LinearLayout>
+
                     <ImageView
                         android:id="@+id/lowBrightnessImg"
                         android:layout_width="@dimen/margin_22"
@@ -1223,13 +1204,8 @@
                         />
                 </LinearLayout>
 
-
-
-
             </LinearLayout>
-
 
         </androidx.cardview.widget.CardView>
     </LinearLayout>
-
 </RelativeLayout>

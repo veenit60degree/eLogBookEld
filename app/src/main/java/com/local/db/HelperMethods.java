@@ -1809,14 +1809,27 @@ public class HelperMethods {
                             String UTCEndDate = Globally.GetUTCFromDate(lastItemEndDateStr, offsetFromUTC);
                             DateTime lastItemEndDate = Globally.getDateTimeObj(lastItemEndDateStr, false); //Globally.getDateTimeObj(logObj.getString(ConstantsKeys.startDateTime), false);
 
-                            int totalMin = new DateTime(lastItemEndDate).getMinuteOfDay() - lastItemStartDate.getMinuteOfDay();
+                            // totalMin = new DateTime(lastItemEndDate).getMinuteOfDay() - lastItemStartDate.getMinuteOfDay();
+                            int totalMin = (int) Constants.getDateTimeDuration(lastItemStartDate, lastItemEndDate).getStandardMinutes();
+
+                          /*  try{
+
+                                if(duration == 0){
+                                    DateTime lastItemStartDate = Globally.getDateTimeObj(logObj.getString(ConstantsKeys.startDateTime), false);
+                                    DateTime lastItemEndDate = Globally.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
+                                    duration = (int) Constants.getDateTimeDuration(lastItemStartDate, lastItemEndDate).getStandardMinutes();
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }*/
+
                             if(totalMin < 0) {
                                 totalMin = Constants.getMinDiff(lastItemStartDate, lastItemEndDate);
                             }
 
                             driverLogJson.put(ConstantsKeys.endDateTime, lastItemEndDateStr );
                             driverLogJson.put(ConstantsKeys.utcEndDateTime, UTCEndDate);
-                            driverLogJson.put(ConstantsKeys.totalMin, totalMin);
+                            driverLogJson.put(ConstantsKeys.totalMin, (totalMin +1));
 
                         }else{
                             driverLogJson.put(ConstantsKeys.endDateTime, logObj.getString(ConstantsKeys.endDateTime));
@@ -2096,6 +2109,35 @@ public class HelperMethods {
 
     }
 
+    public int GetDutyStatusTimeInterval(JSONArray driverLogJsonArray, Constants constants, int status ){
+        int TotalTime = 0;
+        int SelectedTime = 0;
+
+        try {
+            for(int i = 0 ; i < driverLogJsonArray.length() ; i++){
+                JSONObject logObj = (JSONObject) driverLogJsonArray.get(i);
+                String startDateTime = logObj.getString(ConstantsKeys.startDateTime);
+                String endDateTime = logObj.getString(ConstantsKeys.endDateTime);
+                if(logObj.getInt(ConstantsKeys.DriverStatusId) == status) {
+                    if(endDateTime.contains("23:59:59")){
+                        DateTime endDate      = Globally.getDateTimeObj(endDateTime, false);
+                        endDate = endDate.plusSeconds(1);
+                        endDateTime = endDate.toString();
+                    }
+                    SelectedTime = constants.getMinDiff(startDateTime, endDateTime, false);
+                    TotalTime = TotalTime + SelectedTime;
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return TotalTime;
+    }
+
+
+/*
     // Get Selected On Duty Time
     public int GetOnDutyTime(JSONArray driverLogJsonArray ){
         int TotalTime = 0;
@@ -2104,6 +2146,8 @@ public class HelperMethods {
         try {
             for(int i = 0 ; i < driverLogJsonArray.length() ; i++){
                 JSONObject logObj = (JSONObject) driverLogJsonArray.get(i);
+
+
                 DateTime startDateTime      = Globally.getDateTimeObj(logObj.getString(ConstantsKeys.startDateTime), false);
                 DateTime endDateTime      = Globally.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
 
@@ -2151,6 +2195,8 @@ public class HelperMethods {
                     SelectedTime = endDateTime.getMinuteOfDay() - startDateTime.getMinuteOfDay();
                     TotalTime = TotalTime + SelectedTime;
                 }
+
+
             }
 
         }catch (Exception e){
@@ -2224,6 +2270,7 @@ public class HelperMethods {
         return TotalTime;
     }
 
+*/
 
 
     /*-------------------- GET DRIVER SAVED LOG -------------------- */
@@ -3786,6 +3833,23 @@ public class HelperMethods {
     }
 
 
+    public boolean IsAlreadyIntermediate(int companyId, DBHelper dbHelper){
+        boolean isIntermediate = false;
+        try{
+            JSONArray array = getSavedUnidentifiedLogArray(companyId, dbHelper);
+            if(array.length() > 0){
+                JSONObject obj = (JSONObject) array.get(array.length()-1);
+                isIntermediate = obj.getBoolean(ConstantsKeys.Intermediate);
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isIntermediate;
+    }
+
+
     public void updateUploadedStatusInArray(String CompanyId, DBHelper dbHelper){
 
         JSONArray updatedArray = new JSONArray();
@@ -3829,8 +3893,8 @@ public class HelperMethods {
         return IntermediateUpdate;
     }
 
-    public JSONObject updateLastRecordOfUnIdentifiedLog(JSONArray unIdentifiedLogArray, String EndTime, String EndOdometer,
-                                                      String lat, String lon, String engineSec){
+    public JSONObject updateLastRecordOfUnIdentifiedLog(JSONArray unIdentifiedLogArray, String UnAssignedVehicleMilesId, String EndTime, String EndOdometer,
+                                                      String lat, String lon, String engineSec, boolean Intermediate){
         JSONObject updatedObj = null;
         try{
 
@@ -3838,11 +3902,13 @@ public class HelperMethods {
                 int lastIndex = unIdentifiedLogArray.length()-1;
                 updatedObj = (JSONObject) unIdentifiedLogArray.get(lastIndex);
 
-                updatedObj.put(ConstantsKeys.StatusEndTime, EndTime);
+                updatedObj.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
+                updatedObj.put(ConstantsKeys.UTCEndDateTime, EndTime);
                 updatedObj.put(ConstantsKeys.EndOdometer, EndOdometer);
                 updatedObj.put(ConstantsKeys.EndLatitude, lat);
                 updatedObj.put(ConstantsKeys.EndLongitude, lon);
                 updatedObj.put(ConstantsKeys.EndEngineSeconds, engineSec);
+                updatedObj.put(ConstantsKeys.Intermediate, Intermediate);
                 updatedObj.put(ConstantsKeys.IsUploadedUnIdenRecord, false);
 
             }

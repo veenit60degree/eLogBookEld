@@ -2282,6 +2282,21 @@ public class Constants {
 
     }
 
+    public static String ConvertToBeforeDecimal(String value) {
+        try{
+            String[] array = value.split("\\.");
+            if(array.length> 0){
+                value = array[0];
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ""+value;
+        }
+
+        return value;
+    }
+
+
     public boolean isExponentialValue(String str) {
         String CHAR1 = ".";             //   check for the presence of at least one letter
         String CHAR2 =  "[0-9]+";       //   check for the presence of at least one number
@@ -3202,8 +3217,32 @@ public class Constants {
         }
     }
 
+    public void saveTempUnidentifiedLog(String data, Utils util){
+        try {
+            util.writeAppUsageLogFile(data);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
+    public int getMinDiff(String startDateTime, String endDateTime, boolean isPrevDayLastLog){
+        int minDiff = 0;
+        try{
+            DateTime startDateT = Globally.getDateTimeObj(startDateTime, false);
+            DateTime endDateT = Globally.getDateTimeObj(endDateTime, false);
+            // int minDiff = endDateT.getMinuteOfDay() - startDateT.getMinuteOfDay();    2021-10-17T23:59:59
+            minDiff = (int) Constants.getDateTimeDuration(startDateT, endDateT).getStandardMinutes();
+
+            if(isPrevDayLastLog){
+                minDiff++;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return minDiff;
+    }
 
     public String getCountryName(Context context){
 
@@ -3556,6 +3595,17 @@ public class Constants {
         try{
             for(int i = 0 ; i< logArray.length() ; i++) {
                 JSONObject obj = (JSONObject)logArray.get(i);
+
+                String StartDateTime = obj.getString(ConstantsKeys.DriverZoneStartDateTime);
+                if(StartDateTime.length() > 19){
+                    StartDateTime = StartDateTime.substring(0, 19);
+                }
+
+                DateFormat format = new SimpleDateFormat(Globally.DateFormat, Locale.ENGLISH);
+                Date date = format.parse(StartDateTime);
+
+
+
                 UnAssignedVehicleModel dutyModel = new UnAssignedVehicleModel(
                         CheckNullBString(obj.getString(ConstantsKeys.UnAssignedVehicleMilesId)),
                         CheckNullBString(obj.getString(ConstantsKeys.AssignedUnidentifiedRecordsId)),
@@ -3577,12 +3627,15 @@ public class Constants {
 
                         CheckNullBString(obj.getString(ConstantsKeys.StartLocation)),
                         CheckNullBString(obj.getString(ConstantsKeys.EndLocation)),
-                        CheckNullBString(obj.getString(ConstantsKeys.DutyStatus))
+                        CheckNullBString(obj.getString(ConstantsKeys.DutyStatus)),
+                        date
 
                         );
 
                 dotLogList.add(dutyModel);
             }
+
+            Collections.sort(dotLogList);
         }catch (Exception e){
             e.printStackTrace();
         }
