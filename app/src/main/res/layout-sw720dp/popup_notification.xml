@@ -14,22 +14,24 @@
         android:layout_height="wrap_content"
         android:background="@drawable/white_full_border"
         android:orientation="vertical"
-        android:paddingTop="@dimen/margin_10"
+        android:minWidth="@dimen/view_height_700"
+        android:paddingBottom="@dimen/margin_15"
+
+
         >
 
     <TextView
         android:id="@+id/notificationTitle"
-        android:layout_width="@dimen/view_height_700"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/notification"
-
-        android:textColor="@color/colorPrimary"
+        android:background="@drawable/blue_top_corner_drawable"
+        android:textColor="@color/whiteee"
         android:textStyle="bold"
         android:textSize="@dimen/text_size_21"
-        android:gravity="left"
-        android:layout_marginTop="@dimen/margin_10"
-        android:layout_marginBottom="@dimen/margin_20"
-        android:layout_marginLeft="@dimen/margin_25"
+        android:gravity="center"
+        android:paddingBottom="@dimen/margin_17"
+        android:paddingTop="@dimen/margin_17"
 
 
         />
@@ -80,16 +82,16 @@
     <Button
         android:id="@+id/notificationOkBtn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/view_height_55"
         android:text="@string/ok"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/whiteee"
         android:textSize="@dimen/text_size_20"
         android:gravity="center"
-        android:layout_marginRight="@dimen/margin_15"
-        android:paddingLeft="@dimen/margin_10"
-        android:paddingRight="@dimen/margin_10"
-        android:paddingBottom="@dimen/margin_short_5"
-        android:background="@color/transparent"
+        android:layout_marginRight="@dimen/margin_20"
+        android:paddingLeft="@dimen/margin_25"
+        android:paddingRight="@dimen/margin_25"
+        android:background="@drawable/eld_blue_new_selector"
+
         android:layout_gravity="right"
         android:textAllCaps="false"
 

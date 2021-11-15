@@ -600,7 +600,7 @@
     <string name="welcome_to_als_realtime">Welcome to ALS Realtime</string>
     <string name="MainDriver">Main Driver</string>
 
-    <string name="notification">Notification</string>
+    <string name="notification">Notifications</string>
     <string name="news_updates">News &amp; Updates</string>
     <string name="password">Password</string>
     <string name="yes">Yes</string>
@@ -883,6 +883,15 @@
     <string name="obd_ble_discon_conn_error">Bluetooth OBD disconnected, connection error</string>
     <string name="BluetoothOBD">Bluetooth OBD</string>
     <string name="BleObdNotFound">Bluetooth OBD not found. Please check your bluetooth device.</string>
+
+    <string name="BleOBDConnErr">BLE OBD Connection Error</string>
+    <string name="connErrorDesc">E-Log book is getting different MAC address. Please check your BLE device configuration.</string>
+    <string name="AlsEld">ALS ELD</string>
+    <string name="Inter_record_occ">Intermediate record occurred</string>
+    <string name="driving_rec_occurred">Unidentified Driving Record occurred as vehicle is moving but no Driver is logged in</string>
+    <string name="onduty_rec_occurred">Unidentified OnDuty record occurred as vehicle is not moving but engine is idling</string>
+    <string name="UnIdentifiedDrivingOcc">UnIdentified Driving event occurred</string>
+
     <string name="BleObdNotConnected">Bluetooth OBD is not connecting. Restart you app and try to connect it again.</string>
     <string name="obd_not_connected">OBD not connected</string>
     <string name="wifi_active">WIFI OBD is connected</string>

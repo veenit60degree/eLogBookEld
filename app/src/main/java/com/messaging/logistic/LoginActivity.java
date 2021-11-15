@@ -710,6 +710,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			constants.saveMalfncnStatus(getApplicationContext(), false);
 			SharedPref.SetObdOdometer("0", getApplicationContext());
 			SharedPref.SetObdEngineHours("0", getApplicationContext());
+			SharedPref.SaveBleOBDMacAddress("", getApplicationContext());
 
 			// clear array in table
 			if(CompanyId.length() > 0) {

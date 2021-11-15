@@ -226,7 +226,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 }
             }
 
-            dateActionBarTV.setText(Html.fromHtml("<b><u>View Events</u></b>"));
+            dateActionBarTV.setText(Html.fromHtml("<b><u>Events History" +
+                    "</u></b>"));
 
 
             if (globally.isConnected(getContext())) {
@@ -721,7 +722,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     void checkLocMalfunction(){
         boolean isLocMalfunctionOccur = SharedPref.isLocMalfunctionOccur(getActivity());
         String malfunctionType = SharedPref.getLocationEventType(getActivity());
-        if(isLocMalfunctionOccur && (malfunctionType.equals("m") || malfunctionType.equals("x"))){
+        if(isLocMalfunctionOccur && (malfunctionType.equals("M") || malfunctionType.equals("X"))){
             malfunctionHeaderList.add(new MalfunctionHeaderModel(
                     "Positioning Compliance Event", "1", getString(R.string.loc_mal), false, true, "-1"));
             malfunctionChildList.add(new MalfunctionModel(

@@ -200,7 +200,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     int LocRefreshTime = 10;
     int CheckInternetConnection = 2;
     private static final long MIN_TIME_BW_UPDATES = 2 * 1000;   //30 sec. 30000 - 1/2 minute -- [960000 milli sec -- (16 minutes)]
-    private static final long MIN_TIME_LOCATION_UPDATES = 1 * 1000;   // 8 sec
+    private static final long MIN_TIME_LOCATION_UPDATES = 1 * 1000;   // 1 sec
     private static final long OBD_TIME_LOCATION_UPDATES = 10 * 1000;   // 10 sec
     private static final long IDLE_TIME_LOCATION_UPDATES = 3600 * 1000;   // 1 hour
 
@@ -287,13 +287,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String TotalUsage = "";
     String PreviousLatitude = "", PreviousLongitude = "", PreviousOdometer = "";
     long processStartTime = -1;
-    double tempOdo = 1179876199;  //1.090133595E9
+    double tempOdo = 1180203799;  //1.090133595E9
     double tempEngHour = 22999.95;
 
-
-    private static final String SERVICE_UUID = "00001000-0000-1000-8000-00805f9b34fb";
-    private static final String CHARACTER_WRITE_UUID = "00001001-0000-1000-8000-00805f9b34fb";
-    private static final String CHARACTER_NOTIFY_UUID = "00001002-0000-1000-8000-00805f9b34fb";
 
     // Bluetooth obd adapter decleration
     boolean mIsScanning = false;
@@ -604,9 +600,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         // ---------------- temp data ---------------------
 
 
-/*
 
-        if (OBD_DISCONNECTED) {
+
+       /* if (OBD_DISCONNECTED) {
             ignitionStatus = "ON";
             truckRPM = "700";
             speed = 0;
@@ -618,8 +614,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
             OBD_LAST_STATUS = constants.WIRED_CONNECTED;
         } else {
-            ignitionStatus = "ON";
-            truckRPM = "700";
+            ignitionStatus = "OFF";
+            truckRPM = "0";
             speed = 0;
             obdEngineHours = "23789.5";
             if (OBD_LAST_STATUS != Constants.WIRED_DISCONNECTED) {
@@ -642,8 +638,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         }
 
-        //tempEngHour = tempEngHour + .01;
-        //obdEngineHours = ""+tempEngHour;
+        tempEngHour = tempEngHour + .01;
+        obdEngineHours = ""+tempEngHour;
         tempOdo = tempOdo + 400;
         obdOdometer = "" + BigDecimal.valueOf(tempOdo).toPlainString();
         currentHighPrecisionOdometer = obdOdometer;
@@ -1220,24 +1216,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         if ( !isConnected) {    //!mIsScanning &&
 
-                            // ignore scan after 5 attempts if device not found
-                         //   if (SharedPref.getBleScanCount(getApplicationContext()) < 5) {
-                                StartScanHtBle();
-                           /* } else {
-                                if (bleScanCount == 5) {
-                                    bleScanCount++;
-                                    HTBleSdk.Companion.getInstance().stopHTBleScan();
-
-                                    if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-                                        Globally.PlayNotificationSound(getApplicationContext());
-                                        global.ShowLocalNotification(getApplicationContext(),
-                                                getString(R.string.BluetoothOBD),
-                                                getString(R.string.BleObdNotFound), 2081);
-                                    }
-
-                                }
-                            }*/
-
+                            StartScanHtBle();
 
                         }
 
@@ -1343,10 +1322,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_ERROR, s));
                     sendBroadCast(getString(R.string.ht_connect_error), "");
 
-                /*    global.ShowLocalNotification(getApplicationContext(),
-                            "BLE ConnectionError",
-                            s + ", ( " + i + ", " + i1 + "), isBleEnabled: " +isBleEnabled(), 20811);
-*/
                     constants.saveObdData(getObdSource(), "BLE - ConnectionError: " + s
                                     + ", ( " + i + ", " + i1 + ") , Ble Enabled: " + isBleEnabled(),
                             obdOdometer, "-1",
@@ -1382,16 +1357,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
 
             @Override
-            public void onDisconnected(@Nullable String s) {
+            public void onDisconnected(@Nullable String address) {
                 try {
-                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, s));
+                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, address));
                    // Log.d("getAddress-onDisconnect", "getAddress: " +s);
 
-                  /*  global.ShowLocalNotification(getApplicationContext(),
-                            "BLE Disconnected",
-                            s + ", isBleEnabled: " +isBleEnabled(), 20812);
-*/
-                    constants.saveObdData(getObdSource(), "BLE-DISCONNECTED: " + s + ", Ble Enabled: " + isBleEnabled(),
+                    constants.saveObdData(getObdSource(), "BLE-DISCONNECTED: " + address + ", Ble Enabled: " + isBleEnabled(),
                             obdOdometer, "-1",
                             currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                             "-1", obdEngineHours, "", "",
@@ -1412,10 +1383,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                 if(SharedPref.getVINNumber(getApplicationContext()).length() > 5) {
                                     Globally.PlayNotificationSound(getApplicationContext());
-                                    global.ShowLocalNotification(getApplicationContext(),
-                                            getString(R.string.BluetoothOBD),
-                                            getString(R.string.obd_ble_disconnected), 2081);
 
+                                    String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
+                                    if(savedMacAddress.length() == 0 || savedMacAddress.equals(address)) {
+                                        global.ShowLocalNotification(getApplicationContext(),
+                                                getString(R.string.BluetoothOBD),
+                                                getString(R.string.obd_ble_disconnected), 2081);
+                                    }else{
+                                        global.ShowLocalNotification(getApplicationContext(),
+                                                getString(R.string.BleOBDConnErr),
+                                                getString(R.string.connErrorDesc) , 2081);
+                                    }
 
                                     sendBroadcastUpdateObd(false);
                                     sendEcmBroadcast(true);
@@ -1442,6 +1420,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 } else {
                     EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_QUERY_DATA_AVAILABLE, address, uuid, htBleData));
                 }
+                Log.d("BleObd","onReceive RPM: "+ htBleData.getEngineSpeed() + ", VehicleSpeed: " + htBleData.getVehicleSpeed());
 
                 try {
                     if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
@@ -1450,32 +1429,43 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                             //  mHtblData.add(htBleData);
 
-                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
-                                SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(),
-                                        global.GetCurrentUTCTimeFormat(), getApplicationContext());
+                            String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
+                            if(savedMacAddress.length() == 0 || savedMacAddress.equals(address)) {
 
-                                constants.saveObdData(getObdSource(), "VIN: "+ htBleData.getVIN_Number() + " - BLE-CONNECTED: onReceive", obdOdometer, currentHighPrecisionOdometer,
-                                        currentHighPrecisionOdometer, "", "", truckRPM, htBleData.getVehicleSpeed(),
-                                        String.valueOf(-1), obdEngineHours, Globally.GetCurrentDateTime(), Globally.GetCurrentDateTime(),
-                                        DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                SharedPref.SaveBleOBDMacAddress(address, getApplicationContext());
 
-                                sendBroadcastUpdateObd(false);
+                                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
+                                    SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(),
+                                            global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-                                sendEcmBroadcast(false);
-                                if(SharedPref.getVINNumber(getApplicationContext()).length() > 5) {
-                                    global.ShowLocalNotification(getApplicationContext(),
-                                            getString(R.string.BluetoothOBD),
-                                            getString(R.string.obd_ble), 2081);
+                                    constants.saveObdData(getObdSource(), "VIN: "+ htBleData.getVIN_Number() + " - BLE-CONNECTED: onReceive", obdOdometer, currentHighPrecisionOdometer,
+                                            currentHighPrecisionOdometer, "", "", truckRPM, htBleData.getVehicleSpeed(),
+                                            String.valueOf(-1), obdEngineHours, Globally.GetCurrentDateTime(), Globally.GetCurrentDateTime(),
+                                            DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
+                                    sendBroadcastUpdateObd(false);
+
+                                    sendEcmBroadcast(false);
+                                    if(SharedPref.getVINNumber(getApplicationContext()).length() > 5) {
+                                        global.ShowLocalNotification(getApplicationContext(),
+                                                getString(R.string.BluetoothOBD),
+                                                getString(R.string.obd_ble), 2081);
+                                    }
+
                                 }
 
+                                if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                                    sendBroadCast(BleUtil.decodeDataChange(htBleData, HTBleSdk.Companion.getInstance().getAddress()), "");
+                                    obdCallBackObservable(Integer.valueOf(htBleData.getVehicleSpeed()), htBleData.getVIN_Number(), global.GetCurrentDateTime(), htBleData);
+                                }
+
+                            }else{
+
+                                disconnectBleObd();
+
                             }
 
-                          //  EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
 
-                            if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-                                sendBroadCast(BleUtil.decodeDataChange(htBleData, HTBleSdk.Companion.getInstance().getAddress()), "");
-                                obdCallBackObservable(Integer.valueOf(htBleData.getVehicleSpeed()), htBleData.getVIN_Number(), global.GetCurrentDateTime(), htBleData);
-                            }
                         }else{
                             disconnectBleObd();
                         }
@@ -1523,6 +1513,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     mIsScanning = false;
                     mHTBleDevices.add(htBleDevice);
+
                     connectHtBle(htBleDevice);
                 }
 
@@ -1556,8 +1547,20 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
            // ToastUtil.show(getApplicationContext(), getString(R.string.ht_connect_error_other));
             sendBroadCast(getString(R.string.ht_connect_error_other), "");
         } else {
-            sendBroadCast(getString(R.string.ht_connected), "");
-            HTBleSdk.Companion.getInstance().connect(htBleDevice);
+
+            String macAddress = htBleDevice.getAddress();
+            String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
+            if(savedMacAddress.length() == 0 || savedMacAddress.equals(macAddress)) {
+                sendBroadCast(getString(R.string.ht_connected), "");
+                HTBleSdk.Companion.getInstance().connect(htBleDevice);
+
+                SharedPref.SaveBleOBDMacAddress(macAddress, getApplicationContext());
+            }else{
+                Globally.ShowLogoutSpeedNotification(getApplicationContext(),
+                        getString(R.string.BleOBDConnErr),
+                        getString(R.string.connErrorDesc), 2081);
+            }
+
         }
     }
 
@@ -2401,9 +2404,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 // GpsVehicleSpeed = 21;
 
                 // saving location with time info to calculate location malfunction event
-                if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+                //if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
                     saveEcmLocationWithTime(Globally.LATITUDE, SharedPref.getHighPrecisionOdometer(getApplicationContext()));
-                }
+                //}
             }
 
         }
@@ -3498,9 +3501,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             // GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
             // GpsVehicleSpeed = 21;
 
-            if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+           // if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
                 saveEcmLocationWithTime(Globally.LATITUDE, SharedPref.getHighPrecisionOdometer(getApplicationContext()));
-            }
+          //  }
         }
 
     }
@@ -4606,10 +4609,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         SharedPref.SetNorthCanadaStatus(dataObj.getBoolean(ConstantsKeys.IsNorthCanada), getApplicationContext());
 
                                         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+
                                             SharedPref.setEldOccurences(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
-                                                    dataObj.getBoolean(ConstantsKeys.IsMalfunction),
-                                                    dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
+                                                    SharedPref.isMalfunctionOccur(getApplicationContext()),
+                                                    SharedPref.isDiagnosticOccur(getApplicationContext()),
                                                     isSuggestedEdit, getApplicationContext());
+
 
                                             isSuggestedRecall = SharedPref.isSuggestedRecall(getApplicationContext());
 
@@ -4619,8 +4624,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                         }else{
                                             SharedPref.setEldOccurencesCo(dataObj.getBoolean(ConstantsKeys.IsUnidentified),
-                                                    dataObj.getBoolean(ConstantsKeys.IsMalfunction),
-                                                    dataObj.getBoolean(ConstantsKeys.IsDiagnostic),
+                                                    SharedPref.isMalfunctionOccurCo(getApplicationContext()) ,
+                                                    SharedPref.isDiagnosticOccurCo(getApplicationContext()),
                                                     isSuggestedEdit, getApplicationContext());
 
                                             isSuggestedRecall = SharedPref.isSuggestedRecallCo(getApplicationContext());
@@ -4683,10 +4688,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         IsAlertTimeValid = false;
                                     }
 
-                                    obdVehicleSpeed = dataObj.getInt("VehicleSpeed");
+                                    //obdVehicleSpeed = dataObj.getInt("VehicleSpeed");
                                     apiReturnedSpeed = dataObj.getString("VehicleSpeed");
 
-                                    Globally.VEHICLE_SPEED = obdVehicleSpeed;
+                                   // Globally.VEHICLE_SPEED = obdVehicleSpeed;
 
                                     if (obdVehicleSpeed != -1) {
                                         VehicleSpeed = obdVehicleSpeed;

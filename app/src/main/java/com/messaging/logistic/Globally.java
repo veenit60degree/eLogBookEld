@@ -2387,7 +2387,7 @@ public class Globally {
 			SharedPref.SetOBDPingAllowedStatus(false, c);
 			SharedPref.SetAutoDriveStatus(false, c);
 			SharedPref.SaveConnectionInfo("", "", c);
-
+			SharedPref.SaveBleOBDMacAddress("", c);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2430,7 +2430,7 @@ public class Globally {
 			try {
                 Utils util = new Utils(c);
                 util.deleteWiredObdLog();
-                util.deleteAppUsageLog();
+              //  util.deleteAppUsageLog();
             }catch (Exception e){ }
 
 			try {

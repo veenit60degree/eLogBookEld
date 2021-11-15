@@ -263,6 +263,23 @@ public class SharedPref {
         editor.commit();
     }
 
+
+    // Save Ble OBD Mac Address  -------------------
+    public static void SaveBleOBDMacAddress( String date, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("BleOBDMacAddress", date);
+        editor.commit();
+    }
+
+
+    // Get Ble OBD Mac Address -------------------
+    public static String GetBleOBDMacAddress(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("BleOBDMacAddress", "");
+    }
+
+
   /*  // Get OBD Screen status -------------------
     public static boolean isOBDScreen(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

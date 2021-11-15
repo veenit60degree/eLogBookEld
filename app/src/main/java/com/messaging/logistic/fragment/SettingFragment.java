@@ -644,8 +644,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
 
-        if(constants.isLocMalfunctionEvent(getActivity(), DriverType) && SharedPref.getLocationEventType( getContext()).equals("x")){
-            LocationType = "m";
+        if(constants.isLocMalfunctionEvent(getActivity(), DriverType) && SharedPref.getLocationEventType( getContext()).equals("X")){
+            LocationType = "M";
         }
 
         try{
@@ -2197,7 +2197,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     }else if(message.contains("Network")){
                         message = "Internet connection problem";
                     }else if(message.contains("NoConnectionError")){
-                        message = "Connection not working.";
+                        message = "Internet connection error";
                     }
 
                     global.EldScreenToast(SettingSaveBtn, message, getResources().getColor(R.color.colorVoilation));

@@ -1409,7 +1409,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         }else if(Message.contains("Network")){
                             Message = "Internet connection problem";
                         }else if(Message.contains("NoConnectionError")){
-                            Message = "Connection not working.";
+                            Message = "Internet connection error";
                         }
 
                         Globally.EldScreenToast(saveBtn, Message , getResources().getColor(R.color.colorVoilation));

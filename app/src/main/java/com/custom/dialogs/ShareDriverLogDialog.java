@@ -813,7 +813,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             {
                 Map<String,String> params = new HashMap<String, String>();
                 params.put(ConstantsKeys.DriverId, DriverId);
-                 params.put(ConstantsKeys.DeviceId, DeviceId);
+                params.put(ConstantsKeys.DeviceId, DeviceId);
                 params.put(ConstantsKeys.fromDate, StartDate);
                 params.put(ConstantsKeys.toDate, EndDate);
                 params.put(ConstantsKeys.mailToIds, emails);
@@ -842,7 +842,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
     public void DriverLogPDFViewConfirmation(final Context context, final String link){
         try {
-          //  AlertDialog alertDialog
+
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
             alertDialogBuilder.setTitle("You can check driver log in this link.");    //Driver Log !!
             alertDialogBuilder.setMessage(Html.fromHtml("<html> <font color='blue'><u>" + link + "</u></font> </html>") );    //"Do you want to see driver log ?"

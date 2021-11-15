@@ -2219,6 +2219,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 summaryBtn.setEnabled(false);
                 moveToHosSummary();
 
+                  //  NotificationNewsDialog newsDialog = new NotificationNewsDialog(getActivity(), new ArrayList<NotificationNewsModel>(), true);
+                   // newsDialog.show();
+
                 break;
 
 
@@ -4909,7 +4912,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                                     getResources().getString(R.string.dia_event),
                                                     getResources().getString(R.string.missing_event_occured_desc), 2091);
 
-                    LocationType = "x";
+                    LocationType = "X";
                     SharedPref.setLocationEventType(LocationType, getActivity());
 
                    // SharedPref.saveLocDiagnosticStatus(true, Globally.GetCurrentDateTime(), Globally.GetCurrentUTCTimeFormat(), getActivity());
@@ -4946,9 +4949,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 if(isMalfunction  && Globally.LATITUDE.length() < 5) {
                     if (SharedPref.isLocMalfunctionOccur(getActivity())) {
-                        LocationType = "e";
+                        LocationType = "E";
                     }else{
-                        LocationType = "m";
+                        LocationType = "M";
                         if(SharedPref.isLocDiagnosticOccur(getActivity())){
 
                             Constants.isClearMissingCompEvent = true;
@@ -7048,7 +7051,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             }
 
                             if(newsNotificationList.size() > 0 && getActivity() != null) {
-                                NotificationNewsDialog newsDialog = new NotificationNewsDialog(getActivity(), newsNotificationList);
+                                NotificationNewsDialog newsDialog = new NotificationNewsDialog(getActivity(), newsNotificationList, false);
                                 newsDialog.show();
                             }
                         }catch (Exception e){

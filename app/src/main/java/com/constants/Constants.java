@@ -120,7 +120,7 @@ public class Constants {
 
 
     public static int PowerEngSyncMalOccTime            = 30;   // in min
-    public static int PositioningMalOccTime             = 60;   // in min
+    public static int PositioningMalOccTime             = 60;   // 60 in min
 
 
     public static boolean IsAlreadyViolation = false;
@@ -4065,7 +4065,7 @@ public class Constants {
 
 
                         if (odometerDistance >= 8) {
-                            if(SharedPref.isLocDiagnosticOccur(context) == false) {// Save Position malfunction event status if earlier status was false
+                            if(SharedPref.isLocDiagnosticOccur(context) == false) { // Save Position malfunction event status if earlier status was false
                                 SharedPref.saveLocDiagnosticStatus(true, Globally.GetCurrentDateTime(),
                                         Globally.GetCurrentUTCTimeFormat(), context);
 
@@ -4082,6 +4082,15 @@ public class Constants {
                                 malfunctionDiagnosticMethod.PositioningMalDiaHelper(dbHelper, array);
 
                             }
+
+                           // double previousLocDiaTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(ConstLocationMissing, dbHelper);
+                            // int earlierEventTime = malfunctionDiagnosticMethod.getTotalPowerComplianceMin(dbHelper);
+                          //  double totalDuration = engineHrDiffInMin + previousLocDiaTime; // add earlier diagnostic time within 24 hr with current time
+
+                          //  JSONArray posArray  = malfunctionDiagnosticMethod.getPositioningMalDiaArray(dbHelper);
+                          //  Log.d("array", "array: " + posArray);
+
+
 
                             if(SharedPref.isLocMalfunctionOccur(context) == false) {
                                 DateTime malfunctionOccurTime = Globally.getDateTimeObj(SharedPref.getLocDiagnosticOccuredTime(context), false);
@@ -4123,6 +4132,8 @@ public class Constants {
                         }
                     }
                 }
+            }else{
+
             }
         }catch (Exception e){
             e.printStackTrace();

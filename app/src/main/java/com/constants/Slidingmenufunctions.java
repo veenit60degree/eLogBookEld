@@ -878,7 +878,7 @@ public class Slidingmenufunctions implements OnClickListener {
 								} else if (message.contains("ServerError")) {
 									message = "ALS server not responding";
 								} else if (message.contains("NoConnectionError")) {
-									message = "Connection not working.";
+									message = "Internet connection error";
 								}
 
 								global.EldScreenToast(MainDriverBtn, message,

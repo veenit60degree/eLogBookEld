@@ -29,8 +29,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.constants.Constants;
+import com.constants.ConstantsEnum;
 import com.constants.SharedPref;
 import com.google.android.material.textfield.TextInputLayout;
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.EldFragment;
 
@@ -279,14 +281,18 @@ public class DriverLocationDialog extends Dialog {
             if(JobType == Constants.EditRemarks && City.equalsIgnoreCase(updatedCityName)){
                 dismiss();
             } else {
-                locListener.SaveLocReady(
-                        Position,
-                        spinnerItemPos,
-                        JobType,
-                        updatedCityName,
-                        CityNameEditText,
-                        view,
-                        isMalfunction);
+                if(updatedCityName.length() > 4) {
+                    locListener.SaveLocReady(
+                            Position,
+                            spinnerItemPos,
+                            JobType,
+                            updatedCityName,
+                            CityNameEditText,
+                            view,
+                            isMalfunction);
+                }else{
+                    Globally.EldScreenToast(CityNameEditText, ConstantsEnum.LOCATION_DESC, getContext().getResources().getColor(R.color.colorVoilation));
+                }
             }
         }
     }

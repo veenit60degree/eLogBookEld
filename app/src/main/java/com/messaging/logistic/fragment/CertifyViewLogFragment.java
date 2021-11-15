@@ -3285,7 +3285,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                 }else if(message.contains("Network")){
                                     message = "Internet connection problem";
                                 }else if(message.contains("NoConnectionError")){
-                                    message = "Connection not working.";
+                                    message = "Internet connection error";
                                 }
 
 

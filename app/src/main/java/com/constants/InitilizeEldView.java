@@ -213,20 +213,26 @@ public class InitilizeEldView {
 
     public void ActiveView(RelativeLayout layout, TextView violationView, TextView timeView, TextView jobTypeView,
                            TextView asPerShiftOrDayView, boolean isViolation){
-        if(isViolation) {
-            layout.setBackgroundResource(R.drawable.red_eld_selector);
-            violationView.setVisibility(View.VISIBLE);
 
-        }else {
-            layout.setBackgroundResource(R.drawable.eld_blue_new_selector);
-            violationView.setVisibility(View.GONE);
+        try {
+            if (isViolation) {
+                layout.setBackgroundResource(R.drawable.red_eld_selector);
+                violationView.setVisibility(View.VISIBLE);
+
+            } else {
+                layout.setBackgroundResource(R.drawable.eld_blue_new_selector);
+                violationView.setVisibility(View.GONE);
+            }
+
+            violationView.setTextColor(Color.WHITE);
+            timeView.setTextColor(Color.WHITE);
+            jobTypeView.setTextColor(Color.WHITE);
+
+            asPerShiftOrDayView.setTextColor(Color.WHITE);
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        violationView.setTextColor(Color.WHITE);
-        timeView.setTextColor(Color.WHITE);
-        jobTypeView.setTextColor(Color.WHITE);
-
-        asPerShiftOrDayView.setTextColor(Color.WHITE);
 
     }
 
@@ -236,31 +242,34 @@ public class InitilizeEldView {
                              TextView asPerShiftOrDayView, Button personalUseBtn, boolean IsPersonalAllowed, Context context){
         String EldThemeColor = "", SkyBlueColor = "";    //4A88CC
 
-        //if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-        if(UILApplication.getInstance().isNightModeEnabled())  {
-            EldThemeColor = "#F0F0F0";
-            SkyBlueColor = "#ffffff";
-        }else{
-            EldThemeColor = "#1A3561";
-            SkyBlueColor = "#1A3561";
+        try {
+            //if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+            if (UILApplication.getInstance().isNightModeEnabled()) {
+                EldThemeColor = "#F0F0F0";
+                SkyBlueColor = "#ffffff";
+            } else {
+                EldThemeColor = "#1A3561";
+                SkyBlueColor = "#1A3561";
+            }
+            layout.setBackgroundResource(R.drawable.gray_eld_selector);
+            violationView.setTextColor(Color.parseColor(SkyBlueColor));
+            timeView.setTextColor(Color.parseColor(SkyBlueColor));
+
+            jobTypeView.setTextColor(Color.parseColor(EldThemeColor));
+
+            asPerShiftOrDayView.setTextColor(Color.parseColor(EldThemeColor));
+
+            if (IsPersonalAllowed && SharedPref.isPersonalUse75KmCrossed(context) == false) {
+                personalUseBtn.setTextColor(Color.parseColor(EldThemeColor));
+            } else {
+                personalUseBtn.setTextColor(Color.parseColor("#ABAAAB"));
+            }
+
+            violationView.setVisibility(View.GONE);
+            personalUseBtn.setBackgroundResource(R.drawable.gray_eld_selector);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        layout.setBackgroundResource(R.drawable.gray_eld_selector);
-        violationView.setTextColor(Color.parseColor(SkyBlueColor));
-        timeView.setTextColor(Color.parseColor(SkyBlueColor));
-
-        jobTypeView.setTextColor(Color.parseColor(EldThemeColor));
-
-        asPerShiftOrDayView.setTextColor(Color.parseColor(EldThemeColor));
-
-        if(IsPersonalAllowed && SharedPref.isPersonalUse75KmCrossed(context) == false) {
-            personalUseBtn.setTextColor(Color.parseColor(EldThemeColor));
-        }else{
-            personalUseBtn.setTextColor(Color.parseColor("#ABAAAB"));
-        }
-
-        violationView.setVisibility(View.GONE);
-        personalUseBtn.setBackgroundResource(R.drawable.gray_eld_selector);
-
 
     }
 
