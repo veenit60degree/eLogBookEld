@@ -84,13 +84,13 @@ public class OdometerAdapter extends BaseAdapter {
         DistanceKm      = odometerM.getTotalKM();
         DistanceMiles   = odometerM.getTotalMiles();
 
-        if(DistanceKm.equalsIgnoreCase("null"))
+        if(DistanceKm.equalsIgnoreCase("null") || DistanceKm.length() == 0)
             DistanceKm = "--";
         else{
             DistanceKm    = DistanceKm + " km";// +DistanceType;
         }
 
-        if(DistanceMiles.equalsIgnoreCase("null"))
+        if(DistanceMiles.equalsIgnoreCase("null") || DistanceMiles.length() == 0)
             DistanceMiles = "--";
         else{
             DistanceMiles    = DistanceMiles + " miles";// +DistanceType;

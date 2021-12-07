@@ -27,8 +27,8 @@ public class APIs {
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_DEV ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_DEV ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
 
@@ -63,7 +63,7 @@ public class APIs {
     public static String SAVE_DEFFERAL_EVENT                = DOMAIN_URL_ALS + "SaveDefferalEvent";
     public static String GET_MALFUNCTION_LIST_BY_TRUCK      = DOMAIN_URL_ALS + "GetMalfunctionListByTruck";
     public static String ADD_UNIDENTIFIED_RECORD            = DOMAIN_URL_ALS + "AddUnIdentifiedRecord";
-    public static String GET_ODOMETER_DETAIL_IN_PU          = DOMAIN_URL_ALS + "GetOdometerDetailInPersonalUSE";
+    public static String GET_ODOMETER_DETAIL_IN_PU          = DOMAIN_URL_ALS + "GetOdometerDetailInPersonalUSE";    // getting day start odometer and current dat used PU distance
     public static String DownloadPdfCanadaLog               = DOMAIN_URL_ALS + "DownloadPdfCanadaLog";
     public static String GetListOfPdfCanadaLogs             = DOMAIN_URL_ALS + "GetListOfPdfCanadaLogs";
     public static String GenerateLink                       = DOMAIN_URL_ALS + "GenerateLink";

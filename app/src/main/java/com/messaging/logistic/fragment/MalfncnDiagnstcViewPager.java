@@ -1071,9 +1071,9 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 String DetectionDataEventCode = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
 
                 if(EventType.equals(DetectionDataEventCode)) {
-                    if (globally.isSingleDriver(getActivity())) {
+                   /* if (globally.isSingleDriver(getActivity())) {
                         parseData(mainObj);
-                    } else {
+                    } else {*/
 
                         String DrId = mainObj.getString(ConstantsKeys.DriverId);
 
@@ -1088,7 +1088,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                             }
                         }
 
-                    }
+                   // }
                 }
             }
 
@@ -1148,9 +1148,14 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                 String TotalMinutes = "--";
 
-                if(EventType.equals(Constants.PowerComplianceDiagnostic) || EventType.equals(Constants.PowerComplianceMalfunction)){
+                if(EventType.equals(Constants.PowerComplianceDiagnostic) || EventType.equals(Constants.PowerComplianceMalfunction) ||
+                          EventType.equals(Constants.UnIdentifiedDrivingDiagnostic) || EventType.equals(Constants.MissingDataDiagnostic)){
                     if(mainObj.has(ConstantsKeys.TotalMinutes)){
                         TotalMinutes = mainObj.getString(ConstantsKeys.TotalMinutes);
+                    }
+
+                    if(EventType.equals(Constants.MissingDataDiagnostic)){
+                        TotalMinutes = "--";
                     }
                 }else{
                     TotalMinutes = ""+constants.getMinDifference(mainObj.getString(ConstantsKeys.EventDateTime), globally.GetCurrentUTCTimeFormat());

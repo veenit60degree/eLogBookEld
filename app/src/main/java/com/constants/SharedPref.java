@@ -366,6 +366,40 @@ public class SharedPref {
         return preferences.getString("WiredObdCallTime", "");
     }
 
+
+
+    // Set Wired Obd Server Call Time  -------------------
+    public static void SetWiredObdServerCallTime( String date, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("WiredObdServerCallTime", date);
+        editor.commit();
+    }
+
+    // Get last Wired Obd Server CallTime -------------------
+    public static String getWiredObdServerCallTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("WiredObdServerCallTime", "");
+    }
+
+
+
+    // Set After Ignition Off Call Time  -------------------
+    public static void SetIgnitionOffCallTime( String date, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("IgnitionOffCallTime", date);
+        editor.commit();
+    }
+
+    // Get  last Wired Obd Call Time after ignition off -------------------
+    public static String getIgnitionOffCallTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("IgnitionOffCallTime", "");
+    }
+
+
+
     // Set Wrong Vin Alert View status  -------------------
     public static void SetWrongVinAlertView( boolean status, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1749,6 +1783,21 @@ public class SharedPref {
     }
 
 
+    // Set Edited Log Status -------------------
+    public static void SetIgnitionOffCalled( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isIgnitionOffCalled", value);
+        editor.commit();
+    }
+
+
+    // Get Edited Log Status -------------------
+    public static boolean IsIgnitionOffCalled( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("isIgnitionOffCalled", false);
+    }
+
 
     // Set Driver Id -------------------
     public static void setDriverId( String value, Context context) {
@@ -2129,6 +2178,7 @@ public class SharedPref {
         editor.putBoolean(ConstantsKeys.PowerMalfunction, IsEngSyncMal);
         editor.putBoolean(ConstantsKeys.PowerDiagnstc, isEngSynDia);
         editor.putString(ConstantsKeys.PowerMalfunctionTimeOcc, time);
+
         editor.commit();
     }
 

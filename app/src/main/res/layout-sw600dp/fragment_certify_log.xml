@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -1572,7 +1573,7 @@
                     android:paddingLeft="@dimen/margin_short_3"
                     android:paddingRight="@dimen/margin_short_3"
                     android:textStyle="bold"
-                    android:layout_weight="0.9"
+                    android:layout_weight="1"
                     />
 
                 <TextView
@@ -1585,19 +1586,18 @@
                     android:paddingLeft="@dimen/margin_short_3"
                     android:paddingRight="@dimen/margin_short_3"
                     android:textStyle="bold"
-                    android:layout_weight="0.9"
+                    android:layout_weight="1"
                     />
 
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="@dimen/view_height_50"
                     android:layout_height="wrap_content"
                     android:textColor="@color/color_eld_bg"
                     android:textSize="@dimen/text_size_17"
                     android:gravity="center_horizontal"
                     android:padding="@dimen/margin_short_5"
                     android:singleLine="true"
-                    android:layout_weight="1.1"
                     android:textStyle="bold"
 
                     />
@@ -1619,6 +1619,7 @@
                 android:layout_height="wrap_content"
                 android:divider="@color/black"
                 android:dividerHeight="@dimen/margin_short_1"
+                tools:listitem="@layout/items_odometers"
 
                 />
 
@@ -1646,17 +1647,14 @@
                     android:textStyle="bold"
                     android:textColor="@color/color_eld_bg"
                     android:textSize="@dimen/text_size_20"
-                    android:layout_marginRight="@dimen/view_height_50"
-                    android:layout_weight="1.1"
+                    android:layout_weight="2"
                     />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingLeft="@dimen/margin_25"
-                    android:paddingRight="@dimen/view_height_55"
-                    android:layout_weight="0.9"
+                    android:layout_weight="3"
                     >
 
                     <TextView
@@ -1668,7 +1666,6 @@
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_18"
-                        android:layout_marginRight="@dimen/view_height_50"
                         android:layout_weight="1"
                         />
 
@@ -1684,7 +1681,17 @@
                         android:layout_weight="1"
                         />
 
+
+
                 </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="@dimen/view_height_50"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_eld_bg"
+
+                    />
 
             </LinearLayout>
 

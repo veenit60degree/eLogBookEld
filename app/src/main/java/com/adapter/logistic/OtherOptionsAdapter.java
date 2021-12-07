@@ -188,7 +188,7 @@ public class OtherOptionsAdapter extends BaseAdapter {
                 break;
 
             case Constants.VIN:
-                if(Constants.isValidVinFromObd(context) == false){
+                if(Constants.isValidVinFromObd(SharedPref.getIgnitionStatus(context), context) == false){
                     makeViewHighlighed(imgView, titleView, errorView);
                 }
 

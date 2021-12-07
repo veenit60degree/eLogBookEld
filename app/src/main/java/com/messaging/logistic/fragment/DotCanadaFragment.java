@@ -50,9 +50,11 @@ import com.constants.SharedPref;
 import com.constants.SwitchTrackTextDrawable;
 import com.constants.Utils;
 import com.constants.VolleyRequest;
+import com.constants.VolleyRequestWithoutRetry;
 import com.constants.WebAppInterface;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.DotOtherOptionDialog;
+import com.custom.dialogs.DriverLocationDialog;
 import com.custom.dialogs.GenerateRodsDialog;
 import com.custom.dialogs.ShareDriverLogDialog;
 import com.driver.details.DriverConst;
@@ -112,6 +114,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     Constants constants;
     Globally global;
     VolleyRequest GetDotLogRequest;
+    VolleyRequestWithoutRetry GetAddFromLatLngRequest;
     Map<String, String> params;
 
 
@@ -142,6 +145,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     int UsaMaxDays          = 7;
     int CanMaxDays          = 14;
     int MaxDays;
+    final int GetAddFromLatLng      = 160;
 
    /* public static int DutyStatusHeaderCount  = 1;
     public static int LoginLogoutHeaderCount = 1;
@@ -152,7 +156,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     String DayName, MonthFullName , MonthShortName , CurrentCycleId, CountryCycle;
     String DefaultLine      = " <g class=\"event \">\n";
 
-    String DriverId = "", DeviceId = "";
+    String DriverId = "", DeviceId = "", AddressLine = "", AddressLat = "", AddressLon = "";
     String htmlAppendedText = "", LogDate = "", CurrentDate = "", LogSignImage = "", selectedCountryRods = "";
 
     String TotalOnDutyHours         = "00:00";
@@ -204,6 +208,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         constants           = new Constants();
         global              = new Globally();
         GetDotLogRequest    = new VolleyRequest(getActivity());
+        GetAddFromLatLngRequest = new VolleyRequestWithoutRetry(getActivity());
 
         dateRodsTV          = (TextView)view.findViewById(R.id.dateRodsTV);
         dayStartTimeTV      = (TextView)view.findViewById(R.id.dayStartTimeTV);
@@ -847,10 +852,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             int viewHeight = eventDotETV.getHeight();
             if(viewHeight > 0) {
                 if (global.isTablet(getActivity())) {
-                    inspectionLayHeight = viewHeight + 22;
+                    inspectionLayHeight = viewHeight + 30;
                     headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) +10;
                 } else {
-                    inspectionLayHeight = viewHeight + 28;
+                    inspectionLayHeight = viewHeight + 26;
                     headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) ;
                 }
 
@@ -872,7 +877,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             }*/
             int dividerHeight = 1; //remAnotnDotListView.getDividerHeight();
            // int dividerHeightInPx = constants.intToPixel(getActivity(), dividerHeight);
-            final int DutyStatusListHeight = getHeight(inspectionLayHeight, DutyStatusList, headerViewHeight, dividerHeight);
+            final int DutyStatusListHeight = getHeight(inspectionLayHeight-10, DutyStatusList, headerViewHeight, dividerHeight);
             final int LoginLogoutListHeight = getHeight(inspectionLayHeight, LoginLogoutList, headerViewHeight, dividerHeight);
             final int CommentsRemarksListHeight = getHeight(inspectionLayHeight, CommentsRemarksList, 1, dividerHeight);
             final int CycleOpZoneListHeight = getHeight(inspectionLayHeight, CycleOpZoneList, headerViewHeight, dividerHeight);
@@ -1058,9 +1063,31 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    //*================== Get Address From Lat Lng ===================*//*
+    void GetAddFromLatLng() {
+
+        AddressLine = "";
+        AddressLat = Globally.LATITUDE;
+        AddressLon = Globally.LONGITUDE;
+
+        if(Globally.LATITUDE.length() > 4) {
+            params = new HashMap<String, String>();
+            params.put(ConstantsKeys.Latitude, AddressLat);
+            params.put(ConstantsKeys.Longitude, AddressLon);
+            params.put(ConstantsKeys.IsAOBRDAutomatic, String.valueOf(SharedPref.IsAOBRDAutomatic(getActivity())));
+
+            GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, GetAddFromLatLng,
+                    Constants.SocketTimeout3Sec, ResponseCallBack, ErrorCallBack);
+        }
+    }
+
+
+
 
     /* ================== Get Driver CANADA DOT Details =================== */
     void GetDriverDotDetails( final String DriverId, final String date) {
+
+     //   GetAddFromLatLng();
 
         canDotProgressBar.setVisibility(View.VISIBLE);
 
@@ -1078,7 +1105,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             dateRodsTV.setText(global.ConvertDateFormatddMMMyyyy(dataObj.getString("RecordDate"), Globally.DateFormat_dd_MMM_yyyy));
             dayStartTimeTV.setText(dataObj.getString("PeriodStartingTime"));
             timeZoneCTV.setText(dataObj.getString("TimeZone"));
-            currLocCTV.setText(Html.fromHtml(dataObj.getString("CurrentLocation")) );
+
             commentCTV.setText(constants.checkNullString(dataObj.getString("OutputFileComment")) );
             dateTimeCTV.setText(global.ConvertDateFormatMMddyyyyHHmm(dataObj.getString("CurrentDate")));
 
@@ -1097,6 +1124,24 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             curreCycleCTV.setText(dataObj.getString("CurrentCycle"));    // + "\n" + dataObj.getString("cycledetail"));
 
 
+//3.3 km N Mountain View CA <br/> (37.42, -122.08)
+            try {
+                String CurrentOBDLocation = dataObj.getString("CurrentOBDLocation");
+                String CurrentOBDLatLong = dataObj.getString("CurrentOBDLatLong");
+
+                if (CurrentOBDLocation.equals("null")) {
+                    currLocCTV.setText(Html.fromHtml(dataObj.getString("CurrentLocation")));
+                } else {
+                   // AddressLat = Constants.Convert2DecimalPlacesDouble(Double.parseDouble(AddressLat));
+                   // AddressLon = Constants.Convert2DecimalPlacesDouble(Double.parseDouble(AddressLon));
+                    currLocCTV.setText(Html.fromHtml(CurrentOBDLocation + "<br/>(" + CurrentOBDLatLong + ")"));
+                }
+
+            }catch (Exception e){
+                //currLocCTV.setText(Html.fromHtml(AddressLine + "<br/>(" + AddressLat + ", " + AddressLon + ")"));
+                currLocCTV.setText(Html.fromHtml(dataObj.getString("CurrentLocation")));
+                e.printStackTrace();
+            }
 
             String truckTractorId = "", truckTractorVin = "", totalVehDistance = "", distanceToday = "",  currTotalDis = "", currTotalEng = "";
 
@@ -1199,10 +1244,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         public void getResponse(String response, int flag) {
 
             String status = "", Message = "";
-            JSONObject dataObj = null;
+            JSONObject dataObj = null, obj = null;
             try {
 
-                JSONObject obj = new JSONObject(response);
+                obj = new JSONObject(response);
 
                 status = obj.getString("Status");
                 Message = obj.getString("Message");
@@ -1217,62 +1262,79 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             try {
                 if (status.equalsIgnoreCase("true")) {
 
-                    LogSignImage = "";
-                    TotalOnDutyHours         = "00:00";
-                    TotalDrivingHours        = "00:00";
-                    TotalOffDutyHours        = "00:00";
-                    TotalSleeperBerthHours   = "00:00";
+                    if(flag ==  GetAddFromLatLng) {
 
-                    DutyStatusList = new ArrayList();
-                    LoginLogoutList = new ArrayList();
-                    CommentsRemarksList = new ArrayList();
-                    CycleOpZoneList = new ArrayList();
-                    EnginePowerList = new ArrayList();
+                        if (!obj.isNull("Data")) {
+                            try {
+                                JSONObject dataJObject = new JSONObject(obj.getString("Data"));
+                                AddressLine = dataJObject.getString(ConstantsKeys.Location);
 
-
-                    try {
-                        TotalOffDutyHours       = dataObj.getString("TotalOffDutyHours");
-                        TotalSleeperBerthHours  = dataObj.getString("TotalSleeperHours");
-                        TotalDrivingHours       = dataObj.getString("TotalDrivingHours");
-                        TotalOnDutyHours        = dataObj.getString("TotalOnDutyHours");
-
-                        TotalOffDutyHours      = TotalOffDutyHours.replaceAll("-", "");
-                        TotalOnDutyHours       = TotalOnDutyHours.replaceAll("-", "");
-                        TotalDrivingHours      = TotalDrivingHours.replaceAll("-", "");
-                        TotalSleeperBerthHours = TotalSleeperBerthHours.replaceAll("-", "");
-
-                        JSONArray dotLogArray = new JSONArray(dataObj.getString("graphRecordList"));
-                        ParseGraphData(dotLogArray);
-
-                        JSONArray dutyStatusArray = new JSONArray(dataObj.getString(ConstantsKeys.dutyStatusChangesList));
-                        JSONArray loginLogoutArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutList));
-                        JSONArray ChangeInDriversCycleList = new JSONArray(dataObj.getString(ConstantsKeys.ChangeInDriversCycleList));
-                        JSONArray commentsRemarksArray = new JSONArray(dataObj.getString(ConstantsKeys.commentsRemarksList));
-                        JSONArray enginePowerArray = new JSONArray(dataObj.getString(ConstantsKeys.enginePowerUpAndShutDownList));
-                        JSONArray unIdentifiedVehArray = new JSONArray(dataObj.getString(ConstantsKeys.UnAssignedVehicleMilesList));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
 
-                        DutyStatusList =   constants.parseCanadaDotInList(dutyStatusArray, true);
-                        if(dataObj.has(ConstantsKeys.loginAndLogoutDates)) {
-                            JSONArray loginSortingArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutDates));
-                            LoginLogoutList = constants.parseCanadaLogoutLoginList(loginSortingArray);
-                        }else{
-                            LoginLogoutList =   constants.parseCanadaDotInList(loginLogoutArray, true);
                         }
-                        CommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray, false);
-                        CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList, true);
-                        EnginePowerList = constants.parseCanadaDotInList(enginePowerArray, true);
 
-                        UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
 
-                        setdataOnAdapter();
-                        setDataOnTextView(dataObj);
+                    }else {
 
-                    }catch (Exception e){
-                        e.printStackTrace();
+                        LogSignImage = "";
+                        TotalOnDutyHours = "00:00";
+                        TotalDrivingHours = "00:00";
+                        TotalOffDutyHours = "00:00";
+                        TotalSleeperBerthHours = "00:00";
+
+                        DutyStatusList = new ArrayList();
+                        LoginLogoutList = new ArrayList();
+                        CommentsRemarksList = new ArrayList();
+                        CycleOpZoneList = new ArrayList();
+                        EnginePowerList = new ArrayList();
+
+
+                        try {
+                            TotalOffDutyHours = dataObj.getString("TotalOffDutyHours");
+                            TotalSleeperBerthHours = dataObj.getString("TotalSleeperHours");
+                            TotalDrivingHours = dataObj.getString("TotalDrivingHours");
+                            TotalOnDutyHours = dataObj.getString("TotalOnDutyHours");
+
+                            TotalOffDutyHours = TotalOffDutyHours.replaceAll("-", "");
+                            TotalOnDutyHours = TotalOnDutyHours.replaceAll("-", "");
+                            TotalDrivingHours = TotalDrivingHours.replaceAll("-", "");
+                            TotalSleeperBerthHours = TotalSleeperBerthHours.replaceAll("-", "");
+
+                            JSONArray dotLogArray = new JSONArray(dataObj.getString("graphRecordList"));
+                            ParseGraphData(dotLogArray);
+
+                            JSONArray dutyStatusArray = new JSONArray(dataObj.getString(ConstantsKeys.dutyStatusChangesList));
+                            JSONArray loginLogoutArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutList));
+                            JSONArray ChangeInDriversCycleList = new JSONArray(dataObj.getString(ConstantsKeys.ChangeInDriversCycleList));
+                            JSONArray commentsRemarksArray = new JSONArray(dataObj.getString(ConstantsKeys.commentsRemarksList));
+                            JSONArray enginePowerArray = new JSONArray(dataObj.getString(ConstantsKeys.enginePowerUpAndShutDownList));
+                            JSONArray unIdentifiedVehArray = new JSONArray(dataObj.getString(ConstantsKeys.UnAssignedVehicleMilesList));
+
+
+                            DutyStatusList = constants.parseCanadaDotInList(dutyStatusArray, true);
+                            if (dataObj.has(ConstantsKeys.loginAndLogoutDates)) {
+                                JSONArray loginSortingArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutDates));
+                                LoginLogoutList = constants.parseCanadaLogoutLoginList(loginSortingArray);
+                            } else {
+                                LoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray, true);
+                            }
+                            CommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray, false);
+                            CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList, true);
+                            EnginePowerList = constants.parseCanadaDotInList(enginePowerArray, true);
+
+                            UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
+
+                            setdataOnAdapter();
+                            setDataOnTextView(dataObj);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                     }
-
-
                 }else{
                     htmlAppendedText    = "";
 

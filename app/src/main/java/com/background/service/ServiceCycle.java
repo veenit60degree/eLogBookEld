@@ -344,7 +344,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                     boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
                     boolean isAutoDrive = SharedPref.isAutoDrive(context);
 
-                    // !currentJob.equals("") &&
                     if (currentJob.equals(String.valueOf(DRIVER_JOB_STATUS))) {  // reason of this check: some times latest entry was not saved in 18 days array due to unknown/strange error. thats why wrong auto status entry was saved from app. So we need to add this check for safe side.
                         // Check If vehicle is ELD Type
                         if (!isPersonal && isAutoDrive && VehicleSpeed != -1) {
@@ -353,10 +352,10 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                 // ------------------ Get current Job Status -----------------
                                 String JobStatusStr = Global.JobStatus(DRIVER_JOB_STATUS, false);
                                 DateTime startDate = Global.getDateTimeObj(lastJsonItem.getString(ConstantsKeys.startDateTime), false);
-                                DateTime currentdateTime = Global.getDateTimeObj(currentDateTime.toString(), false);
+                              //  DateTime currentdateTime = Global.getDateTimeObj(currentDateTime.toString(), false);
 
-                                long diffInMillis = currentdateTime.getMillis() - startDate.getMillis();
-                                long minutesDiff = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+                              //  long diffInMillis = currentdateTime.getMillis() - startDate.getMillis();
+                                long minutesDiff = constants.getDateTimeDuration(startDate, currentDateTime).getStandardMinutes(); //TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
 
                                 if (minutesDiff == 0) {
                                     BackgroundLocationService.IsAutoChange = false;
@@ -937,7 +936,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                             String.valueOf(DriverId), "", "", "", "","",
                             CurrentCycleId, "", "false", isViolation,
                             "false", String.valueOf(OBDVehicleSpeed),
-                            "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                            "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                             SharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus, false,
                             Global, isHaulExcptn, false,
                             "" + isAdverseExcptn,
@@ -951,7 +950,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                     List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
                     DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
                             DriverId, offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
-                            DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, isNorthCanada, rulesVersion, oDriverLog);
+                            DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, isNorthCanada,
+                            rulesVersion, oDriverLog, context);
                     RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), ChangedDriverStatus, oDriverDetail1);
 
 
@@ -981,14 +981,14 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, DriverId,
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
                 isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                rulesVersion, oDriverLogDetail);
+                rulesVersion, oDriverLogDetail, context);
         RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), DRIVER_JOB_STATUS, oDriverDetail);
 
         // Calculate 2 days data to get remaining Driving/Onduty hours
         RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                 Integer.valueOf(CurrentCycleId), isSingleDriver, DriverId, DRIVER_JOB_STATUS, isOldRecord,
                 isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                rulesVersion, dbHelper);
+                rulesVersion, dbHelper, context);
 
 
 
@@ -1248,7 +1248,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         Globally.LONGITUDE,
                         isAutomatic,
                         String.valueOf(OBDVehicleSpeed),
-                        "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated now GPS status is sending in this parameter
+                        "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated now GPS status is sending in this parameter
                         plateNo,
                         String.valueOf(isHaulExcptn),
                         "false",
@@ -1259,7 +1259,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         CurrentDeviceDate,
                         String.valueOf(SharedPref.IsAOBRD(context)),
                         CurrentCycleId,
-                        String.valueOf(isDeferral), "", "false"
+                        String.valueOf(isDeferral), "", "false", "false"
 
 
 
@@ -1393,7 +1393,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 TruckNo,
                 isAutomatic,
                 String.valueOf(OBDVehicleSpeed),
-                "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                 plateNo,
                 isHaulExcptn,
                 false,
@@ -1444,7 +1444,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         TruckNo,
                         isAutomatic,
                         String.valueOf(OBDVehicleSpeed),
-                        "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                        "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                         plateNo,
                         isHaulExcptn,
                         false,

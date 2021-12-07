@@ -244,7 +244,7 @@ public class TimeZoneDialog extends Dialog {
 
         @Override
         public void getError(VolleyError error, int flag) {
-            Log.d("onDuty error", "onDuty error: " + error.toString());
+           // Log.d("onDuty error", "onDuty error: " + error.toString());
 
             try {
                 if(isCurrentTimeBigger)

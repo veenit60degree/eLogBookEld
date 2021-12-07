@@ -513,8 +513,8 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
 
+                            app:theme="@style/Custom.Widget.SwitchCompat"
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
 

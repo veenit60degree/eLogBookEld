@@ -28,7 +28,7 @@ import com.messaging.logistic.Globally;
 public class LocationListenerService extends Service  implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private static final long MIN_TIME_LOCATION_UPDATES = 1 * 1000;   // 1 sec
+    private static final long MIN_TIME_LOCATION_UPDATES = 3 * 1000;   // 1 sec
     public static LocationRequest locationRequest;
     public static GoogleApiClient mGoogleApiClient;
     protected LocationManager locationManager;
@@ -114,7 +114,11 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
                 Globally.LATITUDE = "" + location.getLatitude();
                 Globally.LONGITUDE = "" + location.getLongitude();
-                Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
+                //Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
+            /*    int GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
+                global.ShowLocalNotification(getApplicationContext(),
+                        "ALS","Lat: " + Globally.LATITUDE + ", Lon: "+ Globally.LONGITUDE + ", Speed: " + GpsVehicleSpeed, 208111);
+*/
             }
 
 
@@ -149,17 +153,22 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        //  Log.d("onConnected", "onConnected");
+        try {
+            requestLocationUpdates();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.d("onConnectionSuspended", "onConnectionSuspended");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d("onConnectionFailed", "onConnectionFailed");
     }
 
     @Override
@@ -167,7 +176,11 @@ public class LocationListenerService extends Service  implements GoogleApiClient
         if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
             Globally.LATITUDE = "" + location.getLatitude();
             Globally.LONGITUDE = "" + location.getLongitude();
-            Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
+            //Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
+         /*   int GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
+            global.ShowLocalNotification(getApplicationContext(),
+                    "ALS","Lat: " + Globally.LATITUDE + ", Lon: "+ Globally.LONGITUDE + ", Speed: " + GpsVehicleSpeed, 208111);
+*/
         }
 
 
@@ -178,6 +191,54 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             stopSelf();
 
         }
+
+    }
+
+
+    private void requestLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, (LocationListener) this);
+    }
+
+
+    protected void StopLocationUpdates() {
+        try {
+            if (mGoogleApiClient.isConnected()) {
+                stopForeground(true);
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (LocationListener) this);
+                mGoogleApiClient.disconnect();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+
+    @Override
+    public void onDestroy() {
+
+        try {
+            StopLocationUpdates();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        super.onDestroy();
+
 
     }
 }

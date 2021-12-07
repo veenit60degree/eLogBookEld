@@ -132,7 +132,7 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
 
         holder.cmvDotTV.setText(constants.checkNullString(itemsList.get(position).getTruckEquipmentNo()));
 
-        holder.distanceAccDotTV.setText(constants.checkNullString(itemsList.get(position).getAccumulatedVehicleMiles()));
+        holder.distanceAccDotTV.setText(constants.checkNullString(itemsList.get(position).getAccumulatedVehicleKm()));
         holder.hrsAccDotTV.setText(itemsList.get(position).getAccumulatedEngineHours());
         holder.distanceTotalDotTV.setText(constants.checkNullString(itemsList.get(position).getTotalVehicleKM()) );
 
@@ -168,11 +168,11 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
         constants.setMarqueonView(holder.geoLocDotTV);
         constants.setMarqueonView(holder.latLongDotTV);
         constants.setMarqueonView(holder.cmvDotTV);
-        constants.setMarqueonView(holder.dateTimeDotTV);
+       // constants.setMarqueonView(holder.dateTimeDotTV);
         constants.setMarqueonView(holder.eventDotTV);
         constants.setMarqueonView(holder.distanceAccDotTV);
         constants.setMarqueonView(holder.hrsAccDotTV);
-        constants.setMarqueonView(holder.distanceTotalDotTV);
+      //  constants.setMarqueonView(holder.distanceTotalDotTV);
         constants.setMarqueonView(holder.recStatusDotTV);
         constants.setMarqueonView(holder.recOriginDotTV);
         constants.setMarqueonView(holder.seqNoDotTV);

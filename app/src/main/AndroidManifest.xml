@@ -308,8 +308,8 @@
             android:exported="false" />
 
         <service
-            android:name="com.background.service.LocationService"
-            android:exported="false" />
+            android:name="com.background.service.LocationListenerService"
+            android:exported="true" />
 
 
 

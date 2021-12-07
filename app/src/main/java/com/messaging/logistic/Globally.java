@@ -97,6 +97,7 @@ public class Globally {
 
 	public static String registrationId = "";
 	public static String LATITUDE = "", LONGITUDE = "";
+	public static String GPS_LATITUDE = "", GPS_LONGITUDE = "";
 	public static int VEHICLE_SPEED = -1;
 	public static JSONObject obj ;
 	public static Intent i;
@@ -113,7 +114,7 @@ public class Globally {
 	static String Timehhmma							= "hh:mm a";
 	static String TimehhmmaWithOutSpace				= "hh:mma";
 	static String DateFormatFullWithSec				= "MMddyyyyHHmmss";
-	static String DateFormatMalfunction				= "MMM dd, hh:mm a";
+	static String DateFormatMalfunction				= "MMM dd, hh:mm:ss a";
 	static String DateFormatMMM_dd_yyyy				= "MMM dd, yyyy";
 	static String DateFormatMMMM_ddd_dd				= "MMMM,MMM,EEEE";
 	public static String DateFormat_dd_MMM_yyyy		= "dd MMM, yyyy";
@@ -2317,6 +2318,7 @@ public class Globally {
 			SharedPref.SetUpdateAppDialogTime("", c);
 			SharedPref.setNotiShowTime("", c);
 			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , c);
+			SharedPref.SetTruckIgnitionStatusForContinue("", "", "", c);
 
 			ClearSqliteDB(c);
 			Constants.ClearNotifications(c);
@@ -2430,7 +2432,7 @@ public class Globally {
 			try {
                 Utils util = new Utils(c);
                 util.deleteWiredObdLog();
-              //  util.deleteAppUsageLog();
+                util.deleteAppUsageLog();
             }catch (Exception e){ }
 
 			try {

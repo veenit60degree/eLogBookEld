@@ -158,6 +158,8 @@ public class ConstantsKeys {
     public static String DayCount               = "DayCount";
     public static String StartOdometerKM        = "StartOdometerKM";
     public static String StartOdometerMiles     = "StartOdometerMiles";
+    public static String DayOdometerInKm        = "DayOdometerInKm";
+    public static String DayOdometerInMiles     = "DayOdometerInMiles";
 
 
     // --------------------- Inspection params -------------------------
@@ -283,6 +285,8 @@ public class ConstantsKeys {
     public static String PowerDiagnstc                  = "PowerDiagnstc";
     public static String PowerMalfunction               = "PowerMalfunction";
     public static String PowerMalfunctionTimeOcc        = "PowerMalfunctionTimeOcc";
+    public static String isIgnitionOffCalled            = "isIgnitionOffCalled";
+
 
     public static String PowerComplianceMal             = "PowerComplianceMal";
     public static String EnginSyncMal                   = "EnginSyncMal";
@@ -594,6 +598,7 @@ public class ConstantsKeys {
     public static String EventDate                      = "EventDate";
     public static String EventTime                      = "EventTime";
     public static String AccumulatedVehicleMiles        = "AccumulatedVehicleMiles";
+    public static String AccumulatedVehicleKm           = "AccumulatedVehicleKm";
     public static String AccumulatedEngineHours         = "AccumulatedEngineHours";
     public static String TotalVehicleMiles              = "TotalVehicleMiles";
     public static String TotalEngineHours               = "TotalEngineHours";

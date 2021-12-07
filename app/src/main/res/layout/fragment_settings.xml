@@ -495,13 +495,12 @@
                             android:id="@+id/haulExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/usa_take_16_hour_exc"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_15"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/shortHaulImagView"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/usa_take_16_hour_exc"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15" />
 
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/haulExceptnSwitchButton"
@@ -660,8 +659,8 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
 
+                            app:theme="@style/Custom.Widget.SwitchCompat"
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
 

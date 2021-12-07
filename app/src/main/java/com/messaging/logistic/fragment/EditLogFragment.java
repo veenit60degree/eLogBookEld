@@ -680,7 +680,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
                 isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                rulesVersion, oDriverLogList);
+                rulesVersion, oDriverLogList, getActivity());
         RulesResponseObject RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
         return RulesObj;
@@ -882,7 +882,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
                                 isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                                rulesVersion, oDriverLogList);
+                                rulesVersion, oDriverLogList, getActivity());
                         RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
                         if ( RulesObj.isViolation() ) {
@@ -1022,7 +1022,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 JSONObject obj = (JSONObject)logArray.get(i);
                 String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", TruckNumber = "",
                         DecesionSource = "", PlateNumber = "", isHaulException = "false", IsShortHaulUpdate = "false";
-                String isAdverseException = "false", adverseExceptionRemark = "", IsNorthCanada = "false";
+                String isAdverseException = "false", adverseExceptionRemark = "", IsNorthCanada = "false", IsCycleChanged = "false";
 
                 if(obj.has(ConstantsKeys.IsStatusAutomatic)){
                     IsStatusAutomatic = obj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1075,6 +1075,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 if (obj.has(ConstantsKeys.IsNorthCanada)) {
                     IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
                 }
+
+                if (obj.has(ConstantsKeys.IsCycleChanged)) {
+                    IsCycleChanged = obj.getString(ConstantsKeys.IsCycleChanged);
+                }
+
 
 
                 String DrivingStartTime = "", IsAOBRD = "false", CurrentCycleId = "", isDeferral = "false";
@@ -1141,7 +1146,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         CurrentCycleId,
                         isDeferral,
                         "",
-                        isNewRecord
+                        isNewRecord,
+                        IsCycleChanged
                 );
 
                 logList.add(logModel);
@@ -1224,6 +1230,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 String LocationType = "";
                 String IsNorthCanada = "false";
                 String isNewRecord = "false";
+                String IsCycleChanged = "false";
 
                 int locLength = loc.length - 1;
                 City = "";
@@ -1319,6 +1326,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     isNewRecord = obj.getString(ConstantsKeys.isNewRecord);
                 }
 
+                if(obj.has(ConstantsKeys.IsCycleChanged)){
+                    IsCycleChanged = obj.getString(ConstantsKeys.IsCycleChanged);
+                }
+
+
                 remarks = obj.getString(ConstantsKeys.Remarks);
 
                 EldDataModelNew eldModel = new EldDataModelNew(
@@ -1362,7 +1374,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         CurrentCycleId,
                         "false",
                         "",
-                        isNewRecord
+                        isNewRecord,
+                        IsCycleChanged
                         );
 
                     if(eldModel != null) {

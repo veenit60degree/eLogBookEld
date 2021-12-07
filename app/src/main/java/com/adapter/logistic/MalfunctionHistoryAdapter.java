@@ -106,7 +106,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
         try{
             if(childData.getDriverZoneEventDate().length() > 10) {
-                String date = globally.dateConversionMalfunction(childData.getDriverZoneEventDate());   //EventDateTime()
+                String date = globally.ConvertDateFormatMMddyyyyHHmm(childData.getDriverZoneEventDate());   //dateConversionMalfunction(
                 timeMalTxtVw.setText(date);
             }else {
                 timeMalTxtVw.setText( "--");
@@ -116,7 +116,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                 endTimeMalTxtVw.setText(childData.getHexaSequenceNo());   // passing start engine hour value in this parameter
             }else {
                 if (childData.getDriverZoneEventDate().length() > 10) {
-                    String date = globally.dateConversionMalfunction(childData.getToDateTime());
+                    String date = globally.ConvertDateFormatMMddyyyyHHmm(childData.getToDateTime());
                     endTimeMalTxtVw.setText(date);
                 } else {
                     endTimeMalTxtVw.setText("--");
@@ -178,21 +178,27 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         if(distance.length() <= 1){
             view.setText("--");
         }else{
-            if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
-                if(distance.contains(".")){
+
+
+            if(distance.contains(".")){
+                String[] array = distance.split("\\.");
+                if(array[0].length() > 7){
+                    distance = constants.meterToKmWith2DecPlaces(distance);
+                }else{
                     distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
-                }else {
+                }
+            }else {
+                if (distance.length() > 7) {
                     distance = constants.meterToKmWith2DecPlaces(distance);
                 }
-                view.setText(distance);
-            }else{
-                if(distance.contains(".")){
-                    distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
-                }else{
-                    distance = constants.meterToMilesWith2DecPlaces(distance);
-                }
+            }
 
-                view.setText(distance);
+            if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
+                view.setText(distance + " km");
+            }else{
+                distance = Constants.kmToMiles(distance);
+                distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
+                view.setText(distance + " miles");
             }
 
         }

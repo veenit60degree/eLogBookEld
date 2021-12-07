@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.constants.Utils;
 import com.driver.details.DriverConst;
 import com.messaging.logistic.Globally;
 
@@ -164,7 +165,7 @@ public class MalfunctionDiagnosticMethod {
                     malfnDiagnstcObj.put(ConstantsKeys.IsCleared, true);
                     malfnDiagnstcObj.put(ConstantsKeys.ClearedTime, Globally.GetCurrentUTCTimeFormat());
                     malfnDiagnstcObj.put(ConstantsKeys.Remarks, Remarks);
-                    malfnDiagnstcObj.put(ConstantsKeys.ClearedTimeEngineHours, SharedPref.getObdEngineHours(context));
+                    malfnDiagnstcObj.put(ConstantsKeys.ClearedTimeEngineHours, Constants.get2DecimalEngHour(context));  //SharedPref.getObdEngineHours(context));
                     malfnDiagnstcObj.put(ConstantsKeys.ClearedTimeOdometer, SharedPref.getObdOdometer(context) );
 
                     malArray.put(i, malfnDiagnstcObj);
@@ -444,7 +445,7 @@ public class MalfunctionDiagnosticMethod {
 
                         eventObj.put(ConstantsKeys.TotalMinutes, minDiff);
                         eventObj.put(ConstantsKeys.EventEndDateTime, currentDate.toString());
-                        eventObj.put(ConstantsKeys.ClearEngineHours, SharedPref.getObdEngineHours(context));
+                        eventObj.put(ConstantsKeys.ClearEngineHours, Constants.get2DecimalEngHour(context));    //SharedPref.getObdEngineHours(context));
                         eventObj.put(ConstantsKeys.ClearOdometer, ObdOdometer);
 
                         array.put(i, eventObj);
@@ -470,14 +471,14 @@ public class MalfunctionDiagnosticMethod {
     public void addNewMalDiaEventInDurationArray(DBHelper dbHelper, String DriverId, String EventDateTime, String EventEndDateTime,
                                                  String DetectionDataEventCode, Constants constants, Context context){
         try{
-            String ClearEngineHours = SharedPref.getObdEngineHours(context);
+            String ClearEngineHours = Constants.get2DecimalEngHour(context);    //SharedPref.getObdEngineHours(context);
             String ClearOdometer = SharedPref.getObdOdometer(context);
             JSONArray array = getMalDiaDurationArray(dbHelper);
             JSONObject newItemObj;
             String lastSavedOdometer = SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, context);
             String lastSavedEngHr =  SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, context);
             String currentOdometer = SharedPref.getObdOdometer(context);
-            String currentEngHr = SharedPref.getObdEngineHours(context);
+            String currentEngHr = Constants.get2DecimalEngHour(context);    //SharedPref.getObdEngineHours(context);
             double engineHrDiffInMin = constants.getEngineHourDiff(lastSavedEngHr, currentEngHr);
 
             if(DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic) || DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ) {
@@ -503,7 +504,8 @@ public class MalfunctionDiagnosticMethod {
     }
 
 
-    public double getLast24HourEventsDurInMin(String EventType, DBHelper dbHelper){
+    public double getLast24HourEventsDurInMin(String EventType, String EngineHour, Double engineHrDiffInMin, Constants constants,
+                                             DriverPermissionMethod driverPermissionMethod, Utils obdUtil, DBHelper dbHelper){
         double totalMin = 0;
         try{
             JSONArray eventsArray = getMalDiaDurationArray(dbHelper);
@@ -522,9 +524,32 @@ public class MalfunctionDiagnosticMethod {
                     }
 
 
-                    if(DetectionDataEventCode.equals(EventType)){
-                        totalMin = totalMin + lastEventMinutes;
+                    if(EventType.equals(Constants.PowerComplianceDiagnostic)){
+                        String lastEngineHours = eventObj.getString(ConstantsKeys.EngineHours);
+                        if(lastEngineHours.equals(EngineHour) && lastEventMinutes == engineHrDiffInMin){
+                            // ignore in this case to add same dia event time again
+
+                            constants.saveObdData("PowerEvent - Final",  "",
+                                    getMalDiaDurationArray(dbHelper).toString(), "",
+                                    "", "", "", "", "",
+                                    String.valueOf(-1), "", "", "",
+                                    "", dbHelper, driverPermissionMethod, obdUtil);
+
+                        }else{
+                            totalMin = totalMin + lastEventMinutes;
+                        }
+                    }else {
+                        if (DetectionDataEventCode.equals(EventType)) {   // && eventObj.getBoolean(ConstantsKeys.IsClearEvent)
+                            totalMin = totalMin + lastEventMinutes;
+                        }
                     }
+
+
+                 /*   if(DetectionDataEventCode.equals(EventType)){   // && eventObj.getBoolean(ConstantsKeys.IsClearEvent)
+                        totalMin = totalMin + lastEventMinutes;
+                    }*/
+
+
                 }else{
                     break;
                 }
@@ -615,8 +640,8 @@ public class MalfunctionDiagnosticMethod {
                         String EventEndDateTime, DateTime driverZoneDate, Constants constants, Context context){
         if(!IsClearEvent) {
             if (DetectionDataEventCode.equals(Constants.MissingDataDiagnostic)) {
-                SharedPref.saveLocDiagnosticStatus(true, driverZoneDate.toString(), EventDateTime, context);
-                 constants.saveDiagnstcStatus(context, true);
+               // SharedPref.saveLocDiagnosticStatus(true, driverZoneDate.toString(), EventDateTime, context);
+                constants.saveDiagnstcStatus(context, true);
             } else if (DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic)) {
                 SharedPref.savePowerMalfunctionOccurStatus(
                         SharedPref.isPowerMalfunctionOccurred(context),
@@ -710,7 +735,7 @@ public class MalfunctionDiagnosticMethod {
                         clearObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
                     }else{
                         clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
-                        clearObj.put(ConstantsKeys.ClearEngineHours, SharedPref.getObdEngineHours(context));
+                        clearObj.put(ConstantsKeys.ClearEngineHours, Constants.get2DecimalEngHour(context));    //SharedPref.getObdEngineHours(context));
                         clearObj.put(ConstantsKeys.ClearOdometer, SharedPref.getObdOdometer(context));
                     }
                 }else {
@@ -750,7 +775,7 @@ public class MalfunctionDiagnosticMethod {
                         clearObj.put(ConstantsKeys.ClearEventDateTime, currentTime.toString());
 
                         clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
-                        clearObj.put(ConstantsKeys.ClearEngineHours, SharedPref.getObdEngineHours(context));
+                        clearObj.put(ConstantsKeys.ClearEngineHours, Constants.get2DecimalEngHour(context));    //SharedPref.getObdEngineHours(context)
                         clearObj.put(ConstantsKeys.ClearOdometer, SharedPref.getObdOdometer(context));
 
                     }

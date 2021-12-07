@@ -84,7 +84,7 @@ public class HelperMethods {
         try {
             if (rs != null & rs.getCount() > 0) {
                 rs.moveToFirst();
-                dbHelper.UpdateDriverLog(driverId, driverLogArray);        // UPDATE DRIVER LOG
+                dbHelper.UpdateDriverLog(driverId, driverLogArray);        // UPDATE RECAP LOG
             } else {
                 dbHelper.InsertDriverLog(driverId, driverLogArray);      // INSERT DRIVER LOG
             }
@@ -265,7 +265,8 @@ public class HelperMethods {
 
     public DriverDetail getDriverList(DateTime currentDate, DateTime currentUTCDate, int driverId,
                                       final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver, int LastStatus,
-                                      boolean isOldRecord, boolean isHaulException,  boolean isAdverseException, boolean isNorthCanada, int ruleVersion, List<DriverLog> logList){
+                                      boolean isOldRecord, boolean isHaulException,  boolean isAdverseException,
+                                      boolean isNorthCanada, int ruleVersion, List<DriverLog> logList, Context context){
 
         LocalTime time = new LocalTime();
         DriverDetail model = new DriverDetail();
@@ -306,6 +307,17 @@ public class HelperMethods {
         // is16HourExceptionEnabled is used for Adverse Exception
         model.setIs16HourExceptionEnabled(isAdverseException);
         model.setNorthArea(isNorthCanada);
+
+       try {
+           String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
+           boolean isDeferralOccurred = Constants.isDeferralOccurred(""+driverId, MainDriverId, context);
+           int deferralDays = Constants.confirmDeferralRuleDays(""+driverId, MainDriverId, context);
+
+           model.setDeferral(isDeferralOccurred);
+           model.setDeferralDay(deferralDays);
+       }catch (Exception e){
+           e.printStackTrace();
+       }
 
         return model;
     }
@@ -632,7 +644,7 @@ public class HelperMethods {
                 String DriverName = "", IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0";
                 String DecesionSource = "", PlateNumber = "";
                 String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", malAddInfo = "";
-                boolean HaulHourException = false, IsShortHaulUpdate = false, IsNorthCanada = false;
+                boolean HaulHourException = false, IsShortHaulUpdate = false, IsNorthCanada = false, IsCycleChanged = false;
 
                 int CycleId = 1;
                 if(!logObj.isNull(ConstantsKeys.CurrentCycleId))
@@ -705,6 +717,10 @@ public class HelperMethods {
                     IsNorthCanada = logObj.getBoolean(ConstantsKeys.IsNorthCanada);
                 }
 
+                if(logObj.has(ConstantsKeys.IsCycleChanged) && !logObj.getString(ConstantsKeys.IsCycleChanged).equals("null")  ) {
+                    IsCycleChanged = logObj.getBoolean(ConstantsKeys.IsCycleChanged);
+                }
+
 
                 if(logObj.has(ConstantsKeys.DecesionSource))
                     DecesionSource = logObj.getString(ConstantsKeys.DecesionSource);
@@ -742,9 +758,12 @@ public class HelperMethods {
 
                 driverLogJson.put(ConstantsKeys.MalfunctionDefinition, malAddInfo);
                 driverLogJson.put(ConstantsKeys.IsNorthCanada, IsNorthCanada);
+                driverLogJson.put(ConstantsKeys.IsCycleChanged,  IsCycleChanged);
 
                 driverLogJson.put(ConstantsKeys.EndOdometerInKm, EndOdometer);
                 driverLogJson.put(ConstantsKeys.StartOdometerInKm,  logObj.getString(ConstantsKeys.StartOdometerInKm));
+
+
 
             }
         }catch (Exception e){
@@ -1410,7 +1429,8 @@ public class HelperMethods {
                 IsViolation = false;
 
                 //  diff = ;
-                diff = DayDiffSplitMethod(currentDate , startDateTime);  //(int) Constants.getDateTimeDuration(startDateTime, currentDate).getStandardDays();
+                diff = DayDiffSplitMethod(currentDate , startDateTime);
+                //(int) Constants.getDateTimeDuration(startDateTime, currentDate).getStandardDays();
                 if(diff < daysDiff ) {
                     driverLogJson = new JSONObject();
 
@@ -2800,7 +2820,11 @@ public class HelperMethods {
             if (JobStatus == EldFragment.DRIVING ){
                 return CallDriverRule.canadaDrivingRules(oDriverDetail);
             }else if(JobStatus == EldFragment.ON_DUTY){
-                return CallDriverRule.canadaOnDutyRules(oDriverDetail);
+                RulesResponseObject obj = CallDriverRule.canadaOnDutyRules(oDriverDetail);
+                RulesResponseObject obj2 = CallDriverRule.calculateLeftCycleMinutes(oDriverDetail);
+                obj.setCycleUsedMinutes(obj2.getCycleUsedMinutes());
+                obj.setCycleRemainingMinutes(obj2.getCycleRemainingMinutes());
+                return obj;
             }else {
                 return CallDriverRule.calculateLeftCycleMinutes(oDriverDetail);
             }
@@ -2823,7 +2847,7 @@ public class HelperMethods {
     public RulesResponseObject getRemainingTime(DateTime currentDate, DateTime currentUTCDate,
                                                 final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver,
                                                 int DriverId, int LastStatus, boolean isOldRecord, boolean isHaulException, boolean isAdverseException,
-                                                boolean isNorthCanada, int rulesVersion, DBHelper dbHelper){
+                                                boolean isNorthCanada, int rulesVersion, DBHelper dbHelper, Context context){
 
         LocalCalls CallDriverRule = new LocalCalls();
 
@@ -2831,7 +2855,7 @@ public class HelperMethods {
 
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException, isNorthCanada,
-                rulesVersion, oDriverLog3DaysList);  //oDriverLog3DaysList
+                rulesVersion, oDriverLog3DaysList, context);  //oDriverLog3DaysList
 
         return CallDriverRule.calculateDailyMinutes(oDriverDetailRemaining);
 
@@ -2841,7 +2865,7 @@ public class HelperMethods {
     public RulesResponseObject getRemainingHosTime(DateTime currentDate, DateTime currentUTCDate,
                                                 final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver,
                                                 int DriverId, int LastStatus, boolean isOldRecord, boolean isHaulException, boolean isAdverseException,
-                                                boolean isNorthCanada, int rulesVersion, DBHelper dbHelper){
+                                                boolean isNorthCanada, int rulesVersion, DBHelper dbHelper, Context context){
 
         LocalCalls CallDriverRule = new LocalCalls();
 
@@ -2849,7 +2873,7 @@ public class HelperMethods {
         oDriverLog3DaysList.get(oDriverLog3DaysList.size()-1).setCurrentCyleId(eldCyclesId);
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException, isNorthCanada,
-                rulesVersion, oDriverLog3DaysList);  //oDriverLog3DaysList
+                rulesVersion, oDriverLog3DaysList, context);  //oDriverLog3DaysList
 
         return CallDriverRule.calculateDailyMinutes(oDriverDetailRemaining);
 
@@ -2860,13 +2884,13 @@ public class HelperMethods {
                                                       final int offsetFromUTC, final int eldCyclesId, final boolean isSingleDriver,
                                                       int DriverId, int LastStatus, boolean isOldRecord,
                                                       boolean isHaulException, boolean isAdverseException,
-                                                      boolean isNorthCanada, int rulesVersion, DBHelper dbHelper){
+                                                      boolean isNorthCanada, int rulesVersion, DBHelper dbHelper, Context context){
 
         LocalCalls CallDriverRule = new LocalCalls();
         List<DriverLog> oDriverLog3DaysList = getNumberOffDaysLog(DriverId, 3, currentDate, currentUTCDate, dbHelper);
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException,
-                isNorthCanada, rulesVersion, oDriverLog3DaysList);
+                isNorthCanada, rulesVersion, oDriverLog3DaysList, context);
 
         return CallDriverRule.calculateDailyOffLeftMinutes(oDriverDetailRemaining);
 
@@ -3587,7 +3611,7 @@ public class HelperMethods {
                         DRIVER_ID, City, State, Country, AddressLine, AddressKm,
                         CurrentCycleId, Remarks, isPersonal, isViolation,
                         "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                        "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                        "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                         SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                         Global, isHaulExcptn, isShortHaulUpdate,
                         ""+isAdverseExcptn,
@@ -3603,7 +3627,7 @@ public class HelperMethods {
                 DriverDetail oDriverDetail1 = getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
                         Integer.valueOf(DRIVER_ID), offsetFromUTC, Integer.valueOf(CurrentCycleId), Global.isSingleDriver(context),
                         DRIVER_JOB_STATUS, false, isHaulExcptn,
-                        isAdverseExcptn, IsNorthCanada, rulesVersion, oDriverLog);
+                        isAdverseExcptn, IsNorthCanada, rulesVersion, oDriverLog, context);
                 RulesObj = CheckDriverRule(Integer.valueOf(CurrentCycleId), DRIVER_JOB_STATUS,
                         oDriverDetail1);
 
@@ -3644,7 +3668,7 @@ public class HelperMethods {
                     Globally.LONGITUDE,
                     "false", // IsStatusAutomatic is false when mannual job has been done
                     String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                    "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                    "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                     SharedPref.GetCurrentTruckPlateNo(context),
                     String.valueOf(isHaulExcptn),
                     String.valueOf( isShortHaulUpdate),
@@ -3657,7 +3681,8 @@ public class HelperMethods {
                     CurrentDeviceDate,
                     String.valueOf(SharedPref.IsAOBRD(context)),
                     CurrentCycleId,
-                    String.valueOf(isDeferral), "", "false"
+                    String.valueOf(isDeferral), "", "false",
+                    String.valueOf(IsCycleChanged)
 
             );
 
@@ -3704,7 +3729,7 @@ public class HelperMethods {
                     DRIVER_ID, City, State, Country, AddressLine, AddressKm,
                     CurrentCycleId, Remarks, isPersonal, isViolation,
                     "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                    "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                    "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                     SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                     Global, isHaulExcptn, isShortHaulUpdate,
                     ""+isAdverseExcptn,

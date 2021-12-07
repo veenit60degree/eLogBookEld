@@ -843,6 +843,9 @@
     <string name="check_available_hour">Check available hours</string>
     <string name="chaged_cycle_rule">Changed Cycle Rule</string>
 
+    <string name="info_missed_desc">Few ECM info may be missed due to ELD book is not connected with OBD</string>
+
+
     <string name="No_">No.</string>
     <string name="Status">Status</string>
     <string name="Status_colon">Status:</string>
@@ -867,6 +870,7 @@
     <string name="wired_inactive">Wired tablet disconnected. Check your cable connection</string>
     <string name="wired_conn_error">OBD connection error</string>
     <string name="engine_ign_off_state">Engine ignition in off state</string>
+    <string name="engine_restarted">Engine Restarted</string>
     <string name="wifi">WiFi</string>
     <string name="wired_tablettt">Wired Tablet</string>
     <string name="wired_tablet_connected">Wired Tablet Connected</string>

@@ -104,7 +104,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
 
         try{
             if(childData.getDriverZoneEventDate().length() > 10) {
-                String date = globally.dateConversionMalfunction(childData.getDriverZoneEventDate());   //EventDateTime()
+                String date = globally.ConvertDateFormatMMddyyyyHHmm(childData.getDriverZoneEventDate());   //dateConversionMalfunction(
                 timeMalTxtVw.setText(date);
             }else {
                 timeMalTxtVw.setText( "");
@@ -119,7 +119,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                 seqIdMalTxtVw.setText(childData.getSequenceNo());
             }*/
 
-            try {
+          /*  try {
                 if(constants.isMalfunction(childData.getDetectionDataEventCode())){
                     durationTxtVw.setVisibility(View.GONE);
                 }else {
@@ -131,7 +131,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                 }
             }catch (Exception e){
                 e.printStackTrace();
-            }
+            }*/
 
             String distance = childData.getMiles();
             try {
@@ -139,7 +139,6 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                     if (distance.equals("--") || distance.length() == 0) {
                         vehMilesMalTxtVw.setText("--");
                     } else {
-                        //vehMilesMalTxtVw.setText(distance);
                         setVehicleView(vehMilesMalTxtVw, distance);
                     }
                 } else {
@@ -189,20 +188,25 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         if(distance.length() <= 1){
             view.setText("--");
         }else{
-            if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
-                if(distance.contains(".")){
+            if(distance.contains(".")){
+                String[] array = distance.split("\\.");
+                if(array[0].length() > 7){
+                    distance = constants.meterToKmWith2DecPlaces(distance);
+                }else{
                     distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
-                }else {
+                }
+            }else {
+                if (distance.length() > 7) {
                     distance = constants.meterToKmWith2DecPlaces(distance);
                 }
-                view.setText(distance);
+            }
+
+            if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {
+                view.setText(distance + " km");
             }else{
-                if(distance.contains(".")){
-                    distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
-                }else{
-                    distance = constants.meterToMilesWith2DecPlaces(distance);
-                }
-                view.setText(distance);
+                distance = Constants.kmToMiles(distance);
+                distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
+                view.setText(distance + " miles");
             }
         }
     }

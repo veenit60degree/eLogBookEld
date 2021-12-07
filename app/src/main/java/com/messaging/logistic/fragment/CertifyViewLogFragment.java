@@ -228,6 +228,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     boolean isLoadImageCalled       = false;
     boolean isReCertifyRequired     = false;
     boolean isSaveCertifyClicked    = false;
+    boolean isLocationMissing       = false;
 
     int startHour = 0,startMin = 0, endHour = 0, endMin = 0;
     SignDialog signDialog;
@@ -965,6 +966,15 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             MonthFullName           = Constants.MonthFullName;
             MonthShortName          = Constants.MonthShortName;
             driverLogArray          = new JSONArray();
+            CurrentDate             = Globally.GetCurrentDeviceDate();
+
+            if (!LogDate.equals(CurrentDate)) {
+                UpdateRecapOffLineData();
+
+                global.DriverSwitchAlert(getActivity(), "Recertify Reminder !!", "You need to ReCertify after editing log.", "Ok");
+
+            }
+
         }else{
             if(Constants.IsEdiLogBackStack) {
                 Constants.IsEdiLogBackStack = false;
@@ -1049,7 +1059,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         certifyHomeTV.setText(HomeTerminal);
 
 
-        String engineHours = sharedPref.getObdEngineHours(getActivity());
+        String engineHours = Constants.get2DecimalEngHour(getActivity()); //sharedPref.getObdEngineHours(getActivity());
         int ObdStatus = sharedPref.getObdStatus(getActivity());
         if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
                 || ObdStatus == Constants.BLE_CONNECTED) && engineHours.length() > 1) {
@@ -1143,7 +1153,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         @Override
         public void CancelBtnReady() {
-            Log.d("cancel", "cancel listener called");
+           // Log.d("cancel", "cancel listener called");
         }
     }
 
@@ -1723,8 +1733,16 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     }
 
                     int DriverLogListHeight      = (certifyLogItemLay.getHeight() + DividerHeigh ) * listSize; //getLayoutParams().height;
-                    int RecapTitleHeight         = certifyLogItemLay.getHeight() + RecapViewHeight + recapHistoryListView.getHeight() + (recapItemLay.getHeight() * 5) + 22;
+                    int RecapTitleHeight ;  //        = certifyLogItemLay.getHeight() + RecapViewHeight + recapHistoryListView.getHeight() + (recapItemLay.getHeight() * 5) + 22;
+                    int logListSize = DriverLogList.size();
 
+                    if(logListSize < 5){
+                        RecapTitleHeight         = certifyLogItemLay.getHeight() + RecapViewHeight + recapHistoryListView.getHeight() + (recapItemLay.getHeight() * 5) + 22;
+                    }else if(logListSize >= 6 && logListSize < 10){
+                        RecapTitleHeight         = certifyLogItemLay.getHeight() + RecapViewHeight + recapHistoryListView.getHeight() + (recapItemLay.getHeight() * 9) + 22;
+                    }else{
+                        RecapTitleHeight         = certifyLogItemLay.getHeight() + RecapViewHeight + recapHistoryListView.getHeight() + (recapItemLay.getHeight() *  (logListSize -2) ) + 22;
+                    }
 
                     int layoutHeight = logHistorylay.getHeight();
                     if(DriverLogListHeight > RecapTitleHeight){
@@ -1849,7 +1867,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
                 isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                rulesVersion, oDriverLogDetail);
+                rulesVersion, oDriverLogDetail, getActivity());
 
         // EldFragment.SLEEPER is used because we are just checking cycle time
         RulesResponseObject RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), EldFragment.SLEEPER, oDriverDetail);
@@ -1858,7 +1876,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         RulesResponseObject RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                 Integer.valueOf(CurrentCycleId), isSingleDriver, Integer.valueOf(DRIVER_ID) , DRIVER_JOB_STATUS, isOldRecord,
                 isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                rulesVersion, dbHelper);
+                rulesVersion, dbHelper, getActivity());
 
         try {
             int CycleRemainingMinutes   = constants.checkIntValue((int) RulesObj.getCycleRemainingMinutes());
@@ -1981,7 +1999,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                             if (OfflineByteImg.length() == 0 && dataObj.getString(ConstantsKeys.LogSignImageInByte).length() > 0) {
                                 // Update recap array with byte image
                                 isReCertifyRequired = constants.isReCertifyRequired(getActivity(), dataObj, "");
-                                if (isReCertifyRequired == false) {
+                                if (isReCertifyRequired == false && !Constants.IsLogEdited) {
                                     recap18DaysArray = recapViewMethod.UpdateSelectedDateRecapArray(recap18DaysArray, LogDate, dataObj.getString(ConstantsKeys.LogSignImageInByte));
                                     recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, recap18DaysArray);
 
@@ -2031,9 +2049,12 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     if(EngineMileage.contains("Data Malfunction") && EngineMileage.equals("0") ){
                         certifyDistanceTV.setText(Distance);
                     }else{
-                        // Update recap array with Engine Miles
-                        recap18DaysArray = recapViewMethod.UpdateSelectedDateEngineMiles(recap18DaysArray, LogDate, EngineMileage);
-                        recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, recap18DaysArray);
+
+                        if(!Constants.IsLogEdited) {
+                            // Update recap array with Engine Miles
+                            recap18DaysArray = recapViewMethod.UpdateSelectedDateEngineMiles(recap18DaysArray, LogDate, EngineMileage);
+                            recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, recap18DaysArray);
+                        }
                     }
 
 
@@ -2852,8 +2873,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     void openMissingDialogAlert(){
         try {
             driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
-            boolean isLocationMissing = constants.isLocationMissingSelectedDay (selectedDateTime, currentDateTime, driverLogArray, hMethods,
-                    global, getActivity());
+            isLocationMissing = constants.isLocationMissingSelectedDay (selectedDateTime, currentDateTime, driverLogArray, false,
+                                    hMethods, global, getActivity());
 
             if(isLocationMissing) {
                 if (missingLocationDialog != null && missingLocationDialog.isShowing()) {
@@ -3111,13 +3132,34 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                                 GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
                                             }
                                         }
+
                                         selectedArray = new JSONArray(logModel);
                                         ParseLogData(dataObj, false);     // Parse Log Data
+
+                                        if(isLocationMissing){
+                                            boolean isLocMissingWithServerArray = constants.isLocationMissingSelectedDay (selectedDateTime, currentDateTime, selectedArray,
+                                                    true, hMethods, global, getActivity());
+
+                                      /* If location is missing in local array but exists in server array then we are calling 18 days log api to sync with server data*/
+                                            if(!isLocMissingWithServerArray){
+                                                if (missingLocationDialog != null && missingLocationDialog.isShowing()) {
+                                                    missingLocationDialog.dismiss();
+                                                }
+
+                                                JSONArray unpostedLogArray = constants.GetDriversSavedArray(getActivity(),
+                                                        MainDriverPref, CoDriverPref);
+                                                if (unpostedLogArray.length() == 0) {
+                                                    GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
+                                                }
+
+                                            }
+                                        }
 
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
+
                                 progressBarDriverLog.setVisibility(View.GONE);
                                 if(progressDialog.isShowing()){
                                     progressDialog.dismiss();
@@ -3334,10 +3376,42 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 String TruckEquipmentNumber = "--";
                 boolean isPersonal = false;
 
-                if (!isOnline)
+                String StartOdometer = odometerListJson.getString(ConstantsKeys.StartOdometer);
+                String EndOdometer  = odometerListJson.getString(ConstantsKeys.EndOdometer);
+                String TotalMiles   = odometerListJson.getString(ConstantsKeys.TotalMiles);
+                String TotalKM      = odometerListJson.getString(ConstantsKeys.TotalKM);
+
+                if (!isOnline) {
                     VehicleNumber = odometerListJson.getString(ConstantsKeys.VehicleNumber);
-                else
+
+                    if(i == SelectedArray.length()-1) {
+                        int obdStatus = SharedPref.getObdStatus(getActivity());
+                        if (obdStatus == Constants.BLE_CONNECTED || obdStatus == Constants.WIRED_CONNECTED ||
+                                obdStatus == Constants.WIFI_CONNECTED) {
+                            if (EndOdometer.length() == 0 && StartOdometer.length() > 0 && !StartOdometer.equalsIgnoreCase("null")) {
+
+                                try {
+                                    EndOdometer = SharedPref.getObdOdometer(getActivity());
+                                    if (EndOdometer.length() > 0 && !EndOdometer.equalsIgnoreCase("null")) {
+
+                                        float startOdo = Float.parseFloat(StartOdometer);
+                                        float endOdo = Float.parseFloat(EndOdometer);
+                                        float TotalKMFloat = endOdo - startOdo;
+                                        TotalMiles = odometerhMethod.Convert2DecimalPlaces(odometerhMethod.convertKmsToMiles(TotalKMFloat));
+                                        TotalKM = odometerhMethod.Convert2DecimalPlaces(TotalKMFloat);
+
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        }
+                    }
+                }else {
                     VehicleNumber = odometerListJson.getString(ConstantsKeys.TruckEquipmentNumber);
+                }
 
                 if (!odometerListJson.isNull(ConstantsKeys.TruckEquipmentNumber))
                     TruckEquipmentNumber = odometerListJson.getString(ConstantsKeys.TruckEquipmentNumber);
@@ -3350,10 +3424,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         VehicleNumber,
                         odometerListJson.getString(ConstantsKeys.DriverId),
                         odometerListJson.getString(ConstantsKeys.VIN),
-                        odometerListJson.getString(ConstantsKeys.StartOdometer),
-                        odometerListJson.getString(ConstantsKeys.EndOdometer),
-                        odometerListJson.getString(ConstantsKeys.TotalMiles),
-                        odometerListJson.getString(ConstantsKeys.TotalKM),
+                        StartOdometer,
+                        EndOdometer,
+                        TotalMiles,
+                        TotalKM,
                         odometerListJson.getString(ConstantsKeys.DistanceType),
                         odometerListJson.getString(ConstantsKeys.CreatedDate),
                         TruckEquipmentNumber,
@@ -3562,6 +3636,35 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         }
 
     }
+
+
+
+    void UpdateRecapOffLineData(){
+        try {
+            LogSignImage = "";
+            LogSignImageInByte = "";
+            JSONArray recapArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
+            if(recapArray != null && recapArray.length() > 0){
+                try {
+                    JSONArray updatedRecapArray = recapViewMethod.UpdateSelectedRecapData(recapArray, LogDate);
+                    if(updatedRecapArray != null) {
+                        Constants.IsLogEdited = true;
+                        recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, updatedRecapArray);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    CallRecapApi();
+                }
+            }else{
+                CallRecapApi();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+    }
+
 
 
     void loadByteImage(String LogSignImageInByte){

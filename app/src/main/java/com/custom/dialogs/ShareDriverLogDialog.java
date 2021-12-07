@@ -783,7 +783,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                                 if (!obj.isNull("Data")) {
                                     dataObj = new JSONObject(obj.getString("Data"));
                                     String filePath = dataObj.getString("FilePath");
-                                    DriverLogPDFViewConfirmation(getContext(), filePath );
+                                    DriverLogPDFViewConfirmation(getContext(), filePath, message );
                                 }
 
                                 dismiss();
@@ -840,39 +840,49 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
 
 
-    public void DriverLogPDFViewConfirmation(final Context context, final String link){
+    public void DriverLogPDFViewConfirmation(final Context context, final String link, String message){
         try {
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            alertDialogBuilder.setTitle("You can check driver log in this link.");    //Driver Log !!
-            alertDialogBuilder.setMessage(Html.fromHtml("<html> <font color='blue'><u>" + link + "</u></font> </html>") );    //"Do you want to see driver log ?"
-            alertDialogBuilder.setCancelable(false);
 
-            alertDialogBuilder.setPositiveButton("Open",
-                    new OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int arg1) {
+            String dismissBtnName;
+            if(!link.equals("Please check your email")) {
+                dismissBtnName = "Dismiss";
+                alertDialogBuilder.setTitle("You can check driver log in this link.");    //Driver Log !!
+                alertDialogBuilder.setMessage(Html.fromHtml("<html> <font color='blue'><u>" + link + "</u></font> </html>") );    //"Do you want to see driver log ?"
+                alertDialogBuilder.setCancelable(false);
 
-                            try {
-                                Intent i = new Intent(Intent.ACTION_VIEW);
-                                i.setData(Uri.parse(link));
-                                context.startActivity(i);
-                            }catch (Exception e){
-                                if(getContext() != null) {
-                                    Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_viewer_found), Toast.LENGTH_LONG).show();
+                alertDialogBuilder.setPositiveButton("Open",
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int arg1) {
+
+                                try {
+                                    Intent i = new Intent(Intent.ACTION_VIEW);
+                                    i.setData(Uri.parse(link));
+                                    context.startActivity(i);
+                                } catch (Exception e) {
+                                    if (getContext() != null) {
+                                        Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_viewer_found), Toast.LENGTH_LONG).show();
+                                    }
+                                    e.printStackTrace();
                                 }
-                                e.printStackTrace();
+
+
+                                dialog.dismiss();
+
+
                             }
+                        });
+            }else{
+                alertDialogBuilder.setTitle("Success !!");    //Driver Log !!
+                alertDialogBuilder.setMessage(message);
+                alertDialogBuilder.setCancelable(false);
 
+                dismissBtnName = "Ok";
+            }
 
-
-                            dialog.dismiss();
-
-
-                        }
-                    });
-
-            alertDialogBuilder.setNegativeButton("Dismiss", new OnClickListener() {
+            alertDialogBuilder.setNegativeButton(dismissBtnName, new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();

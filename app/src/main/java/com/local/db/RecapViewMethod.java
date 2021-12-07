@@ -88,6 +88,29 @@ public class RecapViewMethod {
     }
 
 
+    /*-------------------- update Recap array on particuler position  -------------------- */
+    public JSONArray UpdateSelectedRecapData(JSONArray recapViewArray, String date){
+
+        try {
+            for(int i = 0 ; i < recapViewArray.length() ; i++){
+                JSONObject recapSelectedJson = (JSONObject)recapViewArray.get(i);
+                if(date.equals(recapSelectedJson.getString(ConstantsKeys.Date))){
+                 //   return recapSelectedJson;
+                    recapSelectedJson.put(ConstantsKeys.LogSignImage, "");
+                    recapSelectedJson.put(ConstantsKeys.LogSignImageInByte, "");
+
+                    return recapViewArray.put(i, recapSelectedJson);
+                  //  break;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 
     /*-------------------- Update Selected Date Recap/View Log Array -------------------- */
     public JSONArray UpdateSelectedDateRecapArray(JSONArray recapViewArray, String date, String ImageInByte){

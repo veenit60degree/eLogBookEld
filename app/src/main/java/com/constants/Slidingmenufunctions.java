@@ -891,11 +891,6 @@ public class Slidingmenufunctions implements OnClickListener {
 			@Override
 			protected Map<String, String> getParams()
 			{
-				String odometer = SharedPref.getHighPrecisionOdometer(context);
-				try {
-					odometer = constants.getBeforeDecimalValue(constants.meterToKm(odometer));
-				}catch (Exception e){}
-
 				Map<String,String> params = new HashMap<String, String>();
 				params.put(ConstantsKeys.DriverId, DriverId);
 				params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
@@ -903,8 +898,8 @@ public class Slidingmenufunctions implements OnClickListener {
 				params.put(ConstantsKeys.CompanyId, DriverCompanyId);
 				params.put(ConstantsKeys.VIN, VIN);
 				params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(context));
-				params.put(ConstantsKeys.EngineHours,  SharedPref.getObdEngineHours(context));
-				params.put(ConstantsKeys.CrntOdodmeter, odometer);
+				params.put(ConstantsKeys.EngineHours,  Constants.get2DecimalEngHour(context));	//SharedPref.getObdEngineHours(context));
+				params.put(ConstantsKeys.CrntOdodmeter, SharedPref.getObdOdometer(context));
 				params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);
 				params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 

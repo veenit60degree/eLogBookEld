@@ -198,15 +198,16 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                 String DetectionDataEventCode = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
 
                 if(EventType.equals(DetectionDataEventCode)) {
-                    if (globally.isSingleDriver(getActivity())) {
+                   /* if (globally.isSingleDriver(getActivity())) {
                         parseData(mainObj, i);
-                    } else {
+                    } else {*/
 
                         String DrId = mainObj.getString(ConstantsKeys.DriverId);
 
                         if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
                                 DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
-                                DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)) {
+                                DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction) ||
+                                DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)) {
                             parseData(mainObj, i);
                         } else {
                             if (DrId.equals(DriverId)) {
@@ -214,7 +215,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                             }
                         }
 
-                    }
+                   // }
                 }
             }
 

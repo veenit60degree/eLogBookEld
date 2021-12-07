@@ -161,7 +161,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                  Log.d("received", "received from service");
+                 // Log.d("received", "received from service");
 
                 if (intent.hasExtra(ConstantsKeys.PersonalUse75Km)) {
                     if (intent.getBooleanExtra(ConstantsKeys.PersonalUse75Km, false) == true) {
@@ -187,7 +187,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                                 try {
                                     if (continueStatusDialog != null && continueStatusDialog.isShowing()) {
                                         continueStatusDialog.dismiss();
-                                        Log.d("dialogTab", "dialog dismissed");
+                                       // Log.d("dialogTab", "dialog dismissed");
                                     }
 
                                 }catch (Exception e){
@@ -242,7 +242,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                             if (intent.hasExtra(ConstantsKeys.IsEngineRestarted)) {
 
                                 if(intent.getBooleanExtra(ConstantsKeys.IsEngineRestarted, false)){
-                                    Log.d("IsEngineRestarted", "IsEngineRestarted" );
+                                   // Log.d("IsEngineRestarted", "IsEngineRestarted" );
                                     boolean IsYardMove = intent.getBooleanExtra(ConstantsKeys.IsYard, false);
                                     boolean IsPersonal = intent.getBooleanExtra(ConstantsKeys.IsPersonal, false);
 
@@ -365,7 +365,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         try {
                 if (continueStatusDialog != null && continueStatusDialog.isShowing()) {
-                    Log.d("dialog", "dialog is showing");
+                   // Log.d("dialog", "dialog is showing");
                 } else {
 
                     String TruckIgnitionStatus = SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, TabAct.this);

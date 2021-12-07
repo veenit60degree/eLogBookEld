@@ -15,7 +15,7 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
             String Annotation;
             String EventDate;
             String EventTime;
-            String AccumulatedVehicleMiles;
+            String AccumulatedVehicleKm;
             String AccumulatedEngineHours;
             String TotalVehicleMiles;
             String TotalEngineHours;
@@ -72,7 +72,7 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
 
     public CanadaDutyStatusModel(String dateTimeWithMins, String eventUTCTimeStamp, String driverStatusID, int eventType,
                                  int eventCode, String dutyMinutes, String annotation,
-                                 String eventDate, String eventTime, String accumulatedVehicleMiles,
+                                 String eventDate, String eventTime, String accumulatedVehicleKm,
                                  String accumulatedEngineHours, String totalVehicleMiles, String totalEngineHours,
                                  String GPSLatitude, String GPSLongitude, String CMVVIN, String carrierName,
                                  boolean isMalfunction, String odometerInKm, String strEventType, String origin,
@@ -94,7 +94,7 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
         Annotation = annotation;
         EventDate = eventDate;
         EventTime = eventTime;
-        AccumulatedVehicleMiles = accumulatedVehicleMiles;
+        AccumulatedVehicleKm = accumulatedVehicleKm;
         AccumulatedEngineHours = accumulatedEngineHours;
         TotalVehicleMiles = totalVehicleMiles;
         TotalEngineHours = totalEngineHours;
@@ -179,8 +179,8 @@ public class CanadaDutyStatusModel implements Comparable<CanadaDutyStatusModel>{
         return EventTime;
     }
 
-    public String getAccumulatedVehicleMiles() {
-        return AccumulatedVehicleMiles;
+    public String getAccumulatedVehicleKm() {
+        return AccumulatedVehicleKm;
     }
 
     public String getAccumulatedEngineHours() {

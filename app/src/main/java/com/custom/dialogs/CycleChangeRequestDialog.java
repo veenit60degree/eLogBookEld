@@ -10,9 +10,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
+import com.constants.SharedPref;
 import com.driver.details.DriverConst;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
@@ -32,6 +34,8 @@ public class CycleChangeRequestDialog extends Dialog {
     Constants constants;
     HelperMethods hMethods;
     DBHelper dbHelper;
+    LinearLayout cycleRuleLay;
+
 
 
     public CycleChangeRequestDialog(Context context, String driverId, String changedCycle, ConfirmationListener readyListener) {
@@ -72,11 +76,15 @@ public class CycleChangeRequestDialog extends Dialog {
         getWindow().setAttributes(lp);
 
 
-        TextView changeTitleView, titleDescView, changedCycleRuleTxtVw, changedCycleRuleDescVw;
+        TextView changeTitleView, titleDescView;
+        TextView oldCycleRuleDescVw, changedCycleRuleDescVw;
         changeTitleView = (TextView)findViewById(R.id.changeTitleView);
         titleDescView=(TextView)findViewById(R.id.titleDescView);
-        changedCycleRuleTxtVw=(TextView)findViewById(R.id.changedCycleRuleTxtVw);
+      //  changedCycleRuleTxtVw=(TextView)findViewById(R.id.changedCycleRuleTxtVw);
         changedCycleRuleDescVw=(TextView)findViewById(R.id.changedCycleRuleDescVw);
+        oldCycleRuleDescVw = (TextView)findViewById(R.id.oldCycleRuleDescVw);
+
+        cycleRuleLay    = (LinearLayout) findViewById(R.id.cycleRuleLay);
 
         final Button confirmPopupButton = (Button)findViewById(R.id.confirmPopupButton);
         Button cancelPopupButton = (Button)findViewById(R.id.cancelPopupButton);
@@ -88,10 +96,14 @@ public class CycleChangeRequestDialog extends Dialog {
         cancelPopupButton.setText(getContext().getResources().getString(R.string.reject));
         cancelPopupButton.setTypeface(null, Typeface.NORMAL);
 
-        changedCycleRuleTxtVw.setVisibility(View.VISIBLE);
-        changedCycleRuleDescVw.setVisibility(View.VISIBLE);
+       // changedCycleRuleTxtVw.setVisibility(View.VISIBLE);
+      //  changedCycleRuleDescVw.setVisibility(View.VISIBLE);
+      //  oldCycleRuleDescVw.setVisibility(View.VISIBLE);
+        cycleRuleLay.setVisibility(View.VISIBLE);
+
 
         String currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getContext());
+        String currentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getContext());
 
         if(changedCycleId.equals(Globally.CANADA_CYCLE_1)){
             changedCycleName = Globally.CANADA_CYCLE_1_NAME;
@@ -113,6 +125,10 @@ public class CycleChangeRequestDialog extends Dialog {
         String cycleCalculatedData = constants.CalculateCycleTimeData(getContext(), DriverId, false,
                 false, changedCycleId, Global, hMethods, dbHelper);
         changedCycleRuleDescVw.setText(Html.fromHtml(cycleCalculatedData) );
+
+        String oldCycleCalculatedData = constants.CalculateCycleTimeData(getContext(), SharedPref.getDriverId( getContext()), false,
+                false, currentCycleId, Global, hMethods, dbHelper);
+        oldCycleRuleDescVw.setText(Html.fromHtml(oldCycleCalculatedData));
 
         cancelPopupButton.setOnClickListener(new CancelJobListener());
         confirmPopupButton.setOnClickListener(new OkJobListener());

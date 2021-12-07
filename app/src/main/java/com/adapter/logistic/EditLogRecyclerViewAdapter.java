@@ -1,5 +1,6 @@
 package com.adapter.logistic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
@@ -109,8 +110,11 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
 
+    @SuppressLint("RecyclerView")
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, final int position) {
+
+      //  viewHolder.setIsRecyclable(false);
 
         String startTime = "", endTime = "";
         int TotalHours = 0, status = 1;
@@ -205,6 +209,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
 
         ((ViewHolderItem) viewHolder).dragLay.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int touchPos = viewHolder.getAdapterPosition();
@@ -219,7 +224,6 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                             mDragStartListener.onStartDrag(viewHolder);
                             Log.d("TouchTest", "Touch down");
                         }
-
                     }
                 }
 

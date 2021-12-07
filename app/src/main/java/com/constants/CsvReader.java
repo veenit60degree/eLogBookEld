@@ -86,7 +86,7 @@ public class CsvReader {
             String degree = getLocationInDegree(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE));
             DecimalFormat dec = new DecimalFormat("0.0");
             //String finalAddress = dec.format(distance) + " mi from " + dataModel.getGeographicalName() + " " + stateName ;
-            finalAddress = dec.format(distance) + " mi " + degree + " " + stateName + " " + dataModel.getGeographicalName();
+            finalAddress = dec.format(distance) + " km " + degree + " " + stateName + " " + dataModel.getGeographicalName();
         }
 
         return finalAddress;
@@ -102,7 +102,14 @@ public class CsvReader {
             distance = Math.acos(distance);
             distance = rad2deg(distance);
             distance = distance * 60 * 1.1515;
-            distance = distance * 0.8684;
+
+          /*  if (unit.equals("K")) {
+                distance = distance * 1.609344;
+            } else if (unit.equals("M")) {
+                distance = distance * 0.8684;
+            }*/
+
+            distance = distance * 1.609344;
 
         } catch (Exception e) {
             e.printStackTrace();

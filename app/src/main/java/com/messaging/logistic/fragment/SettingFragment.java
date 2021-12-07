@@ -382,7 +382,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     global.isSingleDriver(getActivity()),
                                     Integer.valueOf(SharedPref.getDriverStatusId(getActivity())), false,
                                     isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                                    SharedPref.GetRulesVersion(getActivity()), oDriverLogDetail);
+                                    SharedPref.GetRulesVersion(getActivity()), oDriverLogDetail, getActivity());
 
                             RulesResponseObject deferralObj = localCalls.IsEligibleDeferralRule(oDriverDetail);
 
@@ -513,14 +513,41 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if(buttonView.isPressed()) {
-                     global.EldScreenToast(SyncDataBtn, "Can't enabled now", getResources().getColor(R.color.colorSleeper));
+                    if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ){
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_usa_cycle_check), getResources().getColor(R.color.colorSleeper));
                         buttonView.setChecked(false);
-//                    if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ){
-//                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_usa_cycle_check), getResources().getColor(R.color.colorSleeper));
-//                        buttonView.setChecked(false);
-//                    }else {
-//                     //
-//                    }
+                    }else {
+                        if (isChecked) {
+
+//                            getExceptionStatus();
+                            if (!isHaulExcptn) {
+
+                                if (isAllowToEnableExceptionInCan(DriverId)) {
+                                    try {
+                                        if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
+                                            adverseRemarksDialog.dismiss();
+
+                                        adverseRemarksDialog = new AdverseRemarksDialog(getActivity(), true,
+                                                false, false, new RemarksListener());
+                                        adverseRemarksDialog.show();
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    buttonView.setChecked(false);
+                                    global.EldScreenToast(SyncDataBtn, exceptionDesc, getResources().getColor(R.color.colorSleeper));
+                                }
+
+                            } else {
+                                buttonView.setChecked(false);
+                                global.EldScreenToast(SyncDataBtn, getString(R.string.already_enable_excp), getResources().getColor(R.color.colorSleeper));
+                            }
+                        } else {
+                            global.EldScreenToast(SyncDataBtn, getString(R.string.excp_reset_auto), getResources().getColor(R.color.colorSleeper));
+                            buttonView.setChecked(true);
+                        }
+                    }
                 }
             }
         });
@@ -638,7 +665,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         }else {
             haulExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
             adverseExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
-            adverseCanadaExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
+            adverseCanadaExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
             deferralTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
         }
 
@@ -1446,8 +1473,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
             JSONArray savedDeferralArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(DriverId), dbHelper);
             JSONObject deferralObj = deferralMethod.GetDeferralJson(DriverId, DeviceId, TruckNumber, CompanyId,
-                    Globally.LATITUDE, Globally.LONGITUDE, SharedPref.getObdEngineHours(getActivity()),
-                    SharedPref.getHighPrecisionOdometer(getActivity()),
+                    Globally.LATITUDE, Globally.LONGITUDE, constants.get2DecimalEngHour(getActivity()),  //SharedPref.getObdEngineHours(getActivity()),
+                    SharedPref.getObdOdometer(getActivity()),
                     ""+leftOffOrSleeperMin, "1");
             savedDeferralArray.put(deferralObj);
 
@@ -2077,7 +2104,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         getActivity().finish();
                     }else{
                         if(flag == ChangeCycle){
-                            Globally.DriverSwitchAlert(getActivity(), "Cycle Change Request !!", Message, "Ok");
+                            Globally.DriverSwitchAlert(getActivity(), "h !!", Message, "Ok");
                         }else if(flag == GetAppUpdate || flag == OperatingZone){
                             global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorVoilation));
                         }
@@ -2470,6 +2497,46 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     }
 
+    public boolean isAllowToEnableExceptionInCan(String DriverId){
+        boolean isAllow = false;
+        exceptionDesc = "";
+        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+
+        try {
+
+            if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+                JSONArray logArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+                JSONObject lastObj = hMethods.GetLastJsonFromArray(logArray);
+
+                int status = lastObj.getInt(ConstantsKeys.DriverStatusId);
+                boolean yardMove = lastObj.getBoolean(ConstantsKeys.YardMove);
+
+                if(status == Constants.DRIVING || (status == Constants.ON_DUTY && yardMove == false) ){
+                    isAllow = true;
+                }else{
+                    if(status == Constants.ON_DUTY && yardMove){
+                        exceptionDesc = "Exception not allowed in Yard Move.";
+                    }else if(status == Constants.OFF_DUTY){
+                        boolean Personal = lastObj.getBoolean(ConstantsKeys.Personal);
+                        if(Personal){
+                            exceptionDesc = "Exception not allowed in Personal Use.";
+                        }else{
+                            exceptionDesc = "Exception not allowed in Off Duty.";
+                        }
+                    }else{
+                        exceptionDesc = "Exception not allowed in Sleeper.";
+                    }
+                }
+            }else{
+                exceptionDesc = "Exception not allowed. Please contact to your company";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isAllow;
+
+    }
 
 
 

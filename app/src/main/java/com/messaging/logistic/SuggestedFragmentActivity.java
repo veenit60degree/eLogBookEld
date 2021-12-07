@@ -184,7 +184,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
         @Override
         public void getResponse(String response, int flag) {
 
-            Log.d("response", "edit response: " + response);
+          //  Log.d("response", "edit response: " + response);
             JSONObject obj = null;
             String status = "";
 

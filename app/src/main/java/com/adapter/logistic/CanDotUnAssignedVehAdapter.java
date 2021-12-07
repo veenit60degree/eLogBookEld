@@ -101,7 +101,9 @@ public class CanDotUnAssignedVehAdapter extends BaseAdapter {
         //holder.startTimeUnTV.setText( itemsList.get(position).getDriverZoneStartDateTime());
 
         String date = itemsList.get(position).getDriverZoneStartDateTime();
-        holder.startTimeUnTV.setText(Globally.ConvertDateFormatMMddyyyy(date) + " " + Globally.ConvertTo12HTimeFormat(date, Globally.DateFormat));
+        if(date.length() >= 19) {
+            holder.startTimeUnTV.setText(Globally.ConvertDateFormatMMddyyyy(date) + " " + date.substring(11, 19));//Globally.ConvertTo12HTimeFormat(date, Globally.DateFormat));
+        }
 
         holder.startLocUnTV.setText( itemsList.get(position).getStartLocation());
         holder.startOdoUnTV.setText( itemsList.get(position).getStartOdometer());

@@ -57,7 +57,7 @@ public class LocationActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate ...............................");
+        //Log.d(TAG, "onCreate ...............................");
         //show error dialog if GoolglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             finish();
@@ -85,16 +85,16 @@ public class LocationActivity extends Activity implements
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart fired ..............");
+      //  Log.d(TAG, "onStart fired ..............");
         mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop fired ..............");
+        //Log.d(TAG, "onStop fired ..............");
         mGoogleApiClient.disconnect();
-        Log.d(TAG, "isConnected ...............: " + mGoogleApiClient.isConnected());
+       // Log.d(TAG, "isConnected ...............: " + mGoogleApiClient.isConnected());
     }
 
     private boolean isGooglePlayServicesAvailable() {
@@ -135,23 +135,23 @@ public class LocationActivity extends Activity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "Firing onLocationChanged..............................................");
+      //  Log.d(TAG, "Firing onLocationChanged..............................................");
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         updateUI();
 
-        if(location.getAccuracy() < 100.0 && location.getSpeed() < 6.95){
+      /*  if(location.getAccuracy() < 100.0 && location.getSpeed() < 6.95){
             Log.d(TAG, "Accuracy result less then 100.............");
         } else{
             Log.d(TAG, "Accuracy result greater then 100 .............");
-        }
+        }*/
 
     }
 
 
 
     private void updateUI() {
-        Log.d(TAG, "UI update initiated .............");
+        //Log.d(TAG, "UI update initiated .............");
         if (null != mCurrentLocation) {
             String lat = String.valueOf(mCurrentLocation.getLatitude());
             String lng = String.valueOf(mCurrentLocation.getLongitude());
@@ -182,7 +182,7 @@ public class LocationActivity extends Activity implements
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
-        Log.d(TAG, "Location update stopped .......................");
+       // Log.d(TAG, "Location update stopped .......................");
     }
 
     @Override
@@ -190,7 +190,7 @@ public class LocationActivity extends Activity implements
         super.onResume();
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
-            Log.d(TAG, "Location update resumed .....................");
+           // Log.d(TAG, "Location update resumed .....................");
         }
     }
 }

@@ -656,8 +656,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		return val.trim();
 	}
 
+
 	private void resetValues(){
 		try {
+			Constants.IsHomePageOnCreate = true;
 			HelperMethods hMethods  = new HelperMethods();
 			DBHelper dbHelper 		= new DBHelper(LoginActivity.this);
 			String  CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
@@ -698,8 +700,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setDeferralForMain(false, "", "0", getApplicationContext());
 			SharedPref.setDeferralForCo(false, "", "0", getApplicationContext());
 			SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
-			SharedPref.SaveTruckInfoOnIgnitionChange("", "","", "",
-								"0", "0", getApplicationContext());
+			SharedPref.SaveTruckInfoOnIgnitionChange("", "","", "","0", "0", getApplicationContext());
 			SharedPref.setUnIdenLastDutyStatus("", getApplicationContext());
 			SharedPref.SaveUnidentifiedIntermediateRecord("", "", "", "", "", getApplicationContext());
 			SharedPref.setUnAssignedVehicleMilesId("", getApplicationContext());
@@ -711,12 +712,16 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.SetObdOdometer("0", getApplicationContext());
 			SharedPref.SetObdEngineHours("0", getApplicationContext());
 			SharedPref.SaveBleOBDMacAddress("", getApplicationContext());
+			SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
+			SharedPref.saveLocDiagnosticStatus(false, "", "", getApplicationContext());
+			SharedPref.SetIgnitionOffCalled(false, getApplicationContext());
 
 			// clear array in table
 			if(CompanyId.length() > 0) {
 				hMethods.UnidentifiedRecordLogHelper(Integer.parseInt(CompanyId), dbHelper, new JSONArray());
 			}
 
+			Constants.ClearNotifications(LoginActivity.this);
 
 		}catch (Exception e){
 			e.printStackTrace();

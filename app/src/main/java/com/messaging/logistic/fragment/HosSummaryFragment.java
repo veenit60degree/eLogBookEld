@@ -1017,7 +1017,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             final DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DriverId),
                     offsetFromUTC, Integer.valueOf(CycleId), isSingleDriver, DRIVER_JOB_STATUS, false,
                     isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                    rulesVersion, oDriverLogDetail);
+                    rulesVersion, oDriverLogDetail, getActivity());
 
             RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
@@ -1027,7 +1027,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 RulesResponseObject remainingTimeObj = hMethods.getRemainingHosTime(currentDateTime, currentUTCTime, offsetFromUTC,
                         Integer.valueOf(CycleId), isSingleDriver, Integer.valueOf(DriverId), DRIVER_JOB_STATUS,
                         false, isHaulExcptn,
-                        isAdverseExcptn,  isNorthCanada, rulesVersion, dbHelper);
+                        isAdverseExcptn,  isNorthCanada, rulesVersion, dbHelper, getActivity());
 
                 LeftCycleHoursInt = (int) RulesObj.getCycleRemainingMinutes();
                 TotalCycleHour = (int) remainingTimeObj.getCycleUsedMinutes();
@@ -1217,7 +1217,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 RulesResponseObject RemainingTimeObj = hMethods.getRemainingHosTime(currentDateTime, currentUTCTime, offsetFromUTC,
                         Integer.valueOf(CycleId), isSingleDriver, Integer.valueOf(DriverId), Constants.DRIVING, false,
                         isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                        rulesVersion, dbHelper);
+                        rulesVersion, dbHelper, getActivity());
 
                 HosInfoDialog dialog = new HosInfoDialog(getActivity(), RemainingTimeObj, RulesObj);
                 dialog.show();

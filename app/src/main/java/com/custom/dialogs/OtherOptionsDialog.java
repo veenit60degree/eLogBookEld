@@ -206,7 +206,7 @@ public class OtherOptionsDialog extends Dialog {
 
                     case Constants.VIN:
 
-                        if(Constants.isValidVinFromObd(getContext()) == false){
+                        if(Constants.isValidVinFromObd(SharedPref.getIgnitionStatus(getContext()), getContext()) == false){
                             Globally.EldToastWithDuration4Sec(EldFragment.refreshLogBtn, getContext().getResources().getString(R.string.VinMismatchedDesc),
                                     getContext().getResources().getColor(R.color.colorVoilation));
                         }else{

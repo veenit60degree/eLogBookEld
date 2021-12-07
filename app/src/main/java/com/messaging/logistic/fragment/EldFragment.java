@@ -169,7 +169,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     boolean IsRefreshedClick = false, IsAOBRDAutomatic = false, IsAOBRD = false, isNewDateStart = true, isYardBtnClick = false, isFragmentAdd = false;
     boolean isFirst = true, isViolation = false, isCertifyLog = false, isDrivingCalled = false, IsDOT = false;
-    boolean IsAddressUpdate = false, isTimeDefault = true, is18DaysLogApiCalled = false, isSaveTrailerPending = false;
+    boolean IsAddressUpdate = false, isTimeDefault = true, is18DaysLogApiCalled = false, isSaveTrailerPending = false, IsLogApiRefreshed = false;
     public static boolean IsOdometerReading = false, IsSaveOperationInProgress = false, IsPopupDismissed = false;
     Animation emptyTrailerNoAnim, OdometerFaceView, exceptionFaceView, connectionStatusAnimation, editLogAnimation;
     String strCurrentDate = "", DRIVER_ID = "0", DeviceId = "", LoginTruckChange = "true";
@@ -382,8 +382,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     ServiceBroadcastReceiver updateReceiver;
 
     WiFiConfig wifiConfig;
-    TcpClient tcpClient;
-    OBDDeviceData data;
     Decoder decoder;
     Utils obdUtil;
     LocalCalls localCalls;
@@ -416,10 +414,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             dbHelper        = new DBHelper(getActivity());
             hMethods        = new HelperMethods();
             wifiConfig      = new WiFiConfig();
-            data            = new OBDDeviceData();
             decoder         = new Decoder();
             obdUtil         = new Utils(getActivity());
-            tcpClient       = new TcpClient(obdResponseHandler);
             localCalls      = new LocalCalls();
 
             obdUtil.createLogFile();
@@ -645,6 +641,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         GetTripSavedData();
         SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
 
+        if (SharedPref.GetNewLoginStatus(getActivity()) == false) {
+            getDayStartOdometer();
+        }
 
         /*========= Start Service =============*/
         Constants.isEldHome = false;
@@ -1016,6 +1015,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             DriverStatusId = ""+DRIVER_JOB_STATUS;
         }
 
+        IsLogApiRefreshed = false;
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter(ConstantsKeys.IsIgnitionOn));
 
 
@@ -1023,6 +1023,17 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         confirmDeferralRuleDays();
     }
+
+    void getDayStartOdometer(){
+        String odoSelectedDay = SharedPref.getSelectedDayForPuOdometer(getActivity());
+        String dayStartOdometer = SharedPref.getTotalPUOdometerForDay(getActivity());
+        if(dayStartOdometer.equals("0") ||
+                !Global.GetCurrentDeviceDate().equals(odoSelectedDay) ){
+            getPuOdometerUsedDetail();
+        }
+
+    }
+
 
     void checkDriverTimeZone(boolean isConnected){
         IsValidTime = Global.isCorrectTime(getActivity() );
@@ -1216,11 +1227,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }else if(isAdverseExcptn){
                 excpnEnabledTxtVw.setText(getString(R.string.adverse_excp_enabled));
             }else if(isDeferralOccurred){
-                int deferralDays = constants.confirmDeferralRuleDays(DRIVER_ID, MainDriverId, getActivity());
+                int deferralDays = constants.getCurrentDeferralDayCount(DRIVER_ID, MainDriverId, getActivity());
                 if(deferralDays != 2){
                     deferralDays = 1;
                 }
-                excpnEnabledTxtVw.setText("Deferral Day " + deferralDays);
+                excpnEnabledTxtVw.setText("OFF DUTY DEFERRAL (DAY " + deferralDays + ")");
             }else{
                 excpnEnabledTxtVw.setVisibility(View.GONE);
             }
@@ -1583,6 +1594,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                         setDateOnView(SelectedDate);
 
+                        confirmDeferralRuleDays();
+
                     }
                 });
             } catch (Exception e) {
@@ -1704,7 +1717,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 boolean isMissingLoc = constants.isLocationMissing(DRIVER_ID, CurrentCycleId, driverPermissionMethod,
                         recapViewMethod, Global, hMethods, dbHelper, logPermissionObj, getActivity());
 
-                if (isPendingNotifications | isUnCertified || isMissingLoc || !Constants.isValidVinFromObd(getContext())) {
+                if (isPendingNotifications | isUnCertified || isMissingLoc || !Constants.isValidVinFromObd(SharedPref.getIgnitionStatus(getActivity()), getActivity())) {
                     otherOptionBadgeView.setVisibility(View.VISIBLE);
                 } else {
                     otherOptionBadgeView.setVisibility(View.GONE);
@@ -2355,6 +2368,18 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
             case R.id.otherOptionBtn:
+                // -------- temp for testing --------
+              /*    if(BackgroundLocationService.OBD_DISCONNECTED){
+                    BackgroundLocationService.OBD_DISCONNECTED = false;
+                }else{
+                    BackgroundLocationService.OBD_DISCONNECTED = true;
+                }
+              Globally.LATITUDE = "49.1780611" ; Globally.LONGITUDE = "-122.7133083";
+                AddressLine = csvReader.getShortestAddress(getActivity());
+                Log.d("Address", AddressLine);*/
+                // -------------------------------------------
+
+
                 try {
                     if (otherOptionsDialog != null && otherOptionsDialog.isShowing()) {
                         otherOptionsDialog.dismiss();
@@ -3783,7 +3808,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             DRIVER_ID, City, State, Country, AddressLine, AddressLine,
                             CurrentCycleId, Reason, isPersonal, isViolation,
                             "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                            "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                            "" + constants.GetGpsStatusIn0And1Form(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                             SharedPref.GetCurrentTruckPlateNo(getActivity()),
                             "mannual_save", isYardBtnClick,
                             Global, SharedPref.get16hrHaulExcptn(getActivity()), false,
@@ -3798,7 +3823,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
                     DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
                             Integer.valueOf(DRIVER_ID), offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
-                            DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn,isAdverseExcptn, IsNorthCanada, rulesVersion, oDriverLog);
+                            DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn,isAdverseExcptn, IsNorthCanada, rulesVersion,
+                            oDriverLog, getActivity());
                     RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(driverStatus),
                             oDriverDetail1);
 
@@ -3862,6 +3888,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
             isLocMalfunction = false;
 
+            boolean isCycleChange = false;
+            /*if(DriverStatusId.equals(Globally.ON_DUTY) && Reason.equals("Border Crossing")){
+                isCycleChange = true;
+            }*/
+
             try {
                 // Save driver job in array
                 EldDataModelNew locationModel = new EldDataModelNew(
@@ -3889,7 +3920,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         Globally.LONGITUDE,
                         "false", // IsStatusAutomatic is false when manual job has been done
                         String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                        "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                        "" + constants.GetGpsStatusIn0And1Form(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                         SharedPref.GetCurrentTruckPlateNo(getActivity()),
                         String.valueOf(isHaulExcptn),
                         "false", "mannual_save",
@@ -3899,7 +3930,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         CurrentDeviceDate,
                         String.valueOf(IsAOBRD),
                         CurrentCycleId,
-                        String.valueOf(isDeferral), "", "false"
+                        String.valueOf(isDeferral), "", "false",
+                        String.valueOf(isCycleChange)
 
                 );
 
@@ -3981,16 +4013,15 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 }
 
-
                 // ============================ Save Job Status in SQLite ==============================
                 driverLogArray = constants.AddNewStatusInList(DriverName, DriverStatusId, ViolationReason, address,
                         DRIVER_ID, City, State, Country, AddressLine, AddressLine,
                         CurrentCycleId, Reason, isPersonal, isViolation,
                         "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                        "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                        "" + constants.GetGpsStatusIn0And1Form(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                         SharedPref.GetCurrentTruckPlateNo(getActivity()), "mannual_save", isYardBtnClick,
                         Global, isHaulExcptn, false, "" + isAdverseExcptn,"",
-                        LocationType, MalfunctionDefinition, IsNorthCanada, false,
+                        LocationType, MalfunctionDefinition, IsNorthCanada, isCycleChange,
                         SharedPref.getObdOdometer(getActivity()), hMethods, dbHelper);
 
                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
@@ -4000,45 +4031,43 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 SharedPref.SetTruckIgnitionStatusForContinue("ON", "home", Global.getCurrentDate(), getActivity());
 
                 // get Obd odometer Data
-                if (!IsAOBRD || IsAOBRDAutomatic) {
+              /*  if (!IsAOBRD || IsAOBRDAutomatic) {
                     int lastJobStatus = hMethods.getSecondLastJobStatus(driverLogArray);
                     int currentJobStatus = Integer.valueOf(DriverStatusId);
 
                     if ((currentJobStatus == ON_DUTY || currentJobStatus == DRIVING) &&
                             (lastJobStatus == OFF_DUTY || lastJobStatus == SLEEPER)) {
 
-                        if (wifiConfig.IsAlsNetworkConnected(getActivity())) {
-                            tcpClient.sendMessage("123456,can");
-                        } else {
-                            checkWiredObdConnectionWithOdometer();
-                        }
+                        String ObdOdometer   = SharedPref.getObdOdometer(getActivity());
+                        odometerhMethod.AddOdometerAutomatically(DRIVER_ID, DeviceId, ObdOdometer, DriverStatusId, dbHelper, getActivity());
+
+                        // constants.heckWiredObdConnectionWithOdometer();
 
                     } else {
 
                         if (currentJobStatus == OFF_DUTY || currentJobStatus == SLEEPER) {
                             if (lastJobStatus == DRIVING || lastJobStatus == ON_DUTY) {
-                                if (wifiConfig.IsAlsNetworkConnected(getActivity())) {
-                                    tcpClient.sendMessage("123456,can");
-                                } else {
-                                    checkWiredObdConnectionWithOdometer();
-                                }
+
+                                String ObdOdometer   = SharedPref.getObdOdometer(getActivity());
+                                odometerhMethod.AddOdometerAutomatically(DRIVER_ID, DeviceId, ObdOdometer, DriverStatusId, dbHelper, getActivity());
+
+                                // constants.checkWiredObdConnectionWithOdometer();
                             }
                         }
                     }
-                }
+                }*/
 
             } catch (Exception e) {
                 e.printStackTrace();
-
                 // ============================ Save Job Status in SQLite ==============================
                 driverLogArray = constants.AddNewStatusInList(DriverName, DriverStatusId, ViolationReason, address,
                         DRIVER_ID, City, State, Country, AddressLine, AddressLine,
                         CurrentCycleId, Reason, isPersonal, isViolation,
                         "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                        "GPS Status- " + constants.CheckGpsStatusToCheckMalfunction(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                        "" + constants.GetGpsStatusIn0And1Form(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                         SharedPref.GetCurrentTruckPlateNo(getActivity()), "mannual_save", isYardBtnClick,
                         Global, isHaulExcptn, false,"" + isAdverseExcptn,"",
-                        LocationType, MalfunctionDefinition, IsNorthCanada, false,
+                        LocationType, MalfunctionDefinition, IsNorthCanada, isCycleChange,
                         SharedPref.getObdOdometer(getActivity()), hMethods, dbHelper);
 
                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
@@ -4074,36 +4103,21 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         isYardBtnClick = false;
 
+        int ObdStatus = SharedPref.getObdStatus(getActivity());
+        if(ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
+                                || ObdStatus == Constants.BLE_CONNECTED) {
+            // odb connected
+        }else{
+            Toast.makeText(getActivity(), getString(R.string.info_missed_desc), Toast.LENGTH_SHORT).show();
+        }
+
+
       //  Log.d("Saved Status Service", "--- DriverStatusId: "+DriverStatusId);
     }
 
 
-    private void checkWiredObdConnectionWithOdometer(){
-        if(SharedPref.GetTruckIgnitionStatusForContinue(constants.IgnitionSource, getActivity()).equals(constants.WiredOBD)) {
-            DateTime lastRecordSavedTime = Global.getDateTimeObj(SharedPref.GetTruckIgnitionStatusForContinue(constants.LastIgnitionTime,
-                    getActivity()), false);
-            DateTime currentDate = Global.getDateTimeObj(Global.getCurrentDate(), false);
-
-            int dayDiff = Days.daysBetween(lastRecordSavedTime.toLocalDate(), currentDate.toLocalDate()).getDays();
-            //(int) Constants.getDateTimeDuration(lastRecordSavedTime, currentDate).getStandardDays();
-
-            if(dayDiff == 0){
-                int minDiff = currentDate.getMinuteOfDay() - lastRecordSavedTime.getMinuteOfDay();
-
-                if(minDiff < 5 ){
-                    String HighResolutionDistance = SharedPref.getHighPrecisionOdometer(getActivity());
-                    odometerhMethod.AddOdometerAutomatically(DRIVER_ID, DeviceId, HighResolutionDistance, DriverStatusId, dbHelper, getActivity());
-
-                }
-            }
-
-        }
-    }
-
     // ------------- Check Certify signature status -------------
     public boolean isCertifySignPending(boolean isOnCreate ){
-     //   DateTime currentDateTime          = Global.getDateTimeObj(Global.GetCurrentDateTime(), false);    // Current Date Time
-     //   DateTime currentUTCTime           = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), true);
         JSONObject logPermissionObj       = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
         boolean isCertifySignaturePending = false;
         boolean IsCertifyMandatory        = SharedPref.IsCertifyMandatory(getActivity());
@@ -4116,9 +4130,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         String title                      = "<font color='" + colorCode + "'><b>Certify Reminder !!</b></font>";
         String titleMsg                   = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.certify_previous_days_log_warning) + " </html></font>";
         String dismissText                = "<font color='" +colorCode+ "'><b>" + getResources().getString(R.string.dismiss) + "</b></font>";
-
-
-        //isSignPending = true; // for test. need to delete --------------------------------------
 
 
         if( IsCertifyMandatory ){
@@ -4142,6 +4153,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     titleDesc    = titleMsg;
                     okText       = dismissText;
 
+                }else{
+                    if(isSignPending && !isOnCreate && isNewDateStart){
+                        isNewDateStart = false;
+                        certifyLogAlert(title, titleMsg);
+                    }
                 }
             }else{
                 if(isSignPending && isOnCreate){
@@ -4194,8 +4210,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             JSONArray savedDeferralArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(DRIVER_ID), dbHelper);
             JSONObject deferralObj = deferralMethod.GetDeferralJson(DRIVER_ID, DeviceId, Globally.TRUCK_NUMBER, DriverCompanyId,
-                    Globally.LATITUDE, Globally.LONGITUDE, SharedPref.getObdEngineHours(getActivity()),
-                    SharedPref.getHighPrecisionOdometer(getActivity()),""+leftOffOrSleeperMin, ""+deferralDays);
+                    Globally.LATITUDE, Globally.LONGITUDE, constants.get2DecimalEngHour(getActivity()),   //SharedPref.getObdEngineHours(getActivity()),
+                    SharedPref.getObdOdometer(getActivity()),""+leftOffOrSleeperMin, ""+deferralDays);
             savedDeferralArray.put(deferralObj);
 
             // save deferral event inn local db and push automatically later. Reason behind this to save in offline also when internet is not working.
@@ -4881,7 +4897,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             DRIVER_ID, DeviceId, SharedPref.getVINNumber(getActivity()),
                             DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity()),
                             DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
-                            SharedPref.getObdEngineHours(getActivity()),
+                            constants.get2DecimalEngHour(getActivity()), //SharedPref.getObdEngineHours(getActivity()),
                             SharedPref.getObdOdometer(getActivity()),
                             SharedPref.getObdOdometer(getActivity()),
                             Global.GetCurrentUTCTimeFormat(), constants.MissingDataDiagnostic,
@@ -4914,8 +4930,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                     LocationType = "X";
                     SharedPref.setLocationEventType(LocationType, getActivity());
-
-                   // SharedPref.saveLocDiagnosticStatus(true, Globally.GetCurrentDateTime(), Globally.GetCurrentUTCTimeFormat(), getActivity());
 
                     SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
                             SharedPref.isMalfunctionOccur(getActivity()), true,
@@ -5082,7 +5096,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             getDailyOffLeftMinObj = hMethods.getDailyOffLeftMinutes(currentDateTime, currentUTCTime, offsetFromUTC,
                     Integer.valueOf(CurrentCycleId), isSingleDriver, Integer.valueOf(DRIVER_ID), LATEST_JOB_STATUS, isOldRecord,
                     isHaulExcptn, isAdverseExcptn, IsNorthCanada,
-                    rulesVersion, dbHelper);
+                    rulesVersion, dbHelper, getActivity());
 
             EnableJobViews();
         }else {
@@ -5099,7 +5113,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
             } else {
 
-                //Log.d("DriverStatusId", "DriverStatusId: " +SharedPref.getDriverStatusId(getActivity()));
                 JSONObject lastJsonItem = new JSONObject();
                 JSONArray selectedArray = new JSONArray();
                 boolean isArrayNull = false;
@@ -5191,6 +5204,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                         DRIVER_JOB_STATUS = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
                         isPersonal = lastJsonItem.getString(ConstantsKeys.Personal);
+                        String currentJob = SharedPref.getDriverStatusId(getActivity());
+
+                        // if log array last status is not equal to current status. Then need to refresh 18 days log API
+                        if(!currentJob.equals(""+DRIVER_JOB_STATUS) && !IsLogApiRefreshed){
+                            IsLogApiRefreshed = true;
+                            GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
+                        }
 
                         if (SharedPref.GetNewLoginStatus(getActivity())) {
                             callEldRuleMethod(currentDayArray, currentDateTime, currentUTCTime, onResume);
@@ -5269,7 +5289,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DRIVER_ID),
                     offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
                     isHaulExcptn, isAdverseExcptn, IsNorthCanada,
-                    rulesVersion, oDriverLogDetail);
+                    rulesVersion, oDriverLogDetail, getActivity());
 
             RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
@@ -5288,7 +5308,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 RemainingTimeObj = hMethods.getRemainingTime(currentDateTime, currentUTCTime, offsetFromUTC,
                         Integer.valueOf(CurrentCycleId), isSingleDriver, Integer.valueOf(DRIVER_ID), DRIVER_JOB_STATUS, isOldRecord,
                         isHaulExcptn, isAdverseExcptn, IsNorthCanada,
-                        rulesVersion, dbHelper);
+                        rulesVersion, dbHelper, getActivity());
 
                 LeftWeekOnDutyHoursInt      = (int) RulesObj.getCycleRemainingMinutes();
                 TotalOnDutyHoursInt         = (int) RemainingTimeObj.getOnDutyUsedMinutes();   // hMethods.GetOnDutyTime(currentDayArray);
@@ -5764,6 +5784,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DRIVER_ID);
         params.put(ConstantsKeys.Date, Global.GetCurrentDeviceDate());
+        params.put(ConstantsKeys.VIN, VIN_NUMBER);
+        params.put(ConstantsKeys.CompanyId, DriverCompanyId);
 
         GetOBDVehRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER_DETAIL_IN_PU, params, OdometerDetailInPu,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -5791,14 +5813,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         SaveOBDVehRequest.executeRequest(Request.Method.POST, APIs.UPDATE_OBD_ASSIGNED_VEHICLE, params, UpdateObdVeh,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
-
-
-        String odoSelectedDay = SharedPref.getSelectedDayForPuOdometer(getActivity());
-        String dayStartOdometer = SharedPref.getTotalPUOdometerForDay(getActivity());
-        if(dayStartOdometer.equals("0") ||
-                        !Global.GetCurrentDeviceDate().equals(odoSelectedDay) ){
-            getPuOdometerUsedDetail();
-        }
 
     }
 
@@ -6223,6 +6237,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     dataObj = new JSONObject(obj.getString(ConstantsKeys.Data));
                 }
 
+           /*     if(Message.contains("Object reference not set to an instance")){
+                    constants.saveObdData("Object reference not set", "API Flag: " + flag, "", "",
+                            "", "", "", "", "0",
+                            "-1", "", Global.GetCurrentDeviceDate(), Global.GetCurrentDeviceDate(),
+                            DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
+                }*/
+
             } catch (JSONException e) { }
 
             if (status.equalsIgnoreCase("true")) {
@@ -6399,18 +6420,18 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 SharedPref.setTotalPUOdometerForDay(dataObj.getString(ConstantsKeys.TotalKM),
                                         Global.GetCurrentDeviceDate(), getActivity());
 
-                                SharedPref.setDayStartOdometer(dataObj.getString(ConstantsKeys.StartOdometerKM),
-                                        dataObj.getString(ConstantsKeys.StartOdometerMiles),
+                                SharedPref.setDayStartOdometer(dataObj.getString(ConstantsKeys.DayOdometerInKm),
+                                        dataObj.getString(ConstantsKeys.DayOdometerInMiles),
                                             Global.GetCurrentDeviceDate(), getActivity());
 
 
-                                constants.saveObdData("OdometerDetail", "PersonalUse Km: " + dataObj.getString(ConstantsKeys.TotalKM) +
-                                                ",StartOdometerKM: " + dataObj.getString(ConstantsKeys.StartOdometerKM) + ",StartOdometerMiles: " +
-                                                dataObj.getString(ConstantsKeys.StartOdometerMiles), "", "",
+                            /*    constants.saveObdData("OdometerDetail-EldHome", "PersonalUseTotalKm: " + dataObj.getString(ConstantsKeys.TotalKM) +
+                                                ", DayOdometerInKm: " + dataObj.getString(ConstantsKeys.DayOdometerInKm) + ", DayOdometerInMiles: " +
+                                                dataObj.getString(ConstantsKeys.DayOdometerInMiles), "", "",
                                         "", "", "", "", "0",
                                         "-1", "", Global.GetCurrentDeviceDate(), Global.GetCurrentDeviceDate(),
                                         DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
-
+*/
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -6662,6 +6683,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         }
 
 
+                        getDayStartOdometer();
+
                         break;
 
 
@@ -6785,6 +6808,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                 if(DeferralDay > 0){
                                     IsDeferral = true;
+
+                                   /* if(DeferralDay == 2){
+                                        DeferralDate = Global.getDateTimeObj(DeferralDate, false).minusDays(1).toString();
+                                    }*/
+
                                 }
 
                                 if(dataJObject.has(ConstantsKeys.IsOdoCalculationAllowed) && !dataJObject.isNull(ConstantsKeys.IsOdoCalculationAllowed)){
@@ -6866,6 +6894,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                     SharedPref.SetExemptDriverStatusMain(isExemptDriver, getActivity());
                                     SharedPref.SetCycleRequestStatusMain(IsCycleRequest, getActivity());
+
+                                    if(DeferralDate.equals("null")){
+                                        DeferralDate = "";
+                                    }
 
                                     SharedPref.setDeferralForMain(IsDeferral, DeferralDate, ""+DeferralDay, getActivity());
 
@@ -7150,6 +7182,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
             loadingSpinEldIV.stopAnimation();
             progressBar.setVisibility(View.GONE);
+            String Message = error.toString();
+
+           /* if(Message.contains("Object reference not set to an instance")){
+                constants.saveObdData("Object reference not set", "API Flag: " + flag, "", "",
+                        "", "", "", "", "0",
+                        "-1", "", Global.GetCurrentDeviceDate(), Global.GetCurrentDeviceDate(),
+                        DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
+            }*/
 
             switch (flag) {
 
@@ -7169,7 +7209,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 case UpdateObdVeh:
 
 
-                    String Message = error.toString();
                     if(Message.contains("timeout")){
                         Message = "Connection time out.";
                     }
@@ -7268,41 +7307,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             CoDriverPref.ClearLocFromList(getActivity());
         }
     }
-
-
-    TcpClient.OnMessageReceived obdResponseHandler = new TcpClient.OnMessageReceived() {
-        @Override
-        public void messageReceived(String message) {
-            // Log.d("response", "OBD Respone: " +message);
-            String noObd = "obd not connected";
-
-            if(!message.equals(noObd) && message.length() > 10){
-
-                if(message.contains("CAN:UNCONNECTED")){
-                    // dataTxtView.setText(noCanData);
-                }else {
-
-                    try {
-                        data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
-                        JSONObject canObj = new JSONObject(data.toString());
-
-                        String HighResolutionDistance   = wifiConfig.checkJsonParameter(canObj, "HighResolutionTotalVehicleDistanceInKM", "0");
-
-                        //String odometerValue = "1370";
-                        odometerhMethod.AddOdometerAutomatically(DRIVER_ID, DeviceId, HighResolutionDistance, DriverStatusId, dbHelper, getActivity());
-
-
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-
-                }
-
-            }
-        }
-    };
-
-
 
 
 

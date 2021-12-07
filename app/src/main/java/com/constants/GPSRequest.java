@@ -58,10 +58,10 @@ public class GPSRequest implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
                     switch (statusCode) {
                         case LocationSettingsStatusCodes.SUCCESS:
-                            Log.d("LocationSettingsStatus", "Success");
+                           // Log.d("LocationSettingsStatus", "Success");
                             break;
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            Log.d("LocationSettingsStatus","GPS is not on");
+                           // Log.d("LocationSettingsStatus","GPS is not on");
                             try {
                                 status.startResolutionForResult(fActivity, 1000);
 
