@@ -609,7 +609,7 @@
                     android:id="@+id/inspCmntEditTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/inspctr_Comments"
+                    android:hint="@string/OutputFileComment"
                     android:textColor="@color/black"
                     android:minLines="2"
                     android:maxLength="60"

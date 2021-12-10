@@ -63,7 +63,7 @@
     <string name="advrs_excptn_enabled">Adverse exception enabled</string>
     <string name="haul_excptn_enabled">16 hour short haul exception enabled</string>
     <string name="cycle_change_check">You can change Cycle in Sleeper/OffDuty.</string>
-    <string name="op_zone_change_check">You can change Operating Zone in Driving/OnDuty.</string>
+    <string name="op_zone_change_check">You can change Operating Zone in OnDuty.</string>
     <string name="setting_soundbrightness">Adjust Sound and Brightness</string>
 
     <string name="AdjustTimeZone">Adjust TimeZone</string>
@@ -455,6 +455,7 @@
     <string name="carrier_principal_add">Principal Place Of Business</string>
     <string name="carrier_principal_address">Principal Place Of Business (Address)</string>
     <string name="CurrentOperatingZone">Current Operating Zone</string>
+    <string name="CurrentOdometer">Current Odometer: </string>
     <string name="total_hrs">Total Hrs</string>
     <string name="total_hrs_in_work">(In Work Shift)</string>
     <string name="seven_or_fourteen">(7 or 14)</string>
@@ -694,9 +695,9 @@
 
     <!--internet connection-->
     <string name="Limited_ELD_">Limited ELD Connection</string>
-    <string name="internet_hint_old">The ELD is not receiving data from the engine of the selected vehicle, which may result in incomplete data being recorded for some events.</string>
+    <string name="limited_ecm_desc">The ELD is not receiving data from the engine of the selected vehicle, which may result in incomplete data being recorded for some events.</string>
     <string name="Limited_ELD_Connection">Limited ELD Connectivity</string>
-    <string name="internet_hint">ELD Log Book failed to receive data from engine of selected vehicle, this may result in missing data for some events. Please make sure your ELD Log Book is connected with ECM of current vehicle using WiFi/Bluetooth/Wired connection.</string>
+    <string name="limited_ecm_desc_new">ELD Log Book failed to receive data from engine of selected vehicle, this may result in missing data for some events. Please make sure your ELD Log Book is connected with ECM of current vehicle using WiFi/Bluetooth/Wired connection.</string>
     <string name="Limited_ELD_failed_to_rec">Limited ELD Connectivity. Failed to receive data from engine.</string>
 
     <string name="pre_trip_unloading">Pre-Trip + unloading</string>
@@ -998,6 +999,7 @@
     <string name="no_obd_settings">No settings found for wired OBD preference.</string>
     <string name="wired_obd">Wired OBD</string>
 
+    <string name="confirm_witout_comment">Do you want to continue without output file comment ?</string>
     <string name="WantEndYM">Do you want to End Yard Move?"</string>
     <string name="WantEndPU">Do you want to End Personal Use?"</string>
     <string name="want_to_logout">Do you really want to logout ?</string>

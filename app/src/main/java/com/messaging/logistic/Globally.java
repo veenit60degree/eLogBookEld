@@ -574,17 +574,16 @@ public class Globally {
 		if(savedUtcDateTime != null && savedUtcDateTime.toString().length() > 16 && currentUtcDateTime.toString().length() > 16) {
 			int dayDiff = Constants.getDayDiff(savedUtcDateTime.toString(), currentUtcDateTime.toString());
 
-			if (dayDiff == 0) {	//savedUtcDateTime.toString().substring(0, 10).equals(currentUtcDateTime.toString().substring(0, 10))
-				int minDiff = currentUtcDateTime.getMinuteOfDay() - savedUtcDateTime.getMinuteOfDay();
-				if (minDiff >= -5) {	//Math.max(-7, minDiff) == Math.min(minDiff, 7)
+			if (dayDiff >= 0) {
+				int minDiff = (int) Constants.getDateTimeDuration(savedUtcDateTime, currentUtcDateTime).getStandardMinutes();
+				//int minDiff = currentUtcDateTime.getMinuteOfDay() - savedUtcDateTime.getMinuteOfDay();
+				if (Math.max(-5, minDiff) == Math.min(minDiff, 9)) {	//minDiff >= -5
 					isTimeCorrect = true;
 				} else {
 					isTimeCorrect = false;
 				}
 			}else{
-				if(dayDiff < 0){
-					isTimeCorrect = false;
-				}
+				isTimeCorrect = false;
 			}
 
 			/*else {

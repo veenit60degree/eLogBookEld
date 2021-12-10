@@ -749,7 +749,7 @@ public class Slidingmenufunctions implements OnClickListener {
 							global.hideKeyboardView(context, PasswordEditText);
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
 
-
+							SharedPref.SetCoDriverSwitchTime(Globally.GetCurrentDateTime(), context);
 							Constants.isDriverSwitchEvent = true;
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 							startService();
@@ -774,7 +774,7 @@ public class Slidingmenufunctions implements OnClickListener {
 							RefreshActivity();
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
 
-
+							SharedPref.SetCoDriverSwitchTime(Globally.GetCurrentDateTime(), context);
 							Constants.isDriverSwitchEvent = true;
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 							startService();

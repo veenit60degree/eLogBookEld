@@ -141,7 +141,12 @@ public class DownloadLogsAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 //                holder.shareProgressBar.setVisibility(View.VISIBLE);
-                GetSharePdfLog(downloadLogsModels.get(position).getEldInspectionLogId(),downloadLogsModels.get(position).getCountry(),downloadLogsModels.get(position).getShareId());
+                GetSharePdfLog(downloadLogsModels.get(position).getEldInspectionLogId(),
+                               downloadLogsModels.get(position).getCountry(),
+                               downloadLogsModels.get(position).getShareId());
+
+                constants.copyTextToClipboard(mContext, downloadLogsModels.get(position).getPdfFilePath());
+                Toast.makeText(mContext, "Copied to clipboard", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -855,7 +855,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     inspectionLayHeight = viewHeight + 30;
                     headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) +10;
                 } else {
-                    inspectionLayHeight = viewHeight + 26;
+                    inspectionLayHeight = viewHeight + 30;
                     headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) ;
                 }
 
@@ -864,7 +864,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     inspectionLayHeight = constants.intToPixel(getActivity(), 60);
                     headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) + 10;
                 } else {
-                    inspectionLayHeight = constants.intToPixel(getActivity(), 45);
+                    inspectionLayHeight = constants.intToPixel(getActivity(), 50);
                     headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight);
                 }
 

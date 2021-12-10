@@ -5055,9 +5055,13 @@ public class Constants {
 
 
     public static void copyTextToClipboard(Context context, String url) {
-        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("URL", url);
-        clipboard.setPrimaryClip(clip);
+        try {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("URL", url);
+            clipboard.setPrimaryClip(clip);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

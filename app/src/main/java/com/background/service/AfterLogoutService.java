@@ -350,10 +350,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private void checkObdDataWithRule(int speed){
 
         // ---------------- temp data ---------------------
-       /*if(LoginActivity.isDriving) {
+   /*    if(LoginActivity.isDriving) {
             ignitionStatus = "ON"; truckRPM = "35436";
             VinNumber = SharedPref.getLastSavedVINNumber(getApplicationContext());
-            speed = 10;
+            speed = 0;
             tempOdo = tempOdo + 100;
             tempEngHour = tempEngHour + .20;
         }else{

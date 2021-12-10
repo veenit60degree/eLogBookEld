@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/margin_11"
                 android:layout_marginRight="@dimen/view_height_55"
-                android:text="@string/internet_hint"
+                android:text="@string/limited_ecm_desc_new"
                 android:textSize="@dimen/text_size_17"
                 android:textColor="@color/splash_gray"
                 android:layout_below="@+id/ecmAlertTitleTV"

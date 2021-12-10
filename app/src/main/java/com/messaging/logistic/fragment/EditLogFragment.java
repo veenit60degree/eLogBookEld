@@ -409,6 +409,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
         switch (v.getId()){
 
             case R.id.eldMenuLay:
+                eldMenuLay.setEnabled(false);
                 Constants.IsEdiLogBackStack = true;
                 getParentFragmentManager().popBackStack();
                 break ;

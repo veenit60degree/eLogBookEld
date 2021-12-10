@@ -134,38 +134,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_short_5"
-                    android:layout_toRightOf="@+id/locInspTitleTV"
                     android:layout_toLeftOf="@+id/changeLocBtn"
-                    android:paddingTop="@dimen/margin_short_8"
-                    android:paddingBottom="@dimen/margin_short_8"
-                    android:paddingLeft="@dimen/margin_short_8"
-                    android:paddingRight="@dimen/margin_short_8"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_18"
-                    android:hint="@string/no_location"
-                    android:enabled="false"
-                    android:imeOptions="flagNoExtractUi"
+                    android:layout_toRightOf="@+id/locInspTitleTV"
                     android:background="@drawable/edit_green_transparent_drawable"
-                    />
-
+                    android:enabled="false"
+                    android:hint="@string/no_location"
+                    android:imeOptions="flagNoExtractUi"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:paddingTop="@dimen/margin_short_8"
+                    android:paddingRight="@dimen/margin_short_8"
+                    android:paddingBottom="@dimen/margin_short_8"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_18" />
 
 
                 <Button
                     android:id="@+id/changeLocBtn"
                     android:layout_width="@dimen/view_height_90"
                     android:layout_height="@dimen/view_height_35"
-                    android:text="@string/change"
-                    android:textColor="@color/whiteee"
-                    android:textSize="@dimen/text_size_14"
-                    android:textAllCaps="false"
-                    android:background="@drawable/green_eld_selector"
-                    android:paddingLeft="@dimen/margin_short_9"
-                    android:paddingRight="@dimen/margin_short_9"
-                    android:paddingTop="@dimen/margin_short_3"
-                    android:paddingBottom="@dimen/margin_short_5"
-                    android:layout_marginTop="@dimen/margin_short_5"
                     android:layout_alignParentRight="true"
                     android:layout_marginLeft="@dimen/margin_short_5"
+                    android:layout_marginTop="@dimen/margin_short_5"
+                    android:background="@drawable/green_eld_selector"
+                    android:paddingLeft="@dimen/margin_short_9"
+                    android:paddingTop="@dimen/margin_short_3"
+                    android:paddingRight="@dimen/margin_short_9"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:text="@string/change"
+                    android:textAllCaps="false"
+                    android:textColor="@color/whiteee"
+                    android:textSize="@dimen/text_size_14"
 
                     />
 
@@ -239,6 +237,57 @@
 
 
             </LinearLayout>
+
+
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_short_1"
+                android:background="@color/black"
+                android:layout_marginLeft="@dimen/margin_short_6"
+                android:layout_marginRight="@dimen/margin_short_6"
+                />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/margin_10"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/locInspectionTV"
+                    android:layout_alignBottom="@+id/locInspectionTV"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/CurrentOdometer"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/currentOdometerTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/margin_13"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_18"
+
+                    />
+
+
+
+
+
+
+            </LinearLayout>
+
+
 
             <View
                 android:layout_width="match_parent"

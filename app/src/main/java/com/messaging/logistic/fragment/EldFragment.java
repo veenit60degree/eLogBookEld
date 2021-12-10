@@ -786,6 +786,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+
                 try {
                     if(getActivity() != null) {
                         int obdStatus       = SharedPref.getObdStatus(getActivity());
@@ -2244,8 +2245,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
             case R.id.shippingLay:
-                //constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )
-                if(constants.isActionAllowed(getActivity())){
+                //if(constants.isActionAllowed(getActivity())){
+                if(hMethods.isActionAllowedWhileDriving(getActivity(), Global, DRIVER_ID, dbHelper)){
                     showShippingDialog(false);
                 } else {
                     Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2256,8 +2257,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             case R.id.odometerLay:
 
                 if(!SharedPref.IsOdometerFromOBD(getActivity())) {
-                    //isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )){   //constants.isActionAllowed(getActivity())){
-                    if(constants.isActionAllowed(getActivity())){
+                    //if(constants.isActionAllowed(getActivity())){
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), Global, DRIVER_ID, dbHelper)){
                         TabAct.host.setCurrentTab(5);
                     } else {
                         Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2321,8 +2322,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
 
-                    //constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )
-                    if(constants.isActionAllowed(getActivity())){
+                    //constants.isActionAllowed(getActivity())
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), Global, DRIVER_ID, dbHelper)){
                         shareDriverLogDialog();
                     } else {
                         Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2355,7 +2356,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.settingsMenuBtn:
-               // if(constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID ) ) {  //constants.isActionAllowed(getActivity())
+               // if(constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID ) ) {
                     TabAct.host.setCurrentTab(1);
                /* }else{
                     Global.EldScreenToast(settingsMenuBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2566,8 +2567,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 if (constants.isAllowedFromPCYM(DRIVER_JOB_STATUS, isPersonal, isYardMove, getActivity()) ) {
                     MalfunctionDefinition = "";
-                    //constants.isActionAllowedWithCoDriver(getActivity(), dbHelper, hMethods, Global, DRIVER_ID )
-                    if (constants.isActionAllowed(getActivity())) {
+                   // if (constants.isActionAllowed(getActivity())) {
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), Global, DRIVER_ID, dbHelper)){
                         isYardBtnClick = false;
                         OnDutyBtnClick();
                     } else {
@@ -2593,7 +2594,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 if (constants.isAllowedFromPCYM(DRIVER_JOB_STATUS, isPersonal, isYardMove, getActivity()) ) {
                     MalfunctionDefinition = "";
-                    if(constants.isActionAllowed(getActivity())){
+                    //if(constants.isActionAllowed(getActivity())){
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), Global, DRIVER_ID, dbHelper)){
                         SleeperBtnClick();
                     } else {
                         Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
@@ -2609,7 +2611,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 if (constants.isAllowedFromPCYM(DRIVER_JOB_STATUS, isPersonal, isYardMove, getActivity()) ) {
                     MalfunctionDefinition = "";
-                    if(constants.isActionAllowed(getActivity())){
+                    //if(constants.isActionAllowed(getActivity())){
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), Global, DRIVER_ID, dbHelper)){
                         OffDutyBtnClick();
                     } else {
                         Global.EldScreenToast(OnDutyBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));

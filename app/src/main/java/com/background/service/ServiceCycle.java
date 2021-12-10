@@ -345,184 +345,55 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                     boolean isAutoDrive = SharedPref.isAutoDrive(context);
 
                     if (currentJob.equals(String.valueOf(DRIVER_JOB_STATUS))) {  // reason of this check: some times latest entry was not saved in 18 days array due to unknown/strange error. thats why wrong auto status entry was saved from app. So we need to add this check for safe side.
-                        // Check If vehicle is ELD Type
-                        if (!isPersonal && isAutoDrive && VehicleSpeed != -1) {
-                            try {
+                        // allow only when auto driver permission will be enabled
+                        if(isAutoDrive) {
 
-                                // ------------------ Get current Job Status -----------------
-                                String JobStatusStr = Global.JobStatus(DRIVER_JOB_STATUS, false);
-                                DateTime startDate = Global.getDateTimeObj(lastJsonItem.getString(ConstantsKeys.startDateTime), false);
-                              //  DateTime currentdateTime = Global.getDateTimeObj(currentDateTime.toString(), false);
+                            if (!isPersonal && VehicleSpeed != -1) {
+                                try {
 
-                              //  long diffInMillis = currentdateTime.getMillis() - startDate.getMillis();
-                                long minutesDiff = constants.getDateTimeDuration(startDate, currentDateTime).getStandardMinutes(); //TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+                                    // ------------------ Get current Job Status -----------------
+                                    String JobStatusStr = Global.JobStatus(DRIVER_JOB_STATUS, false);
+                                    DateTime startDate = Global.getDateTimeObj(lastJsonItem.getString(ConstantsKeys.startDateTime), false);
+                                    //  DateTime currentdateTime = Global.getDateTimeObj(currentDateTime.toString(), false);
 
-                                if (minutesDiff == 0) {
-                                    BackgroundLocationService.IsAutoChange = false;
-                                }
+                                    //  long diffInMillis = currentdateTime.getMillis() - startDate.getMillis();
+                                    long minutesDiff = constants.getDateTimeDuration(startDate, currentDateTime).getStandardMinutes(); //TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
 
-
-                                // ---------- Get Driver Configured Time Details ------------
-                                getConfiguredTime();
-
-
-                                boolean IsAOBRD = SharedPref.IsAOBRD(context);
-                                boolean IsAOBRDAutomatic = SharedPref.IsAOBRDAutomatic(context);
-                                boolean IsAOBRDAutoDrive = SharedPref.IsAOBRDAutoDrive(context);
-
-
-                                if (DRIVER_JOB_STATUS == OFF_DUTY || DRIVER_JOB_STATUS == SLEEPER) {
-
-                                    if (IsAOBRD) {
-                                        if (IsAOBRDAutomatic) {
-                                            String jobStatus;
-                                            if (DRIVER_JOB_STATUS == OFF_DUTY) {
-                                                jobStatus = "off duty";
-                                            } else {
-                                                jobStatus = "sleeper";
-                                            }
-
-                                            if (VehicleSpeed >= AobrdSpeedLimit && minutesDiff >= DrivingInterval) {
-
-                                                if (IsAOBRDAutoDrive) {
-
-                                                    if (BackgroundLocationService.IsAutoChange) {
-                                                        message = "Your current status is " + JobStatusStr + " but your vehicle is running. Now your status is going to be changed to Driving.";
-                                                    } else {
-                                                        message = "Your current status is " + JobStatusStr + " but your vehicle is running. Please change your status to Driving.";
-                                                    }
-
-
-                                                    // added new lines according to AOBRD changes..
-                                                    /* =================================================================================== */
-                                                    if (hMethods.getSecondLastJobStatus(driver18DaysLogArray) == DRIVING) {
-                                                        int minDiff = hMethods.getTimeDiffBwLast2Job(driver18DaysLogArray);
-                                                        if (Math.max(-30, minDiff) == Math.min(minDiff, 30)) {
-                                                            BackgroundLocationService.IsAutoChange = true;
-                                                            message = "Your current status is " + JobStatusStr + " but your vehicle is running. Your status is going to be changed to Driving.";
-                                                        }
-                                                    }
-                                                    /* =================================================================================== */
-
-                                                    LastStatus = "_aobrd_From_" + DRIVER_JOB_STATUS;
-                                                    CHANGED_STATUS = DRIVING;
-                                                    ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                            driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, false, IsAOBRDAutomatic);
-
-
-                                                } else {
-                                                    message = "Your current status is " + jobStatus + " but your vehicle is running";
-                                                    SpeakOutMsg(message);
-                                                    serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, false, constants.AobrdWarning, jobStatus);
-                                                }
-                                            }
-                                        }
-                                    } else {
-
-                                        if (VehicleSpeed >= DrivingSpeedLimit && minutesDiff >= DrivingInterval) {
-
-                                            BackgroundLocationService.IsAutoChange = true;
-                                            message = "Duty status switched to DRIVING due to vehicle moving above threshold speed.";
-
-                                            LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
-                                            CHANGED_STATUS = DRIVING;
-                                            ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                    driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, IsAOBRDAutomatic);
-                                           /* } else {
-
-                                                serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, ConstantsEnum.CO_DRIVING_ALERT1, "");
-                                                // ---------- Text to speech listener---------
-                                                SpeakOutMsg(ConstantsEnum.CO_DRIVING_ALERT1);
-
-                                            }*/
-                                        } else {
-                                            ContinueSpeedCounter = 0;
-                                            ClearCount();
-                                        }
-
+                                    if (minutesDiff == 0) {
+                                        BackgroundLocationService.IsAutoChange = false;
                                     }
 
-                                } else if (DRIVER_JOB_STATUS == DRIVING) {
 
-                                    if (minutesDiff >= OnDutyInterval) {   // && IsAlertTimeValid
-
-                                        boolean isApplicable = false;
-
-                                        /*if (connectionType == constants.API) {
-                                            if (VehicleSpeed <= OnDutySpeedLimit ) {
-                                                isApplicable = true;
-                                            }
-                                        } else*/ if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
-                                            if (OBDVehicleSpeed <= OnDutySpeedLimit ) {
-                                                isApplicable = true;
-                                            }
-                                        }
+                                    // ---------- Get Driver Configured Time Details ------------
+                                    getConfiguredTime();
 
 
-                                        if (isApplicable) {
-
-                                            if (!IsAOBRD || (IsAOBRD && IsAOBRDAutoDrive)) {
-                                                if (BackgroundLocationService.IsAutoChange) {
-                                                    // message = "Vehicle is running below the threshold speed limit. Now your status is going to be changed to On Duty.";
-                                                    message = "Duty status switched to On Duty not Driving due to vehicle is not moving.";
-                                                } else {
-                                                    message = "Please change your status from Driving to other duty status due to vehicle is not moving.";
-                                                }
-
-                                                CHANGED_STATUS = ON_DUTY;
-
-                                                boolean isEldToast;
-                                                if (IsAOBRD) {
-                                                    isEldToast = false;
-                                                } else {
-                                                    isEldToast = true;
-                                                }
-
-                                                if (ContinueSpeedCounter >= OnDutyInterval) {
-                                                  /*  try {
-                                                        if (UILApplication.isActivityVisible()) {
-                                                            TabAct.speedAlertBtn.performClick();
-                                                        }
-                                                    }catch (Exception e){
-                                                        e.printStackTrace();
-                                                    }*/
-                                                    LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
-                                                    ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                            driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, isEldToast, IsAOBRDAutoDrive);
-                                                }
-                                                ContinueSpeedCounter++;
-                                            }
-
-                                        } else {
-                                            ContinueSpeedCounter = 0;
-                                            ClearCount();
-                                        }
-                                    } else {
-                                        if (VehicleSpeed <= OnDutySpeedLimit) {
-                                            ContinueSpeedCounter++;
-                                        } else {
-                                            ContinueSpeedCounter = 0;
-                                        }
-
-                                        ClearCount();
-                                    }
-
-                                } else if (DRIVER_JOB_STATUS == ON_DUTY) {
+                                    boolean IsAOBRD = SharedPref.IsAOBRD(context);
+                                    boolean IsAOBRDAutomatic = SharedPref.IsAOBRDAutomatic(context);
+                                    boolean IsAOBRDAutoDrive = SharedPref.IsAOBRDAutoDrive(context);
 
 
-                                    boolean isYardMove = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
-
-                                    if (!isYardMove) {   // if isYardMove = true. No ELD rule called when Truck in yardfor USA.
-
-                                        BackgroundLocationService.IsAutoChange = true;
-                                        message = "Duty status switched to DRIVING due to vehicle moving above threshold speed.";
-
+                                    if (DRIVER_JOB_STATUS == OFF_DUTY || DRIVER_JOB_STATUS == SLEEPER) {
 
                                         if (IsAOBRD) {
                                             if (IsAOBRDAutomatic) {
+                                                String jobStatus;
+                                                if (DRIVER_JOB_STATUS == OFF_DUTY) {
+                                                    jobStatus = "off duty";
+                                                } else {
+                                                    jobStatus = "sleeper";
+                                                }
+
                                                 if (VehicleSpeed >= AobrdSpeedLimit && minutesDiff >= DrivingInterval) {
 
                                                     if (IsAOBRDAutoDrive) {
+
+                                                        if (BackgroundLocationService.IsAutoChange) {
+                                                            message = "Your current status is " + JobStatusStr + " but your vehicle is running. Now your status is going to be changed to Driving.";
+                                                        } else {
+                                                            message = "Your current status is " + JobStatusStr + " but your vehicle is running. Please change your status to Driving.";
+                                                        }
+
 
                                                         // added new lines according to AOBRD changes..
                                                         /* =================================================================================== */
@@ -530,7 +401,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                             int minDiff = hMethods.getTimeDiffBwLast2Job(driver18DaysLogArray);
                                                             if (Math.max(-30, minDiff) == Math.min(minDiff, 30)) {
                                                                 BackgroundLocationService.IsAutoChange = true;
-                                                                message = "Your current status is On Duty but your vehicle is running. Your status is going to be changed to Driving.";
+                                                                message = "Your current status is " + JobStatusStr + " but your vehicle is running. Your status is going to be changed to Driving.";
                                                             }
                                                         }
                                                         /* =================================================================================== */
@@ -539,83 +410,147 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                         CHANGED_STATUS = DRIVING;
                                                         ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                                 driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, false, IsAOBRDAutomatic);
+
+
                                                     } else {
-                                                        String jobStatus = "on duty";
                                                         message = "Your current status is " + jobStatus + " but your vehicle is running";
                                                         SpeakOutMsg(message);
                                                         serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, false, constants.AobrdWarning, jobStatus);
                                                     }
-                                                } else {
-                                                    ContinueSpeedCounter = 0;
-                                                    ClearCount();
                                                 }
-
                                             }
                                         } else {
 
-                                            boolean isApplicable = false;
-                                            if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
-                                                if (OBDVehicleSpeed >= DrivingSpeedLimit && VehicleSpeed >= DrivingSpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
-                                                    isApplicable = true;
-                                                }
-                                            } else {
-                                                if (VehicleSpeed >= DrivingSpeedLimit) {
-                                                    isApplicable = true;
-                                                }
-                                            }
+                                            if (VehicleSpeed >= DrivingSpeedLimit && minutesDiff >= DrivingInterval) {
 
-                                            if (isApplicable && minutesDiff >= DrivingInterval) {
+                                                BackgroundLocationService.IsAutoChange = true;
+                                                message = "Duty status switched to DRIVING due to vehicle moving above threshold speed.";
 
                                                 LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
                                                 CHANGED_STATUS = DRIVING;
                                                 ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, IsAOBRDAutomatic);
+
                                             } else {
                                                 ContinueSpeedCounter = 0;
                                                 ClearCount();
                                             }
+
                                         }
-                                    } else {
 
-                                        // auto change in Yard Move only applicable in canada cycle
-                                        if (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) {
-                                            boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(context);
+                                    } else if (DRIVER_JOB_STATUS == DRIVING) {
 
-                                            if (isYmPcAlertShown) {
-                                                if (BackgroundLocationService.IsAutoChange) {
-                                                    message = " Duty status switched to DRIVING due to vehicle moving above threshold speed.";
-                                                } else {
-                                                    message = " Please confirm your Yard Move status.";
+                                        if (minutesDiff >= OnDutyInterval) {   // && IsAlertTimeValid
+
+                                            boolean isApplicable = false;
+
+                                        /*if (connectionType == constants.API) {
+                                            if (VehicleSpeed <= OnDutySpeedLimit ) {
+                                                isApplicable = true;
+                                            }
+                                        } else*/
+                                            if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
+                                                if (OBDVehicleSpeed <= OnDutySpeedLimit) {
+                                                    isApplicable = true;
                                                 }
+                                            }
 
-                                                if (VehicleSpeed >= DrivingSpeedLimit ) {
 
-                                                    if (BackgroundLocationService.IsAutoChange){
-                                                        dismissEngineRestartDialog(true);
+                                            if (isApplicable) {
+
+                                                if (!IsAOBRD || (IsAOBRD && IsAOBRDAutoDrive)) {
+                                                    if (BackgroundLocationService.IsAutoChange) {
+                                                        // message = "Vehicle is running below the threshold speed limit. Now your status is going to be changed to On Duty.";
+                                                        message = "Duty status switched to On Duty not Driving due to vehicle is not moving.";
+                                                    } else {
+                                                        message = "Please change your status from Driving to other duty status due to vehicle is not moving.";
                                                     }
-                                                    Constants.isPcYmAlertButtonClicked = false;
-                                                    LastStatus = "_YMNotConfirmed_From_" + DRIVER_JOB_STATUS;
-                                                    CHANGED_STATUS = DRIVING;
-                                                    ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                            driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
 
+                                                    CHANGED_STATUS = ON_DUTY;
 
+                                                    boolean isEldToast;
+                                                    if (IsAOBRD) {
+                                                        isEldToast = false;
+                                                    } else {
+                                                        isEldToast = true;
+                                                    }
 
+                                                    if (ContinueSpeedCounter >= OnDutyInterval) {
+                                                  /*  try {
+                                                        if (UILApplication.isActivityVisible()) {
+                                                            TabAct.speedAlertBtn.performClick();
+                                                        }
+                                                    }catch (Exception e){
+                                                        e.printStackTrace();
+                                                    }*/
+                                                        LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
+                                                        ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                                driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, isEldToast, IsAOBRDAutoDrive);
+                                                    }
+                                                    ContinueSpeedCounter++;
                                                 }
-
 
                                             } else {
+                                                ContinueSpeedCounter = 0;
+                                                ClearCount();
+                                            }
+                                        } else {
+                                            if (VehicleSpeed <= OnDutySpeedLimit) {
+                                                ContinueSpeedCounter++;
+                                            } else {
+                                                ContinueSpeedCounter = 0;
+                                            }
 
-                                                // if (BackgroundLocationService.IsAutoChange) {
-                                                BackgroundLocationService.IsAutoChange = true;
-                                                message = "Duty status switched to Driving due to vehicle moving above threshold speed limit (32 km/h).";
-                                              /*  } else {
-                                                    message = "Please change your status to Driving due to vehicle moving above threshold speed limit (32 km/h).";
-                                                }*/
+                                            ClearCount();
+                                        }
+
+                                    } else if (DRIVER_JOB_STATUS == ON_DUTY) {
+
+
+                                        boolean isYardMove = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
+
+                                        if (!isYardMove) {   // if isYardMove = true. No ELD rule called when Truck in yardfor USA.
+
+                                            BackgroundLocationService.IsAutoChange = true;
+                                            message = "Duty status switched to DRIVING due to vehicle moving above threshold speed.";
+
+
+                                            if (IsAOBRD) {
+                                                if (IsAOBRDAutomatic) {
+                                                    if (VehicleSpeed >= AobrdSpeedLimit && minutesDiff >= DrivingInterval) {
+
+                                                        if (IsAOBRDAutoDrive) {
+
+                                                            // added new lines according to AOBRD changes..
+                                                            /* =================================================================================== */
+                                                            if (hMethods.getSecondLastJobStatus(driver18DaysLogArray) == DRIVING) {
+                                                                int minDiff = hMethods.getTimeDiffBwLast2Job(driver18DaysLogArray);
+                                                                if (Math.max(-30, minDiff) == Math.min(minDiff, 30)) {
+                                                                    BackgroundLocationService.IsAutoChange = true;
+                                                                    message = "Your current status is On Duty but your vehicle is running. Your status is going to be changed to Driving.";
+                                                                }
+                                                            }
+                                                            /* =================================================================================== */
+
+                                                            LastStatus = "_aobrd_From_" + DRIVER_JOB_STATUS;
+                                                            CHANGED_STATUS = DRIVING;
+                                                            ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                                    driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, false, IsAOBRDAutomatic);
+                                                        } else {
+                                                            String jobStatus = "on duty";
+                                                            message = "Your current status is " + jobStatus + " but your vehicle is running";
+                                                            SpeakOutMsg(message);
+                                                            serviceResponse.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, false, constants.AobrdWarning, jobStatus);
+                                                        }
+                                                    } else {
+                                                        ContinueSpeedCounter = 0;
+                                                        ClearCount();
+                                                    }
+
+                                                }
+                                            } else {
 
                                                 boolean isApplicable = false;
-                                                DrivingSpeedLimit = 32; // in canada cycle for Yard Move status if speed will be more then on equal to 32 km/h, change to driving.
-
                                                 if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
                                                     if (OBDVehicleSpeed >= DrivingSpeedLimit && VehicleSpeed >= DrivingSpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
                                                         isApplicable = true;
@@ -628,9 +563,156 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                                 if (isApplicable && minutesDiff >= DrivingInterval) {
 
-                                                    Constants.isPcYmAlertButtonClicked = false;
-                                                    LastStatus = "_YM_From_" + DRIVER_JOB_STATUS;
+                                                    LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
                                                     CHANGED_STATUS = DRIVING;
+                                                    ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                            driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                                } else {
+                                                    ContinueSpeedCounter = 0;
+                                                    ClearCount();
+                                                }
+                                            }
+                                        } else {
+
+                                            // auto change in Yard Move only applicable in canada cycle
+                                            if (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) {
+                                                boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(context);
+
+                                                if (isYmPcAlertShown) {
+                                                    if (BackgroundLocationService.IsAutoChange) {
+                                                        message = " Duty status switched to DRIVING due to vehicle moving above threshold speed.";
+                                                    } else {
+                                                        message = " Please confirm your Yard Move status.";
+                                                    }
+
+                                                    if (VehicleSpeed >= DrivingSpeedLimit) {
+
+                                                        if (BackgroundLocationService.IsAutoChange) {
+                                                            dismissEngineRestartDialog(true);
+                                                        }
+                                                        Constants.isPcYmAlertButtonClicked = false;
+                                                        LastStatus = "_YMNotConfirmed_From_" + DRIVER_JOB_STATUS;
+                                                        CHANGED_STATUS = DRIVING;
+                                                        ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                                driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+
+
+                                                    }
+
+
+                                                } else {
+
+                                                    // if (BackgroundLocationService.IsAutoChange) {
+                                                    BackgroundLocationService.IsAutoChange = true;
+                                                    message = "Duty status switched to Driving due to vehicle moving above threshold speed limit (32 km/h).";
+                                              /*  } else {
+                                                    message = "Please change your status to Driving due to vehicle moving above threshold speed limit (32 km/h).";
+                                                }*/
+
+                                                    boolean isApplicable = false;
+                                                    DrivingSpeedLimit = 32; // in canada cycle for Yard Move status if speed will be more then on equal to 32 km/h, change to driving.
+
+                                                    if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
+                                                        if (OBDVehicleSpeed >= DrivingSpeedLimit && VehicleSpeed >= DrivingSpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
+                                                            isApplicable = true;
+                                                        }
+                                                    } else {
+                                                        if (VehicleSpeed >= DrivingSpeedLimit) {
+                                                            isApplicable = true;
+                                                        }
+                                                    }
+
+                                                    if (isApplicable && minutesDiff >= DrivingInterval) {
+
+                                                        Constants.isPcYmAlertButtonClicked = false;
+                                                        LastStatus = "_YM_From_" + DRIVER_JOB_STATUS;
+                                                        CHANGED_STATUS = DRIVING;
+                                                        ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                                driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+
+                                                    } else {
+                                                        ContinueSpeedCounter = 0;
+                                                        ClearCount();
+                                                    }
+                                                }
+
+
+                                            }
+
+
+                                            if (Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit) {
+                                                Constants.isPcYmAlertButtonClicked = false;
+                                                BackgroundLocationService.IsAutoChange = true;
+                                                message = " Duty status switched to DRIVING due to not confirming YardMove status.";
+                                                LastStatus = "_YM_NotConfirmedByDriver ";
+
+                                                isPcYmAlertChangeStatus = true;
+                                                CHANGED_STATUS = DRIVING;
+
+                                                dismissEngineRestartDialog(true);
+
+                                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+
+
+                                            }
+
+                                        }
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            } else {
+
+                                // auto change in personal use only applicable in canada cycle
+                                boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(context);
+                                if ((isPersonal || isYmPcAlertShown) && (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2))) {
+                                    boolean isPersonalUse75KmCrossed = SharedPref.isPersonalUse75KmCrossed(context);
+
+                                    if (isPersonalUse75KmCrossed || isYmPcAlertShown) {
+                                        DateTime lastSaveUtcDate = Global.getDateTimeObj(SharedPref.getCurrentUTCTime(context), false);
+
+                                        int dayDiff = hMethods.DayDiff(currentUTCTime, lastSaveUtcDate);
+                                        if (dayDiff == 0) {    // if current day
+
+                                            //  if (BackgroundLocationService.IsAutoChange) {
+                                            BackgroundLocationService.IsAutoChange = true;
+
+                                            if (VehicleSpeed >= DrivingSpeedLimit) {
+
+                                                if (isPersonalUse75KmCrossed) {
+                                                    PersonalUse75Km = true;
+                                                    LastStatus = "_PU_Crossed75Km";
+                                                    message = "Duty status switched to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
+
+                                                } else {
+
+                                                    dismissEngineRestartDialog(true);
+                                                    LastStatus = "_PU_NotConfirmedAfterEngineRestart";
+
+                                                    // set value false when status will be changed to driving.
+                                                    SharedPref.SetTruckStartLoginStatus(false, context);
+                                                    message = " Duty status switched to DRIVING due to not confirming Personal use status.";
+
+                                                }
+
+                                                Constants.isPcYmAlertButtonClicked = false;
+                                                CHANGED_STATUS = DRIVING;
+                                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                            } else {
+                                                if (isPersonal && isPersonalUse75KmCrossed) {
+                                                    Constants.isPcYmAlertButtonClicked = false;
+                                                    PersonalUse75Km = true;
+                                                    LastStatus = "_PU_Crossed75Km";
+                                                    message = "Duty status switched to Off Duty due to Personal Use limit (75 km) is exceeded for the day";
+
+                                                    // set value false when PU status has been changed
+                                                    SharedPref.SetTruckStartLoginStatus(false, context);
+
+                                                    CHANGED_STATUS = OFF_DUTY;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                             driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
 
@@ -638,116 +720,28 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                     ContinueSpeedCounter = 0;
                                                     ClearCount();
                                                 }
-                                            }
-
-
-
-
-                                        }
-
-
-                                        if(Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit ) {
-                                            Constants.isPcYmAlertButtonClicked = false;
-                                            BackgroundLocationService.IsAutoChange = true;
-                                            message = " Duty status switched to DRIVING due to not confirming YardMove status.";
-                                            LastStatus = "_YM_NotConfirmedByDriver ";
-
-                                            isPcYmAlertChangeStatus = true;
-                                            CHANGED_STATUS = DRIVING;
-
-                                            dismissEngineRestartDialog(true);
-
-                                            ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                    driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
-
-
-                                        }
-
-                                    }
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                        } else {
-
-                            // auto change in personal use only applicable in canada cycle
-                            boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(context);
-
-                            if ((isPersonal || isYmPcAlertShown) &&  (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2))  ) {
-                                boolean isPersonalUse75KmCrossed = SharedPref.isPersonalUse75KmCrossed(context);
-
-                                if (isPersonalUse75KmCrossed || isYmPcAlertShown) {
-                                    DateTime lastSaveUtcDate = Global.getDateTimeObj(SharedPref.getCurrentUTCTime(context), false);
-
-                                    int dayDiff = hMethods.DayDiff(currentUTCTime, lastSaveUtcDate);
-                                    if (dayDiff == 0) {    // if current day
-
-                                        //  if (BackgroundLocationService.IsAutoChange) {
-                                        BackgroundLocationService.IsAutoChange = true;
-
-                                        if (VehicleSpeed >= DrivingSpeedLimit) {
-
-                                            if (isPersonalUse75KmCrossed) {
-                                                PersonalUse75Km = true;
-                                                LastStatus = "_PU_Crossed75Km";
-                                                message = "Duty status switched to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
-
-                                            } else {
-
-                                                dismissEngineRestartDialog(true);
-                                                LastStatus = "_PU_NotConfirmedAfterEngineRestart" ;
-
-                                                // set value false when status will be changed to driving.
-                                                SharedPref.SetTruckStartLoginStatus(false, context);
-                                                message = " Duty status switched to DRIVING due to not confirming Personal use status.";
 
                                             }
-
-                                            Constants.isPcYmAlertButtonClicked = false;
-                                            CHANGED_STATUS = DRIVING;
-                                            ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                    driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
-                                        } else {
-                                            if (isPersonal && isPersonalUse75KmCrossed) {
-                                                Constants.isPcYmAlertButtonClicked = false;
-                                                PersonalUse75Km = true;
-                                                LastStatus = "_PU_Crossed75Km";
-                                                message = "Duty status switched to Off Duty due to Personal Use limit (75 km) is exceeded for the day";
-
-                                                // set value false when PU status has been changed
-                                                SharedPref.SetTruckStartLoginStatus(false, context);
-
-                                                CHANGED_STATUS = OFF_DUTY;
-                                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
-
-                                            }else{
-                                                ContinueSpeedCounter = 0;
-                                                ClearCount();
-                                            }
-
                                         }
                                     }
                                 }
+
+                                if (isPersonal && Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit) {
+                                    Constants.isPcYmAlertButtonClicked = false;
+                                    isPcYmAlertChangeStatus = true;
+                                    BackgroundLocationService.IsAutoChange = true;
+                                    message = " Duty status switched to DRIVING due to not confirming Personal use status.";
+                                    LastStatus = "_PU_NotConfirmedByDriver ";
+
+                                    dismissEngineRestartDialog(true);
+
+                                    CHANGED_STATUS = DRIVING;
+                                    ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                            driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                }
+
+
                             }
-
-                            if(isPersonal && Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit ){
-                                Constants.isPcYmAlertButtonClicked = false;
-                                isPcYmAlertChangeStatus = true;
-                                BackgroundLocationService.IsAutoChange = true;
-                                message = " Duty status switched to DRIVING due to not confirming Personal use status.";
-                                LastStatus = "_PU_NotConfirmedByDriver ";
-
-                                dismissEngineRestartDialog(true);
-
-                                CHANGED_STATUS = DRIVING;
-                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                    driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
-                            }
-
-
                         }
                     }else{
                         // ---------------

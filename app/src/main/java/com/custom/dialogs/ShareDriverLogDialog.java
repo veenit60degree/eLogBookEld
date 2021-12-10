@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -47,10 +48,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.constants.APIs;
+import com.constants.AlertDialogEld;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.EldFragment;
@@ -112,6 +116,10 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     VolleyRequest GetAddFromLatLngRequest;
     Constants constant;
     Globally globally;
+    HelperMethods hMethods;
+    DBHelper dbHelper;
+    AlertDialogEld statusEndConfDialog;
+
 
     public ShareDriverLogDialog(Context context, FragmentActivity activity, String dRIVER_ID,
                                 String deviceId, String currentCycleId, boolean isAOBRD,
@@ -148,6 +156,9 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
         GetAddFromLatLngRequest = new VolleyRequest(getContext());
 
+        hMethods = new HelperMethods();
+        dbHelper = new DBHelper(getContext());
+        statusEndConfDialog  = new AlertDialogEld(getContext());
 
         checkboxEmail       = (CheckBox)findViewById(R.id.checkboxEmail);
         checkboxService     = (CheckBox)findViewById(R.id.checkboxService);
@@ -295,6 +306,20 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
             if(globally.isConnected(getContext())) {
                   GetAddFromLatLng(Globally.LATITUDE, Globally.LONGITUDE);
             }
+
+            int obdStatus       = SharedPref.getObdStatus(getContext());
+            if(obdStatus == Constants.BLE_CONNECTED || obdStatus == Constants.WIRED_CONNECTED || obdStatus == Constants.WIFI_CONNECTED){
+                // OBD connected with ECM
+            }else {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        globally.DriverSwitchAlert(getContext(), getContext().getString(R.string.Limited_ELD_),
+                                getContext().getString(R.string.limited_ecm_desc), "Ok");
+                    }
+                }, 600);
+
+            }
         }
 
 
@@ -422,7 +447,9 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         @Override
         public void onClick(View v) {
 
-            if(constant.isActionAllowed(getContext())) {
+            //hMethods.isActionAllowedWhileDriving(getContext(), globally, DRIVER_ID, true, dbHelper);
+            boolean isActionAllowed = hMethods.isActionAllowedWhileDriving(getContext(), globally, DRIVER_ID, dbHelper);
+            if(isActionAllowed) {
                 City = cityShareEditText.getText().toString().trim();
                 String MailCheck = String.valueOf(checkboxEmail.isChecked());
                 String ServiceCheck = String.valueOf(checkboxService.isChecked());
@@ -650,21 +677,59 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
 
 
+
+    AlertDialogEld.PositiveButtonCallback positiveCallBack = new AlertDialogEld.PositiveButtonCallback() {
+        @Override
+        public void getPositiveClick(int flag) {
+            String MailCheck = String.valueOf(checkboxEmail.isChecked());
+            String ServiceCheck = String.valueOf(checkboxService.isChecked());
+
+            SendDriverLog(DRIVER_ID, DeviceId, startDateTv.getText().toString(),
+                    endDateTv.getText().toString(), email, inspCmntEditTxt.getText().toString().trim(),
+                    MailCheck, ServiceCheck, Globally.LATITUDE, Globally.LONGITUDE,
+                    SharedPref.getTimeZone(getContext()));
+        }
+    };
+
+    AlertDialogEld.NegativeButtonCallBack negativeCallBack = new AlertDialogEld.NegativeButtonCallBack() {
+        @Override
+        public void getNegativeClick(int flag) {
+            Log.d("negativeCallBack", "negativeCallBack: " + flag);
+            inspCmntEditTxt.requestFocus();
+        }
+    };
+
+
+
     void DriverViewValidations(String MailCheck, String ServiceCheck){
         if (startDateTv.getText().toString().length() > 0) {
             if (endDateTv.getText().toString().length() > 0) {
                 HideKeyboard();
                 if (EndDate.after(StartDate) || EndDate.equals(StartDate)) {
                     String insComments = inspCmntEditTxt.getText().toString().trim();
-                    if(insComments.length() <= 60) {
+
+                    if(insComments.length() == 0) {
+                        statusEndConfDialog.ShowAlertDialog(getContext().getString(R.string.Confirmation_suggested),
+                                getContext().getString(R.string.confirm_witout_comment),
+                                getContext().getString(R.string.yes), getContext().getString(R.string.no),
+                                0, positiveCallBack, negativeCallBack);
+
+                    }else if(insComments.length() <= 4){
+                        globally.EldScreenToast(shareDriverLogBtn, "Enter minimum 4 char", getContext().getResources().getColor(R.color.colorVoilation));
+                        inspCmntEditTxt.setError("Enter minimum 4 char");
+                    }else if(insComments.length() > 60) {
+                        globally.EldScreenToast(shareDriverLogBtn, "Allows 60 characters only", getContext().getResources().getColor(R.color.colorVoilation));
+                        inspCmntEditTxt.setError("Allows 60 characters only");
+                    }else {
                         SendDriverLog(DRIVER_ID, DeviceId, startDateTv.getText().toString(),
                                 endDateTv.getText().toString(), email, insComments,
                                 MailCheck, ServiceCheck, Globally.LATITUDE, Globally.LONGITUDE,
                                 SharedPref.getTimeZone(getContext()));
-                    }else {
-                        globally.EldScreenToast(shareDriverLogBtn, "Allows 60 characters only", getContext().getResources().getColor(R.color.colorVoilation));
-                        inspCmntEditTxt.setError("Allows 60 characters only");
+
+
                     }
+
+
                 } else {
                     globally.EldScreenToast(shareDriverLogBtn, "(To Date) should be greater then (From Date).", getContext().getResources().getColor(R.color.colorVoilation));
                 }

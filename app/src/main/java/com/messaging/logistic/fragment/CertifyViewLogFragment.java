@@ -1197,7 +1197,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 break;
 
             case R.id.saveSignatureBtn:
-                if(constants.isActionAllowed(getActivity())) {
+                // if(constants.isActionAllowed(getActivity())) {
+                if(hMethods.isActionAllowedWhileDriving(getActivity(), global, DRIVER_ID, dbHelper)){
                     isSaveCertifyClicked = true;
                     certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener());
                     certifyConfirmationDialog.show();
@@ -1209,8 +1210,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
 
             case R.id.editLogBtn:
-
-                if(constants.isActionAllowed(getActivity())) {
+//if(constants.isActionAllowed(getActivity())) {
+                if(hMethods.isActionAllowedWhileDriving(getActivity(), global, DRIVER_ID, dbHelper)){
                     String driverType = "";
                     if(DriverType == Constants.MAIN_DRIVER_TYPE){
                         driverType = DriverConst.StatusSingleDriver;
@@ -1259,6 +1260,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 }else{
                     getParentFragmentManager().popBackStack();
                 }*/
+                eldMenuLay.setEnabled(false);
                 getParentFragmentManager().popBackStack();
                 break;
 

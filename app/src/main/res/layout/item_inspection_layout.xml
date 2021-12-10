@@ -170,14 +170,14 @@
                     android:id="@+id/locInspTitleTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/loc_of_inspection"
-                    android:textColor="@color/color_eld_theme"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size_16"
                     android:layout_alignBaseline="@+id/locInspectionTV"
                     android:layout_alignBottom="@+id/locInspectionTV"
+                    android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:text="@string/loc_of_inspection"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold" />
 
 
             </RelativeLayout>
@@ -252,6 +252,57 @@
                 android:layout_marginLeft="@dimen/margin_short_6"
                 android:layout_marginRight="@dimen/margin_short_6"
                 />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/margin_10"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/locInspectionTV"
+                    android:layout_alignBottom="@+id/locInspectionTV"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/CurrentOdometer"
+                    android:textColor="@color/color_eld_theme"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/currentOdometerTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:text="110 km"
+
+                    />
+
+
+
+
+
+
+            </LinearLayout>
+
+
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_short_1"
+                android:background="@color/black"
+                android:layout_marginLeft="@dimen/margin_short_6"
+                android:layout_marginRight="@dimen/margin_short_6"
+                />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -389,6 +440,7 @@
 
 
             </LinearLayout>
+
 
         </LinearLayout>
 

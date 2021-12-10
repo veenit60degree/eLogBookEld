@@ -230,6 +230,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         switch (view.getId()){
 
             case R.id.eldMenuLay:
+                eldMenuLay.setEnabled(false);
                 getParentFragmentManager().popBackStack();
                 break;
 

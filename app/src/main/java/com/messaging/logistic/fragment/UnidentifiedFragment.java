@@ -34,6 +34,8 @@ import com.constants.VolleyRequest;
 import com.custom.dialogs.UnidentifiedDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
@@ -229,7 +231,10 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                         unIdentifiedRecordList,  recordSelectedList);
 
                 if(getActivity() != null) {
-                    if(constants.isActionAllowed(getContext())) {
+                    //if(constants.isActionAllowed(getContext())) {
+                    HelperMethods helperMethods = new HelperMethods();
+                    DBHelper dbHelper = new DBHelper(getActivity());
+                    if(helperMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if (claimArray.length() > 0) {
                             unidentifiedDialog = new UnidentifiedDialog(getActivity(), getResources().getString(R.string.claim), new UnIdentifiedListener());
                             unidentifiedDialog.show();

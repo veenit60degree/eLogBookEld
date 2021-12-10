@@ -1209,7 +1209,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 brightnessCardView.setVisibility(View.GONE);
                 if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
 
-                    if(constants.isActionAllowed(getActivity())) {
+                    //if(constants.isActionAllowed(getActivity())) {
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if(isSleepOffDuty()) {
                             changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
                         }else{
@@ -1231,7 +1232,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 brightnessCardView.setVisibility(View.GONE);
                     if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
 
-                        if(constants.isActionAllowed(getActivity())) {
+                       // if(constants.isActionAllowed(getActivity())) {
+                        if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
                             if(isSleepOffDuty()) {
                                 changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
                             }else{
@@ -1268,8 +1270,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             case R.id.timeZoneLayout:
                 brightnessCardView.setVisibility(View.GONE);
                     if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
-                        if(constants.isActionAllowed(getActivity())) {
-                            if(isSleepOffDuty() == false) {
+                        //if(constants.isActionAllowed(getActivity())) {
+                        if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                            if(isOnDuty()) {
                                 changeCycleZoneDialog("operating_zone", CurrentCycleId, operatingZoneTV.getText().toString());
                             }else{
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.op_zone_change_check), getResources().getColor(R.color.colorPrimary));
@@ -1457,6 +1460,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         }
     }
 
+
+
+    private boolean isOnDuty(){
+        String currentJob     = SharedPref.getDriverStatusId(getActivity());
+        if(currentJob.equals(global.ON_DUTY)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     private class DeferralListener implements DeferralDialog.DeferralListener{
 
@@ -2104,7 +2117,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         getActivity().finish();
                     }else{
                         if(flag == ChangeCycle){
-                            Globally.DriverSwitchAlert(getActivity(), "h !!", Message, "Ok");
+                            Globally.DriverSwitchAlert(getActivity(), "Cycle Change Request !!", Message, "Ok");
                         }else if(flag == GetAppUpdate || flag == OperatingZone){
                             global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorVoilation));
                         }

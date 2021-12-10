@@ -570,7 +570,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                     Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.TRAILER_CHANGE , getResources().getColor(R.color.colorVoilation));
                 }else {
 
-                    if(constants.isActionAllowed(getContext())) {
+                   // if(constants.isActionAllowed(getContext())) {
+
+                 //   HelperMethods helperMethods = new HelperMethods();
+                   // DBHelper dbHelper = new DBHelper(getActivity());
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if (Globally.isConnected(getActivity())) {
                             dialog = new TrailorDialog(getActivity(), "trailor", false, Globally.TRAILOR_NUMBER, 0, false, Globally.onDutyRemarks, 0, dbHelper, new TrailorListener());
                             dialog.show();
@@ -593,7 +597,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 if (CurrentJobStatus.equals(Globally.DRIVING )) {
                     Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.TRUCK_CHANGE, getResources().getColor(R.color.colorVoilation));
                 }else {
-                    if(constants.isActionAllowed(getContext())) {
+                   // if(constants.isActionAllowed(getContext())) {
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if (Globally.isConnected(getActivity())) {
                             inspectionTruckLay.setEnabled(false);
                             inspectionProgressBar.setVisibility(View.VISIBLE);
@@ -718,7 +723,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             case R.id.saveInspectionBtn:
 
-                if(constants.isActionAllowed(getContext())) {
+               // if(constants.isActionAllowed(getContext())) {
+                if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
                     if(Globally.TRAILOR_NUMBER.length() > 0 || Globally.TRUCK_NUMBER.length() > 0) {
                         CheckInspectionValidation();
                     }else{

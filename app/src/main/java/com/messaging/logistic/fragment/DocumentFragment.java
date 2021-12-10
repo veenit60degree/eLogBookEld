@@ -334,7 +334,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
 
             case R.id.eldMenuLay:
                 Log.d("count", "stack_count: " + getParentFragmentManager().getBackStackEntryCount());
-
+                eldMenuLay.setEnabled(false);
                 if(getParentFragmentManager().getBackStackEntryCount() > 1) {
                     getParentFragmentManager().popBackStack();
                 }else{
@@ -493,6 +493,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
     public void onResume() {
         super.onResume();
 
+        eldMenuLay.setEnabled(true);
         getLocalDocuments(true);
 
         if(Globally.isConnected(getActivity())){

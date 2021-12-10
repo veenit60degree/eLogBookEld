@@ -146,6 +146,37 @@ public class HelperMethods {
     }
 
 
+    public boolean isActionAllowedWhileDriving(Context context, Globally Global, String selectedDriverId, DBHelper dbHelper){
+        boolean isActionAllowed = true;
+        boolean isAppRestricted = SharedPref.IsAppRestricted(context);
+        boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
+
+        if (Global.isSingleDriver(context)) {
+            if(isAppRestricted && isVehicleMoving){
+                isActionAllowed = false;
+            }
+        }else{
+            if(isAppRestricted && isVehicleMoving) {
+                int SelectedDriverStatus = 1;
+                boolean isSelectedDriverPersonalUse = false;
+                boolean isSelectedDriverYardMove = false;
+                ArrayList<String> selectedDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
+                if (selectedDriverInfo.size() > 2) {
+                    SelectedDriverStatus = Integer.valueOf(selectedDriverInfo.get(0));
+                    isSelectedDriverPersonalUse = Boolean.parseBoolean(selectedDriverInfo.get(1));
+                    isSelectedDriverYardMove = Boolean.parseBoolean(selectedDriverInfo.get(2));
+                }
+
+
+                if (SelectedDriverStatus == Constants.DRIVING || isSelectedDriverPersonalUse || isSelectedDriverYardMove) {
+                    isActionAllowed = false;
+                }
+            }
+        }
+
+        return isActionAllowed;
+    }
+
 
     public boolean isDrivingAllowedWithCoDriver(Context context, Globally Global, String selectedDriverId, boolean isDriveChanging, DBHelper dbHelper){
         boolean isDrivingAllowed = true;
@@ -188,6 +219,26 @@ public class HelperMethods {
                     }
                 }
             }
+
+            if(isDrivingAllowed){
+                // Some times wrong auto status were changed when driver switched from main to co driver. Now we will wait for 25 sec, afterthat we will check
+                String CoDriverSwitchTime = SharedPref.getCoDriverSwitchTime(context);
+                try{
+                    if(CoDriverSwitchTime.length() > 10){
+                        final DateTime currentDateTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), false);
+                        final DateTime savedDateTime = Global.getDateTimeObj(CoDriverSwitchTime, false);
+
+                        int timeInSec = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
+
+                        if(timeInSec <= 25){
+                            isDrivingAllowed = false;
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
         }
 
         return isDrivingAllowed;
@@ -255,9 +306,6 @@ public class HelperMethods {
                 }
             }
         }
-
-
-
 
         return status;
     }

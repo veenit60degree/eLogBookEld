@@ -696,6 +696,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.saveEngSyncDiagnstcStatus(false, getApplicationContext());
 			SharedPref.saveEngSyncMalfunctionStatus(false, getApplicationContext());
 			SharedPref.SetWiredObdCallTime("", getApplicationContext());
+			SharedPref.SetCoDriverSwitchTime("", getApplicationContext());
 			SharedPref.setPersonalUse75Km(false, getApplicationContext());
 			SharedPref.setDeferralForMain(false, "", "0", getApplicationContext());
 			SharedPref.setDeferralForCo(false, "", "0", getApplicationContext());

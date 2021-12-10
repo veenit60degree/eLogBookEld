@@ -46,6 +46,7 @@ import com.driver.details.DriverConst;
 import com.google.android.material.tabs.TabLayout;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -76,6 +77,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
     LinearLayout confirmCertifyLay;
 
     DBHelper dbHelper;
+    HelperMethods helperMethods;
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
     MalfunctionEventFragment malfunctionEventFragment;
     DiagnosticEventFragment diagnosticEventFragment;
@@ -146,6 +148,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
         malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
         dbHelper            = new DBHelper(getActivity());
+        helperMethods       = new HelperMethods();
         constants           = new Constants();
         globally            = new Globally();
 
@@ -528,7 +531,9 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                 if(globally.isConnected(getContext())) {
                     if(malfunctionHeaderList.size() > 0 || diagnosticHeaderList.size() > 0) {
-                        if(constants.isActionAllowed(getContext())) {
+                        //if(constants.isActionAllowed(getContext())) {
+
+                        if(helperMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
                             malfunctionDialog = new MalfunctionDialog(getActivity(), new ArrayList<MalfunctionModel>(),
                                     new MalfunctionDiagnosticListener());
                             malfunctionDialog.show();

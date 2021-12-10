@@ -26,6 +26,8 @@ import com.constants.SharedPref;
 import com.custom.dialogs.MalfunctionDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.fragment.MalfncnDiagnstcViewPager;
@@ -330,7 +332,10 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             public void onClick(View view) {
                 Log.d("ClickEvent", "Clear Btn click Event");
 
-                if(constants.isActionAllowed(_context)) {
+               // if(constants.isActionAllowed(_context)) {
+                HelperMethods helperMethods = new HelperMethods();
+                DBHelper dbHelper = new DBHelper(_context);
+                if(helperMethods.isActionAllowedWhileDriving(_context, new Globally(), DriverId, dbHelper)){
                     if (malfunctionDialog != null && malfunctionDialog.isShowing())
                         malfunctionDialog.dismiss();
 

@@ -341,6 +341,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
 
 
             case R.id.eldMenuLay:
+                eldMenuLay.setEnabled(false);
                 getParentFragmentManager().popBackStack();
                 break;
 

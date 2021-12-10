@@ -176,12 +176,12 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             @Override
             public void onClick(View view) {
                // String message = "";
-               /* if(BackgroundLocationService.OBD_DISCONNECTED){
+                if(BackgroundLocationService.OBD_DISCONNECTED){
                     BackgroundLocationService.OBD_DISCONNECTED = false;
                 }else{
                     BackgroundLocationService.OBD_DISCONNECTED = true;
 //                    SharedPref.SetIgnitionOffCallTime(Globally.GetCurrentDateTime(), getActivity());
-                }*/
+                }
 
                /* try{
                     OBDDeviceData data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
@@ -434,6 +434,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 break;
 
             case R.id.eldMenuLay:
+                eldMenuLay.setEnabled(false);
                 getParentFragmentManager().popBackStack();
                 break;
         }

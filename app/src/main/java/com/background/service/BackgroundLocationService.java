@@ -465,7 +465,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         if (OBD_DISCONNECTED) {
                             ignitionStatus = "ON";
                             truckRPM = "700";
-                            speed = 0;
+                            speed = 30;
                             // obdEngineHours = "23789.5";
                             if (OBD_LAST_STATUSss != Constants.WIRED_CONNECTED) {
                                 // obdEngineHours = "23789.7";
@@ -482,10 +482,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(),
                                         global.GetCurrentUTCTimeFormat(), getApplicationContext());
                             }
+*/
+
+
 
                            // OBD_LAST_STATUSss = constants.WIRED_CONNECTED;
 
-                          *//*  String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
+                          /*  String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
 
                             // save log when ignition status is changed.    //SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, getApplicationContext())
                             if (lastIgnitionStatus.equals("ON") ) {
@@ -495,10 +498,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
                                         SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()), getApplicationContext());
 
-                            }*//*
+                            }*/
 
-                        }
 
+
+              /*          }
                         tempEngHour = tempEngHour + .01;
                         obdEngineHours = ""+tempEngHour;
                         tempOdo = tempOdo + 400;
@@ -511,8 +515,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         SharedPref.setVehicleVin(vin, getApplicationContext());
                         SharedPref.setVss(speed, getApplicationContext());
                         SharedPref.setRPM(truckRPM, getApplicationContext());
-
 */
+
 
 // ====================================================================================================
 
@@ -1444,7 +1448,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                          ", Type: "+htBleData.getEventType() + ", Code: "+ htBleData.getEventCode() + ", Data: " + htBleData.getEventData());
 */
 
-                Log.d("BleObd","RPM: "+ htBleData.getEngineSpeed() + ", EventType: "+htBleData.getEventType() + ", EventCode: "+ htBleData.getEventCode() + ", EventData: " + htBleData.getEventData());
+                Log.d("BleObd","Speed: "+ htBleData.getVehicleSpeed() + ", RPM: "+ htBleData.getEngineSpeed() + ", EventType: "+htBleData.getEventType() + ", EventCode: "+ htBleData.getEventCode() + ", EventData: " + htBleData.getEventData());
 
                 try {
                     if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
@@ -5088,7 +5092,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         }, 4000);
 
                     }catch (Exception e){
-                        e.printStackTrace();
+
                     }
                 }
 

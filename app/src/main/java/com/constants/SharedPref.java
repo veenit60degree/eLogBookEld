@@ -351,6 +351,21 @@ public class SharedPref {
     }
 
 
+    // Set Wired Obd Call Time  -------------------
+    public static void SetCoDriverSwitchTime( String date, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("CoDriverSwitchTime", date);
+        editor.commit();
+    }
+
+    // Get last Wired Obd CallTime -------------------
+    public static String getCoDriverSwitchTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("CoDriverSwitchTime", "");
+    }
+
+
 
     // Set Wired Obd Call Time  -------------------
     public static void SetWiredObdCallTime( String date, Context context) {
