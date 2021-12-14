@@ -250,33 +250,75 @@
                 />
 
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/view_height_64"
                 android:orientation="horizontal"
-                android:padding="@dimen/margin_10"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/margin_15"
+                android:paddingRight="@dimen/margin_15"
+
                 >
 
+
                 <TextView
+                    android:id="@+id/odometerTitleTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/locInspectionTV"
-                    android:layout_alignBottom="@+id/locInspectionTV"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
                     android:text="@string/CurrentOdometer"
                     android:textColor="@color/color_eld_theme"
                     android:textSize="@dimen/text_size_18"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+
+                    />
 
 
                 <TextView
                     android:id="@+id/currentOdometerTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/margin_13"
+                    android:paddingLeft="@dimen/margin_10"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_18"
+                    android:text="110 km"
+                    android:layout_toRightOf="@+id/odometerTitleTv"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"
+                    />
+
+                <EditText
+                    android:id="@+id/odometerEditTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:layout_toLeftOf="@+id/selectDistanceSpinner"
+                    android:layout_toRightOf="@+id/odometerTitleTv"
+                    android:background="@drawable/edit_green_drawable"
+                    android:hint="@string/Odometers"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_18"
+
+
+                    />
+
+                <Spinner
+                    android:id="@+id/selectDistanceSpinner"
+                    style="@style/spinner_style"
+                    android:layout_width="@dimen/view_height_160"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:minWidth="@dimen/view_height_40"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:paddingRight="@dimen/margin_short_8"
 
                     />
 
@@ -285,7 +327,7 @@
 
 
 
-            </LinearLayout>
+            </RelativeLayout>
 
 
 

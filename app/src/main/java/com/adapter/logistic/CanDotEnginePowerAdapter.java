@@ -133,7 +133,12 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
         holder.cmvEDotTV.setText(constants.checkNullString(itemsList.get(position).getTruckEquipmentNo()));
         holder.distanceTotalEDotTV.setText(itemsList.get(position).getTotalVehicleKM());
 
-        holder.hoursTotalEDotTV.setText(constants.checkNullString(constants.Convert1DecimalPlacesDouble(Double.parseDouble(itemsList.get(position).getTotalEngineHours()))));
+        String EngineHour = itemsList.get(position).getTotalEngineHours();
+        if(EngineHour.length() > 0 && !EngineHour.equals("--")) {
+            EngineHour = constants.Convert1DecimalPlacesDouble(Double.parseDouble(EngineHour));
+        }
+
+        holder.hoursTotalEDotTV.setText(EngineHour);
         holder.seqNoEDotTV.setText(""+itemsList.get(position).getHexaSeqNumber());
         holder.latLonEDotTV.setText(""+itemsList.get(position).getGPSLatitude() + ", " + itemsList.get(position).getGPSLongitude());
 

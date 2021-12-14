@@ -108,7 +108,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     int CanMaxDays          = 13;   // 1 = 13  = 14 days
     int MaxDays, SelectedCountry = 0;
     boolean IsAOBRD;
-    private String City = "", State = "", Country = "", canSelectedEmail = "", selectedCountry = "Select";
+    private String City = "", Country = "", canSelectedEmail = "", selectedCountry = "Select";
     List<DriverLocationModel> StateList;
     List<String> StateArrayList;
     Spinner stateSharedSpinner;
@@ -289,10 +289,11 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                        Country = "";
                         if(position < StateList.size()) {
-                            State = StateList.get(position).getState();
                             Country = StateList.get(position).getCountry();
                         }
+
                     }
 
                     @Override
@@ -762,14 +763,13 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                     if (!obj.isNull("Data")) {
                         JSONObject dataJObject = new JSONObject(obj.getString("Data"));
                         City = dataJObject.getString(ConstantsKeys.City);
-                        State = dataJObject.getString(ConstantsKeys.State);
                         Country = dataJObject.getString(ConstantsKeys.Country);
                         String Location = dataJObject.getString(ConstantsKeys.Location);
 
                         if (Country.contains("China") || Country.contains("Russia") || Country.contains("null")) {
                             Location = Globally.LATITUDE + "," + Globally.LONGITUDE;
                         } else {
-                            if (!Location.contains(Country)) {
+                            if (Country.length() > 0 && !Location.contains(Country)) {
                                 Location = dataJObject.getString(ConstantsKeys.Location) + ", " + Country;
                             }
                         }

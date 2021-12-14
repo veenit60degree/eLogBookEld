@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:text="Do you really want to confirm the Load Delivery?"
             android:textSize="16sp"
-            android:gravity="center"
+            android:gravity="left"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="@dimen/margin_15"

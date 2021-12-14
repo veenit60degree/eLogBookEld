@@ -495,12 +495,13 @@
                             android:id="@+id/haulExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@+id/shortHaulImagView"
-                            android:paddingLeft="@dimen/margin_10"
                             android:text="@string/usa_take_16_hour_exc"
                             android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_15" />
+                            android:textSize="@dimen/text_size_15"
+                            android:layout_toRightOf="@+id/shortHaulImagView"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:layout_centerVertical="true"
+                            />
 
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/haulExceptnSwitchButton"
@@ -541,18 +542,16 @@
                         </RelativeLayout>
 
 
-
                         <TextView
                             android:id="@+id/adverseExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/usa_adverse_excp"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_15"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/adverseExpImgView"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/usa_adverse_excp"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15" />
 
 
                         <androidx.appcompat.widget.SwitchCompat
@@ -571,6 +570,62 @@
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
 
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/agricultureExceptionLay"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_45"
+                        android:paddingLeft="@dimen/margin_10"
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/agricultureExpImgView"
+                            android:layout_width="@dimen/view_height_30"
+                            android:layout_height="@dimen/view_height_30"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_sync"
+                            >
+
+
+                            <ImageView
+                                android:layout_width="@dimen/margin_15"
+                                android:layout_height="@dimen/margin_15"
+                                android:layout_centerInParent="true"
+                                android:tint="@color/on_edit"
+                                android:src="@drawable/adverse_exception" />
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:id="@+id/agricultureExpTxtView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/agricultureExpImgView"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/usa_agriculture_excp"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15" />
+
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/agricultureSwitchButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginRight="@dimen/margin_10"
+                            android:checked="false"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/colorWhite"
+                            android:textColorHighlight="@color/colorPrimary"
+                            app:theme="@style/Custom.Widget.SwitchCompat"
+
+                            app:thumbTextPadding="@dimen/margin_short_5" />
 
 
                     </RelativeLayout>
@@ -659,8 +714,8 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-
                             app:theme="@style/Custom.Widget.SwitchCompat"
+
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
 

@@ -971,7 +971,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             if (!LogDate.equals(CurrentDate)) {
                 UpdateRecapOffLineData();
 
-                global.DriverSwitchAlert(getActivity(), "Recertify Reminder !!", "You need to ReCertify after editing log.", "Ok");
+                global.DriverSwitchAlert(getActivity(), "Recertify Alert !!", "You need to ReCertify after editing log.", "Ok");
 
             }
 

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 
 import java.io.BufferedInputStream;
@@ -170,7 +171,7 @@ public class DownloadAppService extends Service {
 
             try {
                 int Progress = Integer.parseInt(progress[0]);
-                Intent intent = new Intent("download_progress");
+                Intent intent = new Intent(ConstantsKeys.DownloadProgress);
                 intent.putExtra("percentage", Progress);
                 intent.putExtra("path", "");
                 intent.putExtra("isCompleted", false);
@@ -194,7 +195,7 @@ public class DownloadAppService extends Service {
             }
 
             // Display File path after downloading
-            Intent intent = new Intent("download_progress");
+            Intent intent = new Intent(ConstantsKeys.DownloadProgress);
             intent.putExtra("percentage", 100);
             intent.putExtra("path", result);
             intent.putExtra("isCompleted", true);

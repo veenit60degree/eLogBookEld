@@ -3163,5 +3163,41 @@ public class SharedPref {
     }
 
 
+    // Set Agriculture Record -------------------
+    public static void SaveAgricultureRecord( String agricultureLatitude,String agricultureLongitude,String agricultureAddress, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.AgricultureLatitude, agricultureLatitude);
+        editor.putString(ConstantsKeys.AgricultureLongitude, agricultureLongitude);
+        editor.putString(ConstantsKeys.AgricultureAddress, agricultureAddress);
+        editor.commit();
+    }
 
+
+    public static String getAgricultureRecord( String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, "");
+    }
+
+
+    // Set Adverse exception for co driver -------------------
+    public static void setAgricultureExemption( boolean value, Context context) {
+        if(context  != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("agriculture_Exception", value);
+            editor.commit();
+        }
+    }
+
+    // Get Adverse exception for co driver -------------------
+    public static boolean getAgricultureExemption( Context context) {
+        boolean isAdverse = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isAdverse = preferences.getBoolean("agriculture_Exception", false);
+        }
+        return isAdverse;
+
+    }
 }

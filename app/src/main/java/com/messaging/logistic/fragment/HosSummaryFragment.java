@@ -565,7 +565,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-
+        eldMenuLay.setEnabled(true);
         RestartTimer();
 
 //        if(SharedPref.isSuggestedEditOccur(getActivity()) && SharedPref.IsCCMTACertified(getActivity()) ){
@@ -1174,6 +1174,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
             case R.id.eldMenuLay:
+                eldMenuLay.setEnabled(false);
                 getParentFragmentManager().popBackStack();
 
                 break;

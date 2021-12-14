@@ -513,8 +513,66 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-
                             app:theme="@style/Custom.Widget.SwitchCompat"
+
+                            app:thumbTextPadding="@dimen/margin_short_5" />
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/agricultureExceptionLay"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_55"
+                        android:paddingLeft="@dimen/margin_10"
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/agricultureExpImgView"
+                            android:layout_width="@dimen/view_height_40"
+                            android:layout_height="@dimen/view_height_40"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_sync"
+                            >
+
+
+                            <ImageView
+                                android:layout_width="@dimen/margin_17"
+                                android:layout_height="@dimen/margin_17"
+                                android:layout_centerInParent="true"
+                                android:tint="@color/on_edit"
+                                android:src="@drawable/adverse_exception" />
+                        </RelativeLayout>
+
+
+
+                        <TextView
+                            android:id="@+id/agricultureExpTxtView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/usa_agriculture_excp"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_17"
+                            android:layout_toRightOf="@+id/agricultureExpImgView"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:layout_centerVertical="true"
+                            />
+
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/agricultureSwitchButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginRight="@dimen/margin_10"
+                            android:checked="false"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/colorWhite"
+                            android:textColorHighlight="@color/colorPrimary"
+                            app:theme="@style/Custom.Widget.SwitchCompat"
+
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
 

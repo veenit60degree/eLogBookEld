@@ -716,6 +716,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
 			SharedPref.saveLocDiagnosticStatus(false, "", "", getApplicationContext());
 			SharedPref.SetIgnitionOffCalled(false, getApplicationContext());
+			SharedPref.setAgricultureExemption(false, getApplicationContext());
 
 			// clear array in table
 			if(CompanyId.length() > 0) {

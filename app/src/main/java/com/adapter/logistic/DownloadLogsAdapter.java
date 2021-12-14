@@ -186,12 +186,14 @@ public class DownloadLogsAdapter extends BaseAdapter {
             );
         }
         }else{
-            if(Globally.isConnected(mContext)) {
-                Intent i = new Intent(mContext, new WebViewActvity().getClass());
-                i.putExtra("Path", downloadLogsModels.get(pos).getPdfFilePath());
-                mContext.startActivity(i);
-            }else{
-                Toast.makeText(mContext, global.CHECK_INTERNET_MSG, Toast.LENGTH_LONG).show();
+            if(mContext != null) {
+                if (Globally.isConnected(mContext)) {
+                    Intent i = new Intent(mContext, new WebViewActvity().getClass());
+                    i.putExtra("Path", downloadLogsModels.get(pos).getPdfFilePath());
+                    mContext.startActivity(i);
+                } else {
+                    Toast.makeText(mContext, global.CHECK_INTERNET_MSG, Toast.LENGTH_LONG).show();
+                }
             }
 
         }

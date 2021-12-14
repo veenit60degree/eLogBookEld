@@ -45,6 +45,7 @@ import com.constants.AsyncResponse;
 import com.constants.CheckConnectivity;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
+import com.constants.DownloadAppService;
 import com.constants.DriverLogResponse;
 import com.constants.RequestResponse;
 import com.constants.SaveDriverLogPost;
@@ -95,6 +96,8 @@ import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
 import com.notifications.NotificationManagerSmart;
 import com.shared.pref.CoDriverEldPref;
+import com.shared.pref.EldCoDriverLogPref;
+import com.shared.pref.EldSingleDriverLogPref;
 import com.shared.pref.MainDriverEldPref;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
@@ -164,6 +167,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     final int SaveDeferralCo                = 18;
     final int GetMalDiaEventDuration        = 20;
     final int ClearMalDiaEvent              = 21;
+    final int SaveAgricultureAddress        = 22;
 
     final int GetRecapViewFlagMain          = 111;
     final int GetRecapViewFlagCo            = 112;
@@ -205,7 +209,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     private static final long IDLE_TIME_LOCATION_UPDATES = 3600 * 1000;   // 1 hour
 
     VolleyRequest GetOdometerRequest, ctPatInsp18DaysRequest, saveDriverDeviceUsageLog;
-    VolleyRequest UpdateLocReqVolley, UpdateUserStatusVolley, GetRecapView18DaysData, SaveMalDiaEventRequest, GetMalfunctionEvents;
+    VolleyRequest UpdateLocReqVolley, UpdateUserStatusVolley, GetRecapView18DaysData, SaveMalDiaEventRequest, GetMalfunctionEvents,
+            SaveAgricultureRequest;
     Map<String, String> params;
     String DriverId = "", CoDriverId = "", DeviceId = "", VIN_NUMBER = "", VehicleId = "", CompareLocVal = "";
     String ObdRestarted = "OBD Restarted";
@@ -335,6 +340,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         GetRecapView18DaysData  = new VolleyRequest(getApplicationContext());
         SaveMalDiaEventRequest  = new VolleyRequest(getApplicationContext());
         GetMalfunctionEvents    = new VolleyRequest(getApplicationContext());
+        SaveAgricultureRequest  = new VolleyRequest(getApplicationContext());
         mNotificationManager    = new NotificationManagerSmart(getApplicationContext());
 
         saveDriverDeviceUsageLog= new VolleyRequest(getApplicationContext());
@@ -838,7 +844,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             if(constants.isValidVinFromObd(ignitionStatus, getApplicationContext()) == false &&
                     SharedPref.IsWrongVinAlertView(getApplicationContext()) == false) {
 
-                constants.saveObdData(getObdSource(), "WIRED-InValidVinFromObd: " + vin + ", VIN Length- " + vin.length(), "",
+                constants.saveObdData(constants.getObdSource(getApplicationContext()), "WIRED-InValidVinFromObd: " + vin + ", VIN Length- " + vin.length(), "",
                         currentHighPrecisionOdometer,  "", "", ignitionStatus, truckRPM, String.valueOf(speed),
                         String.valueOf(-1), obdEngineHours, timeStamp, timeStamp,
                         DriverId, dbHelper, driverPermissionMethod, obdUtil);
@@ -912,7 +918,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 if (secDiff >= CheckIntervalInSec) {
                     SharedPref.setObdWriteCallTime(Globally.GetCurrentDateTime(), getApplicationContext());
-                    constants.saveObdData(getObdSource(),  "VIN: " + SharedPref.getVehicleVin(getApplicationContext()) + ", " + detail +OBD_LAST_STATUS,
+                    constants.saveObdData(constants.getObdSource(getApplicationContext()),  "VIN: " + SharedPref.getVehicleVin(getApplicationContext()) + ", " + detail +OBD_LAST_STATUS,
                             "", currentHighPrecisionOdometer,
                             currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                             String.valueOf(-1), obdEngineHours, timeStamp, timeStamp,
@@ -1057,15 +1063,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
-    private String getObdSource(){
-        if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-            return constants.BleObd;
-        }else if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED){
-            return constants.WiredOBD;
-        }else{
-            return constants.WifiOBD;
-        }
-    }
+
 
 
     void callWiredDataService(int timeDuration){
@@ -1139,7 +1137,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         SharedPref.SetIgnitionOffCallTime(global.GetCurrentDateTime(), getApplicationContext());
                         SharedPref.SetIgnitionOffCalled(false, getApplicationContext());
 
-                        constants.saveObdData(getObdSource(), "WIRED-CONNECTED", "", "-1",
+                        constants.saveObdData(constants.getObdSource(getApplicationContext()), "WIRED-CONNECTED", "", "-1",
                                 currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                                 "-1", obdEngineHours, "", "",
                                     DriverId, dbHelper, driverPermissionMethod, obdUtil);
@@ -1165,7 +1163,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
                         if (lastObdStatus != constants.WIRED_DISCONNECTED) {
 
-                            constants.saveObdData(getObdSource(), "WIRED-DISCONNECTED", "", "-1",
+                            constants.saveObdData(constants.getObdSource(getApplicationContext()), "WIRED-DISCONNECTED", "", "-1",
                                     currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                                     "-1", obdEngineHours, "", "",
                                     DriverId, dbHelper, driverPermissionMethod, obdUtil);
@@ -1188,7 +1186,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
                     if (lastObdStatus != Constants.WIRED_ERROR) {
 
-                        constants.saveObdData(getObdSource(), "WIRED-ERROR", "", "-1",
+                        constants.saveObdData(constants.getObdSource(getApplicationContext()), "WIRED-ERROR", "", "-1",
                                 currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                                 "-1", obdEngineHours, "", "",
                                     DriverId, dbHelper, driverPermissionMethod, obdUtil);
@@ -1343,7 +1341,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_ERROR, s));
                     sendBroadCast(getString(R.string.ht_connect_error), "");
 
-                    constants.saveObdData(getObdSource(), "BLE - ConnectionError: " + s
+                    constants.saveObdData(constants.getObdSource(getApplicationContext()), "BLE - ConnectionError: " + s
                                     + ", ( " + i + ", " + i1 + ") , Ble Enabled: " + isBleEnabled(),
                             "", "-1",
                             currentHighPrecisionOdometer, "", "", truckRPM, "-1",
@@ -1385,7 +1383,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, address));
                    // Log.d("getAddress-onDisconnect", "getAddress: " +s);
 
-                    constants.saveObdData(getObdSource(), "BLE-DISCONNECTED: " + address + ", Ble Enabled: " + isBleEnabled(),
+                    constants.saveObdData(constants.getObdSource(getApplicationContext()), "BLE-DISCONNECTED: " + address + ", Ble Enabled: " + isBleEnabled(),
                             "", "-1",
                             currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                             "-1", obdEngineHours, "", "",
@@ -1448,7 +1446,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                          ", Type: "+htBleData.getEventType() + ", Code: "+ htBleData.getEventCode() + ", Data: " + htBleData.getEventData());
 */
 
-                Log.d("BleObd","Speed: "+ htBleData.getVehicleSpeed() + ", RPM: "+ htBleData.getEngineSpeed() + ", EventType: "+htBleData.getEventType() + ", EventCode: "+ htBleData.getEventCode() + ", EventData: " + htBleData.getEventData());
+                Log.d("BleObd","Speed: "+ htBleData.getVehicleSpeed() + ", RPM: "+ htBleData.getEngineSpeed() +
+                        ", EventType: "+htBleData.getEventType() + ", EventCode: "+ htBleData.getEventCode() +
+                        ", EventData: " + htBleData.getEventData());
 
                 try {
                     if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
@@ -1467,7 +1467,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             global.GetCurrentUTCTimeFormat(), getApplicationContext());
                                     SharedPref.SetIgnitionOffCalled(false, getApplicationContext());
 
-                                    constants.saveObdData(getObdSource(), "VIN: "+ htBleData.getVIN_Number() + " - BLE-CONNECTED: onReceive",
+                                    constants.saveObdData(constants.getObdSource(getApplicationContext()), "VIN: "+ htBleData.getVIN_Number() + " - BLE-CONNECTED: onReceive",
                                             "", currentHighPrecisionOdometer,
                                             currentHighPrecisionOdometer, "", "", truckRPM, htBleData.getVehicleSpeed(),
                                             String.valueOf(-1), obdEngineHours, Globally.GetCurrentDateTime(), Globally.GetCurrentDateTime(),
@@ -1485,8 +1485,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 }
 
                                 if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-                                    sendBroadCast(BleUtil.decodeDataChange(htBleData, HTBleSdk.Companion.getInstance().getAddress()), "");
-                                    obdCallBackObservable(Integer.valueOf(htBleData.getVehicleSpeed()), htBleData.getVIN_Number(), global.GetCurrentDateTime(), htBleData);
+                                    if(htBleData.getEventData() != "OnTime") {
+                                        sendBroadCast(BleUtil.decodeDataChange(htBleData, HTBleSdk.Companion.getInstance().getAddress()), "");
+                                        obdCallBackObservable(Integer.valueOf(htBleData.getVehicleSpeed()), htBleData.getVIN_Number(), global.GetCurrentDateTime(), htBleData);
+                                    }
                                 }
 
                             }else{
@@ -1684,7 +1686,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                 Globally.PlaySound(getApplicationContext());
 
-                                constants.saveObdData(getObdSource(), "EngSyncDia - lastIgnitionStatus: " + lastIgnitionStatus,
+                                constants.saveObdData(constants.getObdSource(getApplicationContext()), "EngSyncDia - lastIgnitionStatus: " + lastIgnitionStatus,
                                         malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper).toString(), currentHighPrecisionOdometer,
                                         currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                                         "", obdEngineHours, global.GetCurrentDateTime(), "",
@@ -1714,7 +1716,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             double totalEngSyncMissingMin = last24HrEngSyncEventTime + minDiff;
                                             if (totalEngSyncMissingMin >= Constants.PowerEngSyncMalOccTime) {
 
-                                                constants.saveObdData(getObdSource(), "EngSyncMal - lastIgnitionStatus: " + lastIgnitionStatus,
+                                                constants.saveObdData(constants.getObdSource(getApplicationContext()), "EngSyncMal - lastIgnitionStatus: " + lastIgnitionStatus,
                                                         "", currentHighPrecisionOdometer,
                                                         currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, String.valueOf(speed),
                                                         "", obdEngineHours, global.GetCurrentDateTime(), "",
@@ -1952,7 +1954,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             getString(R.string.event_cleared),
                             getString(R.string.power_dia_clear_desc), 2093);
 
-                    constants.saveObdData(getObdSource(), "PowerDiaEvent- Clear Event", "", "",
+                    constants.saveObdData(constants.getObdSource(getApplicationContext()), "PowerDiaEvent- Clear Event", "", "",
                             currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
                             "", obdEngineHours, global.GetCurrentDateTime(), "",
                             DriverId, dbHelper, driverPermissionMethod, obdUtil);
@@ -2012,7 +2014,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         if (minDiff < 5) {
                             if (Globally.LATITUDE.length() < 5 && SharedPref.getEcmObdLatitude(getApplicationContext()).length() > 4) {
 
-                           /*     constants.saveObdData(getObdSource(), "SaveInvalidLocationTime-Method", "", currentHighPrecisionOdometer,
+                           /*     constants.saveObdData(constants.getObdSource(getApplicationContext()), "SaveInvalidLocationTime-Method", "", currentHighPrecisionOdometer,
                                         currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
                                         "", obdEngineHours, global.GetCurrentDateTime(), "",
                                         DriverId, dbHelper, driverPermissionMethod, obdUtil);
@@ -2059,7 +2061,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     // update malfunction & diagnostic Fragment screen
                                     updateMalDiaFragment(true);
 
-                                  /*  constants.saveObdData(getObdSource(), "Position Malfunction- Time: " + SharedPref.getLocDiagnosticOccuredTime(getApplicationContext()),
+                                  /*  constants.saveObdData(constants.getObdSource(getApplicationContext()), "Position Malfunction- Time: " + SharedPref.getLocDiagnosticOccuredTime(getApplicationContext()),
                                             "",
                                             "-1", currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                                             "-1", obdEngineHours, "", "",
@@ -2127,7 +2129,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             updateMalDiaFragment(true);
                         }
 
-                       /* constants.saveObdData(getObdSource(), "PowerDiaEvent- Clear Event", "CheckEventsForClear: " + clearEventArray, "",
+                       /* constants.saveObdData(constants.getObdSource(getApplicationContext()), "PowerDiaEvent- Clear Event", "CheckEventsForClear: " + clearEventArray, "",
                                 currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
                                 "", obdEngineHours, global.GetCurrentDateTime(), "",
                                 DriverId, dbHelper, driverPermissionMethod, obdUtil);
@@ -2213,7 +2215,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 // call api
                 SaveMalfnDiagnstcLogToServer(malArray, DriverId);
 
-                constants.saveObdData(getObdSource(), "Clear Event:- " +dataDiagnostic, "Unposted Event: " + malArray, "",
+                constants.saveObdData(constants.getObdSource(getApplicationContext()), "Clear Event:- " +dataDiagnostic, "Unposted Event: " + malArray, "",
                         currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
                         "", obdEngineHours, global.GetCurrentDateTime(), "",
                         DriverId, dbHelper, driverPermissionMethod, obdUtil);
@@ -2938,6 +2940,37 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
 
 
+                    if (SpeedCounter == 0 && SharedPref.getAgricultureExemption(getApplicationContext())) {
+                        String address = SharedPref.getAgricultureRecord("AgricultureAddress",getApplicationContext());
+                        if(!address.equals("")) {
+                            String AgricultureLatitude = SharedPref.getAgricultureRecord("AgricultureLatitude", getApplicationContext());
+                            String AgricultureLongitude = SharedPref.getAgricultureRecord("AgricultureLongitude", getApplicationContext());
+
+                            if(AgricultureLongitude.length() > 4 && Globally.LATITUDE.length() > 0) {
+                                double latitudeDouble = Double.parseDouble(AgricultureLatitude);
+                                double longitudeDouble = Double.parseDouble(AgricultureLongitude);
+                                double distanceMiles = constants.CalculateDistance(Double.parseDouble(Globally.LATITUDE),
+                                        Double.parseDouble(Globally.LONGITUDE), latitudeDouble, longitudeDouble, "M", 0);
+                                Log.d("", String.valueOf(distanceMiles));
+                                double distanceMilesFormat = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMiles));
+                                // double distanceKm = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat * 1.60934));
+                                // double distance = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat - Constants.AgricultureDistanceInMiles));
+
+                                if (distanceMilesFormat > Constants.AgricultureDistanceInMiles) {
+
+                                    // send broadcast to setting screen
+                                    SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(),
+                                            Globally.TRUCK_NUMBER, DriverId,
+                                            DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
+                                            SharedPref.getAgricultureRecord("AgricultureAddress", getApplicationContext()),
+                                            AgricultureLatitude, AgricultureLongitude,
+                                            SharedPref.getObdEngineHours(getApplicationContext()), SharedPref.getObdOdometer(getApplicationContext()), "0");
+                                }
+                            }
+                        }
+
+                    }
+
                 } else {
                     Log.e("Log", "--stop");
                     StopService();
@@ -3321,6 +3354,28 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
         }
         recapApiAttempts++;
+    }
+
+
+    void SaveAgricultureRecord(final String EventDateTime,final String EventDateTimeInUtc,final String Truck,final String DriverId,final String CompanyId,
+                              final String SourceAddress,final String SourceLatitude,final String SourceLongitude,final String Odometer,final String EngineHours,final String IsEnabled){
+
+        params = new HashMap<String, String>();
+        params.put(ConstantsKeys.EventDateTime, EventDateTime);
+        params.put(ConstantsKeys.EventDateTimeInUtc, EventDateTimeInUtc);
+        params.put(ConstantsKeys.Truck, Truck);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.SourceAddress, SourceAddress);
+        params.put(ConstantsKeys.SourceLatitude, SourceLatitude);
+        params.put(ConstantsKeys.SourceLongitude, SourceLongitude);
+        params.put(ConstantsKeys.Odometer, Odometer);
+        params.put(ConstantsKeys.EngineHours, EngineHours);
+        params.put(ConstantsKeys.IsEnabled, IsEnabled);
+
+        SaveAgricultureRequest.executeRequest(Request.Method.POST, APIs.AddAgricultureException, params, SaveAgricultureAddress,
+                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+
     }
 
 
@@ -4390,7 +4445,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             notificationDesc =  getString(R.string.power_dia_clear_desc);
             notificationId = 2093;
 
-          /*  constants.saveObdData(getObdSource(), "PowerDiaEvent- Clear Event", "Response: updateClearEvent: ", "",
+          /*  constants.saveObdData(constants.getObdSource(getApplicationContext()), "PowerDiaEvent- Clear Event", "Response: updateClearEvent: ", "",
                     currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
                     "", obdEngineHours, global.GetCurrentDateTime(), "",
                     DriverId, dbHelper, driverPermissionMethod, obdUtil);
@@ -4654,6 +4709,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     boolean IsAutoDrive = dataObj.getBoolean("IsAutoOnDutyDriveEnabled");
                                     IsOBDPingAllowed = dataObj.getBoolean("IsOBDPingAllowed");
                                     IsAutoSync = dataObj.getBoolean("IsAutoSync");
+                                    boolean IsAgriException = constants.CheckNullBoolean(dataObj, ConstantsKeys.IsAgriException);
 
 
 
@@ -4667,6 +4723,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         SharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
                                         SharedPref.SetOBDPingAllowedStatus(IsOBDPingAllowed, getApplicationContext());
                                         SharedPref.SetAutoDriveStatus(IsAutoDrive, getApplicationContext());
+                                        SharedPref.setAgricultureExemption(IsAgriException, getApplicationContext());
 
                                         // check PU status exceeding status if 75km exceeded showing popup
                                         checkPUExceedStatus(dataObj);
@@ -4892,6 +4949,34 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         }
                         break;
 
+
+                    case SaveAgricultureAddress:
+                        try {
+                            Globally.PlayNotificationSound(getApplicationContext());
+                            global.ShowLocalNotification(getApplicationContext(),
+                                    getString(R.string.exception_disabled),
+                                    getString(R.string.ag_exmp_disabled), 2086);
+
+                            SharedPref.setAgricultureExemption(false, getApplicationContext());
+                            SharedPref.SaveAgricultureRecord("","","", getApplicationContext());
+
+                            hMethods.SaveDriversJob(DriverId, DeviceId, getString(R.string.end_ag_Exemption),
+                                    getString(R.string.disable_agriculture_exception),
+                                    SharedPref.getLocationEventType(getApplicationContext()), "", false,
+                                    SharedPref.IsNorthCanada(getApplicationContext()), DriverType, constants,
+                                    MainDriverPref, CoDriverPref, new EldSingleDriverLogPref(), new EldCoDriverLogPref(),
+                                    syncingMethod, global, hMethods, dbHelper, getApplicationContext(), false );
+
+                            Intent intent = new Intent(ConstantsKeys.DownloadProgress);
+                            intent.putExtra(ConstantsKeys.IsAgriException, true);
+                            LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                        break;
 
                 }
             }else{

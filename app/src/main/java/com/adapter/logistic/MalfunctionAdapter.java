@@ -112,8 +112,11 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                 timeMalTxtVw.setText( "");
             }
 
-           // statusMalTxtVw.setText(childData.getMalfunctionDefinition());
-            engHoursMalTxtVw.setText(constants.Convert1DecimalPlacesDouble(Double.parseDouble(childData.getEngineHours())));
+            String EngineHour = childData.getEngineHours();
+            if(EngineHour.length() > 0 && !EngineHour.equals("--")) {
+                EngineHour = constants.Convert1DecimalPlacesDouble(Double.parseDouble(EngineHour));
+            }
+            engHoursMalTxtVw.setText(EngineHour);
 
           /*  if(childData.getHexaSequenceNo().length() > 0){
                 seqIdMalTxtVw.setText(childData.getHexaSequenceNo());

@@ -63,6 +63,7 @@ import com.htstart.htsdk.minterface.HTBleScanListener;
 import com.htstart.htsdk.minterface.IReceiveListener;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.messaging.logistic.Globally;
@@ -104,12 +105,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     String AlertMsg = "Your vehicle is moving ";
     String AlertMsg1 = "and there is no driver login in eLog book";
     String AlertMsgSpeech = "Your vehicle is moving and there is no driver login in e log book";
+    String ClearEventType = "";
 
+    String TAG = "Service";
     String TAG_OBD = "OBD Service";
     private static final long TIME_INTERVAL_WIFI  = 10 * 1000;   // 10 sec
     private static final long TIME_INTERVAL_WIRED = 3 * 1000;   // 3 sec
 
-    String TAG = "Service";
     boolean isStopService       = false;
     double lastVehSpeed         = -1;
 
@@ -124,6 +126,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     boolean Intermediate = false;
     boolean IntermediateUpdate = false;
+    boolean isMalfncDataAlreadyPosting = false;
     CheckConnectivity checkConnectivity;
     HelperMethods hMethods;
     DBHelper dbHelper;
@@ -160,17 +163,20 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     int bleConnectionCount = 0;
     int VehicleSpeed = 0;
 
+    final int SaveMalDiagnstcEvent = 302;
+
     private BluetoothAdapter mBTAdapter;
     private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
     private LinkedList<HTBleData> mHtblData = new LinkedList<>();
     Intent locServiceIntent;
 
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
+    DriverPermissionMethod driverPermissionMethod;
 
     double tempOdo = 1179884000;  //1.090133595E9
     double tempEngHour = 22999.95;
 
-   // Utils obdUtil;
+    Utils obdUtil;
 
 
 
@@ -187,6 +193,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         mNotificationManager    = new NotificationManagerSmart(getApplicationContext());
         textToSpeech            = new TextToSpeech(getApplicationContext(), this);
         malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
+        driverPermissionMethod  = new DriverPermissionMethod();
 
         constants               = new Constants();
         mTimer                  = new Timer();
@@ -196,8 +203,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         try{
             //  ------------- OBD Log write initilization----------
-          //  obdUtil = new Utils(getApplicationContext());
-          //  obdUtil.createAppUsageLogFile();
+            obdUtil = new Utils(getApplicationContext());
+            obdUtil.createAppUsageLogFile();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -385,6 +392,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     if (ignitionStatus.equals("ON") && !truckRPM.equals("0")) {
                        // SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, "", "", getApplicationContext());
 
+                        /* ======================== Malfunction & Diagnostic Events ========================= */
+                       // checkPowerMalDiaEvent();   // checking Power Data Compliance Mal/Dia event
+
                         String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
                         if(savedDate.length() == 0){
                             savedDate = Globally.GetCurrentUTCTimeFormat();
@@ -467,6 +477,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     } else {
                         lastVehSpeed = -1;
                         SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+                        saveIgnitionStatus(ignitionStatus);
 
 
                         if( ObdPreference == Constants.OBD_PREF_WIRED ) {
@@ -1792,8 +1804,20 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                 isDataAlreadyPosting = false;
                 if (status.equals("true")) {
-                    // clear malfunction array
-                    malfunctionDiagnosticMethod.MalDiaDurationHelper(dbHelper, new JSONArray());
+
+                   if(flag == SaveMalDiagnstcEvent) {
+                       Log.d("SaveMalDiagnstcEvent", "SaveMalDiagnstcEvent saved successfully");
+                       isMalfncDataAlreadyPosting = false;
+                       // clear malfunction array
+                       malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, new JSONArray());
+
+
+                   }else{
+                       // clear malfunction array
+                       malfunctionDiagnosticMethod.MalDiaDurationHelper(dbHelper, new JSONArray());
+
+                   }
+
 
                 }
 
@@ -1813,5 +1837,317 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     };
 
+
+
+    void saveIgnitionStatus(String ignitionStatus){
+        String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
+
+        // save log when ignition status is changed.    //SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, getApplicationContext())
+        if (lastIgnitionStatus.equals("ON")) {
+            // save truck info to check power compliance mal/dia later.
+            SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, SharedPref.getObdSourceName(getApplicationContext()),
+                    global.getCurrentDate(), global.GetCurrentUTCTimeFormat(),
+                    SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
+                    SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
+                    getApplicationContext());
+
+        }
+    }
+
+
+
+
+    // check Power Data Compliance Malfunction/Diagnostic event
+    private void checkPowerMalDiaEvent(){
+
+        try{
+            if(SharedPref.isPowerMalfunctionOccurred(getApplicationContext()) == false) {
+                boolean isPowerCompMalAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerComplianceMal, getApplicationContext());
+                boolean isPowerCompDiaAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerDataDiag, getApplicationContext());
+
+                if ( (isPowerCompMalAllowed || isPowerCompDiaAllowed) && CompanyId.length() > 0) {
+
+                    String PowerEventStatus = constants.isPowerDiaMalOccurred(currentHighPrecisionOdometer, ignitionStatus,
+                            EngineSeconds, CompanyId, global, malfunctionDiagnosticMethod, isPowerCompMalAllowed, isPowerCompDiaAllowed,
+                            getApplicationContext(), constants, dbHelper, driverPermissionMethod, obdUtil);
+
+                    // String eventType = "";
+                    if (PowerEventStatus.length() > 0) {
+                        if (PowerEventStatus.contains(constants.MalfunctionEvent)) {
+                            if (isPowerCompMalAllowed) {
+                                //  eventType = "PowerMalfunction";
+                                SharedPref.savePowerMalfunctionOccurStatus(true,
+                                        SharedPref.isPowerDiagnosticOccurred(getApplicationContext()),
+                                        global.getCurrentDate(), getApplicationContext()); //global.getCurrentDate()
+
+                                // save occurred event in malfunction/diagnostic table
+                                saveMalfunctionEventInTable(constants.PowerComplianceMalfunction,
+                                        getString(R.string.power_comp_mal_occured),
+                                        global.GetCurrentUTCTimeFormat() ); //occurredTime     SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext())
+
+                                // save malfunction entry in duration table
+                                malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, CompanyId,
+                                        global.GetCurrentUTCTimeFormat() ,   //occurredTime     SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext()),
+                                        global.GetCurrentUTCTimeFormat(),
+                                        Constants.PowerComplianceMalfunction, constants, getApplicationContext());
+
+                                // update mal/dia status for enable disable according to log
+                                malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(CompanyId, global, constants, dbHelper, getApplicationContext());
+
+                                constants.saveMalfncnStatus(getApplicationContext(), true);
+                                SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+
+                            }
+                        } else {
+                            if (isPowerCompDiaAllowed) {
+
+                                SharedPref.savePowerMalfunctionOccurStatus(
+                                        SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
+                                        true, global.getCurrentDate(), getApplicationContext());
+
+                                constants.saveDiagnstcStatus(getApplicationContext(), true);
+
+                                // save occured event in malfunction/diagnostic table
+                                saveMalfunctionEventInTable(constants.PowerComplianceDiagnostic, getString(R.string.power_dia_occured),
+                                        Globally.GetCurrentUTCTimeFormat());  //SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext())
+
+
+                                // save malfunction entry in duration table
+                                malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, CompanyId,
+                                        Globally.GetCurrentUTCTimeFormat(),   //SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext())
+                                        global.GetCurrentUTCTimeFormat(),
+                                        Constants.PowerComplianceDiagnostic, constants, getApplicationContext());
+
+                                // update mal/dia status for enable disable according to log
+                                malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(CompanyId, global, constants, dbHelper, getApplicationContext());
+                                SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+
+                            }
+                        }
+
+
+                    }
+
+                }
+            }
+
+            // check if Malfunction/Diagnostic event occurred in ECM disconnection
+            if (SharedPref.isPowerDiagnosticOccurred(getApplicationContext())) {
+
+               /* String PowerClearEventCallTime = SharedPref.getPowerClearEventCallTime(getApplicationContext());
+                if(PowerClearEventCallTime.length() == 0){
+                    PowerClearEventCallTime = global.getCurrentDate();
+                    SharedPref.setPowerClearEventCallTime(PowerClearEventCallTime, getApplicationContext());
+                }*/
+               // int callTimeMinDiff = constants.getMinDifference(PowerClearEventCallTime, global.getCurrentDate());
+
+                // clear Power Diagnostic event after 5 min automatically when ECM is connected.
+              //  if (callTimeMinDiff >= 0) {  // callTimeMinDiff this check is used to avoid clear method calling after 3 sec each because checkPowerMalDiaEvent is calling after 3 sec when data coming from obd
+                  //  SharedPref.setPowerClearEventCallTime(global.getCurrentDate(), getApplicationContext());
+
+                    ClearEventUpdate(CompanyId, Constants.PowerComplianceDiagnostic,
+                                "Auto clear Power data diagnostic event after 5 min of ECM data received");
+
+
+
+                  /*  global.ShowLocalNotification(getApplicationContext(),
+                            getString(R.string.event_cleared),
+                            getString(R.string.power_dia_clear_desc), 2093);
+*/
+                    constants.saveObdData(constants.getObdSource(getApplicationContext()), "PowerDiaEvent- Clear Event", "", "",
+                            currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
+                            "", EngineSeconds, global.GetCurrentDateTime(), "",
+                            CompanyId, dbHelper, driverPermissionMethod, obdUtil);
+
+                    malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(CompanyId, global, constants, dbHelper, getApplicationContext());
+
+                    if (!SharedPref.isLocDiagnosticOccur(getApplicationContext()) && !SharedPref.isEngSyncDiagnstc(getApplicationContext())) {
+                        SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getApplicationContext()),
+                                SharedPref.isMalfunctionOccur(getApplicationContext()),
+                                false,
+                                SharedPref.isSuggestedEditOccur(getApplicationContext()), getApplicationContext());
+                    }
+
+                    SharedPref.savePowerMalfunctionOccurStatus(
+                            SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
+                            false, global.getCurrentDate(), getApplicationContext());
+
+
+               /* } else {
+                    // update EndTime with TotalMinutes instantly but not cleared, because we are clearing it after 5 min
+                    //  malfunctionDiagnosticMethod.updateTimeInPowerDiagnoseDia(dbHelper, getApplicationContext());
+                }*/
+
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    // Save Malfunction/Diagnostic Event Details
+    void saveMalfunctionEventInTable(String malDiaType, String MalfunctionDefinition, String occurredTime){
+
+        String clearedTime = "", clearTimeOdmeter = "", clearedTimeEngineHour = "";
+        JSONObject newOccuredEventObj;
+        String lastSavedOdometer =   SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext());
+        String lastSavedEngHr =  SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext());
+        String currentOdometer = SharedPref.getObdOdometer(getApplicationContext());
+        String currentEngHr = constants.get2DecimalEngHour(getApplicationContext());   //SharedPref.getObdEngineHours(getApplicationContext());
+
+        // save malfunction/diagnostic occur event to server with few inputs
+        if(malDiaType.equals(Constants.PowerComplianceDiagnostic) || malDiaType.equals(Constants.PowerComplianceMalfunction) ){
+            newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
+                    CompanyId, CompanyId, SharedPref.getVINNumber(getApplicationContext()),
+                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                    DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
+                    lastSavedEngHr,
+                    lastSavedOdometer,
+                    currentOdometer,
+                    occurredTime, malDiaType, MalfunctionDefinition,
+                    false, clearedTime,
+                    currentOdometer,
+                    currentEngHr
+            );
+
+        }else {
+
+            newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
+                    CompanyId, CompanyId, SharedPref.getVINNumber(getApplicationContext()),
+                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                    DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
+                    currentEngHr,
+                    currentOdometer,
+                    currentOdometer,
+                    occurredTime, malDiaType, MalfunctionDefinition,
+                    false, clearedTime, clearTimeOdmeter, clearedTimeEngineHour
+            );
+
+        }
+
+        // save Occurred event locally until not posted to server
+        JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
+        malArray.put(newOccuredEventObj);
+        malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper( dbHelper, malArray);
+
+
+        // call api
+        SaveMalfnDiagnstcLogToServer(malArray, CompanyId);
+
+
+    }
+
+
+    void SaveMalfnDiagnstcLogToServer(JSONArray malArray1, String DriverId){
+        try{
+            if(DriverId.length() > 0) {
+                if(malArray1 == null) {
+                    malArray1 = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
+                }
+                if (global.isConnected(getApplicationContext()) && malArray1.length() > 0 && isMalfncDataAlreadyPosting == false) {
+                    isMalfncDataAlreadyPosting = true;
+                    saveDriverLogPost.PostDriverLogData(malArray1, APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout30Sec,
+                            false, false, 1, SaveMalDiagnstcEvent);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+    // update clear event info in existing log if not uploaded on server yet
+    private void ClearEventUpdate(String CompanyId, String dataDiagnostic, String clearDesc){
+        try{
+           // String dateee = SharedPref.getPowerMalOccTime(getApplicationContext());
+           // int minDiff = constants.getMinDifference(dateee, global.getCurrentDate());
+
+          //  boolean isUnPostedEvent = malfunctionDiagnosticMethod.isUnPostedOfflineEvent( dataDiagnostic, dbHelper);
+
+          //  if(isUnPostedEvent){
+                // update clear event array in duration table and not posted to server with duration table input because occured event already exist TABLE_MALFUNCTION_DIANOSTIC
+                malfunctionDiagnosticMethod.updateAutoClearEvent(dbHelper, CompanyId, dataDiagnostic, true,true, getApplicationContext());
+
+                // update offline unposted event array
+                JSONArray malArray = malfunctionDiagnosticMethod.updateOfflineUnPostedMalDiaEvent(CompanyId, dataDiagnostic,
+                        clearDesc, dbHelper, getApplicationContext());
+
+                // call api
+                SaveMalfnDiagnstcLogToServer(malArray, CompanyId);
+
+
+
+           /* }else {
+                CheckEventsForClear(dataDiagnostic, true, minDiff);
+            }*/
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+   /* private void CheckEventsForClear(String EventCode, boolean isUpdate, int minDiff){
+        try{
+            int dayInMinDuration = 1440;
+            if(SharedPref.isMalfunctionOccur(getApplicationContext()) || SharedPref.isDiagnosticOccur(getApplicationContext()) ){
+
+                String clearEventLastCallTime = SharedPref.getClearEventCallTime(getApplicationContext());
+                if (clearEventLastCallTime.length() == 0) {
+                    SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                }
+
+                // Checking after 1 min
+                if (constants.minDiffMalfunction(clearEventLastCallTime, global, getApplicationContext()) > 0) {
+                    // update call time
+                    SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+
+                    JSONArray clearEventArray = malfunctionDiagnosticMethod.updateAutoClearEvent(dbHelper, CompanyId, EventCode, true, isUpdate, getApplicationContext());
+                    ClearEventType = EventCode;
+
+                    *//* We have 2 api for clear event. 1 for online events and 2nd is use here to clear in offline and input data as array.*//*
+                    if(clearEventArray.length() > 0){
+                        // call clear event API.
+                        if(global.isConnected(getApplicationContext() )) {
+                            saveDriverLogPost.PostDriverLogData(clearEventArray, APIs.CLEAR_MALFNCN_DIAGSTC_EVENT_BY_DATE,
+                                    Constants.SocketTimeout30Sec, true, false, 0, ClearMalDiaEvent);
+                        }
+
+                    }else{
+                        if(ClearEventType.equals(Constants.PowerComplianceDiagnostic)){
+
+                            if(minDiff > dayInMinDuration) {
+                                SharedPref.savePowerMalfunctionOccurStatus(
+                                        false,
+                                        false, global.getCurrentDate(), getApplicationContext());
+                            }else{
+                                SharedPref.savePowerMalfunctionOccurStatus(
+                                        SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
+                                        false, global.getCurrentDate(), getApplicationContext());
+                            }
+                        }else if(ClearEventType.equals(Constants.EngineSyncDiagnosticEvent)){
+
+                            SharedPref.saveEngSyncDiagnstcStatus(false, getApplicationContext());
+                            constants.saveDiagnstcStatus(getApplicationContext(), false);
+                        }
+
+                    }
+
+                }
+
+
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+*/
 
 }

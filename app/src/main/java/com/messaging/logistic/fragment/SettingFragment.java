@@ -37,6 +37,7 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
@@ -49,6 +50,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.AsyncResponse;
@@ -61,9 +63,11 @@ import com.constants.SharedPref;
 import com.constants.SyncDataUpload;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.AdverseRemarksDialog;
+import com.custom.dialogs.AgricultureDialog;
 import com.custom.dialogs.ChangeCycleDialog;
 import com.custom.dialogs.ConfirmationDialog;
 import com.custom.dialogs.DeferralDialog;
+import com.custom.dialogs.DriverAddressDialog;
 import com.custom.dialogs.ObdDataInfoDialog;
 import com.local.db.DeferralMethod;
 import com.models.CycleModel;
@@ -114,7 +118,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     View rootView;
     TextView actionBarTitle, caCycleTV, usCycleTV, timeZoneTV, dateActionBarTV, checkAppUpdateTV, haulExpTxtView, haulExcptnTxtVw,adverseExpTxtView,adverseCanadaExpTxtView,deferralTxtView;
-    TextView caCurrentCycleTV, usCurrentCycleTV, operatingZoneTV;
+    TextView caCurrentCycleTV, usCurrentCycleTV, operatingZoneTV, agricultureExpTxtView;
     Spinner caCycleSpinner, usCycleSpinner, timeZoneSpinner;
     Button SettingSaveBtn;
     ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView, canEditImgView, usEditImgView;
@@ -122,7 +126,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn,
             obdDiagnoseBtn, docBtn, deferralRuleLay, brightnessSoundEditBtn, settingsMainLay, actionbarMainLay, updateBlinkLayout;
     LinearLayout canCycleLayout, usaCycleLayout, timeZoneLayout;
-    SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton,adverseCanadaSwitchButton;
+    SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton,adverseCanadaSwitchButton,agricultureSwitchButton;
     List<CycleModel> CanCycleList;
     List<CycleModel> UsaCycleList;
     List<TimeZoneModel> TimeZoneList;
@@ -146,12 +150,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     CoTimeZonePref coTimePrefManager;
     ArrayAdapter<String> CanCycleAdapter;
 
+
     int SyncData = 1, CheckInternetConnection = 2, CheckUpdate = 3;
     int ExistingVersionCodeInt  = 0,  VersionCodeInt = 0, AppInstallAttemp = 0;
     int CanListSize = 0, UsaListSize = 0, TimeZoneListSize = 0, SavedPosition = 0;
     String SavedCanCycle = "", SavedUsaCycle = "", CurrentCycleId = "", SavedTimeZone = "", DeviceId = "", DriverId = "", DriverName = "", CompanyId = "";
     String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "", TruckNumber, DriverTimeZone,
-            IsSouthCanada, SavedCycleType, changedCycleId, changedCycleName, LocationType = "";
+            IsSouthCanada, SavedCycleType, changedCycleId, changedCycleName, LocationType = "", agricultureAddress = "";
+    String SourceLatitude = "", SourceLongitude = "";
     String Approved = "2";
     String Rejected = "3";
 
@@ -159,6 +165,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     ConfirmationDialog confirmationDialog;
     AdverseRemarksDialog adverseRemarksDialog;
     DeferralDialog deferralDialog;
+    DriverAddressDialog driverAddressDialog;
+    AgricultureDialog agricultureDialog;
 
     CheckConnectivity connectivityTask;
     File syncingFile = new File("");
@@ -169,13 +177,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     private String url = "", ApkFilePath = "", existingApkFilePath = "";
     String VersionCode = "", VersionName = "", ExistingApkVersionCode = "", ExistingApkVersionName = "";
     CircularProgressBar downloadProgressBar;
-    VolleyRequest GetAppUpdateRequest, GetDriverLogPostPermission, getCycleChangeApproval, ChangeCycleRequest, OperatingZoneRequest ;
-    final int GetAppUpdate  = 1, DriverLogPermission = 2, CycleChangeApproval = 3, ChangeCycle = 4, OperatingZone = 5;
+    VolleyRequest GetAppUpdateRequest, GetDriverLogPostPermission, getCycleChangeApproval, ChangeCycleRequest, OperatingZoneRequest,
+            AddressLatLongRequest,SaveAgricultureRequest;
+    final int GetAppUpdate  = 1, DriverLogPermission = 2, CycleChangeApproval = 3, ChangeCycle = 4, OperatingZone = 5,
+                AddressLatLong = 6, SaveAgricultureException = 7;
     int DriverType = 0;
     int leftOffOrSleeperMin = 0;
     long progressPercentage = 0;
     boolean isNorthCanada = false;
-    boolean IsLogPermission = false, IsDownloading = false, IsManualAppDownload = false;
+    boolean IsLogPermission = false, IsDownloading = false, IsManualAppDownload = false, isAgricultureExcptn = false, IsAgriExceptionEnable = false;
     DriverPermissionMethod driverPermissionMethod;
     MainDriverEldPref MainDriverPref;
     CoDriverEldPref CoDriverPref;
@@ -216,6 +226,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -249,6 +261,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         getCycleChangeApproval      = new VolleyRequest(getActivity());
         ChangeCycleRequest          = new VolleyRequest(getActivity());
         OperatingZoneRequest        = new VolleyRequest(getActivity());
+        AddressLatLongRequest       = new VolleyRequest(getActivity());
+        SaveAgricultureRequest      = new VolleyRequest(getActivity());
+
         connectivityTask            = new CheckConnectivity(getActivity());
         driverPermissionMethod      = new DriverPermissionMethod();
         SaveSettingDetails          = new ParseLoginDetails();
@@ -284,6 +299,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         haulExcptnTxtVw      = (TextView)v.findViewById(R.id.haulExcptnTxtVw);
         haulExpTxtView       = (TextView)v.findViewById(R.id.haulExpTxtView);
         operatingZoneTV      = (TextView)v.findViewById(R.id.operatingZoneTV);
+        agricultureExpTxtView    = (TextView)v.findViewById(R.id.agricultureExpTxtView);
+
         caCurrentCycleTV     = (TextView)v.findViewById(R.id.caCurrentCycleTV);
         usCurrentCycleTV     = (TextView)v.findViewById(R.id.usCurrentCycleTV);
         adverseExpTxtView     = (TextView)v.findViewById(R.id.adverseExpTxtView);
@@ -330,6 +347,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         haulExceptnSwitchButton = (SwitchCompat)v.findViewById(R.id.haulExceptnSwitchButton);
         adverseSwitchButton = (SwitchCompat)v.findViewById(R.id.adverseSwitchButton);
         adverseCanadaSwitchButton  = (SwitchCompat) v.findViewById(R.id.adverseCanadaSwitchButton);
+        agricultureSwitchButton  = (SwitchCompat) v.findViewById(R.id.agricultureSwitchButton);
 
         showBrightnessSeekBar = (SeekBar)v.findViewById(R.id.sbBrightness);
         showVolumeSeekBar     = (SeekBar)v.findViewById(R.id.sbVolume);
@@ -522,7 +540,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 //                            getExceptionStatus();
                             if (!isHaulExcptn) {
 
-                                if (isAllowToEnableExceptionInCan(DriverId)) {
+                                if (isAllowToEnableExceptionn(DriverId, true)) {
                                     try {
                                         if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
                                             adverseRemarksDialog.dismiss();
@@ -552,6 +570,45 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             }
         });
 
+
+
+
+        agricultureSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(buttonView.isPressed()) {
+                    if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ){
+                        global.EldScreenToast(SyncDataBtn, getString(R.string.excp_canada_cycle_check), getResources().getColor(R.color.colorSleeper));
+                        buttonView.setChecked(false);
+                    }else {
+                        if (isChecked) {
+                            boolean isVehicleMoving = SharedPref.isVehicleMoving(getContext());
+                            getExceptionStatus();
+
+                            if (!isAgricultureExcptn) {
+                                if (isAllowToEnableExceptionn(DriverId, false) && !isVehicleMoving) {
+                                    OpenAddressDialog();
+                                } else {
+                                    buttonView.setChecked(false);
+                                    global.EldScreenToast(SyncDataBtn, exceptionDesc, getResources().getColor(R.color.colorSleeper));
+                                }
+                            } else {
+                                buttonView.setChecked(false);
+                                global.EldScreenToast(SyncDataBtn, getString(R.string.already_enable_excp), getResources().getColor(R.color.colorSleeper));
+                            }
+                        }else{
+                            buttonView.setChecked(isChecked);
+                            IsAgriExceptionEnable = false;
+                            SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(), Globally.TRUCK_NUMBER,
+                                    DriverId,CompanyId,
+                                    SharedPref.getAgricultureRecord("AgricultureAddress", getContext()),SharedPref.getAgricultureRecord("AgricultureLatitude", getContext()),SharedPref.getAgricultureRecord("AgricultureLongitude", getContext()),SharedPref.getObdEngineHours(getContext()),SharedPref.getObdOdometer(getContext()),"0");
+
+                        }
+                    }
+                }
+            }
+        });
 
 
         /*
@@ -593,6 +650,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             }
         });
 
+        adverseCanadaSwitchButton.setEnabled(false);
+        deferralSwitchButton.setEnabled(false);
 
 
         eldMenuLay.setOnClickListener(this);
@@ -656,17 +715,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         haulExceptnSwitchButton.setChecked(isHaulExcptn);
         adverseSwitchButton.setChecked(isAdverseExcptn);
         deferralSwitchButton.setChecked(isDeferral);
+        agricultureSwitchButton.setChecked(isAgricultureExcptn);
 
         if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ){
             adverseCanadaExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
             deferralTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
             haulExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
             adverseExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
+            agricultureExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
         }else {
             haulExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
             adverseExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
             adverseCanadaExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
             deferralTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
+            agricultureExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
         }
 
 
@@ -696,7 +758,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         DisplayUsaCycles();
         DisplayTimeZones();
 
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter("download_progress"));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter(ConstantsKeys.DownloadProgress));
 
         if (global.isConnected(getActivity())) {
             GetDriverLogPermission(DriverId);
@@ -730,6 +792,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             isAdverseExcptn = SharedPref.getAdverseExcptnCo(getActivity());
             isDeferral      = SharedPref.isDeferralCoDriver(getActivity());
         }
+
+        isAgricultureExcptn =   SharedPref.getAgricultureExemption(getActivity());
     }
 
 
@@ -1672,57 +1736,60 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            long percentage     = intent.getIntExtra("percentage", 0);
-            ApkFilePath         = intent.getStringExtra("path");
-            boolean isCompleted = intent.getBooleanExtra("isCompleted", false);
-            boolean IsInterrupted = intent.getBooleanExtra("isInterrupted", false);
+            boolean IsAgriExceptionChanged = intent.getBooleanExtra(ConstantsKeys.IsAgriException, false);
+            if(IsAgriExceptionChanged){
+                getExceptionStatus();
+                agricultureSwitchButton.setChecked(isAgricultureExcptn);
 
-            if(percentage >= progressPercentage) {
-                //  IsDownloading = true;
-                downloadProgressBar.setProgress(percentage);
-                progressPercentage = percentage;
-            }
+            }else {
+                long percentage = intent.getIntExtra("percentage", 0);
+                ApkFilePath = intent.getStringExtra("path");
+                boolean isCompleted = intent.getBooleanExtra("isCompleted", false);
+                boolean IsInterrupted = intent.getBooleanExtra("isInterrupted", false);
 
-            if(isCompleted || IsInterrupted){
-
-                fadeViewAnim.cancel();
-                downloadBlinkIV.stopAnimation();
-
-                IsDownloading = false;
-
-                if(ApkFilePath.equals("Downloading failed.") || IsInterrupted){
-                    if(IsInterrupted) {
-                        global.EldScreenToast(SyncDataBtn, "Downloading cancelled", getResources().getColor(R.color.colorSleeper));
-                    }else{
-                        global.EldScreenToast(SyncDataBtn, ApkFilePath, getResources().getColor(R.color.colorSleeper));
-                    }
-                    ApkFilePath = "";
-                    ExistingApkVersionCode = "";
-                    ExistingApkVersionName = "";
-                    checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
-                }else{
-                    global.EldScreenToast(SyncDataBtn, "Downloading completed", getResources().getColor(R.color.colorPrimary));
-                    checkAppUpdateTV.setText(getResources().getString(R.string.install_updates));
-
-                    if (ApkFilePath.length() > 0) {
-                        InstallApp(ApkFilePath);
-                    }
+                if (percentage >= progressPercentage) {
+                    //  IsDownloading = true;
+                    downloadProgressBar.setProgress(percentage);
+                    progressPercentage = percentage;
                 }
 
+                if (isCompleted || IsInterrupted) {
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                    fadeViewAnim.cancel();
+                    downloadBlinkIV.stopAnimation();
 
-                        updateBlinkLayout.setVisibility(View.GONE);
-                      //  downloadHintImgView.setVisibility(View.GONE);
-                      //  updateAppDownloadIV.setVisibility(View.GONE);
+                    IsDownloading = false;
+
+                    if (ApkFilePath.equals("Downloading failed.") || IsInterrupted) {
+                        if (IsInterrupted) {
+                            global.EldScreenToast(SyncDataBtn, "Downloading cancelled", getResources().getColor(R.color.colorSleeper));
+                        } else {
+                            global.EldScreenToast(SyncDataBtn, ApkFilePath, getResources().getColor(R.color.colorSleeper));
+                        }
+                        ApkFilePath = "";
+                        ExistingApkVersionCode = "";
+                        ExistingApkVersionName = "";
+                        checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
+                    } else {
+                        global.EldScreenToast(SyncDataBtn, "Downloading completed", getResources().getColor(R.color.colorPrimary));
+                        checkAppUpdateTV.setText(getResources().getString(R.string.install_updates));
+
+                        if (ApkFilePath.length() > 0) {
+                            InstallApp(ApkFilePath);
+                        }
                     }
-                }, 500);
 
 
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateBlinkLayout.setVisibility(View.GONE);
+                        }
+                    }, 500);
+
+
+                }
             }
-
         }
     };
 
@@ -1964,6 +2031,39 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     }
 
 
+    void GetUserLatLong(final String Address){
+
+        params = new HashMap<String, String>();
+        params.put(ConstantsKeys.SourceAddress, Address);
+
+        AddressLatLongRequest.executeRequest(Request.Method.POST, APIs.GetLatLongFromAddress, params, AddressLatLong,
+                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+
+    }
+
+    void SaveAgricultureRecord(final String EventDateTime,final String EventDateTimeInUtc,final String Truck,final String DriverId,final String CompanyId,
+                              final String SourceAddress,final String SourceLatitude,final String SourceLongitude,final String Odometer,final String EngineHours,final String IsEnabled){
+
+        params = new HashMap<String, String>();
+        params.put(ConstantsKeys.EventDateTime, EventDateTime);
+        params.put(ConstantsKeys.EventDateTimeInUtc, EventDateTimeInUtc);
+        params.put(ConstantsKeys.Truck, Truck);
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.CompanyId, CompanyId);
+        params.put(ConstantsKeys.SourceAddress, SourceAddress);
+        params.put(ConstantsKeys.SourceLatitude, SourceLatitude);
+        params.put(ConstantsKeys.SourceLongitude, SourceLongitude);
+        params.put(ConstantsKeys.Odometer, Odometer);
+        params.put(ConstantsKeys.EngineHours, EngineHours);
+        params.put(ConstantsKeys.IsEnabled, IsEnabled);
+
+        SaveAgricultureRequest.executeRequest(Request.Method.POST, APIs.AddAgricultureException, params, SaveAgricultureException,
+                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+
+    }
+
+
+
     void CheckAppStatus(){
         if (ExistingVersionCodeInt >= VersionCodeInt) {
 
@@ -2102,6 +2202,73 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         break;
 
 
+                    case AddressLatLong:
+                        try {
+                            dataObj = new JSONObject(obj.getString("Data"));
+                            SourceLatitude = dataObj.getString("SourceLatitude");
+                            SourceLongitude = dataObj.getString("SourceLongitude");
+                            double latitude = Double.parseDouble(SourceLatitude);
+                            double longitude = Double.parseDouble(SourceLongitude);
+                            double distanceMiles = constants.CalculateDistance(Double.parseDouble(Globally.LATITUDE),Double.parseDouble(Globally.LONGITUDE),latitude,longitude,"M", 0);
+                            Log.d("", String.valueOf(distanceMiles));
+                            double distanceMilesFormat = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMiles));
+                            double distanceKm =  Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat * 1.60934));
+                            double distance = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat - Constants.AgricultureDistanceInMiles));
+                            if(distanceMilesFormat > Constants.AgricultureDistanceInMiles){
+                                OpenAgricultureAlertDialog("<br/><font color='#354365'>Your Current distance from Source of Load is "+ distanceMilesFormat +
+                                        " ("+distanceKm+" KM). " +" <br/><b>Please Note:</b> You are eligible for this exemption within 150 air-mile " +
+                                        "(172.6 Miles or 277.80 KM) radius from the source of the commodities.</font>");
+                            }else{
+                                IsAgriExceptionEnable = true;
+                                SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(),Globally.TRUCK_NUMBER,DriverId,CompanyId,
+                                        agricultureAddress,String.valueOf(latitude),String.valueOf(longitude),SharedPref.getObdEngineHours(getContext()),SharedPref.getObdOdometer(getContext()),"1");
+
+                                if (driverAddressDialog != null && driverAddressDialog.isShowing())
+                                    driverAddressDialog.dismiss();
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case SaveAgricultureException:
+
+                        if(IsAgriExceptionEnable) {
+
+                            SharedPref.setAgricultureExemption(true, getActivity());
+                            SharedPref.SaveAgricultureRecord(SourceLatitude, SourceLongitude, agricultureAddress, getContext());
+
+                            hMethods.SaveDriversJob(DriverId, DeviceId, getString(R.string.begin_ag_Exemption),
+                                    getString(R.string.enable_agriculture_exception),
+                                    LocationType, "", false, isNorthCanada, DriverType, constants,
+                                    MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false);
+                            global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Enabled", getResources().getColor(R.color.colorPrimary));
+
+
+                        }else{
+
+                            SharedPref.setAgricultureExemption(false, getActivity());
+                            SharedPref.SaveAgricultureRecord("","","",getContext());
+                            hMethods.SaveDriversJob(DriverId, DeviceId, getString(R.string.end_ag_Exemption), getString(R.string.disable_agriculture_exception),
+                                    LocationType, "", false, isNorthCanada, DriverType, constants,
+                                    MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
+                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false );
+
+                            global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Disabled", getResources().getColor(R.color.colorPrimary));
+
+
+                        }
+
+                        getExceptionStatus();
+
+
+
+
+                        break;
+
                 }
             }else{
                 try {
@@ -2118,7 +2285,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     }else{
                         if(flag == ChangeCycle){
                             Globally.DriverSwitchAlert(getActivity(), "Cycle Change Request !!", Message, "Ok");
-                        }else if(flag == GetAppUpdate || flag == OperatingZone){
+                        }else if(flag == GetAppUpdate || flag == OperatingZone || flag == SaveAgricultureException){
                             global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorVoilation));
                         }
 
@@ -2142,6 +2309,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     if(progressDialog != null)
                         progressDialog.dismiss();
                     settingSpinImgVw.stopAnimation();
+
+                    if(flag == SaveAgricultureException){
+                        global.EldScreenToast(SyncDataBtn, error.toString(), getResources().getColor(R.color.colorVoilation));
+                    }
 
                     Log.d("Driver", "error" + error.toString());
                     break;
@@ -2510,36 +2681,69 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     }
 
-    public boolean isAllowToEnableExceptionInCan(String DriverId){
+    public boolean isAllowToEnableExceptionn(String DriverId, boolean isAdverse){
         boolean isAllow = false;
         exceptionDesc = "";
         String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
 
         try {
+            String ValidateCycle1, ValidateCycle2;
 
-            if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+            if(isAdverse){
+                ValidateCycle1 = Globally.CANADA_CYCLE_1;
+                ValidateCycle2 = Globally.CANADA_CYCLE_2;
+            }else{
+                ValidateCycle1 = Globally.USA_WORKING_6_DAYS;
+                ValidateCycle2 = Globally.USA_WORKING_7_DAYS;
+
+                /*ValidateCycle1 = Globally.CANADA_CYCLE_1;
+                ValidateCycle2 = Globally.CANADA_CYCLE_2;*/
+            }
+
+            if(CurrentCycleId.equals(ValidateCycle1) || CurrentCycleId.equals(ValidateCycle2)) {
                 JSONArray logArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
                 JSONObject lastObj = hMethods.GetLastJsonFromArray(logArray);
 
                 int status = lastObj.getInt(ConstantsKeys.DriverStatusId);
                 boolean yardMove = lastObj.getBoolean(ConstantsKeys.YardMove);
 
-                if(status == Constants.DRIVING || (status == Constants.ON_DUTY && yardMove == false) ){
-                    isAllow = true;
+                if(isAdverse){
+                    if(status == Constants.DRIVING || (status == Constants.ON_DUTY && !yardMove) ){
+                        isAllow = true;
+                    }else{
+                        exceptionDesc = "Exception only allowed in Driving or OnDuty.";
+
+                        /*if(status == Constants.ON_DUTY && yardMove){
+                            exceptionDesc = "Exception not allowed in Yard Move.";
+                        }else if(status == Constants.OFF_DUTY){
+                            boolean Personal = lastObj.getBoolean(ConstantsKeys.Personal);
+                            if(Personal){
+                                exceptionDesc = "Exception not allowed in Personal Use.";
+                            }else{
+                                exceptionDesc = "Exception not allowed in Off Duty.";
+                            }
+                        }else{
+                            exceptionDesc = "Exception not allowed in Sleeper.";
+                        }*/
+                    }
                 }else{
-                    if(status == Constants.ON_DUTY && yardMove){
-                        exceptionDesc = "Exception not allowed in Yard Move.";
-                    }else if(status == Constants.OFF_DUTY){
-                        boolean Personal = lastObj.getBoolean(ConstantsKeys.Personal);
-                        if(Personal){
+                    boolean Personal = lastObj.getBoolean(ConstantsKeys.Personal);
+                    if(status == Constants.OFF_DUTY && !Personal){
+                        isAllow = true;
+                    }else{
+                        exceptionDesc = "Exception only allowed in OffDuty.";
+                        /*if(status == Constants.ON_DUTY ){
+                            exceptionDesc = "Exception not allowed in OnDuty.";
+                        }else if(status == Constants.DRIVING){
+                            exceptionDesc = "Exception not allowed in Driving";
+                        }else if(Personal && status == Constants.OFF_DUTY){
                             exceptionDesc = "Exception not allowed in Personal Use.";
                         }else{
-                            exceptionDesc = "Exception not allowed in Off Duty.";
-                        }
-                    }else{
-                        exceptionDesc = "Exception not allowed in Sleeper.";
+                            exceptionDesc = "Exception not allowed in Sleeper.";
+                        }*/
                     }
                 }
+
             }else{
                 exceptionDesc = "Exception not allowed. Please contact to your company";
             }
@@ -2552,5 +2756,73 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     }
 
 
+    void OpenAddressDialog() {
+
+
+        try {
+            if(getActivity() != null) {
+
+                driverAddressDialog = new DriverAddressDialog(getActivity(),rootView,
+                        new DriverLocationListener());
+                driverAddressDialog.show();
+            }
+
+        } catch (final IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class DriverLocationListener implements DriverAddressDialog.LocationListener {
+
+        @Override
+        public void CancelLocReady() {
+            if (driverAddressDialog != null && driverAddressDialog.isShowing())
+                driverAddressDialog.dismiss();
+            agricultureSwitchButton.setChecked(false);
+        }
+
+        @Override
+        public void SaveLocReady(String Address) {
+
+            Log.d("Address: " , Address);
+            agricultureAddress = Address;
+
+            if(Address.length() < 5){
+                Toast.makeText(getContext(), "Please enter proper address", Toast.LENGTH_LONG).show();
+            }else {
+                GetUserLatLong(Address);
+            }
+
+        }
+    }
+
+
+    void OpenAgricultureAlertDialog(String description) {
+
+
+        try {
+            if(getActivity() != null) {
+
+                agricultureDialog = new AgricultureDialog(getActivity(),description,
+                        new AgricultureListner());
+                agricultureDialog.show();
+            }
+
+        } catch (final IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class AgricultureListner implements AgricultureDialog.ConfirmationListener {
+
+        @Override
+        public void OkBtnReady() {
+            agricultureDialog.dismiss();
+        }
+    }
 
 }

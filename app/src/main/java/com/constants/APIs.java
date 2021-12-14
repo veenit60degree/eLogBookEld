@@ -67,7 +67,8 @@ public class APIs {
     public static String DownloadPdfCanadaLog               = DOMAIN_URL_ALS + "DownloadPdfCanadaLog";
     public static String GetListOfPdfCanadaLogs             = DOMAIN_URL_ALS + "GetListOfPdfCanadaLogs";
     public static String GenerateLink                       = DOMAIN_URL_ALS + "GenerateLink";
-
+    public static String AddAgricultureException            = DOMAIN_URL_ALS + "AddAgricultureException";
+    public static String GetLatLongFromAddress              = DOMAIN_URL_ALS + "GetLatLongFromAddress";
 
     /*-------- ELD API ----------*/
     public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";

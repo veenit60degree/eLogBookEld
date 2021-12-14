@@ -53,7 +53,7 @@
                 android:id="@+id/titleDescView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="Do you really want to confirm the Load Delivery?"
                 android:layout_centerHorizontal="true"
                 android:textSize="@dimen/text_size_23"

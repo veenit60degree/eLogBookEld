@@ -169,6 +169,7 @@
     <string name="adverse_excp">Adverse Exception </string>
     <string name="deferral_rule">Deferral Rule</string>
     <string name="adverse_excp_enabled">Adverse Exception Enabled</string>
+    <string name="agri_excp_enabled">AG Exemption Enabled</string>
     <string name="short_haul_excp_enabled">Short Haul Exception Enabled</string>
     <string name="adverse">Adverse</string>
     <string name="short_haul">Short Haul</string>
@@ -482,6 +483,8 @@
     <string name="excp_usa_cycle_check">You are not eligible in Usa Cycle</string>
     <string name="canada_deferral_rule">Deferral of Daily Off-Duty Time (Canada South) SOR/2005-313 (16)</string>
     <string name="usa_adverse_excp">Adverse Driving (USA) 395.1(b)(1)</string>
+    <string name="usa_agriculture_excp">Agriculture Exemption</string>
+    <string name="ag_exmp_disabled">AG Exemption has been disabled</string>
     <string name="canada_adverse_excp">Adverse Driving (Canada) SOR/2005-313 (76)</string>
     <string name="usa_take_16_hour_exc">16 Hour Short Haul 395.1(0)</string>
     <string name="USA_Exemption">USA Exemptions</string>
@@ -864,6 +867,12 @@
     <string name="enable_adverse_exception">EnableAdverseException</string>
     <string name="enable_ShortHaul_exception">EnableShortHaulException</string>
     <string name="enable_deferral_rule">EnableDeferralRule</string>
+
+    <string name="begin_ag_Exemption">Begin 150 Air Miles AG Exemption</string>
+    <string name="end_ag_Exemption">End 150 Air Miles AG Exemption</string>
+    <string name="enable_agriculture_exception">EnableAgricultureException</string>
+    <string name="disable_agriculture_exception">DisableAgricultureException</string>
+    <string name="exception_disabled">Exception Disabled</string>
 
     <string name="already_uploading">Please wait! Data saving in progress</string>
     <string name="already_refreshed">Please wait. Data is refreshing</string>

@@ -214,6 +214,8 @@ public class Constants {
     public static int ConnectionOffline = 5;
     public static int CertifyLog = 101010;      // set this value to differentiate where we go on certify screen
 
+    public static double AgricultureDistanceInMiles = 172.61;
+
     public static final int WIRED_CONNECTED     = 1001;
     public static final int WIRED_DISCONNECTED  = 1002;
     public static final int WIRED_ERROR         = 1006;
@@ -1282,6 +1284,24 @@ public class Constants {
     public static double milesToKm(double distanceInMiles) {
         return distanceInMiles * 1.609344f;    //1.60934
     }
+
+    public static String milesToMeter(String odometer) {
+
+        try {
+            double odometerInMiles = Double.parseDouble(odometer);
+            odometer = BigDecimal.valueOf(odometerInMiles * 1609.344).toPlainString();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(odometer.contains(".")){
+            String[] array = odometer.split("\\.");
+            odometer = array[0];
+        }
+
+        return odometer;
+    }
+
 
     public static String kmToMiles(String odometer) {
         // double miles=distanceInKm/1.609;
@@ -4899,6 +4919,30 @@ public class Constants {
             }else{
                 isObdConnected = false;
             }
+        }
+
+        return isObdConnected;
+    }
+
+
+    public String getObdSource(Context context){
+        if(SharedPref.getObdPreference(context) == Constants.OBD_PREF_BLE) {
+            return BleObd;
+        }else if(SharedPref.getObdPreference(context) == Constants.OBD_PREF_WIRED){
+            return WiredOBD;
+        }else{
+            return WifiOBD;
+        }
+    }
+
+
+    public boolean isObdConnWithoutAppRestrictValidation(Context context){
+        boolean isObdConnected;
+        if (SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED
+                || SharedPref.getObdStatus(context) == Constants.BLE_CONNECTED){
+            isObdConnected = true;
+        }else{
+            isObdConnected = false;
         }
 
         return isObdConnected;

@@ -133,7 +133,8 @@ public class InspectionMethod {
                                           String Longitude, String DriverTimeZone ,
                                           String SupervisorMechanicsName, String TruckIssueType ,
                                           String TraiorIssueType, String InspectionTypeId ,
-                                          String ByteDriverSign, String ByteSupervisorSign
+                                          String ByteDriverSign, String ByteSupervisorSign,
+                                          String OdometerInMeters
 
                                           ){
 
@@ -171,7 +172,7 @@ public class InspectionMethod {
             inspectionJson.put(ConstantsKeys.InspectionTypeId,              InspectionTypeId  );
             inspectionJson.put(ConstantsKeys.ByteDriverSign,                ByteDriverSign  );
             inspectionJson.put(ConstantsKeys.ByteSupervisorSign ,           ByteSupervisorSign   );
-
+            inspectionJson.put(ConstantsKeys.OdometerInMeters ,           OdometerInMeters   );
 
 
         }catch (Exception e){

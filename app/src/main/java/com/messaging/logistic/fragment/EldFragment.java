@@ -323,6 +323,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     boolean isUnIdentifiedAlert = false;
     boolean isPending18DaysRequest = false;
     boolean isDeferralOccurred      = false;
+    boolean isAgriException    = false;
 
     String DeviceTimeZone = "", DriverTimeZone = "", LocationJobTYpe = "";
     String WeeklyRemainingTime = "00:00", DrivingRemainingTime = "00:00", OnDutyRemainingTime = "00:00";
@@ -759,7 +760,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     getExceptionStatus();
 
                     if(getActivity() != null){
-                            if (isHaulExcptn || isAdverseExcptn || isDeferralOccurred) {
+                            if (isHaulExcptn || isAdverseExcptn || isDeferralOccurred || isAgriException) {
                                 excpnEnabledTxtVw.setAlpha(1f);
                                 excpnEnabledTxtVw.startAnimation(exceptionFaceView);
                             } else {
@@ -1212,14 +1213,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
 
         isDeferralOccurred = constants.isDeferralOccurred(DRIVER_ID, MainDriverId, getActivity());
-
+        isAgriException = SharedPref.getAgricultureExemption(getActivity());
     }
 
 
     void setExceptionView(){
         getExceptionStatus();
 
-        if (isHaulExcptn || isAdverseExcptn || isDeferralOccurred) {
+        if (isHaulExcptn || isAdverseExcptn || isDeferralOccurred || isAgriException) {
             excpnEnabledTxtVw.startAnimation(exceptionFaceView);
             excpnEnabledTxtVw.setVisibility(View.VISIBLE);
 
@@ -1233,6 +1234,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     deferralDays = 1;
                 }
                 excpnEnabledTxtVw.setText("OFF DUTY DEFERRAL (DAY " + deferralDays + ")");
+            }else if(isAgriException){
+                excpnEnabledTxtVw.setText(getString(R.string.agri_excp_enabled));
             }else{
                 excpnEnabledTxtVw.setVisibility(View.GONE);
             }
@@ -1649,9 +1652,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         int stateListSize = 0;
         StateArrayList = new ArrayList<String>();
         StateList = new ArrayList<DriverLocationModel>();
-
+        DriverLocationModel selectModel = new DriverLocationModel("", "Select", "");
         try {
             StateList = statePrefManager.GetState(getActivity());
+            StateList.add(0, selectModel);
             stateListSize = StateList.size();
         } catch (Exception e) {
             stateListSize = 0;
@@ -2626,17 +2630,20 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
             case R.id.refreshLogBtn:
-                if(SharedPref.isSuggestedEditOccur(getActivity()) && Constants.isClaim == false){
-                    Toast.makeText(getActivity(), getString(R.string.other_suggested_log), Toast.LENGTH_LONG).show();
-                    Intent i = new Intent(getActivity(), SuggestedFragmentActivity.class);
-                    i.putExtra(ConstantsKeys.suggested_data, "");
-                    i.putExtra(ConstantsKeys.Date, "");
-                    startActivity(i);
-                }else {
-                    IsRefreshedClick = false;
-                    GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
+                try {
+                    if (SharedPref.isSuggestedEditOccur(getActivity()) && Constants.isClaim == false) {
+                        Toast.makeText(getActivity(), getString(R.string.other_suggested_log), Toast.LENGTH_LONG).show();
+                        Intent i = new Intent(getActivity(), SuggestedFragmentActivity.class);
+                        i.putExtra(ConstantsKeys.suggested_data, "");
+                        i.putExtra(ConstantsKeys.Date, "");
+                        startActivity(i);
+                    } else {
+                        IsRefreshedClick = false;
+                        GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-
                 break;
 
             case R.id.resetTimerBtn:
@@ -4106,14 +4113,19 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         isYardBtnClick = false;
 
-        int ObdStatus = SharedPref.getObdStatus(getActivity());
-        if(ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
-                                || ObdStatus == Constants.BLE_CONNECTED) {
-            // odb connected
-        }else{
-            Toast.makeText(getActivity(), getString(R.string.info_missed_desc), Toast.LENGTH_SHORT).show();
+        try {
+            if(getActivity() != null) {
+                int ObdStatus = SharedPref.getObdStatus(getActivity());
+                if (ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
+                        || ObdStatus == Constants.BLE_CONNECTED) {
+                    // odb connected
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.info_missed_desc), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
 
       //  Log.d("Saved Status Service", "--- DriverStatusId: "+DriverStatusId);
     }
@@ -5337,6 +5349,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 if (isDisableAdverseException) {
                     if (isAdverseExcptn) {
+                       // isAdverseExcptn = false;
                         if (DriverType == Constants.MAIN_DRIVER_TYPE)
                             SharedPref.setAdverseExcptn(false, getActivity());
                         else
@@ -6465,7 +6478,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     TabAct.vehicleList.add(vehicleModel);
                                 }
                             }catch (Exception e){
-                                Toast.makeText(getActivity(), "OBD Vehicles66: " +e.toString(), Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getActivity(), "OBD Vehicles66: " +e.toString(), Toast.LENGTH_LONG).show();
                                // constants.saveAppUsageLog("OBD Vehicles66: " +e.toString(), false, false, obdUtil);
                                 e.printStackTrace();
                             }
@@ -6802,8 +6815,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 boolean IsCycleRequest      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsCycleRequest);
                                 boolean IsUnidentified      = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsUnidentified);
                                 boolean UnidentifiedFromOBD = constants.CheckNullBoolean(dataJObject, ConstantsKeys.UnidentifiedFromOBD);
+                                boolean IsAgriException = constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsAgriException);
 
                                 SharedPref.SetUnidentifiedFromOBDStatus(UnidentifiedFromOBD, getActivity());
+                                SharedPref.setAgricultureExemption(IsAgriException, getActivity());
 
                                 boolean IsDeferral          = false;
                                 int DeferralDay             = dataJObject.getInt(ConstantsKeys.DeferralDay);

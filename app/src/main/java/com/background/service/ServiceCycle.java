@@ -343,10 +343,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                     boolean isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
                     boolean isAutoDrive = SharedPref.isAutoDrive(context);
+                    boolean isAgricultureExemption = SharedPref.getAgricultureExemption(context);
 
                     if (currentJob.equals(String.valueOf(DRIVER_JOB_STATUS))) {  // reason of this check: some times latest entry was not saved in 18 days array due to unknown/strange error. thats why wrong auto status entry was saved from app. So we need to add this check for safe side.
-                        // allow only when auto driver permission will be enabled
-                        if(isAutoDrive) {
+                        // allow only when auto driver permission will be enabled and AgricultureExemption setting will be false
+                        if(isAutoDrive && !isAgricultureExemption) {
 
                             if (!isPersonal && VehicleSpeed != -1) {
                                 try {

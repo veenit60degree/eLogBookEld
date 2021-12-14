@@ -282,14 +282,18 @@ public class DriverLocationDialog extends Dialog {
                 dismiss();
             } else {
                 if(updatedCityName.length() > 4) {
-                    locListener.SaveLocReady(
-                            Position,
-                            spinnerItemPos,
-                            JobType,
-                            updatedCityName,
-                            CityNameEditText,
-                            view,
-                            isMalfunction);
+                    if(spinnerItemPos !=  0) {
+                        locListener.SaveLocReady(
+                                Position,
+                                spinnerItemPos,
+                                JobType,
+                                updatedCityName,
+                                CityNameEditText,
+                                view,
+                                isMalfunction);
+                    }else{
+                        Globally.EldScreenToast(CityNameEditText, ConstantsEnum.SELECT_STATE, getContext().getResources().getColor(R.color.colorVoilation));
+                    }
                 }else{
                     Globally.EldScreenToast(CityNameEditText, ConstantsEnum.LOCATION_DESC, getContext().getResources().getColor(R.color.colorVoilation));
                 }

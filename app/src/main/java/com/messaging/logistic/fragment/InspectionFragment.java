@@ -100,12 +100,13 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     ArrayList<String> TrailerList = new ArrayList<String>();
     ArrayList<Integer> TruckIdList = new ArrayList<Integer>();
     ArrayList<Integer> TrailerIdList = new ArrayList<Integer>();
+    ArrayList<String> DistanceTypeList;
 
-    TextView dateActionBarTV, EldTitleTV, inspectionDateTv, powerInspectionTV, noDefectLabel, locInspTitleTV, trailerTextVw;
+    TextView dateActionBarTV, EldTitleTV, inspectionDateTv, powerInspectionTV, noDefectLabel, locInspTitleTV, trailerTextVw, currentOdometerTV;
     public static TextView trailerInspectionTV;
-    EditText remarksEditText, SupervisorNameTV, cityEditText;
+    EditText remarksEditText, SupervisorNameTV, cityEditText, odometerEditTxt;
     AutoCompleteTextView locInspectionTV;
-    Spinner stateInspSpinner;
+    Spinner stateInspSpinner, selectDistanceSpinner;
     String EldThemeColor = "#1A3561";
     String BlackColor    = "#7C7C7B";
     RadioGroup prePostRadioGroup, correctRadioGroup;
@@ -117,7 +118,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     Button changeLocBtn, saveInspectionBtn;
     ImageView signSuprvsrIV, signDriverIV;
     ProgressBar inspectionProgressBar;
-    String btnSelectedType = "", SignImageSelected = "", SupervisorSignImage = "", DriverSignImage = "";
+    String btnSelectedType = "", SignImageSelected = "", SupervisorSignImage = "", DriverSignImage = "", Odometer = "", OdometerDistanceType = "";
     String  DRIVER_ID = "", VIN_NUMBER = "", DeviceId = "";
     String DriverName = "",CompanyId = "", InspectionDateTime = "", Location = "", PreTripInsp = "false", PostTripInsp = "false",
             AboveDefectsCorrected = "false", AboveDefectsNotCorrected = "false", Remarks = "",Latitude = "", Longitude = "",
@@ -228,6 +229,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         remarksEditText = (EditText) view.findViewById(R.id.remarksEditText);
         SupervisorNameTV = (EditText) view.findViewById(R.id.SupervisorNameTV);
         cityEditText = (EditText) view.findViewById(R.id.cityEditText);
+        odometerEditTxt= (EditText) view.findViewById(R.id.odometerEditTxt);
 
         trailerTextVw = (TextView) view.findViewById(R.id.trailerTextVw);
         trailerInspectionTV = (TextView) view.findViewById(R.id.trailerInspectionTV);
@@ -237,11 +239,14 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         powerInspectionTV = (TextView) view.findViewById(R.id.powerInspectionTV);
         noDefectLabel = (TextView) view.findViewById(R.id.noDefectLabel);
         locInspTitleTV = (TextView) view.findViewById(R.id.locInspTitleTV);
+        currentOdometerTV = (TextView) view.findViewById(R.id.currentOdometerTV);
 
         checkboxTrailer = (CheckBox) view.findViewById(R.id.checkboxTrailer);
         checkboxTruck = (CheckBox) view.findViewById(R.id.checkboxTruck);
 
         stateInspSpinner = (Spinner) view.findViewById(R.id.stateInspSpinner);
+        selectDistanceSpinner = (Spinner) view.findViewById(R.id.selectDistanceSpinner);
+
         inspectionScrollView = (ScrollView) view.findViewById(R.id.inspectionScrollView);
 
         dateActionBarTV.setVisibility(View.VISIBLE);
@@ -306,6 +311,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             GetInspectionDetail(DRIVER_ID, DeviceId, Globally.PROJECT_ID, VIN_NUMBER);
         }
 
+        setOdometerSpinnerData();
+
         eldMenuLay.setOnClickListener(this);
         saveInspectionBtn.setOnClickListener(this);
         changeLocBtn.setOnClickListener(this);
@@ -364,7 +371,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         saveInspectionBtn.setEnabled(true);
 
         CheckTrailerStatus();
-
+        setOdometer();
 
         if(IsAOBRD && !IsAOBRDAutomatic){
            // Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
@@ -498,9 +505,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         int stateListSize = 0;
         StateArrayList = new ArrayList<String>();
         StateList      = new ArrayList<DriverLocationModel>();
+        DriverLocationModel selectModel = new DriverLocationModel("", "Select", "");
 
         try {
             StateList       = statePrefManager.GetState(getActivity());
+            StateList.add(0, selectModel);
             stateListSize   = StateList.size();
         }catch (Exception e){
             stateListSize = 0;
@@ -790,7 +799,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         if (IsAOBRD && !IsAOBRDAutomatic) {
             City = cityEditText.getText().toString().trim();
             Location = City + ", " + State + ", " + Country;
-            if (City.length() > 0) {
+            if (City.length() > 0 && State.length() > 0) {
                 if(PreTripInsp.equals("true"))
                     InspectionTypeId = String.valueOf(Constants.PreInspection);
                 else
@@ -801,7 +810,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             } else {
                 inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
                 cityEditText.requestFocus();
-                Globally.EldScreenToast(saveInspectionBtn, "Enter city name.", getResources().getColor(R.color.colorVoilation));
+                if (City.length() == 0) {
+                    Globally.EldScreenToast(saveInspectionBtn, "Enter city name.", getResources().getColor(R.color.colorVoilation));
+                }else{
+                    Globally.EldScreenToast(saveInspectionBtn, "Select State first.", getResources().getColor(R.color.colorVoilation));
+                }
             }
         } else {
             getLocation();
@@ -818,16 +831,42 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     }
 
     void CheckInspectValidationPart2() {
-        if (correctRadioGroup.getVisibility() == View.VISIBLE && (TruckIssueType.length() > 0 || TraiorIssueType.length() > 0)) {
-            if (AboveDefectsCorrected.equals("true") || AboveDefectsNotCorrected.equals("true")) {
-                CallSaveInspectionAPI();
+
+         if(constants.isObdConnWithoutAppRestrictValidation(getActivity()) && !Odometer.equals("0")){
+             Odometer = SharedPref.getObdOdometer(getContext());
+        }else{
+             Odometer = odometerEditTxt.getText().toString().trim();
+             if(Odometer.length() > 0){
+                 if(OdometerDistanceType.equals("KM")){
+                     Odometer = Constants.kmToMeter1(Odometer);
+                 }else if(OdometerDistanceType.equals("Miles")){
+                     Odometer = Constants.milesToMeter(Odometer);
+                 }
+             }
+        }
+
+        if(Odometer.length() > 0 && !Odometer.equals("0") && (OdometerDistanceType.equals("KM") || OdometerDistanceType.equals("Miles")) ) {
+            if (correctRadioGroup.getVisibility() == View.VISIBLE && (TruckIssueType.length() > 0 || TraiorIssueType.length() > 0)) {
+                if (AboveDefectsCorrected.equals("true") || AboveDefectsNotCorrected.equals("true")) {
+                    CallSaveInspectionAPI();
+                } else {
+                    Globally.EldScreenToast(inspectionDateTv, "Please select defect status", getResources().getColor(R.color.colorVoilation));
+                }
             } else {
-                Globally.EldScreenToast(inspectionDateTv, "Please select defect status", getResources().getColor(R.color.colorVoilation));
+                TruckIssueType = "";
+                TraiorIssueType = "";
+                CallSaveInspectionAPI();
             }
-        } else {
-            TruckIssueType = "";
-            TraiorIssueType = "";
-            CallSaveInspectionAPI();
+        }else{
+            inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
+            odometerEditTxt.requestFocus();
+
+            if(Odometer.length() == 0 || Odometer.equals("0")){
+                Globally.EldScreenToast(inspectionDateTv, "Enter current odometer of your vehicle.", getResources().getColor(R.color.colorVoilation));
+            }else{
+                Globally.EldScreenToast(inspectionDateTv, "Select unit first.", getResources().getColor(R.color.colorVoilation));
+            }
+
         }
     }
 
@@ -900,6 +939,62 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         }
     }
 
+
+
+    void setOdometer(){
+        Odometer = SharedPref.getObdOdometer(getContext());
+
+        if(constants.isObdConnWithoutAppRestrictValidation(getActivity()) && !Odometer.equals("0")){
+            String odometerInMeter = Constants.meterToKmWithObd(Odometer);
+            if(odometerInMeter.contains(".")){
+                String[] array = odometerInMeter.split("\\.");
+                odometerInMeter = array[0];
+            }
+            currentOdometerTV.setText(odometerInMeter + " km");
+
+            currentOdometerTV.setVisibility(View.VISIBLE);
+            selectDistanceSpinner.setVisibility(View.GONE);
+            odometerEditTxt.setVisibility(View.GONE);
+        }else{
+            currentOdometerTV.setVisibility(View.GONE);
+            selectDistanceSpinner.setVisibility(View.VISIBLE);
+            odometerEditTxt.setVisibility(View.VISIBLE);
+            Odometer = "0";
+        }
+
+    }
+
+
+    void setOdometerSpinnerData(){
+        try{
+            DistanceTypeList = new ArrayList<String>();
+            DistanceTypeList.add("Select Unit");
+            DistanceTypeList.add("KM");
+            DistanceTypeList.add("Miles");
+
+            ArrayAdapter dataAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, DistanceTypeList);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            selectDistanceSpinner.setAdapter(dataAdapter);
+
+            // Spinner click listener
+            selectDistanceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                    OdometerDistanceType = DistanceTypeList.get(position);
+                    Log.d("OdometerDistanceType ",OdometerDistanceType);
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
     void getViewData(){
@@ -1046,6 +1141,9 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         cityEditText.setText("");
         InspectionTypeId = "";
         locInspectionTV.setText("");
+        odometerEditTxt.setText("");
+
+        setOdometerSpinnerData();
 
         Constants.IS_TRAILER_INSPECT = false;
         noDefectLabel.setText("No defects");
@@ -1336,7 +1434,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         JSONObject inspectionData = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
                 Globally.TRUCK_NUMBER, Globally.TRAILOR_NUMBER, CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected, AboveDefectsNotCorrected,
                 Remarks, Globally.LATITUDE, Globally.LONGITUDE, DriverTimeZone, SupervisorMechanicsName, TruckIssueType, TraiorIssueType, InspectionTypeId,
-                ByteDriverSign, ByteSupervisorSign);
+                ByteDriverSign, ByteSupervisorSign, Odometer);
 
         // Add inspection JSON obj in 18 Days Array
         JSONArray reverseArray = shipmentHelperMethod.ReverseArray(inspection18DaysArray);

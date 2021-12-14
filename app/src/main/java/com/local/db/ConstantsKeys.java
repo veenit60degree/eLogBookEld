@@ -47,6 +47,15 @@ public class ConstantsKeys {
     public static String isIsAdverseException   = "isIsAdverseException";
     public static String AdverseExceptionRemarks= "AdverseExceptionRemarks";
 
+    public static String AgricultureLongitude   = "AgricultureLongitude";
+    public static String AgricultureLatitude    = "AgricultureLatitude";
+    public static String AgricultureAddress     = "AgricultureAddress";
+
+    public static String SourceAddress          = "SourceAddress";
+    public static String SourceLatitude         = "SourceLatitude";
+    public static String SourceLongitude        = "SourceLongitude";
+    public static String IsEnabled              = "IsEnabled";
+    public static String EventDateTimeInUtc     = "EventDateTimeInUtc";
 
     public static String DriverName         = "DriverName";
     public static String Remarks            = "Remarks";
@@ -273,6 +282,9 @@ public class ConstantsKeys {
     public static String LocMalfunctionOccurTime        = "LocMalfunctionOccurTime";
     public static String LocMalfunctionOccurUtcTime     = "LocMalfunctionOccurUtcTime";
     public static String UnidentifiedFromOBD            = "UnidentifiedFromOBD";
+    public static String IsAgriException                = "IsAgriException";
+    public static String DownloadProgress               = "download_progress";
+
 
     public static String IsLocDiagnostic                = "IsLocDiagnostic";
     public static String LocDiaOccurTime                = "LocDiaOccurTime";
@@ -370,7 +382,7 @@ public class ConstantsKeys {
     public static String InspectionTruckIssueType       = "InspectionTruckIssueType";
     public static String InspectionTrailorIssueType     = "InspectionTrailorIssueType";
 
-
+    public static String OdometerInMeters               = "OdometerInMeters";
     public static String LogSignImage                   = "LogSignImage";
     public static String LogSignImageInByte             = "LogSignImageInByte";
     public static String CoDriverName                   = "CoDriverName";
