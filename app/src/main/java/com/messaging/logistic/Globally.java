@@ -59,6 +59,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.htstart.htsdk.HTBleSdk;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.messaging.logistic.fragment.EldFragment;
 import com.notifications.NotificationManagerSmart;
 import com.shared.pref.CoDriverEldPref;
@@ -163,6 +164,7 @@ public class Globally {
 	public static String NO_CYCLE_NAME                        = "No Cycle";
 	public static String CANADA_CYCLE_1_NAME                  = "C 70/7";
 	public static String CANADA_CYCLE_2_NAME                  = "C 120/14";
+	public static String CANADA_CYCLE_1_NORTH_NAME            = "C (80/7)";
 	public static String USA_WORKING_6_DAYS_NAME              = "U 60/7";
 	public static String USA_WORKING_7_DAYS_NAME              = "U 70/8";
 
@@ -310,19 +312,65 @@ public class Globally {
 
 
 
+	public void UnIdenDialog(Context context, boolean isDisplay){
+
+		try {
+			if (ecmErrorAlert != null && ecmErrorAlert.isShowing()) {
+				ecmErrorAlert.dismiss();
+			}
+
+			if(isDisplay) {
+				ecmErrorAlert = new Dialog(context);
+				ecmErrorAlert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+				ecmErrorAlert.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				ecmErrorAlert.setContentView(R.layout.dialog_limited_eld_connection);
+				ecmErrorAlert.setCancelable(false);
+
+				ecmErrorAlert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+				WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+				lp.copyFrom(ecmErrorAlert.getWindow().getAttributes());
+				lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+				lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+				lp.gravity = Gravity.BOTTOM;
+				ecmErrorAlert.getWindow().setAttributes(lp);
+
+
+				final ImageView closeDialogImg = (ImageView) ecmErrorAlert.findViewById(R.id.closeDialogImg);
+				closeDialogImg.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						ecmErrorAlert.dismiss();
+					}
+				});
+
+				if (context != null) {
+					ecmErrorAlert.show();
+				}
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+
+
+
 	/*========================= Show Toast message =====================*/
 	public static void showToast(View view, String message) {
 		try {
-			Snackbar snackbar = Snackbar
-					.make(view, message, Snackbar.LENGTH_LONG);
 
-			snackbar.setActionTextColor(Color.WHITE);
-			View snackbarView = snackbar.getView();
-			snackbarView.setBackgroundColor(Color.parseColor("#2E2E2E"));
-			TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
-			textView.setTextColor(Color.WHITE);
+			if(view.getContext() != null ) {
+				Snackbar snackbar = Snackbar
+						.make(view, message, Snackbar.LENGTH_LONG);
 
-			snackbar.show();
+				snackbar.setActionTextColor(Color.WHITE);
+				View snackbarView = snackbar.getView();
+				snackbarView.setBackgroundColor(Color.parseColor("#2E2E2E"));
+				TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
+				textView.setTextColor(Color.WHITE);
+
+				snackbar.show();
+			}
 
 		}catch (Exception e){
 			e.printStackTrace();
@@ -334,23 +382,24 @@ public class Globally {
 	public static void EldScreenToast(View view, String message, int color) {
 
 		try {
-			Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+			if(view.getContext() != null ) {
+				Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
 
-			snackbar.setActionTextColor(Color.WHITE);
-			View snackbarView = snackbar.getView();
-			snackbarView.setBackgroundColor(color);
+				snackbar.setActionTextColor(Color.WHITE);
+				View snackbarView = snackbar.getView();
+				snackbarView.setBackgroundColor(color);
 
-			TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
-			textView.setTextColor(Color.WHITE);
-			snackbar.show();
-
+				TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
+				textView.setTextColor(Color.WHITE);
+				snackbar.show();
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 
-			if(view.getContext() != null){
+			/*if(view.getContext() != null ){
 				//Toast.makeText(view.getContext(), message, Toast.LENGTH_LONG).show();
 				EldScreenToast1(view.getContext(), message, color);
-			}
+			}*/
 		}
 
 	}
@@ -373,9 +422,6 @@ public class Globally {
 		}catch (Exception e){
 			e.printStackTrace();
 
-			if(context != null){
-				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-			}
 		}
 
 	}
@@ -384,17 +430,20 @@ public class Globally {
 	public static void EldToastWithDuration(View view, String message, int color) {
 
 		try {
-			Snackbar snackbar = Snackbar
-					.make(view, message, Snackbar.LENGTH_LONG);
 
-			snackbar.setActionTextColor(Color.WHITE);
-			View snackbarView = snackbar.getView();
-			snackbarView.setBackgroundColor(color);
-			snackbar.setDuration(9000);	// 9 sec
+			if(view.getContext() != null ) {
+				Snackbar snackbar = Snackbar
+						.make(view, message, Snackbar.LENGTH_LONG);
 
-			TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
-			textView.setTextColor(Color.WHITE);
-			snackbar.show();
+				snackbar.setActionTextColor(Color.WHITE);
+				View snackbarView = snackbar.getView();
+				snackbarView.setBackgroundColor(color);
+				snackbar.setDuration(9000);    // 9 sec
+
+				TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
+				textView.setTextColor(Color.WHITE);
+				snackbar.show();
+			}
 
 		}catch (Exception e){
 			e.printStackTrace();
@@ -577,7 +626,7 @@ public class Globally {
 			if (dayDiff >= 0) {
 				int minDiff = (int) Constants.getDateTimeDuration(savedUtcDateTime, currentUtcDateTime).getStandardMinutes();
 				//int minDiff = currentUtcDateTime.getMinuteOfDay() - savedUtcDateTime.getMinuteOfDay();
-				if (Math.max(-5, minDiff) == Math.min(minDiff, 9)) {	//minDiff >= -5
+				if (Math.max(-9, minDiff) == Math.min(minDiff, 9)) {	//minDiff >= -5
 					isTimeCorrect = true;
 				} else {
 					isTimeCorrect = false;
@@ -2316,13 +2365,15 @@ public class Globally {
 			SharedPref.SetTruckStartLoginStatus(true, c);
 			SharedPref.SetUpdateAppDialogTime("", c);
 			SharedPref.setNotiShowTime("", c);
-			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , c);
 			SharedPref.SetTruckIgnitionStatusForContinue("", "", "", c);
 
 			ClearSqliteDB(c);
 			Constants.ClearNotifications(c);
 
 			DisConnectBleDevice(c);
+
+			MalfunctionDiagnosticMethod malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
+			malfunctionDiagnosticMethod.updateTimeOnLocationReceived(new DBHelper(c));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2369,7 +2420,6 @@ public class Globally {
 			SharedPref.setCountryCycle("CountryCycle", "", c);
 			SharedPref.setTimeZone("", c);
 			SharedPref.setUTCTimeZone("utc_time_zone", "", c);
-			SharedPref.setVINNumber("", c);
 			SharedPref.setTrailorNumber("", c);
 			SharedPref.setVehicleId("", c);
 			SharedPref.SetViolation(false, c);

@@ -73,6 +73,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
     public static List<SavedInspectionModel> savedInspectionList = new ArrayList<>();
     public static List<CtPatInspectionModel> savedCtPatInspectionList = new ArrayList<>();
     SavedInspectionTitleAdapter inspectionAdapter;
+
     boolean isTablet, isDOT ;
     DBHelper dbHelper;
     HelperMethods hMethods;
@@ -142,13 +143,19 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
         isDOT               = SharedPref.IsDOT(getActivity());
 
-        Bundle getBundle  = this.getArguments();
-        if(getBundle != null) {
-            InspectionDateTime = getBundle.getString("date");
-            inspectionType = getBundle.getString("inspection_type");
-           // getBundle.clear();
+        if(Constants.IsInspectionDetailViewBack) {
+            InspectionDateTime = Constants.SelectedDatePti;
+            inspectionType = "pti";
+        }else{
+            Bundle getBundle = this.getArguments();
+            if (getBundle != null) {
+                InspectionDateTime = getBundle.getString("date");
+                inspectionType = getBundle.getString("inspection_type");
+                // getBundle.clear();
+            }
         }
 
+        Constants.IsInspectionDetailViewBack = false;
         dateActionBarTV.setText(InspectionDateTime);
 
         CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
@@ -363,6 +370,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
             } catch (final Exception e) {
                 e.printStackTrace();
             }
+            Constants.SelectedDatePti = SelectedDate;
             InspectionDateTime = SelectedDate;
             VisibleHideNextPrevView("");
             OnDateSelectionView(SelectedDate);
@@ -374,6 +382,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
     private void OnDateSelectionView(String SelectedDate){
         InspectionDateTime  = SelectedDate;
+        Constants.SelectedDatePti = SelectedDate;
         dateActionBarTV.setText(SelectedDate);
 
         // Get Local Saved Data
@@ -458,7 +467,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                 JSONArray TrailerArray      = new JSONArray(inspectItemObj.getString(ConstantsKeys.InspectionTrailorIssueType));
                 TruckList   = ParseListData(TruckArray);
                 TrailerList = ParseListData(TrailerArray);
-                String VehicleEquNumber = "", TrailorEquNumber = "", VIN = "";
+                String VehicleEquNumber = "", TrailorEquNumber = "", VIN = "", Odometer = "";
 
                 int InspectionTypeId = 1;
                 JSONObject inspectionItemObj = new JSONObject(inspectItemObj.getString(ConstantsKeys.Inspection));
@@ -481,6 +490,10 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                 if(inspectionItemObj.has(ConstantsKeys.CreatedDate)){
                     CreatedDate = inspectionItemObj.getString(ConstantsKeys.CreatedDate);
                 }
+                if(inspectionItemObj.has(ConstantsKeys.OdometerInMeters)){
+                    Odometer = inspectionItemObj.getString(ConstantsKeys.OdometerInMeters);
+                }
+
 
                 if(inspectionItemObj.has(ConstantsKeys.InspectionDateTime)){
                     CreatedDate = Globally.InspectionDateTimeFormat(inspectionItemObj.getString(ConstantsKeys.InspectionDateTime));
@@ -562,6 +575,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
                         InspectionTypeId,
                         "", "",
+                        Odometer,
 
                         TruckList,
                         TrailerList
@@ -721,7 +735,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         @Override
         public void getError(VolleyError error, int flag) {
 
-            if(getActivity() != null) {
+            if(getActivity() != null && !getActivity().isFinishing()) {
                 Log.d("Driver", "error" + error.toString());
 
                 resetData();

@@ -337,7 +337,7 @@ public class ShippingDocDialog extends Dialog {
 
     void DismissDialog(String msgg){
         try {
-            if(getContext() != null) {
+            if(getContext() != null ) {
                 Toast.makeText(getContext(), msgg, Toast.LENGTH_LONG).show();
             }
             new Handler().postDelayed(new Runnable() {
@@ -561,7 +561,7 @@ public class ShippingDocDialog extends Dialog {
                         // Save data in 18 Days shipping list
                         //  JSONObject objItem = shipmentHelper.GetLastJsonObject(shipmentJsonArray, shipmentJsonArray.length()-1);
                         //    Update18DaysDriverInfo(objItem);
-                        if(getContext() != null) {
+                        if(getContext() != null  ) {
                             Toast.makeText(getContext(), MsgOffline, Toast.LENGTH_LONG).show();
                         }
                     }

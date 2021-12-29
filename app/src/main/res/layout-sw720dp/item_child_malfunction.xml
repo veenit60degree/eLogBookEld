@@ -20,6 +20,22 @@
 
         >
 
+
+        <TextView
+            android:id="@+id/unIdenMalTxtVw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_18"
+            android:paddingLeft="@dimen/margin_short_5"
+            android:textColor="@color/active_status_bg"
+            android:text="@string/uniden_record"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:visibility="invisible"
+
+            />
+
+
         <!--blue_button-->
         <TextView
             android:id="@+id/timeMalTxtVw"

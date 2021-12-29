@@ -450,7 +450,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                 }
 
             } else {
-                if(getActivity() != null)
+                if(getActivity() != null && !getActivity().isFinishing())
                     global.EldScreenToast(eldMenuLay, global.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
             }
         }catch (Exception e){

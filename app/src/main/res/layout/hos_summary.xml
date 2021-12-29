@@ -608,8 +608,8 @@
                                         android:layout_height="wrap_content"
                                         android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
-                                        android:gravity="center_horizontal"
 
+                                        android:gravity="center_horizontal"
                                         android:textColor="@color/hos_used_time"
                                         android:textSize="@dimen/text_size_17"
                                         android:textStyle="bold" />
@@ -786,14 +786,13 @@
                                         android:id="@+id/hosPerDayUsedOffDutyTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textColor="@color/hos_used_time"
-                                        android:textStyle="bold"
-                                        android:textSize="@dimen/text_size_17"
+                                        android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center_horizontal"
-                                        android:layout_centerInParent="true"
+                                        android:textColor="@color/hos_used_time"
+                                        android:textSize="@dimen/text_size_17"
 
-                                        />
+                                        android:textStyle="bold" />
 
 
 

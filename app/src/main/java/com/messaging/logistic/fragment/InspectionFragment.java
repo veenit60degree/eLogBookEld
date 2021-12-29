@@ -371,7 +371,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         saveInspectionBtn.setEnabled(true);
 
         CheckTrailerStatus();
-        setOdometer();
+        setOdometerWithView();
 
         if(IsAOBRD && !IsAOBRDAutomatic){
            // Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
@@ -505,11 +505,10 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         int stateListSize = 0;
         StateArrayList = new ArrayList<String>();
         StateList      = new ArrayList<DriverLocationModel>();
-        DriverLocationModel selectModel = new DriverLocationModel("", "Select", "");
 
         try {
             StateList       = statePrefManager.GetState(getActivity());
-            StateList.add(0, selectModel);
+            StateList.add(0,  new DriverLocationModel("", "Select", ""));
             stateListSize   = StateList.size();
         }catch (Exception e){
             stateListSize = 0;
@@ -585,7 +584,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                    // DBHelper dbHelper = new DBHelper(getActivity());
                     if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if (Globally.isConnected(getActivity())) {
-                            dialog = new TrailorDialog(getActivity(), "trailor", false, Globally.TRAILOR_NUMBER, 0, false, Globally.onDutyRemarks, 0, dbHelper, new TrailorListener());
+                            dialog = new TrailorDialog(getActivity(), "trailor", false, Globally.TRAILOR_NUMBER,
+                                    0, false, Globally.onDutyRemarks, 0, dbHelper, new TrailorListener());
                             dialog.show();
                         } else {
                             Globally.EldScreenToast(saveInspectionBtn, Globally.INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
@@ -832,9 +832,9 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     void CheckInspectValidationPart2() {
 
-         if(constants.isObdConnWithoutAppRestrictValidation(getActivity()) && !Odometer.equals("0")){
-             Odometer = SharedPref.getObdOdometer(getContext());
-        }else{
+         if(!constants.isObdConnectedWithELD(getActivity()) || Odometer.equals("0")){
+             /*Odometer = SharedPref.getObdOdometer(getContext());
+        }else{*/
              Odometer = odometerEditTxt.getText().toString().trim();
              if(Odometer.length() > 0){
                  if(OdometerDistanceType.equals("KM")){
@@ -843,6 +843,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                      Odometer = Constants.milesToMeter(Odometer);
                  }
              }
+        }else{
+             OdometerDistanceType = "KM";   // temp to pass check
         }
 
         if(Odometer.length() > 0 && !Odometer.equals("0") && (OdometerDistanceType.equals("KM") || OdometerDistanceType.equals("Miles")) ) {
@@ -861,10 +863,14 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
             odometerEditTxt.requestFocus();
 
+            odometerEditTxt.setVisibility(View.VISIBLE);
+            selectDistanceSpinner.setVisibility(View.VISIBLE);
+            currentOdometerTV.setVisibility(View.GONE);
+
             if(Odometer.length() == 0 || Odometer.equals("0")){
                 Globally.EldScreenToast(inspectionDateTv, "Enter current odometer of your vehicle.", getResources().getColor(R.color.colorVoilation));
             }else{
-                Globally.EldScreenToast(inspectionDateTv, "Select unit first.", getResources().getColor(R.color.colorVoilation));
+                Globally.EldScreenToast(inspectionDateTv, "Select odometer unit first.", getResources().getColor(R.color.colorVoilation));
             }
 
         }
@@ -941,20 +947,35 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
 
-    void setOdometer(){
-        Odometer = SharedPref.getObdOdometer(getContext());
+    void setOdometerWithView(){
 
-        if(constants.isObdConnWithoutAppRestrictValidation(getActivity()) && !Odometer.equals("0")){
-            String odometerInMeter = Constants.meterToKmWithObd(Odometer);
-            if(odometerInMeter.contains(".")){
-                String[] array = odometerInMeter.split("\\.");
-                odometerInMeter = array[0];
+        String odometerInKm = SharedPref.getObdOdometer(getContext());
+
+        if(odometerInKm.equals("--") || odometerInKm.equals("null")){
+            odometerInKm = "0";
+        }
+
+        if(constants.isObdConnectedWithELD(getActivity())){
+            Odometer = Constants.kmToMeter1(odometerInKm);
+
+            if(!Odometer.equals("0")){
+
+                String odometerInMiles = Constants.kmToMiles(odometerInKm);
+
+                currentOdometerTV.setText(Constants.getUpTo2DecimalString(odometerInKm) + " km (" + Constants.getUpTo2DecimalString(odometerInMiles) + " miles)" );
+
+                currentOdometerTV.setVisibility(View.VISIBLE);
+                selectDistanceSpinner.setVisibility(View.GONE);
+                odometerEditTxt.setVisibility(View.GONE);
+
+            }else{
+                currentOdometerTV.setVisibility(View.GONE);
+                selectDistanceSpinner.setVisibility(View.VISIBLE);
+                odometerEditTxt.setVisibility(View.VISIBLE);
+                Odometer = "0";
             }
-            currentOdometerTV.setText(odometerInMeter + " km");
 
-            currentOdometerTV.setVisibility(View.VISIBLE);
-            selectDistanceSpinner.setVisibility(View.GONE);
-            odometerEditTxt.setVisibility(View.GONE);
+
         }else{
             currentOdometerTV.setVisibility(View.GONE);
             selectDistanceSpinner.setVisibility(View.VISIBLE);
@@ -1074,6 +1095,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
     private void MoveFragment(String date ){
+        Constants.SelectedDatePti = date;
         InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
         Bundle bundle = new Bundle();
         bundle.putString("date", date);
@@ -1430,6 +1452,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             }
         }
 
+        CreatedDate         = Globally.GetCurrentDeviceDateTime();
         isLocationChange = false;
         JSONObject inspectionData = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
                 Globally.TRUCK_NUMBER, Globally.TRAILOR_NUMBER, CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected, AboveDefectsNotCorrected,

@@ -473,7 +473,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                 default:
                     Log.d("Driver", "error" + error.toString());
 
-                    if(getActivity() != null) {
+                    if(getActivity() != null && !getActivity().isFinishing()) {
                         Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
 
                         if (helpDocList.size() > 0) {

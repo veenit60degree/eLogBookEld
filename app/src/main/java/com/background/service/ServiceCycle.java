@@ -947,6 +947,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                             DriverId, offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
                             DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, isNorthCanada,
                             rulesVersion, oDriverLog, context);
+
+                    if(CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2) ) {
+                        oDriverDetail1.setCanAdverseException(isAdverseExcptn);
+                    }
+
                     RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), ChangedDriverStatus, oDriverDetail1);
 
 
@@ -977,6 +982,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver, DRIVER_JOB_STATUS, isOldRecord,
                 isHaulExcptn, isAdverseExcptn, isNorthCanada,
                 rulesVersion, oDriverLogDetail, context);
+
+        if(CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2) ) {
+            oDriverDetail.setCanAdverseException(isAdverseExcptn);
+        }
+
         RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), DRIVER_JOB_STATUS, oDriverDetail);
 
         // Calculate 2 days data to get remaining Driving/Onduty hours

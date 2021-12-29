@@ -1157,16 +1157,16 @@
                 android:id="@+id/showHideRecapBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/view_height_40"
-                android:text="@string/show_recap"
-                android:background="@drawable/green_eld_selector"
-                android:textColor="@color/whiteee"
-                android:textSize="@dimen/text_size_15"
-                android:layout_marginRight="@dimen/margin_10"
-                android:textAllCaps="false"
+                android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/margin_short_8"
+                android:layout_marginRight="@dimen/margin_10"
+                android:background="@drawable/green_eld_selector"
                 android:paddingLeft="@dimen/margin_13"
                 android:paddingRight="@dimen/margin_13"
-                android:layout_alignParentRight="true"
+                android:text="@string/show_recap"
+                android:textAllCaps="false"
+                android:textColor="@color/whiteee"
+                android:textSize="@dimen/text_size_15"
 
                 />
 

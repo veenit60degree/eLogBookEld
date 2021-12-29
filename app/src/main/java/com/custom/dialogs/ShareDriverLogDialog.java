@@ -1,5 +1,6 @@
 package com.custom.dialogs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -241,7 +242,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                     switch (position){
                         case 0:
                             countryFlagImgView.setImageResource(R.drawable.no_flag);
-                            usaView();
+                            canView();
                             selectedCountry = "Select";
                            // fmcsaLogTxtVw.setText(getContext().getResources().getString(R.string.eld_govt_logs));
                             break;
@@ -709,27 +710,33 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 if (EndDate.after(StartDate) || EndDate.equals(StartDate)) {
                     String insComments = inspCmntEditTxt.getText().toString().trim();
 
-                    if(insComments.length() == 0) {
-                        statusEndConfDialog.ShowAlertDialog(getContext().getString(R.string.Confirmation_suggested),
-                                getContext().getString(R.string.confirm_witout_comment),
-                                getContext().getString(R.string.yes), getContext().getString(R.string.no),
-                                0, positiveCallBack, negativeCallBack);
-
-                    }else if(insComments.length() <= 4){
-                        globally.EldScreenToast(shareDriverLogBtn, "Enter minimum 4 char", getContext().getResources().getColor(R.color.colorVoilation));
-                        inspCmntEditTxt.setError("Enter minimum 4 char");
-                    }else if(insComments.length() > 60) {
-                        globally.EldScreenToast(shareDriverLogBtn, "Allows 60 characters only", getContext().getResources().getColor(R.color.colorVoilation));
-                        inspCmntEditTxt.setError("Allows 60 characters only");
-                    }else {
+                    if(emailLogLay.getVisibility() == View.VISIBLE && SelectedCountry == CountryCan) {
                         SendDriverLog(DRIVER_ID, DeviceId, startDateTv.getText().toString(),
                                 endDateTv.getText().toString(), email, insComments,
                                 MailCheck, ServiceCheck, Globally.LATITUDE, Globally.LONGITUDE,
                                 SharedPref.getTimeZone(getContext()));
+                    }else{
+                        if(insComments.length() == 0) {
+                            statusEndConfDialog.ShowAlertDialog(getContext().getString(R.string.Confirmation_suggested),
+                                    getContext().getString(R.string.confirm_witout_comment),
+                                    getContext().getString(R.string.yes), getContext().getString(R.string.no),
+                                    0, positiveCallBack, negativeCallBack);
+
+                        }else if(insComments.length() < 4){
+                            globally.EldScreenToast(shareDriverLogBtn, "Enter minimum 4 char", getContext().getResources().getColor(R.color.colorVoilation));
+                            inspCmntEditTxt.setError("Enter minimum 4 char");
+                        }else if(insComments.length() > 60) {
+                            globally.EldScreenToast(shareDriverLogBtn, "Allows 60 characters only", getContext().getResources().getColor(R.color.colorVoilation));
+                            inspCmntEditTxt.setError("Allows 60 characters only");
+                        }else {
+                            SendDriverLog(DRIVER_ID, DeviceId, startDateTv.getText().toString(),
+                                    endDateTv.getText().toString(), email, insComments,
+                                    MailCheck, ServiceCheck, Globally.LATITUDE, Globally.LONGITUDE,
+                                    SharedPref.getTimeZone(getContext()));
 
 
+                        }
                     }
-
 
                 } else {
                     globally.EldScreenToast(shareDriverLogBtn, "(To Date) should be greater then (From Date).", getContext().getResources().getColor(R.color.colorVoilation));

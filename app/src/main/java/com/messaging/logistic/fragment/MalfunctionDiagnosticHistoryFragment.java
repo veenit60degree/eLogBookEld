@@ -210,7 +210,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                                 DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)) {
                             parseData(mainObj, i);
                         } else {
-                            if (DrId.equals(DriverId)) {
+                            if (DrId.equals(DriverId) || DrId.equals("0")) {
                                 parseData(mainObj, i);
                             }
                         }
@@ -291,7 +291,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                         EngHrs,
                         StartOdometer,
                         mainObj.getString(ConstantsKeys.DetectionDataEventCode),
-                        "", "",
+                        mainObj.getString(ConstantsKeys.DriverId), "",
                         "", "", "", driverEndTimeZone,  // passing event end date into to date
                         driverTimeZone, "--", StartEngineHours, TotalMinutes   //TotalMinutes value is passing in getId()
                 );

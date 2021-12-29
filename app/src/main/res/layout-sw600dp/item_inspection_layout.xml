@@ -281,7 +281,6 @@
                     android:paddingLeft="@dimen/margin_10"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_18"
-                    android:text="110 km"
                     android:layout_toRightOf="@+id/odometerTitleTv"
                     android:layout_centerVertical="true"
                     android:visibility="gone"

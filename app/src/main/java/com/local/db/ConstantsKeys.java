@@ -268,6 +268,7 @@ public class ConstantsKeys {
     public static String DrivingAllowedStatus           = "DrivingAllowedStatus";
     public static String DrivingAllowedStatusTime       = "DrivingAllowedStatusTime";
     public static String IsEldEcmALert                  = "IsEldEcmALert";
+    public static String IsUnIdenLocMissing             = "IsUnIdenLocMissing";
     public static String IsOBDStatusUpdate              = "IsOBDStatusUpdate";
     public static String IsPcYmAlertChangeStatus        = "IsPcYmAlertChangeStatus";
     public static String IsNeedToUpdate18DaysLog        = "IsNeedToUpdate18DaysLog";
@@ -283,6 +284,7 @@ public class ConstantsKeys {
     public static String LocMalfunctionOccurUtcTime     = "LocMalfunctionOccurUtcTime";
     public static String UnidentifiedFromOBD            = "UnidentifiedFromOBD";
     public static String IsAgriException                = "IsAgriException";
+    public static String IsCertifyReminder              = "IsCertifyReminder";
     public static String DownloadProgress               = "download_progress";
 
 

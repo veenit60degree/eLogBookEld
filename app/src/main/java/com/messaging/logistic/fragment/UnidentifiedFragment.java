@@ -2,6 +2,7 @@ package com.messaging.logistic.fragment;
 // Hello
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adapter.logistic.UnIdentifiedListingAdapter;
@@ -230,7 +232,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 JSONArray claimArray = Constants.getClaimRecordsInArray("", "", "", "",
                         unIdentifiedRecordList,  recordSelectedList);
 
-                if(getActivity() != null) {
+                if(getActivity() != null && !getActivity().isFinishing()) {
                     //if(constants.isActionAllowed(getContext())) {
                     HelperMethods helperMethods = new HelperMethods();
                     DBHelper dbHelper = new DBHelper(getActivity());
@@ -257,7 +259,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 JSONArray companyRejectedArray = Constants.getCompanyRejectRecordsInArray("", "", unIdentifiedRecordList,  recordSelectedList);
                 JSONArray rejectedArray = Constants.getRejectRecordsInArray( "", "", unIdentifiedRecordList,  recordSelectedList);
 
-                if(getActivity() != null) {
+                if(getActivity() != null && !getActivity().isFinishing()) {
                     if (companyRejectedArray.length() > 0 || rejectedArray.length() > 0) {
                         unidentifiedDialog = new UnidentifiedDialog(getActivity(), getResources().getString(R.string.reject), new UnIdentifiedListener());
                         unidentifiedDialog.show();
@@ -337,15 +339,31 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                                         getResources().getColor(R.color.color_eld_theme));
                                 UnidentifiedActivity.isUnIdentifiedRecordClaimed = true;
 
+                                if(Constants.IsUnidentifiedLocMissing){
+                                    Constants.IsUnidentifiedLocMissing = false;
+
+                                    try {
+                                        Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                                        intent.putExtra(ConstantsKeys.PersonalUse75Km, false);
+                                        intent.putExtra(ConstantsKeys.IsUnIdenLocMissing, true);
+                                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+
+                                }
+
                                 break;
 
                             case RejectRecords:
+                                Constants.IsUnidentifiedLocMissing = false;
                                 global.EldScreenToast(rightMenuBtn,
                                         getResources().getString(R.string.reject_successfully),
                                         getResources().getColor(R.color.color_eld_theme));
                                 break;
 
                             case RejectCompanyRecords:
+                                Constants.IsUnidentifiedLocMissing = false;
                                 global.EldScreenToast(rightMenuBtn,
                                         getResources().getString(R.string.reject_successfully),
                                         getResources().getColor(R.color.color_eld_theme));
@@ -356,7 +374,8 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                         GetUnidentifiedRecords( DriverId, DeviceId, CurrentDate, VIN, GetUnidentifiedRecordFlag);
 
                     }else{
-                        // {"Status":false,"Message":"Failed..","Data":null}
+
+                        Constants.IsUnidentifiedLocMissing = false;
                         global.EldScreenToast(rightMenuBtn, obj.getString("Message"),
                                 getResources().getColor(R.color.colorVoilation));
 
@@ -374,7 +393,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 if(progressDialog != null && progressDialog.isShowing())
                     progressDialog.dismiss();
 
-
+                Constants.IsUnidentifiedLocMissing = false;
                 global.EldScreenToast(rightMenuBtn, error,
                         getResources().getColor(R.color.colorVoilation));
             }

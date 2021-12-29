@@ -90,8 +90,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	String StrSingleUserame = "", StrSinglePass = "", StrCoDriverUsername = "", StrCoDriverPass = "", StrOSType = "", AppVersion = "";
 	String status = "", message = "", deviceType = "";
 	Anim animation;
-	boolean IsLoginSuccess = false, IsTablet = false, IsBleConnected = false;
+	boolean IsLoginSuccess = false, IsTablet = false, IsBleConnected = false, WiredConnected = false;
 	String Sim1 = "", Sim2 = "", DeviceSimInfo = "";
+	int ObdPreference = 0;
 	Constants constants;
 	Globally global;
 	Utils obdUtil;
@@ -204,6 +205,14 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			loginCoDriverLayout.setBackgroundColor(getResources().getColor(R.color.gray_background));
 		}
 
+		ObdPreference = SharedPref.getObdPreference(getApplicationContext());
+		if(ObdPreference == Constants.OBD_PREF_BLE){
+			loginBleStatusBtn.setImageResource(R.drawable.ble_ic);
+		}else if (ObdPreference == Constants.OBD_PREF_WIRED){
+			loginBleStatusBtn.setImageResource(R.drawable.obd_inactive);
+		}
+
+
 
 		connectionStatusAnimation.setAnimationListener(new Animation.AnimationListener() {
 			@Override
@@ -215,15 +224,25 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				try {
 					if(getApplicationContext() != null) {
 
-						if(IsBleConnected){
-							connectionStatusAnimation.cancel();
-							loginBleStatusBtn.setAlpha(1f);
-							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
+						if(ObdPreference == Constants.OBD_PREF_BLE) {
+							if (IsBleConnected) {
+								connectionStatusAnimation.cancel();
+								loginBleStatusBtn.setAlpha(1f);
+								loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
 
-						}else{
-							loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+							} else {
+								loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+							}
+						}else if(ObdPreference == Constants.OBD_PREF_WIRED){
+							if (WiredConnected) {
+								connectionStatusAnimation.cancel();
+								loginBleStatusBtn.setAlpha(1f);
+								loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
+
+							} else {
+								loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+							}
 						}
-
 					}
 				}catch (Exception e){
 					e.printStackTrace();
@@ -291,10 +310,17 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		loginBtn.setEnabled(true);
 
 
-		if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE){
+		if(ObdPreference == Constants.OBD_PREF_BLE){
 			loginBleStatusBtn.setVisibility(View.VISIBLE);
 
 			if(!IsBleConnected){
+				loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+			}
+
+		}else if(ObdPreference == Constants.OBD_PREF_WIRED){
+			loginBleStatusBtn.setVisibility(View.VISIBLE);
+
+			if(!WiredConnected){
 				loginBleStatusBtn.startAnimation(connectionStatusAnimation);
 			}
 
@@ -323,18 +349,44 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				boolean IsEventUpdate = intent.getBooleanExtra(ConstantsKeys.IsEventUpdate, false);
 				if(IsEventUpdate){
 					if(intent.getBooleanExtra(ConstantsKeys.Status, false)){
-						if(!IsBleConnected){
-							global.ShowLocalNotification(getApplicationContext(),
-									getString(R.string.BluetoothOBD),
-									getString(R.string.obd_ble), 2081);
+
+						if(ObdPreference == Constants.OBD_PREF_BLE){
+							if(!IsBleConnected){
+								global.ShowLocalNotification(getApplicationContext(),
+										getString(R.string.BluetoothOBD),
+										getString(R.string.obd_ble), 2081);
+							}
+
+							IsBleConnected = true;
+							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
+
+						}else if(ObdPreference == Constants.OBD_PREF_WIRED){
+
+							if(!WiredConnected){
+								global.ShowLocalNotification(getApplicationContext(),
+										getString(R.string.wired_tablettt),
+										getString(R.string.wired_tablet_connected), 2081);
+							}
+
+							WiredConnected = true;
+							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
+
 						}
 
-						IsBleConnected = true;
-						loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
+
+
+
 					}else{
-						IsBleConnected = false;
-						loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
-						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+						if(ObdPreference == Constants.OBD_PREF_BLE) {
+							IsBleConnected = false;
+							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
+							loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+						}else if(ObdPreference == Constants.OBD_PREF_WIRED){
+							WiredConnected = false;
+							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
+							loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+
+						}
 					}
 
 				}
@@ -708,15 +760,19 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setIntermediateLogId("", getApplicationContext());
 			SharedPref.setTotalPUOdometerForDay("0","", getApplicationContext());
 			SharedPref.SetWrongVinAlertView(false, getApplicationContext());
+			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , getApplicationContext());
 
 			constants.saveMalfncnStatus(getApplicationContext(), false);
 			SharedPref.SetObdOdometer("0", getApplicationContext());
 			SharedPref.SetObdEngineHours("0", getApplicationContext());
 			SharedPref.SaveBleOBDMacAddress("", getApplicationContext());
 			SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
-			SharedPref.saveLocDiagnosticStatus(false, "", "", getApplicationContext());
 			SharedPref.SetIgnitionOffCalled(false, getApplicationContext());
 			SharedPref.setAgricultureExemption(false, getApplicationContext());
+
+			SharedPref.saveLocDiagnosticStatus(SharedPref.isLocDiagnosticOccur(getApplicationContext()), Globally.GetCurrentDateTime(),
+					Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
+
 
 			// clear array in table
 			if(CompanyId.length() > 0) {
@@ -789,7 +845,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 						public void onResponse(String response) {
 
 							// response
-							Log.d("Response", ">>>response: " + response);
+								Log.d("Response", ">>>response: " + response);
 							//	global.SaveFileInSDCard("LoginOutput", response, LoginActivity.this);
 
 							SharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
@@ -1205,11 +1261,37 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		switch (v.getId()) {
 
 			case R.id.loginBleStatusBtn:
-				if(!IsBleConnected) {
-					SharedPref.SetPingStatus("ble_start", getApplicationContext());
-					loginBleStatusBtn.startAnimation(connectionStatusAnimation);
-					startService();
+
+				if(ObdPreference == Constants.OBD_PREF_BLE) {
+					if(!IsBleConnected) {
+						SharedPref.SetPingStatus("ble_start", getApplicationContext());
+						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+						startService();
+					}else{
+						global.EldScreenToast(mainLoginLayout, getString(R.string.obd_ble), getResources().getColor(R.color.colorPrimary));
+					}
+				}else if(ObdPreference == Constants.OBD_PREF_WIRED){
+					if(SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED){
+						WiredConnected = true;
+					}else{
+						WiredConnected = false;
+					}
+
+					if(WiredConnected) {
+						loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
+
+						global.EldScreenToast(mainLoginLayout, getString(R.string.wired_tablet_connected),
+								getResources().getColor(R.color.colorPrimary));
+					}else{
+						loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
+						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+
+						global.EldScreenToast(mainLoginLayout, getString(R.string.wired_tablet_disconnected),
+								getResources().getColor(R.color.colorVoilation));
+					}
 				}
+
+
 				break;
 
 			case R.id.mainLoginLayout:

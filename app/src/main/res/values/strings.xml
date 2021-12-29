@@ -272,6 +272,8 @@
     <string name="missing_data_dia_def">A missing required data elements data diagnostic event occurs when any required data field is missing at the time of its recording.A data transfer compliance malfunction occurs when the ELD stays in the unconfirmed data transfer mode following the next three consecutive monitoring checks.</string>
 
     <string name="loc_miss_event">Location Missing Event</string>
+    <string name="loc_missing">Location Missing</string>
+    <string name="add_loc_desc">Please add location for this event in Certify screen.</string>
 
     <string name="eng_sync_dia_event">Engine sync diagnostic event</string>
    <!-- <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>-->
@@ -446,8 +448,8 @@
     <string name="TotalDistance">Total Distance</string>
     <string name="TotalVehDistance">Total Veh Distance</string>
     <string name="startEnd">(Start-End)</string>StartEnd
-    <string name="DistanceToday">Distance Today</string>
-    <string name="CurrentTotalDistance">Cur. Total Distance</string>
+    <string name="DistanceToday">Distance Today (KM)</string>
+    <string name="CurrentTotalDistance">Cur. Total Distance (KM)</string>
     <string name="CurrentTotalEngineHr">Cur. Total Engine Hrs</string>
     <string name="CarrierName">Carrier Name</string>
     <string name="carrier_add">Carrier</string>
@@ -716,6 +718,7 @@
     <string name="share_not_allowed">You have no permission for Send Log. Please contact your company.</string>
     <string name="personal_use_limit_75">Your Personal Use limit (75 km) is exceeded for the day in Canada cycle.</string>
     <string name="connect_with_obd_first">Please connect your ELD with truck ECM</string>
+    <string name="pc_ym_alert_with_dr">Please change your status to other duty status first to select Special Driving Conditions (PC/YM).</string>
 
     <string name="loading">Loading</string>
     <string name="TrailerDrop">Trailer Drop</string>
@@ -765,6 +768,7 @@
     <string name="twelve">12</string>
 
     <string name="enter_valid_email">Please enter valid email address</string>
+    <string name="select_state">Please select State</string>
     <string name="select_country">Please select Country</string>
     <string name="select_all">Select All</string>
     <string name="EnterCity">Enter City</string>
@@ -860,6 +864,7 @@
     <string name="Duration">Duration</string>
     <string name="Location">Location</string>
     <string name="LocationTitle">Location: </string>
+    <string name="uniden_record">(U)</string>
 
     <string name="adverse_turn_off">Adverse Exception Turned Off</string>
     <string name="disable_adverse_exception">DisableAdverseException</string>
@@ -905,6 +910,7 @@
     <string name="driving_rec_occurred">Unidentified Driving Record occurred as vehicle is moving but no Driver is logged in</string>
     <string name="onduty_rec_occurred">Unidentified OnDuty record occurred as vehicle is not moving but engine is idling</string>
     <string name="UnIdentifiedDrivingOcc">UnIdentified Driving event occurred</string>
+    <string name="UnIdentifiedEvent">UnIdentified Event</string>
 
     <string name="BleObdNotConnected">Bluetooth OBD is not connecting. Restart you app and try to connect it again.</string>
     <string name="obd_not_connected">OBD not connected</string>

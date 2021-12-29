@@ -2,6 +2,7 @@ package com.adapter.logistic;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -117,7 +118,7 @@ public class DownloadLogsAdapter extends BaseAdapter {
             public void onClick(View v) {
                 boolean checkFilePostion = false;
                 getLocalDocuments();
-                 docPos = getFilePositionFromLocalDir(position);
+                docPos = getFilePositionFromLocalDir(position);
 
                 // position comparision is for local files. because files are fetching from storage and they are getting in the list in different order as compared to json file (from API).
                 // So to match file name we first compare files title first and get that file position.
@@ -142,8 +143,8 @@ public class DownloadLogsAdapter extends BaseAdapter {
             public void onClick(View v) {
 //                holder.shareProgressBar.setVisibility(View.VISIBLE);
                 GetSharePdfLog(downloadLogsModels.get(position).getEldInspectionLogId(),
-                               downloadLogsModels.get(position).getCountry(),
-                               downloadLogsModels.get(position).getShareId());
+                        downloadLogsModels.get(position).getCountry(),
+                        downloadLogsModels.get(position).getShareId());
 
                 constants.copyTextToClipboard(mContext, downloadLogsModels.get(position).getPdfFilePath());
                 Toast.makeText(mContext, "Copied to clipboard", Toast.LENGTH_SHORT).show();
@@ -159,42 +160,49 @@ public class DownloadLogsAdapter extends BaseAdapter {
 
 
 
-        DateTime fromDate = Globally.getDateTimeObj(downloadLogsModels.get(position).getFromDate(), false);
-        DateTime toDate = Globally.getDateTimeObj(downloadLogsModels.get(position).getToDate(), false);
-        int daysDiff = Days.daysBetween(fromDate.toLocalDate(), toDate.toLocalDate()).getDays();
-        int difference = daysDiff+1;
+//        DateTime fromDate = Globally.getDateTimeObj(downloadLogsModels.get(position).getFromDate(), false);
+//        DateTime toDate = Globally.getDateTimeObj(downloadLogsModels.get(position).getToDate(), false);
+//        int daysDiff = Days.daysBetween(fromDate.toLocalDate(), toDate.toLocalDate()).getDays();
+//        int difference = daysDiff+1;
+//        String toDateStr = " <font color='#287CD1'> (" + difference +" days) </font> ";
 
-        String createdDate = globally.ConvertDateFormatddMMMyyyy(downloadLogsModels.get(position).getToDate(), Globally.DateFormat_dd_MMM_yyyy);
-        String toDateStr = " <font color='#287CD1'> (" + difference +" days) </font> ";
-        holder.createdDate.setText(Html.fromHtml("<b>" +createdDate + "</b>" + toDateStr), TextView.BufferType.SPANNABLE);
-
+        String FromDate = globally.ConvertDateFormatddMMMyyyy(downloadLogsModels.get(position).getFromDate(), Globally.DateFormat_dd_MMM_yyyy);
+        String ToDate   = globally.ConvertDateFormatddMMMyyyy(String.valueOf(Globally.GetStartDate(DateTime.parse(downloadLogsModels.get(position).getToDate()),1)), Globally.DateFormat_dd_MMM_yyyy);
+        if(downloadLogsModels.get(position).getCountry().equals("CAN")){
+            String Mode     = downloadLogsModels.get(position).getLogtype();
+            holder.createdDate.setText(Html.fromHtml("<b>" + FromDate +" - "+ToDate + " ("+ Mode +")"+ "</b>"), TextView.BufferType.SPANNABLE);
+        }else{
+            holder.createdDate.setText(Html.fromHtml("<b>" + FromDate +" - "+ToDate + "</b>"), TextView.BufferType.SPANNABLE);
+        }
         return convertView;
     }
 
     void checkFileBeforeView(int pos,boolean checkFileExist){
         if(checkFileExist == true){
-        if(downloadLogslocalDocList.size() > pos) {
-            docFilesList = global.getGeneratedLogDocs(mContext);
-            String filepath = global.getAlsGenerateRodsPath(mContext).toString() + "/";
-            File docFile = new File(filepath + docFilesList.get(pos));
-            File file = new File(String.valueOf(docFile));
-            mContext.startActivity(
-                    PdfViewerActivity.Companion.launchPdfFromPath(
-                            mContext, String.valueOf(file),
-                            "Title", "dir", true, false
-                    )
-            );
-        }
-        }else{
-            if(mContext != null) {
-                if (Globally.isConnected(mContext)) {
-                    Intent i = new Intent(mContext, new WebViewActvity().getClass());
-                    i.putExtra("Path", downloadLogsModels.get(pos).getPdfFilePath());
-                    mContext.startActivity(i);
-                } else {
-                    Toast.makeText(mContext, global.CHECK_INTERNET_MSG, Toast.LENGTH_LONG).show();
-                }
+            if(downloadLogslocalDocList.size() > pos) {
+                docFilesList = global.getGeneratedLogDocs(mContext);
+                String filepath = global.getAlsGenerateRodsPath(mContext).toString() + "/";
+                File docFile = new File(filepath + docFilesList.get(pos));
+                File file = new File(String.valueOf(docFile));
+                mContext.startActivity(
+                        PdfViewerActivity.Companion.launchPdfFromPath(
+                                mContext, String.valueOf(file),
+                                "Title", "dir", true, false
+                        )
+                );
             }
+        }else{
+            try {
+                if (mContext != null) {
+                    if (Globally.isConnected(mContext)) {
+                        Intent i = new Intent(mContext, new WebViewActvity().getClass());
+                        i.putExtra("Path", downloadLogsModels.get(pos).getPdfFilePath());
+                        mContext.startActivity(i);
+                    } else {
+                        Toast.makeText(mContext, global.CHECK_INTERNET_MSG, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }catch (Exception e){}
 
         }
     }
@@ -407,7 +415,7 @@ public class DownloadLogsAdapter extends BaseAdapter {
                         Intent shareIntent = new Intent();
                         shareIntent = new Intent(Intent.ACTION_SEND);
                         shareIntent.setType("text/plain");
-                      //  String action = shareIntent.getAction();
+                        //  String action = shareIntent.getAction();
                         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Copy Link");
                         String shareMessage= "Generated RODS Link \n\n";
                         shareMessage = shareMessage + shareLink +"\n\n";

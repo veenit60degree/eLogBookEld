@@ -388,9 +388,11 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         try {
             StatePrefManager statePrefManager  = new StatePrefManager();
             StateList = statePrefManager.GetState(getActivity());
+            StateList.add(0, new DriverLocationModel("", "Select", ""));
         } catch (Exception e) { }
 
         StateArrayList =  SharedPref.getStatesInList(getActivity());
+        StateArrayList.add(0, "Select");
 
         if (global.isConnected(getActivity())) {
             GetDriverDotDetails(DRIVER_ID, LogDate);
@@ -982,7 +984,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         public void getError(VolleyError error, int flag) {
             Log.d("error", ">>error: " + error);
 
-            if(getActivity() != null) {
+            if(getActivity() != null && !getActivity().isFinishing()) {
                 try {
                     dotProgressBar.setVisibility(View.GONE);
                     global.EldScreenToast(eldMenuLay, "Error", getResources().getColor(R.color.colorVoilation));

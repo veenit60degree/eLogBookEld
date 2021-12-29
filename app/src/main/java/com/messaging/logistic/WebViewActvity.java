@@ -40,8 +40,12 @@ public class WebViewActvity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 try{
-                    if (progressBar.getVisibility() == View.VISIBLE) {
-                        progressBar.setVisibility(View.GONE);
+                    if (view.getTitle().equals("")) {
+                        view.reload();
+                    }else {
+                        if (progressBar.getVisibility() == View.VISIBLE) {
+                            progressBar.setVisibility(View.GONE);
+                        }
                     }
 
                 }catch(Exception exception){

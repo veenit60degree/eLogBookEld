@@ -1,5 +1,6 @@
 package com.constants;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -180,7 +181,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void listItemClick(int status){
 
-		boolean isActionAllowedWithCoDriver = constants.isActionAllowedWithCoDriver(context, dbHelper, hMethod, global, SharedPref.getDriverId(context));
+		//boolean isActionAllowedWithCoDriver = constants.isActionAllowedWithCoDriver(context, dbHelper, hMethod, global, SharedPref.getDriverId(context));
 
 		switch (status){
 
@@ -190,11 +191,11 @@ public class Slidingmenufunctions implements OnClickListener {
 				break;
 
 			case Constants.PTI_INSPECTION:
-				if(isActionAllowedWithCoDriver) {
+				//if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(4);
-				}else{
+			/*	}else{
 					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
-				}
+				}*/
 				break;
 
 			case Constants.CT_PAT_INSPECTION:
@@ -819,7 +820,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		} else {
 			isExemptDriver = SharedPref.IsExemptDriverCo(context);
 		}
-		if(isExemptDriver && context != null){
+		if(isExemptDriver && context != null ){
 			Toast.makeText(context, context.getResources().getString(R.string.exempt_logout_desc), Toast.LENGTH_LONG).show();
 		}
 

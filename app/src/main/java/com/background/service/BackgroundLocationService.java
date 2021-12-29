@@ -250,6 +250,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     boolean isGpsUpdate      = false;
     boolean IsOBDPingAllowed = false;
     boolean isMalfncDataAlreadyPosting = false;
+    boolean isDeferralAlreadyPosting = false;
+    boolean isDeferralAlreadyPostingCo = false;
+
     boolean isWiredObdRespond = false;
     public static boolean IsAutoChange = false; //, IsAutoLogSaved = false;
 
@@ -303,7 +306,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
     //private LinkedList<HTBleData> mHtblData = new LinkedList<>();
 
-    public static boolean OBD_DISCONNECTED  = true;
+    public static boolean OBD_DISCONNECTED  = false;
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -467,16 +470,22 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                         // ---------------- temp data ---------------------
-                /*        int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
+               /*         int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
                         if (OBD_DISCONNECTED) {
                             ignitionStatus = "ON";
                             truckRPM = "700";
-                            speed = 30;
+                            speed = 0;
                             // obdEngineHours = "23789.5";
                             if (OBD_LAST_STATUSss != Constants.WIRED_CONNECTED) {
                                 // obdEngineHours = "23789.7";
                                 SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(),
                                         global.GetCurrentUTCTimeFormat(), getApplicationContext());
+
+                                sendBroadCast("<b>Wired tablet connected</b> <br/>", "");
+                                sendBroadcastUpdateObd(false);
+
+                                sendEcmBroadcast(false);
+
                             }
                           //  OBD_LAST_STATUSss = constants.WIRED_CONNECTED;
                         } else {
@@ -484,17 +493,20 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             truckRPM = "0";
                             speed = 0;
                             // obdEngineHours = "23789.5";
-                            if (OBD_LAST_STATUSss != Constants.WIRED_CONNECTED) {
-                                SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(),
+                            if (OBD_LAST_STATUSss != Constants.WIRED_DISCONNECTED) {
+                                SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(),
                                         global.GetCurrentUTCTimeFormat(), getApplicationContext());
+
+                                sendBroadcastUpdateObd(false);
+                                sendEcmBroadcast(true);
                             }
-*/
+
 
 
 
                            // OBD_LAST_STATUSss = constants.WIRED_CONNECTED;
 
-                          /*  String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
+                            String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
 
                             // save log when ignition status is changed.    //SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, getApplicationContext())
                             if (lastIgnitionStatus.equals("ON") ) {
@@ -504,14 +516,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
                                         SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()), getApplicationContext());
 
-                            }*/
+                            }
 
 
 
-              /*          }
+                       }
                         tempEngHour = tempEngHour + .01;
                         obdEngineHours = ""+tempEngHour;
-                        tempOdo = tempOdo + 400;
+                        tempOdo = tempOdo + 800;
                         obdOdometer = "" + BigDecimal.valueOf(tempOdo).toPlainString();
                         currentHighPrecisionOdometer = obdOdometer;
                         Log.d("Odometer", currentHighPrecisionOdometer);
@@ -641,7 +653,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
                 }
 
-                saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, currentHighPrecisionOdometer);
+                constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, currentHighPrecisionOdometer, getApplicationContext());
 
 
                 if (Integer.valueOf(truckRPM) > 0 || speed > 0) {
@@ -859,9 +871,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 if(UILApplication.isActivityVisible() && TabAct.speedAlertBtn != null) {
                     TabAct.speedAlertBtn.performClick();
                 }
+            }else{
+                mNotificationManager.dismissNotification(getApplicationContext(), 20811);
+                if(UILApplication.isActivityVisible() && TabAct.dismissAlertBtn != null) {
+                    TabAct.dismissAlertBtn.performClick();
+                }
             }
 
         } else {
+            SharedPref.setVehilceMovingStatus(false, getApplicationContext());
             callWiredDataService(Constants.SocketTimeout3Sec);
         }
         LastObdSpeed = speed;
@@ -1170,10 +1188,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(),
                                     global.GetCurrentUTCTimeFormat(), getApplicationContext());
+                            SharedPref.setVehilceMovingStatus(false, getApplicationContext());
 
                             obdCallBackObservable(-1, "", "", null);
-                                  sendBroadcastUpdateObd(false);
+
+                            sendBroadcastUpdateObd(false);
                             sendEcmBroadcast(true);
+
                             Globally.PlayNotificationSound(getApplicationContext());
                             global.ShowLocalNotification(getApplicationContext(),
                                     getString(R.string.wired_tablettt),
@@ -1398,6 +1419,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
 
+                                SharedPref.setVehilceMovingStatus(false, getApplicationContext());
                                 SharedPref.SetWrongVinAlertView(false, getApplicationContext());
                                 SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
                                         global.GetCurrentUTCTimeFormat(), getApplicationContext());
@@ -1613,21 +1635,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
     }
 
-    private boolean isMalDiaAllowed(){
-        try {
-            if (SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerComplianceMal, getApplicationContext()) ||
-                    SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerDataDiag, getApplicationContext()) ||
-                    SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PostioningComplMal, getApplicationContext()) ||
-                    SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncMal, getApplicationContext()) ||
-                    SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncDiag, getApplicationContext())) {
-                return true;
-            } else {
-                return false;
-            }
-        }catch (Exception e){
-            return false;
-        }
-    }
 
 
     private void checkEngineSyncMalDiaOccurredEvent(int speed, boolean isDriverSwitched){
@@ -2084,7 +2091,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         // check Positioning Diagnostic Clear Event
                         if (Globally.LATITUDE.length() > 4 && SharedPref.isLocDiagnosticOccur(getApplicationContext())) {
-                            malfunctionDiagnosticMethod.updateTimeOnLocationReceived(Constants.ConstLocationMissing, dbHelper);
+                            malfunctionDiagnosticMethod.updateTimeOnLocationReceived(dbHelper); //Constants.ConstLocationMissing,
                             SharedPref.saveLocDiagnosticStatus(false, "", "", getApplicationContext());
                         }
 
@@ -2470,7 +2477,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 Globally.LATITUDE = Globally.GPS_LATITUDE;
                 Globally.LONGITUDE = Globally.GPS_LONGITUDE;
 
-                saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE, SharedPref.getHighPrecisionOdometer(getApplicationContext()));
+                constants.saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE,
+                        SharedPref.getHighPrecisionOdometer(getApplicationContext()), getApplicationContext());
             }
 
         }
@@ -2550,7 +2558,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
 
 
-                if(isMalDiaAllowed() && Globally.isConnected(getApplicationContext())) {
+                if(constants.isMalDiaAllowed(getApplicationContext()) && Globally.isConnected(getApplicationContext())) {
                     GetMalDiaEventsDurationList();
                 }
             }else if(Constants.isClearMissingCompEvent){
@@ -3584,27 +3592,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
-    // saving location with time info to calculate location malfunction event
-    void saveEcmLocationWithTime(String latitude, String longitude, String odo){
 
-        String odometer;
-        if(odo.length() > 1){
-            odometer = odo;
-        }else{
-            odometer = SharedPref.getHighPrecisionOdometer(getApplicationContext());
-        }
-
-        if(latitude.length() > 4 ){
-            SharedPref.setEcmObdLocationWithTime(latitude, longitude, odometer,
-                    global.GetCurrentDateTime(), global.GetCurrentUTCTimeFormat(), getApplicationContext());
-        }else{
-            if(SharedPref.getEcmObdLatitude(getApplicationContext()).length() > 4) {
-
-                SharedPref.setEcmObdLocationWithTime("0", "0", odometer,
-                        global.GetCurrentDateTime(), global.GetCurrentUTCTimeFormat(), getApplicationContext());
-            }
-        }
-    }
 
 
     @Override
@@ -3623,7 +3611,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             Globally.LATITUDE = Globally.GPS_LATITUDE;
             Globally.LONGITUDE = Globally.GPS_LONGITUDE;
 
-            saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE, SharedPref.getHighPrecisionOdometer(getApplicationContext()));
+            constants.saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE,
+                    SharedPref.getHighPrecisionOdometer(getApplicationContext()), getApplicationContext());
         }
 
     }
@@ -3751,7 +3740,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                  //   checkEngineSyncMalDiaOccurredEvent();
 
                                     // saving location with time info to calculate location malfunction event
-                                    saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, HighResolutionDistance);
+                                    constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, HighResolutionDistance, getApplicationContext());
 
                                     if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIFI_CONNECTED) {
                                               sendBroadcastUpdateObd(false);
@@ -4368,20 +4357,23 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 defMainDriverArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(DriverId), dbHelper);
                 defCoDriverArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(CoDriverId), dbHelper);
 
-                if (defMainDriverArray.length() > 0) {
+                if (defMainDriverArray.length() > 0 && !isDeferralAlreadyPosting) {
+                    isDeferralAlreadyPosting = true;
                     saveDriverLogPost.PostDriverLogData(defMainDriverArray, APIs.SAVE_DEFFERAL_EVENT, Constants.SocketTimeout10Sec, true, false,
                             Integer.valueOf(DriverId), SaveDeferralMain);
                 }
 
 
-                if (defCoDriverArray.length() > 0) {
+                if (defCoDriverArray.length() > 0 && !isDeferralAlreadyPostingCo) {
+                    isDeferralAlreadyPostingCo = true;
                     saveDriverLogPost.PostDriverLogData(defCoDriverArray, APIs.SAVE_DEFFERAL_EVENT, Constants.SocketTimeout10Sec, true, false,
                             Integer.valueOf(CoDriverId), SaveDeferralCo);
                 }
 
             }else{
                 defMainDriverArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(DriverId), dbHelper);
-                if(defMainDriverArray.length() > 0){
+                if(defMainDriverArray.length() > 0 && !isDeferralAlreadyPosting){
+                    isDeferralAlreadyPosting = true;
                     saveDriverLogPost.PostDriverLogData(defMainDriverArray, APIs.SAVE_DEFFERAL_EVENT, Constants.SocketTimeout10Sec, true, false,
                             Integer.valueOf(DriverId), SaveDeferralMain);
                 }
@@ -4869,6 +4861,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                 if (flag == GetRecapViewFlagMain) {
                                     recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DriverId), dbHelper, recapArray);
+
+                                    if (!SharedPref.GetNewLoginStatus(getApplicationContext())) {
+                                        Intent intent = new Intent(ConstantsKeys.IsIgnitionOn);
+                                        intent.putExtra(ConstantsKeys.IsCertifyReminder, true);
+                                        LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+                                    }
                                 } else {
                                     recapViewMethod.RecapView18DaysHelper(Integer.valueOf(CoDriverId), dbHelper, recapArray);
                                 }
@@ -5253,13 +5251,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     case SaveDeferralMain:
                         // clear main driver deferral events from local db
                         deferralMethod.DeferralLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
-
+                        isDeferralAlreadyPosting = false;
                         break;
 
                     case SaveDeferralCo:
                         // clear main driver deferral events from local db
                         deferralMethod.DeferralLogHelper(Integer.valueOf(CoDriverId), dbHelper, new JSONArray());
-
+                        isDeferralAlreadyPostingCo = false;
                         break;
 
 
@@ -5371,6 +5369,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         updateClearEvent(false);
                     }
+                }else if(flag == SaveDeferralMain){
+                    isDeferralAlreadyPosting = false;
+                }else if(flag == SaveDeferralCo){
+                    isDeferralAlreadyPostingCo = false;
                 }
 
             }
@@ -5380,8 +5382,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
             Log.d("errorrr ", ">>>error dialog: " );
-
-        }
+            if(flag == SaveDeferralMain){
+                    isDeferralAlreadyPosting = false;
+                }else if(flag == SaveDeferralCo){
+                    isDeferralAlreadyPostingCo = false;
+                }
+            }
     };
 
 

@@ -1,6 +1,7 @@
 package com.messaging.logistic.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.constants.APIs;
 import com.constants.Constants;
@@ -51,7 +53,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     final int RejectRecordFlag                  = 102;
     final int RejectCompanyAssignedRecordFlag   = 103;
 
-    String CurrentCycleId = "";
+    String CurrentCycleId = "", StartLocationKM = "";
     String DriverId = "", DriverStatusId = "", AssignedRecordsId = "", unAssignedVehicleMilesId = "",  DriverName = "";
     boolean isCompanyAssigned = false;
     ProgressDialog progressDialog;
@@ -155,7 +157,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     private void getData(){
 
        String StartOdometer = "", EndOdometer = "", StartDateTime = "", EndDateTime = "",
-               StartLocation = "", EndLocation = "", StartLocationKM = "", EndLocationKM = "",
+               StartLocation = "", EndLocation = "", EndLocationKM = "",
                TotalMiles = "", TotalKm = "";
 
         Bundle getBundle        = this.getArguments();
@@ -322,6 +324,11 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
                 if(Globally.isConnected(getActivity())) {
                     if(isClaim) {
+
+                        if(StartLocationKM.length() == 0){
+                            Constants.IsUnidentifiedLocMissing = true;
+                        }
+
                         JSONArray claimArray = new JSONArray();
                         JSONObject claimData = Constants.getClaimRecordInputsAsJson(DriverId, DriverStatusId,
                                 unAssignedVehicleMilesId, AssignedRecordsId, reason, DriverName);
@@ -384,14 +391,30 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                     switch (flag) {
 
                         case ClaimRecordFlag:
+
                             Globally.EldScreenToast(TabAct.sliderLay,
                                     getResources().getString(R.string.claim_successfully),
                                     getResources().getColor(R.color.color_eld_theme));
                             UnidentifiedActivity.isUnIdentifiedRecordClaimed = true;
 
+                            if(Constants.IsUnidentifiedLocMissing){
+                                Constants.IsUnidentifiedLocMissing = false;
+
+                                try {
+                                    Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                                    intent.putExtra(ConstantsKeys.PersonalUse75Km, false);
+                                    intent.putExtra(ConstantsKeys.IsUnIdenLocMissing, true);
+                                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
+                            }
+
                             break;
 
                         case RejectRecordFlag:
+                            Constants.IsUnidentifiedLocMissing = false;
                             Globally.EldScreenToast(TabAct.sliderLay,
                                     getResources().getString(R.string.reject_successfully),
                                     getResources().getColor(R.color.color_eld_theme));

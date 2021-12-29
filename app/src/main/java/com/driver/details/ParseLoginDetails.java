@@ -355,7 +355,7 @@ public class ParseLoginDetails {
 
 
             if(position == 0) {
-                SharedPref.setVINNumber( VINs, context);
+               // SharedPref.setVINNumber( VINs, context);
                 SharedPref.setTrailorNumber(Trailors, context);
                 Globally.TRUCK_NUMBER = Trucks;
                 Globally.TRAILOR_NUMBER = Trailors;
@@ -493,6 +493,7 @@ public class ParseLoginDetails {
 
         if(statePrefManager == null) {
             statePrefManager = new StatePrefManager();
+            //statePrefManager.AddState(context, new DriverLocationModel("", "Select", ""));
         }
       //  CoStatePrefManager coStatePrefManager     = new CoStatePrefManager();
 
@@ -620,7 +621,7 @@ public class ParseLoginDetails {
                     "us_cycle", DriverConst.GetDriverSettings(DriverConst.USACycleId, context), context);
             SharedPref.setTimeZone( DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, context) , context);
 
-            /* Set Main Driver NIN Number Details */
+            /* Set Main Driver VIN Number Details */
             SharedPref.setVINNumber( DriverConst.GetDriverTripDetails(DriverConst.VIN, context), context);
 
             Globally.TRUCK_NUMBER       =  DriverConst.GetDriverTripDetails(DriverConst.Truck, context);

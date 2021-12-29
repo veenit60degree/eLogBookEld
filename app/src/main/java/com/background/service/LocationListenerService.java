@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
+import com.constants.Constants;
 import com.constants.SharedPref;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,14 +34,14 @@ public class LocationListenerService extends Service  implements GoogleApiClient
     public static GoogleApiClient mGoogleApiClient;
     protected LocationManager locationManager;
     Globally global;
-
+    Constants constants;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         global = new Globally();
-
+        constants = new Constants();
 
         createLocationRequest(MIN_TIME_LOCATION_UPDATES);
 
@@ -107,28 +108,34 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
 
 
+
     android.location.LocationListener locationListenerGPS = new android.location.LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
 
+            Globally.GPS_LATITUDE = "" + location.getLatitude();
+            Globally.GPS_LONGITUDE = "" + location.getLongitude();
+
             if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
-                Globally.LATITUDE = "" + location.getLatitude();
-                Globally.LONGITUDE = "" + location.getLongitude();
-                //Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
-            /*    int GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
-                global.ShowLocalNotification(getApplicationContext(),
-                        "ALS","Lat: " + Globally.LATITUDE + ", Lon: "+ Globally.LONGITUDE + ", Speed: " + GpsVehicleSpeed, 208111);
-*/
+
+                Globally.LATITUDE = Globally.GPS_LATITUDE;
+                Globally.LONGITUDE = Globally.GPS_LONGITUDE;
+
+                // saving location with time info to calculate location malfunction event
+                  constants.saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE,
+                          SharedPref.getHighPrecisionOdometer(getApplicationContext()), getApplicationContext());
+
             }
 
 
             if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
                     !SharedPref.getPassword(getApplicationContext()).equals("")) {
-                Log.e("Log", "--stop");
                 stopForeground(true);
                 stopSelf();
 
             }
+
+
         }
 
         @Override
@@ -173,20 +180,24 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
     @Override
     public void onLocationChanged(Location location) {
+
+        Globally.GPS_LATITUDE = "" + location.getLatitude();
+        Globally.GPS_LONGITUDE = "" + location.getLongitude();
+
         if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
-            Globally.LATITUDE = "" + location.getLatitude();
-            Globally.LONGITUDE = "" + location.getLongitude();
-            //Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
-         /*   int GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
-            global.ShowLocalNotification(getApplicationContext(),
-                    "ALS","Lat: " + Globally.LATITUDE + ", Lon: "+ Globally.LONGITUDE + ", Speed: " + GpsVehicleSpeed, 208111);
-*/
+
+            Globally.LATITUDE = Globally.GPS_LATITUDE;
+            Globally.LONGITUDE = Globally.GPS_LONGITUDE;
+
+            // saving location with time info to calculate location malfunction event
+            constants.saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE,
+                    SharedPref.getHighPrecisionOdometer(getApplicationContext()), getApplicationContext());
+
         }
 
 
         if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
                 !SharedPref.getPassword(getApplicationContext()).equals("")) {
-            Log.e("Log", "--stop");
             stopForeground(true);
             stopSelf();
 

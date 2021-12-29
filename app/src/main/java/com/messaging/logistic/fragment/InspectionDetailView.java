@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.DriverLocationDialog;
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.InspectionMethod;
@@ -54,7 +56,7 @@ public class    InspectionDetailView  extends Fragment {
 
     View rootView;
     TextView inspectionTypeTV, noDefectLabel, inspectionDateTv, powerInspectionTV, trailerInspectionTV;
-    TextView invisibleTV, dateActionBarTV, EldTitleTV;
+    TextView invisibleTV, dateActionBarTV, EldTitleTV, currentOdometerTV;
     RadioGroup prePostRadioGroup, correctRadioGroup;
     Button changeLocBtn, saveInspectionBtn;
     RelativeLayout rightMenuBtn, truckTrailerTVLay, inspectTrailerTitleLay, truckTrailerLayout, superviserSignLay, eldMenuLay;
@@ -122,6 +124,7 @@ public class    InspectionDetailView  extends Fragment {
         trailerInspectionTV      = (TextView)view.findViewById(R.id.trailerTextVw);
         dateActionBarTV          = (TextView)view.findViewById(R.id.dateActionBarTV);
         EldTitleTV               = (TextView)view.findViewById(R.id.EldTitleTV);
+        currentOdometerTV        = (TextView)view.findViewById(R.id.currentOdometerTV);
 
         prePostRadioGroup        = (RadioGroup)view.findViewById(R.id.prePostRadioGroup);
         correctRadioGroup        = (RadioGroup)view.findViewById(R.id.correctRadioGroup);
@@ -156,6 +159,12 @@ public class    InspectionDetailView  extends Fragment {
         truckGridView            = (GridView)view.findViewById(R.id.truckGridView);
         trailerGridView          = (GridView)view.findViewById(R.id.trailerGridView);
         inspectionProgressBar    = (ProgressBar)view.findViewById(R.id.inspectionProgressBar);
+
+        EditText odometerEditTxt = (EditText)view.findViewById(R.id.odometerEditTxt);
+        Spinner selectDistanceSpinner = (Spinner)view.findViewById(R.id.selectDistanceSpinner);
+        selectDistanceSpinner.setVisibility(View.GONE);
+        odometerEditTxt.setVisibility(View.GONE);
+        currentOdometerTV.setVisibility(View.VISIBLE);
 
         Bundle getBundle  = this.getArguments();
         int position  = getBundle.getInt("position");
@@ -214,6 +223,12 @@ public class    InspectionDetailView  extends Fragment {
         trailerInspectionTV.setText(savedInspectionModel.getTrailorEquNumber());
         locInspectionTV.setText(savedInspectionModel.getLocation());
         inspectionDateTv.setText(convertDateFormat(savedInspectionModel.getCreatedDate(), savedInspectionModel.getInspectionDateTime() ));
+
+        String odometer = savedInspectionModel.getOdometer();
+
+        String meterToKm = Constants.meterToKmWithObd(odometer);
+        String meterToMiles = Constants.meterToMilesWith2DecPlaces(odometer);
+        currentOdometerTV.setText(Constants.getUpTo2DecimalString(meterToKm) + " km (" + Constants.getUpTo2DecimalString(meterToMiles) + " miles)" );
 
         if(!savedInspectionModel.getRemarks().trim().equalsIgnoreCase("null")) {
             remarksEditText.setText(savedInspectionModel.getRemarks());
@@ -389,6 +404,7 @@ public class    InspectionDetailView  extends Fragment {
 
         try {
             StateList = statePrefManager.GetState(getActivity());
+            StateList.add(0, new DriverLocationModel("", "Select", ""));
             stateListSize = StateList.size();
         } catch (Exception e) {
             stateListSize = 0;
@@ -660,4 +676,9 @@ public class    InspectionDetailView  extends Fragment {
     };
 
 
+    @Override
+    public void onStop() {
+        Constants.IsInspectionDetailViewBack = true;
+        super.onStop();
+    }
 }

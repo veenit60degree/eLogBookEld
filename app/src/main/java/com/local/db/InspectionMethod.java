@@ -172,7 +172,7 @@ public class InspectionMethod {
             inspectionJson.put(ConstantsKeys.InspectionTypeId,              InspectionTypeId  );
             inspectionJson.put(ConstantsKeys.ByteDriverSign,                ByteDriverSign  );
             inspectionJson.put(ConstantsKeys.ByteSupervisorSign ,           ByteSupervisorSign   );
-            inspectionJson.put(ConstantsKeys.OdometerInMeters ,           OdometerInMeters   );
+            inspectionJson.put(ConstantsKeys.OdometerInMeters ,             OdometerInMeters   );
 
 
         }catch (Exception e){

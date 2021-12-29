@@ -108,7 +108,7 @@ public class DriverLocationDialog extends Dialog {
         malfunctionAnim.setDuration(1500);
 
         InputFilter[] filterArray = new InputFilter[1];
-        filterArray[0] = new InputFilter.LengthFilter(30);
+        filterArray[0] = new InputFilter.LengthFilter(50);
         CityNameEditText.setFilters(filterArray);
 
 
@@ -117,8 +117,10 @@ public class DriverLocationDialog extends Dialog {
             TitleTV.setText("Remarks");
             CityNameEditText.setHint("Remarks");
             CityNameEditText.setText(City);
-            CityNameEditText.setSelection(City.length());
 
+            if(City.length() > 0 && City.length() < 50) {
+                CityNameEditText.setSelection(City.length() - 1);
+            }
 
         }else {
             cityInputLayout.setHint("Enter City");
@@ -149,7 +151,9 @@ public class DriverLocationDialog extends Dialog {
 
 
                 CityNameEditText.setText(City);
-                CityNameEditText.setSelection(City.length());
+                if(City.length() > 0 && City.length() < 50) {
+                    CityNameEditText.setSelection(City.length() - 1);
+                }
 
                 // Creating adapter for spinner
                 ArrayAdapter dataAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, locationList);
@@ -159,7 +163,9 @@ public class DriverLocationDialog extends Dialog {
                 if(Position == -1) {
                     City = location;
                     CityNameEditText.setText(City);
-                    CityNameEditText.setSelection(City.length());
+                    if(City.length() > 0 && City.length() < 50) {
+                        CityNameEditText.setSelection(City.length() - 1);
+                    }
                 }
 
                 for(int i = 0 ; i<locationList.size() ; i++){
@@ -231,8 +237,9 @@ public class DriverLocationDialog extends Dialog {
             public void onClick(View view) {
               //  City = location;
                 CityNameEditText.setText(EldFragment.City);
-                CityNameEditText.setSelection(EldFragment.City.length());
-
+                if(EldFragment.City.length() > 0 && EldFragment.City.length() < 50) {
+                    CityNameEditText.setSelection(EldFragment.City.length() - 1);
+                }
                 for(int i = 0 ; i<locationList.size() ; i++){
                     if(EldFragment.AobrdState.equalsIgnoreCase(locationList.get(i))){
                         locationSpinner.setSelection(i);

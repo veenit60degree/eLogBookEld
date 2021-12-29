@@ -682,6 +682,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
                 isHaulExcptn, isAdverseExcptn, isNorthCanada,
                 rulesVersion, oDriverLogList, getActivity());
+
+        if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2) ) {
+            oDriverDetail.setCanAdverseException(isAdverseExcptn);
+        }
         RulesResponseObject RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
         return RulesObj;
@@ -824,7 +828,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     editLogRemarksDialog.dismiss();
 
                 if(logArray.length() > 0) {
-                    if(getActivity() != null) {
+                    if(getActivity() != null && !getActivity().isFinishing()) {
                         previewDialog = new EditLogPreviewDialog(getActivity(), logArray, new EditLogPreviewListener());
                         previewDialog.show();
                     }
@@ -884,6 +888,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                                 offsetFromUTC, Integer.valueOf(CurrentCycleId), IsSingleDriver, DRIVER_JOB_STATUS, IsOldRecord,
                                 isHaulExcptn, isAdverseExcptn, isNorthCanada,
                                 rulesVersion, oDriverLogList, getActivity());
+
+                        if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2) ) {
+                            oDriverDetail.setCanAdverseException(isAdverseExcptn);
+                        }
                         RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
                         if ( RulesObj.isViolation() ) {
@@ -1629,7 +1637,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         RefreshTempAdapter();
                     }
                 }
-            }, 300);
+            }, 500);
 
 
 

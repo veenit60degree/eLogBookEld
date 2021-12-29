@@ -783,8 +783,10 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                             hosCycleTV.setText(CurrentCycle);
                             if(SharedPref.IsNorthCanada(getActivity())) {
                                 TotalCycleHour = 80 * 60;
+                                hosCycleTV.setText(Globally.CANADA_CYCLE_1_NORTH_NAME);
                             }else{
                                 TotalCycleHour = 70 * 60;
+                                hosCycleTV.setText(CurrentCycle);
                             }
                         } else if(CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
                             TotalCycleHour = 120 * 60;
@@ -1019,6 +1021,10 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     isHaulExcptn, isAdverseExcptn, isNorthCanada,
                     rulesVersion, oDriverLogDetail, getActivity());
 
+            if(CycleId.equals(Globally.CANADA_CYCLE_1) || CycleId.equals(Globally.CANADA_CYCLE_2) ) {
+                oDriverDetail.setCanAdverseException(isAdverseExcptn);
+            }
+
             RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CycleId), Integer.valueOf(DRIVER_JOB_STATUS), oDriverDetail);
 
 
@@ -1198,7 +1204,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(getActivity() != null){
+                        if(getActivity() != null && !getActivity().isFinishing()){
                             if(!global.isConnected(getActivity())) {
                                 loadingSpinEldIV.stopAnimation();
                                 global.EldScreenToast(loadingSpinEldIV, ConstantsEnum.UPDATED, getResources().getColor(R.color.colorSleeper));

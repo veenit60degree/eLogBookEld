@@ -1,5 +1,6 @@
 package com.messaging.logistic.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -1068,7 +1069,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             e.printStackTrace();
         }
 
-        if(SuggestedFragmentActivity.dataArray.length() > 0){
+        if(SuggestedFragmentActivity.dataArray.length() > 0 && !((Activity) getActivity()).isFinishing() ){
             Toast.makeText(getActivity(), Message, Toast.LENGTH_SHORT).show();
             getParentFragmentManager().popBackStack();
         }else{
@@ -1152,6 +1153,15 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             for(int i = 0 ; i < editedLogArray.length() ; i++){
                 JSONObject editedObj = (JSONObject)editedLogArray.get(i);
 
+                String StartLatitude = "";
+                String StartLongitude = "";
+                if(editedObj.has(ConstantsKeys.StartLatitude)){
+                    StartLatitude = editedObj.getString(ConstantsKeys.StartLatitude);
+                }
+                if(editedObj.has(ConstantsKeys.StartLongitude)){
+                    StartLongitude = editedObj.getString(ConstantsKeys.StartLongitude);
+                }
+
                 EldDriverLogModel editModel = new EldDriverLogModel(
 
                         editedObj.getInt(ConstantsKeys.DriverStatusId),
@@ -1173,8 +1183,8 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         editedObj.getBoolean(ConstantsKeys.IsEdited),
                         editedObj.getBoolean(ConstantsKeys.YardMove),
 
-                        editedObj.getString(ConstantsKeys.StartLatitude),
-                        editedObj.getString(ConstantsKeys.StartLongitude)
+                        StartLatitude,
+                        StartLongitude
 
                 );
 
@@ -1208,7 +1218,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(getActivity() != null)
+                        if(getActivity() != null && !getActivity().isFinishing())
                             getActivity().finish();
 
                     }
@@ -1219,7 +1229,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     /*    }else{
             try {
 
-                if(getActivity() != null) {
+                if(getActivity() != null && !getActivity().isFinishing()) {
                     getParentFragmentManager().popBackStack();
                 }
             }catch (Exception e){

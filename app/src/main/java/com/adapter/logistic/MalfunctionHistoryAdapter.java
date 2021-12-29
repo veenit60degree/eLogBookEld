@@ -103,6 +103,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         TextView engHoursMalTxtVw = (TextView) convertView.findViewById(R.id.engHoursMalTxtVw);
         TextView totalMinTxtVw = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
         TextView endTimeMalTxtVw = (TextView) convertView.findViewById(R.id.endTimeMalTxtVw);
+        TextView unIdenMalTxtVw = (TextView) convertView.findViewById(R.id.unIdenMalTxtVw);
 
         endTimeMalTxtVw.setVisibility(View.VISIBLE);
 
@@ -125,11 +126,16 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                 }
             }
 
+            String DriverId = childData.getMasterDetectionDataEventId();
             String EngineHour = childData.getEngineHours();
             if(EngineHour.length() > 0 && !EngineHour.equals("--")) {
                 EngineHour = constants.Convert1DecimalPlacesDouble(Double.parseDouble(EngineHour));
             }
             engHoursMalTxtVw.setText(EngineHour);
+
+            if(DriverId.equals("0")) {
+                unIdenMalTxtVw.setVisibility(View.VISIBLE);
+            }
 
 
             /*if(childData.getHexaSequenceNo().length() > 0){
@@ -168,10 +174,46 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
             LinearLayout malfunctionChildLay = (LinearLayout)convertView.findViewById(R.id.malfunctionChildLay);
             if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).size() -1 ) {
-                malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
+                if(DriverId.equals("0")){
+                    malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                }else {
+                    malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
+                }
             }else{
-                malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
+                if(DriverId.equals("0")){
+                    malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                }else {
+                    malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
+                }
             }
+
+            int sizePadding =  constants.intToPixel(_context, 5);
+            int sizeMargin =  constants.intToPixel(_context, 10);
+
+            if(globally.isTablet(_context)){
+                sizePadding =  constants.intToPixel(_context, 8);
+                sizeMargin =  constants.intToPixel(_context, 15);
+            }
+
+            malfunctionChildLay.setPadding(sizePadding, sizePadding, sizePadding, sizePadding);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(sizeMargin, 0, sizeMargin, 0);
+            malfunctionChildLay.setLayoutParams(params);
+
+            malfunctionChildLay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String DriverId = childData.getMasterDetectionDataEventId();
+                    if(DriverId.equals("0")){
+                        globally.EldScreenToast(view, _context.getResources().getString(R.string.UnIdentifiedEvent),
+                                _context.getResources().getColor(R.color.colorPrimary));
+                    }
+                }
+            });
 
         }catch (Exception e){
             e.printStackTrace();

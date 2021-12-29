@@ -390,7 +390,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
     private void MoveFragment(String date ){
         try {
-            if(getActivity() != null) {
+            if(getActivity() != null && !getActivity().isFinishing()) {
                 InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("date", date);

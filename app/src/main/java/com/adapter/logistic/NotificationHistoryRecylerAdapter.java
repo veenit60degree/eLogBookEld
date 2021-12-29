@@ -93,7 +93,7 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
             String changedCycleId = itemModel.getTitle();
 
 
-            if(changedCycleId.equals(Globally.CANADA_CYCLE_1)){
+            if(changedCycleId.equals(Globally.CANADA_CYCLE_1) ){
                 changedCycleName = Globally.CANADA_CYCLE_1_NAME;
             }else if(changedCycleId.equals(Globally.CANADA_CYCLE_2)){
                 changedCycleName = Globally.CANADA_CYCLE_2_NAME;

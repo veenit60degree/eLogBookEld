@@ -222,26 +222,36 @@ public class HelperMethods {
 
             if(isDrivingAllowed){
                 // Some times wrong auto status were changed when driver switched from main to co driver. Now we will wait for 25 sec, afterthat we will check
-                String CoDriverSwitchTime = SharedPref.getCoDriverSwitchTime(context);
-                try{
-                    if(CoDriverSwitchTime.length() > 10){
-                        final DateTime currentDateTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), false);
-                        final DateTime savedDateTime = Global.getDateTimeObj(CoDriverSwitchTime, false);
-
-                        int timeInSec = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
-
-                        if(timeInSec <= 25){
-                            isDrivingAllowed = false;
-                        }
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                isDrivingAllowed = isSwitchedTimeGreater20Sec(isDrivingAllowed, context);
             }
 
         }
 
         return isDrivingAllowed;
+    }
+
+
+    // Some times wrong auto status were changed when driver switched from main to co driver. Now we will wait for 25 sec, afterthat we will check
+    public boolean isSwitchedTimeGreater20Sec(boolean isDrivingAllowed, Context context){
+
+        String CoDriverSwitchTime = SharedPref.getCoDriverSwitchTime(context);
+        try{
+            if(CoDriverSwitchTime.length() > 10){
+                final DateTime currentDateTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+                final DateTime savedDateTime = Globally.getDateTimeObj(CoDriverSwitchTime, false);
+
+                int timeInSec = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
+
+                if(timeInSec <= 20){
+                    isDrivingAllowed = false;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isDrivingAllowed;
+
     }
 
 
@@ -561,6 +571,16 @@ public class HelperMethods {
         return json;
     }
 
+
+    public int getLastStatus(int DriverId, DBHelper dbHelper){
+        try {
+            JSONArray driverLogArray = getSavedLogArray(DriverId, dbHelper);
+            JSONObject lastItemJson = GetLastJsonFromArray(driverLogArray);
+            return lastItemJson.getInt(ConstantsKeys.DriverStatusId);
+        }catch (Exception e){
+            return -1;
+        }
+    }
 
 
     public JSONObject updateLastItemFromArray(JSONArray logArray, JSONObject lastObj, DateTime currentDateTime, int offsetFromUTC){
@@ -2905,6 +2925,10 @@ public class HelperMethods {
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException, isNorthCanada,
                 rulesVersion, oDriverLog3DaysList, context);  //oDriverLog3DaysList
 
+        if(String.valueOf(eldCyclesId).equals(Globally.CANADA_CYCLE_1) || String.valueOf(eldCyclesId).equals(Globally.CANADA_CYCLE_2) ) {
+            oDriverDetailRemaining.setCanAdverseException(isAdverseException);
+        }
+
         return CallDriverRule.calculateDailyMinutes(oDriverDetailRemaining);
 
     }
@@ -2923,6 +2947,10 @@ public class HelperMethods {
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException, isNorthCanada,
                 rulesVersion, oDriverLog3DaysList, context);  //oDriverLog3DaysList
 
+        if(String.valueOf(eldCyclesId).equals(Globally.CANADA_CYCLE_1) || String.valueOf(eldCyclesId).equals(Globally.CANADA_CYCLE_2) ) {
+            oDriverDetailRemaining.setCanAdverseException(isAdverseException);
+        }
+
         return CallDriverRule.calculateDailyMinutes(oDriverDetailRemaining);
 
     }
@@ -2939,7 +2967,9 @@ public class HelperMethods {
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException,
                 isNorthCanada, rulesVersion, oDriverLog3DaysList, context);
-
+       /* if(eldCyclesId.equals(Globally.CANADA_CYCLE_1) || eldCyclesId.equals(Globally.CANADA_CYCLE_2) ) {
+            oDriverDetailRemaining.setCanAdverseException(isAdverseException);
+        }*/
         return CallDriverRule.calculateDailyOffLeftMinutes(oDriverDetailRemaining);
 
     }
@@ -3676,6 +3706,11 @@ public class HelperMethods {
                         Integer.valueOf(DRIVER_ID), offsetFromUTC, Integer.valueOf(CurrentCycleId), Global.isSingleDriver(context),
                         DRIVER_JOB_STATUS, false, isHaulExcptn,
                         isAdverseExcptn, IsNorthCanada, rulesVersion, oDriverLog, context);
+
+                if(CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2) ) {
+                    oDriverDetail1.setCanAdverseException(isAdverseExcptn);
+                }
+
                 RulesObj = CheckDriverRule(Integer.valueOf(CurrentCycleId), DRIVER_JOB_STATUS,
                         oDriverDetail1);
 

@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -72,7 +73,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     public static List<SlideMenuModel> menuList = new ArrayList<>();
     public static SlidingMenu smenu;
     public static RelativeLayout sliderLay;
-    public static Button speedAlertBtn, dayNightBtn, openUpdateDialogBtn;
+    public static Button speedAlertBtn, dayNightBtn, openUpdateDialogBtn, dismissAlertBtn;
     public static boolean isTabActOnCreate = true;
     public static List<VehicleModel> vehicleList = new ArrayList<>();
 
@@ -133,6 +134,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         tabcontent = (FrameLayout)findViewById(android.R.id.tabcontent);
         speedAlertBtn = (Button)findViewById(R.id.wiredObdDataBtn);
+        dismissAlertBtn = (Button)findViewById(R.id.dismissAlertBtn);
         dayNightBtn = (Button)findViewById(R.id.dayNightBtn);
         openUpdateDialogBtn = (Button)findViewById(R.id.openUpdateDialogBtn);
         noObdConnTV = (TextView)findViewById(R.id.noObdConnTV);
@@ -181,6 +183,11 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                                 global.InternetErrorDialog(TabAct.this, true);
                             }else{
                                 global.InternetErrorDialog(TabAct.this, false);
+                            }
+                        }else if (intent.hasExtra(ConstantsKeys.IsUnIdenLocMissing)) {
+                            if (intent.getBooleanExtra(ConstantsKeys.IsUnIdenLocMissing, false) == true) {
+                                global.DriverSwitchAlert(TabAct.this, getString(R.string.loc_missing),
+                                                                getString(R.string.add_loc_desc), "Ok");
                             }
                         }else if (intent.hasExtra(ConstantsKeys.IsPcYmAlertChangeStatus)) {
                             if (intent.getBooleanExtra(ConstantsKeys.IsPcYmAlertChangeStatus, false) == true) {
@@ -352,6 +359,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
         speedAlertBtn.setOnClickListener(this);
+        dismissAlertBtn.setOnClickListener(this);
         sliderLay.setOnClickListener(this);
         dayNightBtn.setOnClickListener(this);
         openUpdateDialogBtn.setOnClickListener(this);
@@ -634,20 +642,22 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                             alertDialog.dismiss();
                         }
                         alertDialog.show();
-
-                        /*else {
-                            if (BackgroundLocationService.IsAutoChange == false) {
-                                if (SharedPref.getVss(TabAct.this) < 8) {
-                                    alertDialog.show();
-                                }
-                            }
-                        }*/
                     }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
 
+                break;
 
+            case R.id.dismissAlertBtn:
+                try {
+                    if (getApplicationContext() != null && alertDialog != null) {
+                        if (alertDialog.isShowing()) {
+                            alertDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "VIN matched", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }catch (Exception e){ }
                 break;
 
             case R.id.sliderLay:

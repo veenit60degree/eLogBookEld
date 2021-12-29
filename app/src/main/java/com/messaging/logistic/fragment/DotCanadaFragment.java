@@ -436,10 +436,11 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             try {
                 StatePrefManager statePrefManager  = new StatePrefManager();
                 StateList = statePrefManager.GetState(getActivity());
+                StateList.add(0, new DriverLocationModel("", "Select", ""));
             } catch (Exception e) { }
 
             StateArrayList =  SharedPref.getStatesInList(getActivity());
-
+            StateArrayList.add(0, "Select");
 
 
         }
@@ -852,7 +853,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             int viewHeight = eventDotETV.getHeight();
             if(viewHeight > 0) {
                 if (global.isTablet(getActivity())) {
-                    inspectionLayHeight = viewHeight + 30;
+                    inspectionLayHeight = viewHeight + 35;
                     headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) +10;
                 } else {
                     inspectionLayHeight = viewHeight + 30;
@@ -1355,7 +1356,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         @Override
         public void getError(VolleyError error, int flag) {
-            if(getActivity() != null) {
+            if(getActivity() != null && !getActivity().isFinishing()) {
                 try {
                     Log.d("error", ">>error: " + error);
                     canDotProgressBar.setVisibility(View.GONE);

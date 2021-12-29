@@ -108,6 +108,16 @@ public class NotificationManagerSmart {
     }
 
 
+    public static void dismissNotification(Context context, int id){
+        try{
+            if(context != null) {
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancel(id);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     public void showLocalNotification(String title, String message, int ID, Intent intent) {
         Globally.PlaySound(mCtx);

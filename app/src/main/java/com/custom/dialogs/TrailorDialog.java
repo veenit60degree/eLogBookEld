@@ -33,6 +33,7 @@ import com.local.db.HelperMethods;
 import com.local.db.ShipmentHelperMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.fragment.EldFragment;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -391,24 +392,31 @@ public class TrailorDialog extends Dialog {
                 if (spinnerSelection.equals(getContext().getResources().getString(R.string.YardMove))) {
 
                     if (constants.isObdConnected(getContext())) {
-                        if (hMethods.isCoDriverInDrYMPC(getContext(), Global, DriverId, dbHelper)) {
-                            String coDriverStatus = hMethods.getCoDriverStatus(getContext(), DriverId, Global, dbHelper);
-                            Global.EldScreenToast(btnLoadingJob, ConstantsEnum.CO_DRIVING_ALERT + coDriverStatus + ConstantsEnum.CO_DRIVING_ALERT1,
-                                    getContext().getResources().getColor(R.color.colorVoilation));
-                        } else {
-                            if (ReasonEditText.getText().toString().trim().length() >= 4) {
-                                readyListener.JobBtnReady(
-                                        Trailer,
-                                        spinnerSelection,
-                                        type,
-                                        isUpdatedTrailer,
-                                        ItemPosition,
-                                        TrailorNoEditText,
-                                        ReasonEditText);
+
+                        if(jobStatus != EldFragment.DRIVING) {
+                            if (hMethods.isCoDriverInDrYMPC(getContext(), Global, DriverId, dbHelper)) {
+                                String coDriverStatus = hMethods.getCoDriverStatus(getContext(), DriverId, Global, dbHelper);
+                                Global.EldScreenToast(btnLoadingJob, ConstantsEnum.CO_DRIVING_ALERT + coDriverStatus + ConstantsEnum.CO_DRIVING_ALERT1,
+                                        getContext().getResources().getColor(R.color.colorVoilation));
                             } else {
-                                Global.EldScreenToast(btnLoadingJob, ConstantsEnum.YARD_MOVE_DESC, getContext().getResources().getColor(R.color.red_eld));
+                                if (ReasonEditText.getText().toString().trim().length() >= 4) {
+                                    readyListener.JobBtnReady(
+                                            Trailer,
+                                            spinnerSelection,
+                                            type,
+                                            isUpdatedTrailer,
+                                            ItemPosition,
+                                            TrailorNoEditText,
+                                            ReasonEditText);
+                                } else {
+                                    Global.EldScreenToast(btnLoadingJob, ConstantsEnum.YARD_MOVE_DESC, getContext().getResources().getColor(R.color.red_eld));
+                                }
                             }
+                        }else{
+                            Global.EldToastWithDuration4Sec(btnLoadingJob, getContext().getResources().getString(R.string.pc_ym_alert_with_dr),
+                                                                            getContext().getResources().getColor(R.color.colorVoilation));
                         }
+
                     } else {
                         Global.EldToastWithDuration4Sec(TrailorNoEditText, getContext().getResources().getString(R.string.connect_with_obd_first), getContext().getResources().getColor(R.color.colorVoilation));
                     }
@@ -447,7 +455,9 @@ public class TrailorDialog extends Dialog {
                             dismiss();
                         } else {
 
-                            if (updatedReason.equals("Trailer Drop") && (Trailor.length() == 0 || Trailor.equals(getContext().getString(R.string.no_trailer)))) {
+                            if(updatedReason.equals("Select")){
+                                Global.EldScreenToast(btnLoadingJob, ConstantsEnum.SELECT_ONDUTY_REASON, getContext().getResources().getColor(R.color.red_eld));
+                            }else if (updatedReason.equals("Trailer Drop") && (Trailor.length() == 0 || Trailor.equals(getContext().getString(R.string.no_trailer)))) {
                                 Global.EldScreenToast(btnLoadingJob, ConstantsEnum.NO_TRAILER_ALERT, getContext().getResources().getColor(R.color.red_eld));
 
                             } else if ((updatedReason.equals("Trailer Pickup") && Trailer.length() == 0) ||

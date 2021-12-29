@@ -25,6 +25,7 @@ public class SavedInspectionModel {
     int InspectionTypeId;
     String DriverImageBytes ;
     String SupervisorImageByte ;
+    String Odometer;
 
     ArrayList<String> TruckList;
     ArrayList<String> TrailerList;
@@ -34,7 +35,8 @@ public class SavedInspectionModel {
                                 String location, boolean preTripInspectionSatisfactory, boolean postTripInspectionSatisfactory,
                                 boolean aboveDefectsCorrected, boolean aboveDefectsNotCorrected, String remarks, String driverSignature,
                                 String supervisorMechanicsName, String supervisorMechanicsSignature, String createdDate,
-                                int inspectionTypeId, String driverImageBytes , String supervisorImageByte, ArrayList<String> truckList, ArrayList<String> trailerList) {
+                                int inspectionTypeId, String driverImageBytes , String supervisorImageByte, String odometer,
+                                ArrayList<String> truckList, ArrayList<String> trailerList) {
 
         this.HeaderTitle = headerTitle;
         this.VIN = VIN;
@@ -54,6 +56,7 @@ public class SavedInspectionModel {
         InspectionTypeId = inspectionTypeId;
         DriverImageBytes = driverImageBytes;
         SupervisorImageByte = supervisorImageByte;
+        Odometer = odometer;
         TruckList = truckList;
         TrailerList = trailerList;
     }
@@ -146,6 +149,11 @@ public class SavedInspectionModel {
 
     public String getSupervisorImageByte() {
         return SupervisorImageByte;
+    }
+
+
+    public String getOdometer() {
+        return Odometer;
     }
 
     public ArrayList<String> getTruckList() {

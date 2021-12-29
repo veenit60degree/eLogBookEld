@@ -1499,7 +1499,7 @@ public class SharedPref {
         try {
             if (context != null) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                DriverStatusId = preferences.getString("jobType", "");
+                DriverStatusId = preferences.getString("jobType", "0");
             }
         }catch (Exception e){}
         return DriverStatusId;
@@ -2520,7 +2520,7 @@ public class SharedPref {
         for (int i = 0; i < stateListSize; i++) {
             StateArrayList.add(StateList.get(i).getState());
         }
-
+      //  StateArrayList.add(0, "Select");
         return StateArrayList;
     }
 

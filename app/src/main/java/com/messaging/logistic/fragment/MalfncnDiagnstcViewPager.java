@@ -1088,7 +1088,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                                 DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)) {
                             parseData(mainObj);
                         } else {
-                            if (DrId.equals(DriverId)) {
+                            if (DrId.equals(DriverId) || DrId.equals("0")) {
                                 parseData(mainObj);
                             }
                         }
@@ -1175,7 +1175,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                         EngHrs,
                         StartOdometer,
                         mainObj.getString(ConstantsKeys.DetectionDataEventCode),
-                        "", "",
+                        mainObj.getString(ConstantsKeys.DriverId), "",
                         "", "", "", "",
                         driverTimeZone, "--", "--", TotalMinutes   //TotalMinutes value is passing in getId()
                 );
