@@ -721,12 +721,13 @@ public class ShippingDocDialog extends Dialog {
         public void getError(VolleyError error, int flag) {
 
             Log.d("error", ">>error: " + error);
+
             switch (flag) {
                 case GetShippingNo:
                     if( error.toString().contains("NoConnection")){
                         global.EldScreenToast(shippingDocSaveBtn, getContext().getResources().getString(R.string.connection_error), Color.parseColor(ToastColor));
                     }else {
-                        global.EldScreenToast(shippingDocSaveBtn, error.toString(), Color.parseColor(ToastColor));
+                        global.EldScreenToast(shippingDocSaveBtn, Globally.DisplayErrorMessage(error.toString()), Color.parseColor(ToastColor));
                     }
                     break;
 

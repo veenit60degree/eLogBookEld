@@ -821,9 +821,11 @@ public class Slidingmenufunctions implements OnClickListener {
 			isExemptDriver = SharedPref.IsExemptDriverCo(context);
 		}
 		if(isExemptDriver && context != null ){
-			Toast.makeText(context, context.getResources().getString(R.string.exempt_logout_desc), Toast.LENGTH_LONG).show();
+			//Toast.makeText(context, context.getResources().getString(R.string.exempt_logout_desc), Toast.LENGTH_LONG).show();
+			global.ShowToastWithDuration(context.getResources().getString(R.string.exempt_logout_desc), context);
 		}
 
+		//global.ShowToastWithDuration(context.getResources().getString(R.string.exempt_logout_desc), context);
 
 		final String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
 		final String TRUCK_NUMBER = DriverConst.GetDriverTripDetails(DriverConst.Truck, context);

@@ -987,7 +987,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             if(getActivity() != null && !getActivity().isFinishing()) {
                 try {
                     dotProgressBar.setVisibility(View.GONE);
-                    global.EldScreenToast(eldMenuLay, "Error", getResources().getColor(R.color.colorVoilation));
+                    global.EldScreenToast(eldMenuLay, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
                     htmlAppendedText = "";
                     TotalOnDutyHours = "00:00";
                     TotalDrivingHours = "00:00";

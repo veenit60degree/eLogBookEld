@@ -861,7 +861,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                                 dismiss();
 
                             }else{
-                                globally.EldScreenToast(shareDriverLogBtn, message, getContext().getResources().getColor(R.color.colorVoilation));
+                                globally.EldToastWithDuration4Sec(shareDriverLogBtn, message, getContext().getResources().getColor(R.color.colorVoilation));
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -874,7 +874,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                     public void onErrorResponse(VolleyError error) {
                         Log.d("error ", "---error: " + error);
                        // sendLogProgressBar.setVisibility(View.GONE);
-                        globally.EldScreenToast(shareDriverLogBtn, "Error", getContext().getResources().getColor(R.color.colorVoilation));
+                        globally.EldToastWithDuration4Sec(shareDriverLogBtn, "Error", getContext().getResources().getColor(R.color.colorVoilation));
                         pDialog.dismiss();
                     }
                 }

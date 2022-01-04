@@ -1068,9 +1068,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             EngineHourTitle.setVisibility(View.GONE);
         }
 
-        if(Globally.isConnected(getActivity())){
+       /* if(Globally.isConnected(getActivity())){
             GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
-        }
+        }*/
 
         try {
             selectedDateRecap = Globally.getDateTimeObj(global.ConvertDateFormat(LogDate), false);

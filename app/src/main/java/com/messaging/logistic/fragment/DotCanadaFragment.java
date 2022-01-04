@@ -1360,7 +1360,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 try {
                     Log.d("error", ">>error: " + error);
                     canDotProgressBar.setVisibility(View.GONE);
-                    global.EldScreenToast(scrollUpBtn, "Error", getResources().getColor(R.color.colorVoilation));
+                    global.EldScreenToast(scrollUpBtn, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
                     htmlAppendedText = "";
                     TotalOnDutyHours = "00:00";
                     TotalDrivingHours = "00:00";

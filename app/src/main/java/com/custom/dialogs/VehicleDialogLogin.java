@@ -354,7 +354,8 @@ public class VehicleDialogLogin  extends Dialog {
         public void getError(VolleyError error, int flag) {
             Log.d("onDuty error", "onDuty error: " + error.toString());
             progressD.dismiss();
-            global.EldScreenToast(logoutTruckPopupTV, error.toString(), getContext().getResources().getColor(R.color.red_eld));
+
+            global.EldScreenToast(logoutTruckPopupTV, Globally.DisplayErrorMessage(error.toString()), getContext().getResources().getColor(R.color.red_eld));
 
         }
     };

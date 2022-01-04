@@ -671,7 +671,7 @@ public class    InspectionDetailView  extends Fragment {
             Log.d("error", "error: " + error);
             inspectionProgressBar.setVisibility(View.GONE);
 
-            Globally.EldScreenToast(changeLocBtn, error.toString(), getResources().getColor(R.color.colorVoilation));
+            Globally.EldScreenToast(changeLocBtn, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
         }
     };
 

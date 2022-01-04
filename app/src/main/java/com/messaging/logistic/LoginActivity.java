@@ -308,7 +308,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 		IsLoginSuccess = false;
 		loginBtn.setEnabled(true);
-
+		ObdPreference = SharedPref.getObdPreference(getApplicationContext());
 
 		if(ObdPreference == Constants.OBD_PREF_BLE){
 			loginBleStatusBtn.setVisibility(View.VISIBLE);
@@ -349,6 +349,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				boolean IsEventUpdate = intent.getBooleanExtra(ConstantsKeys.IsEventUpdate, false);
 				if(IsEventUpdate){
 					if(intent.getBooleanExtra(ConstantsKeys.Status, false)){
+
+						connectionStatusAnimation.cancel();
 
 						if(ObdPreference == Constants.OBD_PREF_BLE){
 							if(!IsBleConnected){

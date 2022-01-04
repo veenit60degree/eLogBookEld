@@ -226,7 +226,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
                     progressDialog.dismiss();
             }catch (Exception e){ e.printStackTrace();}
 
-           Globally.EldScreenToast(tripTitleTV, error.toString(), getResources().getColor(R.color.colorVoilation));
+           Globally.EldScreenToast(tripTitleTV, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
 
         }
     };

@@ -81,7 +81,6 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     DateTime currentDateTime, currentUTCTime;
     int offsetFromUTC;
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
-    JSONArray malfnJsonArray = new JSONArray();
 
 
     public DriverLogInfoAdapter(Context cxt, List<EldDriverLogModel> logList,  List<String> stateArrayList, List<DriverLocationModel> stateList,
@@ -214,7 +213,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         });
 
 
-        if(IsEditView && DaysDiff < 2){
+        if(IsEditView ){    //&& DaysDiff < 2
 
             holder.certifyRemarksIV.setVisibility(View.VISIBLE);
             holder.certifyRemarksLay.setOnClickListener(new View.OnClickListener() {
@@ -439,16 +438,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     logModel.setLocationKm(City + "; " + State + "; " + Country);
                     SaveAndUploadData(logModel, RecordType, position, "","");
 
-                    // Clear Diagnostic if occured
-
-
-                }/*else {
-                   // Global.SaveCurrentCycle(Country, "edit_log", context);
-                }*/
-
-               /* if(position == LogList.size()-1 && IsCurrentDate){
-                   // Global.SaveCurrentCycle(Country, "edit_log", context);
-                }*/
+                }
 
 
                 try {
@@ -620,22 +610,11 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                         if (RecordType.equals(Constants.Location)) {
                             String[] locArray = logObj.getString(ConstantsKeys.RecordValue).split(";");
 
-                          /*  if(SharedPref.IsAOBRD(context)){
-                                if (locArray.length > 2) {
-                                    location = locArray[0] + ", " + locArray[1] + ", " + locArray[2];
-                                    locationKm = locArray[0] + ", " + locArray[1] + ", " + locArray[2];
-                                }else{
-                                    if (locArray.length > 1) {
-                                        location = locArray[0] + " " + locArray[1];
-                                        locationKm = locArray[0] + " " + locArray[1];
-                                    }
-                                }
-                            }else {*/
                                 if (locArray.length > 1) {
                                     location = locArray[1] + " " + locArray[0];
                                     locationKm = locArray[0] + " " + locArray[1];
                                 }
-                           // }
+
 
                             obj.put(ConstantsKeys.StartLocation, location);
                             obj.put(ConstantsKeys.StartLocationKm, locationKm);

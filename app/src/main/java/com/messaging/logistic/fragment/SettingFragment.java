@@ -1585,6 +1585,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         @Override
         public void CancelReady() {
             adverseSwitchButton.setChecked(false);
+            adverseCanadaSwitchButton.setChecked(false);
+
             try {
                 if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
                     adverseRemarksDialog.dismiss();
@@ -2317,7 +2319,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     settingSpinImgVw.stopAnimation();
 
                     if(flag == SaveAgricultureException){
-                        global.EldScreenToast(SyncDataBtn, error.toString(), getResources().getColor(R.color.colorVoilation));
+                        global.EldScreenToast(SyncDataBtn, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
                     }
 
                     Log.d("Driver", "error" + error.toString());

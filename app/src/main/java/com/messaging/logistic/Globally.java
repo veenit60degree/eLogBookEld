@@ -23,6 +23,7 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -404,6 +405,31 @@ public class Globally {
 
 	}
 
+
+	public void ShowToastWithDuration(String message, Context context) {
+		try {
+			if(context != null) {
+				int toastDurationInMilliSeconds = 3000;
+				final Toast mToastToShow = Toast.makeText(context, message, Toast.LENGTH_LONG);
+				CountDownTimer toastCountDown;
+				toastCountDown = new CountDownTimer(toastDurationInMilliSeconds, 1000 /*Tick duration*/) {
+					public void onTick(long millisUntilFinished) {
+						mToastToShow.show();
+					}
+
+					public void onFinish() {
+						mToastToShow.cancel();
+					}
+				};
+				mToastToShow.show();
+				toastCountDown.start();
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+
 	/*========================= Show Toast message =====================*/
 	public static void EldScreenToast1(Context context, String message, int color) {
 
@@ -462,7 +488,7 @@ public class Globally {
 			snackbar.setActionTextColor(Color.WHITE);
 			View snackbarView = snackbar.getView();
 			snackbarView.setBackgroundColor(color);
-			snackbar.setDuration(3600);	// 6 sec
+			snackbar.setDuration(4000);	// 4 sec
 
 			TextView textView = (TextView) snackbarView.findViewById(R.id.snackbar_text);
 			textView.setTextColor(Color.WHITE);
@@ -2180,6 +2206,15 @@ public class Globally {
 	}
 
 
+	public static String DisplayErrorMessage(String error){
+		if(error.contains("timeout")){
+			error = "Connection time out.";
+		}else if( error.contains("NoConnectionError")){
+			error = "Connection Error";
+		}
+
+		return error;
+	}
 
 	public static void ShowNotificationWithSound(Context context, RulesResponseObject RemainingTimeObj, NotificationManagerSmart mNotificationManager){
 

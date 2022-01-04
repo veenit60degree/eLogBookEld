@@ -304,7 +304,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
 
-        int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
+
+    /*    int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
         if (LoginActivity.isDriving) {
             ignitionStatus = "ON";
             truckRPM = "700";
@@ -352,6 +353,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         SharedPref.setVss(speed, getApplicationContext());
         SharedPref.setRPM(truckRPM, getApplicationContext());
 
+*/
 
 
 
@@ -522,8 +524,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         ShellUtils.CommandResult obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
 
-
-/*
         if (obdShell.result == 0) {
             if (obdShell.successMsg.contains("USB_DCP")) {
 
@@ -532,8 +532,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     // Connected State
                     SharedPref.SaveObdStatus(Constants.WIRED_CONNECTED, global.getCurrentDate(),
                             global.GetCurrentUTCTimeFormat(), getApplicationContext());
-
-                    sendBroadcast(true);
 
                     StartStopServer(constants.WiredOBD);
 
@@ -546,6 +544,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                             getString(R.string.wired_tablettt),
                             getString(R.string.wired_tablet_connected), 2081);
 
+                    sendBroadcast(true);
+
+
                 }
 
             } else {
@@ -556,8 +557,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                       SharedPref.SaveObdStatus(Constants.WIRED_DISCONNECTED, global.getCurrentDate(),
                               global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-                      sendBroadcast(false);
-
                       constants.saveObdData(constants.getObdSource(getApplicationContext()), "WIRED-DISCONNECTED", "", "-1",
                               currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "-1",
                               "-1", EngineSeconds, "", "",
@@ -566,6 +565,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                       global.ShowLocalNotification(getApplicationContext(),
                               getString(R.string.wired_tablettt),
                               getString(R.string.wired_tablet_disconnected), 2081);
+
+                      sendBroadcast(false);
 
                   }
 
@@ -582,7 +583,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
         }
-*/
+
 
 
 

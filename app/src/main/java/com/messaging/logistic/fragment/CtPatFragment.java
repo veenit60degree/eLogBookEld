@@ -878,16 +878,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void getError(VolleyError error, int flag) {
-            switch (flag){
-                default:
-                    try {
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    break;
-            }
         }
     };
 

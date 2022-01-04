@@ -1007,7 +1007,13 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
             dismissDialog();
 
-            switch (flag){
+            if(flag == GetRecordFlag){
+                setPagetAdapter();
+            }else{
+                globally.EldScreenToast(confirmCertifyBtn, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
+            }
+
+           /* switch (flag){
 
                 case GetRecordFlag:
                     setPagetAdapter();
@@ -1015,19 +1021,19 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
                 case CertifyRecordFlag:
 
-                    globally.EldScreenToast(confirmCertifyBtn, error.toString(), getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(confirmCertifyBtn, msg, getResources().getColor(R.color.colorVoilation));
 
                     break;
 
                 case RejectRecordFlag:
-                    globally.EldScreenToast(confirmCertifyBtn, error.toString(), getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(confirmCertifyBtn, msg, getResources().getColor(R.color.colorVoilation));
                     break;
 
                 default:
-                    globally.EldScreenToast(confirmCertifyBtn, error.toString(), getResources().getColor(R.color.colorVoilation));
+                    globally.EldScreenToast(confirmCertifyBtn, msg, getResources().getColor(R.color.colorVoilation));
 
                     break;
-            }
+            }*/
         }
     };
 

@@ -254,8 +254,7 @@ public class TimeZoneDialog extends Dialog {
                     if(progressD != null)
                         progressD.dismiss();
 
-
-                    global.EldScreenToast(recordTitleTV, error.toString(), mContext.getResources().getColor(R.color.red_eld));
+                    global.EldScreenToast(recordTitleTV, Globally.DisplayErrorMessage(error.toString()), mContext.getResources().getColor(R.color.red_eld));
 
                     dismiss();
                 }

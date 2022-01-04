@@ -2104,6 +2104,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
+    /*private boolean isExemptDriver(){
+        if(SharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {
+            return SharedPref.IsExemptDriverMain(getApplicationContext());
+        } else {
+            return SharedPref.IsExemptDriverCo(getApplicationContext());
+        }
+    }*/
+
 
     private void CheckEventsForClear(String EventCode, boolean isUpdate, int minDiff){
         try{
@@ -3697,9 +3705,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 GPSSpeed = Integer.valueOf(wifiConfig.checkJsonParameter(canObj, "GPSSpeed", "0"));
                                 WheelBasedVehicleSpeed = Double.parseDouble(wifiConfig.checkJsonParameter(canObj, "WheelBasedVehicleSpeed", "0"));
 
-                                if (WheelBasedVehicleSpeed == -1) {
+                              /*  if (WheelBasedVehicleSpeed == -1) {
                                     WheelBasedVehicleSpeed = GPSSpeed;
-                                }
+                                }*/
 
 
                                 truckRPM = wifiConfig.checkJsonParameter(canObj, "RPMEngineSpeed", "0");
@@ -3756,9 +3764,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     //checkPowerMalDiaEvent();
 
 
-                                    if (WheelBasedVehicleSpeed > 200) {
+                                   /* if (WheelBasedVehicleSpeed > 200) {
                                         WheelBasedVehicleSpeed = 0;
-                                    }
+                                    }*/
 
                                     obdVehicleSpeed = (int) WheelBasedVehicleSpeed;
                                     VehicleSpeed = obdVehicleSpeed;
@@ -3770,7 +3778,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             obdEngineHours, HighResolutionDistance, getApplicationContext());
 
 */
-                                    calculateWifiObdData("--", HighResolutionDistance, ignitionStatus, VehicleSpeed, obdTripDistance, rawResponse, correctData, true);
+                                    calculateWifiObdData("--", HighResolutionDistance, ignitionStatus, VehicleSpeed,
+                                            obdTripDistance, rawResponse, correctData, true);
 
                                     sendBroadCast(parseObdDatainHtml(vin, (int)WheelBasedVehicleSpeed, -2), message);
 
@@ -3896,7 +3905,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         String currentLogDate = global.GetCurrentDateTime();
 
         if(rawResponse.contains("CAN")) {
-            if(SharedPref.isOdoCalculationAllowed(getApplicationContext()) || speed > 220) {
+            if(SharedPref.isOdoCalculationAllowed(getApplicationContext()) || speed > 200) {
                 speedCalculated = calculateSpeedFromWifiObdOdometer(
                         savedTime,
                         SharedPref.GetWifiObdOdometer(getApplicationContext()),
@@ -3945,7 +3954,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 if (speed >= DrivingSpeedLimit || speedCalculated >= DrivingSpeedLimit ) {
 
-                    if(speed == 0){
+                    if(speed > 200){
                         obdVehicleSpeed      = (int)speedCalculated;
                         VehicleSpeed         = obdVehicleSpeed;
                         Globally.VEHICLE_SPEED =  obdVehicleSpeed;
@@ -3972,7 +3981,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             } else if (jobType.equals(global.ON_DUTY)) {
 
                 if (speed >= DrivingSpeedLimit || speedCalculated >= DrivingSpeedLimit ) {
-                    if(speed == 0){
+                    if(speed > 200){
                         obdVehicleSpeed      = (int)speedCalculated;
                         VehicleSpeed         = obdVehicleSpeed;
                         Globally.VEHICLE_SPEED =  obdVehicleSpeed;
@@ -3998,7 +4007,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                if (speedCalculated >= DrivingSpeedLimit && speed == 0 ) {
+                if (speedCalculated >= DrivingSpeedLimit && speed > 200 ) {
                     obdVehicleSpeed = (int) speedCalculated;
                     VehicleSpeed = obdVehicleSpeed;
                     Globally.VEHICLE_SPEED = obdVehicleSpeed;
@@ -4998,12 +5007,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 case GetRecapViewFlagCo:
 
                     IsRecapApiACalled = false;
-
-                     /*   if (recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DriverId), dbHelper).length() == 0) {
-                           Recap18DaysLog();
-                        }
-                    */
-
 
                     break;
 

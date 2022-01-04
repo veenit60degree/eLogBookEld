@@ -331,10 +331,6 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
         public void getError(VolleyError error, int flag) {
 
             Log.d("error", ">>error: " + error);
-            switch (flag) {
-
-            }
-
 
         }
     };

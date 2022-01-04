@@ -2926,7 +2926,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         }
                     }
                 }else{
-                    if(hMethods.isSwitchedTimeGreater20Sec(isDrivingAllowedWithCo, getActivity())){
+                    if(hMethods.isSwitchedTimeGreater20Sec(true, getActivity())){
                         Global.EldScreenToast(OnDutyBtn, ConstantsEnum.CO_DRIVING_ALERT + coDriverStatus + ConstantsEnum.CO_DRIVING_ALERT1, getResources().getColor(R.color.colorVoilation));
                     }else{
                         Global.EldScreenToast(OnDutyBtn, ConstantsEnum.AFTER_SWITCH_ALERT, getResources().getColor(R.color.colorVoilation));
@@ -3134,7 +3134,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             Global.onDutyRemarks, oldStatusView, dbHelper, new TrailorListener());
                 trailerDialog.show();
             }
-                // Global.EldScreenToast(OnDutyBtn, getResources().getString(R.string.update_trailer_no), getResources().getColor(R.color.colorVoilation));
             }
         }
     }
@@ -4695,9 +4694,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         SaveTrailerEvent("Saved Successfully");
                     }
 
-                    /*} else {
-                        Global.EldScreenToast(ReasonEditText, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorSleeper));
-                    }*/
+
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -7285,14 +7282,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
             loadingSpinEldIV.stopAnimation();
             progressBar.setVisibility(View.GONE);
-            String Message = error.toString();
-
-           /* if(Message.contains("Object reference not set to an instance")){
-                constants.saveObdData("Object reference not set", "API Flag: " + flag, "", "",
-                        "", "", "", "", "0",
-                        "-1", "", Global.GetCurrentDeviceDate(), Global.GetCurrentDeviceDate(),
-                        DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
-            }*/
 
             switch (flag) {
 
@@ -7312,13 +7301,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 case UpdateObdVeh:
 
 
-                    if(Message.contains("timeout")){
-                        Message = "Connection time out.";
-                    }
+
                     if (SharedPref.GetNewLoginStatus(getActivity())) {
-                        Global.EldScreenToast(loginDialogView, Message, getResources().getColor(R.color.colorVoilation));
+                        Global.EldScreenToast(loginDialogView, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
                     }else{
-                        Global.EldScreenToast(OnDutyBtn, Message, getResources().getColor(R.color.colorVoilation));
+                        Global.EldScreenToast(OnDutyBtn, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
                     }
 
                     break;
