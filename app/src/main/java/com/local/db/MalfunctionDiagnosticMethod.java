@@ -9,6 +9,7 @@ import com.constants.SharedPref;
 import com.constants.Utils;
 import com.driver.details.DriverConst;
 import com.messaging.logistic.Globally;
+import com.messaging.logistic.R;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -1352,7 +1353,7 @@ public class MalfunctionDiagnosticMethod {
             if(eventArray.length() > 0) {
                 eventObj = (JSONObject) eventArray.get(eventArray.length() - 1);
 
-                if (speed == 0) {
+                if (speed <= 0) {
 
                     DateTime EndDateTime = Globally.GetCurrentUTCDateTime();
                     DateTime StartDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.StartDateTime), false);
@@ -1420,7 +1421,7 @@ public class MalfunctionDiagnosticMethod {
                 TotalMinutes = TotalMinutes + eventDuration;
             }
 
-            if(TotalMinutes >= 30){
+            if(TotalMinutes >= Constants.UnidentifiedDiagnosticTime){
                 JSONObject eventJsonObj = new JSONObject();
                 eventJsonObj.put(ConstantsKeys.EventDateTime, Globally.GetCurrentUTCTimeFormat());
                 eventJsonObj.put(ConstantsKeys.EventEndDateTime, "");
@@ -1432,12 +1433,23 @@ public class MalfunctionDiagnosticMethod {
                 eventJsonObj.put(ConstantsKeys.VIN, VIN);
                 eventJsonObj.put(ConstantsKeys.CompanyId, CompanyId);
                 eventJsonObj.put(ConstantsKeys.UnitNo, TruckID);
-                JSONArray array = getMalDiaDurationArray(dbHelper);
-                array.put(eventJsonObj);
+
                 // save in db
-                MalDiaDurationHelper(dbHelper, array);
+                // save Occurred event locally until not posted to server
+                JSONArray malArray = getSavedMalDiagstcArray(dbHelper);
+                malArray.put(eventJsonObj);
+                MalfnDiagnstcLogHelper( dbHelper, malArray);
+
+               /* JSONArray array = getMalDiaDurationArray(dbHelper);
+                array.put(eventJsonObj);
+                MalDiaDurationHelper(dbHelper, array);*/
 
                 SharedPref.saveUnidentifiedEventStatus(true, Globally.GetCurrentUTCTimeFormat(), context);
+
+                Globally.ShowLocalNotification(context,
+                        context.getResources().getString(R.string.dia_event),
+                        context.getResources().getString(R.string.unidentified_dia_occured_desc), 2095);
+
             }
         }catch (Exception e){
             e.printStackTrace();

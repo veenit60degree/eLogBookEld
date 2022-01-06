@@ -366,7 +366,14 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     if(malDiaArray.length() > 0) {
                         showOfflineData(malDiaArray, 0);
                     }else {
-                         setPagerAdapter(0, false);
+                        malfunctionChildList = new ArrayList<>();
+                        malfunctionHeaderList = new ArrayList<>();
+                        malfunctionChildHashMap = new HashMap<>();
+                        diagnosticHeaderList = new ArrayList<>();
+                        diagnosticChildHashMap = new HashMap<>();
+
+
+                        setPagerAdapter(0, false);
                     }
 
                     if(isReceiverUpdate){

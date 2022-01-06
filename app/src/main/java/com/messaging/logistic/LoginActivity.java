@@ -350,45 +350,31 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				if(IsEventUpdate){
 					if(intent.getBooleanExtra(ConstantsKeys.Status, false)){
 
-						connectionStatusAnimation.cancel();
-
-						if(ObdPreference == Constants.OBD_PREF_BLE){
-							if(!IsBleConnected){
-								global.ShowLocalNotification(getApplicationContext(),
-										getString(R.string.BluetoothOBD),
-										getString(R.string.obd_ble), 2081);
-							}
-
+						if(ObdPreference == Constants.OBD_PREF_BLE ){
 							IsBleConnected = true;
-							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
-
 						}else if(ObdPreference == Constants.OBD_PREF_WIRED){
-
-							if(!WiredConnected){
-								global.ShowLocalNotification(getApplicationContext(),
-										getString(R.string.wired_tablettt),
-										getString(R.string.wired_tablet_connected), 2081);
-							}
-
 							WiredConnected = true;
-							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
-
 						}
 
+						if(!connectionStatusAnimation.hasEnded()) {
+							connectionStatusAnimation.cancel();
+						}
+
+						loginBleStatusBtn.setAlpha(1f);
+						loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
 
 
 
 					}else{
 						if(ObdPreference == Constants.OBD_PREF_BLE) {
 							IsBleConnected = false;
-							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
-							loginBleStatusBtn.startAnimation(connectionStatusAnimation);
 						}else if(ObdPreference == Constants.OBD_PREF_WIRED){
 							WiredConnected = false;
-							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
-							loginBleStatusBtn.startAnimation(connectionStatusAnimation);
-
 						}
+
+						loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
+						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+
 					}
 
 				}

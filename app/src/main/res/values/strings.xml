@@ -283,6 +283,7 @@
     <string name="power_dia_clear_desc">Power data diagnostic event has been cleared.</string>
     <string name="power_mal_clear_desc">Power compliance malfunction event has been cleared.</string>
 
+    <string name="unidentified_dia_occured_desc">Unidentified driving record data diagnostic event occurred.</string>
     <string name="missing_data_dia_clear_desc">Missing required data element data diagnostic event has been cleared.</string>
     <string name="pos_mal_clear_desc">Positioning compliance malfunction event has been cleared.</string>
 

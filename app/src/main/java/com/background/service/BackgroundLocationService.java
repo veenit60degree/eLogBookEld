@@ -470,7 +470,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                         // ---------------- temp data ---------------------
-               /*         int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
+                   /*     int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
                         if (OBD_DISCONNECTED) {
                             ignitionStatus = "ON";
                             truckRPM = "700";
@@ -489,8 +489,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             }
                           //  OBD_LAST_STATUSss = constants.WIRED_CONNECTED;
                         } else {
-                            ignitionStatus = "OFF";
-                            truckRPM = "0";
+                            ignitionStatus = "ON";
+                            truckRPM = "700";
                             speed = 0;
                             // obdEngineHours = "23789.5";
                             if (OBD_LAST_STATUSss != Constants.WIRED_DISCONNECTED) {
@@ -533,8 +533,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         SharedPref.setVehicleVin(vin, getApplicationContext());
                         SharedPref.setVss(speed, getApplicationContext());
                         SharedPref.setRPM(truckRPM, getApplicationContext());
-*/
 
+*/
 
 // ====================================================================================================
 
@@ -1941,7 +1941,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 int callTimeMinDiff = constants.getMinDifference(PowerClearEventCallTime, global.getCurrentDate());
 
                 // clear Power Diagnostic event after 5 min automatically when ECM is connected.
-                if (minDiff > 5 && callTimeMinDiff >= 0) {  // callTimeMinDiff this check is used to avoid clear method calling after 3 sec each because checkPowerMalDiaEvent is calling after 3 sec when data coming from obd
+                if (minDiff > 1 && callTimeMinDiff >= 0) {  // callTimeMinDiff this check is used to avoid clear method calling after 3 sec each because checkPowerMalDiaEvent is calling after 3 sec when data coming from obd
                     SharedPref.setPowerClearEventCallTime(global.getCurrentDate(), getApplicationContext());
                     String eventOccuredDriverId = "";
                     if (!global.isSingleDriver(getApplicationContext())) {
@@ -4606,9 +4606,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             for(int i = dataArray.length()-1 ; i >= 0 ; i--){
                                 JSONObject objItem = (JSONObject) dataArray.get(i);
 
-                                String EngineHours = "",StartOdometer = "";
+                                String EngineHours = "0",StartOdometer = "", ClearEngineHour = "0";
+                                int TotalMinutes = 0;
+
                                 if(!objItem.isNull(ConstantsKeys.EngineHours)){
                                     EngineHours = objItem.getString(ConstantsKeys.EngineHours);
+                                    ClearEngineHour = EngineHours;
+                                }
+
+                                if(!objItem.isNull(ConstantsKeys.ClearEngineHours)){
+                                    ClearEngineHour = objItem.getString(ConstantsKeys.ClearEngineHours);
                                 }
 
                                 if(!objItem.isNull(ConstantsKeys.StartOdometer)){
@@ -4619,6 +4626,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 }
 
                                 String DetectionDataEventCode = objItem.getString(ConstantsKeys.DetectionDataEventCode);
+
+                                if(DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic)){
+                                    TotalMinutes = (int)constants.getEngineHourDiff(EngineHours, ClearEngineHour);
+                                }else{
+                                    TotalMinutes = objItem.getInt(ConstantsKeys.TotalMinutes);
+                                }
                                 String DriverId = objItem.getString(ConstantsKeys.DriverId);
                               /*  if(DriverId.equals(MainDriverId) || DriverId.equals(CoDriverId) ||
                                         DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
@@ -4632,9 +4645,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             objItem.getString(ConstantsKeys.EventDateTime),
                                             objItem.getString(ConstantsKeys.EventEndDateTime),
                                             DetectionDataEventCode,
-                                            objItem.getInt(ConstantsKeys.TotalMinutes),
+                                            TotalMinutes,
                                             objItem.getBoolean(ConstantsKeys.IsClearEvent),
-                                            EngineHours,
+                                            ClearEngineHour,
                                             "",
                                             StartOdometer,
                                             EngineHours);

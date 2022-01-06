@@ -119,9 +119,9 @@ public class Constants {
     public static String EngineSyncMalfunctionEvent     = "E";
     public static String PositionComplianceMalfunction  = "L";
 
-
-    public static int PowerEngSyncMalOccTime            = 30;   // in min
-    public static int PositioningMalOccTime             = 60;   // 60 in min
+    public static int UnidentifiedDiagnosticTime        = 30;   // 30 min
+    public static int PowerEngSyncMalOccTime            = 30;   // 30 min
+    public static int PositioningMalOccTime             = 60;   // 60 min
 
     public static boolean IsUnidentifiedLocMissing      = false;
     public static boolean IsLogEdited             = false;
@@ -3972,10 +3972,10 @@ public class Constants {
 
                             SharedPref.SetIgnitionOffCalled(true, context);
 
-                            double previousLocDiaTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(PowerComplianceDiagnostic,
+                            double previousDiaEventTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(PowerComplianceDiagnostic,
                                     lastEngineHour, engineHrDiffInMin, constants, driverPermissionMethod, obdUtil, dbHelper);
 
-                            double totalDuration = engineHrDiffInMin + previousLocDiaTime; // add earlier diagnostic time within 24 hr with current time
+                            double totalDuration = engineHrDiffInMin + previousDiaEventTime; // add earlier diagnostic time within 24 hr with current time
 
                             if (totalDuration >= PowerEngSyncMalOccTime) {
 
@@ -4018,7 +4018,7 @@ public class Constants {
 
                                     constants.saveObdData("PowerDiaEvent - Ignition- " + lastIgnitionStatus +
                                                     ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour +
-                                                    ", TotalDuration: " + totalDuration + ", PreviousLocDiaTime: " +previousLocDiaTime,  "",
+                                                    ", TotalDuration: " + totalDuration + ", PreviousLocDiaTime: " +previousDiaEventTime,  "",
                                             "", currentHighPrecisionOdometer,
                                             currentHighPrecisionOdometer, "", ignitionStatus, "", "",
                                             String.valueOf(-1), obdEngineHours, "", "",
