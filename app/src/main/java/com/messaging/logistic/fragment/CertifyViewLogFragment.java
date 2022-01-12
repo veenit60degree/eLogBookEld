@@ -53,6 +53,7 @@ import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.ConstantHtml;
 import com.constants.Constants;
+import com.constants.ConstantsEnum;
 import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.ScrollViewExt;
@@ -134,8 +135,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     OdometerAdapter odometerAdapter;
     ShippingViewDetailAdapter shippingAdapter;
 
+    Button swapDrivingBtn;
     public static Button saveSignatureBtn, editLogBtn, showHideRecapBtn;
     public static TextView invisibleRfreshBtn ;
+    public static ArrayList<String> SwapDrivingArray = new ArrayList<>() ;
     ImageView eldMenuBtn, signImageView, nextDateBtn, previousDateBtn, loadingSpinEldIV, certifyErrorImgView;
     TextView EldTitleTV, certifyDateTV, certifyCycleTV, EngineHourTitle, EngineHourTV;
     TextView certifyDriverNameTV, certifyCoDriverNameTV, certifyDriverIDTV, certifyCoDriverIDTV;
@@ -152,7 +155,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     String LogDate = "", CurrentDate = "", CurrentDateDefault = "", DayName = "", MonthFullName = "", MonthShortName = "", DRIVER_ID = "";
     String CountryCycle = "",  CompanyId = "";
-    String MainDriverName = "",CoDriverName = "N/A", DeviceId = "", CurrentCycleId = "", VehicleId = "";  //   MainDriverId = "",CoDriverId = "N/A",
+    String MainDriverName = "",CoDriverName = "N/A", DeviceId = "", CurrentCycleId = "", VehicleId = "", SelectedCoDriverId = "";  //   MainDriverId = "",CoDriverId = "N/A",
     String Distance, HomeTerminal, PlateNumber = "", TruckNo, TrailerNo, VIN_NUMBER = "", OfficeAddress = "", Carrier = "", Remarks = "";
     String TeamDriverType = "1", imagePath = "", LogSignImage = "", LogSignImageInByte = "", EngineMileage = "", OffLineLogSignImage = "", OfflineByteImg = "";
     String TotalOnDutyHours         = "00:00";
@@ -174,6 +177,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     final int SaveCertifyOnResume   = 9;
     final int SaveCertifyLog        = 10;
     final int GetReCertifyRecords   = 11;
+    final int SwapDriving           = 12;
 
     //int displayHeight   = 0;
     int displayWidth    = 0;
@@ -229,6 +233,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     boolean isReCertifyRequired     = false;
     boolean isSaveCertifyClicked    = false;
     boolean isLocationMissing       = false;
+    boolean isDrivingAllowForSwap   = false;
 
     int startHour = 0,startMin = 0, endHour = 0, endMin = 0;
     SignDialog signDialog;
@@ -319,6 +324,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         editLogBtn                  = (Button)view.findViewById(R.id.editLogBtn);
         showHideRecapBtn            = (Button)view.findViewById(R.id.showHideRecapBtn);
+        swapDrivingBtn              = (Button)view.findViewById(R.id.swapDrivingBtn);
         saveSignatureBtn            = (Button) view.findViewById(R.id.saveSignatureBtn);
         eldMenuBtn                  = (ImageView)view.findViewById(R.id.eldMenuBtn);
         signImageView               = (ImageView)view.findViewById(R.id.signImageView);
@@ -627,6 +633,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         saveSignatureBtn.setOnClickListener(this);
         editLogBtn.setOnClickListener(this);
         showHideRecapBtn.setOnClickListener(this);
+        swapDrivingBtn.setOnClickListener(this);
         EldTitleTV.setOnClickListener(this);
         certifyDateTV.setOnClickListener(this);
         dateActionBarTV.setOnClickListener(this);
@@ -1246,6 +1253,21 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 break;
 
 
+            case R.id.swapDrivingBtn:
+
+                if (Globally.isConnected(getActivity())) {
+                    if(CertifyViewLogFragment.SwapDrivingArray.size() > 0) {
+                         SwapDriving( DRIVER_ID, SelectedCoDriverId, LogDate, getDriverStatusLogId() );
+                    }else{
+                        global.EldScreenToast(eldMenuLay, ConstantsEnum.SELECT_DR_STATUS, getResources().getColor(R.color.colorVoilation) );
+                    }
+                }else {
+                    global.EldScreenToast(eldMenuLay, global.INTERNET_MSG, getResources().getColor(R.color.colorVoilation) );
+                }
+
+
+                break;
+
             case R.id.signLay:
 
                 //CheckStoragePermissionGranted();
@@ -1310,6 +1332,19 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 break;
 
         }
+    }
+
+    private String getDriverStatusLogId(){
+        String logId = "";
+        for (int i = 0; i < CertifyViewLogFragment.SwapDrivingArray.size(); i++) {
+            if(i == 0) {
+                logId = CertifyViewLogFragment.SwapDrivingArray.get(i);
+            }else{
+                logId = logId + "," +CertifyViewLogFragment.SwapDrivingArray.get(i);
+            }
+        }
+
+        return logId;
     }
 
 
@@ -1842,7 +1877,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
             if(isOffline){
 
-                ParseJsonArray(selectedArray);
+                ParseJsonArray(selectedArray, isOffline);
 
                 int diff = 0;
                 try {
@@ -1893,11 +1928,12 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 }
 
                 try{
+                    SwapDrivingArray = new ArrayList<>();
                    // int diff = hMethods.DayDiff(currentDateTime, selectedDateRecap);
                     LogInfoAdapter = new DriverLogInfoAdapter(getActivity(), DriverLogList, StateArrayList, StateList,
                             DriverType, IsEditLocation, diff, Integer.valueOf(DRIVER_ID), IsCurrentDate,
                             isExceptionEnabledForDay, driverLogArray, selectedDateTime , selectedDateTime,
-                            offsetFromUTC, dbHelper, hMethods );
+                            offsetFromUTC, isDrivingAllowForSwap, dbHelper, hMethods );
                     certifyLogListView.setAdapter(LogInfoAdapter);
                 }catch (Exception e){
                     e.printStackTrace();
@@ -1911,7 +1947,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             }else {
                 if (!dataObj.isNull("DriverLogModel")) {
                     selectedArray = new JSONArray(dataObj.getString("DriverLogModel"));
-                    ParseJsonArray(selectedArray);
+                    ParseJsonArray(selectedArray, isOffline);
 
                     JSONObject SPJson = new JSONObject(dataObj.getString("oDriverTripTruckTrailorDetail_SP"));
 
@@ -1997,10 +2033,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 }
 
                 try{
+                    SwapDrivingArray = new ArrayList<>();
                     int diff = hMethods.DayDiff(currentDateTime, selectedDateRecap);
                     LogInfoAdapter = new DriverLogInfoAdapter(getActivity(), DriverLogList, StateArrayList, StateList, DriverType,
                             IsEditLocation, diff, Integer.valueOf(DRIVER_ID), IsCurrentDate, isExceptionEnabledForDay, driverLogArray,
-                            selectedDateTime , selectedDateTime, offsetFromUTC, dbHelper, hMethods );
+                            selectedDateTime , selectedDateTime, offsetFromUTC, isDrivingAllowForSwap, dbHelper, hMethods );
                     certifyLogListView.setAdapter(LogInfoAdapter);
                 }catch (Exception e){  }
 
@@ -2029,9 +2066,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     }
 
-    void ParseJsonArray(JSONArray driverLogJsonArray){
+    void ParseJsonArray(JSONArray driverLogJsonArray, boolean isOffline){
         try{
             isExceptionEnabledForDay = false;
+            isDrivingAllowForSwap = false;
 
             for(int logCount = 0 ; logCount < driverLogJsonArray.length() ; logCount ++) {
                 JSONObject logObj = (JSONObject) driverLogJsonArray.get(logCount);
@@ -2042,10 +2080,13 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 String currentCycleId = logObj.getString(ConstantsKeys.CurrentCycleId);
                 String UTCStartDateTime = logObj.getString(ConstantsKeys.startDateTime);  //UTCStartDateTime
                 String UTCEndDateTime = logObj.getString(ConstantsKeys.endDateTime);  //UTCEndDateTime
+                String DriverStatusLogId = logObj.getString(ConstantsKeys.DriverLogId);
+
                 boolean isPersonal = false;
                 boolean YardMove = false;
                 boolean IsAdverseException = false;
                 boolean IsShortHaulException = false;
+
 
                 if (!logObj.isNull(ConstantsKeys.Personal))
                     isPersonal = logObj.getBoolean(ConstantsKeys.Personal);
@@ -2053,13 +2094,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 if(!logObj.isNull(ConstantsKeys.YardMove))
                     YardMove = logObj.getBoolean(ConstantsKeys.YardMove);
 
-
                 if(!logObj.getString(ConstantsKeys.IsAdverseException).equals("null"))
                     IsAdverseException = logObj.getBoolean(ConstantsKeys.IsAdverseException);
 
                 if(!logObj.getString(ConstantsKeys.IsShortHaulException).equals("null"))
                     IsShortHaulException = logObj.getBoolean(ConstantsKeys.IsShortHaulException);
-
 
                 if(IsAdverseException || IsShortHaulException){
                     isExceptionEnabledForDay = true;
@@ -2070,6 +2109,22 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         isViolation = logObj.getBoolean(ConstantsKeys.IsViolation);
                     } else {
                         isViolation = false;
+                    }
+
+                    if(!isDrivingAllowForSwap && !LogDate.equals(CurrentDate)) {
+                        String CoDriverId = "";
+                        if(isOffline) {
+                            if (logObj.has(ConstantsKeys.CoDriverId)) {
+                                CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
+                                SelectedCoDriverId = CoDriverId;
+                            }
+                        }else{
+                            CoDriverId = SelectedCoDriverId;
+                        }
+                        if (DRIVER_JOB_STATUS == Constants.DRIVING && CoDriverId.length() > 0 &&
+                                !CoDriverId.equals("0") && !CoDriverId.equals("null")) {
+                            isDrivingAllowForSwap = true;
+                        }
                     }
                 }else{
                     isViolation = false;
@@ -2116,14 +2171,14 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                 EldDriverLogModel driverLogModel;
                 if(DRIVER_JOB_STATUS == constants.ON_DUTY) {
-                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTimeStr, totalHours, currentCycleId,
-                            isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm, remarks, YardMove,
-                            IsAdverseException, IsShortHaulException, logObj.getString(ConstantsKeys.StartLatitude),
+                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, DriverStatusLogId, startDateTime, endDateTimeStr,
+                            totalHours, currentCycleId, isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm,
+                            remarks, YardMove, IsAdverseException, IsShortHaulException, logObj.getString(ConstantsKeys.StartLatitude),
                             logObj.getString(ConstantsKeys.StartLongitude) );
                 }else{
-                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTimeStr, totalHours, currentCycleId,
-                            isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm, remarks, isPersonal,
-                            IsAdverseException, IsShortHaulException, logObj.getString(ConstantsKeys.StartLatitude),
+                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, DriverStatusLogId, startDateTime, endDateTimeStr,
+                            totalHours, currentCycleId, isViolation, UTCStartDateTime, UTCEndDateTime, Duration, Location, LocationKm,
+                            remarks, isPersonal, IsAdverseException, IsShortHaulException, logObj.getString(ConstantsKeys.StartLatitude),
                             logObj.getString(ConstantsKeys.StartLongitude));
                 }
                 DriverLogList.add(driverLogModel);
@@ -2172,6 +2227,13 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     }
                 }
                 OldStatus   =   DRIVER_JOB_STATUS;
+            }
+
+
+            if(isDrivingAllowForSwap && SharedPref.IsCCMTACertified(getActivity())){
+                swapDrivingBtn.setVisibility(View.VISIBLE);
+            }else{
+                swapDrivingBtn.setVisibility(View.GONE);
             }
 
         }catch (Exception e){
@@ -2632,13 +2694,31 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
-         params.put(ConstantsKeys.CompanyId, CompanyId  );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.CompanyId, CompanyId  );
         params.put(ConstantsKeys.CreatedDate, CreatedDate);
 
         GetOdometerRequest.executeRequest(Request.Method.POST, APIs.GET_ODOMETER_OFFLINE , params, GetOdometers18Days,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
 
+    }
+
+
+    //*================== Swap driving with other driver ===================*//*
+    void SwapDriving(final String DriverId, final String CoDriverId,
+                                String DriverLogDate, String DriverLogIds ){
+
+        params = new HashMap<String, String>();
+        params.put(ConstantsKeys.DriverId, DriverId);
+        params.put(ConstantsKeys.CoDriverId, CoDriverId );
+        params.put(ConstantsKeys.CoDriverKey, CoDriverId);
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.CompanyId, CompanyId );
+        params.put(ConstantsKeys.DriverLogDate, DriverLogDate);
+        params.put(ConstantsKeys.DriverLogIds, DriverLogIds );
+
+        GetRecapView18DaysData.executeRequest(Request.Method.POST, APIs.SWAP_DRIVING , params, SwapDriving,
+                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
     }
 
 
@@ -2650,14 +2730,15 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
-         params.put(ConstantsKeys.ProjectId, Globally.PROJECT_ID);
+        params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.ProjectId, Globally.PROJECT_ID);
         params.put(ConstantsKeys.DrivingStartTime, StartDate);
         params.put(ConstantsKeys.DriverLogDate, EndDate );
 
         GetRecapView18DaysData.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS_DETAILS , params, GetRecapViewData,
                 Constants.SocketTimeout50Sec, ResponseCallBack, ErrorCallBack);
     }
+
 
 
 
@@ -3029,6 +3110,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                                     GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
                                                 }
                                             }
+                                            SelectedCoDriverId = dataObj.getString(ConstantsKeys.CoDriverId);
 
                                             selectedArray = new JSONArray(logModel);
                                             ParseLogData(dataObj, false);     // Parse Log Data
@@ -3206,6 +3288,14 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                 }
                                 break;
 
+                            case SwapDriving:
+
+                                global.EldScreenToast(eldMenuBtn, obj.getString("Message"), getResources().getColor(R.color.color_eld_theme));
+
+                                LogInfoAdapter.notifyDataSetChanged();
+
+                                break;
+
                         }
                     }else{
 
@@ -3218,15 +3308,16 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                             if(obj.has("Message")){
                                 String message = obj.getString("Message");
 
-                                if(!message.equals("null"))
-                                    global.EldScreenToast(eldMenuBtn, message, Color.parseColor(colorVoilation));
-                                else if(message.contains("ServerError")){
+                               if(message.contains("ServerError")){
                                     message = "ALS server not responding";
                                 }else if(message.contains("Network")){
                                     message = "Internet connection problem";
                                 }else if(message.contains("NoConnectionError")){
                                     message = "Internet connection error";
                                 }
+
+                                if(!message.equals("null"))
+                                    global.EldScreenToast(eldMenuBtn, message, Color.parseColor(colorVoilation));
 
 
                                 if(message.equals("Device Logout")){

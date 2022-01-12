@@ -21,6 +21,15 @@
 
 
 
+        <CheckBox
+            android:id="@+id/drivingSwapCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+
+            />
+
+
     <TextView
     android:id="@+id/certifyNoTV"
     android:layout_width="match_parent"

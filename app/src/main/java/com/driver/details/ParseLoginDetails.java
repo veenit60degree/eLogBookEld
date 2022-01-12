@@ -558,7 +558,7 @@ public class ParseLoginDetails {
 
 
 
-                EldDriverLogModel driverLogModel = new EldDriverLogModel(driverStatusId, startDateTime, endDateTime, totalHours, currentCycleId,
+                EldDriverLogModel driverLogModel = new EldDriverLogModel(driverStatusId, "0", startDateTime, endDateTime, totalHours, currentCycleId,
                         isViolation, UTCStartDateTime, UTCEndDateTime, Duration , Location , "", remarks, isPersonal,
                         IsAdverseException, IsShortHaulException, logObj.getString("StartLatitude"), logObj.getString("StartLongitude"));
 

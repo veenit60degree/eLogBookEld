@@ -31,10 +31,15 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UnidentifiedActivity;
+import com.models.DriverLocationModel;
+import com.shared.pref.StatePrefManager;
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UnidentifiedRecordDetailFragment extends Fragment implements View.OnClickListener {
 
@@ -54,10 +59,17 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     final int RejectCompanyAssignedRecordFlag   = 103;
 
     String CurrentCycleId = "", StartLocationKM = "";
-    String DriverId = "", DriverStatusId = "", AssignedRecordsId = "", unAssignedVehicleMilesId = "",  DriverName = "";
+    String DriverId = "", DriverStatusId = "", AssignedRecordsId = "", unAssignedVehicleMilesId = "",  DriverName = "",VIN = "";
     boolean isCompanyAssigned = false;
     ProgressDialog progressDialog;
     Constants constant;
+    String StartOdometer = "", EndOdometer = "", StartDateTime = "", EndDateTime = "",
+            StartLocation = "", EndLocation = "", EndLocationKM = "",
+            TotalMiles = "", TotalKm = "";
+    StatePrefManager statePrefManager;
+
+    List<String> StateArrayList;
+    List<DriverLocationModel> StateList;
 
 
     @Override
@@ -78,6 +90,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
 
         initView(rootView);
+
 
         return rootView;
     }
@@ -119,8 +132,10 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading ...");
+        statePrefManager = new StatePrefManager();
 
         getData();
+        AddStatesInList();
 
         unIdentifyRadGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -156,13 +171,12 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
     private void getData(){
 
-       String StartOdometer = "", EndOdometer = "", StartDateTime = "", EndDateTime = "",
-               StartLocation = "", EndLocation = "", EndLocationKM = "",
-               TotalMiles = "", TotalKm = "";
+
 
         Bundle getBundle        = this.getArguments();
         if(getBundle != null) {
             DriverId = getBundle.getString(ConstantsKeys.DriverId);
+            VIN = getBundle.getString(ConstantsKeys.VIN);
             DriverName = getBundle.getString(ConstantsKeys.UserName);
             DriverStatusId = getBundle.getString(ConstantsKeys.DriverStatusId);
             unAssignedVehicleMilesId = getBundle.getString(ConstantsKeys.UnAssignedVehicleMilesId);
@@ -238,6 +252,11 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
             case R.id.rejectRecordBtn:
 
+                boolean startOdometer = false;
+                boolean endOdometer = false;
+                boolean startLocation = false;
+                boolean endLocation = false;
+
 
                 try {
 
@@ -245,7 +264,8 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                         remarksDialog.dismiss();
 
                     if(constant.isActionAllowed(getContext())) {
-                        remarksDialog = new AdverseRemarksDialog(getActivity(), false, false, isCompanyAssigned, new RemarksListener());
+
+                        remarksDialog = new AdverseRemarksDialog(getActivity(), false, false,false,false,false,false, isCompanyAssigned,null,null,new RemarksListener());
                         remarksDialog.show();
                     }else{
                         Globally.EldScreenToast(rejectRecordBtn, getString(R.string.stop_vehicle_alert),
@@ -270,7 +290,11 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
                         DriverStatusId = Constants.getDriverStatus(idx);
                         if (idx != -1){
-                            remarksDialog = new AdverseRemarksDialog(getActivity(), false, true, isCompanyAssigned, new RemarksListener());
+                            startOdometer = StartOdometer.equals("");
+                            endOdometer = EndOdometer.equals("");
+                            startLocation = StartLocation.equals("");
+                            endLocation = EndLocation.equals("");
+                            remarksDialog = new AdverseRemarksDialog(getActivity(), false, true, isCompanyAssigned,startOdometer,endOdometer,startLocation,endLocation,StateList,StateArrayList, new RemarksListener());
                             remarksDialog.show();
                         }else{
                             Globally.EldScreenToast(TabAct.sliderLay, getResources().getString(R.string.select_status_first),
@@ -301,6 +325,26 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                 getResources().getColor(R.color.color_eld_theme));*/
     }
 
+    private void AddStatesInList() {
+        int stateListSize = 0;
+        StateArrayList = new ArrayList<String>();
+        StateList = new ArrayList<DriverLocationModel>();
+
+        try {
+            StateList = statePrefManager.GetState(getActivity());
+            StateList.add(0, new DriverLocationModel("", "Select", ""));
+            stateListSize = StateList.size();
+        } catch (Exception e) {
+            stateListSize = 0;
+        }
+
+        for (int i = 0; i < stateListSize; i++) {
+            StateArrayList.add(StateList.get(i).getState());
+        }
+
+
+    }
+
     private class RemarksListener implements AdverseRemarksDialog.RemarksListener{
 
         @Override
@@ -315,7 +359,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         }
 
         @Override
-        public void JobBtnReady(String reason, boolean isClaim, boolean isCompanyAssigned ) {
+        public void JobBtnReady(String reason, boolean isClaim, boolean isCompanyAssigned,String startOdo,String endOdo,String startLoc,String endLoc,String StartCity,String StartState,String StartCountry,String EndCity,String EndState,String EndCountry,boolean startOdometer, boolean endOdometer, boolean startLocation, boolean endLocation) {
 
             try {
                 if (remarksDialog != null && remarksDialog.isShowing())
@@ -330,8 +374,8 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                         }
 
                         JSONArray claimArray = new JSONArray();
-                        JSONObject claimData = Constants.getClaimRecordInputsAsJson(DriverId, DriverStatusId,
-                                unAssignedVehicleMilesId, AssignedRecordsId, reason, DriverName);
+                        JSONObject claimData = Constants.getClaimRecordInputsAsJson(DriverId,VIN, DriverStatusId,
+                                unAssignedVehicleMilesId, AssignedRecordsId, reason, DriverName,startOdo,endOdo,startLoc,endLoc,StartCity,StartState,StartCountry,EndCity,EndState,EndCountry,startOdometer,endOdometer,startLocation,endLocation);
                         claimArray.put(claimData);
 
                         progressDialog.show();

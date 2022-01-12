@@ -178,6 +178,7 @@
     <string name="not_allow_to_enable_excp">You are not allow to enable this exception. </string>
     <string name="show_recap">Show Recap</string>
     <string name="hide_recap">Hide Recap</string>
+    <string name="swap_driving">Swap Driving</string>
 
     <!--Exception will be invalidated automatically once driver takes proper shift reset-->
     <string name="excp_reset_auto">Exception will be auto disabled after 10 hours of rest period. (Shift reset)</string>
@@ -859,7 +860,8 @@
     <string name="Status">Status</string>
     <string name="Status_colon">Status:</string>
     <string name="currentStatus">Current Status</string>
-    <string name="Start_eng_hr">Start Engine Hours</string>
+    <string name="start_eng_hr">Start Engine Hours</string>
+    <string name="end_eng_hr">End Engine Hours</string>
     <string name="Start_time">Start Time</string>
     <string name="End_time">End Time</string>
     <string name="Duration">Duration</string>

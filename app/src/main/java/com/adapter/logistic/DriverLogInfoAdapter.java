@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -74,7 +76,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     String RecordType = "";
     String selectedDate = "";
     String selectedRemarks = "";
-    boolean IsPersonalRecord = false;
+    boolean IsPersonalRecord = false, IsDrivingAllowForSwap = false;
     int selectedStatus = 0;
     String currentCycle = "";
     boolean IsCurrentDate;
@@ -86,7 +88,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     public DriverLogInfoAdapter(Context cxt, List<EldDriverLogModel> logList,  List<String> stateArrayList, List<DriverLocationModel> stateList,
                                 int driverType, boolean isEditView, int daysDiff, int driverId,
                                 boolean isCurrentDate, boolean isExcptnEnabled, JSONArray driverLog18DaysArray,
-                                DateTime currentDateTime, DateTime currentUTCTime, int offsetFromUTC,
+                                DateTime currentDateTime, DateTime currentUTCTime, int offsetFromUTC, boolean isDrivingAllowForSwap,
                                 DBHelper db_helper, HelperMethods h_methods ){
 
         this.context        = cxt;
@@ -104,6 +106,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         this.currentDateTime = currentDateTime;
         this.currentUTCTime = currentUTCTime;
         this.offsetFromUTC = offsetFromUTC;
+        this.IsDrivingAllowForSwap = isDrivingAllowForSwap;
         this.dbHelper       = db_helper;
         this.hMethods       = h_methods;
         Global = new Globally();
@@ -166,6 +169,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
             holder.certifyLocationLay   = (RelativeLayout)convertView.findViewById(R.id.certifyLocationLay);
             holder.certifyRemarksLay    = (RelativeLayout)convertView.findViewById(R.id.certifyRemarksLay);
 
+            holder.drivingSwapCheckBox  = (CheckBox)convertView.findViewById(R.id.drivingSwapCheckBox);
+
             SetViewFontColor(holder);
 
             convertView.setTag(holder);
@@ -178,6 +183,11 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
         final int JobStatus = LogItem.getDriverStatusId();
         SetTextDataInView(holder,  LogItem, Global.JobStatus(JobStatus, LogItem.isPersonal()),  String.valueOf(position + 1)+ "." );
+
+        if(JobStatus == Constants.DRIVING && IsDrivingAllowForSwap){
+            holder.drivingSwapCheckBox.setVisibility(View.VISIBLE);
+        }
+
 
         if(isExceptionEnabled) {
             setMarqueOnView(holder.certifyExcptnTV);
@@ -213,6 +223,13 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         });
 
 
+        holder.drivingSwapCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                addRemoveLogId(isChecked,  LogItem.getDriverStatusLogId());
+            }
+        });
+
         if(IsEditView ){    //&& DaysDiff < 2
 
             holder.certifyRemarksIV.setVisibility(View.VISIBLE);
@@ -240,6 +257,20 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
 
 
+    private void addRemoveLogId(boolean isChecked, String logId){
+
+        if(isChecked){
+            CertifyViewLogFragment.SwapDrivingArray.add(logId);
+        }else {
+            for (int i = 0; i < CertifyViewLogFragment.SwapDrivingArray.size(); i++) {
+                if (logId.equals(CertifyViewLogFragment.SwapDrivingArray.get(i))) {
+                    CertifyViewLogFragment.SwapDrivingArray.remove(i);
+                    break;
+                }
+            }
+        }
+    }
+
 
     @Override
     public int getItemViewType(int position) {
@@ -257,6 +288,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         ImageView certifyLocationIV, certifyRemarksIV;
         LinearLayout LogInfoLay;
         RelativeLayout certifyLocationLay, certifyRemarksLay;
+        CheckBox drivingSwapCheckBox;
 
     }
 

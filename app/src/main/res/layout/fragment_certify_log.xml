@@ -1152,6 +1152,24 @@
                 android:visibility="gone"
                 />
 
+            <Button
+                android:id="@+id/swapDrivingBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/view_height_40"
+                android:layout_marginTop="@dimen/margin_short_8"
+                android:layout_marginRight="@dimen/margin_20"
+                android:layout_toLeftOf="@+id/showHideRecapBtn"
+                android:background="@drawable/green_eld_selector"
+                android:paddingLeft="@dimen/margin_13"
+                android:paddingRight="@dimen/margin_13"
+                android:text="@string/swap_driving"
+                android:textAllCaps="false"
+                android:textColor="@color/whiteee"
+                android:textSize="@dimen/text_size_15"
+                android:visibility="gone"
+
+                />
+
 
             <Button
                 android:id="@+id/showHideRecapBtn"

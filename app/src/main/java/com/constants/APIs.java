@@ -15,7 +15,7 @@ public class APIs {
     /*=============== ELD SERVER URL =============== */
     static String ELD_DOMAIN_DEV         = "http://develd.alsrealtime.com/api/ELDAPI/";
     static String ELD_DOMAIN_SINGAPORE   = "http://103.20.169.122:9289/api/ELDAPI/";            //http://arethos.com:8285
-    static String ELD_DOMAIN_PRODUCTION  = "https://eld.alsrealtime.com/api/ELDAPI/";            //http://104.167.9.210:8285/
+    static String ELD_DOMAIN_PRODUCTION  = "https://eld.alsrealtime.com/api/ELDAPI/";           //http://104.167.9.210:8285/
 
 
     static String ALS_DOMAIN_INDIAN_OPEN = "http://182.73.78.171:8286/api/LogisticsApi/";
@@ -69,6 +69,8 @@ public class APIs {
     public static String GenerateLink                       = DOMAIN_URL_ALS + "GenerateLink";
     public static String AddAgricultureException            = DOMAIN_URL_ALS + "AddAgricultureException";
     public static String GetLatLongFromAddress              = DOMAIN_URL_ALS + "GetLatLongFromAddress";
+    public static String SWAP_DRIVING                       = DOMAIN_URL_ALS + "SwapDriving";
+
 
     /*-------- ELD API ----------*/
     public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";

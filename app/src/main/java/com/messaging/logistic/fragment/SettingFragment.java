@@ -154,7 +154,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     int SyncData = 1, CheckInternetConnection = 2, CheckUpdate = 3;
     int ExistingVersionCodeInt  = 0,  VersionCodeInt = 0, AppInstallAttemp = 0;
     int CanListSize = 0, UsaListSize = 0, TimeZoneListSize = 0, SavedPosition = 0;
-    String SavedCanCycle = "", SavedUsaCycle = "", CurrentCycleId = "", SavedTimeZone = "", DeviceId = "", DriverId = "", DriverName = "", CompanyId = "";
+    String SavedCanCycle = "", SavedUsaCycle = "", CurrentCycleId = "", SavedTimeZone = "", DeviceId = "", DriverId = "",
+            CoDriverId = "", DriverName = "", CompanyId = "";
     String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "", TruckNumber, DriverTimeZone,
             IsSouthCanada, SavedCycleType, changedCycleId, changedCycleName, LocationType = "", agricultureAddress = "";
     String SourceLatitude = "", SourceLongitude = "";
@@ -506,7 +507,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                             adverseRemarksDialog.dismiss();
 
                                         adverseRemarksDialog = new AdverseRemarksDialog(getActivity(), true,
-                                                false, false, new RemarksListener());
+                                                false, false,false,false,false,false,null,null, new RemarksListener());
                                         adverseRemarksDialog.show();
 
                                     } catch (Exception e) {
@@ -550,7 +551,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                             adverseRemarksDialog.dismiss();
 
                                         adverseRemarksDialog = new AdverseRemarksDialog(getActivity(), true,
-                                                false, false, new RemarksListener());
+                                                false, false,false,false,false,false,null,null, new RemarksListener());
                                         adverseRemarksDialog.show();
 
                                     } catch (Exception e) {
@@ -758,6 +759,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
         }catch (Exception e){
             e.printStackTrace();
+        }
+
+
+        if (!SharedPref.getDriverType(getActivity()).equals(DriverConst.SingleDriver)) {
+            if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+                CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+            }else{
+                CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+            }
         }
 
 
@@ -1596,7 +1606,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         }
 
         @Override
-        public void JobBtnReady(String AdverseExceptionRemarks, boolean IsClaim, boolean IsCompanyAssign) {
+        public void JobBtnReady(String AdverseExceptionRemarks, boolean IsClaim, boolean IsCompanyAssign,String startOdo,
+                                String endOdo,String startLoc,String endLoc,String StartCity,String StartState,String StartCountry,
+                                String EndCity,String EndState,String EndCountry,boolean startOdometer, boolean endOdometer,
+                                boolean startLocation, boolean endLocation) {
             if(DriverType == Constants.MAIN_DRIVER_TYPE) {
                 SharedPref.setAdverseExcptn(true, getActivity());
             }else{
@@ -1614,7 +1627,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
                         LocationType, "", false, isNorthCanada, DriverType, constants,
                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                        syncingMethod, global, hMethods, dbHelper, getActivity(), false ) ;
+                        syncingMethod, global, hMethods, dbHelper, getActivity(), false , CoDriverId) ;
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -1636,6 +1649,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             }*/
 
         }
+
     }
 
 
@@ -2252,7 +2266,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     getString(R.string.enable_agriculture_exception),
                                     LocationType, "", false, isNorthCanada, DriverType, constants,
                                     MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false);
+                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false, CoDriverId);
                             global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Enabled", getResources().getColor(R.color.colorPrimary));
 
 
@@ -2263,7 +2277,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             hMethods.SaveDriversJob(DriverId, DeviceId, getString(R.string.end_ag_Exemption), getString(R.string.disable_agriculture_exception),
                                     LocationType, "", false, isNorthCanada, DriverType, constants,
                                     MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false );
+                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false, CoDriverId );
 
                             global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Disabled", getResources().getColor(R.color.colorPrimary));
 
@@ -2592,7 +2606,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
                                         LocationType, "", true, isNorthCanada, DriverType, constants,
                                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                                        syncingMethod, global, hMethods, dbHelper, getActivity(), false);
+                                        syncingMethod, global, hMethods, dbHelper, getActivity(), false, CoDriverId);
 
                             } else {
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.halu_excp_not_eligible), getResources().getColor(R.color.colorVoilation));

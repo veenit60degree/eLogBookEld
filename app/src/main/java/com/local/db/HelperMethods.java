@@ -401,7 +401,7 @@ public class HelperMethods {
                                     boolean isShortHaulUpdate, String decesionSource,   String isAdverseException,
                                     String adverseExceptionRemark, String LocationType, String malAddInfo,
                                     boolean IsNorthCanada, String StartLocationKm, boolean IsCycleChanged,
-                                    String StartOdometer, String EndOdometer){
+                                    String StartOdometer, String EndOdometer, String CoDriverId){
 
         JSONObject driverLogJson = new JSONObject();
 
@@ -461,6 +461,7 @@ public class HelperMethods {
 
             driverLogJson.put(ConstantsKeys.EndOdometerInKm, EndOdometer);
             driverLogJson.put(ConstantsKeys.StartOdometerInKm,  StartOdometer);
+            driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -831,6 +832,11 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.EndOdometerInKm, EndOdometer);
                 driverLogJson.put(ConstantsKeys.StartOdometerInKm,  logObj.getString(ConstantsKeys.StartOdometerInKm));
 
+                String CoDriverId = "";
+                if (logObj.has(ConstantsKeys.CoDriverId)) {
+                    CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
+                }
+                driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
 
             }
@@ -969,6 +975,13 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                     driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
                 }
+
+                String CoDriverId = "";
+                if (logObj.has(ConstantsKeys.CoDriverId)) {
+                    CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
+                }
+                driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1107,6 +1120,13 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                     driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
                 }
+
+                String CoDriverId = "";
+                if (logObj.has(ConstantsKeys.CoDriverId)) {
+                    CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
+                }
+                driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1226,6 +1246,12 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                     driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
                 }
+
+                String CoDriverId = "";
+                if (logObj.has(ConstantsKeys.CoDriverId)) {
+                    CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
+                }
+                driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
             }
         }catch (Exception e){
@@ -1367,6 +1393,14 @@ public class HelperMethods {
                 sameStatusJson.put(ConstantsKeys.StartOdometerInKm, "0");
                 sameStatusJson.put(ConstantsKeys.EndOdometerInKm, "0");
             }
+
+            String CoDriverId = "";
+            if (lastItemJson.has(ConstantsKeys.CoDriverId)) {
+                CoDriverId = lastItemJson.getString(ConstantsKeys.CoDriverId);
+            }
+            sameStatusJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -1656,6 +1690,13 @@ public class HelperMethods {
                         driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
                     }
 
+                    String CoDriverId = "";
+                    if (logObj.has(ConstantsKeys.CoDriverId)) {
+                        CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
+                    }
+                    driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+
                     parseArray.put(driverLogJson);
 
                 }
@@ -1820,6 +1861,12 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                 driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
             }
+
+            String CoDriverId = "";
+            if (logObj.has(ConstantsKeys.CoDriverId)) {
+                CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
+            }
+            driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
             parseArray.put(driverLogJson);
 
@@ -2079,6 +2126,12 @@ public class HelperMethods {
                         driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                         driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
                     }
+
+                    String CoDriverId = "";
+                    if (logObj.has(ConstantsKeys.CoDriverId)) {
+                        CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
+                    }
+                    driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
                     parseArray.put(driverLogJson);
                 }
@@ -3314,7 +3367,8 @@ public class HelperMethods {
                         logModel.getStartLocationKm(),
                         logModel.IsCycleChanged(),
                         logModel.getStartOdometerInKm(),
-                        logModel.getEndOdometerInKm()
+                        logModel.getEndOdometerInKm(),
+                        logModel.getCoDriverId()
                 );
                 obj.put(ConstantsKeys.isNewRecord, logModel.IsNewRecord());
                 array.put(obj);
@@ -3604,7 +3658,7 @@ public class HelperMethods {
                                EldSingleDriverLogPref eldSharedPref, EldCoDriverLogPref coEldSharedPref,
                                SyncingMethod syncingMethod,
                                Globally Global, HelperMethods hMethods, DBHelper dbHelper, Context context,
-                               boolean IsCycleChanged) {
+                               boolean IsCycleChanged, String CoDriverId) {
 
         boolean isViolation = false, IsYardMove = false;
         String address = "", wasViolation = "false", ViolationReason = "", isPersonal = "false";
@@ -3694,7 +3748,7 @@ public class HelperMethods {
                         Global, isHaulExcptn, isShortHaulUpdate,
                         ""+isAdverseExcptn,
                         AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, IsCycleChanged,
-                        SharedPref.getObdOdometer(context), hMethods, dbHelper);
+                        SharedPref.getObdOdometer(context), CoDriverId, hMethods, dbHelper);
 
 
                 String CurrentDate = Global.GetCurrentDateTime();
@@ -3776,7 +3830,7 @@ public class HelperMethods {
                 MainDriverPref.AddDriverLoc(context, locationModel);
 
                 /* ==== Add data in list to show in offline mode ============ */
-                EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "startDateTime", "endDateTime", "totalHours",
+                EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0","startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                         "", "", "","", Boolean.parseBoolean(isPersonal),
                         isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE );
@@ -3785,7 +3839,7 @@ public class HelperMethods {
                 CoDriverPref.AddDriverLoc(context, locationModel);
 
                 /* ==== Add data in list to show in offline mode ============ */
-                EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "startDateTime", "endDateTime", "totalHours",
+                EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0","startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                         "", "", "","", Boolean.parseBoolean(isPersonal),
                         isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE);
@@ -3817,7 +3871,7 @@ public class HelperMethods {
                     Global, isHaulExcptn, isShortHaulUpdate,
                     ""+isAdverseExcptn,
                     AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, IsCycleChanged,
-                    SharedPref.getObdOdometer(context), hMethods, dbHelper);
+                    SharedPref.getObdOdometer(context), CoDriverId, hMethods, dbHelper);
 
 
 

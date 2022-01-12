@@ -3,6 +3,7 @@ package com.models;
 public class EldDriverLogModel {
 
     int DriverStatusId;
+    String DriverStatusLogId;
     String StartDateTime;
     String EndDateTime;
     String TotalHours;
@@ -20,11 +21,13 @@ public class EldDriverLogModel {
     String StartLatitude;
     String StartLongitude;
 
-    public EldDriverLogModel(int driverStatusId, String startDateTime, String endDateTime, String totalHours,
+
+    public EldDriverLogModel(int driverStatusId, String driverStatusLogId, String startDateTime, String endDateTime, String totalHours,
                              String currentCycleId, boolean isViolation, String UTCStartDateTime, String UTCEndDateTime,
                              String duration, String location, String locationKm, String remarks, boolean isPersonal,
                              boolean isAdverseException , boolean isShortHaulException, String startLatitude, String startLongitude) {
         DriverStatusId = driverStatusId;
+        DriverStatusLogId = driverStatusLogId;
         StartDateTime = startDateTime;
         EndDateTime = endDateTime;
         TotalHours = totalHours;
@@ -47,6 +50,10 @@ public class EldDriverLogModel {
 
     public Integer getDriverStatusId() {
         return DriverStatusId;
+    }
+
+    public String getDriverStatusLogId() {
+        return DriverStatusLogId;
     }
 
     public String getStartDateTime() {

@@ -468,11 +468,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     if( ObdPreference != Constants.OBD_PREF_WIFI ) {
                         CallWired(Constants.SocketTimeout5Sec);
 
-                        constants.saveObdData(constants.getObdSource(getApplicationContext()), "WIRED-DISCONNECTED-1", "", "-1",
+                     /*   constants.saveObdData(constants.getObdSource(getApplicationContext()), "WIRED-DISCONNECTED-1", "", "-1",
                                 currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "-1",
                                 "-1", EngineSeconds, "", "",
                                 "0", dbHelper, driverPermissionMethod, obdUtil);
-
+*/
                         // Check Engine Sync data Malfunction/Diagnostic event
                          checkEngineSyncMalDiaOccurredEvent();
 
@@ -713,11 +713,12 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                         malfunctionDiagnosticMethod.saveVehicleMotionChangeTime(speed, Integer.parseInt(CompanyId), dbHelper);
                     }
 
-                    constants.saveObdData(constants.getObdSource(getApplicationContext()), "UnIdentified Diagnostic event: " +
+                    /*constants.saveObdData(constants.getObdSource(getApplicationContext()), "UnIdentified Diagnostic event: " +
                                     malfunctionDiagnosticMethod.getUnidentifiedLogoutArray(Integer.parseInt(CompanyId), dbHelper).toString(),
                             "", "-1",  currentHighPrecisionOdometer, "", ignitionStatus, truckRPM,
                             "-1","-1", EngineSeconds, "", "",
                             "0", dbHelper, driverPermissionMethod, obdUtil);
+                    */
                 }
 
             } else {
@@ -2100,7 +2101,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                 //  eventType = "PowerMalfunction";
                                 SharedPref.savePowerMalfunctionOccurStatus(true,
                                         SharedPref.isPowerDiagnosticOccurred(getApplicationContext()),
-                                        global.getCurrentDate(), getApplicationContext()); //global.getCurrentDate()
+                                        global.GetCurrentUTCTimeFormat(), getApplicationContext()); //global.getCurrentDate()
 
                                 // save occurred event in malfunction/diagnostic table
                                 saveMalfunctionEventInTable(constants.PowerComplianceMalfunction,
@@ -2133,7 +2134,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                 SharedPref.savePowerMalfunctionOccurStatus(
                                         SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
-                                        true, global.getCurrentDate(), getApplicationContext());
+                                        true, global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
                                 constants.saveDiagnstcStatus(getApplicationContext(), true);
 
@@ -2186,7 +2187,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                     SharedPref.savePowerMalfunctionOccurStatus(
                             SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
-                            false, global.getCurrentDate(), getApplicationContext());
+                            false, global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
 
                /* } else {
@@ -2341,11 +2342,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                             if(minDiff > dayInMinDuration) {
                                 SharedPref.savePowerMalfunctionOccurStatus(
                                         false,
-                                        false, global.getCurrentDate(), getApplicationContext());
+                                        false, global.GetCurrentUTCTimeFormat(), getApplicationContext());
                             }else{
                                 SharedPref.savePowerMalfunctionOccurStatus(
                                         SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
-                                        false, global.getCurrentDate(), getApplicationContext());
+                                        false, global.GetCurrentUTCTimeFormat(), getApplicationContext());
                             }
                         }else if(ClearEventType.equals(Constants.EngineSyncDiagnosticEvent)){
 
@@ -2552,12 +2553,12 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                         SharedPref.saveEngSyncMalfunctionStatus(SharedPref.isEngSyncMalfunction(getApplicationContext()), getApplicationContext());
 
 
-                        constants.saveObdData(constants.getObdSource(getApplicationContext()), "PowerDiaEvent- Clear Event", "", "",
+                       /* constants.saveObdData(constants.getObdSource(getApplicationContext()), "PowerDiaEvent- Clear Event", "", "",
                                 currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
                                 "", EngineSeconds, global.GetCurrentDateTime(), "",
                                 "0", dbHelper, driverPermissionMethod, obdUtil);
 
-
+*/
 
                     }
 

@@ -71,6 +71,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     String LastStatus           = "";
     String DeviceId             = "";
     String connectionSource     = "";
+    String CoDriverId = "";
 
     boolean IsAppForground   = true;
     boolean isViolation      = false;
@@ -144,7 +145,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     }
 
 
-    public void CalculateCycleTime(int driverId, final boolean IsLogApiACalled, boolean isAlertTimeValid, int vehicleSpeed,
+    public void CalculateCycleTime(int driverId, String coDriverId, final boolean IsLogApiACalled, boolean isAlertTimeValid, int vehicleSpeed,
                                    final HelperMethods hMethods, final DBHelper dbHelper, final LatLongHelper latLongHelper,
                                    final LocationMethod locMethod, final ServiceCallback serviceResponse,
                                    final ServiceError serviceError, NotificationMethod notiMethod,
@@ -152,6 +153,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                    boolean isConnection, int connection_type, int obdVehicleSpeed, int gpsVehicleSpeed, Utils obdUtil ) {
 
         DriverId                 = driverId;
+        CoDriverId               = coDriverId;
         VehicleSpeed             = vehicleSpeed;
         PersonalUse75Km          = false;
 
@@ -936,7 +938,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                             Global, isHaulExcptn, false,
                             "" + isAdverseExcptn,
                             "", LocationType, "", isNorthCanada, false,
-                            SharedPref.getObdOdometer(context), hMethods, dbHelper);
+                            SharedPref.getObdOdometer(context), CoDriverId, hMethods, dbHelper);
 
                     String CurrentDate = Global.GetCurrentDateTime();
                     String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
@@ -1279,7 +1281,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             MainDriverPref.AddDriverLoc(context, locationModel);
 
             /* ==== Add data in list to show in offline mode ============ */
-            EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
+            EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "0","startDateTime", "endDateTime", "totalHours",
                     "currentCycleId", false , currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                     "", City + ", " + State + ", " + Country, "", "", Boolean.parseBoolean(isPersonal),
                     isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE );
@@ -1288,7 +1290,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             CoDriverPref.AddDriverLoc(context, locationModel);
 
             /* ==== Add data in list to show in offline mode ============ */
-            EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "startDateTime", "endDateTime", "totalHours",
+            EldDriverLogModel logModel = new EldDriverLogModel(Integer.valueOf(DriverStatusId), "0","startDateTime", "endDateTime", "totalHours",
                     "currentCycleId", false , currentUtcTimeDiffFormat, currentUtcTimeDiffFormat, "", City + ", " + State + ", " + Country,
                     "", "",Boolean.parseBoolean(isPersonal),
                     isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE  );
@@ -1408,7 +1410,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 "", isNorthCanada, address,
                 false,
                 SharedPref.getObdOdometer(context),
-                SharedPref.getObdOdometer(context)
+                SharedPref.getObdOdometer(context),
+                CoDriverId
 
         );
 
@@ -1459,7 +1462,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         "", isNorthCanada, address,
                         false,
                         SharedPref.getObdOdometer(context),
-                        SharedPref.getObdOdometer(context)
+                        SharedPref.getObdOdometer(context),
+                        CoDriverId
 
                 );
 

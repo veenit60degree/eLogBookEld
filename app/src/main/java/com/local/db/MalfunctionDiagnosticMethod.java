@@ -511,6 +511,7 @@ public class MalfunctionDiagnosticMethod {
                 newItemObj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
                 newItemObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
             }
+
             array.put(newItemObj);
 
             // save in db
@@ -554,7 +555,22 @@ public class MalfunctionDiagnosticMethod {
                                     "", dbHelper, driverPermissionMethod, obdUtil);
 
                         }else{
-                            totalMin = totalMin + lastEventMinutes;
+
+                            String StartOdometer = eventObj.getString(ConstantsKeys.StartOdometer);
+                            String ClearOdometer = eventObj.getString(ConstantsKeys.ClearOdometer);
+                            if(!StartOdometer.equals("null") && StartOdometer.length() > 1 &&
+                                    !ClearOdometer.equals("null") && ClearOdometer.length() > 1){
+                                try {
+                                    double OdometerDiff = Double.parseDouble(ClearOdometer) - Double.parseDouble(StartOdometer);
+                                    if(OdometerDiff > 1) {
+                                        totalMin = totalMin + lastEventMinutes;
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+
+
 
 
                             constants.saveObdData("PowerEvent - Final2",  "",
@@ -565,7 +581,7 @@ public class MalfunctionDiagnosticMethod {
 
                         }
                     }else {
-                        if (DetectionDataEventCode.equals(EventType)) {   // && eventObj.getBoolean(ConstantsKeys.IsClearEvent)
+                        if (DetectionDataEventCode.equals(EventType)) {
                             totalMin = totalMin + lastEventMinutes;
 
                             constants.saveObdData("PowerEvent - Final3",  "",
@@ -628,14 +644,15 @@ public class MalfunctionDiagnosticMethod {
                     if (obj.has(ConstantsKeys.EventEndDateTime)) {
                         EventEndDateTime = obj.getString(ConstantsKeys.EventEndDateTime);
                         if (EventEndDateTime.length() > 10) {
-                            DateTime eventEndUtcDate = Globally.getDateTimeObj(EventEndDateTime, false);
-                            EventEndDateTime = eventEndUtcDate.minusHours(offset).toString();
+                          //  DateTime eventEndUtcDate = Globally.getDateTimeObj(EventEndDateTime, false);
+                            //EventEndDateTime = eventEndUtcDate.minusHours(offset).toString();
                         } else {
                             int TotalMinutes = 0;
                             if(obj.has(ConstantsKeys.TotalMinutes)){
                                 TotalMinutes = obj.getInt(ConstantsKeys.TotalMinutes);
                             }
-                            EventEndDateTime = driverZoneDate.plusMinutes(TotalMinutes).toString();
+                            //EventEndDateTime = driverZoneDate.plusMinutes(TotalMinutes).toString();
+                            EventEndDateTime = eventUtcDate.plusMinutes(TotalMinutes).toString();
                         }
                     }
                 }
@@ -722,13 +739,13 @@ public class MalfunctionDiagnosticMethod {
             String EventEndDateTime = "", ClearEngineHours = "", ClearOdometer = "";
 
             if(isAlreadyCleared){   // some times multiple events occurred with same event thats why we are clearing wth same time other events
-                clearObj.put(ConstantsKeys.TotalMinutes, 0);
+                clearObj.put(ConstantsKeys.TotalMinutes, eventObj.getInt(ConstantsKeys.TotalMinutes));
                 clearObj.put(ConstantsKeys.ClearEventDateTime, EventDateTime);
-                clearObj.put(ConstantsKeys.EventEndDateTime, EventDateTime);
+                clearObj.put(ConstantsKeys.EventEndDateTime, eventObj.getString(ConstantsKeys.EventEndDateTime));
 
                 clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
-                clearObj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
-                clearObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
+                clearObj.put(ConstantsKeys.ClearEngineHours, eventObj.getString(ConstantsKeys.ClearEngineHours));
+                clearObj.put(ConstantsKeys.ClearOdometer, eventObj.getString(ConstantsKeys.ClearOdometer));
 
             }else{
                 if(TotalMinutes > 0){
@@ -748,8 +765,10 @@ public class MalfunctionDiagnosticMethod {
                     if(eventObj.has(ConstantsKeys.ClearEngineHours)){
                         ClearEngineHours = eventObj.getString(ConstantsKeys.ClearEngineHours);
                     }
-                    if(eventObj.has(ConstantsKeys.ClearOdometer)){
+                    if(eventObj.has(ConstantsKeys.ClearOdometer) && eventObj.getString(ConstantsKeys.ClearOdometer).length() > 0){
                         ClearOdometer = eventObj.getString(ConstantsKeys.ClearOdometer);
+                    }else{
+                        ClearOdometer = SharedPref.getObdOdometer(context);
                     }
 
                     clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
@@ -763,12 +782,12 @@ public class MalfunctionDiagnosticMethod {
                             clearObj.put(ConstantsKeys.EngineHours, eventObj.getString(ConstantsKeys.EngineHours));
                         }
 
-                        clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
-                        clearObj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
-                        clearObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
+                       // clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
+                      //  clearObj.put(ConstantsKeys.ClearEngineHours, ClearEngineHours);
+                       // clearObj.put(ConstantsKeys.ClearOdometer, ClearOdometer);
                     }else{
                         clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);
-                        clearObj.put(ConstantsKeys.ClearEngineHours, Constants.get2DecimalEngHour(context));    //SharedPref.getObdEngineHours(context));
+                        clearObj.put(ConstantsKeys.ClearEngineHours, Constants.get2DecimalEngHour(context));
                         clearObj.put(ConstantsKeys.ClearOdometer, SharedPref.getObdOdometer(context));
                     }
                 }else {
@@ -779,9 +798,6 @@ public class MalfunctionDiagnosticMethod {
                         if (EventEndDateTime.length() < 10) {
                             EventEndDateTime = Globally.GetCurrentUTCTimeFormat();
                         }
-                        //  DateTime EventDate = Globally.getDateTimeObj(EventDateTime, false);
-                        //  DateTime EventEndDate = Globally.getDateTimeObj(EventEndDateTime, false);
-                        // int minDiff = Constants.getMinDiff(EventDate, EventEndDate);
 
                         clearObj.put(ConstantsKeys.TotalMinutes, TotalMinutes);
                         clearObj.put(ConstantsKeys.ClearEventDateTime, EventEndDateTime);
@@ -789,8 +805,10 @@ public class MalfunctionDiagnosticMethod {
                         if (eventObj.has(ConstantsKeys.ClearEngineHours)) {
                             ClearEngineHours = eventObj.getString(ConstantsKeys.ClearEngineHours);
                         }
-                        if (eventObj.has(ConstantsKeys.ClearOdometer)) {
+                        if (eventObj.has(ConstantsKeys.ClearOdometer) && eventObj.getString(ConstantsKeys.ClearOdometer).length() > 0) {
                             ClearOdometer = eventObj.getString(ConstantsKeys.ClearOdometer);
+                        }else{
+                            ClearOdometer = SharedPref.getObdOdometer(context);
                         }
 
                         clearObj.put(ConstantsKeys.IsClearEvent, IsClearEvent);

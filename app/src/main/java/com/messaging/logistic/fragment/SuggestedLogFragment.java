@@ -100,7 +100,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     int endHour         = 0;
     int endMin          = 0;
 
-    String DriverId, DeviceId, imagePath = "", CoDriverId = "";
+    String DriverId = "", DeviceId = "", imagePath = "", CoDriverId = "";
     public HelperMethods hMethods;
     public DBHelper dbHelper;
     public Globally globally;
@@ -730,11 +730,11 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
 
                 if(DRIVER_JOB_STATUS == constants.ON_DUTY) {
-                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, "",
+                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0", startDateTime, endDateTime, totalHours, "",
                             isViolation, "", "", Duration, "", "","", logObj.getBoolean(ConstantsKeys.Personal),
                             isEditedLog,  logObj.getBoolean(ConstantsKeys.YardMove), StartLatitude, StartLongitude );
                 }else{
-                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, startDateTime, endDateTime, totalHours, "",
+                    driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0", startDateTime, endDateTime, totalHours, "",
                             isViolation, "", "", Duration, "", "","",
                             logObj.getBoolean(ConstantsKeys.Personal),
                             isEditedLog, logObj.getBoolean(ConstantsKeys.YardMove), StartLatitude, StartLongitude);
@@ -776,6 +776,14 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
                 if(!logObj.isNull(ConstantsKeys.CoDriverKey)) {
                     CoDriverId = logObj.getString(ConstantsKeys.CoDriverKey);
+                }else{
+
+                    if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+                        CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+                    }else{
+                        CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+                    }
+
                 }
 
             }
@@ -835,10 +843,11 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         String selectedDate= selectedDateTime.toString().split("T")[0];
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
         params.put(ConstantsKeys.CurrentDate, selectedDate);
         params.put(ConstantsKeys.StatusId, StatusId );
         params.put(ConstantsKeys.CoDriverKey, CoDriverId);
+        params.put(ConstantsKeys.CoDriverId, CoDriverId);
 
         params.put(ConstantsKeys.ActionDateTime, globally.getCurrentDate() );
         params.put(ConstantsKeys.ActionTimeZone, SharedPref.getTimeZone(getActivity()) );
@@ -1171,7 +1180,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 EldDriverLogModel editModel = new EldDriverLogModel(
 
                         editedObj.getInt(ConstantsKeys.DriverStatusId),
-
+                        "0",
                         editedObj.getString(ConstantsKeys.StartDateTime),
                         editedObj.getString(ConstantsKeys.EndDateTime),
                         editedObj.getString(ConstantsKeys.TotalHours),

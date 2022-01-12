@@ -187,6 +187,320 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/startOdometerLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_10"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_ododmeter"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:textColor="@color/black_unidenfied"
+                android:textSize="@dimen/text_size_21"
+                android:layout_marginTop="@dimen/margin_short_5"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"
+
+                />
+
+            <EditText
+                android:id="@+id/startOdoEditText"
+                android:layout_width="@dimen/view_height_900"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_marginRight="@dimen/margin_10"
+                android:background="@drawable/edit_green_drawable"
+                android:hint="@string/Odometers"
+                android:imeOptions="actionDone"
+                android:inputType="numberDecimal"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_short_5"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_21"
+                android:layout_gravity="center_vertical"
+                />
+
+            <Spinner
+                android:id="@+id/selectUnitStartOdo"
+                style="@style/spinner_style"
+                android:layout_width="@dimen/view_height_350"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:minWidth="@dimen/view_height_40"
+                android:paddingLeft="@dimen/margin_short_8"
+                android:paddingRight="@dimen/margin_short_8"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/endOdometerLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_10"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/end_ododmeter"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:textColor="@color/black_unidenfied"
+                android:textSize="@dimen/text_size_21"
+                android:layout_marginTop="@dimen/margin_short_5"
+                android:textStyle="bold"
+
+                />
+
+            <EditText
+                android:id="@+id/endOdometerEditTxt"
+                android:layout_width="@dimen/view_height_900"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_marginRight="@dimen/margin_10"
+                android:background="@drawable/edit_green_drawable"
+                android:hint="@string/Odometers"
+                android:imeOptions="actionDone"
+                android:inputType="numberDecimal"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_short_5"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_21"
+                android:layout_gravity="center_vertical"
+                />
+
+            <Spinner
+                android:id="@+id/selectUnitEndOdo"
+                style="@style/spinner_style"
+                android:layout_width="@dimen/view_height_350"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:minWidth="@dimen/view_height_40"
+                android:paddingLeft="@dimen/margin_short_8"
+                android:paddingRight="@dimen/margin_short_8"
+
+                />
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/startLocationLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_10"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_loc"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:textColor="@color/black_unidenfied"
+                android:textSize="@dimen/text_size_21"
+                android:layout_marginTop="@dimen/margin_short_5"
+                android:textStyle="bold"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:layout_marginTop="@dimen/margin_10"
+                >
+
+
+                <EditText
+                    android:id="@+id/startAddressEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:background="@drawable/edit_green_drawable"
+                    android:hint="@string/Odometers"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_21"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"
+                android:visibility="visible"
+                >
+
+                <EditText
+                    android:id="@+id/startLocationEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:background="@drawable/edit_green_drawable"
+                    android:hint="@string/Odometers"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_21"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    />
+
+                <Spinner
+                    android:id="@+id/startStateSelectSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:paddingRight="@dimen/margin_short_8"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_marginBottom="@dimen/margin_10"
+                    style="@style/spinner_style"
+                    android:visibility="visible"
+                    android:layout_weight="1"
+                    />
+
+
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/endLocationLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/margin_10"
+            android:paddingBottom="@dimen/margin_10"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/end_loc"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:textColor="@color/black_unidenfied"
+                android:textSize="@dimen/text_size_21"
+                android:layout_marginTop="@dimen/margin_short_5"
+                android:textStyle="bold"
+
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:layout_marginTop="@dimen/margin_10"
+                >
+
+
+                <EditText
+                    android:id="@+id/endAddressEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:background="@drawable/edit_green_drawable"
+                    android:hint="@string/Odometers"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_21"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    />
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_10"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"
+                android:visibility="visible"
+                >
+
+                <EditText
+                    android:id="@+id/endLocationEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:background="@drawable/edit_green_drawable"
+                    android:hint="@string/Odometers"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_21"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    />
+
+                <Spinner
+                    android:id="@+id/endStateSelectSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:paddingRight="@dimen/margin_short_8"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_marginBottom="@dimen/margin_10"
+                    style="@style/spinner_style"
+                    android:visibility="visible"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
 
         <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/trailorNoInputType"

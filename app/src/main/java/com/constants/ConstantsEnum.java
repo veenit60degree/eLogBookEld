@@ -27,6 +27,7 @@ public class ConstantsEnum {
     public static String YARD_MOVE_DESC       = "Enter minimum 4 char for Yard Move description";
     public static String LOCATION_DESC        = "Enter minimum 5 char of Location ";
     public static String SELECT_STATE         = "Please select State.";
+    public static String SELECT_DR_STATUS     = "Select Driving status for swap first";
 
     public static String EDIT_REMARKS_DESC    = "Enter minimum 4 char for edit reason";
     public static String REJECT_REASON_ALERT  = "Enter minimum 4 char to reject unidentified records reason";

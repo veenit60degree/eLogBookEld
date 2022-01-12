@@ -66,6 +66,14 @@ public class ConstantsKeys {
     public static String UserName           = "UserName";
     public static String DutyStatus         = "DutyStatus";
 
+    public static String StartCity          = "StartCity";
+    public static String StartState         = "StartState";
+    public static String StartCountry       = "StartCountry";
+
+    public static String EndCity            = "EndCity";
+    public static String EndState           = "EndState";
+    public static String EndCountry         = "EndCountry";
+
     public static String rulesVersion       = "rulesVersion";
     public static String ChkDateTime        = "ChkDateTime";
 
@@ -453,6 +461,7 @@ public class ConstantsKeys {
     public static String ClearUnIdentifiedData          = "ClearUnIdentifiedData";
     public static String SaveOfflineData                = "SaveOfflineData";
     public static String DriverLogDate                  = "DriverLogDate";
+    public static String DriverLogIds                   = "DriverLogIds";
     public static String SuggestedEditModel             = "SuggestedEditModel";
     public static String MalfunctionEngSync             = "SuggestedEditModel";
     public static String DiagnosticEngSync              = "SuggestedEditModel";

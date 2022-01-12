@@ -116,7 +116,13 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             }
 
             if(childData.getDetectionDataEventCode().equals(Constants.PowerComplianceDiagnostic)){
-                endTimeMalTxtVw.setText(childData.getHexaSequenceNo());   // passing start engine hour value in this parameter
+                String StartEngineHour = childData.getHexaSequenceNo();  // passing start engine hour value in this parameter
+
+                if(StartEngineHour.length() > 0 && !StartEngineHour.equals("--")) {
+                    StartEngineHour = constants.Convert1DecimalPlacesDouble(Double.parseDouble(StartEngineHour));
+                }
+                endTimeMalTxtVw.setText(StartEngineHour);
+
             }else {
                 if (childData.getDriverZoneEventDate().length() > 10) {
                     String date = globally.ConvertDateFormatMMddyyyyHHmm(childData.getToDateTime());
@@ -281,7 +287,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
 
     public class GroupViewHolder {
-        TextView timeMalTxtVw, endTimeMalTxtVw, statusMalTxtVw, vehMilesMalTxtVw, engHoursMalTxtVw, seqIdMalTxtVw;
+        TextView timeMalTxtVw, startEngHrTxtVw, statusMalTxtVw, vehMilesMalTxtVw, engHoursMalTxtVw, seqIdMalTxtVw;
         TextView malfHeaderTxtVw, clearEventBtn;
         ImageView groupIndicatorBtn, malfncnInfoImgView;
         RelativeLayout malfunctionChildMainLay;
@@ -308,11 +314,11 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             holder.vehMilesMalTxtVw = (TextView) convertView.findViewById(R.id.vehMilesMalTxtVw);
             holder.engHoursMalTxtVw = (TextView) convertView.findViewById(R.id.engHoursMalTxtVw);
             holder.seqIdMalTxtVw = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
-            holder.endTimeMalTxtVw = (TextView) convertView.findViewById(R.id.endTimeMalTxtVw);
+            holder.startEngHrTxtVw = (TextView) convertView.findViewById(R.id.endTimeMalTxtVw);
 
 
 
-            holder.endTimeMalTxtVw.setVisibility(View.VISIBLE);
+            holder.startEngHrTxtVw.setVisibility(View.VISIBLE);
 
             holder.clearEventBtn = (TextView) convertView.findViewById(R.id.clearEventBtn);
             holder.malfHeaderTxtVw = (TextView) convertView.findViewById(R.id.malfHeaderTxtVw);
@@ -329,7 +335,8 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
         holder.timeMalTxtVw.setText(_context.getString(R.string.Start_time));
         if(headerModel.getEventCode().equals(Constants.PowerComplianceDiagnostic)){
-            holder.endTimeMalTxtVw.setText(_context.getString(R.string.Start_eng_hr));
+            holder.startEngHrTxtVw.setText(_context.getString(R.string.start_eng_hr));
+            holder.engHoursMalTxtVw.setText(_context.getString(R.string.end_eng_hr));
         }
 
         if(constants.isMalfunction(headerModel.getEventCode())){
@@ -337,7 +344,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         }
 
         setViewTextColorWithStyle(holder.timeMalTxtVw, holder.statusMalTxtVw, holder.vehMilesMalTxtVw,
-                holder.engHoursMalTxtVw, holder.seqIdMalTxtVw, holder.endTimeMalTxtVw);
+                holder.engHoursMalTxtVw, holder.seqIdMalTxtVw, holder.startEngHrTxtVw);
 
 
         holder.malfHeaderTxtVw.setText(headerModel.getEventName());
@@ -459,28 +466,21 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
 
     private void setViewTextColorWithStyle(TextView timeMalTxtVw, TextView statusMalTxtVw, TextView vehMilesMalTxtVw,
-                                           TextView engHoursMalTxtVw, TextView seqIdMalTxtVw, TextView endTimeMalTxtVw){
+                                           TextView engHoursMalTxtVw, TextView seqIdMalTxtVw, TextView startEngHrTxtVw){
         timeMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee )); //blue_button
         // statusMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
         vehMilesMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
         engHoursMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
         seqIdMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
-        endTimeMalTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
+        startEngHrTxtVw.setTextColor(_context.getResources().getColor(R.color.whiteee));
 
         timeMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         //  statusMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         vehMilesMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         engHoursMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
         seqIdMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
-        endTimeMalTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
+        startEngHrTxtVw.setTypeface(timeMalTxtVw.getTypeface(), Typeface.BOLD);
 
-      /*  int textSize =  constants.intToPixel(_context, R.dimen.text_size_15);
-        timeMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
-        statusMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
-        vehMilesMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
-        engHoursMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
-        seqIdMalTxtVw.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize );
-*/
     }
 
 

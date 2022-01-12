@@ -1842,7 +1842,7 @@ public class Constants {
                                         Globally Global, boolean isHaulException, boolean isHaulExceptionUpdate,
                                         String isAdverseException, String adverseExceptionRemark, String LocationType,
                                         String malAddInfo, boolean IsNorthCanada, boolean IsCycleChanged, String Odometer,
-                                        HelperMethods hMethods, DBHelper dbHelper) {
+                                        String CoDriverId, HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
         long DriverLogId = 0;
@@ -1944,7 +1944,8 @@ public class Constants {
                 AddressKm,
                 IsCycleChanged,
                 Odometer,
-                Odometer
+                Odometer,
+                CoDriverId
 
         );
 
@@ -2957,12 +2958,22 @@ public class Constants {
     }
 
 
+    private String getTimeFormat(String time){
+        // 2022-01-11T23:29:43.267
+        if(time.length() > 21){
+            time = time.substring(0, 19);
+        }
+        return time;
+    }
+
 
     public int getMinDifference(String lastRestartTime, String currentDate){
 
         int minDiff = 0;
 
         try {
+            lastRestartTime = getTimeFormat(lastRestartTime);
+            currentDate = getTimeFormat(currentDate);
             DateTime savedDateTime = Globally.getDateTimeObj(lastRestartTime, false);
             DateTime currentDateTime = Globally.getDateTimeObj(currentDate, false);
 
@@ -3060,7 +3071,7 @@ public class Constants {
     }
 
 
-  public static JSONObject getClaimRecordInputsAsJson(String DriverId, String DriverStatusId,
+ /* public static JSONObject getClaimRecordInputsAsJson(String DriverId, String DriverStatusId,
                                                 String UnAssignedVehicleMilesId, String AssignedRecordsId,
                                                       String Remarks, String UserName){
 
@@ -3078,8 +3089,54 @@ public class Constants {
         }
 
         return obj;
-  }
+  }*/
 
+
+    public static JSONObject getClaimRecordInputsAsJson(String DriverId,String Vin, String DriverStatusId,
+                                                        String UnAssignedVehicleMilesId, String AssignedRecordsId,
+                                                        String Remarks, String UserName,String StartOdo,String EndOdo,String StartLoc,String EndLoc,String StartCity,String StartState,String StartCountry,String EndCity,String EndState,String EndCountry,boolean startOdometer, boolean endOdometer, boolean startLocation, boolean endLocation){
+
+        JSONObject obj = new JSONObject();
+
+        try{
+            obj.put(ConstantsKeys.DriverId , DriverId);
+            obj.put(ConstantsKeys.VIN , Vin);
+            obj.put(ConstantsKeys.DriverStatusId , DriverStatusId);
+            obj.put(ConstantsKeys.UnAssignedVehicleMilesId , UnAssignedVehicleMilesId);
+            obj.put(ConstantsKeys.AssignedUnidentifiedRecordsId, AssignedRecordsId);
+            obj.put(ConstantsKeys.Remarks , Remarks);
+            obj.put(ConstantsKeys.UserName , UserName);
+            if(startOdometer){
+                obj.put(ConstantsKeys.StartOdometer , StartOdo);
+            }
+
+            if(endOdometer){
+                obj.put(ConstantsKeys.EndOdometer , EndOdo);
+            }
+
+            if(startLocation){
+                obj.put(ConstantsKeys.StartLocation , StartLoc);
+                obj.put(ConstantsKeys.StartCity , StartCity);
+                obj.put(ConstantsKeys.StartState , StartState);
+                obj.put(ConstantsKeys.StartCountry , StartCountry);
+            }
+
+            if(endLocation){
+                obj.put(ConstantsKeys.EndLocation, EndLoc);
+                obj.put(ConstantsKeys.EndCity , EndCity);
+                obj.put(ConstantsKeys.EndState , EndState);
+                obj.put(ConstantsKeys.EndCountry , EndCountry);
+            }
+
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return obj;
+    }
 
 
     public static JSONObject getRejectedRecordInputs(String DriverId, String UnAssignedVehicleMilesId, String Remarks){
@@ -3187,10 +3244,11 @@ public class Constants {
         try {
             for (int i = 0; i < unIdentifiedRecordList.size(); i++) {
                 if (recordSelectedList.get(i).equals("selected")) {
-                    JSONObject obj = Constants.getClaimRecordInputsAsJson(DriverId, DriverStatusId,
+                    JSONObject obj = Constants.getClaimRecordInputsAsJson(DriverId,"", DriverStatusId,
                             unIdentifiedRecordList.get(i).getUnAssignedVehicleMilesId(),
                             unIdentifiedRecordList.get(i).getAssignedUnidentifiedRecordsId(),
-                            reason, DriverName);
+                            reason, DriverName,"","","","","","","",
+                            "","","",false,false,false,false);
                     array.put(obj);
 
                     if(unIdentifiedRecordList.get(i).getStartLocationKm().length() == 0){
@@ -3204,6 +3262,7 @@ public class Constants {
 
         return array;
     }
+
 
 
 
@@ -3951,6 +4010,8 @@ public class Constants {
         try {
             String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, context);
             String lastEngineHour = SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, context);
+            String lastodometer   = SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, context);
+
 
             if (!lastIgnitionStatus.equals("ON") ) {
 
@@ -3971,11 +4032,23 @@ public class Constants {
                         if (engineHrDiffInMin > 5) {
 
                             SharedPref.SetIgnitionOffCalled(true, context);
+                            double totalDuration = 0;
 
                             double previousDiaEventTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(PowerComplianceDiagnostic,
                                     lastEngineHour, engineHrDiffInMin, constants, driverPermissionMethod, obdUtil, dbHelper);
 
-                            double totalDuration = engineHrDiffInMin + previousDiaEventTime; // add earlier diagnostic time within 24 hr with current time
+                            try {
+                                double OdometerDiff = Double.parseDouble(SharedPref.getObdOdometer(context)) - Double.parseDouble(lastodometer);
+                                if(OdometerDiff > 1) {
+                                    totalDuration = engineHrDiffInMin + previousDiaEventTime;
+                                }else{
+                                    totalDuration = engineHrDiffInMin;
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                             // add earlier diagnostic time within 24 hr with current time
 
                             if (totalDuration >= PowerEngSyncMalOccTime) {
 
@@ -3990,7 +4063,7 @@ public class Constants {
 
                                         // Save power mal status with updated time
                                         SharedPref.savePowerMalfunctionOccurStatus( true,
-                                                SharedPref.isPowerDiagnosticOccurred(context),  global.getCurrentDate(), context);
+                                                SharedPref.isPowerDiagnosticOccurred(context), global.GetCurrentUTCTimeFormat(), context);
 
                                         constants.saveObdData("PowerMalEvent - Ignition- " + lastIgnitionStatus +
                                                         ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour +
@@ -4014,7 +4087,7 @@ public class Constants {
 
                                     SharedPref.savePowerMalfunctionOccurStatus(
                                             SharedPref.isPowerMalfunctionOccurred(context),
-                                            true,  global.getCurrentDate(), context);
+                                            true,  global.GetCurrentUTCTimeFormat(), context);
 
                                     constants.saveObdData("PowerDiaEvent - Ignition- " + lastIgnitionStatus +
                                                     ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour +

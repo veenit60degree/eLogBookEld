@@ -20,6 +20,8 @@ public class EldInfo {
     // http://eld.alsrealtime.com/HOme/DriverlogYear
     // http://develd.alsrealtime.com/Home/DriverLogYearLive/
 
+    /*----------- Delete mal/dia events by driver id ------------- */
+    // https://alsrealtime.com/api/LogisticsApi/DeleteEventByDriverId?Driverid=
 
     /* ----------------- API document ------------------  */
     // https://docs.google.com/document/d/1W--cgKbFZcnhF3q6bE7YK_EYJGBZ3YF1jT93u51jd-4/edit#heading=h.xpbvxw45js7s

@@ -51,7 +51,7 @@ public class DriverLogModel {
     private boolean IsCycleChanged;
     private String StartOdometerInKm;
     private String EndOdometerInKm;
-
+    private String CoDriverId;
 
     public DriverLogModel() {
     }
@@ -99,6 +99,7 @@ public class DriverLogModel {
         this.IsCycleChanged = logModel.IsCycleChanged();
         this.StartOdometerInKm = logModel.getStartOdometerInKm();
         this.EndOdometerInKm = logModel.getEndOdometerInKm();
+        this.CoDriverId = logModel.getCoDriverId();
 
     }
 
@@ -460,4 +461,15 @@ public class DriverLogModel {
     public void setEndOdometerInKm(String endOdometerInKm) {
         EndOdometerInKm = endOdometerInKm;
     }
+
+    public String getCoDriverId() {
+        return CoDriverId;
+    }
+
+    public void setCoDriverId(String coDriverId) {
+        CoDriverId = coDriverId;
+    }
+
+
+
 }
