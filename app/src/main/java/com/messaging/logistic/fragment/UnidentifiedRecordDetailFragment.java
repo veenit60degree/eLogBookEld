@@ -316,14 +316,6 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     }
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-/*
-        Globally.EldScreenToast(TabAct.sliderLay,
-                getResources().getString(R.string.reject_successfully),
-                getResources().getColor(R.color.color_eld_theme));*/
-    }
 
     private void AddStatesInList() {
         int stateListSize = 0;

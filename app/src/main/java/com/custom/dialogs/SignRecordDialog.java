@@ -199,7 +199,7 @@ public class SignRecordDialog extends Dialog {
 
                 if(selectedDateList.size() > 0){
 
-                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener() );
+                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false, "", new CertificationListener() );
                     certifyConfirmationDialog.show();
 
                 }else{
@@ -215,7 +215,7 @@ public class SignRecordDialog extends Dialog {
     private class CertificationListener implements CertifyConfirmationDialog.CertifyConfirmationListener{
 
         @Override
-        public void CertifyBtnReady() {
+        public void CertifyBtnReady(boolean isSwapConfirmation) {
             CertifyLogArray     = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(DriverId), dbHelper);
             if(isCertifySignExist){
                 ContinueWithoutSignDialog();

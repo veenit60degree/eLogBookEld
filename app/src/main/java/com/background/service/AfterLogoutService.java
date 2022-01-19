@@ -691,12 +691,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         }
 
         if(constants.isValidData(currentHighPrecisionOdometer)) {
-            SharedPref.SetObdOdometer(currentHighPrecisionOdometer, getApplicationContext());
+            SharedPref.SetObdOdometer(Constants.meterToKmWithObd(currentHighPrecisionOdometer), getApplicationContext());
+            SharedPref.SetObdOdometerInMiles(Constants.meterToMilesWith2DecPlaces(currentHighPrecisionOdometer), getApplicationContext());
         }else{
             // converting odometer from km to meter. because it is saving in km.
-            currentHighPrecisionOdometer = SharedPref.getObdOdometer(getApplicationContext());
-
+            currentHighPrecisionOdometer = Constants.kmToMeter(SharedPref.getObdOdometer(getApplicationContext()));
         }
+
     }
 
 
@@ -953,8 +954,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                             String odometer = Constants.ConvertToBeforeDecimal(Constants.meterToKmWithObd(currentHighPrecisionOdometer));
 
                             // save unidentified events if vehicle is in motion for 30 min in last 24 hour
-                            malfunctionDiagnosticMethod.saveVehicleMotionStatus(odometer, EngineSeconds, Integer.parseInt(CompanyId), TruckID,
-                                                            VinNumber, VehicleSpeed, dbHelper, getApplicationContext());
+                            malfunctionDiagnosticMethod.saveVehicleMotionStatus(odometer, EngineSeconds, Integer.parseInt(CompanyId),
+                                    TruckID, VinNumber, VehicleSpeed, dbHelper, constants,
+                                    driverPermissionMethod, obdUtil, getApplicationContext());
                         }
 
                     }

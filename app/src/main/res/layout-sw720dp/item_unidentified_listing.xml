@@ -106,6 +106,18 @@
 
             />
 
+        <ImageView
+            android:id="@+id/missingElementImgView"
+            android:layout_width="@dimen/margin_26"
+            android:layout_height="@dimen/margin_26"
+            android:src="@drawable/error"
+            android:layout_marginRight="@dimen/margin_short_4"
+            android:layout_toLeftOf="@+id/unIdenArrow"
+            android:layout_marginTop="@dimen/margin_14"
+            android:visibility="gone"
+
+            />
+
 
         <TextView
             android:id="@+id/unIdenRecorTimeTV"

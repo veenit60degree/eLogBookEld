@@ -470,6 +470,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                         // ---------------- temp data ---------------------
+/*
                         int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
                         if (OBD_DISCONNECTED) {
                             ignitionStatus = "ON";
@@ -534,6 +535,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         SharedPref.setVss(speed, getApplicationContext());
                         SharedPref.setRPM(truckRPM, getApplicationContext());
 
+*/
 
 
 // ====================================================================================================
@@ -892,7 +894,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
 
 
-       /* if (SharedPref.getVINNumber(getApplicationContext()).length() > 5) {
+        if (SharedPref.getVINNumber(getApplicationContext()).length() > 5) {
             if (obdShell.result == 0) {
                 //System.out.println("obd --> cat type --> " + obdShell.successMsg);
                 if (obdShell.successMsg.contains("USB_DCP")) {  // Connected State
@@ -973,7 +975,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 }
             }
         }
-*/
+
 
     }
 

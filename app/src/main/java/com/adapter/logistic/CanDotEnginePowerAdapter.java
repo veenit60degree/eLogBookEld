@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -16,7 +18,7 @@ import com.models.PrePostModel;
 
 import java.util.List;
 
-public class CanDotEnginePowerAdapter extends BaseAdapter {
+public class CanDotEnginePowerAdapter extends RecyclerView.Adapter<CanDotEnginePowerAdapter.CustomViewHolder> {
 
     private Context mContext;
     private final List<CanadaDutyStatusModel> itemsList;
@@ -30,65 +32,16 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
         constants = new Constants();
     }
 
+
     @Override
-    public int getCount() {
-        return itemsList.size();
+    public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        view = mInflater.inflate(R.layout.item_engine_power_dot, parent, false);
+        return new CustomViewHolder(view);
     }
 
     @Override
-    public Object getItem(int arg0) {
-        return itemsList.get(arg0);
-    }
-
-    @Override
-    public long getItemId(int arg0) {
-        return 0;
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return getCount();
-    }
-
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
-
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.item_engine_power_dot, null);
-
-            holder.enginePwrDotLay     = (LinearLayout) convertView.findViewById(R.id.enginePwrDotLay);
-
-            holder.dateTimeDiffEngineTV= (TextView) convertView.findViewById(R.id.dateTimeDiffEngineTV);
-            holder.latLonEDotTV        = (TextView) convertView.findViewById(R.id.latLonEDotTV);
-
-            holder.dateTimeEDotTV      = (TextView) convertView.findViewById(R.id.dateTimeEDotTV);
-            holder.eventDotETV         = (TextView) convertView.findViewById(R.id.eventDotETV);
-            holder.jeoLocEDotTV        = (TextView) convertView.findViewById(R.id.jeoLocEDotTV);
-
-            holder.distanceAccDotTV    = (TextView) convertView.findViewById(R.id.distanceAccDotTV);
-            holder.cmvEDotTV           = (TextView) convertView.findViewById(R.id.cmvEDotTV);
-            holder.distanceTotalEDotTV = (TextView) convertView.findViewById(R.id.distanceTotalEDotTV);
-
-            holder.hoursTotalEDotTV    = (TextView) convertView.findViewById(R.id.hoursTotalEDotTV);
-            holder.seqNoEDotTV         = (TextView) convertView.findViewById(R.id.seqNoEDotTV);
-
-            convertView.setTag(holder);
-        } else {
-
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-
-
+    public void onBindViewHolder(CustomViewHolder holder, int position) {
         holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String EventDateTime = itemsList.get(position).getDateTimeWithMins();
@@ -123,10 +76,10 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
             holder.dateTimeEDotTV.setText(EventDateTime.substring(11, 19));
         }
 
-       // holder.dateTimeEDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins() ));
+        // holder.dateTimeEDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getDateTimeWithMins() ));
         holder.eventDotETV.setText(constants.getEnginePowerUpDownEventName(
-                                        itemsList.get(position).getEventType(),
-                                        itemsList.get(position).getEventCode()));
+                itemsList.get(position).getEventType(),
+                itemsList.get(position).getEventCode()));
         holder.jeoLocEDotTV.setText(itemsList.get(position).getAnnotation());
 
         holder.distanceAccDotTV.setText(constants.checkNullString(itemsList.get(position).getDistanceSinceLastValidCord()));
@@ -167,16 +120,42 @@ public class CanDotEnginePowerAdapter extends BaseAdapter {
         constants.setMarqueonView(holder.seqNoEDotTV);
         constants.setMarqueonView(holder.latLonEDotTV);
 
+    }
 
-        return convertView;
+    @Override
+    public int getItemCount() {
+        return itemsList.size();
     }
 
 
-    public class ViewHolder {
+    public class CustomViewHolder extends RecyclerView.ViewHolder {
+
         TextView dateTimeEDotTV, eventDotETV, jeoLocEDotTV, distanceAccDotTV, cmvEDotTV, distanceTotalEDotTV, hoursTotalEDotTV, seqNoEDotTV ;
         TextView dateTimeDiffEngineTV, latLonEDotTV;
         LinearLayout enginePwrDotLay;
 
+        public CustomViewHolder(View itemView) {
+            super(itemView);
+
+            enginePwrDotLay     = (LinearLayout) itemView.findViewById(R.id.enginePwrDotLay);
+
+            dateTimeDiffEngineTV= (TextView) itemView.findViewById(R.id.dateTimeDiffEngineTV);
+            latLonEDotTV        = (TextView) itemView.findViewById(R.id.latLonEDotTV);
+
+            dateTimeEDotTV      = (TextView) itemView.findViewById(R.id.dateTimeEDotTV);
+            eventDotETV         = (TextView) itemView.findViewById(R.id.eventDotETV);
+            jeoLocEDotTV        = (TextView) itemView.findViewById(R.id.jeoLocEDotTV);
+
+            distanceAccDotTV    = (TextView) itemView.findViewById(R.id.distanceAccDotTV);
+            cmvEDotTV           = (TextView) itemView.findViewById(R.id.cmvEDotTV);
+            distanceTotalEDotTV = (TextView) itemView.findViewById(R.id.distanceTotalEDotTV);
+
+            hoursTotalEDotTV    = (TextView) itemView.findViewById(R.id.hoursTotalEDotTV);
+            seqNoEDotTV         = (TextView) itemView.findViewById(R.id.seqNoEDotTV);
+
+
+
+        }
     }
 
 

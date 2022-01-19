@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.constants.Constants;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
@@ -85,6 +87,8 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
             holder.unIdenRecorTimeTV = (TextView)convertView.findViewById(R.id.unIdenRecorTimeTV);
             holder.unIdenRecordStatusTV = (TextView)convertView.findViewById(R.id.unIdenRecordStatusTV);
 
+            holder.missingElementImgView = (ImageView)convertView.findViewById(R.id.missingElementImgView);
+
             holder.checkboxUnIdentifiedRecord = (CheckBox)convertView.findViewById(R.id.checkboxUnIdentifiedRecord);
             holder.unIdentifiedDtailView    = (RelativeLayout)convertView.findViewById(R.id.unIdentifiedDtailView) ;
 
@@ -125,7 +129,7 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
         }
 
         if(IsAllSelectedClicked) {
-            if (isChecked) {
+            if (isChecked && !Constants.isInfoMissing(unIdentifiedList.get(position))) {
                 SelectedRecordList.set(position, "selected");
                 holder.checkboxUnIdentifiedRecord.setChecked(true);
             } else {
@@ -134,28 +138,36 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
             }
         }
 
-
-
+        if(Constants.isInfoMissing(unIdentifiedList.get(position))) {
+            holder.missingElementImgView.setVisibility(View.VISIBLE);
+        }
 
         holder.checkboxUnIdentifiedRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(holder.checkboxUnIdentifiedRecord.isChecked()){
-                    SelectedRecordList.set(position, "selected");
-                }else{
-                    SelectedRecordList.set(position, "");
-                }
 
-                IsAllSelectedClicked = false;
-                UnidentifiedFragment.isItemViewClicked = true;
-                int count = getSelectedCount();
-                if(count < SelectedRecordList.size()){
-                    UnidentifiedFragment.checkboxUnIdentifiedRecord.setChecked(false);
-                }else{
-                    UnidentifiedFragment.checkboxUnIdentifiedRecord.setChecked(true);
+                if(Constants.isInfoMissing(unIdentifiedList.get(position))){
+                    holder.checkboxUnIdentifiedRecord.setChecked(false);
+                    Globally.EldToastWithDuration4Sec(holder.checkboxUnIdentifiedRecord, context.getString(R.string.can_not_select),
+                            context.getResources().getColor(R.color.colorVoilation));
+                }else {
+                    if (holder.checkboxUnIdentifiedRecord.isChecked()) {
+                        SelectedRecordList.set(position, "selected");
+                    } else {
+                        SelectedRecordList.set(position, "");
+                    }
+
+                    IsAllSelectedClicked = false;
+                    UnidentifiedFragment.isItemViewClicked = true;
+                    int count = getSelectedCount();
+                    if (count < SelectedRecordList.size()) {
+                        UnidentifiedFragment.checkboxUnIdentifiedRecord.setChecked(false);
+                    } else {
+                        UnidentifiedFragment.checkboxUnIdentifiedRecord.setChecked(true);
+                    }
+                    UnidentifiedFragment.checkboxUnIdentifiedRecord.setText(context.getResources().getString(R.string.select_all) + " (" + count + ")");
+                    UnidentifiedFragment.isItemViewClicked = false;
                 }
-                UnidentifiedFragment.checkboxUnIdentifiedRecord.setText(context.getResources().getString(R.string.select_all) + " (" + count + ")");
-                UnidentifiedFragment.isItemViewClicked = false;
             }
         });
 
@@ -260,8 +272,10 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
     public class ViewHolder {
         TextView unIdenDistanceTV, unIdenRecordDescTV, requestedByTxtVw, unIdenRecorTimeTV, unIdenRecordStatusTV;
         CheckBox checkboxUnIdentifiedRecord;
+        ImageView missingElementImgView;
         RelativeLayout unIdentifiedDtailView;
 
     }
+
 
 }

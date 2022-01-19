@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -16,7 +18,7 @@ import com.models.CanadaDutyStatusModel;
 
 import java.util.List;
 
-public class CanDotCycleOpZoneAdapter extends BaseAdapter {
+public class CanDotCycleOpZoneAdapter extends RecyclerView.Adapter<CanDotCycleOpZoneAdapter.CustomViewHolder> {
 
     private Context mContext;
     private final List<CanadaDutyStatusModel> itemsList;
@@ -32,65 +34,14 @@ public class CanDotCycleOpZoneAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() {
-        return itemsList.size();
+    public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        view = mInflater.inflate(R.layout.item_cycle_op_zone_dot, parent, false);
+        return new CustomViewHolder(view);
     }
 
     @Override
-    public Object getItem(int arg0) {
-        return itemsList.get(arg0);
-    }
-
-    @Override
-    public long getItemId(int arg0) {
-        return 0;
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return getCount();
-    }
-
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
-
-
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.item_cycle_op_zone_dot, null);
-
-            holder.addHrsDotLay             = (LinearLayout) convertView.findViewById(R.id.addHrsDotLay);
-
-            holder.dateTimeDiffCycleTV      = (TextView) convertView.findViewById(R.id.dateTimeDiffCycleTV);
-
-            holder.dateCycleDotTV           = (TextView) convertView.findViewById(R.id.dateCycleDotTV);
-            holder.eventCycleEventTV        = (TextView) convertView.findViewById(R.id.eventCycleEventTV);
-            holder.geoLocCycleTV            = (TextView) convertView.findViewById(R.id.geoLocCycleTV);
-
-            holder.latLongCycleTV           = (TextView) convertView.findViewById(R.id.latLongCycleTV);
-            holder.distanceLastCoCycleTV    = (TextView) convertView.findViewById(R.id.distanceLastCoCycleTV);
-            holder.cmvAHDotTV               = (TextView) convertView.findViewById(R.id.cmvAHDotTV);
-
-            holder.recStatusAHDotTV         = (TextView) convertView.findViewById(R.id.recStatusAHDotTV);
-            holder.recOriginAHDotTV         = (TextView) convertView.findViewById(R.id.recOriginAHDotTV);
-            holder.seqNoDotTV               = (TextView) convertView.findViewById(R.id.seqNoDotTV);
-
-            convertView.setTag(holder);
-        } else {
-
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-
-
+    public void onBindViewHolder(CustomViewHolder holder, int position) {
         holder.addHrsDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String EventDateTime = itemsList.get(position).getDateTimeWithMins();
@@ -116,7 +67,7 @@ public class CanDotCycleOpZoneAdapter extends BaseAdapter {
         }
 
 
-       // holder.dateCycleDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate()));
+        // holder.dateCycleDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(itemsList.get(position).getEventDate()));
        /* if(EventDateTime.length() > 16) {
             holder.dateCycleDotTV.setText(EventDateTime.substring(11, 16));
         }*/
@@ -161,19 +112,43 @@ public class CanDotCycleOpZoneAdapter extends BaseAdapter {
         constants.setMarqueonView(holder.recStatusAHDotTV);
         constants.setMarqueonView(holder.recOriginAHDotTV);
         constants.setMarqueonView(holder.seqNoDotTV);
+    }
 
-
-
-        return convertView;
+    @Override
+    public int getItemCount() {
+        return itemsList.size();
     }
 
 
-    public class ViewHolder {
+    public class CustomViewHolder extends RecyclerView.ViewHolder {
+
         TextView dateCycleDotTV, eventCycleEventTV, geoLocCycleTV, latLongCycleTV, distanceLastCoCycleTV;
         TextView cmvAHDotTV, recStatusAHDotTV, recOriginAHDotTV, seqNoDotTV;
         TextView dateTimeDiffCycleTV;
         LinearLayout addHrsDotLay;
 
+        public CustomViewHolder(View itemView) {
+            super(itemView);
+
+            addHrsDotLay             = (LinearLayout) itemView.findViewById(R.id.addHrsDotLay);
+
+            dateTimeDiffCycleTV      = (TextView) itemView.findViewById(R.id.dateTimeDiffCycleTV);
+
+            dateCycleDotTV           = (TextView) itemView.findViewById(R.id.dateCycleDotTV);
+            eventCycleEventTV        = (TextView) itemView.findViewById(R.id.eventCycleEventTV);
+            geoLocCycleTV            = (TextView) itemView.findViewById(R.id.geoLocCycleTV);
+
+            latLongCycleTV           = (TextView) itemView.findViewById(R.id.latLongCycleTV);
+            distanceLastCoCycleTV    = (TextView) itemView.findViewById(R.id.distanceLastCoCycleTV);
+            cmvAHDotTV               = (TextView) itemView.findViewById(R.id.cmvAHDotTV);
+
+            recStatusAHDotTV         = (TextView) itemView.findViewById(R.id.recStatusAHDotTV);
+            recOriginAHDotTV         = (TextView) itemView.findViewById(R.id.recOriginAHDotTV);
+            seqNoDotTV               = (TextView) itemView.findViewById(R.id.seqNoDotTV);
+
+
+
+        }
     }
 
 }

@@ -193,7 +193,8 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         }else{
             dateActionBarTV.setText(getString(R.string.eld));
         }
-
+        checkboxUnIdentifiedRecord.setChecked(false);
+        setListSelectionRecord(false);
         notifyAdapter(false, false);
 
         if(global.isConnected(getContext())) {
@@ -401,10 +402,13 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     };
 
     private void setListSelectionRecord(boolean isSelected){
-        Log.d("recordSelectedList", "recordSelectedList: " + recordSelectedList);
         int count = 0;
         for(int i = 0 ; i < recordSelectedList.size() ; i++){
-            if(isSelected){
+            UnIdentifiedRecordModel recordModel = null;
+            if(i < unIdentifiedRecordList.size()){
+                recordModel = unIdentifiedRecordList.get(i);
+            }
+            if(isSelected && Constants.isInfoMissing(recordModel)){
                 count++;
                 recordSelectedList.set(i, "selected");
             }else{
@@ -481,8 +485,8 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                                         objItem.getString(ConstantsKeys.UnAssignedVehicleMilesId),
                                         objItem.getString(ConstantsKeys.AssignedUnidentifiedRecordsId),
                                         false,
-                                        objItem.getString(ConstantsKeys.StartLocationKM),
-                                        objItem.getString(ConstantsKeys.EndLocationKM),
+                                        Constants.CheckNullString(objItem.getString(ConstantsKeys.StartLocationKM)),
+                                        Constants.CheckNullString(objItem.getString(ConstantsKeys.EndLocationKM)),
                                         objItem.getString(ConstantsKeys.DutyStatus),
                                         objItem.getBoolean(ConstantsKeys.Intermediate)
                                         );
@@ -571,7 +575,8 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     void notifyAdapter(boolean isAllSelected, boolean isChecked){
         try{
 
-            listingAdapter = new UnIdentifiedListingAdapter(getActivity(), DriverId, DriverName, isAllSelected, isChecked, recordSelectedList, unIdentifiedRecordList, this);
+            listingAdapter = new UnIdentifiedListingAdapter(getActivity(), DriverId, DriverName, isAllSelected, isChecked,
+                    recordSelectedList, unIdentifiedRecordList, this);
             unIdentifiedListView.setAdapter(listingAdapter);
 
         }catch (Exception e){ }

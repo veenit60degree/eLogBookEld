@@ -151,6 +151,8 @@ public class ConstantsKeys {
     public static String ShipperState           = "ShipperState";
     public static String IsEmptyLoad            = "IsEmptyLoad";
     public static String ShipperDocDateStr      = "ShipperDocDateStr";
+    public static String IsUnAssignedMileRecord = "IsUnAssignedMileRecord";
+
 
     // --------------------- Odometer params -------------------------
     public static String VIN                    = "VIN";

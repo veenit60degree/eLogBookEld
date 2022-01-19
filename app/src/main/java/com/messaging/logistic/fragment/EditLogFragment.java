@@ -122,6 +122,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     boolean isHaulExcptn;
     boolean isAdverseExcptn;
     boolean isNorthCanada;
+    boolean IsUnAssignedMileRecord = false;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -222,6 +224,12 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
             IsDrivingPermission     = driverPermissionMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.DrivingKey);
             IsOnDutyPermission      = driverPermissionMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.OnDutyKey);
 
+            IsUnAssignedMileRecord = IsUnAssignedMileRecord();
+
+            if(IsUnAssignedMileRecord){
+                IsDrivingPermission = true;
+            }
+
             setRecyclerAdapter();
             enableSwipeToDeleteAndUndo();
 
@@ -305,6 +313,22 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     }
 
 
+    private boolean IsUnAssignedMileRecord(){
+        boolean IsUnAssignedMileRecord = false;
+        try{
+            for(int i = 0 ; i < logArray.length() ; i++){
+                JSONObject obj = (JSONObject) logArray.get(i);
+                if(obj.has(ConstantsKeys.IsUnAssignedMileRecord) && obj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord)){
+                    IsUnAssignedMileRecord = true;
+                    break;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return IsUnAssignedMileRecord;
+    }
 
     private void setRecyclerAdapter(){
 
@@ -314,7 +338,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
             driverLogRecyclerView.setLayoutManager(mLayoutManager);
 
             editLogRecyclerAdapter = new EditLogRecyclerViewAdapter(getActivity(), driverLogRecyclerView, oDriverLogDetail, selectedDateFormat, offsetFromUTC,
-                    logPermissionObj, driverPermissionMethod, hMethods, IsCurrentDate, this);
+                    logPermissionObj, driverPermissionMethod, hMethods, IsCurrentDate, IsUnAssignedMileRecord, this);
 
             ItemTouchHelper.Callback callback = new EditItemTouchHelperCallback(editLogRecyclerAdapter);
             mItemTouchHelper = new ItemTouchHelper(callback);

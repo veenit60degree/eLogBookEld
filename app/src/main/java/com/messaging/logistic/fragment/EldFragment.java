@@ -1991,90 +1991,100 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     void SetJobButtonView(int job, boolean isViolation, String IsPersonal) {
 
-        switch (job) {
-            case OFF_DUTY:  //1
+        try {
+            if(getActivity() != null){
+                 switch (job) {
+                case OFF_DUTY:  //1
 
-                initilizeEldView.InActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                if (IsPersonal.equals("false")) {
-                    personalUseBtn.setText(getString(R.string.pc_start));
-                    initilizeEldView.ActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, false);
-                } else {
+                    initilizeEldView.InActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    if (IsPersonal.equals("false")) {
+                        personalUseBtn.setText(getString(R.string.pc_start));
+                        initilizeEldView.ActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, false);
+                    } else {
+                        initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                        personalUseBtn.setBackgroundResource(R.drawable.eld_blue_new_selector);
+                        personalUseBtn.setTextColor(Color.WHITE);
+                        personalUseBtn.setText(getString(R.string.pc_end));
+                    }
+
+                    yardMoveBtn.setText(getString(R.string.ym_start));
+                    StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+
+                    break;
+
+                case SLEEPER:  //2
+
+                    initilizeEldView.ActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, false);
+                    initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
                     initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                    personalUseBtn.setBackgroundResource(R.drawable.eld_blue_new_selector);
-                    personalUseBtn.setTextColor(Color.WHITE);
-                    personalUseBtn.setText(getString(R.string.pc_end));
-                }
-
-                yardMoveBtn.setText(getString(R.string.ym_start));
-                StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
-
-                break;
-
-            case SLEEPER:  //2
-
-                initilizeEldView.ActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, false);
-                initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
-
-                personalUseBtn.setText(getString(R.string.pc_start));
-                yardMoveBtn.setText(getString(R.string.ym_start));
-
-                break;
-
-            case DRIVING:   //3
-
-                initilizeEldView.InActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.ActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, isViolation);
-                initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-
-                personalUseBtn.setText(getString(R.string.pc_start));
-                yardMoveBtn.setText(getString(R.string.ym_start));
-
-                if (isViolation) {
-                    StatusMainView.setBackgroundResource(R.drawable.red_default);
-                } else {
                     StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
-                }
-                break;
 
-            case ON_DUTY:   //4
-                initilizeEldView.InActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.ActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, isViolation);
-                initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    personalUseBtn.setText(getString(R.string.pc_start));
+                    yardMoveBtn.setText(getString(R.string.ym_start));
 
-                personalUseBtn.setText(getString(R.string.pc_start));
+                    break;
 
-                if (isViolation) {
-                    StatusMainView.setBackgroundResource(R.drawable.red_default);
-                } else {
+                case DRIVING:   //3
+
+                    initilizeEldView.InActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.ActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, isViolation);
+                    initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+
+                    personalUseBtn.setText(getString(R.string.pc_start));
+                    yardMoveBtn.setText(getString(R.string.ym_start));
+
+                    if (isViolation) {
+                        StatusMainView.setBackgroundResource(R.drawable.red_default);
+                    } else {
+                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+                    }
+                    break;
+
+                case ON_DUTY:   //4
+                    initilizeEldView.InActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.ActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, isViolation);
+                    initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+
+                    personalUseBtn.setText(getString(R.string.pc_start));
+
+                    if (isViolation) {
+                        StatusMainView.setBackgroundResource(R.drawable.red_default);
+                    } else {
+                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+                    }
+
+                    break;
+
+
+                default:
+                    initilizeEldView.InActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
+                    initilizeEldView.ActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, false);
                     StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
-                }
+                    personalUseBtn.setText(getString(R.string.pc_start));
+                    yardMoveBtn.setText(getString(R.string.ym_start));
 
-                break;
+                    break;
+            }
+            }
 
-
-            default:
-                initilizeEldView.InActiveView(SleeperBtn, sleeperViolationTV, sleeperTimeTxtVw, sleeperTxtVw, asPerDateSleepTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.InActiveView(DrivingBtn, drivingViolationTV, drivingTimeTxtVw, drivingTxtVw, asPerShiftDrivingTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
-                initilizeEldView.ActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, false);
-                StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
-                personalUseBtn.setText(getString(R.string.pc_start));
-                yardMoveBtn.setText(getString(R.string.ym_start));
-
-                break;
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
 
     void setJobButtonViewTrue(int job, String isPersonal) {
-        switch (job) {
+
+        try{
+            if(getActivity() != null){
+                switch (job) {
             case OFF_DUTY:  //1
                 if (isPersonal.equals("true")) {
                     initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
@@ -2109,6 +2119,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 // OffDutyBtn.setEnabled(false);
                 break;
         }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -2643,10 +2658,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         IsRefreshedClick = false;
 
                         if (TeamDriverType.equals(DriverConst.TeamDriver)) {
-                            GetDriverLog18Days(MainDriverId, GetDriverLog18Days);
-                            GetDriverLog18Days(CoDriverId, GetCoDriverLog18Days);
+                           // GetDriverLog18Days(MainDriverId, GetDriverLog18Days);
+                           // GetDriverLog18Days(CoDriverId, GetCoDriverLog18Days);
+
+                            dataRequest18Days(MainDriverId, GetDriverLog18Days);
+                            dataRequest18Days(CoDriverId, GetCoDriverLog18Days);
                         } else {
-                            GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
+                            dataRequest18Days(DRIVER_ID, GetDriverLog18Days);
                         }
 
                     }

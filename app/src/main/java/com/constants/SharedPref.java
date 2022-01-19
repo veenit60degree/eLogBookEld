@@ -1158,10 +1158,14 @@ public class SharedPref {
 
     // Set Re-Certify Data -------------------
     public static void setReCertifyData( String value, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("ReCertifyData", value);
-        editor.commit();
+        try {
+            if (context != null) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("ReCertifyData", value);
+                editor.commit();
+            }
+        }catch(Exception e){}
     }
 
 

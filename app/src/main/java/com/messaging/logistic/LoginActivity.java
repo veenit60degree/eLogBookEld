@@ -1250,6 +1250,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			case R.id.loginBleStatusBtn:
 
+
+				String abc = "{\"note_text\":\"tertsetresrs sdfds fsd fsdfs f\"}";
+				//abc = abc.replaceAll("\"", "");
+				abc = abc.replaceAll("\\\\", "");
+				Log.d("finalString: ", abc);
+
 				if(ObdPreference == Constants.OBD_PREF_BLE) {
 					if(!IsBleConnected) {
 						SharedPref.SetPingStatus("ble_start", getApplicationContext());

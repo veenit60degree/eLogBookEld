@@ -166,6 +166,12 @@ public class AdverseRemarksDialog extends Dialog {
         }
 
 
+        if(startOdometer || endOdometer || startLocation || endLocation){
+            descTextView.setVisibility(View.VISIBLE);
+            descTextView.setText(getContext().getResources().getString(R.string.input_req_miss_elem));
+            descTextView.setTextColor(getContext().getResources().getColor(R.color.colorVoilation));
+        }
+
 
         remarksEditText.setSingleLine(false);
         remarksEditText.setMinLines(2);

@@ -18,7 +18,7 @@
     <string name="rods_log_type">Log Type</string>
     <string name="Generate_Rods">Generate RODS</string>
 
-    <string name="mal_dia_history">Events History</string>
+    <string name="mal_dia_history">Events History (Cleared)</string>
     <string name="child_text">LOAD#661\n3785 BOUL LAURIER EST,QUEBEC,CA\n\nLOAD#NISD662\n3785 BOUL LAURIER EST,QUEBEC,CA</string>
     <string name="title_activity_maps_activityyy">Map</string>
     <string name="obd_connection_desc">OBD not connected!! Connect your phone with OBD wifi connection. </string>
@@ -905,6 +905,7 @@
     <string name="obd_ble_discon_conn_error">Bluetooth OBD disconnected, connection error</string>
     <string name="BluetoothOBD">Bluetooth OBD</string>
     <string name="BleObdNotFound">Bluetooth OBD not found. Please check your bluetooth device.</string>
+    <string name="can_not_select">Can\'t select due to missing elements. Go to detail page to Claim/Reject this event.</string>
 
     <string name="BleOBDConnErr">BLE OBD Connection Error</string>
     <string name="connErrorDesc">E-Log book is getting different MAC address. Please check your BLE device configuration.</string>
@@ -1065,6 +1066,8 @@
     <string name="DailyCertifyLog">Daily Certify Log</string>
     <string name="eld">ELD</string>
     <string name="clear">Clear</string>
+    <string name="input_req_miss_elem">Please input required missing elements</string>
+
 
     <string name="ViewInspections">View Inspections</string>
     <string name="sign_record">Certification Records</string>

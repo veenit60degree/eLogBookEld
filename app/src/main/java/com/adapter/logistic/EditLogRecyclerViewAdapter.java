@@ -65,7 +65,8 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
 
     public EditLogRecyclerViewAdapter(Context context, RecyclerView eldMenuBtn, List<DriverLogModel> oDriverLogDetail, String selectedDate, int offset,
-                                      JSONObject permitLog, DriverPermissionMethod pMethod, HelperMethods h_method, boolean isCurrentDate, OnStartDragListener dragListner) {
+                                      JSONObject permitLog, DriverPermissionMethod pMethod, HelperMethods h_method,
+                                      boolean isCurrentDate, boolean isUnAssignedMileRecord, OnStartDragListener dragListner) {
         this.driverLogList = oDriverLogDetail;
         this.mInflater = LayoutInflater.from(context);
         this.mDragStartListener = dragListner;
@@ -84,6 +85,9 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         IsDrivingPermission = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.DrivingKey);
         IsOnDutyPermission  = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.OnDutyKey);
 
+        if(isUnAssignedMileRecord){
+            IsDrivingPermission = true;
+        }
 
 
     }

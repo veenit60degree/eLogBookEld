@@ -21,13 +21,7 @@
 
 
 
-        <CheckBox
-            android:id="@+id/drivingSwapCheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
 
-            />
 
 
     <TextView
@@ -191,6 +185,16 @@
             android:gravity="center"
             android:layout_weight="1.2"
             android:visibility="gone"
+
+            />
+
+        <CheckBox
+            android:id="@+id/drivingSwapCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:button="@drawable/eld_checkbox_drawable"
+            android:layout_marginLeft="@dimen/margin_short_8"
 
             />
 

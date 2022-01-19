@@ -17,7 +17,11 @@ import androidx.fragment.app.Fragment;
 
 import com.adapter.logistic.EditedLogAdapter;
 import com.constants.SharedPref;
+import com.local.db.ConstantsKeys;
 import com.messaging.logistic.R;
+import com.messaging.logistic.SuggestedFragmentActivity;
+
+import org.json.JSONObject;
 
 public class EditedLogConfirmationFragment extends Fragment {
 
@@ -67,7 +71,6 @@ public class EditedLogConfirmationFragment extends Fragment {
         DriverId            = SharedPref.getDriverId( getActivity());
         offsetFromUTC       = (int) suggestedLogFragment.globally.GetTimeZoneOffSet();
 
-
         suggestedLogFragment.LoadDataOnWebView(editLogWebView, SuggestedLogFragment.editedLogArray, SuggestedLogFragment.LogDate, true);
 
         if(SuggestedLogFragment.editedLogList.size() > 0) {
@@ -75,6 +78,16 @@ public class EditedLogConfirmationFragment extends Fragment {
             editLogListView.setAdapter(adapter);
 
             SetCertifyListViewHeight();
+
+            try {
+                JSONObject logObj = (JSONObject) SuggestedLogFragment.editedLogArray.get(0);
+                if(!logObj.isNull(ConstantsKeys.CoDriverKey)) {
+                    SuggestedFragmentActivity.CoDriverKey = logObj.getString(ConstantsKeys.CoDriverKey);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
 
         return rootView;

@@ -18,10 +18,11 @@
 
 
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/canDotScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scrollbars="none"
         android:layout_below="@+id/canadaDotActionBar"
         android:background="@color/dot_titles_bg"
 
@@ -1664,12 +1665,11 @@
                     />
 
 
-                <ListView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/dutyChangeDotListView"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/view_height_80"
+                    android:layout_height="wrap_content"
                     android:scrollbars="none"
-                    android:minHeight="@dimen/view_height_30"
 
 
                     />
@@ -1711,12 +1711,11 @@
                     />
 
 
-                <ListView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/loginLogDotListView"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/view_height_80"
+                    android:layout_height="wrap_content"
                     android:scrollbars="none"
-                    android:minHeight="@dimen/view_height_30"
 
 
                     />
@@ -1756,12 +1755,11 @@
                     />
 
 
-                <ListView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/addHrsDotListView"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/view_height_80"
+                    android:layout_height="wrap_content"
                     android:scrollbars="none"
-                    android:minHeight="@dimen/view_height_30"
 
 
                     />
@@ -1801,12 +1799,11 @@
                     />
 
 
-                <ListView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/remAnotnDotListView"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/view_height_80"
+                    android:layout_height="wrap_content"
                     android:scrollbars="none"
-                    android:minHeight="@dimen/view_height_30"
 
 
                     />
@@ -1850,12 +1847,11 @@
                     />
 
 
-                <ListView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/enginePwrDotListView"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/view_height_80"
+                    android:layout_height="wrap_content"
                     android:scrollbars="none"
-                    android:minHeight="@dimen/view_height_30"
 
                     />
 
@@ -1895,12 +1891,11 @@
                     />
 
 
-                <ListView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/unIdnfdVehDotListView"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/view_height_80"
+                    android:layout_height="wrap_content"
                     android:scrollbars="none"
-                    android:minHeight="@dimen/view_height_30"
                     android:paddingBottom="@dimen/margin_20"
                     />
 
@@ -1912,7 +1907,7 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
 

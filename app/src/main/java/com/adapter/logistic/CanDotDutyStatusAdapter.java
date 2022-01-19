@@ -1,13 +1,17 @@
 package com.adapter.logistic;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
@@ -17,7 +21,7 @@ import com.models.PrePostModel;
 
 import java.util.List;
 
-public class CanDotDutyStatusAdapter extends BaseAdapter {
+public class CanDotDutyStatusAdapter extends RecyclerView.Adapter<CanDotDutyStatusAdapter.CustomViewHolder> {
 
     private Context mContext;
     private final List<CanadaDutyStatusModel> itemsList;
@@ -32,68 +36,16 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
 
     }
 
+
     @Override
-    public int getCount() {
-        return itemsList.size();
+    public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        view = mInflater.inflate(R.layout.item_duty_status_change_dot, parent, false);
+        return new CustomViewHolder(view);
     }
 
     @Override
-    public Object getItem(int arg0) {
-        return itemsList.get(arg0);
-    }
-
-    @Override
-    public long getItemId(int arg0) {
-        return 0;
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return getCount();
-    }
-
-
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
-
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.item_duty_status_change_dot, null);
-
-            holder.dutyStatusDotLay     = (LinearLayout) convertView.findViewById(R.id.dutyStatusDotLay);
-
-            holder.dateTimeDiffTV       = (TextView) convertView.findViewById(R.id.dateTimeDiffTV);
-            holder.distanceCordDotTV       = (TextView) convertView.findViewById(R.id.distanceCordDotTV);
-            holder.latLongDotTV       = (TextView) convertView.findViewById(R.id.latLongDotTV);
-            holder.geoLocDotTV       = (TextView) convertView.findViewById(R.id.geoLocDotTV);
-
-            holder.dateTimeDotTV        = (TextView) convertView.findViewById(R.id.dateTimeDotTV);
-            holder.eventDotTV           = (TextView) convertView.findViewById(R.id.eventDotTV);
-            holder.cmvDotTV             = (TextView) convertView.findViewById(R.id.cmvDotTV);
-
-            holder.distanceAccDotTV     = (TextView) convertView.findViewById(R.id.distanceAccDotTV);
-            holder.hrsAccDotTV          = (TextView) convertView.findViewById(R.id.hrsAccDotTV);
-            holder.distanceTotalDotTV   = (TextView) convertView.findViewById(R.id.distanceTotalDotTV);
-
-            holder.recStatusDotTV       = (TextView) convertView.findViewById(R.id.recStatusDotTV);
-            holder.recOriginDotTV       = (TextView) convertView.findViewById(R.id.recOriginDotTV);
-            holder.seqNoDotTV           = (TextView) convertView.findViewById(R.id.seqNoDotTV);
-
-            convertView.setTag(holder);
-        } else {
-
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-
+    public void onBindViewHolder(CustomViewHolder holder, int position) {
         holder.dutyStatusDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String EventDateTime = itemsList.get(position).getDateTimeWithMins();
@@ -126,9 +78,9 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
         }
 
         holder.eventDotTV.setText(constants.getDutyChangeEventName( itemsList.get(position).getEventType(),
-                                                                    itemsList.get(position).getEventCode(),
-                                                                    itemsList.get(position).isPersonal(),
-                                                                    itemsList.get(position).isYard() ));
+                itemsList.get(position).getEventCode(),
+                itemsList.get(position).isPersonal(),
+                itemsList.get(position).isYard() ));
 
         holder.cmvDotTV.setText(constants.checkNullString(itemsList.get(position).getTruckEquipmentNo()));
 
@@ -168,26 +120,60 @@ public class CanDotDutyStatusAdapter extends BaseAdapter {
         constants.setMarqueonView(holder.geoLocDotTV);
         constants.setMarqueonView(holder.latLongDotTV);
         constants.setMarqueonView(holder.cmvDotTV);
-       // constants.setMarqueonView(holder.dateTimeDotTV);
+        // constants.setMarqueonView(holder.dateTimeDotTV);
         constants.setMarqueonView(holder.eventDotTV);
         constants.setMarqueonView(holder.distanceAccDotTV);
         constants.setMarqueonView(holder.hrsAccDotTV);
-      //  constants.setMarqueonView(holder.distanceTotalDotTV);
+        //  constants.setMarqueonView(holder.distanceTotalDotTV);
         constants.setMarqueonView(holder.recStatusDotTV);
         constants.setMarqueonView(holder.recOriginDotTV);
         constants.setMarqueonView(holder.seqNoDotTV);
         constants.setMarqueonView(holder.distanceCordDotTV);
+    }
 
-
-        return convertView;
+    @Override
+    public int getItemCount() {
+        return itemsList.size();
     }
 
 
-    public class ViewHolder {
+    public class CustomViewHolder extends RecyclerView.ViewHolder {
+
         TextView dateTimeDotTV, eventDotTV, cmvDotTV, distanceAccDotTV, hrsAccDotTV, distanceTotalDotTV, recStatusDotTV, recOriginDotTV, seqNoDotTV;
         TextView dateTimeDiffTV, distanceCordDotTV, latLongDotTV, geoLocDotTV;
         LinearLayout dutyStatusDotLay;
 
+        public CustomViewHolder(View itemView) {
+            super(itemView);
+
+//            final ViewHolder holder;
+//
+//            if (convertView == null) {
+//                holder = new ViewHolder();
+//                convertView = mInflater.inflate(R.layout.item_duty_status_change_dot, null);
+
+                dutyStatusDotLay     = (LinearLayout) itemView.findViewById(R.id.dutyStatusDotLay);
+
+                dateTimeDiffTV       = (TextView) itemView.findViewById(R.id.dateTimeDiffTV);
+                distanceCordDotTV       = (TextView) itemView.findViewById(R.id.distanceCordDotTV);
+                latLongDotTV       = (TextView) itemView.findViewById(R.id.latLongDotTV);
+                geoLocDotTV       = (TextView) itemView.findViewById(R.id.geoLocDotTV);
+
+                dateTimeDotTV        = (TextView) itemView.findViewById(R.id.dateTimeDotTV);
+                eventDotTV           = (TextView) itemView.findViewById(R.id.eventDotTV);
+                cmvDotTV             = (TextView) itemView.findViewById(R.id.cmvDotTV);
+
+                distanceAccDotTV     = (TextView) itemView.findViewById(R.id.distanceAccDotTV);
+                hrsAccDotTV          = (TextView) itemView.findViewById(R.id.hrsAccDotTV);
+                distanceTotalDotTV   = (TextView) itemView.findViewById(R.id.distanceTotalDotTV);
+
+                recStatusDotTV       = (TextView) itemView.findViewById(R.id.recStatusDotTV);
+                recOriginDotTV       = (TextView) itemView.findViewById(R.id.recOriginDotTV);
+                seqNoDotTV           = (TextView) itemView.findViewById(R.id.seqNoDotTV);
+
+
+
+        }
     }
 
 }

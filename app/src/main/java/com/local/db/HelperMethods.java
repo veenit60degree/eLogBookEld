@@ -462,6 +462,8 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.EndOdometerInKm, EndOdometer);
             driverLogJson.put(ConstantsKeys.StartOdometerInKm,  StartOdometer);
             driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+            driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, false);
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -838,6 +840,11 @@ public class HelperMethods {
                 }
                 driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
+                boolean IsUnAssignedMileRecord = false;
+                if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
+                    IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
+                }
+                driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
 
             }
         }catch (Exception e){
@@ -981,6 +988,13 @@ public class HelperMethods {
                     CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
                 }
                 driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+                boolean IsUnAssignedMileRecord = false;
+                if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
+                    IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
+                }
+                driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
 
             }
         }catch (Exception e){
@@ -1127,6 +1141,13 @@ public class HelperMethods {
                 }
                 driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
+                boolean IsUnAssignedMileRecord = false;
+                if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
+                    IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
+                }
+                driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1252,6 +1273,13 @@ public class HelperMethods {
                     CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
                 }
                 driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+                boolean IsUnAssignedMileRecord = false;
+                if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
+                    IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
+                }
+                driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
 
             }
         }catch (Exception e){
@@ -1400,6 +1428,11 @@ public class HelperMethods {
             }
             sameStatusJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
+            boolean IsUnAssignedMileRecord = false;
+            if(lastItemJson.has(ConstantsKeys.IsUnAssignedMileRecord) && !lastItemJson.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
+                IsUnAssignedMileRecord = lastItemJson.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
+            }
+            sameStatusJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
 
 
         }catch (Exception e){
@@ -1696,6 +1729,12 @@ public class HelperMethods {
                     }
                     driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
+                    boolean IsUnAssignedMileRecord = false;
+                    if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
+                        IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
+                    }
+                    driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
 
                     parseArray.put(driverLogJson);
 
@@ -1867,6 +1906,13 @@ public class HelperMethods {
                 CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
             }
             driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+            boolean IsUnAssignedMileRecord = false;
+            if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
+                IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
+            }
+            driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
 
             parseArray.put(driverLogJson);
 
@@ -2132,6 +2178,13 @@ public class HelperMethods {
                         CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
                     }
                     driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+                    boolean IsUnAssignedMileRecord = false;
+                    if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
+                        IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
+                    }
+                    driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
 
                     parseArray.put(driverLogJson);
                 }

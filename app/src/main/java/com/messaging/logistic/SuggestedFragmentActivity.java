@@ -44,6 +44,7 @@ public class SuggestedFragmentActivity extends FragmentActivity {
     public static JSONArray editDataArray = new JSONArray();
     public static List<RecapModel> otherLogList   = new ArrayList<>();
 
+    public static String CoDriverKey = "";
     String editedData = "", DriverId, DeviceId;
     ProgressDialog progressDialog;
     VolleyRequest GetEditedRecordRequest;

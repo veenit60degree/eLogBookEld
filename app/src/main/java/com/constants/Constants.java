@@ -5314,4 +5314,20 @@ public class Constants {
     }
 
 
+    public static boolean isInfoMissing(UnIdentifiedRecordModel recordModel){
+        boolean isInfoMissing = false;
+
+        if(recordModel != null) {
+            if (recordModel.getStartOdometer().equals("") ||
+                    recordModel.getEndOdometer().equals("") ||
+                    recordModel.getStartLocation().equals("") ||
+                    recordModel.getEndLocation().equals("")) {
+                isInfoMissing = true;
+            }
+        }
+
+        return isInfoMissing;
+    }
+
+
 }

@@ -29,9 +29,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.adapter.logistic.CanDotCycleOpZoneAdapter;
 import com.adapter.logistic.CanDotDutyStatusAdapter;
@@ -106,10 +109,11 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     WebView canDotGraphWebView;
     ProgressBar canDotProgressBar;
-    ScrollView canDotScrollView;
-    ListView dutyChangeDotListView, remAnotnDotListView, cycleOpZoneDotListView, loginLogDotListView,
-            enginePwrDotListView, unIdnfdVehDotListView;
+    NestedScrollView canDotScrollView;
     SwitchMultiButton canDotSwitchBtn;
+
+    RecyclerView dutyChangeDotListView,loginLogDotListView,cycleOpZoneDotListView,remAnotnDotListView,enginePwrDotListView,unIdnfdVehDotListView;
+
 
     Constants constants;
     Globally global;
@@ -256,12 +260,12 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         EldTitleTV          = (TextView)view.findViewById(R.id.EldTitleTV);
         eventDotETV         = (TextView)view.findViewById(R.id.eventDotETV);
 
-        dutyChangeDotListView= (ListView)view.findViewById(R.id.dutyChangeDotListView);
-        remAnotnDotListView  = (ListView)view.findViewById(R.id.remAnotnDotListView);
-        cycleOpZoneDotListView    = (ListView)view.findViewById(R.id.addHrsDotListView);
-        loginLogDotListView  = (ListView)view.findViewById(R.id.loginLogDotListView);
-        enginePwrDotListView = (ListView)view.findViewById(R.id.enginePwrDotListView);
-        unIdnfdVehDotListView= (ListView)view.findViewById(R.id.unIdnfdVehDotListView);
+        dutyChangeDotListView= (RecyclerView) view.findViewById(R.id.dutyChangeDotListView);
+        remAnotnDotListView  = (RecyclerView) view.findViewById(R.id.remAnotnDotListView);
+        cycleOpZoneDotListView    = (RecyclerView)view.findViewById(R.id.addHrsDotListView);
+        loginLogDotListView  = (RecyclerView) view.findViewById(R.id.loginLogDotListView);
+        enginePwrDotListView = (RecyclerView) view.findViewById(R.id.enginePwrDotListView);
+        unIdnfdVehDotListView= (RecyclerView) view.findViewById(R.id.unIdnfdVehDotListView);
 
         canDotViewMorelay   = (LinearLayout)view.findViewById(R.id.canDotViewMorelay);
 
@@ -278,7 +282,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         canDotGraphWebView  = (WebView)view.findViewById(R.id.canDotGraphWebView);
         canDotProgressBar   = (ProgressBar)view.findViewById(R.id.canDotProgressBar);
-        canDotScrollView    = (ScrollView)view.findViewById(R.id.canDotScrollView);
+        canDotScrollView    = (NestedScrollView) view.findViewById(R.id.canDotScrollView);
 
         canDotSwitchBtn     = (SwitchMultiButton) view.findViewById(R.id.canDotSwitchBtn);
         canDotSwitchBtn.setOnSwitchListener (onSwitchListener);
@@ -818,88 +822,49 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         try {
             canDotDutyStatusAdapter = new CanDotDutyStatusAdapter(getActivity(), DutyStatusList);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            dutyChangeDotListView.setLayoutManager(manager);
             dutyChangeDotListView.setAdapter(canDotDutyStatusAdapter);
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         try{
             canDotLogInOutAdapter = new CanDotLogInOutAdapter(getActivity(), LoginLogoutList);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            loginLogDotListView.setLayoutManager(manager);
             loginLogDotListView.setAdapter(canDotLogInOutAdapter);
         }catch (Exception e){}
 
         try {
             canDotRemarksAdapter = new CanDotRemarksAdapter(getActivity(), CommentsRemarksList);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            remAnotnDotListView.setLayoutManager(manager);
             remAnotnDotListView.setAdapter(canDotRemarksAdapter);
         }catch (Exception e){}
 
         try {
             canDotCycleOpZoneAdapter = new CanDotCycleOpZoneAdapter(getActivity(), CycleOpZoneList);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            cycleOpZoneDotListView.setLayoutManager(manager);
             cycleOpZoneDotListView.setAdapter(canDotCycleOpZoneAdapter);
         }catch (Exception e){}
 
         try {
             canDotEnginePowerAdapter = new CanDotEnginePowerAdapter(getActivity(), EnginePowerList);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            enginePwrDotListView.setLayoutManager(manager);
             enginePwrDotListView.setAdapter(canDotEnginePowerAdapter);
         }catch (Exception e){}
 
         try {
             canDotUnAssignedVehAdapter = new CanDotUnAssignedVehAdapter(getActivity(), UnAssignedVehicleList);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            unIdnfdVehDotListView.setLayoutManager(manager);
             unIdnfdVehDotListView.setAdapter(canDotUnAssignedVehAdapter);
         }catch (Exception e){}
 
 
-
-        try {
-            int headerViewHeight;
-            int viewHeight = eventDotETV.getHeight();
-            if(viewHeight > 0) {
-                if (global.isTablet(getActivity())) {
-                    inspectionLayHeight = viewHeight + 35;
-                    headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) +10;
-                } else {
-                    inspectionLayHeight = viewHeight + 30;
-                    headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) ;
-                }
-
-            }else{
-                if (global.isTablet(getActivity())) {
-                    inspectionLayHeight = constants.intToPixel(getActivity(), 60);
-                    headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight) + 10;
-                } else {
-                    inspectionLayHeight = constants.intToPixel(getActivity(), 50);
-                    headerViewHeight = viewHeight + constants.intToPixel(getActivity(), viewHeight);
-                }
-
-            }
-
-
-            /*int HeaderViewCount = 1;
-            if(LoginLogoutList.size() > 0){
-                HeaderViewCount = LoginLogoutList.get(LoginLogoutList.size()-1).getHeaderViewCount();
-            }*/
-            int dividerHeight = 1; //remAnotnDotListView.getDividerHeight();
-           // int dividerHeightInPx = constants.intToPixel(getActivity(), dividerHeight);
-            final int DutyStatusListHeight = getHeight(inspectionLayHeight-10, DutyStatusList, headerViewHeight, dividerHeight);
-            final int LoginLogoutListHeight = getHeight(inspectionLayHeight, LoginLogoutList, headerViewHeight, dividerHeight);
-            final int CommentsRemarksListHeight = getHeight(inspectionLayHeight, CommentsRemarksList, 1, dividerHeight);
-            final int CycleOpZoneListHeight = getHeight(inspectionLayHeight, CycleOpZoneList, headerViewHeight, dividerHeight);
-            final int EnginePowerListHeight = getHeight(inspectionLayHeight, EnginePowerList, headerViewHeight, dividerHeight);
-            final int UnIdenfdVehListHeight = (inspectionLayHeight * UnAssignedVehicleList.size()+1) + headerViewHeight + (dividerHeight * UnAssignedVehicleList.size());
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dutyChangeDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DutyStatusListHeight));
-                    loginLogDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LoginLogoutListHeight));
-                    remAnotnDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CommentsRemarksListHeight));
-                    cycleOpZoneDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, CycleOpZoneListHeight));
-                    enginePwrDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, EnginePowerListHeight));
-                    unIdnfdVehDotListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, UnIdenfdVehListHeight));
-
-                }
-            }, 500);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
 

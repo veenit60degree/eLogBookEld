@@ -248,6 +248,13 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
         try {
             driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+
+            if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
+                CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+            }else{
+                CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             driverLogArray = new JSONArray();
@@ -370,7 +377,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             case R.id.confirmCertifyBtn:
                // if(constants.isActionAllowed(getActivity())) {
                 if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
-                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener());
+                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false , "", new CertificationListener());
                     certifyConfirmationDialog.show();
                 }else{
                     Globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
@@ -406,12 +413,12 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     private class CertificationListener implements CertifyConfirmationDialog.CertifyConfirmationListener{
 
         @Override
-        public void CertifyBtnReady() {
+        public void CertifyBtnReady(boolean isSwapConfirmation) {
 
             if(globally.isConnected(getActivity())){
 
                 if(isCurrentDate) {
-                    ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord, CertifyRecordFlag);
+                    ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord,  CoDriverId, CertifyRecordFlag);
                 }else{
                     if(isCertifySignExist){
                         ContinueWithoutSignDialog();
@@ -448,7 +455,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         @Override
                         public void onClick(DialogInterface dialog, int arg1) {
                             IsContinueWithSign = true;
-                            ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord, CertifyRecordFlag);
+                            ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord,  CoDriverId, CertifyRecordFlag);
                             dialog.dismiss();
                         }
                     });
@@ -500,7 +507,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         imagePath = constants.GetSignatureBitmap(inkView, suggestInvisibleView, getActivity());
                         signDialog.dismiss();
 
-                        ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord, CertifyRecordFlag);
+                        ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord,  CoDriverId, CertifyRecordFlag);
 
                     } else {
                         Globally.EldScreenToast(TabAct.sliderLay, "Error", getResources().getColor(R.color.colorVoilation) );
@@ -643,7 +650,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     public void LoadDataOnWebView(WebView webView, JSONArray driverLogJsonArray, String selectedLogDate, boolean isEdited){
 
         int DRIVER_JOB_STATUS = 1, OldStatus = -1;
-        CoDriverId               = "";
+       // CoDriverKey               = "";
 
         TotalDrivingHours        = "00:00";
         TotalOnDutyHours         = "00:00";
@@ -774,18 +781,6 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 }
                 OldStatus   =   DRIVER_JOB_STATUS;
 
-                if(!logObj.isNull(ConstantsKeys.CoDriverKey)) {
-                    CoDriverId = logObj.getString(ConstantsKeys.CoDriverKey);
-                }else{
-
-                    if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
-                        CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
-                    }else{
-                        CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
-                    }
-
-                }
-
             }
 
         }catch (Exception e){
@@ -814,7 +809,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-         params.put(ConstantsKeys.DeviceId, DeviceId );
+        params.put(ConstantsKeys.DeviceId, DeviceId );
 
         GetEditedRecordRequest.executeRequest(Request.Method.POST, APIs.GET_SUGGESTED_RECORDS , params, GetRecordFlag,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -830,9 +825,16 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     }
 
     /*================== claim suggested records edited from web ===================*/
-    void ClaimSuggestedRecords(final String DriverId, final String DeviceId, final String StatusId, int flag){
+    void ClaimSuggestedRecords(final String DriverId, final String DeviceId, final String StatusId,
+                               final String CoDriverId, int flag){
 
-       boolean IsRecertifyRequied = constants.isReCertifyRequired(getActivity(), null, selectedDateTime.toString());
+        String selectedDate = selectedDateTime.toString();
+
+        if(selectedDate.length() > 19){
+            selectedDate = selectedDate.substring(0, 19);
+        }
+
+       boolean IsRecertifyRequied = constants.isReCertifyRequired(getActivity(), null, selectedDate);
 
         SaveDriverSignArray(IsContinueWithSign);
 
@@ -840,13 +842,13 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             progressDialog.show();
 
 
-        String selectedDate= selectedDateTime.toString().split("T")[0];
+      //  String selectedDate= selectedDateTime.toString().split("T")[0];
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
         params.put(ConstantsKeys.DeviceId, DeviceId );
-        params.put(ConstantsKeys.CurrentDate, selectedDate);
+        params.put(ConstantsKeys.CurrentDate, selectedDate); //selectedDate
         params.put(ConstantsKeys.StatusId, StatusId );
-        params.put(ConstantsKeys.CoDriverKey, CoDriverId);
+        params.put(ConstantsKeys.CoDriverKey, SuggestedFragmentActivity.CoDriverKey);
         params.put(ConstantsKeys.CoDriverId, CoDriverId);
 
         params.put(ConstantsKeys.ActionDateTime, globally.getCurrentDate() );
@@ -956,12 +958,14 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
                     case RejectRecordFlag:
 
-                        dismissDialog();
+                        if(getActivity() != null) {
+                            dismissDialog();
 
-                        if(Message.equals("Record updated successfully")){
-                            Message = "Record rejected successfully";
+                            if (Message.equals("Record updated successfully")) {
+                                Message = "Record rejected successfully";
+                            }
+                            globally.EldScreenToast(confirmCertifyBtn, Message, getResources().getColor(R.color.color_eld_theme));
                         }
-                        globally.EldScreenToast(confirmCertifyBtn, Message, getResources().getColor(R.color.color_eld_theme));
 
                         removeSelectedDateFromList();
                         clearRecall(SuggestedFragmentActivity.dataArray);
@@ -1051,7 +1055,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     AlertDialogEld.PositiveButtonCallback positiveCallBack = new AlertDialogEld.PositiveButtonCallback() {
         @Override
         public void getPositiveClick(int flag) {
-            ClaimSuggestedRecords(DriverId, DeviceId, RejectSuggestedRecord, RejectRecordFlag);
+            ClaimSuggestedRecords(DriverId, DeviceId, RejectSuggestedRecord,  CoDriverId, RejectRecordFlag);
         }
     };
 

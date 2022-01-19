@@ -21,6 +21,7 @@
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/date_picker_border.xml" value="0.2703125" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/eld_blue_new_default.xml" value="0.2703125" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/eld_blue_new_selector.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/eld_checkbox_drawable.xml" value="0.2703125" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/gray_background_drawable.xml" value="0.2703125" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/gray_eld_default.xml" value="0.2703125" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/gray_eld_drawable.xml" value="0.2703125" />
@@ -34,6 +35,7 @@
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/outline_light_mode_20.xml" value="0.2703125" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/ripple_effect.xml" value="0.15677083333333333" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/summary_btn_selector.xml" value="0.2703125" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/unidentified_checkbox_drawable.xml" value="0.2703125" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_border.xml" value="0.2703125" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_cardview_default.xml" value="0.2703125" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/drawable/white_cardview_hover.xml" value="0.2703125" />
@@ -186,6 +188,7 @@
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/popup_vehicle_list.xml" value="0.22282608695652173" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/settings_fragment.xml" value="0.2" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/slide_menu.xml" value="0.21603260869565216" />
+        <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/unidentified_details.xml" value="0.21105072463768115" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/update_popup.xml" value="0.2346014492753623" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/webview_activity.xml" value="0.25416666666666665" />
         <entry key="..\:/OldSystemData/Eld projects/eLogBookAls/app/src/main/res/layout/webview_log_preview.xml" value="0.23052536231884058" />

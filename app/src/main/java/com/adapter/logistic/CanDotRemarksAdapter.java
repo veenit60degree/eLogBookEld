@@ -1,12 +1,15 @@
 package com.adapter.logistic;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
@@ -16,7 +19,7 @@ import com.models.PrePostModel;
 
 import java.util.List;
 
-public class CanDotRemarksAdapter extends BaseAdapter {
+public class CanDotRemarksAdapter extends RecyclerView.Adapter<CanDotRemarksAdapter.CustomViewHolder> {
 
     private Context mContext;
     private final List<CanadaDutyStatusModel> itemsList;
@@ -31,65 +34,22 @@ public class CanDotRemarksAdapter extends BaseAdapter {
 
     }
 
+
     @Override
-    public int getCount() {
-        return itemsList.size();
+    public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        view = mInflater.inflate(R.layout.item_remarks_ano_dot, parent, false);
+        return new CustomViewHolder(view);
     }
 
     @Override
-    public Object getItem(int arg0) {
-        return itemsList.get(arg0);
-    }
-
-    @Override
-    public long getItemId(int arg0) {
-        return 0;
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return getCount();
-    }
-
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
-
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.item_remarks_ano_dot, null);
-
-            holder.remarksAnoDotLay     = (LinearLayout) convertView.findViewById(R.id.remarksAnoDotLay);
-
-            holder.dateRemarksDotTV     = (TextView) convertView.findViewById(R.id.dateRemarksDotTV);
-            holder.timeDotTV            = (TextView) convertView.findViewById(R.id.timeDotTV);
-            holder.usernameDotTV        = (TextView) convertView.findViewById(R.id.usernameDotTV);
-            holder.sqNoRemDotTV         = (TextView) convertView.findViewById(R.id.sqNoRemDotTV);
-            holder.commAnotnDotTV       = (TextView) convertView.findViewById(R.id.commAnotnDotTV);
-            holder.editDateCmntDotTV       = (TextView) convertView.findViewById(R.id.editDateCmntDotTV);
-            holder.editTimeCmntDotTV       = (TextView) convertView.findViewById(R.id.editTimeCmntDotTV);
-
-            convertView.setTag(holder);
-        } else {
-
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-
-
+    public void onBindViewHolder(CustomViewHolder holder, int position) {
         holder.remarksAnoDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String eventTime = itemsList.get(position).getDateTimeWithMins();
         holder.dateRemarksDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(eventTime, Globally.DateFormat_mm_dd_yy));
 
-       if(eventTime.length() > 16) {
+        if(eventTime.length() > 16) {
             holder.timeDotTV.setText(eventTime.substring(11, 16));
         }
 
@@ -129,14 +89,36 @@ public class CanDotRemarksAdapter extends BaseAdapter {
         constants.setMarqueonView(holder.editDateCmntDotTV);
         constants.setMarqueonView(holder.editTimeCmntDotTV);
 
-        return convertView;
+    }
+
+    @Override
+    public int getItemCount() {
+        return itemsList.size();
     }
 
 
-    public class ViewHolder {
+    public class CustomViewHolder extends RecyclerView.ViewHolder {
+
         TextView dateRemarksDotTV, timeDotTV, usernameDotTV, sqNoRemDotTV, commAnotnDotTV  ;
         TextView editDateCmntDotTV, editTimeCmntDotTV;
         LinearLayout remarksAnoDotLay;
+
+        public CustomViewHolder(View itemView) {
+            super(itemView);
+
+            remarksAnoDotLay     = (LinearLayout) itemView.findViewById(R.id.remarksAnoDotLay);
+
+            dateRemarksDotTV     = (TextView) itemView.findViewById(R.id.dateRemarksDotTV);
+            timeDotTV            = (TextView) itemView.findViewById(R.id.timeDotTV);
+            usernameDotTV        = (TextView) itemView.findViewById(R.id.usernameDotTV);
+            sqNoRemDotTV         = (TextView) itemView.findViewById(R.id.sqNoRemDotTV);
+            commAnotnDotTV       = (TextView) itemView.findViewById(R.id.commAnotnDotTV);
+            editDateCmntDotTV       = (TextView) itemView.findViewById(R.id.editDateCmntDotTV);
+            editTimeCmntDotTV       = (TextView) itemView.findViewById(R.id.editTimeCmntDotTV);
+
+
+
+        }
     }
 
 

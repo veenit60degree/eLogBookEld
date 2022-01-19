@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -16,7 +18,7 @@ import com.models.PrePostModel;
 
 import java.util.List;
 
-public class CanDotLogInOutAdapter extends BaseAdapter {
+public class CanDotLogInOutAdapter extends RecyclerView.Adapter<CanDotLogInOutAdapter.CustomViewHolder> {
 
     private Context mContext;
     private final List<CanadaDutyStatusModel> itemsList;
@@ -32,64 +34,14 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() {
-        return itemsList.size();
+    public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        view = mInflater.inflate(R.layout.item_login_logout_dot, parent, false);
+        return new CustomViewHolder(view);
     }
 
     @Override
-    public Object getItem(int arg0) {
-        return itemsList.get(arg0);
-    }
-
-    @Override
-    public long getItemId(int arg0) {
-        return 0;
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return getCount();
-    }
-
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
-
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.item_login_logout_dot, null);
-
-            holder.logInOutDotLay           = (LinearLayout) convertView.findViewById(R.id.logInOutDotLay);
-
-            holder.dateTimeDiffLogInTV      = (TextView)convertView.findViewById(R.id.dateTimeDiffLogInTV);
-
-            holder.dateDotTV                = (TextView) convertView.findViewById(R.id.dateDotTV);
-            holder.eventLoginDotTV          = (TextView) convertView.findViewById(R.id.eventLoginDotTV);
-            holder.addInfoDotTV             = (TextView) convertView.findViewById(R.id.addInfoDotTV);
-
-            holder.cmvLoginDotTV            = (TextView) convertView.findViewById(R.id.cmvLoginDotTV);
-            holder.diatanceTotalLoginDotTV  = (TextView) convertView.findViewById(R.id.diatanceTotalLoginDotTV);
-            holder.hrsTotalLoginDotTV       = (TextView) convertView.findViewById(R.id.hrsTotalLoginDotTV);
-
-            holder.recStatusLoginDotTV      = (TextView) convertView.findViewById(R.id.recStatusLoginDotTV);
-            holder.recOriginLoginDotTV      = (TextView) convertView.findViewById(R.id.recOriginLoginDotTV);
-            holder.seqNoDotTV               = (TextView) convertView.findViewById(R.id.seqNoDotTV);
-
-            convertView.setTag(holder);
-        } else {
-
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-
-
+    public void onBindViewHolder(CustomViewHolder holder, int position) {
         holder.logInOutDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
 
         String EventDateTime  = itemsList.get(position).getDateTimeWithMins();
@@ -120,10 +72,10 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
         }
 
 
-      //  holder.dateDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime, Globally.DateFormat_mm_dd_yy) );
+        //  holder.dateDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(EventDateTime, Globally.DateFormat_mm_dd_yy) );
         holder.eventLoginDotTV.setText(constants.getLoginLogoutEventName(
-                                                        itemsList.get(position).getEventType(),
-                                                        itemsList.get(position).getEventCode() ));
+                itemsList.get(position).getEventType(),
+                itemsList.get(position).getEventCode() ));
         holder.addInfoDotTV.setText(constants.checkNullString(itemsList.get(position).getAdditionalInfo()));
 
         holder.cmvLoginDotTV.setText(constants.checkNullString(itemsList.get(position).getTruckEquipmentNo()));
@@ -158,11 +110,12 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
         constants.setMarqueonView(holder.recStatusLoginDotTV);
         constants.setMarqueonView(holder.recOriginLoginDotTV);
         constants.setMarqueonView(holder.seqNoDotTV);
-
-
-        return convertView;
     }
 
+    @Override
+    public int getItemCount() {
+        return itemsList.size();
+    }
 
     private void showDateView(String lastItemDate, String EventDateTime, TextView view, boolean isDirectVisibile){
         if(isDirectVisibile){
@@ -184,11 +137,34 @@ public class CanDotLogInOutAdapter extends BaseAdapter {
     }
 
 
-    public class ViewHolder {
+    public class CustomViewHolder extends RecyclerView.ViewHolder {
+
         TextView dateDotTV, eventLoginDotTV, addInfoDotTV, cmvLoginDotTV, diatanceTotalLoginDotTV, hrsTotalLoginDotTV, recStatusLoginDotTV, recOriginLoginDotTV, seqNoDotTV  ;
         TextView dateTimeDiffLogInTV;
         LinearLayout logInOutDotLay;
 
+        public CustomViewHolder(View itemView) {
+            super(itemView);
+
+            logInOutDotLay           = (LinearLayout) itemView.findViewById(R.id.logInOutDotLay);
+
+            dateTimeDiffLogInTV      = (TextView)itemView.findViewById(R.id.dateTimeDiffLogInTV);
+
+            dateDotTV                = (TextView) itemView.findViewById(R.id.dateDotTV);
+            eventLoginDotTV          = (TextView) itemView.findViewById(R.id.eventLoginDotTV);
+            addInfoDotTV             = (TextView) itemView.findViewById(R.id.addInfoDotTV);
+
+            cmvLoginDotTV            = (TextView) itemView.findViewById(R.id.cmvLoginDotTV);
+            diatanceTotalLoginDotTV  = (TextView) itemView.findViewById(R.id.diatanceTotalLoginDotTV);
+            hrsTotalLoginDotTV       = (TextView) itemView.findViewById(R.id.hrsTotalLoginDotTV);
+
+            recStatusLoginDotTV      = (TextView) itemView.findViewById(R.id.recStatusLoginDotTV);
+            recOriginLoginDotTV      = (TextView) itemView.findViewById(R.id.recOriginLoginDotTV);
+            seqNoDotTV               = (TextView) itemView.findViewById(R.id.seqNoDotTV);
+
+
+
+        }
     }
 
 }

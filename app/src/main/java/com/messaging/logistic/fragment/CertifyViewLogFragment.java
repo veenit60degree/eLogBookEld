@@ -275,7 +275,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     CertifyConfirmationDialog certifyConfirmationDialog;
     MissingLocationDialog missingLocationDialog;
 
-    String MainDriverPass = "", CoDriverPass = "";
+    String MainDriverPass = "", CoDriverPass = "", CoDriverNameTxt = "";
     int  eldWarningColor;
 
     final private int REQUEST_CODE_ASK_PERMISSIONS = 101;
@@ -1153,10 +1153,13 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     private class CertificationListener implements CertifyConfirmationDialog.CertifyConfirmationListener{
 
         @Override
-        public void CertifyBtnReady() {
+        public void CertifyBtnReady(boolean isSwapConfirmation) {
 
-            certifyListenerCall();
-
+            if(isSwapConfirmation){
+                SwapDriving( DRIVER_ID, SelectedCoDriverId, Globally.ConvertDateFormat(LogDate), getDriverStatusLogId() );
+            }else {
+                certifyListenerCall();
+            }
         }
 
         @Override
@@ -1208,7 +1211,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 // if(constants.isActionAllowed(getActivity())) {
                 if(hMethods.isActionAllowedWhileDriving(getActivity(), global, DRIVER_ID, dbHelper)){
                     isSaveCertifyClicked = true;
-                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), new CertificationListener());
+                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false, "", new CertificationListener());
                     certifyConfirmationDialog.show();
                 }else{
                      Globally.EldScreenToast(saveSignatureBtn, getString(R.string.stop_vehicle_alert),
@@ -1257,7 +1260,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                 if (Globally.isConnected(getActivity())) {
                     if(CertifyViewLogFragment.SwapDrivingArray.size() > 0) {
-                         SwapDriving( DRIVER_ID, SelectedCoDriverId, LogDate, getDriverStatusLogId() );
+
+                        certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), true, "Do you want to swap DRIVING with " +CoDriverNameTxt + " ?",
+                                new CertificationListener());
+                        certifyConfirmationDialog.show();
+
                     }else{
                         global.EldScreenToast(eldMenuLay, ConstantsEnum.SELECT_DR_STATUS, getResources().getColor(R.color.colorVoilation) );
                     }
@@ -1977,7 +1984,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         }
                     }
 
-                    // certifyCarrierTV
                     NullCheckJson(dataObj, certifyCoDriverNameTV, ConstantsKeys.CoDriverName, "N/A");
                     NullCheckJson(dataObj, certifyCarrierTV, ConstantsKeys.CarrierName, Carrier);
                     NullCheckJson(dataObj, certifyDistanceTV, ConstantsKeys.EngineMileage, "0");
@@ -3103,6 +3109,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                                     MainDriverPref, CoDriverPref);
 
                                         String logModel = dataObj.getString("DriverLogModel");
+                                        CoDriverNameTxt = dataObj.getString(ConstantsKeys.CoDriverName);
 
                                         if(!logModel.equals("null")) {
                                             if (unPostedLogArray.length() == 0) {
@@ -3292,7 +3299,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                                 global.EldScreenToast(eldMenuBtn, obj.getString("Message"), getResources().getColor(R.color.color_eld_theme));
 
-                                LogInfoAdapter.notifyDataSetChanged();
+                                getParentFragmentManager().popBackStack();
 
                                 break;
 
@@ -3597,7 +3604,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         OffLineLogSignImage = LogSignImage;
 
                         ParseRecapData(recapSelectedJson);
-
 
                         NullCheckJson(recapSelectedJson, certifyCoDriverNameTV, ConstantsKeys.CoDriverName, "N/A");
                         if( !LogDate.equals(CurrentDate) ) {

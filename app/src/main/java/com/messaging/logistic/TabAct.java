@@ -642,6 +642,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                             alertDialog.dismiss();
                         }
                         alertDialog.show();
+
+
                     }
                 }catch (Exception e){
                     e.printStackTrace();

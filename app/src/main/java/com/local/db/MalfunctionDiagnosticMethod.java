@@ -499,6 +499,16 @@ public class MalfunctionDiagnosticMethod {
             String currentEngHr = Constants.get2DecimalEngHour(context);    //SharedPref.getObdEngineHours(context);
             double engineHrDiffInMin = constants.getEngineHourDiff(lastSavedEngHr, currentEngHr);
 
+            try {
+                if (currentOdometer.length() > 8 && !currentOdometer.contains(".")) {
+                    currentOdometer = Constants.meterToKmWithObd(currentOdometer);
+                }
+
+                if (lastSavedOdometer.length() > 8 && !lastSavedOdometer.contains(".")) {
+                    lastSavedOdometer = Constants.meterToKmWithObd(lastSavedOdometer);
+                }
+            }catch (Exception e){}
+
             if(DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic) || DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ) {
                 newItemObj = getNewMalDiaDurationObj(DriverId, EventDateTime, EventEndDateTime, DetectionDataEventCode, (int)engineHrDiffInMin,
                         false, ClearEngineHours, ClearOdometer, lastSavedOdometer, lastSavedEngHr);
@@ -1418,12 +1428,13 @@ public class MalfunctionDiagnosticMethod {
 
 
     public void saveVehicleMotionStatus(String StartOdometer, String startEngineHours, int CompanyId, String TruckID,
-                                        String VIN, int vehicleSpeed, DBHelper dbHelper, Context context){
+                                        String VIN, int vehicleSpeed, DBHelper dbHelper, Constants constants,
+                                        DriverPermissionMethod driverPermissionMethod, Utils obdUtil, Context context){
 
         try{
             double TotalMinutes = 0;
             JSONArray eventsArray = getUnidentifiedLogoutArray(CompanyId, dbHelper);
-//1179885
+
             for (int i = 0; i < eventsArray.length() ; i++) {
                 JSONObject eventObj = (JSONObject) eventsArray.get(i);
 
@@ -1467,6 +1478,12 @@ public class MalfunctionDiagnosticMethod {
                 Globally.ShowLocalNotification(context,
                         context.getResources().getString(R.string.dia_event),
                         context.getResources().getString(R.string.unidentified_dia_occured_desc), 2095);
+
+
+                constants.saveObdData("", context.getResources().getString(R.string.dia_event), eventsArray.toString(),
+                        "-1","", "", "", "", "-1",
+                        "-1", "", "", "",
+                        "0", dbHelper, driverPermissionMethod, obdUtil);
 
             }
         }catch (Exception e){

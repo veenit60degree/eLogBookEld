@@ -34,12 +34,13 @@ import java.util.Map;
 public class CertifyConfirmationDialog extends Dialog {
 
     public interface CertifyConfirmationListener {
-        public void CertifyBtnReady();
+        public void CertifyBtnReady(boolean isSwapConfirmation);
         public void CancelBtnReady();
 
     }
 
-    String DeviceId, DriverId, CompanyId;
+    String DeviceId, DriverId, CompanyId, message;
+    boolean isSwapConfirmation;
     CertifyConfirmationListener certifyListener;
     Constants constants;
     Globally globally;
@@ -48,8 +49,10 @@ public class CertifyConfirmationDialog extends Dialog {
 
 
 
-    public CertifyConfirmationDialog(@NonNull Context context, CertifyConfirmationListener certifyListener) {
+    public CertifyConfirmationDialog(@NonNull Context context, boolean isSwap, String msg, CertifyConfirmationListener certifyListener) {
         super(context);
+        isSwapConfirmation = isSwap;
+        message = msg;
         this.certifyListener = certifyListener;
         constants = new Constants();
 
@@ -86,9 +89,16 @@ public class CertifyConfirmationDialog extends Dialog {
         Button cancelPopupButton = (Button)findViewById(R.id.cancelPopupButton);
 
         changeTitleView.setText(getContext().getResources().getString(R.string.Confirmation_suggested));
-        titleDescView.setText(getContext().getResources().getString(R.string.I_certify_that_suggested) + "\n\n" + getContext().getResources().getString(R.string.will_finalize_log));
-        confirmPopupButton.setText(getContext().getResources().getString(R.string.agree_submit));
-        cancelPopupButton.setText(getContext().getResources().getString(R.string.not_ready));
+
+        if(isSwapConfirmation){
+            titleDescView.setText(message );
+            confirmPopupButton.setText(getContext().getResources().getString(R.string.yes));
+            cancelPopupButton.setText(getContext().getResources().getString(R.string.no));
+        }else {
+            titleDescView.setText(getContext().getResources().getString(R.string.I_certify_that_suggested) + "\n\n" + getContext().getResources().getString(R.string.will_finalize_log));
+            confirmPopupButton.setText(getContext().getResources().getString(R.string.agree_submit));
+            cancelPopupButton.setText(getContext().getResources().getString(R.string.not_ready));
+        }
         titleDescView.setTextColor(getContext().getResources().getColor(R.color.gray_text1));
         cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.black_unidenfied));
 
@@ -108,7 +118,7 @@ public class CertifyConfirmationDialog extends Dialog {
         @Override
         public void onClick(View v) {
 
-            certifyListener.CertifyBtnReady();
+            certifyListener.CertifyBtnReady(isSwapConfirmation);
             dismiss();
 
         }
@@ -119,11 +129,15 @@ public class CertifyConfirmationDialog extends Dialog {
         @Override
         public void onClick(View v) {
 
-            if(Globally.isConnected(getContext()) ) {
-                NotReadyApi();
-            }else{
-                certifyListener.CancelBtnReady();
+            if(isSwapConfirmation){
                 dismiss();
+            }else {
+                if (Globally.isConnected(getContext())) {
+                    NotReadyApi();
+                } else {
+                    certifyListener.CancelBtnReady();
+                    dismiss();
+                }
             }
 
         }
