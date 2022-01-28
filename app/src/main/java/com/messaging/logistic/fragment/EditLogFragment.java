@@ -1136,6 +1136,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     isNewRecord = obj.getString(ConstantsKeys.isNewRecord);
                 }
 
+                String UnAssignedVehicleMilesId = "0";
+                if (obj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !obj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")) {
+                    UnAssignedVehicleMilesId = obj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+                }
+
 
                 EldDataModelNew logModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1180,7 +1185,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         isDeferral,
                         "",
                         isNewRecord,
-                        IsCycleChanged
+                        IsCycleChanged,
+                        UnAssignedVehicleMilesId
                 );
 
                 logList.add(logModel);
@@ -1363,6 +1369,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     IsCycleChanged = obj.getString(ConstantsKeys.IsCycleChanged);
                 }
 
+                String UnAssignedVehicleMilesId = "0";
+                if (obj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !obj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")) {
+                    UnAssignedVehicleMilesId = obj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+                }
 
                 remarks = obj.getString(ConstantsKeys.Remarks);
 
@@ -1408,7 +1418,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         "false",
                         "",
                         isNewRecord,
-                        IsCycleChanged
+                        IsCycleChanged,
+                        UnAssignedVehicleMilesId
                         );
 
                     if(eldModel != null) {

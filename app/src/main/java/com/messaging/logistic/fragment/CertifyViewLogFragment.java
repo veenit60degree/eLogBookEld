@@ -2235,8 +2235,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 OldStatus   =   DRIVER_JOB_STATUS;
             }
 
-
-            if(isDrivingAllowForSwap && SharedPref.IsCCMTACertified(getActivity())){
+            boolean isCCMTA = SharedPref.IsCCMTACertified(getActivity());
+            if(isDrivingAllowForSwap && isCCMTA){
                 swapDrivingBtn.setVisibility(View.VISIBLE);
             }else{
                 swapDrivingBtn.setVisibility(View.GONE);
@@ -3664,6 +3664,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     void loadByteImage(String LogSignImageInByte){
         isCertifyViewAgain = false;
+        final int width = signImageView.getWidth();
+        final int height = signImageView.getHeight();
 
         try {
             signImageView.setBackground(null);
@@ -3674,12 +3676,17 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         try {
             if (LogSignImageInByte.length() > 0) {
-                Bitmap bitmap = Globally.ConvertStringBytesToBitmap(LogSignImageInByte);
-                int width = signImageView.getWidth();
-                int height = signImageView.getHeight();
+                final Bitmap bitmap = Globally.ConvertStringBytesToBitmap(LogSignImageInByte);
+
                 if(width > 0 && height > 0) {
-                    signImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, width, height, false));
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            signImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, width, height, false));
+                        }
+                    }, 250);
                 }else{
+                    signImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 400, 180, false));
                     isCertifyViewAgain = true;
                 }
             }

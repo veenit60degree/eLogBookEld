@@ -459,6 +459,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 currentHighPrecisionOdometer = bundle.getString(constants.OBD_HighPrecisionOdometer);
                             }
 
+                            // temp odometer for simulator
+                            // converting odometer from km to meter. because it is saving in km.
+                            currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
+
+
                             if(vin.length() <= 5){
                                 vin = "";
                             }
@@ -470,6 +475,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                         // ---------------- temp data ---------------------
+
 /*
                         int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
                         if (OBD_DISCONNECTED) {
@@ -534,8 +540,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         SharedPref.setVehicleVin(vin, getApplicationContext());
                         SharedPref.setVss(speed, getApplicationContext());
                         SharedPref.setRPM(truckRPM, getApplicationContext());
-
 */
+
+
 
 
 // ====================================================================================================
@@ -3318,7 +3325,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         String startEventDate = "";
     //    String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getApplicationContext());
       //  if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
-            startEventDate = Globally.GetCurrentJodaDateTime().minusDays(15).toString();
+            startEventDate = Globally.GetCurrentJodaDateTime().minusDays(14).toString();
         /*}else{
             startEventDate = Globally.GetCurrentJodaDateTime().minusDays(8).toString();
         }*/

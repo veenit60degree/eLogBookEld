@@ -167,7 +167,6 @@ public class BleUtil {
 
         String decodedData = "";
         String accDateTime = data.getRTCDate() + data.getRTCTime();
-        //String finalaccDateTime = accDateTime.substring(0, 2) + "-" + accDateTime.substring(2, 4) + "-" + accDateTime.substring(4, 6) + " " + accDateTime.substring(6, 8) + ":" + accDateTime.substring(8, 10) + ":" + accDateTime.substring(10, 12);
 
         decodedData = // "<b>Device Name:</b> " + name + "<br/>" +
                  "<b>MAC Address:</b> " + address + "<br/><br/>" +

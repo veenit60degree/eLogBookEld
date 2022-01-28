@@ -401,7 +401,7 @@ public class HelperMethods {
                                     boolean isShortHaulUpdate, String decesionSource,   String isAdverseException,
                                     String adverseExceptionRemark, String LocationType, String malAddInfo,
                                     boolean IsNorthCanada, String StartLocationKm, boolean IsCycleChanged,
-                                    String StartOdometer, String EndOdometer, String CoDriverId){
+                                    String StartOdometer, String EndOdometer, String CoDriverId, String UnAssignedVehicleMilesId){
 
         JSONObject driverLogJson = new JSONObject();
 
@@ -463,6 +463,7 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.StartOdometerInKm,  StartOdometer);
             driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
             driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, false);
+            driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
 
         }catch (Exception e){
@@ -846,6 +847,14 @@ public class HelperMethods {
                 }
                 driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
 
+                String UnAssignedVehicleMilesId = "0";
+                if(logObj.has(ConstantsKeys.UnAssignedVehicleMilesId) &&
+                        !logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")  ) {
+                    UnAssignedVehicleMilesId = logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+                }
+                driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
+
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -994,6 +1003,12 @@ public class HelperMethods {
                     IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
                 }
                 driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
+                String UnAssignedVehicleMilesId = "0";
+                if(logObj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")  ) {
+                    UnAssignedVehicleMilesId = logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+                }
+                driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
 
             }
@@ -1148,6 +1163,13 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
 
 
+                String UnAssignedVehicleMilesId = "0";
+                if(logObj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")  ) {
+                    UnAssignedVehicleMilesId = logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+                }
+                driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
+
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1279,6 +1301,12 @@ public class HelperMethods {
                     IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
                 }
                 driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
+                String UnAssignedVehicleMilesId = "0";
+                if(logObj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")  ) {
+                    UnAssignedVehicleMilesId = logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+                }
+                driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
 
             }
@@ -1433,6 +1461,12 @@ public class HelperMethods {
                 IsUnAssignedMileRecord = lastItemJson.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
             }
             sameStatusJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
+            String UnAssignedVehicleMilesId = "0";
+            if(lastItemJson.has(ConstantsKeys.UnAssignedVehicleMilesId) && !lastItemJson.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")  ) {
+                UnAssignedVehicleMilesId = lastItemJson.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+            }
+            sameStatusJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
 
         }catch (Exception e){
@@ -1736,6 +1770,13 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
 
 
+                    String UnAssignedVehicleMilesId = "0";
+                    if(logObj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")  ) {
+                        UnAssignedVehicleMilesId = logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+                    }
+                    driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
+
+
                     parseArray.put(driverLogJson);
 
                 }
@@ -1912,6 +1953,12 @@ public class HelperMethods {
                 IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
             }
             driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
+            String UnAssignedVehicleMilesId = "0";
+            if(logObj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")  ) {
+                UnAssignedVehicleMilesId = logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+            }
+            driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
 
             parseArray.put(driverLogJson);
@@ -2184,6 +2231,12 @@ public class HelperMethods {
                         IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
                     }
                     driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, IsUnAssignedMileRecord);
+
+                    String UnAssignedVehicleMilesId = "0";
+                    if(logObj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")  ) {
+                        UnAssignedVehicleMilesId = logObj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+                    }
+                    driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
 
                     parseArray.put(driverLogJson);
@@ -3196,7 +3249,7 @@ public class HelperMethods {
 
         DriverLogModel driverLogModel = new DriverLogModel();
         String IsStatusAutomatic = "false", DecesionSource = "", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
-        String adverseExceptionRemark = "";
+        String adverseExceptionRemark = "", UnAssignedVehicleMilesId = "0";
         boolean HaulHourException = false, IsAdverseException = false;
         boolean IsNorthCanada = false;
 
@@ -3306,6 +3359,11 @@ public class HelperMethods {
                 IsNorthCanada = json.getBoolean(ConstantsKeys.IsNorthCanada);
             }
 
+            if (json.has(ConstantsKeys.UnAssignedVehicleMilesId)) {
+                UnAssignedVehicleMilesId = json.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+            }
+
+
             driverLogModel.setIsStatusAutomatic(IsStatusAutomatic);
             driverLogModel.setOBDSpeed(OBDSpeed);
             driverLogModel.setGPSSpeed(GPSSpeed);
@@ -3316,7 +3374,7 @@ public class HelperMethods {
             driverLogModel.setAdverseException(IsAdverseException);
             driverLogModel.setAdverseExceptionRemark(adverseExceptionRemark);
             driverLogModel.setNorthCanadaStatus(IsNorthCanada);
-
+            driverLogModel.setUnAssignedVehicleMilesId(UnAssignedVehicleMilesId);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -3421,7 +3479,8 @@ public class HelperMethods {
                         logModel.IsCycleChanged(),
                         logModel.getStartOdometerInKm(),
                         logModel.getEndOdometerInKm(),
-                        logModel.getCoDriverId()
+                        logModel.getCoDriverId(),
+                        logModel.getUnAssignedVehicleMilesId()
                 );
                 obj.put(ConstantsKeys.isNewRecord, logModel.IsNewRecord());
                 array.put(obj);
@@ -3454,7 +3513,7 @@ public class HelperMethods {
             boolean HaulHourException = false, IsAdverseException = false;
             boolean IsNorthCanada = false;
             String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "", DecesionSource = "";
-            String adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "";
+            String adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "", UnAssignedVehicleMilesId = "0";
 
             int status = json.getInt(ConstantsKeys.DriverStatusId); //Integer.valueOf(statusStr);
 
@@ -3498,6 +3557,10 @@ public class HelperMethods {
 
             if(json.has(ConstantsKeys.IsNorthCanada) && !json.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
                 IsNorthCanada = json.getBoolean(ConstantsKeys.IsNorthCanada);
+            }
+
+            if (json.has(ConstantsKeys.UnAssignedVehicleMilesId)) {
+                UnAssignedVehicleMilesId = json.getString(ConstantsKeys.UnAssignedVehicleMilesId);
             }
 
             driverLogModel.setDriverLogId(json.getLong(ConstantsKeys.DriverLogId));
@@ -3566,6 +3629,7 @@ public class HelperMethods {
             driverLogModel.setMalfunctionDefinition(MalfunctionDefinition);
             driverLogModel.setNorthCanadaStatus(IsNorthCanada);
             driverLogModel.setNewRecordStatus(IsNewLogAdded);
+            driverLogModel.setUnAssignedVehicleMilesId(UnAssignedVehicleMilesId);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -3872,7 +3936,8 @@ public class HelperMethods {
                     String.valueOf(SharedPref.IsAOBRD(context)),
                     CurrentCycleId,
                     String.valueOf(isDeferral), "", "false",
-                    String.valueOf(IsCycleChanged)
+                    String.valueOf(IsCycleChanged),
+                    "0"
 
             );
 

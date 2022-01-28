@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/margin_25"
-    android:paddingRight="@dimen/margin_25"
+    android:paddingLeft="@dimen/margin_20"
+    android:paddingRight="@dimen/margin_20"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -13,14 +16,15 @@
         android:layout_gravity="center_horizontal"
         >
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/voilet_border"
-        android:padding="@dimen/margin_22"
-        >
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/voilet_border"
+            android:padding="@dimen/margin_15"
+            >
 
 
             <com.constants.CustomEditText
@@ -28,466 +32,495 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_17"
+                android:textSize="@dimen/text_size_18"
                 android:textColorHint="@color/white_hover"
                 android:imeOptions="actionNext"
                 android:theme="@style/AppTheme.EditText"
                 android:singleLine="true"
-
                 android:visibility="invisible"
                 />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/TitleTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/text_size_22"
-            android:textColor="@color/black"
-            android:paddingBottom="@dimen/margin_short_8"
-            android:textStyle="bold"
-            />
+                <TextView
+                    android:id="@+id/TitleTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="@dimen/margin_short_8"
+                    android:text="@string/app_name"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_22"
+                    android:textStyle="bold"
+
+                    />
 
 
-        <TextView
-            android:id="@+id/logoutTruckPopupTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/logout"
-            android:textSize="@dimen/text_size_18"
-            android:textColor="@color/black"
-            android:layout_alignParentRight="true"
-            android:paddingRight="@dimen/margin_short_5"
-            android:paddingLeft="@dimen/margin_short_5"
-            android:paddingBottom="@dimen/margin_short_5"
-            android:paddingTop="@dimen/margin_20"
-            android:gravity="center_horizontal"
-            android:visibility="gone"
 
-            />
+
+
+
+                <TextView
+                    android:id="@+id/logoutTruckPopupTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/logout"
+                    android:textSize="@dimen/text_size_17"
+                    android:textColor="@color/black"
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="@dimen/margin_short_5"
+                    android:paddingLeft="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:paddingTop="@dimen/margin_15"
+                    android:gravity="center_horizontal"
+                    android:visibility="gone"
+
+                    />
+
+
+                <TextView
+                    android:id="@+id/malfunctionEventTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/position_com_mal_occur"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/text_size_18"
+                    android:textColor="@color/colorVoilation"
+                    android:paddingTop="@dimen/margin_short_1"
+                    android:paddingBottom="@dimen/margin_short_8"
+                    android:layout_below="@+id/logoutTruckPopupTV"
+                    android:visibility="gone"
+
+                    />
+
+
+            </RelativeLayout>
+
 
 
             <TextView
-                android:id="@+id/malfunctionEventTV"
-                android:layout_width="wrap_content"
+                android:id="@+id/recordTitleTV"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/position_com_mal_occur"
-                android:layout_centerHorizontal="true"
-                android:textSize="@dimen/text_size_17"
-                android:textColor="@color/colorVoilation"
-                android:paddingTop="@dimen/margin_short_3"
-                android:paddingBottom="@dimen/margin_short_8"
-                android:layout_below="@+id/logoutTruckPopupTV"
+                android:textSize="@dimen/text_size_18"
+                android:text="@string/SelectRemark"
+                android:textColor="@color/black"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_10"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:gravity="center_horizontal"
+                android:visibility="gone"
+
+                />
+
+            <TextView
+                android:id="@+id/desc2TxtView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_18"
+                android:textColor="@color/gray_text"
+                android:layout_marginBottom="@dimen/margin_10"
+                android:layout_marginLeft="@dimen/margin_10"
                 android:visibility="gone"
 
                 />
 
 
-
-
-        </RelativeLayout>
-
-
-
-        <TextView
-            android:id="@+id/recordTitleTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/SelectRemark"
-            android:textSize="@dimen/text_size_18"
-            android:textColor="@color/black"
-            android:layout_marginTop="@dimen/margin_10"
-            android:layout_marginBottom="@dimen/margin_10"
-            android:layout_marginLeft="@dimen/margin_10"
-            android:gravity="center_horizontal"
-            android:visibility="gone"
-
-            />
-
-        <TextView
-            android:id="@+id/desc2TxtView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_18"
-            android:textColor="@color/gray_text"
-            android:layout_marginBottom="@dimen/margin_10"
-            android:layout_marginLeft="@dimen/margin_10"
-            android:visibility="gone"
-
-            />
-
-
-        <LinearLayout
-            android:id="@+id/noTrailerView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/margin_25"
-            android:layout_marginBottom="@dimen/margin_18"
-            android:visibility="gone"
-
-
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_trailer_desc"
-                android:textSize="@dimen/text_size_19"
-                android:textColor="@color/colorBlack"
-                android:layout_marginBottom="@dimen/margin_short_5"
-                android:paddingTop="@dimen/margin_short_3"
-
-                />
-
-            <RadioGroup
-                android:id="@+id/radioGroupTrailer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/margin_short_9"
-
-                android:layout_marginLeft="@dimen/margin_12"
-
-
-                >
-
-                <RadioButton
-                    android:id="@+id/radioNoTrailer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_trailer"
-                    android:checked="false"
-                    android:textSize="@dimen/text_size_19"
-                    android:textColor="@color/black_semi"
-                    android:theme="@style/CustomRadioBtnInspection"
-                    />
-
-                <RadioButton
-                    android:id="@+id/radioEnterTrailer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_20"
-                    android:text="@string/enter_trailer_number"
-                    android:checked="false"
-                    android:textSize="@dimen/text_size_19"
-                    android:textColor="@color/black_semi"
-                    android:theme="@style/CustomRadioBtnInspection"
-
-                    />
-
-            </RadioGroup>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/startOdometerLay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/margin_10"
-            android:paddingBottom="@dimen/margin_10"
-            android:visibility="gone"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/start_ododmeter"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
-                android:textSize="@dimen/text_size_19"
-                android:layout_marginTop="@dimen/margin_short_5"
-                android:textStyle="bold"
-                android:layout_gravity="center_vertical"
-                />
-
-            <EditText
-                android:id="@+id/startOdoEditText"
-                android:layout_width="@dimen/view_height_440"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:layout_marginRight="@dimen/margin_10"
-                android:background="@drawable/edit_green_drawable"
-                android:hint="@string/Odometers"
-                android:imeOptions="actionDone"
-                android:inputType="numberDecimal"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_5"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_19"
-                android:layout_gravity="center_vertical"
-                />
-
-            <Spinner
-                android:id="@+id/selectUnitStartOdo"
-                style="@style/spinner_style"
-                android:layout_width="@dimen/view_height_200"
-                android:layout_height="wrap_content"
-                android:minWidth="@dimen/view_height_40"
-                android:paddingLeft="@dimen/margin_short_8"
-                android:paddingRight="@dimen/margin_short_8"
-                android:layout_gravity="center_vertical"
-
-                />
-
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/endOdometerLay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/margin_10"
-            android:paddingBottom="@dimen/margin_10"
-            android:visibility="gone"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/end_ododmeter"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
-                android:textSize="@dimen/text_size_19"
-                android:layout_marginTop="@dimen/margin_short_5"
-                android:textStyle="bold"
-
-                />
-
-            <EditText
-                android:id="@+id/endOdometerEditTxt"
-                android:layout_width="@dimen/view_height_440"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:layout_marginRight="@dimen/margin_10"
-                android:background="@drawable/edit_green_drawable"
-                android:hint="@string/Odometers"
-                android:imeOptions="actionDone"
-                android:inputType="numberDecimal"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_5"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_19"
-                android:layout_gravity="center_vertical"
-                />
-
-            <Spinner
-                android:id="@+id/selectUnitEndOdo"
-                style="@style/spinner_style"
-                android:layout_width="@dimen/view_height_200"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:minWidth="@dimen/view_height_40"
-                android:paddingLeft="@dimen/margin_short_8"
-                android:paddingRight="@dimen/margin_short_8"
-
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/startLocationLay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/margin_10"
-            android:paddingBottom="@dimen/margin_10"
-            android:visibility="gone"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/start_loc"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
-                android:textSize="@dimen/text_size_19"
-                android:layout_marginTop="@dimen/margin_short_5"
-                android:textStyle="bold"
-                />
-
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/noTrailerView"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                android:layout_marginTop="@dimen/margin_10"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/margin_20"
+                android:layout_marginBottom="@dimen/margin_24"
+                android:visibility="gone"
+
                 >
 
-
-                <EditText
-                    android:id="@+id/startAddressEditText"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_10"
-                    android:layout_marginRight="@dimen/margin_10"
-                    android:background="@drawable/edit_green_drawable"
-                    android:hint="@string/Odometers"
-                    android:imeOptions="actionDone"
-                    android:inputType="text"
-                    android:paddingLeft="@dimen/margin_10"
-                    android:paddingTop="@dimen/margin_short_5"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_19"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
+                    android:text="@string/no_trailer_desc"
+                    android:textSize="@dimen/text_size_17"
+                    android:textColor="@color/colorBlack"
+                    android:layout_marginBottom="@dimen/margin_short_5"
+
                     />
+
+
+                <RadioGroup
+                    android:id="@+id/radioGroupTrailer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:paddingTop="@dimen/margin_short_2"
+                    android:layout_marginLeft="@dimen/margin_short_9"
+
+
+                    >
+
+                    <RadioButton
+                        android:id="@+id/radioNoTrailer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/no_trailer"
+                        android:checked="false"
+                        android:textSize="@dimen/text_size_17"
+                        android:textColor="@color/black_semi"
+                        android:theme="@style/CustomRadioBtnInspection"
+                        />
+
+                    <RadioButton
+                        android:id="@+id/radioEnterTrailer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_15"
+                        android:text="@string/enter_trailer_number"
+                        android:checked="false"
+                        android:textSize="@dimen/text_size_17"
+                        android:textColor="@color/black_semi"
+                        android:theme="@style/CustomRadioBtnInspection"
+
+                        />
+
+                </RadioGroup>
+
+
             </LinearLayout>
 
-
             <LinearLayout
+                android:id="@+id/startOdometerLay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="@dimen/margin_10"
                 android:paddingTop="@dimen/margin_10"
                 android:paddingBottom="@dimen/margin_10"
-                android:visibility="visible"
+                android:visibility="gone"
                 >
 
+                <TextView
+                    android:layout_width="@dimen/view_height_150"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_ododmeter"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:textColor="@color/black_unidenfied"
+                    android:textSize="@dimen/text_size_18"
+                    android:layout_marginTop="@dimen/margin_short_5"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+
+                    />
+
                 <EditText
-                    android:id="@+id/startLocationEditText"
-                    android:layout_width="match_parent"
+                    android:id="@+id/startOdoEditText"
+                    android:layout_width="@dimen/view_height_250"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_10"
                     android:layout_marginRight="@dimen/margin_10"
                     android:background="@drawable/edit_green_drawable"
                     android:hint="@string/Odometers"
                     android:imeOptions="actionDone"
-                    android:inputType="text"
+                    android:inputType="numberDecimal"
                     android:paddingLeft="@dimen/margin_10"
-                    android:paddingTop="@dimen/margin_short_5"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_19"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"/>
-
-                <Spinner
-                    android:id="@+id/startStateSelectSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:paddingTop="@dimen/margin_short_5"
                     android:paddingBottom="@dimen/margin_short_5"
-                    android:paddingLeft="@dimen/margin_short_8"
-                    android:paddingRight="@dimen/margin_short_8"
-                    android:layout_marginTop="@dimen/margin_10"
-                    android:layout_marginBottom="@dimen/margin_10"
-                    style="@style/spinner_style"
-                    android:visibility="visible"
-                    android:layout_weight="1"
-                    />
-
-
-
-            </LinearLayout>
-
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/endLocationLay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/margin_10"
-            android:paddingBottom="@dimen/margin_10"
-            android:visibility="gone"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/end_loc"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
-                android:textSize="@dimen/text_size_19"
-                android:layout_marginTop="@dimen/margin_short_5"
-                android:textStyle="bold"
-
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                android:layout_marginTop="@dimen/margin_10"
-                >
-
-
-                <EditText
-                    android:id="@+id/endAddressEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_10"
-                    android:layout_marginRight="@dimen/margin_10"
-                    android:background="@drawable/edit_green_drawable"
-                    android:hint="@string/Odometers"
-                    android:imeOptions="actionDone"
-                    android:inputType="text"
-                    android:paddingLeft="@dimen/margin_10"
-                    android:paddingTop="@dimen/margin_short_5"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_19"
+                    android:textSize="@dimen/text_size_18"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    />
-            </LinearLayout>
-
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_10"
-                android:paddingBottom="@dimen/margin_10"
-                android:visibility="visible"
-                >
-
-                <EditText
-                    android:id="@+id/endLocationEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_10"
-                    android:layout_marginRight="@dimen/margin_10"
-                    android:background="@drawable/edit_green_drawable"
-                    android:hint="@string/Odometers"
-                    android:imeOptions="actionDone"
-                    android:inputType="text"
-                    android:paddingLeft="@dimen/margin_10"
-                    android:paddingTop="@dimen/margin_short_5"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_19"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
+                    android:layout_weight="0.2"
                     />
 
                 <Spinner
-                    android:id="@+id/endStateSelectSpinner"
-                    android:layout_width="match_parent"
+                    android:id="@+id/selectUnitStartOdo"
+                    style="@style/spinner_style"
+                    android:layout_width="@dimen/view_height_150"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/margin_short_5"
-                    android:paddingBottom="@dimen/margin_short_5"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:minWidth="@dimen/view_height_40"
                     android:paddingLeft="@dimen/margin_short_8"
                     android:paddingRight="@dimen/margin_short_8"
-                    android:layout_marginTop="@dimen/margin_10"
-                    android:layout_marginBottom="@dimen/margin_10"
-                    style="@style/spinner_style"
-                    android:visibility="visible"
-                    android:layout_weight="1"
+
                     />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/endOdometerLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/margin_short_5"
+                android:paddingBottom="@dimen/margin_10"
+                android:visibility="gone"
+
+                >
+
+                <TextView
+                    android:layout_width="@dimen/view_height_150"
+                    android:layout_height="wrap_content"
+                    android:text="@string/end_ododmeter"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:textColor="@color/black_unidenfied"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+
+                    />
+
+                <EditText
+                    android:id="@+id/endOdometerEditTxt"
+                    android:layout_width="@dimen/view_height_250"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:background="@drawable/edit_green_drawable"
+                    android:hint="@string/Odometers"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_18"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.2"
+                    />
+
+                <Spinner
+                    android:id="@+id/selectUnitEndOdo"
+                    style="@style/spinner_style"
+                    android:layout_width="@dimen/view_height_150"
+                    android:layout_height="wrap_content"
+                    android:minWidth="@dimen/view_height_40"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:paddingRight="@dimen/margin_short_8"
+
+                    />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/startLocationLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"
+                android:visibility="gone"
+
+                >
+
+                <TextView
+                    android:id="@+id/startLocationTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_loc"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:textColor="@color/black_unidenfied"
+                    android:textSize="@dimen/text_size_18"
+                    android:layout_marginTop="@dimen/margin_short_5"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    android:layout_marginTop="@dimen/margin_10"
+                    >
+
+
+                    <EditText
+                        android:id="@+id/startAddressEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_marginRight="@dimen/margin_10"
+                        android:background="@drawable/edit_green_drawable"
+                        android:hint="@string/Location"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_5"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_18"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        />
+                </LinearLayout>
+
+
+
+
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"
+                    android:visibility="visible"
+                    >
+
+
+
+                    <EditText
+                        android:id="@+id/startLocationEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_marginRight="@dimen/margin_10"
+                        android:background="@drawable/edit_green_drawable"
+                        android:hint="@string/EnterCity"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_5"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_18"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        />
+
+                    <Spinner
+                        android:id="@+id/startStateSelectSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_5"
+                        android:paddingLeft="@dimen/margin_short_8"
+                        android:paddingRight="@dimen/margin_short_8"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:layout_marginBottom="@dimen/margin_10"
+                        style="@style/spinner_style"
+                        android:visibility="visible"
+                        android:layout_weight="1"
+                        />
+
+
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/endLocationLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"
+                android:visibility="gone"
+
+                >
+
+                <TextView
+                    android:id="@+id/endLocationTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/end_loc"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:textColor="@color/black_unidenfied"
+                    android:textSize="@dimen/text_size_18"
+                    android:layout_marginTop="@dimen/margin_short_5"
+                    android:textStyle="bold"
+
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    android:layout_marginTop="@dimen/margin_10"
+                    >
+
+
+                    <EditText
+                        android:id="@+id/endAddressEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_marginRight="@dimen/margin_10"
+                        android:background="@drawable/edit_green_drawable"
+                        android:hint="@string/Location"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_5"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_18"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"
+                    android:visibility="visible"
+                    >
+
+                    <EditText
+                        android:id="@+id/endLocationEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_marginRight="@dimen/margin_10"
+                        android:background="@drawable/edit_green_drawable"
+                        android:hint="@string/EnterCity"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_5"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_18"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        />
+
+                    <Spinner
+                        android:id="@+id/endStateSelectSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/margin_short_5"
+                        android:paddingBottom="@dimen/margin_short_5"
+                        android:paddingLeft="@dimen/margin_short_8"
+                        android:paddingRight="@dimen/margin_short_8"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:layout_marginBottom="@dimen/margin_10"
+                        style="@style/spinner_style"
+                        android:visibility="visible"
+                        android:layout_weight="1"
+                        />
+
+
+
+                </LinearLayout>
 
 
 
@@ -495,169 +528,150 @@
 
 
 
-        </LinearLayout>
 
-
-
-
-        <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/trailorNoInputType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.EditText"
-        android:layout_marginTop="@dimen/margin_short_5"
-        android:layout_toLeftOf="@+id/uploadMediaLay"
-        android:layout_marginLeft="@dimen/margin_short_5"
-        android:layout_marginRight="@dimen/margin_short_5"
-
-        >
-
-
-        <com.constants.CustomEditText
-            android:id="@+id/TrailorNoEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_18"
-            android:textColorHint="@color/white_hover"
-            android:imeOptions="actionDone"
-            android:paddingLeft="@dimen/margin_10"
-            android:paddingRight="@dimen/margin_10"
-            android:theme="@style/AppTheme.EditText"
-            android:singleLine="true"
-            android:hint="@string/TrailorNo"
-            android:maxLength="30"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-
-
-        <LinearLayout
-            android:id="@+id/driverStatusLay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/margin_10"
-            android:paddingBottom="@dimen/margin_14"
-            android:visibility="gone"
-            >
-
-
-
-            <TextView
-                android:id="@+id/statusTVv"
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/trailorNoInputType"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/Status_colon"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
-                android:textSize="@dimen/text_size_19"
+                android:theme="@style/AppTheme.EditText"
                 android:layout_marginTop="@dimen/margin_short_5"
-                android:textStyle="bold"
-                android:maxLength="12"
-                android:layout_below="@+id/idenLay1"
+                android:layout_toLeftOf="@+id/uploadMediaLay"
+                android:layout_marginLeft="@dimen/margin_short_5"
+                android:layout_marginRight="@dimen/margin_short_5"
 
-                />
+                >
 
 
-            <RadioGroup
-                android:id="@+id/unIdentifyRadGroupp"
+                <com.constants.CustomEditText
+                    android:id="@+id/TrailorNoEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_18"
+                    android:textColorHint="@color/white_hover"
+                    android:imeOptions="actionDone"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingRight="@dimen/margin_10"
+                    android:theme="@style/AppTheme.EditText"
+                    android:singleLine="true"
+                    android:hint="@string/TrailorNo"
+                    android:maxLength="30"
+
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/driverStatusLay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_below="@+id/idenLay1"
-                android:paddingTop="@dimen/margin_short_4"
-                android:layout_marginBottom="@dimen/margin_short_5"
-                android:layout_marginLeft="@dimen/margin_15"
-                android:layout_toRightOf="@+id/statusTV"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"
+                android:visibility="gone"
                 >
 
-                <RadioButton
-                    android:id="@+id/drivingRadBtnn"
+
+
+                <TextView
+                    android:id="@+id/statusTVv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/Driving"
-                    android:textColor="@color/black_semi"
-                    android:textSize="@dimen/text_size_17"
-                    android:theme="@style/unIdenRadioBtn"
-
+                    android:text="@string/Status_colon"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:textColor="@color/black_unidenfied"
+                    android:textSize="@dimen/text_size_18"
+                    android:layout_marginTop="@dimen/margin_short_5"
+                    android:textStyle="bold"
+                    android:maxLength="12"
+                    android:layout_below="@+id/idenLay1"
 
                     />
 
 
-                <RadioButton
-                    android:id="@+id/onDutyRadBtnn"
+                <RadioGroup
+                    android:id="@+id/unIdentifyRadGroupp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/On_Duty"
-                    android:textColor="@color/black_semi"
-                    android:textSize="@dimen/text_size_17"
-                    android:theme="@style/unIdenRadioBtn"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/idenLay1"
+                    android:layout_marginBottom="@dimen/margin_short_5"
                     android:layout_marginLeft="@dimen/margin_short_8"
+                    android:layout_toRightOf="@+id/statusTV"
+                    >
 
-                    />
-
-
-                <RadioButton
-                    android:id="@+id/personalRadBtnn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Personal_Use"
-                    android:textColor="@color/black_semi"
-                    android:textSize="@dimen/text_size_17"
-                    android:theme="@style/unIdenRadioBtn"
-                    android:layout_marginLeft="@dimen/margin_short_8"
-
-                    />
+                    <RadioButton
+                        android:id="@+id/drivingRadBtnn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Driving"
+                        android:textColor="@color/black_semi"
+                        android:textSize="@dimen/text_size_14"
+                        android:theme="@style/unIdenRadioBtn"
 
 
-            </RadioGroup>
-
-        </LinearLayout>
+                        />
 
 
+                    <RadioButton
+                        android:id="@+id/onDutyRadBtnn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/On_Duty"
+                        android:textColor="@color/black_semi"
+                        android:textSize="@dimen/text_size_14"
+                        android:theme="@style/unIdenRadioBtn"
+                        android:layout_marginLeft="@dimen/margin_short_8"
 
-        <TextView
-            android:id="@+id/SpinnerTitleTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/SelectRemark"
-            android:textSize="@dimen/text_size_19"
-            android:textColor="@color/black"
-            android:layout_marginTop="@dimen/margin_short_5"
-            android:layout_marginLeft="@dimen/margin_10"
-            android:textStyle="bold"
-            android:visibility="gone"
-            />
+                        />
 
 
-        <Spinner
-            android:id="@+id/remarkSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+                    <RadioButton
+                        android:id="@+id/personalRadBtnn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Personal_Use"
+                        android:textColor="@color/black_semi"
+                        android:textSize="@dimen/text_size_14"
+                        android:theme="@style/unIdenRadioBtn"
+                        android:layout_marginLeft="@dimen/margin_short_8"
 
-            android:paddingTop="@dimen/margin_short_5"
-            android:paddingBottom="@dimen/margin_short_5"
-            android:paddingLeft="@dimen/margin_10"
-            android:paddingRight="@dimen/margin_10"
-            android:layout_marginTop="@dimen/margin_13"
-            android:layout_marginBottom="@dimen/margin_13"
-            style="@style/spinner_style"
-            android:visibility="gone"
-            />
+                        />
 
 
-      <!--  <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/reasonInputType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.EditText"
-            android:layout_toLeftOf="@+id/uploadMediaLay"
-            android:layout_below="@+id/contnrNoInputType"
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/SpinnerTitleTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/SelectRemark"
+                android:textSize="@dimen/text_size_18"
+                android:textColor="@color/black"
+                android:layout_marginTop="@dimen/margin_short_5"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:textStyle="bold"
+                android:visibility="gone"
+                />
 
 
-            >-->
+            <Spinner
+                android:id="@+id/remarkSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/margin_short_5"
+                android:paddingBottom="@dimen/margin_short_5"
+                android:paddingLeft="@dimen/margin_short_8"
+                android:paddingRight="@dimen/margin_short_8"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_10"
+                style="@style/spinner_style"
+                android:visibility="gone"
+                />
+
 
 
             <com.constants.CustomEditText
@@ -674,66 +688,72 @@
                 android:padding="@dimen/margin_10"
                 android:gravity="top|left"
                 android:hint="@string/reason"
+                android:paddingTop="@dimen/margin_short_5"
+                android:paddingBottom="@dimen/margin_short_5"
                 android:background="@drawable/edittext_black_hover"
-                android:layout_marginLeft="@dimen/margin_short_5"
-                android:layout_marginRight="@dimen/margin_short_5"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_marginRight="@dimen/margin_10"
                 android:visibility="gone"
+
                 />
-   <!--     </com.google.android.material.textfield.TextInputLayout>-->
+            <!--  </com.google.android.material.textfield.TextInputLayout>-->
 
 
 
 
 
-        <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/view_height_48"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/view_height_35"
-            android:layout_marginRight="@dimen/view_height_140"
-            android:layout_marginLeft="@dimen/view_height_140"
-        >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_48"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/view_height_35"
+                android:layout_marginRight="@dimen/view_height_140"
+                android:layout_marginLeft="@dimen/view_height_140"
+                >
 
 
 
-        <Button
-            android:id="@+id/btnCancelLoadingJob"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            android:textSize="@dimen/text_size_22"
-            android:layout_marginLeft="@dimen/margin_15"
-            android:layout_marginRight="@dimen/margin_10"
-            android:textColor="@color/whiteee"
-            android:background="@drawable/gray_selector"
-            android:textAllCaps="false"
-            android:layout_weight="1"
+                <Button
+                    android:id="@+id/btnCancelLoadingJob"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancel"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginLeft="@dimen/margin_15"
+                    android:layout_marginRight="@dimen/margin_10"
+                    android:textColor="@color/whiteee"
+                    android:background="@drawable/gray_selector"
+                    android:textAllCaps="false"
+                    android:layout_weight="1"
 
-            />
-
-
-        <Button
-            android:id="@+id/btnLoadingJob"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ok"
-            android:textSize="@dimen/text_size_22"
-            android:layout_marginLeft="@dimen/margin_10"
-            android:layout_marginRight="@dimen/margin_15"
-            android:textColor="@color/whiteee"
-            android:background="@drawable/green_selector"
-            android:textAllCaps="false"
-            android:layout_weight="1"
-
-            />
+                    />
 
 
+                <Button
+                    android:id="@+id/btnLoadingJob"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ok"
+                    android:textSize="@dimen/text_size_22"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:layout_marginRight="@dimen/margin_15"
+                    android:textColor="@color/whiteee"
+                    android:background="@drawable/green_selector"
+                    android:textAllCaps="false"
+                    android:layout_weight="1"
+
+                    />
 
 
 
-</LinearLayout>
-    </LinearLayout>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </ScrollView>
+
 
 </LinearLayout>

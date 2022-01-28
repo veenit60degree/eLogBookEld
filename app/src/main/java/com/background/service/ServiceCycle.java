@@ -515,7 +515,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                         if (!isYardMove) {   // if isYardMove = true. No ELD rule called when Truck in yardfor USA.
 
                                             BackgroundLocationService.IsAutoChange = true;
-                                            message = "Duty status switched to DRIVING due to vehicle moving above threshold speed.";
+                                            message = "Duty status switched to DRIVING due to vehicle moving above threshold speed of 8 Km/h (5 miles per hour).";
 
 
                                             if (IsAOBRD) {
@@ -1266,7 +1266,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         CurrentDeviceDate,
                         String.valueOf(SharedPref.IsAOBRD(context)),
                         CurrentCycleId,
-                        String.valueOf(isDeferral), "", "false", "false"
+                        String.valueOf(isDeferral), "",
+                        "false", "false", "0"
 
 
 
@@ -1411,7 +1412,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 false,
                 SharedPref.getObdOdometer(context),
                 SharedPref.getObdOdometer(context),
-                CoDriverId
+                CoDriverId,
+                "0"
 
         );
 
@@ -1463,7 +1465,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         false,
                         SharedPref.getObdOdometer(context),
                         SharedPref.getObdOdometer(context),
-                        CoDriverId
+                        CoDriverId,
+                        "0"
 
                 );
 

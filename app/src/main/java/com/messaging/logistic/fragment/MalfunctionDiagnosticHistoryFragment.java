@@ -168,6 +168,9 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                 parseListInHashMap(malDiaArray, Constants.MissingDataDiagnostic);
                 parseListInHashMap(malDiaArray, Constants.PositionComplianceMalfunction);
 
+                parseListInHashMap(malDiaArray, Constants.DataTransferDiagnostic);
+                parseListInHashMap(malDiaArray, Constants.DataTransferMalfunction);
+
                 parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
 
 
@@ -207,6 +210,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                         if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
                                 DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
                                 DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction) ||
+                                DetectionDataEventCode.equals(Constants.DataTransferMalfunction) ||
                                 DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)) {
                             parseData(mainObj, i);
                         } else {

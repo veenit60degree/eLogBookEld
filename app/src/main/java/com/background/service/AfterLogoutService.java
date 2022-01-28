@@ -285,7 +285,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         // ---------------- temp data ---------------------
 
-       /* int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
+
+/*
+        int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
         if (LoginActivity.isDriving) {
             ignitionStatus = "ON";
             truckRPM = "700";
@@ -333,6 +335,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         SharedPref.setRPM(truckRPM, getApplicationContext());
 
 */
+
+
 
 
         //========================================================
@@ -506,6 +510,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         ShellUtils.CommandResult obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
 
+
         if (obdShell.result == 0) {
             if (obdShell.successMsg.contains("USB_DCP")) {
 
@@ -574,6 +579,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             sendBroadcast(false);
         }
+
 
 
     }

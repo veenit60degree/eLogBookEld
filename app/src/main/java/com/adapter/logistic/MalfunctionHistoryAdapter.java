@@ -148,16 +148,28 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                 seqIdMalTxtVw.setText(childData.getHexaSequenceNo());
             }else{
                 seqIdMalTxtVw.setText(childData.getSequenceNo());
-            }*/
+            }
           if(constants.isMalfunction(childData.getDetectionDataEventCode())){
               totalMinTxtVw.setVisibility(View.GONE);
          }else {
-              if (childData.getId().equals("--")) {
-                  totalMinTxtVw.setText(childData.getId());
-              } else {
-                  totalMinTxtVw.setText(childData.getId() + " min");   //TotalMinutes value is passing in getId()
-              }
-          }
+
+          }*/
+
+            totalMinTxtVw.setVisibility(View.VISIBLE);
+           /* if (childData.getId().equals("--")) {
+                totalMinTxtVw.setText(childData.getId());
+            } else {
+                //TotalMinutes value is passing in getId()
+                if(childData.getDetectionDataEventCode().equals(Constants.PowerComplianceDiagnostic) ||
+                        childData.getDetectionDataEventCode().equals(Constants.PowerComplianceMalfunction) ){
+                    totalMinTxtVw.setText(childData.getId() + " min");
+                }else{
+                    totalMinTxtVw.setText(childData.getId() + " min");
+                }
+
+            }*/
+            totalMinTxtVw.setText(childData.getId() + " min");
+
             String distance = childData.getMiles(); //constants.getBeforeDecimalValue();
 
             try {
@@ -339,9 +351,12 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             holder.engHoursMalTxtVw.setText(_context.getString(R.string.end_eng_hr));
         }
 
-        if(constants.isMalfunction(headerModel.getEventCode())){
+       /* if(constants.isMalfunction(headerModel.getEventCode())){
             holder.seqIdMalTxtVw.setVisibility(View.GONE);
-        }
+        }*/
+
+        holder.seqIdMalTxtVw.setVisibility(View.VISIBLE);
+        holder.seqIdMalTxtVw.setText("Difference");
 
         setViewTextColorWithStyle(holder.timeMalTxtVw, holder.statusMalTxtVw, holder.vehMilesMalTxtVw,
                 holder.engHoursMalTxtVw, holder.seqIdMalTxtVw, holder.startEngHrTxtVw);

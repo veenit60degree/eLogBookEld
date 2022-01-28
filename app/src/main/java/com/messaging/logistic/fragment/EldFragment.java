@@ -690,7 +690,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         SharedPref.setEndLocation("", "", "", getActivity());
 
         if (!SharedPref.GetNewLoginStatus(getActivity()) && Constants.IsHomePageOnCreate){
-            isCertifySignPending( Constants.IsHomePageOnCreate);
+            isCertifySignPending( Constants.IsHomePageOnCreate, false);
         }
         Constants.IsHomePageOnCreate = false;
 
@@ -2754,7 +2754,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         isYardBtnClick = false;
         if(constants.CheckGpsStatus(getActivity())) {
             if (DRIVER_JOB_STATUS != OFF_DUTY || (DRIVER_JOB_STATUS == OFF_DUTY && isPersonal.equals("true"))) {
-                if (isCertifySignPending(false)) {
+                if (isCertifySignPending(false, false)) {
                     Global.DriverSwitchAlert(getActivity(), certifyTitle, titleDesc, okText);
                     resetCertifyLogDialogTitles();
 
@@ -2846,7 +2846,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     IsPopupDismissed = true;
                 }
 
-                if (isCertifySignPending(false)) {
+                if (isCertifySignPending(false, false)) {
                     Global.DriverSwitchAlert(getActivity(), certifyTitle, titleDesc, okText);
                     resetCertifyLogDialogTitles();
                 } else {
@@ -2981,7 +2981,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         boolean isGps = constants.CheckGpsStatus(getActivity());
 
         if(isGps) {
-            if (isCertifySignPending(false)) {
+            if (isCertifySignPending(false, false)) {
                 Global.DriverSwitchAlert(getActivity(), certifyTitle, titleDesc, okText);
                 resetCertifyLogDialogTitles();
             } else {
@@ -3114,7 +3114,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
     private void DrivingWithCertifySign(){
-        if (isCertifySignPending(false)) {
+        if (isCertifySignPending(false, false)) {
             Global.DriverSwitchAlert(getActivity(), certifyTitle, titleDesc, okText);
             resetCertifyLogDialogTitles();
         } else {
@@ -3668,7 +3668,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         }
                     }else if(intent.hasExtra(ConstantsKeys.IsCertifyReminder)){
                         if (intent.getBooleanExtra(ConstantsKeys.IsCertifyReminder, false) == true) {
-                            isCertifySignPending(false);
+                            isCertifySignPending(false, true);
                         }
                     }
                     setMalfnDiagnEventInfo();
@@ -3987,7 +3987,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         String.valueOf(IsAOBRD),
                         CurrentCycleId,
                         String.valueOf(isDeferral), "", "false",
-                        String.valueOf(isCycleChange)
+                        String.valueOf(isCycleChange),
+                        "0"
 
                 );
 
@@ -4137,7 +4138,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
     // ------------- Check Certify signature status -------------
-    public boolean isCertifySignPending(boolean isOnCreate ){
+    public boolean isCertifySignPending(boolean isOnCreate, boolean IsCertifyReminder ){
         JSONObject logPermissionObj       = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
         boolean isCertifySignaturePending = false;
         boolean IsCertifyMandatory        = SharedPref.IsCertifyMandatory(getActivity());
@@ -4173,8 +4174,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     titleDesc    = titleMsg;
                     okText       = dismissText;
 
+                    if(IsCertifyReminder) {
+                        certifyLogAlert(title, titleMsg);
+                    }
+
                 }else{
-                    if(isSignPending && !isOnCreate && isNewDateStart){
+                    if( isNewDateStart){
                         isNewDateStart = false;
                         certifyLogAlert(title, titleMsg);
                     }
@@ -4316,7 +4321,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, dayOfMonth, isCertifyLog,
                         VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
                         Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId,
-                        isCertifySignPending(false ), isFragmentAdd, fragManager, driverLogArray.toString());
+                        isCertifySignPending(false , false), isFragmentAdd, fragManager, driverLogArray.toString());
             } catch (final Exception e) {
                 e.printStackTrace();
             }
@@ -6757,7 +6762,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 Globally.DriverSwitchAlert(getActivity(), getString(R.string.exempt_reminder_desc), "", getString(R.string.ok));
                             }
 
-                            isCertifySignPending(false);
+                            isCertifySignPending(false, false);
 
                         } else {
 
@@ -7697,7 +7702,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             initilizeEldView.MoveFragment(SelectedDate, dayOfTheWeek, MonthFullName, MonthShortName, constants.CertifyLog, isCertifyLog,
                     VIN_NUMBER, offsetFromUTC, Global.FinalValue(LeftWeekOnDutyHoursInt), Global.FinalValue(LeftDayOnDutyHoursInt),
                     Global.FinalValue(LeftDayDrivingHoursInt), CurrentCycleId, VehicleId,
-                    isCertifySignPending(false ), isFragmentAdd, fragManager, driverLogArray.toString());
+                    isCertifySignPending(false, false ), isFragmentAdd, fragManager, driverLogArray.toString());
         } catch (final Exception e) {
             e.printStackTrace();
         }

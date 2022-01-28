@@ -408,7 +408,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
             if(i < unIdentifiedRecordList.size()){
                 recordModel = unIdentifiedRecordList.get(i);
             }
-            if(isSelected && Constants.isInfoMissing(recordModel)){
+            if(isSelected && !Constants.isInfoMissing(recordModel)){
                 count++;
                 recordSelectedList.set(i, "selected");
             }else{

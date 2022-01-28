@@ -33,12 +33,12 @@
             android:id="@+id/malfHeaderTxtVw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Malfunction_with_bracket"
-           android:textColor="@color/color_eld_theme"
-            android:textSize="@dimen/text_size_17"
-            android:paddingLeft="@dimen/margin_short_5"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/malfncnInfoImgView"
+            android:paddingLeft="@dimen/margin_short_5"
+            android:text="@string/Malfunction_with_bracket"
+            android:textColor="@color/color_eld_theme"
+            android:textSize="@dimen/text_size_17"
 
             />
 

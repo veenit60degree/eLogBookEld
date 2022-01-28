@@ -113,10 +113,12 @@ public class Constants {
     public static String PowerComplianceDiagnostic      = "1";
     public static String EngineSyncDiagnosticEvent      = "2";
     public static String MissingDataDiagnostic          = "3";
+    public static String DataTransferDiagnostic         = "4";
     public static String UnIdentifiedDrivingDiagnostic  = "5";
 
     public static String PowerComplianceMalfunction     = "P";
     public static String EngineSyncMalfunctionEvent     = "E";
+    public static String DataTransferMalfunction        = "S";
     public static String PositionComplianceMalfunction  = "L";
 
     public static int UnidentifiedDiagnosticTime        = 30;   // 30 min
@@ -407,6 +409,10 @@ public class Constants {
            eventModel = new MalDiaEventModel(context.getString(R.string.eng_sync_mal_title), context.getString(R.string.eng_sync_mal_def));
        }else if(EventCode.equals(UnIdentifiedDrivingDiagnostic)){
            eventModel = new MalDiaEventModel(context.getString(R.string.unidentified_title), context.getString(R.string.unidentified_def));
+       }else if(EventCode.equals(DataTransferDiagnostic)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.data_transfer_dia_title), context.getString(R.string.data_transfer_dia_def));
+       }else if(EventCode.equals(DataTransferMalfunction)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.data_transfer_mal_title), context.getString(R.string.data_transfer_mal_def));
        }else{
            eventModel = new MalDiaEventModel(context.getString(R.string.loc_miss_event), context.getString(R.string.pos_mal_occured_desc));
        }
@@ -539,6 +545,7 @@ public class Constants {
         locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, ListModel.getUnassignedVehicleMilesId());
         locationObj.put(ConstantsKeys.isNewRecord, ListModel.getNewRecordStatus());
         locationObj.put(ConstantsKeys.IsCycleChanged, ListModel.IsCycleChanged());
+        locationObj.put(ConstantsKeys.UnAssignedVehicleMilesId, ListModel.getUnAssignedVehicleMilesId());
 
         jsonArray.put(locationObj);
     }
@@ -619,6 +626,11 @@ public class Constants {
             IsCycleChanged = obj.getString(ConstantsKeys.IsCycleChanged);
         }
 
+        String UnAssignedVehicleMilesId = "0";
+        if (obj.has(ConstantsKeys.UnAssignedVehicleMilesId)) {
+            UnAssignedVehicleMilesId = obj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
+        }
+
 
         locationObj.put(ConstantsKeys.ProjectId, obj.getString(ConstantsKeys.ProjectId));
         locationObj.put(ConstantsKeys.DriverId, obj.getString(ConstantsKeys.DriverId));
@@ -665,6 +677,7 @@ public class Constants {
         locationObj.put(ConstantsKeys.isDeferral, isDeferral);
         locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, "");
         locationObj.put(ConstantsKeys.IsCycleChanged, IsCycleChanged);
+        locationObj.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
 
         return locationObj;
@@ -1945,7 +1958,8 @@ public class Constants {
                 IsCycleChanged,
                 Odometer,
                 Odometer,
-                CoDriverId
+                CoDriverId,
+                "0"
 
         );
 

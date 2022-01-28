@@ -1738,9 +1738,9 @@ public class Globally {
 
 	public static String CheckLongitudeWithCycle(String longitude){
 
-		if (longitude.length() > 0 && !longitude.contains("-")) {
+		/*if (longitude.length() > 0 && !longitude.contains("-")) {
 			longitude = "-" + longitude;
-		}
+		}*/
 
 		return longitude;
 	}

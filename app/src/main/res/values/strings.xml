@@ -255,6 +255,12 @@
     <string name="eng_sync_mal_title">Engine synchronization data malfunction event</string>
     <string name="eng_sync_mal_def">Engine synchronization compliance malfunctions occur when ECM connectivity to any of the required data sources (engine power status, vehicle motion status, miles driven, and engine hours) is lost for more than 30 minutes during a 24-hour period aggregated across all driver profiles.</string>
 
+    <string name="data_transfer_dia_title">Data transfer data diagnostic event</string>
+    <string name="data_transfer_dia_def">Data Transfer email monitoring mechanism fails to confirm proper in-service operation.</string>
+
+    <string name="data_transfer_mal_title">Data transfer compliance \malfunction event</string>
+    <string name="data_transfer_mal_def">Data Transfer email monitoring mechanism fails three consecutive times to confirm proper in-service operation.</string>
+
     <string name="unidentified_title">Unidentified driving records data diagnostic event</string>
     <string name="unidentified_def">An unidentified driving records data diagnostic event occurs when more than 30 minutes of driving time for an unidentified driver is recorded within a 24-hour period.</string>
 
