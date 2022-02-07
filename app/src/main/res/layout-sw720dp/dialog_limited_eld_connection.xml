@@ -59,17 +59,17 @@
                 />
 
             <TextView
+                android:id="@+id/limitedConnDescTxtView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/margin_13"
-                android:layout_marginRight="@dimen/view_height_60"
-                android:text="@string/limited_ecm_desc_new"
-                android:textSize="@dimen/text_size_20"
-                android:textColor="@color/splash_gray"
                 android:layout_below="@+id/ecmAlertTitleTV"
-                android:layout_toRightOf="@+id/errorImgEcm"
                 android:layout_marginTop="@dimen/margin_short_7"
-                />
+                android:layout_marginRight="@dimen/view_height_60"
+                android:layout_toRightOf="@+id/errorImgEcm"
+                android:paddingLeft="@dimen/margin_13"
+                android:text="@string/limited_ecm_desc_new"
+                android:textColor="@color/splash_gray"
+                android:textSize="@dimen/text_size_20" />
 
 
         </RelativeLayout>

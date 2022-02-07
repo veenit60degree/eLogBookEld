@@ -165,6 +165,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
         if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
             DriverName          = DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
+
         }else{
             CompanyId           = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, getActivity());
             DriverName          = DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, getActivity());
@@ -1186,7 +1187,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         "",
                         isNewRecord,
                         IsCycleChanged,
-                        UnAssignedVehicleMilesId
+                        UnAssignedVehicleMilesId,
+                        obj.getString(ConstantsKeys.CoDriverId),
+                        obj.getString(ConstantsKeys.CoDriverName),
+                        "false"
                 );
 
                 logList.add(logModel);
@@ -1419,7 +1423,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         "",
                         isNewRecord,
                         IsCycleChanged,
-                        UnAssignedVehicleMilesId
+                        UnAssignedVehicleMilesId,
+                        obj.getString(ConstantsKeys.CoDriverId),
+                        obj.getString(ConstantsKeys.CoDriverName),
+                        "false"
                         );
 
                     if(eldModel != null) {

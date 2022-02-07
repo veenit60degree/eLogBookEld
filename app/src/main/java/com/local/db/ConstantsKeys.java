@@ -344,6 +344,7 @@ public class ConstantsKeys {
     public static String EventDateTime                  = "EventDateTime";
     public static String EventEndDateTime               = "EventEndDateTime";
     public static String IsClearEvent                   = "IsClearEvent";
+    public static String ClearEventId                   = "ClearEventId";
 
     public static String ClearOdometer                  = "ClearOdometer";
     public static String ClearEngineHours               = "ClearEngineHours";
@@ -399,6 +400,7 @@ public class ConstantsKeys {
     public static String LogSignImageInByte             = "LogSignImageInByte";
     public static String CoDriverName                   = "CoDriverName";
     public static String CoDriverKey                    = "CoDriverKey";
+    public static String IsSkipRecord                   = "IsSkipRecord";
     public static String EngineMileage                  = "EngineMileage";
     public static String Date                           = "Date";
     public static String IsRecertifyRequied             = "IsRecertifyRequied";

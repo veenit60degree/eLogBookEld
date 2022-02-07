@@ -3,7 +3,9 @@ package com.messaging.logistic;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
@@ -174,6 +177,7 @@ public class SplashActivity extends Activity implements
             } else {
                // Log.v("TAG","Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, LOCATION_REQUEST);
+
                 return false;
             }
         }else { //permission is automatically granted on sdk<23 upon installation
@@ -184,6 +188,78 @@ public class SplashActivity extends Activity implements
 
     }
 
+
+    private void checkLocationPermission() {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)  != PackageManager.PERMISSION_GRANTED) {
+          //  if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+                alertBuilder.setCancelable(true);
+                alertBuilder.setTitle("Location Permission Needed");
+                alertBuilder.setMessage("ALS E-Log book collects location data to enable tracking for Vehicle & Driver corresponding to different duty statuses even when app is closed or not in use.");
+                alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(SplashActivity.this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                LOCATION_REQUEST);
+                    }
+                });
+
+                AlertDialog alert = alertBuilder.create();
+                alert.show();
+         /*   } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_REQUEST);
+                // MY_PERMISSIONS_REQUEST_CAMERA is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }*/
+        } else {
+            statusCheck();
+        }
+    }
+
+
+
+    /*private void checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            ) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                AlertDialog.Builder(SplashActivity.this)
+                        .setTitle("Location Permission Needed")
+                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setPositiveButton(
+                                "OK"
+                        ) {
+                        //Prompt the user once explanation has been shown
+                        requestLocationPermission()
+                }
+                    .create()
+                        .show()
+            } else {
+                // No explanation needed, we can request the permission.
+                requestLocationPermission()
+            }
+        } else {
+            checkBackgroundLocation()
+        }
+    }
+    */
 
 
     public  boolean isStoragePermissionGranted() {
@@ -435,7 +511,8 @@ public class SplashActivity extends Activity implements
             }
         } else {
             if (global.checkPlayServices(getApplicationContext())) {
-                requestLocationPermission();
+              //  requestLocationPermission();
+                checkLocationPermission();
             } else {
                 requestLocationWithoutPlayServices();
             }

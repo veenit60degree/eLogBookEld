@@ -258,7 +258,7 @@
     <string name="data_transfer_dia_title">Data transfer data diagnostic event</string>
     <string name="data_transfer_dia_def">Data Transfer email monitoring mechanism fails to confirm proper in-service operation.</string>
 
-    <string name="data_transfer_mal_title">Data transfer compliance \malfunction event</string>
+    <string name="data_transfer_mal_title">Data transfer compliance malfunction event</string>
     <string name="data_transfer_mal_def">Data Transfer email monitoring mechanism fails three consecutive times to confirm proper in-service operation.</string>
 
     <string name="unidentified_title">Unidentified driving records data diagnostic event</string>
@@ -711,6 +711,7 @@
     <string name="limited_ecm_desc">The ELD is not receiving data from the engine of the selected vehicle, which may result in incomplete data being recorded for some events.</string>
     <string name="Limited_ELD_Connection">Limited ELD Connectivity</string>
     <string name="limited_ecm_desc_new">ELD Log Book failed to receive data from engine of selected vehicle, this may result in missing data for some events. Please make sure your ELD Log Book is connected with ECM of current vehicle using WiFi/Bluetooth/Wired connection.</string>
+    <string name="limited_ecm_desc_2">ELD Tablet/Mobile failed to receive data from engine of selected vehicle, this may result in missing data for some events. ELD is unable to monitor Vehicle Motion Status, Vehicle Distance or Vehicle Engine Hour Information.</string>
     <string name="Limited_ELD_failed_to_rec">Limited ELD Connectivity. Failed to receive data from engine.</string>
 
     <string name="pre_trip_unloading">Pre-Trip + unloading</string>

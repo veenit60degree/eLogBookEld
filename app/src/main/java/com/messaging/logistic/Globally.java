@@ -49,6 +49,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.ble.util.ConstantEvent;
 import com.ble.util.EventBusInfo;
+import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.Utils;
@@ -271,7 +272,7 @@ public class Globally {
 	}
 
 
-	public void InternetErrorDialog(Context context, boolean isDisplay){
+	public void InternetErrorDialog(Context context, boolean isDisplay, boolean isEventChanged){
 
 		try {
 			if (ecmErrorAlert != null && ecmErrorAlert.isShowing()) {
@@ -283,7 +284,6 @@ public class Globally {
 				ecmErrorAlert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 				ecmErrorAlert.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				ecmErrorAlert.setContentView(R.layout.dialog_limited_eld_connection);
-				ecmErrorAlert.setCancelable(false);
 
 				ecmErrorAlert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 				WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
@@ -293,6 +293,12 @@ public class Globally {
 				lp.gravity = Gravity.BOTTOM;
 				ecmErrorAlert.getWindow().setAttributes(lp);
 
+				if(isEventChanged){
+					TextView limitedConnDescTxtView = (TextView) ecmErrorAlert.findViewById(R.id.limitedConnDescTxtView);
+					limitedConnDescTxtView.setText(context.getResources().getString(R.string.limited_ecm_desc_2));
+				}else {
+					ecmErrorAlert.setCancelable(false);
+				}
 
 				final ImageView closeDialogImg = (ImageView) ecmErrorAlert.findViewById(R.id.closeDialogImg);
 				closeDialogImg.setOnClickListener(new View.OnClickListener() {
@@ -655,10 +661,14 @@ public class Globally {
 				if (Math.max(-9, minDiff) == Math.min(minDiff, 9)) {	//minDiff >= -5
 					isTimeCorrect = true;
 				} else {
-					isTimeCorrect = false;
+					if(isConnected(context)) {
+						isTimeCorrect = false;
+					}
 				}
 			}else{
-				isTimeCorrect = false;
+				if(isConnected(context)) {
+					isTimeCorrect = false;
+				}
 			}
 
 			/*else {
@@ -1738,9 +1748,13 @@ public class Globally {
 
 	public static String CheckLongitudeWithCycle(String longitude){
 
-		/*if (longitude.length() > 0 && !longitude.contains("-")) {
-			longitude = "-" + longitude;
-		}*/
+		if(APIs.DOMAIN_URL_ALS.contains("dev")){
+			// ignoring in DEV build
+		}else {
+			if (longitude.length() > 0 && !longitude.contains("-")) {
+				longitude = "-" + longitude;
+			}
+		}
 
 		return longitude;
 	}

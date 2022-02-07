@@ -247,6 +247,10 @@ public class Slidingmenufunctions implements OnClickListener {
 
 				logoutEvent();
 
+				if (context != null && !constants.isObdConnectedWithELD(context)) {
+					global.InternetErrorDialog(context, true, true);
+				}
+
 				break;
 
 		}

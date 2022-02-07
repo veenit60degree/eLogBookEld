@@ -184,9 +184,11 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         final int JobStatus = LogItem.getDriverStatusId();
         SetTextDataInView(holder,  LogItem, Global.JobStatus(JobStatus, LogItem.isPersonal()),  String.valueOf(position + 1)+ "." );
 
-        if(JobStatus == Constants.DRIVING && IsDrivingAllowForSwap && IsEditView &&
-                !LogItem.getDuration().equals("00:00")){
-            holder.drivingSwapCheckBox.setVisibility(View.VISIBLE);
+        if(SharedPref.IsCCMTACertified(context) && !IsCurrentDate) {
+            if (JobStatus == Constants.DRIVING && IsDrivingAllowForSwap && IsEditView &&
+                    !LogItem.getDuration().equals("00:00")) {
+                holder.drivingSwapCheckBox.setVisibility(View.VISIBLE);
+            }
         }
 
 
@@ -230,12 +232,16 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 if(isChecked){
                     if(CertifyViewLogFragment.SwapDrivingArray.size() == 0){
                         addRemoveLogId(isChecked, LogItem.getDriverStatusLogId());
+                        CertifyViewLogFragment.SelectedCoDriverId = LogItem.getCoDriverId();
+                        CertifyViewLogFragment.SelectedCoDriverName = LogItem.getCoDriverName();
                     }else{
                         holder.drivingSwapCheckBox.setChecked(false);
                         Global.EldScreenToast(buttonView, "You can Swap one Driving status at a time", context.getResources().getColor(R.color.colorVoilation));
                     }
                 }else {
                     addRemoveLogId(isChecked, LogItem.getDriverStatusLogId());
+                    CertifyViewLogFragment.SelectedCoDriverId = "";
+                    CertifyViewLogFragment.SelectedCoDriverName = "";
                 }
             }
         });

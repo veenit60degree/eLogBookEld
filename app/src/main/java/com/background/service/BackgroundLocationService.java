@@ -212,7 +212,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     VolleyRequest UpdateLocReqVolley, UpdateUserStatusVolley, GetRecapView18DaysData, SaveMalDiaEventRequest, GetMalfunctionEvents,
             SaveAgricultureRequest;
     Map<String, String> params;
-    String DriverId = "", CoDriverId = "", DeviceId = "", VIN_NUMBER = "", VehicleId = "", CompareLocVal = "";
+    String DriverId = "", CoDriverId = "", CoDriverName = "", DeviceId = "", VIN_NUMBER = "", VehicleId = "", CompareLocVal = "";
     String ObdRestarted = "OBD Restarted";
 
     int DriverType = 0, LastObdSpeed = -1;
@@ -459,11 +459,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 currentHighPrecisionOdometer = bundle.getString(constants.OBD_HighPrecisionOdometer);
                             }
 
-                            // temp odometer for simulator
-                            // converting odometer from km to meter. because it is saving in km.
-                            currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
-
-
                             if(vin.length() <= 5){
                                 vin = "";
                             }
@@ -475,6 +470,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                         // ---------------- temp data ---------------------
+
+                        // temp odometer for simulator
+                        // converting odometer from km to meter. because it is saving in km.
+                        // currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
 
 /*
                         int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
@@ -1479,12 +1478,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                /* Log.d("BleObd00","onReceive RPM: "+ htBleData.getEngineSpeed() + ", VehicleSpeed: " + htBleData.getVehicleSpeed());
                 Log.d("BleObd01","ACC ON: "+ htBleData.getACC_ON_Date() +
                          ", Type: "+htBleData.getEventType() + ", Code: "+ htBleData.getEventCode() + ", Data: " + htBleData.getEventData());
-*/
+
 
                 Log.d("BleObd","Speed: "+ htBleData.getVehicleSpeed() + ", RPM: "+ htBleData.getEngineSpeed() +
                         ", EventType: "+htBleData.getEventType() + ", EventCode: "+ htBleData.getEventCode() +
                         ", EventData: " + htBleData.getEventData());
-
+*/
                 try {
                     if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
                             !SharedPref.getPassword(getApplicationContext()).equals("")) {
@@ -2461,7 +2460,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         try {
             VehicleSpeed = speed;
             obdVehicleSpeed = (int) calculatedSpeedFromOdo;
-            serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
+            serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
                     hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
                     odometerhMethod, true, constants.WIRED_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
         }catch (Exception e){
@@ -3141,10 +3140,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     // pass driver and co driver id in the object (DriverId and CoDriverId).
                     DriverId        =  DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
                     CoDriverId      =  DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
+                    CoDriverName    = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, getApplicationContext());
                 }else{
                     // Exchange driver and co driver id when co driver is logged In.
                     CoDriverId      =  DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
                     DriverId        =  DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
+                    CoDriverName    =   DriverConst.GetDriverDetails(DriverConst.DriverName, getApplicationContext());
                 }
 
                 SharedPref.setDriverId(DriverId, getApplicationContext());
@@ -3975,7 +3976,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     ServiceCycle.ContinueSpeedCounter = 0;
                     if (constants.minDiff(savedDate, global, getApplicationContext()) > 1) {  //&& !HighPrecisionOdometer.equals(SharedPref.getHighPrecisionOdometer(getApplicationContext()))
                         SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
-                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
+                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
                                 hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
                                 odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
                     }
@@ -3984,7 +3985,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     if (constants.minDiff(savedDate, global, getApplicationContext()) > 0) {
                         SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
-                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
+                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
                                 hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
                                 odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
                     }
@@ -4000,7 +4001,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
 
                     SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer,currentLogDate, getApplicationContext());
-                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
+                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
                             hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
                             odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
 
@@ -4009,7 +4010,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     ServiceCycle.ContinueSpeedCounter = 0;
                     if (constants.minDiff(savedDate, global, getApplicationContext()) > 1) {
                         SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
-                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
+                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
                                 hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
                                 odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
                     }
@@ -4031,7 +4032,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                    // Log.d("ELD Rule", "Rule is correct.");
                     ServiceCycle.ContinueSpeedCounter = 0;
                 } else {
-                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
+                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, IsAlertTimeValid, VehicleSpeed,
                             hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
                             odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
                 }
@@ -4652,6 +4653,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     TotalMinutes = objItem.getInt(ConstantsKeys.TotalMinutes);
                                 }
                                 String DriverId = objItem.getString(ConstantsKeys.DriverId);
+                                boolean isClearEvent;
+                                if(objItem.getInt(ConstantsKeys.ClearEventId) > 0){
+                                    isClearEvent = true;
+                                }else {
+                                    isClearEvent = objItem.getBoolean(ConstantsKeys.IsClearEvent);
+                                }
                               /*  if(DriverId.equals(MainDriverId) || DriverId.equals(CoDriverId) ||
                                         DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
                                         DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
@@ -4665,7 +4672,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             objItem.getString(ConstantsKeys.EventEndDateTime),
                                             DetectionDataEventCode,
                                             TotalMinutes,
-                                            objItem.getBoolean(ConstantsKeys.IsClearEvent),
+                                            isClearEvent,
                                             ClearEngineHour,
                                             ClearOdometer,
                                             StartOdometer,
@@ -5004,7 +5011,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     SharedPref.getLocationEventType(getApplicationContext()), "", false,
                                     SharedPref.IsNorthCanada(getApplicationContext()), DriverType, constants,
                                     MainDriverPref, CoDriverPref, new EldSingleDriverLogPref(), new EldCoDriverLogPref(),
-                                    syncingMethod, global, hMethods, dbHelper, getApplicationContext(), false, CoDriverId );
+                                    syncingMethod, global, hMethods, dbHelper, getApplicationContext(), false,
+                                    CoDriverId, CoDriverName, false);
 
                             Intent intent = new Intent(ConstantsKeys.DownloadProgress);
                             intent.putExtra(ConstantsKeys.IsAgriException, true);

@@ -21,6 +21,7 @@ import androidx.core.view.MotionEventCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.constants.Constants;
+import com.constants.SharedPref;
 import com.custom.dialogs.TimerDialog;
 import com.local.db.ConstantsKeys;
 import com.local.db.DriverPermissionMethod;
@@ -87,6 +88,13 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         if(isUnAssignedMileRecord){
             IsDrivingPermission = true;
+        }else{
+            if(SharedPref.IsCCMTACertified(context) ) {
+                IsOffDutyPermission = true;
+                IsSleeperPermission = true;
+                IsOnDutyPermission  = true;
+                IsDrivingPermission = false;
+            }
         }
 
 

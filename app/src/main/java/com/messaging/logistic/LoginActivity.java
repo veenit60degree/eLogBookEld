@@ -917,8 +917,15 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 								loginBtn.setEnabled(true);
 
 								Log.d("error", "error: " + error);
-								String errorStr = getErrorMsg(error.toString());
-								global.EldScreenToast(mainLoginLayout, errorStr, getResources().getColor(R.color.colorVoilation));
+								String message = error.toString();	////  com.android.volley.TimeoutError
+								if (message.contains("TimeoutError")) {
+									message = "Connection timeout. Please try again.";
+								} else if (message.contains("ServerError")) {
+									message = "ALS server not responding";
+								} else if (message.contains("NoConnectionError")) {
+									message = "Internet connection error";
+								}
+								global.EldScreenToast(mainLoginLayout, message, getResources().getColor(R.color.colorVoilation));
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

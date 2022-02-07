@@ -155,7 +155,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     int ExistingVersionCodeInt  = 0,  VersionCodeInt = 0, AppInstallAttemp = 0;
     int CanListSize = 0, UsaListSize = 0, TimeZoneListSize = 0, SavedPosition = 0;
     String SavedCanCycle = "", SavedUsaCycle = "", CurrentCycleId = "", SavedTimeZone = "", DeviceId = "", DriverId = "",
-            CoDriverId = "", DriverName = "", CompanyId = "";
+            CoDriverId = "", DriverName = "", CoDriverName = "", CompanyId = "";
     String SelectedCanCycle = "", SelectedUsaCycle = "", SelectedTimeZone = "", exceptionDesc = "", TruckNumber, DriverTimeZone,
             IsSouthCanada, SavedCycleType, changedCycleId, changedCycleName, LocationType = "", agricultureAddress = "";
     String SourceLatitude = "", SourceLongitude = "";
@@ -424,6 +424,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     e.printStackTrace();
                                 }
 
+                                if (getActivity() != null && !constants.isObdConnectedWithELD(getActivity())) {
+                                    global.InternetErrorDialog(getActivity(), true, true);
+                                }
+
                             } else {
                                 buttonView.setChecked(false);
                                 global.EldScreenToast(SyncDataBtn, getString(R.string.notEligForDef), getResources().getColor(R.color.colorVoilation));
@@ -447,6 +451,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 */
                         }
                     }
+                }else{
+                    getExceptionStatus();
+                    deferralSwitchButton.setChecked(isDeferral);
                 }
             }
         });
@@ -764,9 +771,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
         if (!SharedPref.getDriverType(getActivity()).equals(DriverConst.SingleDriver)) {
             if(DriverId.equals(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()))){
-                CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+                CoDriverId   = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
+                CoDriverName = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, getActivity());
             }else{
-                CoDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+                CoDriverId   = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
+                CoDriverName = DriverConst.GetDriverDetails(DriverConst.DriverName, getActivity());
             }
         }
 
@@ -1627,7 +1636,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
                         LocationType, "", false, isNorthCanada, DriverType, constants,
                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                        syncingMethod, global, hMethods, dbHelper, getActivity(), false , CoDriverId) ;
+                        syncingMethod, global, hMethods, dbHelper, getActivity(), false , CoDriverId, CoDriverName, false) ;
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -2204,10 +2213,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         break;
 
                     case ChangeCycle:
-                        global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorPrimary));
+
+                        if (getActivity() != null && !constants.isObdConnectedWithELD(getActivity())) {
+                            global.InternetErrorDialog(getActivity(), true, true);
+                            Toast.makeText(getActivity(), Message, Toast.LENGTH_LONG).show();
+                        }else{
+                            global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorPrimary));
+                        }
 
                         saveUpdatedCycleData();
-
                         updateIsCycleChangeIn18DaysLog();
 
                         break;
@@ -2266,7 +2280,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     getString(R.string.enable_agriculture_exception),
                                     LocationType, "", false, isNorthCanada, DriverType, constants,
                                     MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false, CoDriverId);
+                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false,
+                                    CoDriverId, CoDriverName, false);
                             global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Enabled", getResources().getColor(R.color.colorPrimary));
 
 
@@ -2277,7 +2292,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             hMethods.SaveDriversJob(DriverId, DeviceId, getString(R.string.end_ag_Exemption), getString(R.string.disable_agriculture_exception),
                                     LocationType, "", false, isNorthCanada, DriverType, constants,
                                     MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false, CoDriverId );
+                                    syncingMethod, global, hMethods, dbHelper, getActivity(), false,
+                                    CoDriverId, CoDriverName, false );
 
                             global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Disabled", getResources().getColor(R.color.colorPrimary));
 
@@ -2606,7 +2622,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
                                         LocationType, "", true, isNorthCanada, DriverType, constants,
                                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                                        syncingMethod, global, hMethods, dbHelper, getActivity(), false, CoDriverId);
+                                        syncingMethod, global, hMethods, dbHelper, getActivity(), false,
+                                        CoDriverId, CoDriverName, false);
 
                             } else {
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.halu_excp_not_eligible), getResources().getColor(R.color.colorVoilation));

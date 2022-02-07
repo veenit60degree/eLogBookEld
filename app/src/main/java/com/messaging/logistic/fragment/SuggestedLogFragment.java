@@ -739,12 +739,12 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 if(DRIVER_JOB_STATUS == constants.ON_DUTY) {
                     driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0", startDateTime, endDateTime, totalHours, "",
                             isViolation, "", "", Duration, "", "","", logObj.getBoolean(ConstantsKeys.Personal),
-                            isEditedLog,  logObj.getBoolean(ConstantsKeys.YardMove), StartLatitude, StartLongitude );
+                            isEditedLog,  logObj.getBoolean(ConstantsKeys.YardMove), StartLatitude, StartLongitude, "", "" );
                 }else{
                     driverLogModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0", startDateTime, endDateTime, totalHours, "",
                             isViolation, "", "", Duration, "", "","",
                             logObj.getBoolean(ConstantsKeys.Personal),
-                            isEditedLog, logObj.getBoolean(ConstantsKeys.YardMove), StartLatitude, StartLongitude);
+                            isEditedLog, logObj.getBoolean(ConstantsKeys.YardMove), StartLatitude, StartLongitude,"", "");
                 }
 
                 if(isEdited){
@@ -1203,7 +1203,8 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         editedObj.getBoolean(ConstantsKeys.YardMove),
 
                         StartLatitude,
-                        StartLongitude
+                        StartLongitude,
+                        "", ""
 
                 );
 

@@ -414,7 +414,7 @@ public class Constants {
        }else if(EventCode.equals(DataTransferMalfunction)){
            eventModel = new MalDiaEventModel(context.getString(R.string.data_transfer_mal_title), context.getString(R.string.data_transfer_mal_def));
        }else{
-           eventModel = new MalDiaEventModel(context.getString(R.string.loc_miss_event), context.getString(R.string.pos_mal_occured_desc));
+           eventModel = new MalDiaEventModel(context.getString(R.string.other_dia_title), context.getString(R.string.other_dia_def));
        }
         return eventModel;
     }
@@ -542,10 +542,14 @@ public class Constants {
         locationObj.put(ConstantsKeys.IsAOBRD, ListModel.getIsAobrd());
         locationObj.put(ConstantsKeys.CurrentCycleId, ListModel.getCurrentCycleId());
         locationObj.put(ConstantsKeys.isDeferral, ListModel.getIsDeferral());
-        locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, ListModel.getUnassignedVehicleMilesId());
+        //locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, ListModel.getUnassignedVehicleMilesId());
         locationObj.put(ConstantsKeys.isNewRecord, ListModel.getNewRecordStatus());
         locationObj.put(ConstantsKeys.IsCycleChanged, ListModel.IsCycleChanged());
         locationObj.put(ConstantsKeys.UnAssignedVehicleMilesId, ListModel.getUnAssignedVehicleMilesId());
+
+        locationObj.put(ConstantsKeys.CoDriverId,   ListModel.getCoDriverId());
+        locationObj.put(ConstantsKeys.CoDriverName, ListModel.getCoDriverName());
+        locationObj.put(ConstantsKeys.IsSkipRecord, ListModel.getIsSkipRecord());
 
         jsonArray.put(locationObj);
     }
@@ -675,9 +679,13 @@ public class Constants {
         locationObj.put(ConstantsKeys.IsAOBRD, IsAOBRD);
         locationObj.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
         locationObj.put(ConstantsKeys.isDeferral, isDeferral);
-        locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, "");
+       // locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, "");
         locationObj.put(ConstantsKeys.IsCycleChanged, IsCycleChanged);
         locationObj.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
+
+        locationObj.put(ConstantsKeys.CoDriverId,   obj.getString(ConstantsKeys.CoDriverId));
+        locationObj.put(ConstantsKeys.CoDriverName, obj.getString(ConstantsKeys.CoDriverName));
+        locationObj.put(ConstantsKeys.IsSkipRecord, obj.getString(ConstantsKeys.IsSkipRecord));
 
 
         return locationObj;
@@ -1855,7 +1863,7 @@ public class Constants {
                                         Globally Global, boolean isHaulException, boolean isHaulExceptionUpdate,
                                         String isAdverseException, String adverseExceptionRemark, String LocationType,
                                         String malAddInfo, boolean IsNorthCanada, boolean IsCycleChanged, String Odometer,
-                                        String CoDriverId, HelperMethods hMethods, DBHelper dbHelper) {
+                                        String CoDriverId, String CoDriverName, HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
         long DriverLogId = 0;
@@ -1959,6 +1967,7 @@ public class Constants {
                 Odometer,
                 Odometer,
                 CoDriverId,
+                CoDriverName,
                 "0"
 
         );
@@ -5241,6 +5250,22 @@ public class Constants {
         }else{
             return false;
         }
+    }
+
+
+    public static int getDeferralDay(String DRIVER_ID, String MainDriverId, Context context){
+        int deferralDay = -1;
+        try {
+            if (DRIVER_ID.equals(MainDriverId)) {
+                deferralDay = Integer.parseInt(SharedPref.getDeferralDayMainDriver(context));
+            } else {
+                deferralDay = Integer.parseInt(SharedPref.getDeferralDayCoDriver(context));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return deferralDay;
     }
 
 

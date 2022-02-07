@@ -20,12 +20,15 @@ public class EldDriverLogModel {
     boolean IsShortHaulException;
     String StartLatitude;
     String StartLongitude;
+    String CoDriverId;
+    String CoDriverName;
 
 
     public EldDriverLogModel(int driverStatusId, String driverStatusLogId, String startDateTime, String endDateTime, String totalHours,
                              String currentCycleId, boolean isViolation, String UTCStartDateTime, String UTCEndDateTime,
                              String duration, String location, String locationKm, String remarks, boolean isPersonal,
-                             boolean isAdverseException , boolean isShortHaulException, String startLatitude, String startLongitude) {
+                             boolean isAdverseException , boolean isShortHaulException, String startLatitude, String startLongitude,
+                             String coDriverId, String coDriverName) {
         DriverStatusId = driverStatusId;
         DriverStatusLogId = driverStatusLogId;
         StartDateTime = startDateTime;
@@ -44,6 +47,8 @@ public class EldDriverLogModel {
         IsShortHaulException = isShortHaulException;
         StartLatitude = startLatitude;
         StartLongitude = startLongitude;
+        CoDriverId = coDriverId;
+        CoDriverName = coDriverName;
 
     }
 
@@ -131,5 +136,13 @@ public class EldDriverLogModel {
 
     public String getStartLongitude() {
         return StartLongitude;
+    }
+
+    public String getCoDriverId() {
+        return CoDriverId;
+    }
+
+    public String getCoDriverName() {
+        return CoDriverName;
     }
 }

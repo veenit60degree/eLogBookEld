@@ -180,9 +180,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                     }else{
                         if (intent.hasExtra(ConstantsKeys.IsEldEcmALert)) {
                             if (intent.getBooleanExtra(ConstantsKeys.IsEldEcmALert, false) == true) {
-                                global.InternetErrorDialog(TabAct.this, true);
+                                global.InternetErrorDialog(TabAct.this, true, false);
                             }else{
-                                global.InternetErrorDialog(TabAct.this, false);
+                                global.InternetErrorDialog(TabAct.this, false, false);
                             }
                         }else if (intent.hasExtra(ConstantsKeys.IsUnIdenLocMissing)) {
                             if (intent.getBooleanExtra(ConstantsKeys.IsUnIdenLocMissing, false) == true) {

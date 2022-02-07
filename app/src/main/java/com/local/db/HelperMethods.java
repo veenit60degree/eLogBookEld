@@ -222,7 +222,7 @@ public class HelperMethods {
 
             if(isDrivingAllowed){
                 // Some times wrong auto status were changed when driver switched from main to co driver. Now we will wait for 25 sec, afterthat we will check
-                isDrivingAllowed = isSwitchedTimeGreater20Sec(isDrivingAllowed, context);
+                isDrivingAllowed = isSwitchedTimeGreater10Sec(isDrivingAllowed, context);
             }
 
         }
@@ -232,7 +232,7 @@ public class HelperMethods {
 
 
     // Some times wrong auto status were changed when driver switched from main to co driver. Now we will wait for 25 sec, afterthat we will check
-    public boolean isSwitchedTimeGreater20Sec(boolean isDrivingAllowed, Context context){
+    public boolean isSwitchedTimeGreater10Sec(boolean isDrivingAllowed, Context context){
 
         String CoDriverSwitchTime = SharedPref.getCoDriverSwitchTime(context);
         try{
@@ -242,7 +242,7 @@ public class HelperMethods {
 
                 int timeInSec = (int) Constants.getDateTimeDuration(savedDateTime, currentDateTime).getStandardSeconds();
 
-                if(timeInSec <= 20){
+                if(timeInSec <= 10){
                     isDrivingAllowed = false;
                 }
             }
@@ -369,10 +369,11 @@ public class HelperMethods {
        try {
            String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
            boolean isDeferralOccurred = Constants.isDeferralOccurred(""+driverId, MainDriverId, context);
-           int deferralDays = Constants.confirmDeferralRuleDays(""+driverId, MainDriverId, context);
+          // int deferralDays = Constants.confirmDeferralRuleDays(""+driverId, MainDriverId, context);
+           int DeferralDay = Constants.getDeferralDay(""+driverId, MainDriverId, context);
 
            model.setDeferral(isDeferralOccurred);
-           model.setDeferralDay(deferralDays);
+           model.setDeferralDay(DeferralDay);
        }catch (Exception e){
            e.printStackTrace();
        }
@@ -401,7 +402,8 @@ public class HelperMethods {
                                     boolean isShortHaulUpdate, String decesionSource,   String isAdverseException,
                                     String adverseExceptionRemark, String LocationType, String malAddInfo,
                                     boolean IsNorthCanada, String StartLocationKm, boolean IsCycleChanged,
-                                    String StartOdometer, String EndOdometer, String CoDriverId, String UnAssignedVehicleMilesId){
+                                    String StartOdometer, String EndOdometer, String CoDriverId, String CoDriverName,
+                                    String UnAssignedVehicleMilesId){
 
         JSONObject driverLogJson = new JSONObject();
 
@@ -462,6 +464,8 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.EndOdometerInKm, EndOdometer);
             driverLogJson.put(ConstantsKeys.StartOdometerInKm,  StartOdometer);
             driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+            driverLogJson.put(ConstantsKeys.CoDriverName, CoDriverName);
+
             driverLogJson.put(ConstantsKeys.IsUnAssignedMileRecord, false);
             driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
@@ -841,6 +845,13 @@ public class HelperMethods {
                 }
                 driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
+                String CoDriverName = "";
+                if (logObj.has(ConstantsKeys.CoDriverName)) {
+                    CoDriverName = logObj.getString(ConstantsKeys.CoDriverName);
+                }
+                driverLogJson.put(ConstantsKeys.CoDriverName, CoDriverName);
+
+
                 boolean IsUnAssignedMileRecord = false;
                 if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
                     IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
@@ -997,6 +1008,13 @@ public class HelperMethods {
                     CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
                 }
                 driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+                String CoDriverName = "";
+                if (logObj.has(ConstantsKeys.CoDriverName)) {
+                    CoDriverName = logObj.getString(ConstantsKeys.CoDriverName);
+                }
+                driverLogJson.put(ConstantsKeys.CoDriverName, CoDriverName);
+
 
                 boolean IsUnAssignedMileRecord = false;
                 if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
@@ -1156,6 +1174,12 @@ public class HelperMethods {
                 }
                 driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
+                String CoDriverName = "";
+                if (logObj.has(ConstantsKeys.CoDriverName)) {
+                    CoDriverName = logObj.getString(ConstantsKeys.CoDriverName);
+                }
+                driverLogJson.put(ConstantsKeys.CoDriverName, CoDriverName);
+
                 boolean IsUnAssignedMileRecord = false;
                 if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
                     IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
@@ -1295,6 +1319,12 @@ public class HelperMethods {
                     CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
                 }
                 driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+                String CoDriverName = "";
+                if (logObj.has(ConstantsKeys.CoDriverName)) {
+                    CoDriverName = logObj.getString(ConstantsKeys.CoDriverName);
+                }
+                driverLogJson.put(ConstantsKeys.CoDriverName, CoDriverName);
 
                 boolean IsUnAssignedMileRecord = false;
                 if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
@@ -1455,6 +1485,13 @@ public class HelperMethods {
                 CoDriverId = lastItemJson.getString(ConstantsKeys.CoDriverId);
             }
             sameStatusJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+            String CoDriverName = "";
+            if (lastItemJson.has(ConstantsKeys.CoDriverName)) {
+                CoDriverName = lastItemJson.getString(ConstantsKeys.CoDriverName);
+            }
+            sameStatusJson.put(ConstantsKeys.CoDriverName, CoDriverName);
+
 
             boolean IsUnAssignedMileRecord = false;
             if(lastItemJson.has(ConstantsKeys.IsUnAssignedMileRecord) && !lastItemJson.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
@@ -1763,6 +1800,12 @@ public class HelperMethods {
                     }
                     driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
 
+                    String CoDriverName = "";
+                    if (logObj.has(ConstantsKeys.CoDriverName)) {
+                        CoDriverName = logObj.getString(ConstantsKeys.CoDriverName);
+                    }
+                    driverLogJson.put(ConstantsKeys.CoDriverName, CoDriverName);
+
                     boolean IsUnAssignedMileRecord = false;
                     if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
                         IsUnAssignedMileRecord = logObj.getBoolean(ConstantsKeys.IsUnAssignedMileRecord);
@@ -1947,6 +1990,13 @@ public class HelperMethods {
                 CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
             }
             driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+            String CoDriverName = "";
+            if (logObj.has(ConstantsKeys.CoDriverName)) {
+                CoDriverName = logObj.getString(ConstantsKeys.CoDriverName);
+            }
+            driverLogJson.put(ConstantsKeys.CoDriverName, CoDriverName);
+
 
             boolean IsUnAssignedMileRecord = false;
             if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
@@ -2225,6 +2275,13 @@ public class HelperMethods {
                         CoDriverId = logObj.getString(ConstantsKeys.CoDriverId);
                     }
                     driverLogJson.put(ConstantsKeys.CoDriverId, CoDriverId);
+
+                    String CoDriverName = "";
+                    if (logObj.has(ConstantsKeys.CoDriverName)) {
+                        CoDriverName = logObj.getString(ConstantsKeys.CoDriverName);
+                    }
+                    driverLogJson.put(ConstantsKeys.CoDriverName, CoDriverName);
+
 
                     boolean IsUnAssignedMileRecord = false;
                     if(logObj.has(ConstantsKeys.IsUnAssignedMileRecord) && !logObj.getString(ConstantsKeys.IsUnAssignedMileRecord).equals("null")  ) {
@@ -3480,6 +3537,7 @@ public class HelperMethods {
                         logModel.getStartOdometerInKm(),
                         logModel.getEndOdometerInKm(),
                         logModel.getCoDriverId(),
+                        logModel.getCoDriverName(),
                         logModel.getUnAssignedVehicleMilesId()
                 );
                 obj.put(ConstantsKeys.isNewRecord, logModel.IsNewRecord());
@@ -3775,7 +3833,7 @@ public class HelperMethods {
                                EldSingleDriverLogPref eldSharedPref, EldCoDriverLogPref coEldSharedPref,
                                SyncingMethod syncingMethod,
                                Globally Global, HelperMethods hMethods, DBHelper dbHelper, Context context,
-                               boolean IsCycleChanged, String CoDriverId) {
+                               boolean IsCycleChanged, String CoDriverId, String CoDriverName, boolean IsSkipRecord) {
 
         boolean isViolation = false, IsYardMove = false;
         String address = "", wasViolation = "false", ViolationReason = "", isPersonal = "false";
@@ -3785,8 +3843,8 @@ public class HelperMethods {
         String CurrentDeviceDate = Global.GetCurrentDateTime();
         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
         String CurrentCycleId   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
-        String  MainDriverName = DriverConst.GetDriverDetails(DriverConst.DriverName, context);
-        String CoDriverName = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, context);
+        String MainDriverName = DriverConst.GetDriverDetails(DriverConst.DriverName, context);
+        //String CoDriverName = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, context);
         String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
         String TrailorNumber = SharedPref.getTrailorNumber(context);
         RulesResponseObject RulesObj;
@@ -3865,7 +3923,7 @@ public class HelperMethods {
                         Global, isHaulExcptn, isShortHaulUpdate,
                         ""+isAdverseExcptn,
                         AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, IsCycleChanged,
-                        SharedPref.getObdOdometer(context), CoDriverId, hMethods, dbHelper);
+                        SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, hMethods, dbHelper);
 
 
                 String CurrentDate = Global.GetCurrentDateTime();
@@ -3937,7 +3995,10 @@ public class HelperMethods {
                     CurrentCycleId,
                     String.valueOf(isDeferral), "", "false",
                     String.valueOf(IsCycleChanged),
-                    "0"
+                    "0",
+                    CoDriverId,
+                    CoDriverName,
+                    ""+IsSkipRecord
 
             );
 
@@ -3951,7 +4012,7 @@ public class HelperMethods {
                 EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0","startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                         "", "", "","", Boolean.parseBoolean(isPersonal),
-                        isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE );
+                        isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE, CoDriverId, CoDriverName );
                 eldSharedPref.AddDriverLoc(context, logModel);
             } else {
                 CoDriverPref.AddDriverLoc(context, locationModel);
@@ -3960,7 +4021,7 @@ public class HelperMethods {
                 EldDriverLogModel logModel = new EldDriverLogModel(DRIVER_JOB_STATUS, "0","startDateTime", "endDateTime", "totalHours",
                         "currentCycleId", false, currentUtcTimeDiffFormat, currentUtcTimeDiffFormat,
                         "", "", "","", Boolean.parseBoolean(isPersonal),
-                        isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE);
+                        isAdverseExcptn, isHaulExcptn, Globally.LATITUDE, Globally.LONGITUDE, CoDriverId, CoDriverName);
                 coEldSharedPref.AddDriverLoc(context, logModel);
             }
 
@@ -3989,7 +4050,7 @@ public class HelperMethods {
                     Global, isHaulExcptn, isShortHaulUpdate,
                     ""+isAdverseExcptn,
                     AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, IsCycleChanged,
-                    SharedPref.getObdOdometer(context), CoDriverId, hMethods, dbHelper);
+                    SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, hMethods, dbHelper);
 
 
 
