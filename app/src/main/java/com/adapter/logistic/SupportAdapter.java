@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.constants.Constants;
 import com.models.SupportModel;
 import com.messaging.logistic.R;
 
@@ -147,6 +148,9 @@ public class SupportAdapter extends BaseAdapter {
 
                 if (intentEmail.resolveActivity(mContext.getPackageManager()) != null) {
                     mContext.startActivity(intentEmail);
+                }else{
+                    Constants.copyTextToClipboard(mContext, value);
+                    Toast.makeText(mContext, "Email copied.", Toast.LENGTH_LONG).show();
                 }
 
 

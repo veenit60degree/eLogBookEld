@@ -966,7 +966,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
         }
 
-        //checkDriverTimeZone(isConnected);
+        checkDriverTimeZone(isConnected);
 
 
 
@@ -1543,7 +1543,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     private class MyTimerTask extends TimerTask {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void run() {
-            Log.e("Log", "----Running");
+            Log.e("Log", "----TimerTask EldFragment");
             strCurrentDate = Global.getCurrentDate();
             SelectedDate = Global.GetCurrentDeviceDate();
 
@@ -1571,8 +1571,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             if (DriverJsonArray.length() > 0 && !IsSaveOperationInProgress) {
                                 IsPrePost = false;
                                 if (SaveRequestCount < 2) {
-
                                     SAVE_DRIVER_STATUS();
+                                }else{
+                                    CalculateTimeInOffLine(false, false);
                                 }
                             } else {
                                 IsLogShown = false;
@@ -3797,7 +3798,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     /*===== Save Driver Jobs with Shared Preference to 18 days Array List and in unposted array those will be posted to server======= */
     private void SaveDriverJob(String driverStatus ) {
 
-        try {
+      /*  try {
             if(getActivity() != null && !getActivity().isFinishing()) {
                 if (!constants.isObdConnectedWithELD(getActivity()) ) {
                     Toast.makeText(getActivity(), getString(R.string.info_missed_desc), Toast.LENGTH_SHORT).show();
@@ -3805,7 +3806,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
 
 
         boolean isLogSavedInSyncTable = false;
@@ -4591,12 +4592,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
                                             usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
                                     SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
-                                    CalculateTimeInOffLine(false, false);
 
-                                // After save locally push data to server
-                                pushStatusToServerAfterSave();
 
-                                //  }
 
                                 if (constants.IS_TRAILER_INSPECT) {
                                     if (TrailorNumber.length() > 0) {
@@ -4634,9 +4631,22 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     if (trailerDialog != null && trailerDialog.isShowing())
                                         trailerDialog.dismiss();
 
-                                    // call lat long API
-                                    IsAddressUpdate = true;
-                                    GetAddFromLatLng();
+                                    if(!IsPrePost){
+                                        CalculateTimeInOffLine(false, false);
+
+                                        // After save locally push data to server
+                                        pushStatusToServerAfterSave();
+
+                                        // call lat long API
+                                        IsAddressUpdate = true;
+                                        GetAddFromLatLng();
+
+                                    }else{
+                                        progressBar.setVisibility(View.GONE);
+                                        EnableJobViews();
+                                    }
+
+
 
                                 } catch (final IllegalArgumentException e) {
                                     e.printStackTrace();
@@ -4695,7 +4705,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 } else {
                     HideKeyboard(ReasonEditText);
-
 
                         TrailorNumber = TrailorNo.trim();
 
@@ -5944,7 +5953,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         Globally.LONGITUDE = Global.CheckLongitudeWithCycle(Globally.LONGITUDE);
 
-        if (SharedPref.IsAOBRD(getActivity()) == false){
+        if (!SharedPref.IsAOBRD(getActivity()) && !IsPrePost ){
             params = new HashMap<String, String>();
             params.put(ConstantsKeys.Latitude, Globally.LATITUDE);
             params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
@@ -5952,6 +5961,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             GetAddFromLatLngRequest.executeRequest(Request.Method.POST, APIs.GET_Add_FROM_LAT_LNG, params, GetAddFromLatLng,
                     Constants.SocketTimeout3Sec, ResponseCallBack, ErrorCallBack);
+        }else{
+            progressBar.setVisibility(View.GONE);
+            EnableJobViews();
         }
     }
 

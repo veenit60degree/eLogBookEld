@@ -65,8 +65,12 @@ public class CommonUtils {
 
 			// this check is for special device resolution (Chinese tablet)
 			if(metrics.widthPixels == 1280 && metrics.heightPixels == 800){
-				SingleDriverMenuWidth = 500;
-				DualDriverMenuWidth   = 580;
+				//SingleDriverMenuWidth = 500;
+				//DualDriverMenuWidth   = 580;
+
+				SingleDriverMenuWidth = 630;
+				DualDriverMenuWidth   = 680;
+
 			}else if(metrics.widthPixels > 2200 && metrics.heightPixels >= 1080){
 				SingleDriverMenuWidth = 980;
 				DualDriverMenuWidth   = 1050;

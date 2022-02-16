@@ -19,9 +19,9 @@ android {
     defaultConfig {
         applicationId "com.messaging.logistic"
         minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 135  //116
-        versionName "3.6.33"  //3.5.28
+        targetSdkVersion 30
+        versionCode 137  //116
+        versionName "3.6.35"  //3.5.28
         // Enabling multidex support.
         multiDexEnabled true
 

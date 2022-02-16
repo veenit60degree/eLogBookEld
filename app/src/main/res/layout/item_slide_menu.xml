@@ -24,8 +24,8 @@
 
             <ImageView
                 android:id="@+id/menuImgView"
-                android:layout_width="@dimen/view_height_25"
-                android:layout_height="@dimen/view_height_25"
+                android:layout_width="@dimen/margin_23"
+                android:layout_height="@dimen/margin_23"
                 android:src="@drawable/eld_malfunction"
                 android:layout_centerVertical="true"
                 android:tint="@color/slide_menu_default"
@@ -48,13 +48,12 @@
                 android:id="@+id/menuTitleTxtView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/margin_15"
+                android:layout_toRightOf="@+id/menuImgView"
                 android:text="@string/noti_history"
                 android:textColor="@color/gray_unidenfied"
-                android:textSize="@dimen/text_size_16"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/menuImgView"
-                />
+                android:textSize="@dimen/text_size_15" />
 
 
 

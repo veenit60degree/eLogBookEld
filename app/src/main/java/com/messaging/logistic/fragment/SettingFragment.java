@@ -1163,7 +1163,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             connectivityTask.ConnectivityRequest(SyncData, ConnectivityInterface);
         }else{
             ClearDriverUnSavedlog();
-            global.EldScreenToast(SyncDataBtn, "No data available for syncing.", getResources().getColor(R.color.colorSleeper));
+            global.EldScreenToast(SyncDataBtn, "No data available for syncing.", getResources().getColor(R.color.colorVoilation));
         }
 
     }
@@ -1730,7 +1730,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         syncDataUpload.execute();
                     }else{
                         settingSpinImgVw.stopAnimation();
-                        global.EldScreenToast(SyncDataBtn, "No data available for syncing.", getResources().getColor(R.color.colorSleeper));
+                        global.EldScreenToast(SyncDataBtn, "No data available for syncing.", getResources().getColor(R.color.colorVoilation));
                     }
 
 

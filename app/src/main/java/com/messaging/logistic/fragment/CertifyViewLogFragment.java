@@ -276,7 +276,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     CertifyConfirmationDialog certifyConfirmationDialog;
     MissingLocationDialog missingLocationDialog;
 
-    String MainDriverPass = "", CoDriverPass = "", CoDriverNameTxt = "";
+    String MainDriverPass = "", CoDriverPass = "";  // CoDriverNameTxt = "";
     int  eldWarningColor;
 
     final private int REQUEST_CODE_ASK_PERMISSIONS = 101;
@@ -1268,7 +1268,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 if (Globally.isConnected(getActivity())) {
                     if(CertifyViewLogFragment.SwapDrivingArray.size() > 0) {
 
-                        certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), true, "Do you want to swap DRIVING with " +CoDriverNameTxt + " ?",
+                        certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), true,
+                                "Do you want to swap DRIVING with " +SelectedCoDriverName + " ?",
                                 new CertificationListener());
                         certifyConfirmationDialog.show();
 
@@ -2085,7 +2086,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         try{
             isExceptionEnabledForDay = false;
             isDrivingAllowForSwap = false;
-            CoDriverNameTxt = "";
+          //  CoDriverNameTxt = "";
             for(int logCount = 0 ; logCount < driverLogJsonArray.length() ; logCount ++) {
                 JSONObject logObj = (JSONObject) driverLogJsonArray.get(logCount);
                 DRIVER_JOB_STATUS = logObj.getInt(ConstantsKeys.DriverStatusId);
@@ -3160,7 +3161,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                                     MainDriverPref, CoDriverPref);
 
                                         String logModel = dataObj.getString("DriverLogModel");
-                                        CoDriverNameTxt = dataObj.getString(ConstantsKeys.CoDriverName);
+                                       // CoDriverNameTxt = dataObj.getString(ConstantsKeys.CoDriverName);
 
                                         if(!logModel.equals("null")) {
                                             if (unPostedLogArray.length() == 0) {

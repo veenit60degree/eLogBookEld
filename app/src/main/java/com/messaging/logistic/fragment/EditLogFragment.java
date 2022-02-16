@@ -1258,22 +1258,6 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 String location     = obj.getString(ConstantsKeys.StartLocation);
                 String[] loc        = location.split(",");
                 String[] oldLocArr  = oldLocAddress.split(",");
-                String IsStatusAutomatic = "false";
-                String OBDSpeed = "0";
-                String GPSSpeed = "0";
-                String PlateNumber = "";
-                String isHaulException = "false";
-                String IsShortHaulUpdate = "false";
-                String DecesionSource = "edit";
-                String isAdverseException = "";
-                String adverseExceptionRemark = "";
-
-                String TruckNumber = "";
-                String remarks = "";
-                String LocationType = "";
-                String IsNorthCanada = "false";
-                String isNewRecord = "false";
-                String IsCycleChanged = "false";
 
                 int locLength = loc.length - 1;
                 City = "";
@@ -1318,67 +1302,29 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     City = City.substring(0, 49);
                 }
 
-                if(obj.has(ConstantsKeys.IsStatusAutomatic)){
-                    IsStatusAutomatic = obj.getString(ConstantsKeys.IsStatusAutomatic);
-                }
+                String IsStatusAutomatic = constants.checkStringBoolInJsonObj(obj, ConstantsKeys.IsStatusAutomatic);
+                String OBDSpeed = constants.checkIntInJsonObj(obj, ConstantsKeys.OBDSpeed);
+                String GPSSpeed = constants.checkIntInJsonObj(obj, ConstantsKeys.GPSSpeed);
+                String PlateNumber = constants.checkStringInJsonObj(obj, ConstantsKeys.PlateNumber);
+                String isHaulException = constants.checkStringBoolInJsonObj(obj, ConstantsKeys.IsShortHaulException);
+                String IsShortHaulUpdate = constants.checkStringBoolInJsonObj(obj, ConstantsKeys.IsShortHaulUpdate);
+                String isAdverseException = constants.checkStringBoolInJsonObj(obj, ConstantsKeys.IsAdverseException);
+                String adverseExceptionRemark = constants.checkStringBoolInJsonObj(obj, ConstantsKeys.AdverseExceptionRemarks);
+                String TruckNumber = constants.checkStringInJsonObj(obj, ConstantsKeys.Truck);
+                String LocationType = constants.checkStringInJsonObj(obj, ConstantsKeys.LocationType);
+                String IsNorthCanada = constants.checkStringBoolInJsonObj(obj, ConstantsKeys.IsNorthCanada);
+                String isNewRecord = constants.checkStringBoolInJsonObj(obj, ConstantsKeys.isNewRecord);
+                String IsCycleChanged = constants.checkStringBoolInJsonObj(obj, ConstantsKeys.IsCycleChanged);
+                String CoDriverId = constants.checkStringInJsonObj(obj, ConstantsKeys.CoDriverId);
+                String CoDriverName = constants.checkStringInJsonObj(obj, ConstantsKeys.CoDriverName);
+                String UnAssignedVehicleMilesId = constants.checkIntInJsonObj(obj, ConstantsKeys.UnAssignedVehicleMilesId);
+                String Remarks = constants.checkStringInJsonObj(obj, ConstantsKeys.Remarks);
 
-                if(obj.has(ConstantsKeys.OBDSpeed)){
-                    OBDSpeed = obj.getString(ConstantsKeys.OBDSpeed);
-                }
-
-                if(obj.has(ConstantsKeys.GPSSpeed)){
-                    GPSSpeed = obj.getString(ConstantsKeys.GPSSpeed);
-                }
-
-                if(obj.has(ConstantsKeys.PlateNumber)){
-                    PlateNumber = obj.getString(ConstantsKeys.PlateNumber);
-                }
-
-                if(obj.has(ConstantsKeys.IsShortHaulException)){
-                    isHaulException = obj.getString(ConstantsKeys.IsShortHaulException);
-                }
-
-
-                if(obj.has(ConstantsKeys.IsShortHaulUpdate)){
-                    IsShortHaulUpdate = obj.getString(ConstantsKeys.IsShortHaulUpdate);
-                }
-
+                String DecesionSource = "edit";
                 if(obj.has(ConstantsKeys.DecesionSource)){
                     DecesionSource = obj.getString(ConstantsKeys.DecesionSource);
                 }
 
-                if (obj.has(ConstantsKeys.IsAdverseException )) {
-                    isAdverseException = obj.getString(ConstantsKeys.IsAdverseException );
-                }
-                if (obj.has(ConstantsKeys.AdverseExceptionRemarks)) {
-                    adverseExceptionRemark = obj.getString(ConstantsKeys.AdverseExceptionRemarks);
-                }
-
-                if(obj.has(ConstantsKeys.Truck)){
-                    TruckNumber = obj.getString(ConstantsKeys.Truck);
-                }
-
-                if(obj.has(ConstantsKeys.LocationType)){
-                    LocationType = obj.getString(ConstantsKeys.LocationType);
-                }
-                if(obj.has(ConstantsKeys.IsNorthCanada)){
-                    IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
-                }
-
-                if(obj.has(ConstantsKeys.isNewRecord)){
-                    isNewRecord = obj.getString(ConstantsKeys.isNewRecord);
-                }
-
-                if(obj.has(ConstantsKeys.IsCycleChanged)){
-                    IsCycleChanged = obj.getString(ConstantsKeys.IsCycleChanged);
-                }
-
-                String UnAssignedVehicleMilesId = "0";
-                if (obj.has(ConstantsKeys.UnAssignedVehicleMilesId) && !obj.getString(ConstantsKeys.UnAssignedVehicleMilesId).equals("null")) {
-                    UnAssignedVehicleMilesId = obj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
-                }
-
-                remarks = obj.getString(ConstantsKeys.Remarks);
 
                 EldDataModelNew eldModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1387,7 +1333,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         obj.getString(ConstantsKeys.YardMove),
                         obj.getString(ConstantsKeys.Personal),
                         DeviceID,
-                        remarks,
+                        Remarks,
                         utcDate,
                         TruckNumber,
                         obj.getString(ConstantsKeys.Trailor),
@@ -1424,8 +1370,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         isNewRecord,
                         IsCycleChanged,
                         UnAssignedVehicleMilesId,
-                        obj.getString(ConstantsKeys.CoDriverId),
-                        obj.getString(ConstantsKeys.CoDriverName),
+                        CoDriverId,
+                        CoDriverName,
                         "false"
                         );
 

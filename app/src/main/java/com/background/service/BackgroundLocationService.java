@@ -471,9 +471,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         // ---------------- temp data ---------------------
 
-                        // temp odometer for simulator
-                        // converting odometer from km to meter. because it is saving in km.
-                        // currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
+                        // temp odometer for simulator converting odometer from km to meter. because it is saving in km.
+//                        currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
+
 
 /*
                         int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
@@ -903,7 +903,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         if (SharedPref.getVINNumber(getApplicationContext()).length() > 5) {
             if (obdShell.result == 0) {
                 //System.out.println("obd --> cat type --> " + obdShell.successMsg);
-                if (obdShell.successMsg.contains("USB_DCP")) {  // Connected State
+                if (obdShell.successMsg.contains("USB_DCP")) {  // USB_DCP     Connected State
 
                     if (lastObdStatus != Constants.WIRED_CONNECTED) {
 

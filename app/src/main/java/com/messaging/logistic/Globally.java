@@ -293,14 +293,26 @@ public class Globally {
 				lp.gravity = Gravity.BOTTOM;
 				ecmErrorAlert.getWindow().setAttributes(lp);
 
+				final ImageView closeDialogImg = (ImageView) ecmErrorAlert.findViewById(R.id.closeDialogImg);
+
 				if(isEventChanged){
+					ecmErrorAlert.setCancelable(false);
+					closeDialogImg.setVisibility(View.GONE);
 					TextView limitedConnDescTxtView = (TextView) ecmErrorAlert.findViewById(R.id.limitedConnDescTxtView);
 					limitedConnDescTxtView.setText(context.getResources().getString(R.string.limited_ecm_desc_2));
+					TextView okAlertBtn = (TextView) ecmErrorAlert.findViewById(R.id.okAlertBtn);
+					okAlertBtn.setVisibility(View.VISIBLE);
+					okAlertBtn.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							ecmErrorAlert.dismiss();
+						}
+					});
 				}else {
 					ecmErrorAlert.setCancelable(false);
 				}
 
-				final ImageView closeDialogImg = (ImageView) ecmErrorAlert.findViewById(R.id.closeDialogImg);
+
 				closeDialogImg.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {

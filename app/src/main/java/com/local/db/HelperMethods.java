@@ -866,6 +866,8 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
 
+
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -3302,13 +3304,14 @@ public class HelperMethods {
 
 
     /*-------------------- GET DRIVER SELECTED MODEL TO EDIT DRIVER -------------------- */
-    public  DriverLogModel GetSelectedLogModelEdit( JSONObject json, DateTime end, DateTime endUtc, boolean isLastElement, boolean isCurrentDate, final int offsetFromUTC){
+    public  DriverLogModel GetSelectedLogModelEdit( JSONObject json, DateTime end, DateTime endUtc, boolean isLastElement,
+                                                    boolean isCurrentDate, final int offsetFromUTC){
 
         DriverLogModel driverLogModel = new DriverLogModel();
-        String IsStatusAutomatic = "false", DecesionSource = "", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
-        String adverseExceptionRemark = "", UnAssignedVehicleMilesId = "0";
-        boolean HaulHourException = false, IsAdverseException = false;
-        boolean IsNorthCanada = false;
+        //String IsStatusAutomatic = "false", DecesionSource = "", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
+       // String adverseExceptionRemark = "", UnAssignedVehicleMilesId = "0";
+       // boolean HaulHourException = false, IsAdverseException = false;
+      //  boolean IsNorthCanada = false;
 
         try {
             DateTime startDateTime       = Globally.getDateTimeObj(json.getString(ConstantsKeys.startDateTime),  false);
@@ -3386,40 +3389,18 @@ public class HelperMethods {
                 driverLogModel.setStartLocationKm(json.getString(ConstantsKeys.StartLocation));
             }
 
-            if(json.has(ConstantsKeys.IsStatusAutomatic))
-                IsStatusAutomatic = json.getString(ConstantsKeys.IsStatusAutomatic);
-
-            if(json.has(ConstantsKeys.OBDSpeed))
-                OBDSpeed = json.getString(ConstantsKeys.OBDSpeed);
-
-            if(json.has(ConstantsKeys.GPSSpeed))
-                GPSSpeed = json.getString(ConstantsKeys.GPSSpeed);
-
-            if(json.has(ConstantsKeys.PlateNumber))
-                PlateNumber = json.getString(ConstantsKeys.PlateNumber);
-
-
-            if(json.has(ConstantsKeys.IsShortHaulException) && !json.getString(ConstantsKeys.IsShortHaulException).equals("null") )
-                HaulHourException = json.getBoolean(ConstantsKeys.IsShortHaulException);
-
-            if(json.has(ConstantsKeys.DecesionSource))
-                DecesionSource = json.getString(ConstantsKeys.DecesionSource);
-
-            if (json.has(ConstantsKeys.IsAdverseException )) {
-                IsAdverseException = json.getBoolean(ConstantsKeys.IsAdverseException );
-            }
-            if (json.has(ConstantsKeys.AdverseExceptionRemarks)) {
-                adverseExceptionRemark = json.getString(ConstantsKeys.AdverseExceptionRemarks);
-            }
-
-            if(json.has(ConstantsKeys.IsNorthCanada) && !json.getString(ConstantsKeys.IsNorthCanada).equals("null")  ) {
-                IsNorthCanada = json.getBoolean(ConstantsKeys.IsNorthCanada);
-            }
-
-            if (json.has(ConstantsKeys.UnAssignedVehicleMilesId)) {
-                UnAssignedVehicleMilesId = json.getString(ConstantsKeys.UnAssignedVehicleMilesId);
-            }
-
+            String IsStatusAutomatic = Constants.checkStringBoolInJsonObj(json, ConstantsKeys.IsStatusAutomatic);
+            String OBDSpeed = Constants.checkIntInJsonObj(json, ConstantsKeys.OBDSpeed);
+            String GPSSpeed = Constants.checkIntInJsonObj(json, ConstantsKeys.GPSSpeed);
+            String PlateNumber = Constants.checkStringInJsonObj(json, ConstantsKeys.PlateNumber);
+            boolean HaulHourException = Boolean.parseBoolean(Constants.checkStringBoolInJsonObj(json, ConstantsKeys.IsShortHaulException));
+            String DecesionSource = Constants.checkStringInJsonObj(json, ConstantsKeys.DecesionSource);
+            boolean IsAdverseException = Boolean.parseBoolean(Constants.checkStringBoolInJsonObj(json, ConstantsKeys.IsAdverseException));
+            String adverseExceptionRemark = Constants.checkStringBoolInJsonObj(json, ConstantsKeys.AdverseExceptionRemarks);
+            boolean IsNorthCanada = Boolean.parseBoolean(Constants.checkStringBoolInJsonObj(json, ConstantsKeys.IsNorthCanada));
+            String UnAssignedVehicleMilesId = Constants.checkIntInJsonObj(json, ConstantsKeys.UnAssignedVehicleMilesId);
+            String CoDriverId = Constants.checkStringInJsonObj(json, ConstantsKeys.CoDriverId);
+            String CoDriverName = Constants.checkStringInJsonObj(json, ConstantsKeys.CoDriverName);
 
             driverLogModel.setIsStatusAutomatic(IsStatusAutomatic);
             driverLogModel.setOBDSpeed(OBDSpeed);
@@ -3432,6 +3413,9 @@ public class HelperMethods {
             driverLogModel.setAdverseExceptionRemark(adverseExceptionRemark);
             driverLogModel.setNorthCanadaStatus(IsNorthCanada);
             driverLogModel.setUnAssignedVehicleMilesId(UnAssignedVehicleMilesId);
+
+            driverLogModel.setCoDriverId(CoDriverId);
+            driverLogModel.setCoDriverName(CoDriverName);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -3541,6 +3525,11 @@ public class HelperMethods {
                         logModel.getUnAssignedVehicleMilesId()
                 );
                 obj.put(ConstantsKeys.isNewRecord, logModel.IsNewRecord());
+
+                obj.put(ConstantsKeys.CoDriverId, logModel.getCoDriverId());
+                obj.put(ConstantsKeys.CoDriverName, logModel.getCoDriverName());
+                obj.put(ConstantsKeys.UnAssignedVehicleMilesId, logModel.getUnAssignedVehicleMilesId());
+
                 array.put(obj);
             }catch (Exception e){
                 e.printStackTrace();
@@ -3621,6 +3610,9 @@ public class HelperMethods {
                 UnAssignedVehicleMilesId = json.getString(ConstantsKeys.UnAssignedVehicleMilesId);
             }
 
+            String CoDriverId = Constants.checkStringInJsonObj(json, ConstantsKeys.CoDriverId);
+            String CoDriverName = Constants.checkStringInJsonObj(json, ConstantsKeys.CoDriverName);
+
             driverLogModel.setDriverLogId(json.getLong(ConstantsKeys.DriverLogId));
             driverLogModel.setDriverId(json.getLong(ConstantsKeys.DriverId));
             driverLogModel.setProjectId(json.getInt(ConstantsKeys.ProjectId));
@@ -3688,6 +3680,9 @@ public class HelperMethods {
             driverLogModel.setNorthCanadaStatus(IsNorthCanada);
             driverLogModel.setNewRecordStatus(IsNewLogAdded);
             driverLogModel.setUnAssignedVehicleMilesId(UnAssignedVehicleMilesId);
+
+            driverLogModel.setCoDriverId(CoDriverId);
+            driverLogModel.setCoDriverName(CoDriverName);
 
         }catch (Exception e){
             e.printStackTrace();

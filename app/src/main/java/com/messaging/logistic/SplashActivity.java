@@ -377,9 +377,11 @@ public class SplashActivity extends Activity implements
 
 
     void CheckUserCredientials(){
-        if (!SharedPref.getUserName( SplashActivity.this).equals("") &&
-                !SharedPref.getPassword( SplashActivity.this).equals("")) {
+        String userName = SharedPref.getUserName( SplashActivity.this);
+        String password = SharedPref.getPassword( SplashActivity.this);
+       // Toast.makeText(getApplicationContext(), "userName: " +userName + ", password: " +password, Toast.LENGTH_LONG).show();
 
+        if (!userName.equals("") && !password.equals("")) {
             ScreenName = "home";
             MoveToNextScreen(ScreenName);
         } else {
@@ -397,6 +399,7 @@ public class SplashActivity extends Activity implements
             Globally.LATITUDE = "" +location.getLatitude();
             Globally.LONGITUDE = "" +location.getLongitude();
             Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);
+
         }
 
         @Override
@@ -577,6 +580,7 @@ public class SplashActivity extends Activity implements
 
         // call home/login activity
         intent.putExtra("user_type", "splash");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

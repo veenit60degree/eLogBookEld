@@ -17,7 +17,7 @@ public class ConstantsKeys {
     public static String utcEndDateTime     = "UTCEndDateTime";
 
     public static String totalMin           = "TotalHours";
-    public static String isNewRecord        = "isNewRecord";
+    public static String isNewRecord        = "isNewRecord";    // used at Edit log time when new log is inserted.
 
     public static String TotalHours         = "TotalHours";
     public static String Duration           = "Duration";
@@ -400,7 +400,7 @@ public class ConstantsKeys {
     public static String LogSignImageInByte             = "LogSignImageInByte";
     public static String CoDriverName                   = "CoDriverName";
     public static String CoDriverKey                    = "CoDriverKey";
-    public static String IsSkipRecord                   = "IsSkipRecord";
+    public static String IsSkipRecord                   = "IsSkipRecord";   // true used for same status like DRIVING/ONDUTY when violation occurred
     public static String EngineMileage                  = "EngineMileage";
     public static String Date                           = "Date";
     public static String IsRecertifyRequied             = "IsRecertifyRequied";

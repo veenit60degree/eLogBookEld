@@ -512,7 +512,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
         if (obdShell.result == 0) {
-            if (obdShell.successMsg.contains("USB_DCP")) {
+            if (obdShell.successMsg.contains("USB_DCP")) {  //USB_DCP
 
                 if (SharedPref.getObdStatus(getApplicationContext()) != Constants.WIRED_CONNECTED) {
 

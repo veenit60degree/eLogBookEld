@@ -65,6 +65,9 @@
     </style>
 
     <style name="Custom.Widget.SwitchCompat" parent="Widget.AppCompat.CompoundButton.Switch" >
+        <item name="colorButtonNormal">@color/cardview_shadow_start_color</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/colorPrimary</item>
         <item name="android:textColorPrimary">@color/colorPrimary</item>  <!--textColor on activated state -->
     </style>
 

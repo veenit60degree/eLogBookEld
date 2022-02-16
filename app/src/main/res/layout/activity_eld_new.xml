@@ -108,8 +108,8 @@
 
             <ImageView
                 android:id="@+id/cyleFlagImgView"
-                android:layout_width="@dimen/margin_27"
-                android:layout_height="@dimen/margin_27"
+                android:layout_width="@dimen/margin_25"
+                android:layout_height="@dimen/margin_25"
                 android:padding="@dimen/margin_short_2"
                 android:src="@drawable/usa_flag"
 
@@ -155,7 +155,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_short_1"
             android:layout_marginTop="@dimen/margin_short_4"
-            android:layout_toLeftOf="@+id/shippingDocLay"
             android:layout_toRightOf="@+id/currentCycleLay"
             android:singleLine="true"
             android:text="Cycle Time Left: 45:36"
@@ -178,8 +177,8 @@
 
             <ImageView
                 android:id="@+id/calendarBtn"
-                android:layout_width="@dimen/margin_23"
-                android:layout_height="@dimen/margin_23"
+                android:layout_width="@dimen/margin_21"
+                android:layout_height="@dimen/margin_21"
                 android:layout_marginTop="@dimen/margin_short_1"
                 android:src="@drawable/calender_eld" />
 
@@ -192,7 +191,7 @@
                 android:paddingTop="@dimen/margin_short_1"
                 android:text="mm/dd/yyyy"
                 android:textColor="@color/color_eld_theme"
-                android:textSize="@dimen/text_size_14"
+                android:textSize="@dimen/text_size_13"
 
                 />
 
@@ -206,11 +205,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/margin_short_5"
+            android:layout_marginRight="@dimen/margin_short_2"
             android:background="@drawable/eld_blue_new_selector"
-            android:paddingLeft="@dimen/margin_10"
+            android:paddingLeft="@dimen/margin_short_6"
             android:paddingTop="@dimen/margin_short_5"
-            android:paddingRight="@dimen/margin_10"
+            android:paddingRight="@dimen/margin_short_6"
             android:paddingBottom="@dimen/margin_short_7"
             android:text="@string/summary"
             android:textColor="@color/whiteee"
@@ -229,11 +228,11 @@
 
             <ImageView
                 android:id="@+id/connectionStatusImgView"
-                android:layout_width="@dimen/view_height_70"
+                android:layout_width="@dimen/view_height_40"
                 android:layout_height="@dimen/margin_29"
                 android:layout_centerHorizontal="true"
-                android:paddingLeft="@dimen/margin_short_4"
-                android:paddingRight="@dimen/margin_short_4"
+                android:paddingLeft="@dimen/margin_short_2"
+                android:paddingRight="@dimen/margin_short_2"
                 android:paddingBottom="@dimen/margin_short_5"
                 android:src="@drawable/wifi_obd_active"
 

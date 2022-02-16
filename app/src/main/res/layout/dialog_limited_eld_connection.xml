@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ecmAlertTitleTV"
-                android:layout_marginRight="@dimen/view_height_40"
+                android:layout_toLeftOf="@+id/closeDialogImg"
                 android:layout_toRightOf="@+id/errorImgEcm"
                 android:paddingLeft="@dimen/margin_short_8"
                 android:text="@string/limited_ecm_desc_new"
@@ -77,6 +77,26 @@
                 android:textSize="14sp"
 
                 />
+
+
+
+            <TextView
+                android:id="@+id/okAlertBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ok"
+                android:textSize="@dimen/text_size_17"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginTop="@dimen/margin_short_2"
+                android:layout_below="@+id/limitedConnDescTxtView"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/margin_short_6"
+                android:layout_marginRight="@dimen/view_height_30"
+                android:visibility="gone"
+
+                />
+
 
 
         </RelativeLayout>

@@ -560,80 +560,35 @@ public class Constants {
         JSONObject obj = (JSONObject) jsonArray.get(pos);
         JSONObject locationObj = new JSONObject();
 
-        String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "";
-        String decesionSpurce = "", HaulHourException = "false", TruckNumber = "";
-        String isAdverseException = "", adverseExceptionRemark = "", LocationType = "", IsNorthCanada = "false";
-
         String isViolation = obj.getString(ConstantsKeys.IsViolation).trim();
 
         if (!isViolation.equalsIgnoreCase("true") && !isViolation.equalsIgnoreCase("false")) {
             isViolation = "false";
         }
 
-        if (obj.has(ConstantsKeys.IsStatusAutomatic)) {
-            IsStatusAutomatic = obj.getString(ConstantsKeys.IsStatusAutomatic);
-        }
+        String IsStatusAutomatic = checkStringBoolInJsonObj(obj, ConstantsKeys.IsStatusAutomatic);
+        String OBDSpeed = checkStringInJsonObj(obj, ConstantsKeys.OBDSpeed);
+        String GPSSpeed = checkStringInJsonObj(obj, ConstantsKeys.GPSSpeed);
+        String PlateNumber = checkStringInJsonObj(obj, ConstantsKeys.PlateNumber);
+        String HaulHourException = checkStringBoolInJsonObj(obj, ConstantsKeys.IsShortHaulException);
+        String decesionSource = checkStringInJsonObj(obj, ConstantsKeys.DecesionSource);
+        String TruckNumber = checkStringInJsonObj(obj, ConstantsKeys.TruckNumber);
+        String isAdverseException = checkStringBoolInJsonObj(obj, ConstantsKeys.IsAdverseException);
+        String adverseExceptionRemark = checkStringInJsonObj(obj, ConstantsKeys.AdverseExceptionRemarks);
+        String LocationType = checkStringInJsonObj(obj, ConstantsKeys.LocationType);
+        String IsNorthCanada = checkStringBoolInJsonObj(obj, ConstantsKeys.IsNorthCanada);
 
-        if (obj.has(ConstantsKeys.OBDSpeed)) {
-            OBDSpeed = obj.getString(ConstantsKeys.OBDSpeed);
-        }
 
-        if (obj.has(ConstantsKeys.GPSSpeed)) {
-            GPSSpeed = obj.getString(ConstantsKeys.GPSSpeed);
-        }
+        String DrivingStartTime = checkStringInJsonObj(obj, ConstantsKeys.DrivingStartTime);
+        String IsAOBRD = checkStringBoolInJsonObj(obj, ConstantsKeys.IsAOBRD);
+        String CurrentCycleId = checkStringInJsonObj(obj, ConstantsKeys.CurrentCycleId);
+        String isDeferral = checkStringBoolInJsonObj(obj, ConstantsKeys.isDeferral);
+        String IsCycleChanged = checkStringBoolInJsonObj(obj, ConstantsKeys.IsCycleChanged);
 
-        if (obj.has(ConstantsKeys.PlateNumber)) {
-            PlateNumber = obj.getString(ConstantsKeys.PlateNumber);
-        }
-
-        if (obj.has(ConstantsKeys.IsShortHaulException)) {
-            HaulHourException = obj.getString(ConstantsKeys.IsShortHaulException);
-        }
-
-        if (obj.has(ConstantsKeys.DecesionSource)) {
-            decesionSpurce = obj.getString(ConstantsKeys.DecesionSource);
-        }
-        if (obj.has(ConstantsKeys.TruckNumber)) {
-            TruckNumber = obj.getString(ConstantsKeys.TruckNumber);
-        }
-
-        if (obj.has(ConstantsKeys.IsAdverseException )) {
-            isAdverseException = obj.getString(ConstantsKeys.IsAdverseException );
-        }
-        if (obj.has(ConstantsKeys.AdverseExceptionRemarks)) {
-            adverseExceptionRemark = obj.getString(ConstantsKeys.AdverseExceptionRemarks);
-        }
-        if (obj.has(ConstantsKeys.LocationType)) {
-            LocationType = obj.getString(ConstantsKeys.LocationType);
-        }
-        if (obj.has(ConstantsKeys.IsNorthCanada)) {
-            IsNorthCanada = obj.getString(ConstantsKeys.IsNorthCanada);
-        }
-
-        String DrivingStartTime = "", IsAOBRD = "false", CurrentCycleId = "", isDeferral = "false", IsCycleChanged = "false";
-        if (obj.has(ConstantsKeys.DrivingStartTime)) {
-            DrivingStartTime = obj.getString(ConstantsKeys.DrivingStartTime);
-        }
-
-        if (obj.has(ConstantsKeys.IsAOBRD)) {
-            IsAOBRD = obj.getString(ConstantsKeys.IsAOBRD);
-        }
-        if (obj.has(ConstantsKeys.CurrentCycleId)) {
-            CurrentCycleId = obj.getString(ConstantsKeys.CurrentCycleId);
-        }
-
-        if (obj.has(ConstantsKeys.isDeferral)) {
-            isDeferral = obj.getString(ConstantsKeys.isDeferral);
-        }
-
-        if (obj.has(ConstantsKeys.IsCycleChanged)) {
-            IsCycleChanged = obj.getString(ConstantsKeys.IsCycleChanged);
-        }
-
-        String UnAssignedVehicleMilesId = "0";
-        if (obj.has(ConstantsKeys.UnAssignedVehicleMilesId)) {
-            UnAssignedVehicleMilesId = obj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
-        }
+        String CoDriverId = checkStringInJsonObj(obj, ConstantsKeys.CoDriverId);
+        String CoDriverName = checkStringInJsonObj(obj, ConstantsKeys.CoDriverName);
+        String IsSkipRecord = checkStringBoolInJsonObj(obj, ConstantsKeys.IsSkipRecord);
+        String UnAssignedVehicleMilesId = checkIntInJsonObj(obj, ConstantsKeys.UnAssignedVehicleMilesId);
 
 
         locationObj.put(ConstantsKeys.ProjectId, obj.getString(ConstantsKeys.ProjectId));
@@ -668,7 +623,7 @@ public class Constants {
         locationObj.put(ConstantsKeys.PlateNumber, PlateNumber);
 
         locationObj.put(ConstantsKeys.IsShortHaulException, HaulHourException);
-        locationObj.put(ConstantsKeys.DecesionSource, decesionSpurce);
+        locationObj.put(ConstantsKeys.DecesionSource, decesionSource);
 
         locationObj.put(ConstantsKeys.IsAdverseException, isAdverseException);
         locationObj.put(ConstantsKeys.AdverseExceptionRemarks, adverseExceptionRemark);
@@ -679,19 +634,55 @@ public class Constants {
         locationObj.put(ConstantsKeys.IsAOBRD, IsAOBRD);
         locationObj.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
         locationObj.put(ConstantsKeys.isDeferral, isDeferral);
-       // locationObj.put(ConstantsKeys.UnassignedVehicleMilesId, "");
         locationObj.put(ConstantsKeys.IsCycleChanged, IsCycleChanged);
         locationObj.put(ConstantsKeys.UnAssignedVehicleMilesId, UnAssignedVehicleMilesId);
 
-        locationObj.put(ConstantsKeys.CoDriverId,   obj.getString(ConstantsKeys.CoDriverId));
-        locationObj.put(ConstantsKeys.CoDriverName, obj.getString(ConstantsKeys.CoDriverName));
-        locationObj.put(ConstantsKeys.IsSkipRecord, obj.getString(ConstantsKeys.IsSkipRecord));
+        locationObj.put(ConstantsKeys.CoDriverId,   CoDriverId);
+        locationObj.put(ConstantsKeys.CoDriverName, CoDriverName);
+        locationObj.put(ConstantsKeys.IsSkipRecord, IsSkipRecord);
 
 
         return locationObj;
     }
 
-    
+
+    public static String checkStringInJsonObj(JSONObject obj, String key){
+        String value = "";
+        try {
+            if (obj.has(key) && !obj.getString(key).equals("null")) {
+                value = obj.getString(key);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    public static String checkStringBoolInJsonObj(JSONObject obj, String key){
+        String value = "false";
+        try {
+            if (obj.has(key)) {
+                value = obj.getString(key);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    public static String checkIntInJsonObj(JSONObject obj, String key){
+        String value = "0";
+        try {
+            if (obj.has(key) && !obj.getString(key).equals("null")) {
+                value = obj.getString(key);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+
     public static boolean isValidVinFromObd(String ignitionStatus, Context context){
         String VINNumberFromApi = SharedPref.getVINNumber(context);
         String obdReceivedVin = SharedPref.getVehicleVin(context);
