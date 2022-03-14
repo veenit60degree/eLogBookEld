@@ -53,7 +53,7 @@ import java.util.Map;
 public class InspectionsHistoryFragment extends Fragment implements View.OnClickListener{
 
     View rootView;
-    ArrayList<String> TruckList, TrailerList;
+    ArrayList<String> TruckList, TrailerList,AgricultureList;
     // public static int inspectionLayHeight = 0;
     TextView dateActionBarTV, EldTitleTV, inspectionDateTv, noDataInspectTV;
     TextView trailerTextVw;
@@ -137,6 +137,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
         TruckList           = new ArrayList<String>();
         TrailerList         = new ArrayList<String>();
+        AgricultureList     = new ArrayList<String>();
         DRIVER_ID           = SharedPref.getDriverId( getActivity());
 
         isTablet            = Globally.isTablet(getActivity());
@@ -405,6 +406,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         dateActionBarTV.setText(InspectionDateTime);
         TruckList   = new ArrayList<String>();
         TrailerList = new ArrayList<String>();
+        AgricultureList = new ArrayList<String>();
 
     }
 
@@ -451,6 +453,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
             savedInspectionList = new ArrayList<>();
             savedCtPatInspectionList = new ArrayList<>();
+            AgricultureList    = new ArrayList<>();
 
             JSONArray InspectionArray;
 
@@ -465,8 +468,15 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
                 JSONArray TruckArray        = new JSONArray(inspectItemObj.getString(ConstantsKeys.InspectionTruckIssueType));
                 JSONArray TrailerArray      = new JSONArray(inspectItemObj.getString(ConstantsKeys.InspectionTrailorIssueType));
+                JSONArray AgricultureArray  = new JSONArray();
+                if(inspectItemObj.has(ConstantsKeys.AgricultureIssueTypeInspection)) {
+                    AgricultureArray = new JSONArray(inspectItemObj.getString(ConstantsKeys.AgricultureIssueTypeInspection));
+                    AgricultureList = ParseListData(AgricultureArray);
+                }
+
                 TruckList   = ParseListData(TruckArray);
                 TrailerList = ParseListData(TrailerArray);
+
                 String VehicleEquNumber = "", TrailorEquNumber = "", VIN = "", Odometer = "";
 
                 int InspectionTypeId = 1;
@@ -508,7 +518,8 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                 String SupervisorMechanicsName = "", Remarks = "";
                 String arrivalSealNumber = "", departureSealNumber = "";
                 String securityInspectionPersonName = "", followUpInspectionPersonName = "", affixedSealPersonName = "",  verificationPersonName = "";
-                String byteInspectionConductorSign = "", byteFollowUpConductorSign = "", byteSealFixerSign = "", byteSealVerifierSign = "";
+                String byteInspectionConductorSign = "", byteFollowUpConductorSign = "", byteSealFixerSign = "", byteSealVerifierSign = "",agricultureReason = "";
+                String conatinerIdentification = "";
 
                 if (inspectionType.equals("pti")) {
                     PreTripInspectionSatisfactory = inspectionItemObj.getBoolean(ConstantsKeys.PreTripInspectionSatisfactory);
@@ -525,6 +536,8 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                     followUpInspectionPersonName = inspectionItemObj.getString(ConstantsKeys.FollowUpInspectionPersonName);
                     affixedSealPersonName = inspectionItemObj.getString(ConstantsKeys.AffixedSealPersonName);
                     verificationPersonName = inspectionItemObj.getString(ConstantsKeys.VerificationPersonName);
+                    agricultureReason      = inspectionItemObj.getString(ConstantsKeys.AreaOfInspectionRemarks);
+                    conatinerIdentification = inspectionItemObj.getString(ConstantsKeys.ContainerIdentification);
 
                     byteInspectionConductorSign = getByteImage(inspectionItemObj, ConstantsKeys.SecurityInspectionPersonSignature, ConstantsKeys.ByteInspectionConductorSign);
                     byteFollowUpConductorSign = getByteImage(inspectionItemObj, ConstantsKeys.FollowUpInspectionPersonSignature, ConstantsKeys.ByteFollowUpConductorSign);
@@ -535,7 +548,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                             VIN, VehicleEquNumber, TrailorEquNumber, InspecDateTime, arrivalSealNumber, departureSealNumber,
                             securityInspectionPersonName, followUpInspectionPersonName, affixedSealPersonName,  verificationPersonName, "", "",
                             TruckArray.toString(), TrailerArray.toString(), byteInspectionConductorSign, byteFollowUpConductorSign,
-                            byteSealFixerSign, byteSealVerifierSign);
+                            byteSealFixerSign, byteSealVerifierSign, AgricultureArray.toString(),agricultureReason, conatinerIdentification);
 
                     savedCtPatInspectionList.add(ctPatModel);
 
@@ -579,6 +592,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
                         TruckList,
                         TrailerList
+
 
                 );
                 savedInspectionList.add(inspectModel);
@@ -668,6 +682,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                 if(status.equalsIgnoreCase("true")){
                     TruckList   = new ArrayList<String>();
                     TrailerList = new ArrayList<String>();
+                    AgricultureList = new ArrayList<String>();
 
                     JSONObject dataObj = new JSONObject(objJson.getString("Data"));
 

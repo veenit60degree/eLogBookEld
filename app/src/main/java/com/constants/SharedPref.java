@@ -2233,6 +2233,45 @@ public class SharedPref {
     }
 
 
+    // Save Engine sync diagnostic event also when power diagnostic occurred and odometer was not changed or less then equal to 1 km  ----------------
+    public static void saveEngSyncEventAlso( boolean IsEngSyncDia, String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.EngSyncDiagnosticAlso, IsEngSyncDia);
+        editor.putString(ConstantsKeys.EngSyncDiagnosticTimeAlso, savedTime);
+
+        editor.commit();
+    }
+
+
+    // if true, save engine sync Diagnostic event also when power diagnostic occurred -------------------
+    public static boolean isAlsoSaveEngSyncDiaEvent( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.EngSyncDiagnosticAlso, false);
+        }else {
+            return false;
+        }
+    }
+
+
+
+
+
+
+
+
+    // Get also saved engine sync event time  -------------------
+    public static String alsoSavedEngSyncDiaEventTime( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getString(ConstantsKeys.EngSyncDiagnosticTimeAlso, "");
+        }else {
+            return "";
+        }
+    }
+
+
 
     // Save Engine sync Malfunction status  ----------------
     public static void saveEngSyncMalfunctionStatus( boolean IsEngSyncDia, Context context) {
@@ -2252,6 +2291,29 @@ public class SharedPref {
             return false;
         }
     }
+
+
+
+
+    // Save Missing Diagnostic status  -------------------
+    public static void saveMissingDiaStatus( boolean IsLocMalfunction, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.MissingDiagnostic, IsLocMalfunction);
+
+        editor.commit();
+    }
+
+    // Get issing Diagnostic occured status -------------------
+    public static boolean isMissingDiaOccur( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.MissingDiagnostic, false);
+        }else {
+            return false;
+        }
+    }
+
 
 
 
@@ -2316,6 +2378,31 @@ public class SharedPref {
         }else {
             return false;
         }
+    }
+
+
+
+    // Set Storage Malfunction Status -------------------
+    public static void SetStorageMalfunctionStatus( boolean CCMTACertified, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsStorageMalfunction, CCMTACertified);
+        editor.commit();
+    }
+
+
+
+    // Get Storage Malfunction Status  -------------------
+    public static boolean IsStorageMalfunction(Context context) {
+
+        boolean isRecord = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isRecord = preferences.getBoolean(ConstantsKeys.IsStorageMalfunction, false);
+        }
+        return isRecord;
+
+
     }
 
 
@@ -3204,4 +3291,26 @@ public class SharedPref {
         return isAdverse;
 
     }
+
+    // Set Auto Sync log Status -------------------
+    public static void setAutoSyncStatus( boolean value, Context context) {
+        if(context  != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("AutoSyncStatus", value);
+            editor.commit();
+        }
+    }
+
+    // Get Auto Sync log Status -------------------
+    public static boolean IsAutoSync( Context context) {
+        boolean AutoSyncStatus = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            AutoSyncStatus = preferences.getBoolean("AutoSyncStatus", false);
+        }
+        return AutoSyncStatus;
+
+    }
+
 }

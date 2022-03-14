@@ -32,7 +32,10 @@
     <color name="hos_shift">#39A9C4</color>
     <color name="hos_current_status">#00BFA5</color>
     <color name="hos_cycle">#7A2FFA</color>
-
+    <color name="color_storage1500">#97CE45</color>
+    <color name="color_storage500">#E5953B</color>
+    <color name="color_storage0">#CE4545</color>
+    
     <color name="hos_cardview_shadow">#3284E529</color>
     <color name="hos_distance">#0ACDFC</color>
     <color name="hos_status">#00BFA5</color>

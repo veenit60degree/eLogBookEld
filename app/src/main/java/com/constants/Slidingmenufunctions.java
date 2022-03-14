@@ -257,6 +257,11 @@ public class Slidingmenufunctions implements OnClickListener {
 	}
 
 	void logoutEvent(){
+
+		Constants.isLogoutEvent = true;
+		SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
+		startService();
+
 		if(constants.isActionAllowed(context)){
 			if(isSignPending()){
 				certifyLogAlert();

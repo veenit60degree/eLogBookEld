@@ -1111,7 +1111,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
             String truckTractorId = "", truckTractorVin = "", totalVehDistance = "", distanceToday = "",  currTotalDis = "", currTotalEng = "";
 
-            JSONArray EngineHourArray = new JSONArray(dataObj.getString("EngineHourMilesReportList"));
+            JSONArray EngineHourArray = constants.checkNullArray(dataObj,ConstantsKeys.EngineHourMilesReportList);
             if(EngineHourArray.length() > 0) {
 
                 for (int i = 0; i < EngineHourArray.length(); i++) {
@@ -1269,20 +1269,20 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                             TotalDrivingHours = TotalDrivingHours.replaceAll("-", "");
                             TotalSleeperBerthHours = TotalSleeperBerthHours.replaceAll("-", "");
 
-                            JSONArray dotLogArray = new JSONArray(dataObj.getString("graphRecordList"));
+                            JSONArray dotLogArray = constants.checkNullArray(dataObj, ConstantsKeys.graphRecordList);
                             ParseGraphData(dotLogArray);
 
-                            JSONArray dutyStatusArray = new JSONArray(dataObj.getString(ConstantsKeys.dutyStatusChangesList));
-                            JSONArray loginLogoutArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutList));
-                            JSONArray ChangeInDriversCycleList = new JSONArray(dataObj.getString(ConstantsKeys.ChangeInDriversCycleList));
-                            JSONArray commentsRemarksArray = new JSONArray(dataObj.getString(ConstantsKeys.commentsRemarksList));
-                            JSONArray enginePowerArray = new JSONArray(dataObj.getString(ConstantsKeys.enginePowerUpAndShutDownList));
-                            JSONArray unIdentifiedVehArray = new JSONArray(dataObj.getString(ConstantsKeys.UnAssignedVehicleMilesList));
+                            JSONArray dutyStatusArray =  constants.checkNullArray(dataObj, ConstantsKeys.dutyStatusChangesList);
+                            JSONArray loginLogoutArray =  constants.checkNullArray(dataObj, ConstantsKeys.loginAndLogoutList);
+                            JSONArray ChangeInDriversCycleList =  constants.checkNullArray(dataObj, ConstantsKeys.ChangeInDriversCycleList);
+                            JSONArray commentsRemarksArray =  constants.checkNullArray(dataObj, ConstantsKeys.commentsRemarksList);
+                            JSONArray enginePowerArray =  constants.checkNullArray(dataObj, ConstantsKeys.enginePowerUpAndShutDownList);
+                            JSONArray unIdentifiedVehArray =  constants.checkNullArray(dataObj, ConstantsKeys.UnAssignedVehicleMilesList);
 
 
                             DutyStatusList = constants.parseCanadaDotInList(dutyStatusArray, true);
                             if (dataObj.has(ConstantsKeys.loginAndLogoutDates)) {
-                                JSONArray loginSortingArray = new JSONArray(dataObj.getString(ConstantsKeys.loginAndLogoutDates));
+                                JSONArray loginSortingArray =  constants.checkNullArray(dataObj, ConstantsKeys.loginAndLogoutDates);
                                 LoginLogoutList = constants.parseCanadaLogoutLoginList(loginSortingArray);
                             } else {
                                 LoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray, true);

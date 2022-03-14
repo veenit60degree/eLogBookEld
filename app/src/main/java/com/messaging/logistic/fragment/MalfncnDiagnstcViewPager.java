@@ -565,7 +565,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 refreshButtonCLicked = true;
                 GetMalfunctionEvents( DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
 
-                refreshEventDataFromService();
+                constants.refreshEventDataFromService(getActivity());
 
                 break;
 
@@ -580,22 +580,6 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         }
     }
 
-
-    protected void refreshEventDataFromService(){
-        try {
-            Constants.isCallMalDiaEvent = true;
-            SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
-
-            // call service onStart command to call event data to refresh
-            Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                getActivity().startForegroundService(serviceIntent);
-            }
-            getActivity().startService(serviceIntent);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
 
     private void MoveFragment(Fragment fragment){
@@ -1065,6 +1049,10 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
             parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
 
+            parseListInHashMap(malDiaArray, Constants.DataRecordingComplianceMalfunction);
+
+
+
             setPagerAdapter(position, false);
 
         }catch (Exception e){
@@ -1096,7 +1084,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                                 DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
                                 DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction) ||
                                 DetectionDataEventCode.equals(Constants.DataTransferMalfunction) ||
-                                DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)) {
+                                DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic) ||
+                                DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction)) {
                             parseData(mainObj);
                         } else {
                             if (DrId.equals(DriverId) || DrId.equals("0")) {
@@ -1165,7 +1154,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 String TotalMinutes = "--";
 
                 if(EventType.equals(Constants.PowerComplianceDiagnostic) || EventType.equals(Constants.PowerComplianceMalfunction) ||
-                          EventType.equals(Constants.UnIdentifiedDrivingDiagnostic) || EventType.equals(Constants.MissingDataDiagnostic)){
+                          EventType.equals(Constants.UnIdentifiedDrivingDiagnostic) || EventType.equals(Constants.MissingDataDiagnostic) ||
+                        EventType.equals(Constants.DataRecordingComplianceMalfunction)){
                     if(mainObj.has(ConstantsKeys.TotalMinutes)){
                         TotalMinutes = mainObj.getString(ConstantsKeys.TotalMinutes);
                     }

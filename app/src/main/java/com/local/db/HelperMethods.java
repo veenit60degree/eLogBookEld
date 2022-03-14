@@ -723,7 +723,7 @@ public class HelperMethods {
                 boolean HaulHourException = false, IsShortHaulUpdate = false, IsNorthCanada = false, IsCycleChanged = false;
 
                 int CycleId = 1;
-                if(!logObj.isNull(ConstantsKeys.CurrentCycleId))
+                if(!logObj.getString(ConstantsKeys.CurrentCycleId).equals("null"))
                     CycleId = logObj.getInt(ConstantsKeys.CurrentCycleId);
 
                 driverLogJson.put(ConstantsKeys.DriverLogId,        logObj.getLong(ConstantsKeys.DriverLogId));
@@ -759,11 +759,6 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.EndLocation,        logObj.getString(ConstantsKeys.EndLocation));
                 driverLogJson.put(ConstantsKeys.Truck,              logObj.getString(ConstantsKeys.Truck));
 
-                if(logObj.has(ConstantsKeys.StartLocationKm)){
-                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
-                }else{
-                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
-                }
 
                 if(logObj.has(ConstantsKeys.DriverName))
                     DriverName = logObj.getString(ConstantsKeys.DriverName);
@@ -838,6 +833,12 @@ public class HelperMethods {
 
                 driverLogJson.put(ConstantsKeys.EndOdometerInKm, EndOdometer);
                 driverLogJson.put(ConstantsKeys.StartOdometerInKm,  logObj.getString(ConstantsKeys.StartOdometerInKm));
+
+                if(logObj.has(ConstantsKeys.StartLocationKm)){
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
+                }
 
                 String CoDriverId = "";
                 if (logObj.has(ConstantsKeys.CoDriverId)) {
@@ -940,11 +941,6 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.EndLocation,        logObj.getString(ConstantsKeys.EndLocation));
                 driverLogJson.put(ConstantsKeys.Truck,              logObj.getString(ConstantsKeys.Truck));
 
-                if(logObj.has(ConstantsKeys.StartLocationKm)){
-                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
-                }else{
-                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
-                }
 
                 if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                     IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1003,6 +999,13 @@ public class HelperMethods {
                 }else{
                     driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                     driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+                }
+
+
+                if(logObj.has(ConstantsKeys.StartLocationKm)){
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
                 }
 
                 String CoDriverId = "";
@@ -1106,11 +1109,6 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.EndLocation,        logObj.getString(ConstantsKeys.EndLocation));
                 driverLogJson.put(ConstantsKeys.Truck,              logObj.getString(ConstantsKeys.Truck));
 
-                if(logObj.has(ConstantsKeys.StartLocationKm)){
-                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
-                }else{
-                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
-                }
 
                 if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                     IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1169,6 +1167,14 @@ public class HelperMethods {
                     driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                     driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
                 }
+
+                if(logObj.has(ConstantsKeys.StartLocationKm)){
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
+                }
+
+
 
                 String CoDriverId = "";
                 if (logObj.has(ConstantsKeys.CoDriverId)) {
@@ -1253,11 +1259,6 @@ public class HelperMethods {
                 driverLogJson.put(ConstantsKeys.EndLocation,        logObj.getString(ConstantsKeys.EndLocation));
                 driverLogJson.put(ConstantsKeys.Truck,              logObj.getString(ConstantsKeys.Truck));
 
-                if(logObj.has(ConstantsKeys.StartLocationKm)){
-                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
-                }else{
-                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
-                }
 
                 if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                     IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1314,6 +1315,12 @@ public class HelperMethods {
                 }else{
                     driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                     driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+                }
+
+                if(logObj.has(ConstantsKeys.StartLocationKm)){
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocationKm));
+                }else{
+                    driverLogJson.put(ConstantsKeys.StartLocationKm,      logObj.getString(ConstantsKeys.StartLocation));
                 }
 
                 String CoDriverId = "";
@@ -1699,11 +1706,11 @@ public class HelperMethods {
                         }
                     }
 
-                    if(!logObj.isNull(ConstantsKeys.CurrentCycleId)){
+                    if(!logObj.getString(ConstantsKeys.CurrentCycleId).equals("null")){
                         CurrentCycleId = logObj.getInt(ConstantsKeys.CurrentCycleId);
                     }
 
-                    if(!logObj.isNull(ConstantsKeys.IsViolation)){
+                    if(!logObj.getString(ConstantsKeys.IsViolation).equals("null")){
                         IsViolation = logObj.getBoolean(ConstantsKeys.IsViolation);
                     }
 
@@ -1728,11 +1735,6 @@ public class HelperMethods {
                     CheckNullStatus(logObj, driverLogJson, ConstantsKeys.EndLocation);
                     CheckNullStatus(logObj, driverLogJson, ConstantsKeys.Truck);
 
-                    if(logObj.has(ConstantsKeys.StartLocationKm)){
-                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocationKm));
-                    }else{
-                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocation));
-                    }
 
                     if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                         IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1795,6 +1797,13 @@ public class HelperMethods {
                         driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                         driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
                     }
+
+                    if(logObj.has(ConstantsKeys.StartLocationKm)){
+                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocationKm));
+                    }else{
+                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocation));
+                    }
+
 
                     String CoDriverId = "";
                     if (logObj.has(ConstantsKeys.CoDriverId)) {
@@ -1890,11 +1899,11 @@ public class HelperMethods {
             driverLogJson.put(ConstantsKeys.utcEndDateTime, LastDayUTCDate);
             driverLogJson.put(ConstantsKeys.totalMin, totalMin);
 
-            if(!logObj.isNull(ConstantsKeys.CurrentCycleId)){
+            if(!logObj.getString(ConstantsKeys.CurrentCycleId).equals("null")){
                 CurrentCycleId = logObj.getInt(ConstantsKeys.CurrentCycleId);
             }
 
-            if(!logObj.isNull(ConstantsKeys.IsViolation)){
+            if(!logObj.getString(ConstantsKeys.IsViolation).equals("null")){
                 IsViolation = logObj.getBoolean(ConstantsKeys.IsViolation);
             }
 
@@ -1917,12 +1926,6 @@ public class HelperMethods {
             CheckNullStatus(logObj, driverLogJson, ConstantsKeys.StartLocation);
             CheckNullStatus(logObj, driverLogJson, ConstantsKeys.EndLocation);
             CheckNullStatus(logObj, driverLogJson, ConstantsKeys.Truck);
-
-            if(logObj.has(ConstantsKeys.StartLocationKm)){
-                driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocationKm));
-            }else{
-                driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocation));
-            }
 
             if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                 IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1985,6 +1988,12 @@ public class HelperMethods {
             }else{
                 driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                 driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+            }
+
+            if(logObj.has(ConstantsKeys.StartLocationKm)){
+                driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocationKm));
+            }else{
+                driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocation));
             }
 
             String CoDriverId = "";
@@ -2154,12 +2163,12 @@ public class HelperMethods {
                     }
 
 
-                    if(!logObj.isNull(ConstantsKeys.CurrentCycleId)){
+                    if(!logObj.getString(ConstantsKeys.CurrentCycleId).equals("null")){
                         CurrentCycleId = logObj.getInt(ConstantsKeys.CurrentCycleId);
                     }
 
-                    if(!logObj.isNull(ConstantsKeys.IsViolation)){
-                        IsViolation = logObj.getBoolean(ConstantsKeys.IsViolation);
+                    if(!logObj.getString(ConstantsKeys.IsViolation).equals("null")){
+                         IsViolation = logObj.getBoolean(ConstantsKeys.IsViolation);
                     }
 
                     try {
@@ -2203,11 +2212,6 @@ public class HelperMethods {
                     CheckNullStatus(logObj, driverLogJson, ConstantsKeys.Truck);
                     CheckNullStatus(logObj, driverLogJson, ConstantsKeys.LocationType);
 
-                    if(logObj.has(ConstantsKeys.StartLocationKm)){
-                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocationKm));
-                    }else{
-                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocation));
-                    }
 
                     if(logObj.has(ConstantsKeys.IsStatusAutomatic))
                         IsStatusAutomatic = logObj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -2270,6 +2274,14 @@ public class HelperMethods {
                     }else{
                         driverLogJson.put(ConstantsKeys.StartOdometerInKm, "0");
                         driverLogJson.put(ConstantsKeys.EndOdometerInKm, "0");
+                    }
+
+                    if(logObj.has(ConstantsKeys.StartLocationKm)){
+                        driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocationKm));
+                    }else{
+                        if(logObj.has(ConstantsKeys.StartLocation)) {
+                            driverLogJson.put(ConstantsKeys.StartLocationKm, logObj.getString(ConstantsKeys.StartLocation));
+                        }
                     }
 
                     String CoDriverId = "";
@@ -2404,7 +2416,7 @@ public class HelperMethods {
 
     void CheckNullStatus(JSONObject json, JSONObject returnJSON, String key){
         try {
-            if(!json.isNull(key))
+            if(!json.getString(key).equals("null"))
                 returnJSON.put(key, json.getString(key));
             else
                 returnJSON.put(key, "");
@@ -2652,7 +2664,7 @@ public class HelperMethods {
 
                     if(startDateTime.isBefore(SelectedDate)) {
                         int CurrentCycleId = 1;
-                        if (!json.isNull(ConstantsKeys.CurrentCycleId)) {
+                        if (!json.getString(ConstantsKeys.CurrentCycleId).equals("null")) {
                             CurrentCycleId = json.getInt(ConstantsKeys.CurrentCycleId);
                         }
 
@@ -2678,13 +2690,13 @@ public class HelperMethods {
 
                         driverLogModel.setCurrentCyleId(CurrentCycleId);
 
-                        if (!json.isNull(ConstantsKeys.IsViolation))
+                        if (!json.getString(ConstantsKeys.IsViolation).equals("null"))
                             driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
                         else
                             driverLogModel.setViolation(false);
 
 
-                        if (!json.isNull(ConstantsKeys.ViolationReason))
+                        if (!json.getString(ConstantsKeys.ViolationReason).equals("null"))
                             driverLogModel.setViolationReason(json.getString(ConstantsKeys.ViolationReason));
                         else
                             driverLogModel.setViolationReason("");
@@ -2692,14 +2704,14 @@ public class HelperMethods {
 
                         driverLogModel.setCreatedDate(endDateTime);
 
-                        if(json.has(ConstantsKeys.IsShortHaulException) && !json.isNull(ConstantsKeys.IsShortHaulException))
+                        if(json.has(ConstantsKeys.IsShortHaulException) && !json.getString(ConstantsKeys.IsShortHaulException).equals("null"))
                             driverLogModel.setIsShortHaulException(json.getBoolean(ConstantsKeys.IsShortHaulException));
                         else
                             driverLogModel.setIsShortHaulException(false);
 
 
 
-                        if(json.has(ConstantsKeys.IsAdverseException) && !json.isNull(ConstantsKeys.IsAdverseException))
+                        if(json.has(ConstantsKeys.IsAdverseException) && !json.getString(ConstantsKeys.IsAdverseException).equals("null"))
                             driverLogModel.setIsAdverseException(json.getBoolean(ConstantsKeys.IsAdverseException));
                         else
                             driverLogModel.setIsAdverseException(false);
@@ -2735,7 +2747,7 @@ public class HelperMethods {
             DateTime utcStartDateTime    = Globally.getDateTimeObj(json.getString(ConstantsKeys.utcStartDateTime), true);
             DateTime utcEndDateTime      = Globally.getDateTimeObj(json.getString(ConstantsKeys.utcEndDateTime), true);
             int CurrentCycleId = 1;
-            if(!json.isNull(ConstantsKeys.CurrentCycleId)){
+            if(!json.getString(ConstantsKeys.CurrentCycleId).equals("null")){
                 CurrentCycleId = json.getInt(ConstantsKeys.CurrentCycleId);
             }
 
@@ -2755,7 +2767,7 @@ public class HelperMethods {
             }else{
                 driverLogModel.setEndDateTime(endDateTime);
                 driverLogModel.setUtcEndDateTime(utcEndDateTime);
-                if(json.isNull(ConstantsKeys.totalMin)){
+                if(json.getString(ConstantsKeys.totalMin).equals("null")){
                     driverLogModel.setTotalMinutes(0);
                 }else{
                     driverLogModel.setTotalMinutes(json.getDouble(ConstantsKeys.totalMin));
@@ -2772,7 +2784,7 @@ public class HelperMethods {
             driverLogModel.setYardMove(json.getBoolean(ConstantsKeys.YardMove));
             driverLogModel.setPersonal(json.getBoolean(ConstantsKeys.Personal));
 
-            if(json.has(ConstantsKeys.IsCycleChanged) && !json.isNull(ConstantsKeys.IsCycleChanged)) {
+            if(json.has(ConstantsKeys.IsCycleChanged) && !json.getString(ConstantsKeys.IsCycleChanged).equals("null")) {
                 driverLogModel.setCycleChanged(json.getBoolean(ConstantsKeys.IsCycleChanged));
             }else{
                 driverLogModel.setCycleChanged(false);
@@ -2781,26 +2793,26 @@ public class HelperMethods {
             driverLogModel.setCurrentCyleId(CurrentCycleId);
 
 
-            if(!json.isNull(ConstantsKeys.IsViolation))
+            if(!json.getString(ConstantsKeys.IsViolation).equals("null"))
                 driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
             else
                 driverLogModel.setViolation(false);
 
 
-            if(!json.isNull(ConstantsKeys.ViolationReason))
+            if(!json.getString(ConstantsKeys.ViolationReason).equals("null"))
                 driverLogModel.setViolationReason(json.getString(ConstantsKeys.ViolationReason));
             else
                 driverLogModel.setViolationReason("");
 
 
-            if(json.has(ConstantsKeys.IsShortHaulException) && !json.isNull(ConstantsKeys.IsShortHaulException))
+            if(json.has(ConstantsKeys.IsShortHaulException) && !json.getString(ConstantsKeys.IsShortHaulException).equals("null"))
                 driverLogModel.setIsShortHaulException(json.getBoolean(ConstantsKeys.IsShortHaulException));
             else
                 driverLogModel.setIsShortHaulException(false);
 
 
 
-            if(json.has(ConstantsKeys.IsAdverseException) && !json.isNull(ConstantsKeys.IsAdverseException))
+            if(json.has(ConstantsKeys.IsAdverseException) && !json.getString(ConstantsKeys.IsAdverseException).equals("null"))
                 driverLogModel.setIsAdverseException(json.getBoolean(ConstantsKeys.IsAdverseException));
             else
                 driverLogModel.setIsAdverseException(false);
@@ -2829,7 +2841,7 @@ public class HelperMethods {
             // DateTime utcStartDateTime    = Globally.getDateTimeObj(json.getString(ConstantsKeys.utcStartDateTime), true);
 
             int CurrentCycleId = 1;
-            if(!json.isNull(ConstantsKeys.CurrentCycleId)){
+            if(!json.getString(ConstantsKeys.CurrentCycleId).equals("null")){
                 CurrentCycleId = json.getInt(ConstantsKeys.CurrentCycleId);
             }
 
@@ -2858,7 +2870,7 @@ public class HelperMethods {
             driverLogModel.setCurrentCyleId(CurrentCycleId);
             driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
 
-            if(!json.isNull(ConstantsKeys.ViolationReason))
+            if(!json.getString(ConstantsKeys.ViolationReason).equals("null"))
                 driverLogModel.setViolationReason(json.getString(ConstantsKeys.ViolationReason));
             else
                 driverLogModel.setViolationReason("");
@@ -2866,14 +2878,14 @@ public class HelperMethods {
 
             driverLogModel.setCreatedDate(endDateTime);
 
-            if(json.has(ConstantsKeys.IsShortHaulException) && !json.isNull(ConstantsKeys.IsShortHaulException))
+            if(json.has(ConstantsKeys.IsShortHaulException) && !json.getString(ConstantsKeys.IsShortHaulException).equals("null"))
                 driverLogModel.setIsShortHaulException(json.getBoolean(ConstantsKeys.IsShortHaulException));
             else
                 driverLogModel.setIsShortHaulException(false);
 
 
 
-            if(json.has(ConstantsKeys.IsAdverseException) && !json.isNull(ConstantsKeys.IsAdverseException))
+            if(json.has(ConstantsKeys.IsAdverseException) && !json.getString(ConstantsKeys.IsAdverseException).equals("null"))
                 driverLogModel.setIsAdverseException(json.getBoolean(ConstantsKeys.IsAdverseException));
             else
                 driverLogModel.setIsAdverseException(false);
@@ -2909,7 +2921,7 @@ public class HelperMethods {
                     if(startDateTime.equals(selectedDate) || startDateTime.isBefore(selectedDate) ) {
                         if (DateDiff < noOfDays) {
                             int CurrentCycleId = 1;
-                            if (!json.isNull(ConstantsKeys.CurrentCycleId)) {
+                            if (!json.getString(ConstantsKeys.CurrentCycleId).equals("null")) {
                                 CurrentCycleId = json.getInt(ConstantsKeys.CurrentCycleId);
                             }
 
@@ -2942,12 +2954,12 @@ public class HelperMethods {
 
                             driverLogModel.setCurrentCyleId(CurrentCycleId);
 
-                            if (!json.isNull(ConstantsKeys.IsViolation))
+                            if (!json.getString(ConstantsKeys.IsViolation).equals("null"))
                                 driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
                             else
                                 driverLogModel.setViolation(false);
 
-                            if (!json.isNull(ConstantsKeys.ViolationReason))
+                            if (!json.getString(ConstantsKeys.ViolationReason).equals("null"))
                                 driverLogModel.setViolationReason(json.getString(ConstantsKeys.ViolationReason));
                             else
                                 driverLogModel.setViolationReason("");
@@ -2955,14 +2967,14 @@ public class HelperMethods {
 
                             driverLogModel.setCreatedDate(endDateTime);
 
-                            if(json.has(ConstantsKeys.IsShortHaulException) && !json.isNull(ConstantsKeys.IsShortHaulException))
+                            if(json.has(ConstantsKeys.IsShortHaulException) && !json.getString(ConstantsKeys.IsShortHaulException).equals("null"))
                                 driverLogModel.setIsShortHaulException(json.getBoolean(ConstantsKeys.IsShortHaulException));
                             else
                                 driverLogModel.setIsShortHaulException(false);
 
 
 
-                            if(json.has(ConstantsKeys.IsAdverseException) && !json.isNull(ConstantsKeys.IsAdverseException))
+                            if(json.has(ConstantsKeys.IsAdverseException) && !json.getString(ConstantsKeys.IsAdverseException).equals("null"))
                                 driverLogModel.setIsAdverseException(json.getBoolean(ConstantsKeys.IsAdverseException));
                             else
                                 driverLogModel.setIsAdverseException(false);
@@ -3009,7 +3021,7 @@ public class HelperMethods {
                 DateTime utcStartDateTime    = Globally.getDateTimeObj(json.getString(ConstantsKeys.utcStartDateTime), true);
                 DateTime utcEndDateTime      = Globally.getDateTimeObj(json.getString(ConstantsKeys.utcEndDateTime), true);
                 int CurrentCycleId = -1; // temp set to check violation
-                if(!json.isNull(ConstantsKeys.CurrentCycleId)){
+                if(!json.getString(ConstantsKeys.CurrentCycleId).equals("null")){
                     CurrentCycleId = json.getInt(ConstantsKeys.CurrentCycleId);
                 }
 
@@ -3041,7 +3053,7 @@ public class HelperMethods {
                 driverLogModel.setPersonal(json.getBoolean(ConstantsKeys.Personal));
 
                 driverLogModel.setCurrentCyleId(CurrentCycleId);
-                if(json.isNull(ConstantsKeys.IsViolation)){
+                if(!json.getString(ConstantsKeys.IsViolation).equals("null")){
                     driverLogModel.setViolation(false);
                 }else {
                     driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
@@ -3049,14 +3061,14 @@ public class HelperMethods {
                 driverLogModel.setViolationReason("");
                 driverLogModel.setCreatedDate(endDateTime);
 
-                if(json.has(ConstantsKeys.IsShortHaulException) && !json.isNull(ConstantsKeys.IsShortHaulException))
+                if(json.has(ConstantsKeys.IsShortHaulException) && !json.getString(ConstantsKeys.IsShortHaulException).equals("null"))
                     driverLogModel.setIsShortHaulException(json.getBoolean(ConstantsKeys.IsShortHaulException));
                 else
                     driverLogModel.setIsShortHaulException(false);
 
 
 
-                if(json.has(ConstantsKeys.IsAdverseException) && !json.isNull(ConstantsKeys.IsAdverseException))
+                if(json.has(ConstantsKeys.IsAdverseException) && !json.getString(ConstantsKeys.IsAdverseException).equals("null"))
                     driverLogModel.setIsAdverseException(json.getBoolean(ConstantsKeys.IsAdverseException));
                 else
                     driverLogModel.setIsAdverseException(false);
@@ -3319,7 +3331,7 @@ public class HelperMethods {
             DateTime utcStartDateTime    = Globally.getDateTimeObj(json.getString(ConstantsKeys.utcStartDateTime), true);
             DateTime utcEndDateTime      = Globally.getDateTimeObj(json.getString(ConstantsKeys.utcEndDateTime), true);
             int CurrentCycleId = 1;
-            if(!json.isNull(ConstantsKeys.CurrentCycleId)){
+            if(!json.getString(ConstantsKeys.CurrentCycleId).equals("null")){
                 CurrentCycleId = json.getInt(ConstantsKeys.CurrentCycleId);
             }
 
@@ -3368,7 +3380,7 @@ public class HelperMethods {
             driverLogModel.setCurrentCyleId(CurrentCycleId);
             driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
 
-            if(!json.isNull(ConstantsKeys.ViolationReason))
+            if(!json.getString(ConstantsKeys.ViolationReason).equals("null"))
                 driverLogModel.setViolationReason(json.getString(ConstantsKeys.ViolationReason));
             else
                 driverLogModel.setViolationReason("");
@@ -3553,7 +3565,7 @@ public class HelperMethods {
         try {
 
             int CurrentCycleId = 1;
-            if(!json.isNull(ConstantsKeys.CurrentCycleId)){
+            if(!json.getString(ConstantsKeys.CurrentCycleId).equals("null")){
                 CurrentCycleId = json.getInt(ConstantsKeys.CurrentCycleId);
             }
 
@@ -3562,9 +3574,10 @@ public class HelperMethods {
             String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", PlateNumber = "", DecesionSource = "";
             String adverseExceptionRemark = "", LocationType = "", MalfunctionDefinition = "", UnAssignedVehicleMilesId = "0";
 
-            int status = json.getInt(ConstantsKeys.DriverStatusId); //Integer.valueOf(statusStr);
+            int status = json.getInt(ConstantsKeys.DriverStatusId);       
 
             if(IsNewLogAdded) {
+                status = Constants.OFF_DUTY;
                 status = GetStatusWithPermissionCheck(status, IsOffDutyPermission, IsSleeperPermission, IsDrivingPermission, IsOnDutyPermission);
             }else{
                 if(json.has(ConstantsKeys.IsStatusAutomatic))
@@ -3646,7 +3659,7 @@ public class HelperMethods {
             driverLogModel.setCurrentCyleId(CurrentCycleId);
             driverLogModel.setViolation(false); //json.getBoolean(ConstantsKeys.IsViolation)
 
-            if(!json.isNull(ConstantsKeys.ViolationReason))
+            if(!json.getString(ConstantsKeys.ViolationReason).equals("null"))
                 driverLogModel.setViolationReason(json.getString(ConstantsKeys.ViolationReason));
             else
                 driverLogModel.setViolationReason("");

@@ -1958,31 +1958,36 @@ public class Globally {
 	}
 
 
-	public static String JobStatus(int pos, boolean isPersonalOrYardMove){
+	public static String JobStatus(int pos, boolean isPersonalOrYardMove, String type){
 		String JobStatus = "";
-		switch (pos){
-			case 1:
-				if(isPersonalOrYardMove)
-					JobStatus = "Personal";
-				else
-					JobStatus = "Off Duty";
-				break;
 
-			case 2:
-				JobStatus = "Sleeper";
-				break;
+		if(type.length() == 1) {
+			switch (pos) {
+				case 1:
+					if (isPersonalOrYardMove)
+						JobStatus = "Personal";
+					else
+						JobStatus = "Off Duty";
+					break;
 
-			case 3:
-				JobStatus = "Driving";
-				break;
+				case 2:
+					JobStatus = "Sleeper";
+					break;
 
-			case 4:
-				if(isPersonalOrYardMove) {
-					JobStatus = "On Duty(YM)";
-				}else{
-					JobStatus = "On Duty";
-				}
-				break;
+				case 3:
+					JobStatus = "Driving";
+					break;
+
+				case 4:
+					if (isPersonalOrYardMove) {
+						JobStatus = "On Duty(YM)";
+					} else {
+						JobStatus = "On Duty";
+					}
+					break;
+			}
+		}else{
+			JobStatus = type;
 		}
 		return  JobStatus;
 	}

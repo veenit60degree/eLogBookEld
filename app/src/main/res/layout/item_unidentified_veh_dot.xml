@@ -96,6 +96,22 @@
             />
 
 
+        <TextView
+            android:id="@+id/lstLongUnidenTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lat_long"
+            android:textStyle="bold"
+            android:paddingLeft="@dimen/margin_short_2"
+            android:paddingRight="@dimen/margin_short_2"
+            android:textSize="@dimen/text_size_14"
+            android:gravity="center_horizontal"
+            android:textColor="@color/color_eld_theme"
+            android:layout_weight="1.1"
+            android:maxLines="2"
+
+            />
+
 
         <TextView
             android:id="@+id/startOdoUnTV"

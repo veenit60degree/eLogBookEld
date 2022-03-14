@@ -68,6 +68,7 @@ import com.custom.dialogs.MissingLocationDialog;
 import com.custom.dialogs.SignDialog;
 import com.custom.dialogs.SignRecordDialog;
 import com.driver.details.DriverConst;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.models.EldDriverLogModel;
 import com.local.db.CertifyLogMethod;
 import com.local.db.ConstantsKeys;
@@ -216,6 +217,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     boolean isOldRecord     = false;
    // boolean isDOT           = false;
     boolean isNorthCanada   = false;
+    boolean isExemptDriver = false;
 
     boolean nextPrevBtnClicked      = false;
     boolean isCertifyViewAgain      = false;
@@ -259,6 +261,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     LatLongHelper latLongHelper;
     DriverPermissionMethod driverPermissionMethod;
     CertifyLogMethod certifyLogMethod;
+    MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
 
     ScrollViewExt driverLogScrollView;
     JSONObject logPermissionObj = new JSONObject();
@@ -303,6 +306,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         global                      = new Globally();
         dbHelper                    = new DBHelper(getActivity());
         hMethods                    = new HelperMethods();
+        malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
 
         saveCertifyLogPost          = new SaveDriverLogPost(getActivity(), saveCertifyResponse);
         odometerhMethod             = new OdometerHelperMethod();
@@ -668,7 +672,14 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         CertifyLogArray     = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
 
         if(Globally.isConnected(getActivity()) && CertifyLogArray.length() > 0){
-            saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout20Sec, true, false, DriverType, SaveCertifyOnResume);
+            saveCertifyLogPost.PostDriverLogData(CertifyLogArray, APIs.CERTIFY_LOG_OFFLINE, constants.SocketTimeout20Sec,
+                    true, false, DriverType, SaveCertifyOnResume);
+        }
+
+        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
+            isExemptDriver  = SharedPref.IsExemptDriverMain(getActivity());
+        }else{
+            isExemptDriver  = SharedPref.IsExemptDriverCo(getActivity());
         }
 
     }
@@ -2807,6 +2818,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     if (getActivity() != null && !constants.isObdConnectedWithELD(getActivity())) {
                         global.InternetErrorDialog(getActivity(), true, true);
                         Toast.makeText(getActivity(), getString(R.string.certify_log_offline_saved), Toast.LENGTH_LONG).show();
+
+                        saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
+
                     }else{
                         global.EldToastWithDuration(TabAct.sliderLay, getString(R.string.certify_log_offline_saved), getResources().getColor(R.color.colorSleeper));
                     }
@@ -2842,6 +2856,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         if (getActivity() != null && !constants.isObdConnectedWithELD(getActivity())) {
                             global.InternetErrorDialog(getActivity(), true, true);
                             Toast.makeText(getActivity(), getString(R.string.certify_log_offline_saved), Toast.LENGTH_LONG).show();
+
+                            saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
+
+
                         }else{
                             global.EldToastWithDuration(TabAct.sliderLay, getString(R.string.certify_log_offline_saved), getResources().getColor(R.color.colorSleeper));
                         }
@@ -2886,6 +2904,47 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             certifyErrorImgView.setVisibility(View.VISIBLE);
         }else{
             certifyErrorImgView.setVisibility(View.GONE);
+        }
+    }
+
+    private void saveMissingDiagnostic(String remarks, String type){
+        try {
+            boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
+
+            if(!isExemptDriver && !isMissingEventAlreadyWithStatus) {
+                // save malfunction occur event to server with few inputs
+                JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
+                        DRIVER_ID, DeviceId, SharedPref.getVINNumber(getActivity()),
+                        DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity()),
+                        DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
+                        constants.get2DecimalEngHour(getActivity()), //SharedPref.getObdEngineHours(getActivity()),
+                        SharedPref.getObdOdometer(getActivity()),
+                        SharedPref.getObdOdometer(getActivity()),
+                        Globally.GetCurrentUTCTimeFormat(), constants.MissingDataDiagnostic,
+                        remarks + " " + type, false,
+                        "", "", "", "", type);
+
+                // save Occurred event locally until not posted to server
+                JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
+                malArray.put(newOccuredEventObj);
+                malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, malArray);
+
+                // save malfunction entry in duration table
+                malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, DRIVER_ID,
+                        Globally.GetCurrentUTCTimeFormat(), Globally.GetCurrentUTCTimeFormat(),
+                        Constants.MissingDataDiagnostic, type, "", type, constants, getActivity());
+
+                SharedPref.saveMissingDiaStatus(true, getActivity());
+
+                Globally.PlayNotificationSound(getActivity());
+                Globally.ShowLocalNotification(getActivity(),
+                        getString(R.string.missing_dia_event),
+                        getString(R.string.missing_event_occured_desc) + " in " +
+                                type + " due to OBD not connected with E-Log Book", 2091);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -3040,6 +3099,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     if (getActivity() != null && !constants.isObdConnectedWithELD(getActivity())) {
                         global.InternetErrorDialog(getActivity(), true, true);
                         Toast.makeText(getActivity(), getString(R.string.has_been_certified), Toast.LENGTH_LONG).show();
+
+                        saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
+
                     }else{
                         Globally.EldScreenToast(previousDateBtn, getString(R.string.has_been_certified),
                                 getResources().getColor(R.color.colorPrimary));
@@ -3090,6 +3152,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         if (getActivity() != null && !constants.isObdConnectedWithELD(getActivity())) {
                             global.InternetErrorDialog(getActivity(), true, true);
                             Toast.makeText(getActivity(), getString(R.string.certify_log_offline_saved), Toast.LENGTH_LONG).show();
+
+                            saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
+
                         }else{
                             global.EldToastWithDuration(TabAct.sliderLay, getString(R.string.certify_log_offline_saved), getResources().getColor(R.color.colorSleeper));
                         }

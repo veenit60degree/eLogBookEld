@@ -54,7 +54,17 @@ public class CanDotUnAssignedVehAdapter extends RecyclerView.Adapter<CanDotUnAss
             holder.startTimeUnTV.setText(Globally.ConvertDateFormatMMddyyyy(date) + " " + date.substring(11, 19));//Globally.ConvertTo12HTimeFormat(date, Globally.DateFormat));
         }
 
+        String StartLatitude = itemsList.get(position).getStartLatitude();
+        String StartLongitude = itemsList.get(position).getStartLongitude();
+
+        if(!StartLatitude.equals("null") && StartLatitude.length() > 0){
+            holder.lstLongUnidenTV.setText(StartLatitude + "," + StartLongitude);
+        }else{
+            holder.lstLongUnidenTV.setText("--");
+        }
+
         holder.startLocUnTV.setText( itemsList.get(position).getStartLocation());
+
         holder.startOdoUnTV.setText( itemsList.get(position).getStartOdometer());
         holder.seqNoUnTV.setText( itemsList.get(position).getHexaSeqNumber());
 
@@ -92,7 +102,7 @@ public class CanDotUnAssignedVehAdapter extends RecyclerView.Adapter<CanDotUnAss
         constants.setTextStyleNormal(holder.seqNoUnTV);
 
         constants.setTextStyleNormal(holder.startLocUnTV);
-        // constants.setTextStyleNormal(holder.endLocUnTV);
+        constants.setTextStyleNormal(holder.lstLongUnidenTV);
 
 
         // set Marque on view
@@ -118,7 +128,7 @@ public class CanDotUnAssignedVehAdapter extends RecyclerView.Adapter<CanDotUnAss
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        TextView truckNoUnTV, statusUnTV, startTimeUnTV, startLocUnTV, startOdoUnTV, seqNoUnTV;
+        TextView truckNoUnTV, statusUnTV, startTimeUnTV, startLocUnTV, lstLongUnidenTV, startOdoUnTV, seqNoUnTV;
         // TextView vinUnLay, endOdoUnTV, endTimeUnTV, totalKmUnTV, totalMilesUnTV,endLocUnTV;
         LinearLayout unidentifiedVehDotLay;
 
@@ -134,7 +144,7 @@ public class CanDotUnAssignedVehAdapter extends RecyclerView.Adapter<CanDotUnAss
             //  holder.endOdoUnTV       = (TextView) convertView.findViewById(R.id.endOdoUnTV);
 
             startLocUnTV     = (TextView) itemView.findViewById(R.id.startLocUnTV);
-            //  holder.endLocUnTV       = (TextView) convertView.findViewById(R.id.endLocUnTV);
+            lstLongUnidenTV  = (TextView) itemView.findViewById(R.id.lstLongUnidenTV);
 
             //  holder.totalKmUnTV      = (TextView) convertView.findViewById(R.id.totalKmUnTV);
             //  holder.totalMilesUnTV   = (TextView) convertView.findViewById(R.id.totalMilesUnTV);

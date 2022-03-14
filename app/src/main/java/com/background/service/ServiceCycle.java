@@ -114,7 +114,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     boolean isNorthCanada;
 
     boolean isOldRecord      = false;
-    boolean IsAlertTimeValid = false;
     boolean isSingleDriver   = true;
     boolean isALSConnection;
     boolean isPcYmAlertChangeStatus = false;
@@ -145,7 +144,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     }
 
 
-    public void CalculateCycleTime(int driverId, String coDriverId, String coDriverName, final boolean IsLogApiACalled, boolean isAlertTimeValid, int vehicleSpeed,
+    public void CalculateCycleTime(int driverId, String coDriverId, String coDriverName, final boolean IsLogApiACalled, int vehicleSpeed,
                                    final HelperMethods hMethods, final DBHelper dbHelper, final LatLongHelper latLongHelper,
                                    final LocationMethod locMethod, final ServiceCallback serviceResponse,
                                    final ServiceError serviceError, NotificationMethod notiMethod,
@@ -187,7 +186,6 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
             final DateTime currentUTCTime  = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), true);
             //offsetFromUTC            = currentDateTime.getHourOfDay() - currentUTCTime.getHourOfDay();
             offsetFromUTC            = (int) Global.GetTimeZoneOffSet();
-            IsAlertTimeValid         = isAlertTimeValid;
             IsAppForground           = UILApplication.isActivityVisible();
             DeviceId                 = SharedPref.GetSavedSystemToken(context);
             isSingleDriver           = Global.isSingleDriver(context);
@@ -356,7 +354,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                 try {
 
                                     // ------------------ Get current Job Status -----------------
-                                    String JobStatusStr = Global.JobStatus(DRIVER_JOB_STATUS, false);
+                                    String JobStatusStr = Global.JobStatus(DRIVER_JOB_STATUS, false, ""+DRIVER_JOB_STATUS);
                                     DateTime startDate = Global.getDateTimeObj(lastJsonItem.getString(ConstantsKeys.startDateTime), false);
                                     //  DateTime currentdateTime = Global.getDateTimeObj(currentDateTime.toString(), false);
 

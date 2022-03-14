@@ -966,7 +966,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
         }
 
-        checkDriverTimeZone(isConnected);
+       checkDriverTimeZone(isConnected);
 
 
 
@@ -1024,6 +1024,27 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
 
         confirmDeferralRuleDays();
+
+        if(VIN_NUMBER.length() > 0) {
+            boolean isStorageMalfunction = malfunctionDiagnosticMethod.isStorageMalfunction(dbHelper, getActivity());
+            int AvailableStorageSpace = constants.getAvailableSpace();
+            if (AvailableStorageSpace <= 200 && !isStorageMalfunction) {    // 200 mb
+                Constants.isStorageMalfunctionEvent = true;
+                SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+                startService();
+            } else {
+                if(isStorageMalfunction) {
+                    boolean isStorageMal24HrOld = malfunctionDiagnosticMethod.isStorageMal24HrOldToClear(dbHelper);
+                    if (AvailableStorageSpace > 200  && isStorageMal24HrOld) {
+                        Constants.isClearStorageMalEvent = true;
+                        SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+                        startService();
+                    }
+                }
+            }
+        }
+
+
     }
 
     void getDayStartOdometer(){
@@ -1988,8 +2009,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         saveDriverLogPost.PostDriverLogData(DriverJsonArray, SavedLogApi, socketTimeout, false, false, DriverType, MainDriverLog);
 
+        constants.saveObdData("", "ELD Home SaveLogApi Status: " +DRIVER_JOB_STATUS, "",
+                "-1", "", "", "", "", "-1",
+                "-1", "", "", "",
+                DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
 
-      //  SAVE_DRIVER_STATUS(DriverJsonArray, false, false, socketTimeout);
+
+        //  SAVE_DRIVER_STATUS(DriverJsonArray, false, false, socketTimeout);
 
     }
 
@@ -3555,8 +3581,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     if (driverLocationDialog != null && driverLocationDialog.isShowing()) {
                         driverLocationDialog.dismiss();
                     }
-                    driverLocationDialog = new DriverLocationDialog(getActivity(), City, State, OldSelectedStatePos, JobType, isMalfunction, OnDutyBtn,
-                            StateArrayList, new DriverLocationListener());
+                    driverLocationDialog = new DriverLocationDialog(getActivity(), City, State, OldSelectedStatePos, JobType,
+                            isMalfunction, OnDutyBtn, StateArrayList, new DriverLocationListener());
                     driverLocationDialog.show();
                 }
             }
@@ -3845,7 +3871,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 if(AddressLine.length() == 0){
                     if(SharedPref.isLocDiagnosticOccur(getActivity()) && LocationType.length() > 0){
-                        AddressLine = City + " " + State;
+                        AddressLine = State + " " + City;
                     }else {
                         if ((CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2))
                                 && SharedPref.IsAOBRD(getActivity()) == false) {
@@ -3949,8 +3975,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     City = constants.CheckNullString(City);
                     State = constants.CheckNullString(State);
                     Country = constants.CheckNullString(Country);
-                    address = City + ", " + State ; //+ ", " + Country
+
+                   // address = City + ", " + State ;
+                    address = State + " " + City;
+
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -3988,7 +4018,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         Globally.LONGITUDE,
                         "false", // IsStatusAutomatic is false when manual job has been done
                         String.valueOf(BackgroundLocationService.obdVehicleSpeed),
-                        "" + constants.GetGpsStatusIn0And1Form(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                        "" + constants.GetGpsStatusIn0And1Form(getActivity()),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter. 1=On, 0=Off
                         SharedPref.GetCurrentTruckPlateNo(getActivity()),
                         String.valueOf(isHaulExcptn),
                         "false", "mannual_save",
@@ -4130,6 +4160,23 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
 
 
+        // save missing diagnostic
+        if(!constants.isObdConnectedWithELD(getActivity()) && !isExemptDriver ) {
+            boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithStatus(DRIVER_JOB_STATUS,
+                    isPersonal, ""+DRIVER_JOB_STATUS, dbHelper);
+            if (!isMissingEventAlreadyWithStatus) {
+                saveMissingDiagnostic(getString(R.string.obd_data_is_missing));
+
+                Globally.PlayNotificationSound(getActivity());
+                Global.ShowLocalNotification(getActivity(),
+                        getString(R.string.missing_dia_event),
+                        getString(R.string.missing_event_occured_desc) + " in " +
+                                Global.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal), ""+DRIVER_JOB_STATUS) +
+                                " due to OBD not connected with E-Log Book", 2091);
+
+            }
+        }
+
         // Save odometer
         // save app display status log
         if(SharedPref.IsOdometerFromOBD(getActivity())) {
@@ -4138,6 +4185,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
         SharedPref.setDrivingAllowedStatus(true, "", getActivity());
         AddressLine = "";
+        State = ""; City = ""; Country = "";
 
         oldStatusView = Integer.valueOf(driverStatus);
         if (driverStatus.equals(Global.ON_DUTY)){
@@ -4999,52 +5047,29 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             if(isMalfunction){
 
-                if(isExemptDriver == false) {
-                    // save malfunction occur event to server with few inputs
-                    JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
-                            DRIVER_ID, DeviceId, SharedPref.getVINNumber(getActivity()),
-                            DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity()),
-                            DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
-                            constants.get2DecimalEngHour(getActivity()), //SharedPref.getObdEngineHours(getActivity()),
-                            SharedPref.getObdOdometer(getActivity()),
-                            SharedPref.getObdOdometer(getActivity()),
-                            Global.GetCurrentUTCTimeFormat(), constants.MissingDataDiagnostic,
-                            getString(R.string.ignore_to_save_loc) + " " + Global.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal)),
-                            false, "", "", "");
+                if(!isExemptDriver) {
 
+                    if (SharedPref.isLocMalfunctionOccur(getActivity()) ) {
+                        LocationType = "E";
+                        SharedPref.setLocationEventType(LocationType, getActivity());
+                    }else {
+                      // save missing diagnostic
+                        saveMissingDiagnostic(getString(R.string.ignore_to_save_loc));
 
-                    // save Occurred Mal/Dia events locally to get details later for clear them
-                  /*  JSONArray malArrayEvent = malfunctionDiagnosticMethod.getSavedMalDiagstcArrayEvents(Integer.parseInt(DRIVER_ID), dbHelper);
-                    malArrayEvent.put(newOccuredEventObj);
-                    malfunctionDiagnosticMethod.MalfnDiagnstcLogHelperEvents(Integer.parseInt(DRIVER_ID), dbHelper, malArrayEvent);
-*/
-                    // save Occurred event locally until not posted to server
-                    JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
-                    malArray.put(newOccuredEventObj);
-                    malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, malArray);
+                        Globally.PlayNotificationSound(getActivity());
+                        Global.ShowLocalNotification(getActivity(),
+                                getResources().getString(R.string.missing_dia_event),
+                                getResources().getString(R.string.missing_event_occured_desc), 2091);
 
-                    MalfunctionDefinition = Constants.ConstLocationMissing;
+                        LocationType = "X";
+                        SharedPref.setLocationEventType(LocationType, getActivity());
 
-                    // save malfunction entry in duration table
-                    malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, DRIVER_ID,
-                            Global.GetCurrentUTCTimeFormat(), Global.GetCurrentUTCTimeFormat(),
-                            Constants.MissingDataDiagnostic, constants, getActivity());
+                        SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
+                                SharedPref.isMalfunctionOccur(getActivity()), true,
+                                SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
 
-
-                    Globally.PlayNotificationSound(getActivity());
-                    Global.ShowLocalNotification(getActivity(),
-                                                    getResources().getString(R.string.dia_event),
-                                                    getResources().getString(R.string.missing_event_occured_desc), 2091);
-
-                    LocationType = "X";
-                    SharedPref.setLocationEventType(LocationType, getActivity());
-
-                    SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
-                            SharedPref.isMalfunctionOccur(getActivity()), true,
-                            SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
-
-                    setMalfnDiagnEventInfo();
-
+                        setMalfnDiagnEventInfo();
+                    }
                 }
 
                 isLocMalfunction = false;
@@ -5052,6 +5077,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 saveInAobrdMalfnModeStatus(JobType);
 
             }
+
+
         }
 
         @Override
@@ -5075,7 +5102,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     }else{
                         LocationType = "M";
                         if(SharedPref.isLocDiagnosticOccur(getActivity())){
-
                             Constants.isClearMissingCompEvent = true;
                             SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
                             startService();
@@ -5105,6 +5131,44 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
+
+    private void saveMissingDiagnostic(String remarks){
+        try {
+            String type = Global.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal), ""+DRIVER_JOB_STATUS);
+
+            // save malfunction occur event to server with few inputs
+            JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
+                                DRIVER_ID, DeviceId, SharedPref.getVINNumber(getActivity()),
+                                DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity()),
+                                DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
+                                constants.get2DecimalEngHour(getActivity()), //SharedPref.getObdEngineHours(getActivity()),
+                                SharedPref.getObdOdometer(getActivity()),
+                                SharedPref.getObdOdometer(getActivity()),
+                                Global.GetCurrentUTCTimeFormat(), constants.MissingDataDiagnostic,
+                                 remarks + " " + type,
+                                false, "", "",
+                                "", LocationType, type);
+
+            // save Occurred event locally until not posted to server
+            JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
+            malArray.put(newOccuredEventObj);
+            malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, malArray);
+
+            MalfunctionDefinition = Constants.ConstLocationMissing;
+
+            // save malfunction entry in duration table
+            malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, DRIVER_ID,
+                    Global.GetCurrentUTCTimeFormat(), Global.GetCurrentUTCTimeFormat(),
+                    Constants.MissingDataDiagnostic, ""+DRIVER_JOB_STATUS, LocationType, type,
+                    constants, getActivity());
+
+            SharedPref.saveMissingDiaStatus(true, getActivity());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
     void SaveTrailerLocally(String trailerNumber) {
@@ -6715,17 +6779,17 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             boolean isOdometerFromOBD = false;
                             String plateNo = "";
 
-                            if(vehicleJsonObj.has("OdometerFromOBD")){
-                                isOdometerFromOBD = vehicleJsonObj.getBoolean("OdometerFromOBD");
+                            if(vehicleJsonObj.has(ConstantsKeys.OdometerFromOBD)){
+                                isOdometerFromOBD = vehicleJsonObj.getBoolean(ConstantsKeys.OdometerFromOBD);
                             }
 
-                            if(vehicleJsonObj.has("PlateNumber")){
-                                plateNo = vehicleJsonObj.getString("PlateNumber");
+                            if(vehicleJsonObj.has(ConstantsKeys.PlateNumber)){
+                                plateNo = vehicleJsonObj.getString(ConstantsKeys.PlateNumber);
                             }
 
                             SharedPref.SetIsAOBRD(IsAOBRD, getActivity());
                             SharedPref.SetAOBRDAutomatic(IsAOBRDAutomatic, getActivity());
-                            SharedPref.SetAOBRDAutoDrive(vehicleJsonObj.getBoolean("IsAutoDriving"), getActivity());
+                            SharedPref.SetAOBRDAutoDrive(vehicleJsonObj.getBoolean(ConstantsKeys.IsAutoDriving), getActivity());
                             SharedPref.SetOdometerFromOBD(isOdometerFromOBD, getActivity());
                             SharedPref.setCurrentTruckPlateNo(plateNo, getActivity());
 

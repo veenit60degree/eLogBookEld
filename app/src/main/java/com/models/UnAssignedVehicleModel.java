@@ -19,12 +19,15 @@ public class UnAssignedVehicleModel implements Comparable<UnAssignedVehicleModel
     String HexaSeqNumber;
     String StartLocation;
     String EndLocation;
+    String StartLatitude;
+    String StartLongitude;
     String DutyStatus;
     Date dateTime;
 
     public UnAssignedVehicleModel(String unAssignedVehicleMilesId, String assignedUnidentifiedRecordsId, String equipmentNumber, String VIN, String startOdometer,
                                   String endOdometer, String totalMiles, String totalKm, String driverZoneStartDateTime, String driverZoneEndDateTime, String statusId,
-                                  boolean isIntermediateLog, String hexaSeqNumber, String startLoc, String endLoc, String dutyStatus, Date date) {
+                                  boolean isIntermediateLog, String hexaSeqNumber, String startLoc, String endLoc,
+                                  String startLatitude, String startLongitude, String dutyStatus, Date date) {
         UnAssignedVehicleMilesId = unAssignedVehicleMilesId;
         AssignedUnidentifiedRecordsId = assignedUnidentifiedRecordsId;
         EquipmentNumber = equipmentNumber;
@@ -40,6 +43,8 @@ public class UnAssignedVehicleModel implements Comparable<UnAssignedVehicleModel
         HexaSeqNumber = hexaSeqNumber;
         StartLocation = startLoc;
         EndLocation = endLoc;
+        StartLatitude = startLatitude;
+        StartLongitude = startLongitude;
         DutyStatus = dutyStatus;
         dateTime = date;
 
@@ -117,6 +122,14 @@ public class UnAssignedVehicleModel implements Comparable<UnAssignedVehicleModel
         this.dateTime = datetime;
     }
 
+
+    public String getStartLatitude() {
+        return StartLatitude;
+    }
+
+    public String getStartLongitude() {
+        return StartLongitude;
+    }
 
     @Override
     public int compareTo(UnAssignedVehicleModel unAssignedVehicleModel) {

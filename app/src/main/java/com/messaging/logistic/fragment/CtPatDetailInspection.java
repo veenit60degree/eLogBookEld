@@ -33,26 +33,27 @@ import java.util.ArrayList;
 public class CtPatDetailInspection extends Fragment {
 
 
-    View rootView, truckCtPatView, trailerCtPatView;
+    View rootView, truckCtPatView, trailerCtPatView,agricultureCtPatView,agricultureReasonCtPatView;
     RelativeLayout eldMenuLay;
-    LinearLayout scrollChildMainLay;
+    LinearLayout scrollChildMainLay,agricutureReasonLay;
     RelativeLayout rightMenuBtn;
-    TextView trailerCtPatGridTitle, truckCtPatGridTitle;
+    TextView trailerCtPatGridTitle, truckCtPatGridTitle,agricultureCtPatGridTitle;
     TextView EldTitleTV, actionBarRightBtn, truckCtPatTV, trailerCtPatTV, ctPatDateTimeTv;
-    EditText arrivalContNoEditTxt, departureContNoEditTxt, conductedSecInspEditTxt, followSecLayEditTxt, affixedSealEditTxt, verifiedSealEditTxt;
+    EditText arrivalContNoEditTxt, departureContNoEditTxt, conductedSecInspEditTxt, followSecLayEditTxt, affixedSealEditTxt, verifiedSealEditTxt,
+            agricultureReasonEditText, containerIdenEditText;
     ImageView conductedSecIV, followSecLayIV, affixedSealIV, verifiedSealIV, eldMenuBtn;
-    GridView ctPatTruckGridVw, ctPatTrailerGridVw;
+    GridView ctPatTruckGridVw, ctPatTrailerGridVw,ctPatAgricultureGridVw;
     Button ctPatInspectionBtn;
 
-    ArrayList<String> TruckList, TrailerList;
-    ViewInspectionGridAdapter truckAdapter, trailerAdapter;
+    ArrayList<String> TruckList, TrailerList,AgricultureList;
+    ViewInspectionGridAdapter truckAdapter, trailerAdapter,agricultureAdapter;
 
     String ArrivalSealNumber = "", DepartureSealNumber = "";
     String SecurityInspectionPersonName = "", ByteInspectionConductorSign = "";
     String FollowUpInspectionPersonName = "", ByteFollowUpConductorSign = "";
     String AffixedSealPersonName        = "", ByteSealFixerSign = "";
     String VerificationPersonName       = "", ByteSealVerifierSign = "";
-
+    String AgricultureReason       = "",    ContainerIdentificationReason = "";
 
 
 
@@ -85,12 +86,16 @@ public class CtPatDetailInspection extends Fragment {
 
         rightMenuBtn            = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         scrollChildMainLay      = (LinearLayout) view.findViewById(R.id.scrollChildMainLay);
+        agricutureReasonLay      = (LinearLayout) view.findViewById(R.id.agricutureReasonLay);
 
         truckCtPatView          = (View) view.findViewById(R.id.truckCtPatView);
         trailerCtPatView        = (View) view.findViewById(R.id.trailerCtPatView);
+        agricultureCtPatView        = (View) view.findViewById(R.id.agricultureCtPatView);
+        agricultureReasonCtPatView         = (View) view.findViewById(R.id.agricultureReasonCtPatView);
 
         trailerCtPatGridTitle   = (TextView) view.findViewById(R.id.trailerCtPatGridTitle);
         truckCtPatGridTitle   = (TextView) view.findViewById(R.id.truckCtPatGridTitle);
+        agricultureCtPatGridTitle   = (TextView) view.findViewById(R.id.agricultureCtPatGridTitle);
         EldTitleTV              = (TextView) view.findViewById(R.id.EldTitleTV);
         actionBarRightBtn       = (TextView) view.findViewById(R.id.dateActionBarTV);
         truckCtPatTV            = (TextView) view.findViewById(R.id.truckCtPatTV);
@@ -103,9 +108,12 @@ public class CtPatDetailInspection extends Fragment {
         followSecLayEditTxt     = (EditText) view.findViewById(R.id.followSecLayEditTxt);
         affixedSealEditTxt      = (EditText) view.findViewById(R.id.affixedSealEditTxt);
         verifiedSealEditTxt     = (EditText) view.findViewById(R.id.verifiedSealEditTxt);
+        agricultureReasonEditText     = (EditText) view.findViewById(R.id.agricultureReasonEditText);
+        containerIdenEditText    = (EditText) view.findViewById(R.id.containerIdenEditText);
 
         ctPatTruckGridVw        = (GridView) view.findViewById(R.id.ctPatTruckGridVw);
         ctPatTrailerGridVw      = (GridView) view.findViewById(R.id.ctPatTrailerGridVw);
+        ctPatAgricultureGridVw      = (GridView) view.findViewById(R.id.ctPatAgricultureGridVw);
 
         conductedSecIV          = (ImageView) view.findViewById(R.id.conductedSecIV);
         followSecLayIV          = (ImageView) view.findViewById(R.id.followSecLayIV);
@@ -140,6 +148,7 @@ public class CtPatDetailInspection extends Fragment {
         followSecLayEditTxt.setEnabled(false);
         affixedSealEditTxt.setEnabled(false);
         verifiedSealEditTxt.setEnabled(false);
+        agricultureReasonEditText.setEnabled(false);
 
         arrivalContNoEditTxt.setHint("--");
         departureContNoEditTxt.setHint("--");
@@ -147,6 +156,7 @@ public class CtPatDetailInspection extends Fragment {
         followSecLayEditTxt.setHint("--");
         affixedSealEditTxt.setHint("--");
         verifiedSealEditTxt.setHint("--");
+        agricultureReasonEditText.setHint("--");
 
 
         ctPatInspectionBtn.setVisibility(View.GONE);
@@ -170,6 +180,8 @@ public class CtPatDetailInspection extends Fragment {
         FollowUpInspectionPersonName = savedInspectionModel.getFollowUpInspectionPersonName();
         AffixedSealPersonName = savedInspectionModel.getAffixedSealPersonName();
         VerificationPersonName = savedInspectionModel.getVerificationPersonName();
+        AgricultureReason      = savedInspectionModel.getAgricultureReason();
+        ContainerIdentificationReason  = savedInspectionModel.getContainerIdentificationReason();
 
         ByteInspectionConductorSign = savedInspectionModel.getByteInspectionConductorSign().trim();
         ByteFollowUpConductorSign = savedInspectionModel.getByteFollowUpConductorSign().trim();
@@ -182,6 +194,8 @@ public class CtPatDetailInspection extends Fragment {
         setTextOnView(followSecLayEditTxt, FollowUpInspectionPersonName);
         setTextOnView(affixedSealEditTxt, AffixedSealPersonName);
         setTextOnView(verifiedSealEditTxt, VerificationPersonName);
+        setTextOnView(agricultureReasonEditText, AgricultureReason);
+        setTextOnView(containerIdenEditText , ContainerIdentificationReason);
 
 
         truckCtPatTV.setText(savedInspectionModel.getVehicleEquNumber());
@@ -205,6 +219,7 @@ public class CtPatDetailInspection extends Fragment {
 
         TruckList   = ParseListData(savedInspectionModel.getTruckIssueType());
         TrailerList = ParseListData(savedInspectionModel.getTraiorIssueType());
+        AgricultureList = ParseListData(savedInspectionModel.getAgricultureIssueType());
 
         if(TruckList.size() == 0){
             truckCtPatGridTitle.setVisibility(View.GONE);
@@ -214,6 +229,17 @@ public class CtPatDetailInspection extends Fragment {
         if(TrailerList.size() == 0){
             trailerCtPatGridTitle.setVisibility(View.GONE);
             trailerCtPatView.setVisibility(View.GONE);
+        }
+
+        if(AgricultureList.size() == 0){
+            agricultureCtPatGridTitle.setVisibility(View.GONE);
+            agricultureCtPatView.setVisibility(View.GONE);
+
+        }
+
+        if(!AgricultureReason.equals("null")) {
+            agricutureReasonLay.setVisibility(View.VISIBLE);
+            agricultureReasonCtPatView.setVisibility(View.VISIBLE);
         }
 
 
@@ -231,9 +257,17 @@ public class CtPatDetailInspection extends Fragment {
             e.printStackTrace();
         }
 
+        try{
+            agricultureAdapter = new ViewInspectionGridAdapter(getActivity(), AgricultureList);
+            ctPatAgricultureGridVw.setAdapter(agricultureAdapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
 
         final int truckViewCount      = TruckList.size() / 2 + TruckList.size() % 2;
         final int trailerViewCount    = TrailerList.size() / 2 + TrailerList.size() % 2;
+        final int agricultureViewCount    = AgricultureList.size() / 2 + AgricultureList.size() % 2;
 
 
         new Handler().postDelayed(new Runnable() {
@@ -241,6 +275,7 @@ public class CtPatDetailInspection extends Fragment {
             public void run() {
                 int truckViewHeight = Constants.inspectionViewHeight * truckViewCount;
                 int trailerViewHeight = Constants.inspectionViewHeight * trailerViewCount;
+                int agricultureViewHeight = Constants.inspectionViewHeight * agricultureViewCount;
 
                 try {
                     LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, truckViewHeight) ;  //SavedInspectionsFragment.inspectionLayHeight
@@ -250,6 +285,11 @@ public class CtPatDetailInspection extends Fragment {
                 try {
                     LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, trailerViewHeight ) ; //SavedInspectionsFragment.inspectionLayHeight
                     ctPatTrailerGridVw.setLayoutParams(mParam);
+                }catch (Exception e){}
+
+                try {
+                    LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, agricultureViewHeight ) ; //SavedInspectionsFragment.inspectionLayHeight
+                    ctPatAgricultureGridVw.setLayoutParams(mParam);
                 }catch (Exception e){}
             }
         }, 500);

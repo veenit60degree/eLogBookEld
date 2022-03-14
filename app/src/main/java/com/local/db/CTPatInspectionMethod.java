@@ -126,7 +126,8 @@ public class CTPatInspectionMethod {
                                           String Longitude, String TruckIssueType ,
                                           String TraiorIssueType, String ByteInspectionConductorSign ,
                                           String ByteFollowUpConductorSign, String ByteSealFixerSign ,
-                                          String ByteSealVerifierSign
+                                          String ByteSealVerifierSign,String AgricultureIssueType,String AreaOfInspectionRemarks,
+                                          String ContainerIdentification
 
     ){
 
@@ -165,6 +166,12 @@ public class CTPatInspectionMethod {
             inspectionJson.put(ConstantsKeys.ByteFollowUpConductorSign,     ByteFollowUpConductorSign  );
             inspectionJson.put(ConstantsKeys.ByteSealFixerSign ,            ByteSealFixerSign   );
             inspectionJson.put(ConstantsKeys.ByteSealVerifierSign ,         ByteSealVerifierSign   );
+            inspectionJson.put(ConstantsKeys.AgricultureIssueType ,            AgricultureIssueType   );
+
+//            if(!AreaOfInspectionRemarks.equals("")) {
+            inspectionJson.put(ConstantsKeys.AreaOfInspectionRemarks, AreaOfInspectionRemarks);
+//            }
+            inspectionJson.put(ConstantsKeys.ContainerIdentification, ContainerIdentification);
 
 
 
@@ -179,7 +186,7 @@ public class CTPatInspectionMethod {
 
 
     public JSONObject AddCtPat18DaysObj(JSONObject obj, ArrayList<String> truckIssueNameList, ArrayList<Integer> truckIssueIdList,
-                                   ArrayList<String> trailerIssueNameList, ArrayList<Integer> trailerIssueIdList){
+                                   ArrayList<String> trailerIssueNameList, ArrayList<Integer> trailerIssueIdList,ArrayList<String> agricultureIssueList, ArrayList<Integer> agricultureIssueIdList){
 
         JSONObject finalInspectionObj = new JSONObject();
 
@@ -187,10 +194,12 @@ public class CTPatInspectionMethod {
 
             JSONArray truckArray = getCtPatIssueArray(truckIssueNameList, truckIssueIdList, 1);
             JSONArray trailerArray = getCtPatIssueArray(trailerIssueNameList, trailerIssueIdList, 2);
+            JSONArray agricultureArray = getCtPatIssueArray(agricultureIssueList, agricultureIssueIdList, 3);
 
             finalInspectionObj.put(ConstantsKeys.Inspection, obj);
             finalInspectionObj.put(ConstantsKeys.TruckIssueList, truckArray);
             finalInspectionObj.put(ConstantsKeys.TrailorIssueList, trailerArray);
+            finalInspectionObj.put(ConstantsKeys.AgricultureIssueTypeInspection, agricultureArray);
 
         }catch (Exception e){
             e.printStackTrace();

@@ -32,13 +32,16 @@ public class CtPatInspectionModel {
     String ByteFollowUpConductorSign ;
     String ByteSealFixerSign ;
     String ByteSealVerifierSign ;
+    String AgricultureIssueType ;
+    String AgricultureReason ;
+    String ContainerIdentification;
 
 
     public CtPatInspectionModel(String driverId, String deviceId, String projectId, String driverName, String companyId, String vehicleId,
                                 String VIN, String vehicleEquNumber, String trailorEquNumber, String inspectionDateTime, String arrivalSealNumber,
                                 String departureSealNumber, String securityInspectionPersonName, String followUpInspectionPersonName, String affixedSealPersonName,
                                 String verificationPersonName, String latitude, String longitude, String truckIssueType, String traiorIssueType, String byteInspectionConductorSign,
-                                String byteFollowUpConductorSign, String byteSealFixerSign, String byteSealVerifierSign) {
+                                String byteFollowUpConductorSign, String byteSealFixerSign, String byteSealVerifierSign,String agricultureIssueType,String agricultureReason,String containerIdentification) {
         DriverId = driverId;
         DeviceId = deviceId;
         ProjectId = projectId;
@@ -63,6 +66,9 @@ public class CtPatInspectionModel {
         ByteFollowUpConductorSign = byteFollowUpConductorSign;
         ByteSealFixerSign = byteSealFixerSign;
         ByteSealVerifierSign = byteSealVerifierSign;
+        AgricultureIssueType = agricultureIssueType;
+        AgricultureReason    = agricultureReason;
+        ContainerIdentification = containerIdentification;
     }
 
     public String getDriverId() {
@@ -160,4 +166,18 @@ public class CtPatInspectionModel {
     public String getByteSealVerifierSign() {
         return ByteSealVerifierSign;
     }
+
+    public String getAgricultureIssueType() {
+        return AgricultureIssueType;
+    }
+
+    public String getAgricultureReason() {
+        return AgricultureReason;
+    }
+
+    public String getContainerIdentificationReason() {
+        return ContainerIdentification;
+    }
+
+
 }

@@ -957,17 +957,15 @@
                         </RelativeLayout>
 
 
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/synchronize_data"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_15"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/settingLayout"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/synchronize_data"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15" />
 
                     </RelativeLayout>
 
@@ -1221,6 +1219,93 @@
 
 
                 </LinearLayout>
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ripple_effect"
+                    android:layout_weight="0.5"
+                    android:layout_marginTop="@dimen/margin_short_5"
+                    android:layout_marginBottom="@dimen/margin_20"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+
+
+                    >
+
+                    <RelativeLayout
+                        android:id="@+id/checkStorage"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_45"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:layout_margin="@dimen/margin_short_2"
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/checkStorageLayout"
+                            android:layout_width="@dimen/view_height_30"
+                            android:layout_height="@dimen/view_height_30"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_checkinternet"
+                            >
+
+
+                            <ImageView
+                                android:id="@+id/checkStorageImgView"
+                                android:layout_width="@dimen/margin_15"
+                                android:layout_height="@dimen/margin_15"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/storage_icon"
+
+                                />
+
+
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:id="@+id/storageTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/checkStorageLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/lat_long"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_15"
+
+                            />
+
+                        <RelativeLayout
+                            android:id="@+id/progressBarLayout"
+                            android:layout_width="@dimen/view_height_300"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/margin_15"
+                            android:orientation="horizontal"
+
+                            >
+
+
+                            <ProgressBar
+                                android:id="@+id/storageProgress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:progressDrawable="@drawable/progress_style"
+                                android:background="@drawable/gray_eld_drawable"
+                                style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+
 
                 <Button
                     android:id="@+id/settingSaveBtn"

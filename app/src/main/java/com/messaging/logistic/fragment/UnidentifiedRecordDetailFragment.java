@@ -361,7 +361,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                 if(Globally.isConnected(getActivity())) {
                     if(isClaim) {
 
-                        if(StartLocationKM.length() == 0){
+                        if(StartLocationKM.length() == 0 && startLoc.length() == 0){
                             Constants.IsUnidentifiedLocMissing = true;
                         }
 
@@ -447,6 +447,8 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
                             }
 
+                            constant.refreshEventDataFromService(getActivity());
+
                             break;
 
                         case RejectRecordFlag:
@@ -454,6 +456,9 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                             Globally.EldScreenToast(TabAct.sliderLay,
                                     getResources().getString(R.string.reject_successfully),
                                     getResources().getColor(R.color.color_eld_theme));
+
+                           // constants.refreshEventDataFromService(getActivity());
+
                             break;
 
                         case RejectCompanyAssignedRecordFlag:

@@ -10,11 +10,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.StatFs;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
@@ -32,6 +35,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -40,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -70,6 +75,7 @@ import com.custom.dialogs.DeferralDialog;
 import com.custom.dialogs.DriverAddressDialog;
 import com.custom.dialogs.ObdDataInfoDialog;
 import com.local.db.DeferralMethod;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.models.CycleModel;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
@@ -107,6 +113,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import kotlin.jvm.internal.Intrinsics;
 import models.DriverDetail;
 import models.DriverLog;
 import models.RulesResponseObject;
@@ -118,7 +125,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     View rootView;
     TextView actionBarTitle, caCycleTV, usCycleTV, timeZoneTV, dateActionBarTV, checkAppUpdateTV, haulExpTxtView, haulExcptnTxtVw,adverseExpTxtView,adverseCanadaExpTxtView,deferralTxtView;
-    TextView caCurrentCycleTV, usCurrentCycleTV, operatingZoneTV, agricultureExpTxtView;
+    TextView caCurrentCycleTV, usCurrentCycleTV, operatingZoneTV, agricultureExpTxtView, storageTextView;
     Spinner caCycleSpinner, usCycleSpinner, timeZoneSpinner;
     Button SettingSaveBtn;
     ImageView updateAppDownloadIV, downloadHintImgView, opZoneTmgView, canEditImgView, usEditImgView;
@@ -131,6 +138,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     List<CycleModel> UsaCycleList;
     List<TimeZoneModel> TimeZoneList;
     ScrollView settingsScrollView;
+    ProgressBar storageProgress;
 
     CheckConnectivity checkConnectivity;
     ParseLoginDetails SaveSettingDetails;
@@ -141,6 +149,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     DBHelper dbHelper;
     HelperMethods hMethods;
     DeferralMethod deferralMethod;
+    MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
 
     Constants constant;
     Map<String, String> params;
@@ -209,6 +218,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     boolean isAdverseExcptn = false;
     boolean isDeferral = false;
     boolean isCoDriverSync = false;
+    boolean isExemptDriver = false;
 
 
     private int brightness;
@@ -257,6 +267,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         localCalls                  = new LocalCalls();
         constants                   = new Constants();
         global                      = new Globally();
+        malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
         GetAppUpdateRequest         = new VolleyRequest(getActivity());
         GetDriverLogPostPermission  = new VolleyRequest(getActivity());
         getCycleChangeApproval      = new VolleyRequest(getActivity());
@@ -290,6 +301,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading ...");
 
+        storageProgress      = (ProgressBar) v.findViewById(R.id.storageProgress);
         settingsScrollView   = (ScrollView)v.findViewById(R.id.settingsScrollView);
         actionBarTitle       = (TextView)v.findViewById(R.id.EldTitleTV);
         caCycleTV            = (TextView)v.findViewById(R.id.caCycleTV);
@@ -300,7 +312,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         haulExcptnTxtVw      = (TextView)v.findViewById(R.id.haulExcptnTxtVw);
         haulExpTxtView       = (TextView)v.findViewById(R.id.haulExpTxtView);
         operatingZoneTV      = (TextView)v.findViewById(R.id.operatingZoneTV);
-        agricultureExpTxtView    = (TextView)v.findViewById(R.id.agricultureExpTxtView);
+        agricultureExpTxtView= (TextView)v.findViewById(R.id.agricultureExpTxtView);
+        storageTextView      = (TextView)v.findViewById(R.id.storageTextView);
 
         caCurrentCycleTV     = (TextView)v.findViewById(R.id.caCurrentCycleTV);
         usCurrentCycleTV     = (TextView)v.findViewById(R.id.usCurrentCycleTV);
@@ -726,6 +739,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         actionBarTitle.setText(getResources().getString(R.string.action_settings));
         getSavedCycleData();
 
+        getStorageRecordOnView();
         getExceptionStatus();
         haulExceptnSwitchButton.setChecked(isHaulExcptn);
         adverseSwitchButton.setChecked(isAdverseExcptn);
@@ -813,10 +827,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             isHaulExcptn    = SharedPref.get16hrHaulExcptn(getActivity());
             isAdverseExcptn = SharedPref.getAdverseExcptn(getActivity());
             isDeferral      = SharedPref.isDeferralMainDriver(getActivity());
+            isExemptDriver  = SharedPref.IsExemptDriverMain(getActivity());
         }else{
             isHaulExcptn    = SharedPref.get16hrHaulExcptnCo(getActivity());
             isAdverseExcptn = SharedPref.getAdverseExcptnCo(getActivity());
             isDeferral      = SharedPref.isDeferralCoDriver(getActivity());
+            isExemptDriver  = SharedPref.IsExemptDriverCo(getActivity());
         }
 
         isAgricultureExcptn =   SharedPref.getAgricultureExemption(getActivity());
@@ -1075,6 +1091,106 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             }
         }
     }
+
+
+
+
+    private void saveMissingDiagnostic(String remarks, String type){
+        try {
+
+            if(!constants.isObdConnectedWithELD(getActivity()) && !isExemptDriver) {
+                boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
+
+                if (!isMissingEventAlreadyWithStatus) {
+                    // save malfunction occur event to server with few inputs
+                    JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
+                            DriverId, DeviceId, SharedPref.getVINNumber(getActivity()),
+                            DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity()),
+                            DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
+                            constants.get2DecimalEngHour(getActivity()), //SharedPref.getObdEngineHours(getActivity()),
+                            SharedPref.getObdOdometer(getActivity()),
+                            SharedPref.getObdOdometer(getActivity()),
+                            Globally.GetCurrentUTCTimeFormat(), constants.MissingDataDiagnostic,
+                            remarks + " " + type, false,
+                            "", "", "",
+                            Constants.getLocationType(getActivity()), type);
+
+                    // save Occurred event locally until not posted to server
+                    JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
+                    malArray.put(newOccuredEventObj);
+                    malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, malArray);
+
+                    // save malfunction entry in duration table
+                    malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, DriverId,
+                            Globally.GetCurrentUTCTimeFormat(), Globally.GetCurrentUTCTimeFormat(),
+                            Constants.MissingDataDiagnostic, type, Constants.getLocationType(getActivity()),
+                            type, constants, getActivity());
+
+                    SharedPref.saveMissingDiaStatus(true, getActivity());
+
+                    Globally.PlayNotificationSound(getActivity());
+                    Globally.ShowLocalNotification(getActivity(),
+                            getString(R.string.missing_dia_event),
+                            getString(R.string.missing_event_occured_desc) + " in " +
+                                    type + " due to OBD not connected with E-Log Book", 2091);
+
+
+
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public static String getSize(long size) {
+        String s = "";
+        double kb = size / 1024;
+        double mb = kb / 1024;
+        double gb = mb / 1024;
+        double tb = gb / 1024;
+        if(size < 1024L) {
+            s = size + " Bytes";
+        } else if(size >= 1024 && size < (1024L * 1024)) {
+            s =  String.format("%.2f", kb) + " KB";
+        } else if(size >= (1024L * 1024) && size < (1024L * 1024 * 1024)) {
+            s = String.format("%.2f", mb) + " MB";
+        } else if(size >= (1024L * 1024 * 1024) && size < (1024L * 1024 * 1024 * 1024)) {
+            s = String.format("%.2f", gb) + " GB";
+        } else if(size >= (1024L * 1024 * 1024 * 1024)) {
+            s = String.format("%.2f", tb) + " TB";
+        }
+        return s;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void getStorageRecordOnView(){
+        File var10000 = Environment.getDataDirectory();
+        Intrinsics.checkNotNullExpressionValue(var10000, "Environment.getDataDirectory()");
+        File iPath = var10000;
+        StatFs iStat = new StatFs(iPath.getPath());
+        long iBlockSize = iStat.getBlockSizeLong();
+        long iAvailableBlocks = iStat.getAvailableBlocksLong();
+        long iTotalBlocks = iStat.getBlockCountLong();
+        Integer iAvailableSpace = Integer.valueOf(constants.formatSize(iAvailableBlocks * iBlockSize).replaceAll("[^0-9]",""));
+        Integer iTotalSpace = Integer.valueOf(constants.formatSize(iTotalBlocks * iBlockSize).replaceAll("[^0-9]",""));
+        String AvailableSpace = this.getSize(iAvailableBlocks * iBlockSize);
+        String TotalSpace = this.getSize(iTotalBlocks * iBlockSize);
+        Intrinsics.checkNotNullExpressionValue(storageTextView, "mTextView");
+        storageTextView.setText((CharSequence)("Storage (" + AvailableSpace + " free of " + TotalSpace + ")"));
+        storageProgress.setMax(iTotalSpace);
+        storageProgress.setProgress(iTotalSpace - iAvailableSpace);
+
+        if(iAvailableSpace>=1500){
+            storageProgress.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.color_storage1500)));
+        }else if(iAvailableSpace>=500 && iAvailableSpace < 1500){
+            storageProgress.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.color_storage500)));
+        }else {
+            storageProgress.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.color_storage0)));
+        }
+    }
+
 
 
 
@@ -1584,6 +1700,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             // save deferral event inn local db and push automatically later. Reason behind this to save in offline also when internet is not working.
             deferralMethod.DeferralLogHelper(Integer.valueOf(DriverId), dbHelper, savedDeferralArray);
 
+            saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "OffDuty Deferral");
 
             SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
             constant.startService(getActivity());
@@ -2224,6 +2341,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         saveUpdatedCycleData();
                         updateIsCycleChangeIn18DaysLog();
 
+                        saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Cycle Change");
+
                         break;
 
                     case OperatingZone:
@@ -2236,6 +2355,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         }
 
                         getSavedCycleData();
+
+                        saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Operating Zone Change");
+
                         break;
 
 

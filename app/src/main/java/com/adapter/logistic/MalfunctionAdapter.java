@@ -219,15 +219,15 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         }else{
             if(distance.contains(".")){
                 String[] array = distance.split("\\.");
-                if(array[0].length() > 7){
-                    distance = constants.meterToKmWith2DecPlaces(distance);
-                }else{
+               // if(array[0].length() > 7){
+                    distance = constants.meterToKmWith0DecPlaces(distance);
+               /* }else{
                     distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
-                }
+                }*/
             }else {
-                if (distance.length() > 7) {
-                    distance = constants.meterToKmWith2DecPlaces(distance);
-                }
+               // if (distance.length() > 7) {
+                    distance = constants.meterToKmWith0DecPlaces(distance);
+              //  }
             }
 
             if (CurrentCycleId.equals(globally.CANADA_CYCLE_1) || CurrentCycleId.equals(globally.CANADA_CYCLE_2)) {

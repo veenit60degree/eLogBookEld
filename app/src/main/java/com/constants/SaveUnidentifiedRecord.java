@@ -57,8 +57,11 @@ public class SaveUnidentifiedRecord
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("error", ">>errorrrrr: " + error);
-                        ErrorCallBack.getError(error,flag);
-
+                        try {
+                            ErrorCallBack.getError(error, flag);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 }
         ) {

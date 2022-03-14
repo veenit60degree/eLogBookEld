@@ -22,6 +22,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.os.StatFs;
 import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
 import android.telephony.TelephonyManager;
@@ -95,6 +97,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import kotlin.jvm.internal.Intrinsics;
 import models.DriverDetail;
 import models.DriverLog;
 import models.RulesResponseObject;
@@ -120,10 +123,13 @@ public class Constants {
     public static String EngineSyncMalfunctionEvent     = "E";
     public static String DataTransferMalfunction        = "S";
     public static String PositionComplianceMalfunction  = "L";
+    public static String DataRecordingComplianceMalfunction  = "R";
 
     public static int UnidentifiedDiagnosticTime        = 30;   // 30 min
     public static int PowerEngSyncMalOccTime            = 30;   // 30 min
     public static int PositioningMalOccTime             = 60;   // 60 min
+
+    public static int TotalMinInADay                    = 1440;
 
     public static boolean IsUnidentifiedLocMissing      = false;
     public static boolean IsLogEdited             = false;
@@ -282,8 +288,16 @@ public class Constants {
     public static boolean isClearMissingCompEvent   = false;
     public static boolean isPcYmAlertButtonClicked   = false;
 
+
+
+    public static boolean isLogoutEvent = false;
+    public static boolean isStorageMalfunctionEvent = false;
+    public static boolean isClearStorageMalEvent = false;
     public static boolean isDriverSwitchEvent   = false;
+    public static boolean isClearMissingEvent   = false;
+
     public static String lastDriverId = "0";
+    public static String ClearMissingEventTime = "";
 
     public static int OFF_DUTY = 1;
     public static int SLEEPER  = 2;
@@ -401,6 +415,8 @@ public class Constants {
            eventModel = new MalDiaEventModel(context.getString(R.string.missing_data_dia_title), context.getString(R.string.missing_data_dia_def));
        }else if(EventCode.equals(PowerComplianceMalfunction)){
            eventModel = new MalDiaEventModel(context.getString(R.string.power_mal_title), context.getString(R.string.power_mal_def));
+       }else if(EventCode.equals(DataRecordingComplianceMalfunction)){
+           eventModel = new MalDiaEventModel(context.getString(R.string.data_rec_mal_title), context.getString(R.string.data_rec_mal_def));
        }else if(EventCode.equals(PowerComplianceDiagnostic)){
            eventModel = new MalDiaEventModel(context.getString(R.string.power_dia_title), context.getString(R.string.power_dia_def));
        }else if(EventCode.equals(EngineSyncDiagnosticEvent)){
@@ -1364,6 +1380,13 @@ public class Constants {
                 double km = Double.parseDouble(odometerInKm) * 1000;
                 //odometerInKm = "" + (km * 1000);
                 odometerInKm = BigDecimal.valueOf(km).toPlainString();
+
+                String[] array = odometerInKm.split("\\.");
+                if(array.length > 1) {
+                    if (array[1].equals("0")) {
+                        odometerInKm = array[0];
+                    }
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1436,6 +1459,18 @@ public class Constants {
             meter = meter * 0.001;
             odometer =  Convert2DecimalPlacesDouble(meter);
            // odometer = ""+ meter ;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return odometer;
+    }
+
+    public static String meterToKmWith0DecPlaces(String odometer){
+        try {
+            double meter = Double.parseDouble(odometer);
+            meter = meter * 0.001;
+            odometer =  Convert0DecimalPlacesDouble(meter);
+            // odometer = ""+ meter ;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -2416,6 +2451,20 @@ public class Constants {
         return strValue;
     }
 
+
+    public static String Convert0DecimalPlacesDouble(double value) {
+        String strValue = "";
+        try{
+            strValue = String.format("%.0f", value);
+            strValue = strValue.replace(".00", "");
+        }catch (Exception e){
+            e.printStackTrace();
+            strValue = ""+value;
+        }
+
+        return strValue;
+    }
+
     public static String get2DecimalEngHour(Context context){
         String engHour = SharedPref.getObdEngineHours(context);
         try {
@@ -3245,8 +3294,63 @@ public class Constants {
             maxDays = DriverPermitMaxDays;
         }
 
+
         return maxDays;
     }
+
+
+
+
+
+    public int getAvailableSpace(){
+
+        int iAvailableSpace = 0;
+
+        try{
+            File var10000 = Environment.getDataDirectory();
+            Intrinsics.checkNotNullExpressionValue(var10000, "Environment.getDataDirectory()");
+            File iPath = var10000;
+            StatFs iStat = new StatFs(iPath.getPath());
+            long iBlockSize = iStat.getBlockSizeLong();
+            long iAvailableBlocks = iStat.getAvailableBlocksLong();
+            iAvailableSpace = Integer.valueOf(formatSize(iAvailableBlocks * iBlockSize).replaceAll("[^0-9]",""));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return iAvailableSpace;
+    }
+
+
+
+    public final String formatSize(long sizeee) {
+        long size = sizeee;
+        String suffix = (String)null;
+        if (size >= (long)1024) {
+            suffix = "KB";
+            size = size / (long)1024;
+            if (size >= (long)1024) {
+                suffix = "MB";
+                size /= (long)1024;
+            }
+
+
+        }
+
+        StringBuilder resultBuffer = new StringBuilder(Long.toString(size));
+
+        for(int commaOffset = resultBuffer.length() - 3; commaOffset > 0; commaOffset -= 3) {
+            resultBuffer.insert(commaOffset, ',');
+        }
+
+        if (suffix != null) {
+            resultBuffer.append(suffix);
+        }
+
+        return resultBuffer.toString();
+    }
+
+
 
 
     public static JSONArray getClaimRecordsInArray(
@@ -3866,6 +3970,10 @@ public class Constants {
 
                         CheckNullBString(obj.getString(ConstantsKeys.StartLocation)),
                         CheckNullBString(obj.getString(ConstantsKeys.EndLocation)),
+
+                        CheckNullBString(obj.getString(ConstantsKeys.StartLatitude)),
+                        CheckNullBString(obj.getString(ConstantsKeys.StartLongitude)),
+
                         CheckNullBString(obj.getString(ConstantsKeys.DutyStatus)),
                         date
 
@@ -4043,20 +4151,25 @@ public class Constants {
                             odoDiff = Float.parseFloat(meterToKm(currentHighPrecisionOdometer)) - Float.parseFloat(meterToKm(lastOdometer));
                         }*/
 
-                        if (engineHrDiffInMin > 5) {
+                        if (engineHrDiffInMin > 4) {
 
                             SharedPref.SetIgnitionOffCalled(true, context);
                             double totalDuration = 0;
+                            double OdometerDiff  = 0;
 
                             double previousDiaEventTime = malfunctionDiagnosticMethod.getLast24HourEventsDurInMin(PowerComplianceDiagnostic,
                                     lastEngineHour, engineHrDiffInMin, constants, driverPermissionMethod, obdUtil, dbHelper);
 
                             try {
-                                double OdometerDiff = Double.parseDouble(SharedPref.getObdOdometer(context)) - Double.parseDouble(lastodometer);
-                                if(OdometerDiff > 1) {
+                                OdometerDiff = Double.parseDouble(SharedPref.getObdOdometer(context)) - Double.parseDouble(lastodometer);
+                                if(OdometerDiff > 0) {
                                     totalDuration = engineHrDiffInMin + previousDiaEventTime;
+
                                 }else{
                                     totalDuration = engineHrDiffInMin;
+
+                                    // Engine Sync diagnostic event is also occurred because truck was not moving
+                                    SharedPref.saveEngSyncEventAlso(true, Globally.GetCurrentDateTime(), context);
                                 }
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -4064,7 +4177,7 @@ public class Constants {
 
                              // add earlier diagnostic time within 24 hr with current time
 
-                            if (totalDuration >= PowerEngSyncMalOccTime) {
+                            if (totalDuration >= PowerEngSyncMalOccTime && OdometerDiff > 1) {
 
                                 if(isPowerCompMalAllowed) {
 
@@ -4093,7 +4206,7 @@ public class Constants {
 
                             } else {
                                 if (isPowerCompDiaAllowed) {
-                                    eventStatus = DiagnosticEvent + ","+engineHrDiffInMin;
+                                    eventStatus = DiagnosticEvent + "," + engineHrDiffInMin;
                                     Globally.PlayNotificationSound(context);
                                     global.ShowLocalNotification(context,
                                             context.getResources().getString(R.string.dia_event),
@@ -4164,6 +4277,23 @@ public class Constants {
 
 
 
+    public void refreshEventDataFromService(Context context){
+        try {
+            Constants.isCallMalDiaEvent = true;
+            SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
+
+            // call service onStart command to call event data to refresh
+            Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(serviceIntent);
+            }
+            context.startService(serviceIntent);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
     // saving location with time info to calculate location malfunction event
     public void saveEcmLocationWithTime(String latitude, String longitude, String odo, Context context){
 
@@ -4206,7 +4336,7 @@ public class Constants {
 
     public boolean isMalfunction(String EventCode){
         if(EventCode.equals(Constants.PowerComplianceMalfunction) || EventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
-                EventCode.equals(Constants.PositionComplianceMalfunction)){
+                EventCode.equals(Constants.PositionComplianceMalfunction) || EventCode.equals(Constants.DataRecordingComplianceMalfunction)){
             return true;
         }else {
             return false;
@@ -4306,6 +4436,50 @@ public class Constants {
         return duration;
     }
 
+    public JSONArray checkNullArray(JSONObject dataObj, String key){
+        JSONArray array = new JSONArray();
+        try{
+            if(!dataObj.getString(key).equals("null")){
+                array = new JSONArray(dataObj.getString(key));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return array;
+
+    }
+
+
+    // CT-PAT Agriculture inspection list
+    public List<PrePostModel> CtPatAgricultureList(){
+        List<PrePostModel> agricultureList = new ArrayList<>();
+        PrePostModel model;
+
+        model = new PrePostModel("101", "Area Of Inspection");
+        agricultureList.add(model);
+
+      /*  model = new PrePostModel("102", "Container Identification");
+        agricultureList.add(model);
+*/
+        model = new PrePostModel("103", "Conveyance Clean Before Loading");
+        agricultureList.add(model);
+
+        model = new PrePostModel("104", "Check Insects And Rodents");
+        agricultureList.add(model);
+
+        model = new PrePostModel("105", "Vacuum Pressure Wash");
+        agricultureList.add(model);
+
+        model = new PrePostModel("106", "WPM Compliant IPPC Logos");
+        agricultureList.add(model);
+
+        return agricultureList;
+
+    }
+
+
+
    /* public Duration getDateTimeDurationPublic(DateTime selectedDateTime, DateTime currentTime){
         Duration duration = new Duration(selectedDateTime, currentTime);
         return duration;
@@ -4358,7 +4532,7 @@ public class Constants {
                                 String ObdOdometer = SharedPref.getObdOdometer(context);
 
                                 JSONArray array = malfunctionDiagnosticMethod.AddNewItemInPositionArray( DriverId, ConstLocationMissing,
-                                                        ObdEngineHours, ObdOdometer, dbHelper);
+                                                        ObdEngineHours, ObdOdometer, "X", "", dbHelper);
                                 malfunctionDiagnosticMethod.PositioningMalDiaHelper(dbHelper, array);
 
                             }
@@ -4387,15 +4561,6 @@ public class Constants {
                                             Globally.GetCurrentUTCTimeFormat(), context);
                                     saveMalfncnStatus(context, true);
                                     PositionComplianceStatus = "M";
-
-                                    // update array for last 24 hours only before add new event
-                                   /*   malfunctionDiagnosticMethod.clearEventsMoreThen1Day(dbHelper);
-
-                                   String ObdEngineHours =  Constants.get2DecimalEngHour(context); //SharedPref.getObdEngineHours(context);
-                                    String ObdOdometer = SharedPref.getObdOdometer(context);
-
-                                   JSONArray array = malfunctionDiagnosticMethod.AddNewItemInPositionArray( DriverId, PositionComplianceMalfunction,
-                                                            ObdEngineHours, ObdOdometer, dbHelper);*/
 
                                      // clearing pos array after pos mal because we are checking dia for mal only here
                                     malfunctionDiagnosticMethod.PositioningMalDiaHelper(dbHelper, new JSONArray());    //array
@@ -4426,6 +4591,21 @@ public class Constants {
 
         return PositionComplianceStatus;
     }
+
+
+
+    public static String getLocationType(Context context){
+
+        String LocationType = "";
+        if(SharedPref.isLocMalfunctionOccur(context)) {
+            LocationType = "E";
+        }else if(SharedPref.isLocDiagnosticOccur(context)) {
+            LocationType = "X";
+        }
+
+        return LocationType;
+    }
+
 
 
     public void resetMalDiaEvents(Context context){

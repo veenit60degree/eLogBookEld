@@ -65,30 +65,34 @@ import java.util.Map;
 public class CtPatFragment extends Fragment implements View.OnClickListener {
 
 
-    View rootView;
+    View rootView,agricultureReasonCtPatView;
     RelativeLayout rightMenuBtn, eldMenuLay;
-    LinearLayout scrollChildMainLay;
+    LinearLayout scrollChildMainLay,agricutureReasonLay;
     TextView EldTitleTV, actionBarRightBtn, truckCtPatTV, trailerCtPatTV, ctPatDateTimeTv, ctPatDateTimeTitle;
     public static TextView ctPatInspctTV;
-    EditText arrivalContNoEditTxt, departureContNoEditTxt, conductedSecInspEditTxt, followSecLayEditTxt, affixedSealEditTxt, verifiedSealEditTxt;
+    EditText arrivalContNoEditTxt, departureContNoEditTxt, conductedSecInspEditTxt, followSecLayEditTxt, affixedSealEditTxt,
+            verifiedSealEditTxt,agricultureReasonEditText, containerIdenEditText;
     ImageView conductedSecIV, followSecLayIV, affixedSealIV, verifiedSealIV;
-    GridView ctPatTruckGridVw, ctPatTrailerGridVw;
+    GridView ctPatTruckGridVw, ctPatTrailerGridVw,ctPatAgricultureGridVw;
     Button ctPatInspectionBtn;
     ScrollView ctPatScrollView;
     CtPatDialog signDialog;
-    CtPatAdapter truckAdapter, trailerAdapter;
+    CtPatAdapter truckAdapter, trailerAdapter,agricultureAdapter;
     List<PrePostModel> TruckInspList = new ArrayList<PrePostModel>();
     List<PrePostModel> TrailerInspList = new ArrayList<PrePostModel>();
+    List<PrePostModel> AgricultureInspList = new ArrayList<PrePostModel>();
     ArrayList<String> TruckList = new ArrayList<String>();
     ArrayList<String> TrailerList = new ArrayList<String>();
+    ArrayList<String> AgricultureList = new ArrayList<String>();
     ArrayList<Integer> TruckIdList = new ArrayList<Integer>();
     ArrayList<Integer> TrailerIdList = new ArrayList<Integer>();
+    ArrayList<Integer> AgricultureIdList = new ArrayList<Integer>();
 
     ProgressDialog pDialog;
     VolleyRequest GetCtPatInspRequest, ctPatInsp18DaysRequest;
     Map<String, String> params;
     Constants constant;
-    String  DRIVER_ID = "", VIN_NUMBER = "", DeviceId = "", CreatedDate = "", TruckIssueType = "", TraiorIssueType = "",
+    String  DRIVER_ID = "", VIN_NUMBER = "", DeviceId = "", CreatedDate = "", TruckIssueType = "", TraiorIssueType = "",AgricultureIssueType = "",
             CurrentCycleId = "", SelectedDatee = "";
 
 
@@ -97,6 +101,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
     String FollowUpInspectionPersonName = "", ByteFollowUpConductorSign = "";
     String AffixedSealPersonName        = "", ByteSealFixerSign = "";
     String VerificationPersonName       = "", ByteSealVerifierSign = "";
+    String AgricultureReason            = "",  ContainerIdentification = "";
 
     String DriverId = "", CoDriverId = "", SelectedMain = "", DriverName = "", CompanyId = "";
 
@@ -112,6 +117,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
     JSONArray truckArray = new JSONArray();
     JSONArray trailerArray = new JSONArray();
+    List<PrePostModel> agricultureArray;
     JSONArray inspection18DaysArray = new JSONArray();
 
     Slidingmenufunctions slideMenu;
@@ -131,6 +137,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
             if (parent != null)
                 parent.removeView(rootView);
         }
+
         try {
             rootView = inflater.inflate(R.layout.fragment_ct_pat, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -161,6 +168,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
         rightMenuBtn            = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
         scrollChildMainLay      = (LinearLayout) view.findViewById(R.id.scrollChildMainLay);
+        agricutureReasonLay      = (LinearLayout) view.findViewById(R.id.agricutureReasonLay);
 
         EldTitleTV              = (TextView) view.findViewById(R.id.EldTitleTV);
         actionBarRightBtn       = (TextView) view.findViewById(R.id.dateActionBarTV);
@@ -172,13 +180,16 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
         arrivalContNoEditTxt    = (EditText) view.findViewById(R.id.arrivalContNoEditTxt);
         departureContNoEditTxt  = (EditText) view.findViewById(R.id.departureContNoEditTxt);
+        agricultureReasonEditText = (EditText) view.findViewById(R.id.agricultureReasonEditText);
         conductedSecInspEditTxt = (EditText) view.findViewById(R.id.conductedSecInspEditTxt);
         followSecLayEditTxt     = (EditText) view.findViewById(R.id.followSecLayEditTxt);
         affixedSealEditTxt      = (EditText) view.findViewById(R.id.affixedSealEditTxt);
         verifiedSealEditTxt     = (EditText) view.findViewById(R.id.verifiedSealEditTxt);
+        containerIdenEditText   = (EditText) view.findViewById(R.id.containerIdenEditText);
 
         ctPatTruckGridVw        = (GridView) view.findViewById(R.id.ctPatTruckGridVw);
         ctPatTrailerGridVw      = (GridView) view.findViewById(R.id.ctPatTrailerGridVw);
+        ctPatAgricultureGridVw      = (GridView) view.findViewById(R.id.ctPatAgricultureGridVw);
 
         conductedSecIV          = (ImageView) view.findViewById(R.id.conductedSecIV);
         followSecLayIV          = (ImageView) view.findViewById(R.id.followSecLayIV);
@@ -188,6 +199,8 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         ctPatInspectionBtn      = (Button) view.findViewById(R.id.ctPatInspectionBtn);
 
         ctPatScrollView         = (ScrollView)view.findViewById(R.id.ctPatScrollView);
+        agricultureReasonCtPatView         = (View) view.findViewById(R.id.agricultureReasonCtPatView);
+
 
         pDialog                 = new ProgressDialog(getActivity());
         pDialog.setMessage("Saving ...");
@@ -206,7 +219,8 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
             truckArray = new JSONArray(SharedPref.getCtPatInspectionIssues(ConstantsKeys.TruckCtPatIssues, getActivity()) );
             trailerArray = new JSONArray(SharedPref.getCtPatInspectionIssues(ConstantsKeys.TrailerCtPatIssues, getActivity()) );
-            ParseInspectionIssues( truckArray, trailerArray );
+//            agricultureArray =  constant.CtPatAgricultureList();   //new(JSONArray();
+//            ParseInspectionIssues( truckArray, trailerArray ,agricultureArray);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -215,6 +229,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         if(TruckInspList.size() == 0) {
             TruckInspList = constant.CtPatTruckList();
             TrailerInspList = constant.CtPatTrailerList();
+            AgricultureInspList = constant.CtPatAgricultureList();
         }
 
         new Handler().postDelayed(new Runnable() {
@@ -226,9 +241,9 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
 
         // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
-        if(UILApplication.getInstance().isNightModeEnabled()){
-            scrollChildMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
-        }
+//        if(UILApplication.getInstance().isNightModeEnabled()){
+//            scrollChildMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
+//        }
 
 
         ctPatInspectionBtn.setOnClickListener(this);
@@ -290,6 +305,9 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
             }
         }
 
+        agricultureArray =  constant.CtPatAgricultureList();   //new(JSONArray();
+        ParseInspectionIssues( truckArray, trailerArray ,agricultureArray);
+
     }
 
     @Override
@@ -327,15 +345,35 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                 FollowUpInspectionPersonName = followSecLayEditTxt.getText().toString().trim();
                 AffixedSealPersonName = affixedSealEditTxt.getText().toString().trim();
                 VerificationPersonName = verifiedSealEditTxt.getText().toString().trim();
+                AgricultureReason      = agricultureReasonEditText.getText().toString().trim();
+                ContainerIdentification = containerIdenEditText.getText().toString().trim();
 
                 if(constant.isActionAllowed(getContext())) {
-                    if (ArrivalSealNumber.length() > 0 || DepartureSealNumber.length() > 0) {
-                        SaveInspectionOfflineWithAPI();
-                    } else {
-                        //  inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
-                        // cityEditText.requestFocus();
-                        Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.arrival_departure_seal_number),
-                                getResources().getColor(R.color.colorVoilation));
+
+                    if(AgricultureIssueType.contains("101")) {
+                        if (ArrivalSealNumber.length() > 0 || DepartureSealNumber.length() > 0) {
+                            AgricultureReason = "null";
+                            SaveInspectionOfflineWithAPI();
+                        } else {
+                            //  inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
+                            // cityEditText.requestFocus();
+                            Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.arrival_departure_seal_number),
+                                    getResources().getColor(R.color.colorVoilation));
+                        }
+                    }else{
+                        if(AgricultureReason.length()> 0){
+                            if (ArrivalSealNumber.length() > 0 || DepartureSealNumber.length() > 0) {
+                                SaveInspectionOfflineWithAPI();
+                            } else {
+                                //  inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
+                                // cityEditText.requestFocus();
+                                Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.arrival_departure_seal_number),
+                                        getResources().getColor(R.color.colorVoilation));
+                            }
+                        }else{
+                            Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.agriculture_unacceptable_reason),
+                                    getResources().getColor(R.color.colorVoilation));
+                        }
                     }
                 }else{
                     Globally.EldScreenToast(ctPatInspectionBtn, getString(R.string.stop_vehicle_alert),
@@ -375,11 +413,21 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
             case R.id.ctPatInspctTV:
 
-                TruckIssueType = "";      TraiorIssueType = "";
+                TruckIssueType = "";      TraiorIssueType = ""; AgricultureIssueType = "";
 
                 TruckIssueType = GetItemsId(TruckList, TruckIdList);
                 TraiorIssueType = GetItemsId(TrailerList, TrailerIdList);
+                AgricultureIssueType = GetItemsId(AgricultureList,AgricultureIdList);
+                Log.e("AgricultureIssueType",AgricultureIssueType);
 
+                if(!AgricultureIssueType.contains("101")){
+                    agricutureReasonLay.setVisibility(View.VISIBLE);
+                    agricultureReasonCtPatView.setVisibility(View.VISIBLE);
+                }else{
+                    agricutureReasonLay.setVisibility(View.GONE);
+                    agricultureReasonCtPatView.setVisibility(View.GONE);
+                    AgricultureReason = "";
+                }
 
                 break;
 
@@ -596,14 +644,19 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         TruckIdList = new ArrayList<>();
         TrailerList = new ArrayList<>();
         TrailerIdList = new ArrayList<>();
+        AgricultureList = new ArrayList<>();
+        AgricultureIdList = new ArrayList<>();
 
         SetDataInList(TruckInspList, TruckList, TruckIdList);
         SetDataInList(TrailerInspList, TrailerList, TrailerIdList);
+        SetDataInList(AgricultureInspList, AgricultureList, AgricultureIdList);
 
         truckAdapter = new CtPatAdapter(getActivity(), false, false, TruckInspList, TruckList, TruckIdList);
         trailerAdapter = new CtPatAdapter(getActivity(), false, false, TrailerInspList, TrailerList, TrailerIdList);
+        agricultureAdapter = new CtPatAdapter(getActivity(), false, false, AgricultureInspList, AgricultureList, AgricultureIdList);
         ctPatTruckGridVw.setAdapter(truckAdapter);
         ctPatTrailerGridVw.setAdapter(trailerAdapter);
+        ctPatAgricultureGridVw.setAdapter(agricultureAdapter);
 
         arrivalContNoEditTxt.setText("");
         departureContNoEditTxt.setText("");
@@ -611,9 +664,13 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         followSecLayEditTxt.setText("");
         affixedSealEditTxt.setText("");
         verifiedSealEditTxt.setText("");
+        agricultureReasonEditText.setText("");
+        containerIdenEditText.setText("");
 
         TruckIssueType       = "";
         TraiorIssueType      = "";
+        AgricultureIssueType = "";
+        ContainerIdentification = "";
 
         conductedSecIV.setBackgroundDrawable(null);
         followSecLayIV.setBackgroundDrawable(null);
@@ -625,6 +682,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         FollowUpInspectionPersonName = "";  ByteFollowUpConductorSign   = "";
         AffixedSealPersonName        = "";  ByteSealFixerSign           = "";
         VerificationPersonName       = "";  ByteSealVerifierSign        = "";
+        AgricultureReason = "";
 
         ScrollUpView();
 
@@ -641,23 +699,29 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    private void ParseInspectionIssues(JSONArray TruckArray, JSONArray TrailerArray){
+    private void ParseInspectionIssues(JSONArray TruckArray, JSONArray TrailerArray,List<PrePostModel> agricultureArray){
         TruckInspList = new ArrayList<>();
         TrailerInspList = new ArrayList<>();
+        AgricultureInspList = new ArrayList<>();
 
         TruckInspList   = parseListData(TruckArray);
         TrailerInspList = parseListData(TrailerArray);
+        AgricultureInspList =  agricultureArray;
 
         SetDataInList(TruckInspList, TruckList, TruckIdList);
         SetDataInList(TrailerInspList, TrailerList, TrailerIdList);
+        SetDataInList(AgricultureInspList, AgricultureList, AgricultureIdList);
 
         truckAdapter = new CtPatAdapter(getActivity(), false, false, TruckInspList, TruckList, TruckIdList);
         trailerAdapter = new CtPatAdapter(getActivity(), false, false, TrailerInspList, TrailerList, TrailerIdList);
+        agricultureAdapter = new CtPatAdapter(getActivity(), true, true, AgricultureInspList, AgricultureList, AgricultureIdList);
         ctPatTruckGridVw.setAdapter(truckAdapter);
         ctPatTrailerGridVw.setAdapter(trailerAdapter);
+        ctPatAgricultureGridVw.setAdapter(agricultureAdapter);
 
         final int truckViewCount      = TruckInspList.size() / 2 + TruckInspList.size() % 2;
         final int trailerViewCount    = TrailerInspList.size() / 2 + TrailerInspList.size() % 2;
+        final int agricultureViewCount    = AgricultureInspList.size() / 2 + AgricultureInspList.size() % 2;
 
 
         new Handler().postDelayed(new Runnable() {
@@ -673,6 +737,13 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                 try {
                     LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (constant.inspectionLayHeight * trailerViewCount) );
                     ctPatTrailerGridVw.setLayoutParams(mParam);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                try {
+                    LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (constant.inspectionLayHeight * agricultureViewCount) );
+                    ctPatAgricultureGridVw.setLayoutParams(mParam);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -718,11 +789,12 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         JSONObject inspectionData = ctPatInspectionMethod.AddUnPostedCtPatInspObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, VIN_NUMBER,
                 Globally.TRUCK_NUMBER, Globally.TRAILOR_NUMBER, CreatedDate,  ArrivalSealNumber , DepartureSealNumber, SecurityInspectionPersonName , FollowUpInspectionPersonName,
                 AffixedSealPersonName , VerificationPersonName, Globally.LATITUDE, Globally.LONGITUDE, TruckIssueType, TraiorIssueType,
-                ByteInspectionConductorSign, ByteFollowUpConductorSign, ByteSealFixerSign, ByteSealVerifierSign);
+                ByteInspectionConductorSign, ByteFollowUpConductorSign, ByteSealFixerSign, ByteSealVerifierSign,AgricultureIssueType,
+                AgricultureReason, ContainerIdentification );
 
         // Add inspection JSON obj in 18 Days Array
         JSONArray reverseArray = shipmentHelperMethod.ReverseArray(inspection18DaysArray);
-        JSONObject inspectionFor18DaysObj = ctPatInspectionMethod.AddCtPat18DaysObj(inspectionData, TruckList, TruckIdList, TrailerList, TrailerIdList);
+        JSONObject inspectionFor18DaysObj = ctPatInspectionMethod.AddCtPat18DaysObj(inspectionData, TruckList, TruckIdList, TrailerList, TrailerIdList,AgricultureList,AgricultureIdList);
         reverseArray.put(inspectionFor18DaysObj);
 
         // again reverse Array to show last item at top
@@ -830,7 +902,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
                                 SharedPref.setCtPatInspectionIssues( truckArray.toString() , trailerArray.toString(), getActivity());
 
-                                ParseInspectionIssues( truckArray, trailerArray );
+                                ParseInspectionIssues( truckArray, trailerArray ,agricultureArray);
                             }
 
 

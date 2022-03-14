@@ -885,7 +885,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     }
 
 
-    private void addCurrentDateLogWithPrevDay(){
+   /* private void addCurrentDateLogWithPrevDay(){
         try{
              if(!IsCurrentDate) {
 
@@ -962,7 +962,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
             e.printStackTrace();
         }
     }
-
+*/
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void saveEditLogWithReason(String reason){
         try {

@@ -173,6 +173,7 @@ public class ConstantsKeys {
     public static String UTCEndDateTime         = "UTCEndDateTime";
     public static String CrntOdodmeter          = "CrntOdodmeter";
     public static String LocationType           = "LocationType";
+    public static String CurrentStatus          = "CurrentStatus";
     public static String DeferralOffTime        = "DeferralOff_dutyTime";
     public static String DayCount               = "DayCount";
     public static String StartOdometerKM        = "StartOdometerKM";
@@ -262,7 +263,7 @@ public class ConstantsKeys {
     public static String DeviceType                     = "DeviceType";
 
 
-
+    public static String OdometerFromOBD                = "OdometerFromOBD";
     public static String PlateNumber                    = "PlateNumber";
     public static String HaulHourException              = "HaulHourException";
     public static String Carrier                        = "Carrier";
@@ -283,8 +284,12 @@ public class ConstantsKeys {
     public static String IsPcYmAlertChangeStatus        = "IsPcYmAlertChangeStatus";
     public static String IsNeedToUpdate18DaysLog        = "IsNeedToUpdate18DaysLog";
     public static String IsUpdateMalDiaInfoWindow       = "IsUpdateMalDiaInfoWindow";
+    public static String IsAutoOnDutyDriveEnabled       = "IsAutoOnDutyDriveEnabled";
+    public static String IsOBDPingAllowed               = "IsOBDPingAllowed";
+    public static String IsAutoSync                     = "IsAutoSync";
 
 
+    public static String IsStorageMalfunction           = "IsStorageMalfunction";
     public static String IsUnidentified                 = "IsUnidentified";
     public static String IsMalfunction                  = "IsMalfunction";
     public static String IsDiagnostic                   = "IsDiagnostic";
@@ -296,7 +301,7 @@ public class ConstantsKeys {
     public static String IsAgriException                = "IsAgriException";
     public static String IsCertifyReminder              = "IsCertifyReminder";
     public static String DownloadProgress               = "download_progress";
-
+    public static String MissingDiagnostic              = "MissingDiagnostic";
 
     public static String IsLocDiagnostic                = "IsLocDiagnostic";
     public static String LocDiaOccurTime                = "LocDiaOccurTime";
@@ -311,6 +316,8 @@ public class ConstantsKeys {
     public static String PowerMalfunctionTimeOcc        = "PowerMalfunctionTimeOcc";
     public static String isIgnitionOffCalled            = "isIgnitionOffCalled";
 
+    public static String EngSyncDiagnosticAlso          = "EngSyncDiagnstcAlso";
+    public static String EngSyncDiagnosticTimeAlso      = "EngSyncDiagnstcTImeAlso";
 
     public static String PowerComplianceMal             = "PowerComplianceMal";
     public static String EnginSyncMal                   = "EnginSyncMal";
@@ -665,6 +672,8 @@ public class ConstantsKeys {
     public static String DriverZoneEndDateTime          = "DriverZoneEndDateTime";
     public static String IsIntermediateLog              = "IsIntermediateLog";
 
+    public static String graphRecordList                = "graphRecordList";
+    public static String EngineHourMilesReportList      = "EngineHourMilesReportList";
     public static String loginAndLogoutDates            = "loginAndLogoutDates";
     public static String dutyStatusChangesList          = "dutyStatusChangesList";
     public static String loginAndLogoutList             = "loginAndLogoutList";
@@ -679,6 +688,11 @@ public class ConstantsKeys {
     public static String TotalSleeperHours              = "TotalSleeperHours";
     public static String TotalDrivingHours              = "TotalDrivingHours";
     public static String TotalOnDutyHours               = "TotalOnDutyHours";
+
+    public static String AgricultureIssueType           = "AgricultureIssueType";
+    public static String AreaOfInspectionRemarks        = "AreaOfInspectionRemarks";
+    public static String AgricultureIssueTypeInspection = "AgricultureIssueTypeInspection";
+    public static String ContainerIdentification        = "ContainerIdentification";
 
     public static String oReportList                    = "oReportList";
     public static String ShippingInformationModel       = "ShippingInformationModel";

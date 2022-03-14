@@ -149,7 +149,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
     void viewOfflineData(String selectedDate){
         try{
             selectedDate = globally.ConvertDateFormatyyyy_MM_dd(selectedDate);
-            JSONArray malDiaArray = malfunctionDiagnosticMethod.getEventsDateWise(selectedDate, dbHelper);  //getMalDiaDurationArray(dbHelper);
+            JSONArray malDiaArray = malfunctionDiagnosticMethod.getEventsDateWise(selectedDate, globally, dbHelper);  //getMalDiaDurationArray(dbHelper);
 
             Log.d("malDiaArray", "malDiaArray: " + malDiaArray);
 
@@ -173,6 +173,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
 
                 parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
 
+                parseListInHashMap(malDiaArray, Constants.DataRecordingComplianceMalfunction);
 
 
                 notifyMalfunctionAdapter(noRecordTV, diagnosticExpandList, diagnosticHeaderList, diagnosticChildHashMap);

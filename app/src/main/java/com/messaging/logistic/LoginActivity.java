@@ -61,6 +61,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
 
@@ -99,6 +100,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	RetryPolicy policy;
 	RequestQueue queue;
 	Animation connectionStatusAnimation;
+	MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
 
 
 	@Override
@@ -152,6 +154,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		userTypeLayout 			= (RelativeLayout) findViewById(R.id.userTypeLayout);
 		loginCoDriverLayout 	= (RelativeLayout) findViewById(R.id.loginCoDriverLayout);
 		//mTelephonyManager 	= (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
 
 		connectionStatusAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
 		connectionStatusAnimation.setDuration(1500);
@@ -750,6 +753,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.SetWrongVinAlertView(false, getApplicationContext());
 			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , getApplicationContext());
 
+			SharedPref.saveMissingDiaStatus(false, getApplicationContext());
 			constants.saveMalfncnStatus(getApplicationContext(), false);
 			SharedPref.SetObdOdometer("0", getApplicationContext());
 			SharedPref.SetObdEngineHours("0", getApplicationContext());
@@ -831,10 +835,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					new Response.Listener<String>() {
 						@Override
 						public void onResponse(String response) {
-
-							// response
-								Log.d("Response", ">>>response: " + response);
-							//	global.SaveFileInSDCard("LoginOutput", response, LoginActivity.this);
+							Log.d("Response", ">>>response: " + response);
 
 							SharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
 							//SharedPref.SetConnectionType(constants.ConnectionMalfunction, getApplicationContext());
@@ -855,12 +856,20 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 								if (status.equalsIgnoreCase("true")) {
 
-									global.DisConnectBleDevice(LoginActivity.this);
+									try {
+										global.DisConnectBleDevice(LoginActivity.this);
+										String CompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
+										malfunctionDiagnosticMethod.UnidentifiedLogoutRecordHelper(Integer.valueOf(CompanyId),
+												new DBHelper(getApplicationContext()), new JSONArray());
+									}catch (Exception e){
+										e.printStackTrace();
+									}
 
 									if (!obj.isNull("Data")) {
 										loginResponseData = obj.getString("Data");
 										// reset user data
 										Constants.IS_ELD_ON_CREATE = true;
+
 
 										resetValues();
 
@@ -885,13 +894,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 									String errorStr = getErrorMsg(message);
 									global.EldScreenToast(mainLoginLayout, errorStr, getResources().getColor(R.color.colorVoilation));
 
-								/*	if (message.contains("Object reference")) {
-										global.EldScreenToast(mainLoginLayout, "Invalid Username/Password.", getResources().getColor(R.color.colorVoilation));
-									} else if (message.contains("timeout")) {
-										global.EldScreenToast(mainLoginLayout, "Please check your internet connection", getResources().getColor(R.color.colorVoilation));
-									} else {
-										global.EldScreenToast(mainLoginLayout, message, getResources().getColor(R.color.colorVoilation));
-									}*/
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -1258,10 +1260,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			case R.id.loginBleStatusBtn:
 
 
+/*
 				String abc = "{\"note_text\":\"tertsetresrs sdfds fsd fsdfs f\"}";
 				//abc = abc.replaceAll("\"", "");
 				abc = abc.replaceAll("\\\\", "");
 				Log.d("finalString: ", abc);
+*/
 
 				if(ObdPreference == Constants.OBD_PREF_BLE) {
 					if(!IsBleConnected) {

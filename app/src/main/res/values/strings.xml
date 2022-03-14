@@ -275,6 +275,13 @@
     <string name="power_mal_title">Power Compliance Malfunction Event</string>
     <string name="power_mal_def">Power compliance malfunctions occur when an ELD is not powered for an aggregated in-motion driving time of 30 minutes or more over a 24-hour period across all driver profiles</string>
 
+    <string name="data_rec_mal_title">Data Recording Compliance Malfunction Event</string>
+    <string name="data_rec_mal_def">Data recording compliance malfunctions occur when device storage left less then 200mb.</string>
+    <string name="data_rec_mal_def_noti">Data recording compliance malfunctions occurred due to low storage space.</string>
+    <string name="data_rec_mal_cleared_def">Data recording compliance malfunctions has been cleared</string>
+    <string name="missing_event_cleared_def">Missing required data elements data diagnostic event has been cleared</string>
+
+
     <string name="missing_data_dia_title">Missing Data Diagnostic Event</string>
     <string name="missing_data_dia_def">A missing required data elements data diagnostic event occurs when any required data field is missing at the time of its recording.A data transfer compliance malfunction occurs when the ELD stays in the unconfirmed data transfer mode following the next three consecutive monitoring checks.</string>
 
@@ -297,6 +304,7 @@
     <string name="missing_event_occured_desc">Missing required data element data diagnostic event occurred</string>
     <string name="missing_data_element">Missing Data Diagnostic</string>
     <string name="dia_event_occured">Diagnostic event occurred</string>
+    <string name="data_recording_mal_occured">Data recording compliance malfunction occurred</string>
     <string name="power_dia_occured">Power data diagnostic event occurred</string>
     <string name="power_comp_mal_occured">Power compliance malfunction occurred</string>
     <string name="eng_sync_dia_occured">Engine sync diagnostic occurred</string>
@@ -308,6 +316,8 @@
     <string name="pos_mal_occured">Position malfunction occurred</string>
     <string name="pos_mal_occured_desc">Position malfunction occurred due to location missing.</string>
     <string name="ignore_to_save_loc">Driver ignore to save location in </string>
+    <string name="obd_data_is_missing">OBD data is missing in </string>
+    <string name="obd_data_is_missing_at">OBD data is missing at </string>
 
     <string name="hos_limitation">New HOS Limitations</string>
     <string name="hos_limitation_old">Old HOS Limitations</string>
@@ -321,6 +331,7 @@
     <string name="title_eld">HOS - ELD</string> <!--HOURS OF SERVICE-->
     <string name="title_eld_exempt">HOS - ELD (Exempt Driver)</string>
 
+    <string name="Storage">Storage</string>
     <string name="RecordDate">Record Date</string>
     <string name="USDOT"> USDOT #</string>
     <string name="DriverLicenseNo">Driver License No.</string>
@@ -861,6 +872,13 @@
     <string name="chaged_cycle_rule">Changed Cycle Rule</string>
 
     <string name="info_missed_desc">Few ECM info may be missed due to ELD book is not connected with OBD</string>
+    <string name="agriculture_no_hint_arr">Unacceptable Reason</string>
+    <string name="Agriculture_Reason">Enter unacceptable reason for Area of inspection </string>
+    <string name="Agriculture">Agriculture</string>
+    <string name="agriculture_unacceptable_reason">Enter unacceptable agriculture inspection Reason</string>
+
+    <string name="conatinerIdent_no_hint_arr">Enter container identification</string>
+    <string name="ContainerIden_Reason">Container Identification (optional)</string>
 
 
     <string name="No_">No.</string>
@@ -1002,6 +1020,7 @@
     <string name="diagnostic_occur">Diagnostic event occurred</string>
     <string name="malfunction_event">Malfunction event</string>
     <string name="dia_event">Diagnostic event</string>
+    <string name="missing_dia_event">Missing Diagnostic event</string>
 
     <string name="malfunction_events">Malfunction Event</string>
     <string name="dia_events">Diagnostic Event</string>

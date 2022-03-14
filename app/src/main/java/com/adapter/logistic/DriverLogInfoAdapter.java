@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 
@@ -24,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
@@ -182,7 +184,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         setMarqueOnView(holder.certifyLocationTV);
 
         final int JobStatus = LogItem.getDriverStatusId();
-        SetTextDataInView(holder,  LogItem, Global.JobStatus(JobStatus, LogItem.isPersonal()),  String.valueOf(position + 1)+ "." );
+        SetTextDataInView(holder,  LogItem, Global.JobStatus(JobStatus, LogItem.isPersonal(), ""+JobStatus),  String.valueOf(position + 1)+ "." );
 
         if(SharedPref.IsCCMTACertified(context) && !IsCurrentDate) {
             if (JobStatus == Constants.DRIVING && IsDrivingAllowForSwap && IsEditView &&
@@ -485,6 +487,24 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     logModel.setLocation(City + "; " + State + "; " + Country);
                     logModel.setLocationKm(City + "; " + State + "; " + Country);
                     SaveAndUploadData(logModel, RecordType, position, "","");
+
+                    DateTime eventDate = Globally.getDateTimeObj(LogList.get(position).getUTCStartDateTime(), false);
+                    int offset = Math.abs((int) Global.GetTimeZoneOffSet());
+                    String eventStartUtcDate = eventDate.plusHours(offset).toString();
+
+                    boolean isMissingEventToClear =  malfunctionDiagnosticMethod.isMissingEventToClear(eventStartUtcDate, dbHelper);
+                    if(isMissingEventToClear){
+                        Constants.ClearMissingEventTime = eventStartUtcDate;
+                        Constants.isClearMissingEvent = true;
+                        SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
+
+                        Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
+                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            context.startForegroundService(serviceIntent);
+                        }
+                        context.startService(serviceIntent);
+
+	                }
 
                 }
 
