@@ -2504,13 +2504,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
     // update clear event info in existing log if not uploaded on server yet
-    private void ClearLocationMissingEvent(String DriverId, String eventTime){
+    private void ClearLocationMissingEvent(String DriverId, String eventTime, boolean isLocationEventToClear){
         try{
 
             boolean isUnPostedEvent = malfunctionDiagnosticMethod.isUnPostedMissingEventToClear(eventTime, dbHelper);
             if (isUnPostedEvent) {
                 // update clear event array in duration table and not posted to server with duration table input because occured event already exist TABLE_MALFUNCTION_DIANOSTIC
-                malfunctionDiagnosticMethod.updateMissingDataToClear(eventTime, getApplicationContext(), dbHelper);
+                malfunctionDiagnosticMethod.updateMissingDataToClear(eventTime, isLocationEventToClear, getApplicationContext(), dbHelper);
 
                 // update offline unposted event array
                 JSONArray malArray = malfunctionDiagnosticMethod.updateOfflineUnPostedMissingEvent( eventTime,
@@ -2523,7 +2523,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             } else {
 
                 // checking Missing Event with log time if match then update with clear data and Upload to server
-               JSONArray getMissingClearEventArray = malfunctionDiagnosticMethod.updateMissingDataToClear(eventTime, getApplicationContext(), dbHelper);
+               JSONArray getMissingClearEventArray = malfunctionDiagnosticMethod.updateMissingDataToClear(eventTime, isLocationEventToClear,
+                       getApplicationContext(), dbHelper);
                 if(getMissingClearEventArray.length() > 0){
 
                     ClearEventType = Constants.MissingDataDiagnostic;
@@ -2560,7 +2561,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 SaveMalfnDiagnstcLogToServer(malArray, DriverId);
 
             }
-              //  CheckEventsForClear(dataDiagnostic, true);
 
                 EngSyncClearEventForSwitchedDriver(DriverId, dataDiagnostic);
 
@@ -2881,7 +2881,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 Constants.isClearMissingEvent = false;
 
                 if(Constants.ClearMissingEventTime.length() > 10) {
-                    ClearLocationMissingEvent(DriverId, Constants.ClearMissingEventTime);
+                    ClearLocationMissingEvent(DriverId, Constants.ClearMissingEventTime, true);
                 }
                 Constants.ClearMissingEventTime = "";
             }else {
@@ -4964,12 +4964,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 }
 
                                 String LocationType = "";
-                                if(obj.has(ConstantsKeys.LocationType)){
-                                    LocationType = obj.getString(ConstantsKeys.LocationType);
+                                if(objItem.has(ConstantsKeys.LocationType)){
+                                    LocationType = objItem.getString(ConstantsKeys.LocationType);
                                 }
                                 String CurrentStatus = "";
-                                if(obj.has(ConstantsKeys.CurrentStatus)){
-                                    CurrentStatus = obj.getString(ConstantsKeys.CurrentStatus);
+                                if(objItem.has(ConstantsKeys.CurrentStatus)){
+                                    CurrentStatus = objItem.getString(ConstantsKeys.CurrentStatus);
                                 }
 
                                 JSONObject item = malfunctionDiagnosticMethod.getNewMalDiaDurationObj(
@@ -4990,7 +4990,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     durationArray.put(item);
 
                                 if(DetectionDataEventCode.equals(Constants.MissingDataDiagnostic) && !isClearEvent){
-                                    SharedPref.saveMissingDiaStatus(true, getApplicationContext());
+                                    //LocationType.equals("X") || LocationType.equals("E")
+                                    if(LocationType.length() == 0){
+                                        SharedPref.saveMissingDiaStatus(true, getApplicationContext());
+                                    }
+
                                 }
 
                             }

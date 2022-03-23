@@ -40,13 +40,17 @@ public class VolleyRequestWithoutRetry {
                 @Override
                 public void onResponse(String response) {
                     Log.d("RES", " Response" + flag + ": " + response);
-                    callback.getResponse(response, flag );
+                    if(context != null) {
+                        callback.getResponse(response, flag);
+                    }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.e("error", " error: " + error);
-                    ErrorCallback.getError(error, flag );
+                    if(context != null) {
+                        ErrorCallback.getError(error, flag);
+                    }
                 }
             }) {
 

@@ -1394,8 +1394,16 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     EngineSeconds = htBleData.getEngineHours();
                     obdOdometer = htBleData.getOdoMeter();
                     currentHighPrecisionOdometer = htBleData.getOdoMeter();
-                    Globally.LATITUDE = htBleData.getLatitude();
-                    Globally.LONGITUDE = htBleData.getLongitude() ;
+                    String lat = htBleData.getLatitude();
+                    String lon = htBleData.getLongitude();
+
+                    if(lat.equalsIgnoreCase("X")){
+                        lat = Constants.getLocationType(getApplicationContext());
+                        lon = lat;
+                    }
+
+                    Globally.LATITUDE = lat;
+                    Globally.LONGITUDE = lon ;
 
                     // this check is using to confirm loc update, because in loc disconnection ble OBD is sending last saved location.
                     if(Globally.LATITUDE.equals(PreviousLatitude) && Globally.LONGITUDE.equals(PreviousLongitude) &&
@@ -1405,8 +1413,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                     }
 
-                    PreviousLatitude = htBleData.getLatitude();
-                    PreviousLongitude = htBleData.getLongitude();
+                    PreviousLatitude = lat;
+                    PreviousLongitude = lon;
                     PreviousOdometer = currentHighPrecisionOdometer;
 
                     if(Globally.LATITUDE.length() < 5){
@@ -1593,7 +1601,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             JSONObject jsonObject = constants.getUnIdentifiedLogJSONObj("", CompanyId, VinNumber, TruckID,
                     LastDutyStatus, StatusStartTime, "", Globally.LATITUDE, Globally.LONGITUDE, "", "",
                     EngineSeconds, "", odometer, "", false,
-                    false, "0", false);
+                    false, "0", false, Constants.getLocationType(getApplicationContext()) );
 
             SharedPref.SaveUnidentifiedIntermediateRecord(odometer, Globally.GetCurrentUTCTimeFormat(), Globally.LATITUDE, Globally.LONGITUDE,
                     EngineSeconds, getApplicationContext());
@@ -1707,7 +1715,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 JSONObject jsonObject = constants.getUnIdentifiedLogJSONObj("", CompanyId, VinNumber, TruckID,
                         LastDutyStatus, StatusStartTime, "", Globally.LATITUDE, Globally.LONGITUDE, "", "",
                         EngineSeconds, "", currentOdometer, "", Intermediate,
-                        IntermediateUpdate, "", false);
+                        IntermediateUpdate, "", false,
+                        Constants.getLocationType(getApplicationContext()) );
 
 
                 SharedPref.setUnIdenLastDutyStatus(LastDutyStatus, getApplicationContext());
@@ -1775,7 +1784,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                         JSONObject lastObj = constants.getUnIdentifiedLogJSONObj(UnAssignedVehicleMilesId, CompanyId, VinNumber, TruckID,
                                 LastDutyStatus, UnidenStartTime, currentTime, startLatitude, startLongitude, Globally.LATITUDE, Globally.LONGITUDE,
                                 startEngineSeconds, EngineSeconds,  startOdometer, currentOdometer,  Intermediate,
-                                IntermediateUpdate, IntermediateLogId, false);
+                                IntermediateUpdate, IntermediateLogId, false, Constants.getLocationType(getApplicationContext()));
                         SavedUnidentifiedLogArray.put(SavedUnidentifiedLogArray.length()-1, lastObj);
                         unPostedArray.put(lastObj);
 
@@ -1785,8 +1794,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     JSONObject jsonObject = constants.getUnIdentifiedLogJSONObj(UnAssignedVehicleMilesId, CompanyId, VinNumber, TruckID,
                             LastDutyStatus, currentTime, currentTime, Globally.LATITUDE, Globally.LONGITUDE,
                             Globally.LATITUDE, Globally.LONGITUDE, EngineSeconds, EngineSeconds,
-                            currentOdometer, currentOdometer, Intermediate,
-                            false, "0", false);
+                            currentOdometer, currentOdometer, Intermediate,false, "0",
+                            false, Constants.getLocationType(getApplicationContext()));
 
                     SharedPref.setUnIdenLastDutyStatus(LastDutyStatus, getApplicationContext());
                     SavedUnidentifiedLogArray.put(jsonObject);
@@ -1871,8 +1880,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             JSONObject jsonObject = constants.getUnIdentifiedLogJSONObj(UnAssignedVehicleMilesId, CompanyId, VinNumber, TruckID,
                     lastDutyStatus, startTime, Globally.GetCurrentUTCTimeFormat(), startLatitude, startLongitude,
                     Globally.LATITUDE, Globally.LONGITUDE, startEngineSeconds, EngineSeconds,
-                    startOdometer, currentOdometer, Intermediate,
-                    IntermediateUpdate, IntermediateLogId, false);
+                    startOdometer, currentOdometer, Intermediate, IntermediateUpdate, IntermediateLogId,
+                    false, Constants.getLocationType(getApplicationContext()));
 
             SavedUnidentifiedLogArray.put(jsonObject);
             unPostedArray.put(jsonObject);

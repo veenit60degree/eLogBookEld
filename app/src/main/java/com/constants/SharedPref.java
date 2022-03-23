@@ -333,8 +333,12 @@ public class SharedPref {
 
     // Get Obd Status -------------------
     public static int getObdStatus( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getInt("ObdStatus", Constants.NO_CONNECTION);
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getInt("ObdStatus", Constants.NO_CONNECTION);
+        }else{
+            return Constants.NO_CONNECTION;
+        }
     }
 
 
@@ -2295,7 +2299,7 @@ public class SharedPref {
 
 
 
-    // Save Missing Diagnostic status  -------------------
+    // Save Missing Diagnostic status those occurred in obd disconnect time -------------------
     public static void saveMissingDiaStatus( boolean IsLocMalfunction, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();

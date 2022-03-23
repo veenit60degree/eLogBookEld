@@ -1113,7 +1113,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             Globally.GetCurrentUTCTimeFormat(), constants.MissingDataDiagnostic,
                             remarks + " " + type, false,
                             "", "", "",
-                            Constants.getLocationType(getActivity()), type);
+                            "", type);  //Constants.getLocationType(getActivity())
 
                     // save Occurred event locally until not posted to server
                     JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
@@ -1123,7 +1123,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     // save malfunction entry in duration table
                     malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, DriverId,
                             Globally.GetCurrentUTCTimeFormat(), Globally.GetCurrentUTCTimeFormat(),
-                            Constants.MissingDataDiagnostic, type, Constants.getLocationType(getActivity()),
+                            Constants.MissingDataDiagnostic, type, "",  //Constants.getLocationType(getActivity())
                             type, constants, getActivity());
 
                     SharedPref.saveMissingDiaStatus(true, getActivity());

@@ -167,7 +167,7 @@ public class DownloadLogsAdapter extends BaseAdapter {
 //        String toDateStr = " <font color='#287CD1'> (" + difference +" days) </font> ";
 
         String FromDate = globally.ConvertDateFormatddMMMyyyy(downloadLogsModels.get(position).getFromDate(), Globally.DateFormat_dd_MMM_yyyy);
-        String ToDate   = globally.ConvertDateFormatddMMMyyyy(String.valueOf(Globally.GetStartDate(DateTime.parse(downloadLogsModels.get(position).getToDate()),1)), Globally.DateFormat_dd_MMM_yyyy);
+        String ToDate   = globally.ConvertDateFormatddMMMyyyy(downloadLogsModels.get(position).getToDate(), Globally.DateFormat_dd_MMM_yyyy);
         if(downloadLogsModels.get(position).getCountry().equals("CAN")){
             String Mode     = downloadLogsModels.get(position).getLogtype();
             holder.createdDate.setText(Html.fromHtml("<b>" + FromDate +" - "+ToDate + " ("+ Mode +")"+ "</b>"), TextView.BufferType.SPANNABLE);

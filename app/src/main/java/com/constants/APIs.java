@@ -19,7 +19,7 @@ public class APIs {
 
 
     static String ALS_DOMAIN_INDIAN_OPEN = "http://182.73.78.171:8952/api/LogisticsApi/";
-    static String ELD_DOMAIN_INDIAN_OPEN = "http://182.73.78.171:8951/api/ELDAPI/";
+    static String ELD_DOMAIN_INDIAN_OPEN = "http://182.73.78.171:8954/api/ELDAPI/"; //8951
 
     static String ALS_DOMAIN_INDIAN      = "http://192.168.0.10:8952/api/LogisticsApi/";       //  http://103.66.204.26
     static String ELD_DOMAIN_INDIAN      = "http://192.168.0.10:8251/api/ELDAPI/";             //http://182.73.78.171:8287
@@ -73,7 +73,7 @@ public class APIs {
 
 
     /*-------- ELD API ----------*/
-    public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
+    public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";   //"http://182.73.78.171:8954/api/DriverStatus/UpdateDriverStatus";
     //public static String SAVE_DRIVER_EDIT_LOG     			= DOMAIN_URL_ELD + "SaveDriverEditELDStatus";
     public static String SAVE_DRIVER_EDIT_LOG_NEW  			= DOMAIN_URL_ELD + "SaveDriverEditELDStatusNew";
     //  public static String GET_DRIVER_STATUS      			= DOMAIN_URL_ELD + "GetDriverStatusAndLocation";   //GetDriverLogDetail

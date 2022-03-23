@@ -2388,7 +2388,7 @@ public class Constants {
                                                 String LastDutyStatus, String StatusStartTime, String StatusEndTime, String lat, String lon,
                                                 String endLat, String endLon, String StartEngineSeconds, String EndEngineSeconds,
                                                 String StartOdometer, String EndOdometer, boolean Intermediate, boolean IntermediateUpdate,
-                                                String IntermediateLogId, boolean IsUploadedUnIdenRecord){
+                                                String IntermediateLogId, boolean IsUploadedUnIdenRecord, String LocationType){
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put(ConstantsKeys.UnAssignedVehicleMilesId,UnAssignedVehicleMilesId);
@@ -2410,6 +2410,7 @@ public class Constants {
             jsonObject.put(ConstantsKeys.IntermediateUpdate, IntermediateUpdate);
             jsonObject.put(ConstantsKeys.IntermediateLogId, IntermediateLogId);
             jsonObject.put(ConstantsKeys.IsUploadedUnIdenRecord, IsUploadedUnIdenRecord);
+            jsonObject.put(ConstantsKeys.LocationType, LocationType);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -5175,11 +5176,13 @@ public class Constants {
         //(int) Constants.getDateTimeDuration(StartTime, EndTime).getStandardDays();
 
         if(dayDiff > 0){
-            int startDateMin = StartTime.getMinuteOfDay();
+            /*int startDateMin = StartTime.getMinuteOfDay();
             int endDateMin = EndTime.getMinuteOfDay();
             int totalMinInDay = 1440;
-
             return totalMinInDay+ endDateMin - startDateMin;
+            */
+           return  (int) getDateTimeDuration(StartTime, EndTime).getStandardMinutes();
+
         }else{
             return EndTime.getMinuteOfDay() - StartTime.getMinuteOfDay();
         }

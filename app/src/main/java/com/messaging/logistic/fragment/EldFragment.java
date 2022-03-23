@@ -914,7 +914,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         super.onResume();
 
 
-
+        /*int minDiff = Constants.getMinDiff("2022-03-14T11:51:45", "2022-03-16T06:12:45");
+        int MINNN =  Constants.getMinDiff(Globally.getDateTimeObj("2022-03-14T11:51:45", false),
+                Globally.getDateTimeObj("2022-03-16T06:12:45", false));
+*/
         if(constants == null) {
             try {
                 initView(rootView);
@@ -1564,7 +1567,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     private class MyTimerTask extends TimerTask {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void run() {
-            Log.e("Log", "----TimerTask EldFragment");
+           // Log.e("Log", "----TimerTask EldFragment");
             strCurrentDate = Global.getCurrentDate();
             SelectedDate = Global.GetCurrentDeviceDate();
 
@@ -3837,16 +3840,15 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         boolean isLogSavedInSyncTable = false;
         String statusStr = "";
+        String address = "", wasViolation = "false", ViolationReason = "", DriverName = "";
+        String currentUTCTime = Global.GetCurrentUTCTime();
+        String CurrentDeviceDate = Global.GetCurrentDateTime();
+        String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
+        DateTime currentDateTime = Global.getDateTimeObj(CurrentDeviceDate, false);    // Current Date Time
+        DateTime currentUTCDateTime = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), true);
 
 
         try {
-
-            String address = "", wasViolation = "false", ViolationReason = "", DriverName = "";
-            String currentUTCTime = Global.GetCurrentUTCTime();
-            String CurrentDeviceDate = Global.GetCurrentDateTime();
-            String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
-            DateTime currentDateTime = Global.getDateTimeObj(CurrentDeviceDate, false);    // Current Date Time
-            DateTime currentUTCDateTime = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), true);
 
             if (SharedPref.isLocMalfunctionOccur(getActivity()) ) { //constants.isLocMalfunctionEvent(context, DriverType)
                 LocationType = SharedPref.getLocationEventType(getActivity());
@@ -4165,7 +4167,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithStatus(DRIVER_JOB_STATUS,
                     isPersonal, ""+DRIVER_JOB_STATUS, dbHelper);
             if (!isMissingEventAlreadyWithStatus) {
-                saveMissingDiagnostic(getString(R.string.obd_data_is_missing));
+                LocationType = "";
+                SharedPref.saveMissingDiaStatus(true, getActivity());
+
+                saveMissingDiagnostic(getString(R.string.obd_data_is_missing), currentUtcTimeDiffFormat);
 
                 Globally.PlayNotificationSound(getActivity());
                 Global.ShowLocalNotification(getActivity(),
@@ -5053,16 +5058,16 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         LocationType = "E";
                         SharedPref.setLocationEventType(LocationType, getActivity());
                     }else {
-                      // save missing diagnostic
-                        saveMissingDiagnostic(getString(R.string.ignore_to_save_loc));
+                        LocationType = "X";
+                        SharedPref.setLocationEventType(LocationType, getActivity());
+
+                        // save missing diagnostic
+                        saveMissingDiagnostic(getString(R.string.ignore_to_save_loc), Global.GetCurrentUTCTimeFormat());
 
                         Globally.PlayNotificationSound(getActivity());
                         Global.ShowLocalNotification(getActivity(),
                                 getResources().getString(R.string.missing_dia_event),
                                 getResources().getString(R.string.missing_event_occured_desc), 2091);
-
-                        LocationType = "X";
-                        SharedPref.setLocationEventType(LocationType, getActivity());
 
                         SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
                                 SharedPref.isMalfunctionOccur(getActivity()), true,
@@ -5133,7 +5138,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
 
-    private void saveMissingDiagnostic(String remarks){
+    private void saveMissingDiagnostic(String remarks, String currentDateTime){
         try {
             String type = Global.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal), ""+DRIVER_JOB_STATUS);
 
@@ -5145,7 +5150,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 constants.get2DecimalEngHour(getActivity()), //SharedPref.getObdEngineHours(getActivity()),
                                 SharedPref.getObdOdometer(getActivity()),
                                 SharedPref.getObdOdometer(getActivity()),
-                                Global.GetCurrentUTCTimeFormat(), constants.MissingDataDiagnostic,
+                                currentDateTime, constants.MissingDataDiagnostic,
                                  remarks + " " + type,
                                 false, "", "",
                                 "", LocationType, type);
@@ -5159,11 +5164,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             // save malfunction entry in duration table
             malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, DRIVER_ID,
-                    Global.GetCurrentUTCTimeFormat(), Global.GetCurrentUTCTimeFormat(),
+                    currentDateTime, currentDateTime,
                     Constants.MissingDataDiagnostic, ""+DRIVER_JOB_STATUS, LocationType, type,
                     constants, getActivity());
-
-            SharedPref.saveMissingDiaStatus(true, getActivity());
 
         }catch (Exception e){
             e.printStackTrace();
@@ -6965,9 +6968,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                             if (!obj.isNull("Data")) {
                                 JSONObject dataJObject = new JSONObject(obj.getString("Data"));
-                                driverPermissionMethod.
-
-                                DriverPermissionHelper(Integer.valueOf(DRIVER_ID), dbHelper, dataJObject);
+                                driverPermissionMethod.DriverPermissionHelper(Integer.valueOf(DRIVER_ID), dbHelper, dataJObject);
 
                                 boolean IsCertifyMandatory = false;
                                 if(dataJObject.has(ConstantsKeys.IsCertifyMandatory)) {

@@ -61,6 +61,10 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
 
+<!--    <queries>
+        <package android:name="com.whatsapp" />
+    </queries>-->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
 
 
     <supports-screens
@@ -133,6 +137,7 @@
 
         </activity>
 
+        <!-- android:theme="@android:style/Theme.NoDisplay"-->
         <activity android:name=".BlankActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.Transparent"
