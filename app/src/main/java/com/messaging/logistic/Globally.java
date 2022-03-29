@@ -182,15 +182,6 @@ public class Globally {
 	public static String CANADA_SOUTH_OPERATION_NAME          = "Canada South 60°N (";
 	public static String CANADA_NORTH_OPERATION_NAME          = "Canada North 60°N (";
 
-	public static String TRUCK_NUMBER                   	  = "--";
-	public static String TRAILOR_NUMBER                   	  = "--";
-	public static String PLATE_NUMBER                   	  = "--";
-	public static String SHIPPER_NAME                   	  = "--";
-	public static String CONSIGNEE_NAME                   	  = "--";
-	public static String TRIP_NUMBER	                   	  = "--";
-	public static String SECOND_DRIVER_NAME                	  = "--";
-
-	public static String DRIVER_TYPE                	  	  = "driver_type";
 	public static String CURRENT_DRIVER_TYPE				  = "current_driver_type";
 
 	public static String TEMP_USERNAME                	  	  = "";
@@ -1662,12 +1653,11 @@ public class Globally {
 
 	public static File SaveFileInSDCard(String fileType, String savedData, boolean Is18DaysLog, Context context){
 		String SavedFileName = "", DriverName = "";
-		FileOutputStream fos;
 		File myFile = null;
 		if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver))
 			DriverName = SharedPref.getUserName( context);
 		else
-			DriverName = SECOND_DRIVER_NAME;
+			DriverName = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, context);
 
 		if(Is18DaysLog){
 			DriverName = "";
@@ -1685,8 +1675,6 @@ public class Globally {
 				myOutWriter.close();
 				fOut.close();
 
-				//Log.d("FileSaved", "---Saved File: " + filename + " \n" +savedData);
-				//Log.d("myFile", "---myFile: " + myFile);
 			}
 
 		} catch (FileNotFoundException e) {e.printStackTrace();}
@@ -2471,16 +2459,14 @@ public class Globally {
 			e.printStackTrace();
 		}
 
-		SECOND_DRIVER_NAME = "--";
-		TRUCK_NUMBER = "--";
-		TRAILOR_NUMBER = "--";
-		SHIPPER_NAME = "--";
+		//SECOND_DRIVER_NAME = "--";
+		//TRUCK_NUMBER = "--";
+		//TRAILOR_NUMBER = "--";
+		/*SHIPPER_NAME = "--";
 		CONSIGNEE_NAME = "--";
-		TRIP_NUMBER = "--";
-		SECOND_DRIVER_NAME = "--";
+		TRIP_NUMBER = "--";*/
 
 		try {
-			SharedPref.setLoadId("", c);
 			SharedPref.setDriverId("", c);
 			SharedPref.setDriverStatusId("", c);
 			SharedPref.setCountryCycle("CountryCycle", "", c);
@@ -2514,21 +2500,18 @@ public class Globally {
 
 		try {
 				DriverConst.SetDriverLoginDetails( "", "", c);
-				//DriverConst.SetDriverDetails( "", "", "", "", "", "","", "", c);
 				DriverConst.SetDriverCurrentCycle("NoCycle", "0", c);
 				DriverConst.SetDriverSettings("", "","", "","", "", "", "", "" , c);
-				//DriverConst.SetDriverTripDetails( "", "", "", "", "", "", "", "", "", "", "", "","", "", "", c);
 				DriverConst.SetDriverLogDetails( "", "", "", "", "", "", "", "", "", "","", "", "", "", "", c);
 
 		} catch (Exception e) {    }
 
 			try {
 				DriverConst.SetCoDriverLoginDetails("", "", c);
-				DriverConst.SetCoDriverDetails("", "", "", "", "", "", "", "", c);
-				//DriverConst.SetCoDriverCurrentCycle("", "", c);
+				DriverConst.SetCoDriverDetails("", "", "", "", "", "", "", c);
 				DriverConst.SetCoDriverSettings("", "", "","", "", "", "", "", "", c);
-				DriverConst.SetCoDriverTripDetails("", "", "", "", "", "", "", "", "", "", "", "","", "", "", c);
-				DriverConst.SetCoDriverLogDetails("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", c);
+				//DriverConst.SetCoDriverTripDetails("", "", "", "", "", "", "", "", "", "", "", "","", "", "", c);
+				//DriverConst.SetCoDriverLogDetails("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", c);
 			} catch (Exception e) {    }
 
 			try {

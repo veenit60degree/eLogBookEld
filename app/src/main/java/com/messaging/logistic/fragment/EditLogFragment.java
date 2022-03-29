@@ -163,13 +163,12 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
         editLogProgressBar      = (ProgressBar)view.findViewById(R.id.editLogProgressBar);
 
         if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-            CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
             DriverName          = DriverConst.GetDriverDetails( DriverConst.DriverName, getActivity());
-
         }else{
-            CompanyId           = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, getActivity());
             DriverName          = DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, getActivity());
         }
+        
+        CompanyId     = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
 
         EldTitleTV.setText("Edit Log");
         eldMenuBtn.setImageResource(R.drawable.back_btn);

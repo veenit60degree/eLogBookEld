@@ -155,7 +155,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     RelativeLayout rightMenuBtn, signLay, SignatureMainLay, eldMenuLay, recapItemLay, viewDetailMaiLay, certifyRecordsListLay;
 
     String LogDate = "", CurrentDate = "", CurrentDateDefault = "", DayName = "", MonthFullName = "", MonthShortName = "", DRIVER_ID = "";
-    String CountryCycle = "",  CompanyId = "";
+    String CountryCycle = "",  CompanyId = "", TruckNumber = "", TrailorNumber = "";
     String MainDriverName = "",CoDriverName = "N/A", DeviceId = "", CurrentCycleId = "", VehicleId = "";
     public static String SelectedCoDriverId = "", SelectedCoDriverName = "";
     String Distance, HomeTerminal, PlateNumber = "", TruckNo, TrailerNo, VIN_NUMBER = "", OfficeAddress = "", Carrier = "", Remarks = "";
@@ -1031,7 +1031,12 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         TeamDriverType          = sharedPref.getDriverType(getActivity());
         IsAOBRD                 = sharedPref.IsAOBRD(getActivity());
 
-        TruckNo             = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
+        TruckNo                 = SharedPref.getTruckNumber(getActivity());
+
+        TrailorNumber           =  SharedPref.getTrailorNumber(getActivity());
+        TruckNumber             = SharedPref.getTruckNumber(getActivity());
+
+
         isNorthCanada       =  sharedPref.IsNorthCanada(getActivity());
         CountryCycle        = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
         CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
@@ -1045,7 +1050,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         } else {
             certifyDriverNameTV.setText(CoDriverName);
 
-           // CompanyId           = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, getActivity());
             HomeTerminal        = DriverConst.GetCoDriverDetails(DriverConst.CoHomeTerminal, getActivity());
             OfficeAddress       = DriverConst.GetCoDriverDetails(DriverConst.CoCarrierAddress, getActivity());
             Carrier             = DriverConst.GetCoDriverDetails(DriverConst.CoCarrier, getActivity());
@@ -1666,20 +1670,20 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
 
         if(LogDate.equals(CurrentDate)){
-            if(Globally.TRUCK_NUMBER.length() > 0 && !TruckNo.contains(Globally.TRUCK_NUMBER)){
+            if(TruckNumber.length() > 0 && !TruckNo.contains(TruckNumber)){
                 if(TruckNo.length() > 0) {
-                    TruckNo = TruckNo + "," + Globally.TRUCK_NUMBER;
+                    TruckNo = TruckNo + "," + TruckNumber;
                 }else{
-                    TruckNo = Globally.TRUCK_NUMBER;
+                    TruckNo = TruckNumber;
                 }
             }
 
-            if(!Globally.TRAILOR_NUMBER.equals(constants.NoTrailer) && !Globally.TRAILOR_NUMBER.equals("null")) {
-                if (Globally.TRAILOR_NUMBER.length() > 0 && !TrailerNo.contains(Globally.TRAILOR_NUMBER)) {
+            if(!TrailorNumber.equals(constants.NoTrailer) && !TrailorNumber.equals("null")) {
+                if (TrailorNumber.length() > 0 && !TrailerNo.contains(TrailorNumber)) {
                     if (TrailerNo.length() > 0) {
-                        TrailerNo = TrailerNo + "," + Globally.TRAILOR_NUMBER;
+                        TrailerNo = TrailerNo + "," + TrailorNumber;
                     } else {
-                        TrailerNo = Globally.TRAILOR_NUMBER;
+                        TrailerNo = TrailorNumber;
                     }
                 }
             }
@@ -2915,7 +2919,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 // save malfunction occur event to server with few inputs
                 JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
                         DRIVER_ID, DeviceId, SharedPref.getVINNumber(getActivity()),
-                        DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity()),
+                        SharedPref.getTruckNumber(getActivity()),   //DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity()),
                         DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
                         constants.get2DecimalEngHour(getActivity()), //SharedPref.getObdEngineHours(getActivity()),
                         SharedPref.getObdOdometer(getActivity()),

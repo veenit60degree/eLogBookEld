@@ -297,7 +297,8 @@ public class Constants {
     public static boolean isClearMissingEvent   = false;
 
     public static String lastDriverId = "0";
-    public static String ClearMissingEventTime = "";
+    public static String ClearMissingEventTime      = "";
+    public static String ClearMissingEventStatus    = "";
 
     public static int OFF_DUTY = 1;
     public static int SLEEPER  = 2;
@@ -864,7 +865,7 @@ public class Constants {
     }
 
 
-    public static void SaveTripDetails(int DriverType, String truck, String VIN_NUMBER, Context context) {
+/*    public static void SaveTripDetails(int DriverType, String truck, String VIN_NUMBER, Context context) {
 
         switch (DriverType) {
             case 0:
@@ -884,24 +885,9 @@ public class Constants {
                         context);
                 break;
 
-            case 1:
-                DriverConst.SetCoDriverTripDetails(
-                        DriverConst.GetCoDriverTripDetails(DriverConst.CoTripId, context),
-                        truck,
-                        VIN_NUMBER,
-                        DriverConst.GetCoDriverTripDetails(DriverConst.CoTrailor, context),
-                        DriverConst.GetCoDriverTripDetails(DriverConst.CoTripNumber, context),
-                        DriverConst.GetCoDriverTripDetails(DriverConst.CoShipperName, context),
-                        DriverConst.GetCoDriverTripDetails(DriverConst.CoShipperCity, context),
-                        DriverConst.GetCoDriverTripDetails(DriverConst.CoShipperState, context),
-                        DriverConst.GetCoDriverTripDetails(DriverConst.CoConsigneeName, context),
-                        DriverConst.GetCoDriverTripDetails(DriverConst.CoConsigneeCity, context),
-                        DriverConst.GetCoDriverTripDetails(DriverConst.CoConsigneeState, context),
-                        "", "", "", "", context);
-                break;
         }
 
-    }
+    }*/
 
 
     public double CalculateDistance(double originLat, double originLon, double destLat, double destLon, String unit, int JobStatus) {
@@ -1889,7 +1875,8 @@ public class Constants {
                                         Globally Global, boolean isHaulException, boolean isHaulExceptionUpdate,
                                         String isAdverseException, String adverseExceptionRemark, String LocationType,
                                         String malAddInfo, boolean IsNorthCanada, boolean IsCycleChanged, String Odometer,
-                                        String CoDriverId, String CoDriverName, HelperMethods hMethods, DBHelper dbHelper) {
+                                        String CoDriverId, String CoDriverName, String Truck, String Trailer,
+                                        HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
         long DriverLogId = 0;
@@ -1972,9 +1959,9 @@ public class Constants {
                 violaotionReason,
                 DriverName,
                 Reason,
-                Globally.TRAILOR_NUMBER,
+                Trailer,
                 address, address,
-                Globally.TRUCK_NUMBER,
+                Truck,
                 IsStatusAutomatic,
                 OBDSpeed,
                 GPSSpeed,
@@ -2660,29 +2647,7 @@ public class Constants {
     }
 
 
-    public void saveUpdateVehDetails(String DriverId, String PreviousDeviceMappingId, String DeviceMappingId,
-                                     String VehicleId, String EquipmentNumber, String PlateNumber, String VIN,
-                                     String CompanyId, String IMEINumber, Utils util){
 
-        try {
-            JSONObject obj = new JSONObject();
-            obj.put("InputType", "Update Vehicle");
-            obj.put(ConstantsKeys.DriverId, DriverId);
-            obj.put("PreviousDeviceMappingId", PreviousDeviceMappingId);
-            obj.put("DeviceMappingId", DeviceMappingId);
-            obj.put("VehicleId", VehicleId);
-            obj.put("EquipmentNumber", EquipmentNumber);
-            obj.put("PlateNumber", PlateNumber);
-            obj.put("VIN", VIN);
-            obj.put("CompanyId", CompanyId);
-            obj.put("IMEINumber", IMEINumber);
-
-            util.writeToLogFile(obj.toString());
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
 
     public void saveLoginDetails(String username, String OSType, String DeviceSimInfo,

@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.constants.SharedPref;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
@@ -64,8 +65,8 @@ public class LoadingFieldDialog extends Dialog {
         tractorTextView = (TextView) findViewById(R.id.tractorTextView);
         ConfirmTitleTV = (TextView) findViewById(R.id.ConfirmTitleTV);
 
-        trailorTextView.setText(Globally.TRAILOR_NUMBER);
-        tractorTextView.setText(Globally.TRUCK_NUMBER);
+        trailorTextView.setText(SharedPref.getTrailorNumber(getContext()));
+        tractorTextView.setText(SharedPref.getTruckNumber(getContext()));
 
         ConfirmTitleTV.setText(title);
 

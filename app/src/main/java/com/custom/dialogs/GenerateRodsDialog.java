@@ -45,8 +45,8 @@ public class GenerateRodsDialog extends Dialog implements View.OnClickListener {
     String Title = "";
     TextView TitleVehTV, updateVehTitleTV,TitleCanadaTV,startDateTv,endDateTv;
     int SelectedPosition = -1,MaxDays;
-    int UsaMaxDays          = 8;    // 1 + 7  = 8 days
-    int CanMaxDays          = 15;
+    int UsaMaxDays          = 7;    // 7 days
+    int CanMaxDays          = 14;   // 14 days
     private SearchArrayListAdapter mSimpleArrayListAdapter;
     CheckBox checkboxEld,checkBoxAbord;
     String checkedMode;

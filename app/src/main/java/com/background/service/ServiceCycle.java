@@ -937,7 +937,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                             Global, isHaulExcptn, false,
                             "" + isAdverseExcptn,
                             "", LocationType, "", isNorthCanada, false,
-                            SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, hMethods, dbHelper);
+                            SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, TruckNo,
+                            SharedPref.getTrailorNumber(context), hMethods, dbHelper);
 
                     String CurrentDate = Global.GetCurrentDateTime();
                     String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
@@ -1146,13 +1147,13 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
         if(DriverType == Constants.MAIN_DRIVER_TYPE) {
             DriverName      = DriverConst.GetDriverDetails( DriverConst.DriverName, context);
-            DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
-            TruckNo         = DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
         }else {
             DriverName      = DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, context);
-            DriverCompanyId = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, context);
-            TruckNo         = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, context);
         }
+
+        DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
+        TruckNo         = SharedPref.getTruckNumber(context);   //DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
+
     }
 
 

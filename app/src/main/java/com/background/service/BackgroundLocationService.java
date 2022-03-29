@@ -295,7 +295,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String TotalUsage = "";
     String PreviousLatitude = "", PreviousLongitude = "", PreviousOdometer = "";
     long processStartTime = -1;
-    double tempOdo = 1180319979;  //1.090133595E9
+    double tempOdo = 1180321279;  //1.090133595E9
     double tempEngHour = 22999.95;
 
 
@@ -472,11 +472,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         // ---------------- temp data ---------------------
 
                         // temp odometer for simulator converting odometer from km to meter. because it is saving in km.
-                        currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
+                      //  currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
 
 
 
-                 /*       int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
+  /*                      int OBD_LAST_STATUSss = SharedPref.getObdStatus(getApplicationContext());
                         if (OBD_DISCONNECTED) {
                             ignitionStatus = "ON";
                             truckRPM = "700";
@@ -529,7 +529,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                        }
                         tempEngHour = tempEngHour + .01;
                         obdEngineHours = ""+tempEngHour;
-                        tempOdo = tempOdo + 10;
+                        tempOdo = tempOdo + 100;
                         obdOdometer = "" + BigDecimal.valueOf(tempOdo).toPlainString();
                         currentHighPrecisionOdometer = obdOdometer;
                         Log.d("Odometer", currentHighPrecisionOdometer);
@@ -1709,7 +1709,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
                     DriverId, DeviceId, SharedPref.getVINNumber(getApplicationContext()),
-                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                    SharedPref.getTruckNumber(getApplicationContext()), //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
                     DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
                     lastSavedEngHr,
                     lastSavedOdometer,
@@ -2504,33 +2504,32 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
     // update clear event info in existing log if not uploaded on server yet
-    private void ClearLocationMissingEvent(String DriverId, String eventTime, boolean isLocationEventToClear){
+    private void ClearLocationMissingEvent(String DriverId, String eventTime, String eventStatus){
         try{
 
             boolean isUnPostedEvent = malfunctionDiagnosticMethod.isUnPostedMissingEventToClear(eventTime, dbHelper);
             if (isUnPostedEvent) {
                 // update clear event array in duration table and not posted to server with duration table input because occured event already exist TABLE_MALFUNCTION_DIANOSTIC
-                malfunctionDiagnosticMethod.updateMissingDataToClear(eventTime, isLocationEventToClear, getApplicationContext(), dbHelper);
+                malfunctionDiagnosticMethod.updateMissingDataToClear(eventTime, eventStatus, getApplicationContext(), dbHelper);
 
                 // update offline unposted event array
-                JSONArray malArray = malfunctionDiagnosticMethod.updateOfflineUnPostedMissingEvent( eventTime,
+                JSONArray missingEventArray = malfunctionDiagnosticMethod.updateOfflineUnPostedMissingEvent( eventTime,
                         "Missing diagnostic event has been cleared for this status", dbHelper, getApplicationContext());
 
                 // call api
-                SaveMalfnDiagnstcLogToServer(malArray, DriverId);
+                SaveMalfnDiagnstcLogToServer(missingEventArray, DriverId);
 
 
             } else {
 
                 // checking Missing Event with log time if match then update with clear data and Upload to server
-               JSONArray getMissingClearEventArray = malfunctionDiagnosticMethod.updateMissingDataToClear(eventTime, isLocationEventToClear,
-                       getApplicationContext(), dbHelper);
-                if(getMissingClearEventArray.length() > 0){
+               JSONArray missingEventArray = malfunctionDiagnosticMethod.updateMissingDataToClear(eventTime, eventStatus, getApplicationContext(), dbHelper);
+                if(missingEventArray.length() > 0){
 
                     ClearEventType = Constants.MissingDataDiagnostic;
-                    if(getMissingClearEventArray.length() > 0 && global.isConnected(getApplicationContext())) {
+                    if(missingEventArray.length() > 0 && global.isConnected(getApplicationContext())) {
                         // call clear event API.
-                        saveDriverLogPost.PostDriverLogData(getMissingClearEventArray, APIs.CLEAR_MALFNCN_DIAGSTC_EVENT_BY_DATE,
+                        saveDriverLogPost.PostDriverLogData(missingEventArray, APIs.CLEAR_MALFNCN_DIAGSTC_EVENT_BY_DATE,
                                 Constants.SocketTimeout30Sec, true, false, 0, ClearMalDiaEvent);
                     }
 
@@ -2621,7 +2620,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         if(malDiaType.equals(Constants.PowerComplianceDiagnostic) || malDiaType.equals(Constants.PowerComplianceMalfunction) ){
             newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
                     DriverId, DeviceId, SharedPref.getVINNumber(getApplicationContext()),
-                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                    SharedPref.getTruckNumber(getApplicationContext()), //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
                     DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
                     lastSavedEngHr,
                     lastSavedOdometer,
@@ -2636,7 +2635,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
                     DriverId, DeviceId, SharedPref.getVINNumber(getApplicationContext()),
-                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                    SharedPref.getTruckNumber(getApplicationContext()), //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
                     DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
                     currentEngHr,
                     currentOdometer,
@@ -2881,9 +2880,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 Constants.isClearMissingEvent = false;
 
                 if(Constants.ClearMissingEventTime.length() > 10) {
-                    ClearLocationMissingEvent(DriverId, Constants.ClearMissingEventTime, true);
+                    ClearLocationMissingEvent(DriverId, Constants.ClearMissingEventTime, Constants.ClearMissingEventStatus);
                 }
                 Constants.ClearMissingEventTime = "";
+                Constants.ClearMissingEventStatus = "";
             }else {
                 driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
                 if (driverLogArray.length() > 0) {
@@ -3288,7 +3288,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                     // send broadcast to setting screen
                                     SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(),
-                                            Globally.TRUCK_NUMBER, DriverId,
+                                            SharedPref.getTruckNumber(getApplicationContext()), DriverId,
                                             DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
                                             SharedPref.getAgricultureRecord("AgricultureAddress", getApplicationContext()),
                                             AgricultureLatitude, AgricultureLongitude,
@@ -3633,7 +3633,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }*/
 
         params = new HashMap<String, String>();
-        params.put(ConstantsKeys.UnitNo, Globally.TRUCK_NUMBER);
+        params.put(ConstantsKeys.UnitNo, SharedPref.getTruckNumber(getApplicationContext()));
         params.put(ConstantsKeys.EventDateTime, startEventDate);
 
         GetMalfunctionEvents.executeRequest(Request.Method.POST, APIs.GET_MALFUNCTION_LIST_BY_TRUCK , params, GetMalDiaEventDuration,
@@ -4915,8 +4915,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         Constants.isCallMalDiaEvent = false;
                         try {
 
-                          //  String MainDriverId        =  DriverConst.GetDriverDetails(DriverConst.DriverID, getApplicationContext());
-                          //  String CoDriverId      =  DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getApplicationContext());
                             JSONArray durationArray = new JSONArray();
                             JSONArray dataArray = new JSONArray(obj.getString("Data"));
                             for(int i = dataArray.length()-1 ; i >= 0 ; i--){
@@ -4963,14 +4961,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     isClearEvent = objItem.getBoolean(ConstantsKeys.IsClearEvent);
                                 }
 
-                                String LocationType = "";
-                                if(objItem.has(ConstantsKeys.LocationType)){
-                                    LocationType = objItem.getString(ConstantsKeys.LocationType);
-                                }
-                                String CurrentStatus = "";
-                                if(objItem.has(ConstantsKeys.CurrentStatus)){
-                                    CurrentStatus = objItem.getString(ConstantsKeys.CurrentStatus);
-                                }
+                                String LocationType = constants.checkStringInJsonObj(objItem, ConstantsKeys.LocationType);
+                                String CurrentStatus = constants.checkStringInJsonObj(objItem, ConstantsKeys.CurrentStatus);
 
                                 JSONObject item = malfunctionDiagnosticMethod.getNewMalDiaDurationObj(
                                             DriverId,
@@ -5453,14 +5445,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             SharedPref.SetOdoSavingStatus(false, getApplicationContext());
                             odometerHelper.OdometerHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
 
-                            String CompanyId = "", SelectedDate = "";
-                            SelectedDate = Globally.GetCurrentDeviceDate();
+                            String SelectedDate = Globally.GetCurrentDeviceDate();
                             DriverId   = SharedPref.getDriverId(getApplicationContext());
-                            if(SharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-                                CompanyId     = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
-                            } else {                                                                                 // If Current driver is Co Driver
-                                CompanyId     = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, getApplicationContext());
-                            }
+                            String CompanyId     = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
 
                             GetOdometer18Days(DriverId, DeviceId, CompanyId, SelectedDate);
 

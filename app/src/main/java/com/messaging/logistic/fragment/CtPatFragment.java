@@ -275,8 +275,8 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         EldTitleTV.setText(getResources().getString(R.string.ctPat));
         CreatedDate = Globally.GetCurrentDeviceDateTime();
         ctPatDateTimeTv.setText(CreatedDate.substring(0, 11));
-        truckCtPatTV.setText(Globally.TRUCK_NUMBER);
-        trailerCtPatTV.setText(Globally.TRAILOR_NUMBER);
+        trailerCtPatTV.setText(SharedPref.getTrailorNumber(getActivity()));
+        truckCtPatTV.setText(SharedPref.getTruckNumber(getActivity()));
 
         if(truckArray.length() == 0 || trailerArray.length() == 0)
             GetCtPatInspectionDetail(DRIVER_ID, DeviceId, Globally.PROJECT_ID, VIN_NUMBER);
@@ -786,8 +786,11 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         ctPatInspectionBtn.setEnabled(false);
 
 
-        JSONObject inspectionData = ctPatInspectionMethod.AddUnPostedCtPatInspObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, VIN_NUMBER,
-                Globally.TRUCK_NUMBER, Globally.TRAILOR_NUMBER, CreatedDate,  ArrivalSealNumber , DepartureSealNumber, SecurityInspectionPersonName , FollowUpInspectionPersonName,
+
+        JSONObject inspectionData = ctPatInspectionMethod.AddUnPostedCtPatInspObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID,
+                DriverName, CompanyId, EldFragment.VehicleId, VIN_NUMBER,
+                SharedPref.getTruckNumber(getActivity()), SharedPref.getTrailorNumber(getActivity()), CreatedDate,
+                ArrivalSealNumber , DepartureSealNumber, SecurityInspectionPersonName , FollowUpInspectionPersonName,
                 AffixedSealPersonName , VerificationPersonName, Globally.LATITUDE, Globally.LONGITUDE, TruckIssueType, TraiorIssueType,
                 ByteInspectionConductorSign, ByteFollowUpConductorSign, ByteSealFixerSign, ByteSealVerifierSign,AgricultureIssueType,
                 AgricultureReason, ContainerIdentification );

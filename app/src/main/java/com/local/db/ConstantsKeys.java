@@ -63,6 +63,7 @@ public class ConstantsKeys {
     public static String EndLocation        = "EndLocation";
     public static String Truck              = "Truck";
     public static String Trailor            = "Trailor";
+    public static String TrailerNumber      = "TrailerNumber";
     public static String UserName           = "UserName";
     public static String DutyStatus         = "DutyStatus";
 

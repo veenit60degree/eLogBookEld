@@ -364,6 +364,7 @@ public class ShipmentHelperMethod {
             return isShippingCleared;
     }
 
+
     /*---------------- Insert/Update Shipment 18 Days Table ---------------- */
     public void Shipment18DaysHelper( int DriverId, DBHelper dbHelper, JSONArray shipmentArray){
 

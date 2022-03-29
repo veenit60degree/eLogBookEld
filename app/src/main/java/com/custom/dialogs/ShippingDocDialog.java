@@ -350,6 +350,8 @@ public class ShippingDocDialog extends Dialog {
             e.printStackTrace();
         }
     }
+
+
     void LogoutUser(){
         if( constant.GetDriverSavedArray(getContext()).length() == 0) {
             try {

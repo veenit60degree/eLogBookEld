@@ -837,8 +837,8 @@ public class Slidingmenufunctions implements OnClickListener {
 		//global.ShowToastWithDuration(context.getResources().getString(R.string.exempt_logout_desc), context);
 
 		final String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
-		final String TRUCK_NUMBER = DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
-		final String VIN = DriverConst.GetDriverTripDetails(DriverConst.VIN, context);
+		final String TRUCK_NUMBER = SharedPref.getTruckNumber(context);	//DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
+		final String VIN = SharedPref.getVINNumber(context);	//DriverConst.GetDriverTripDetails(DriverConst.VIN, context);
 
 		RequestQueue queue = Volley.newRequestQueue(context);
 		StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.DRIVER_LOGOUT , new Response.Listener<String>() {

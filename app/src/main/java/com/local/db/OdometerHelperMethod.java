@@ -483,7 +483,7 @@ public class OdometerHelperMethod {
         try {
             String CreatedDate      = Globally.GetCurrentDeviceDateTime();
             String VIN_NUMBER       = SharedPref.getVINNumber(context);
-            String TRUCK_NUMBER     = DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
+            String TRUCK_NUMBER     = SharedPref.getTruckNumber(context); //DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
 
 
             if(odometer18DaysArray.length() > 0) {

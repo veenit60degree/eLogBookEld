@@ -3053,7 +3053,7 @@ public class HelperMethods {
                 driverLogModel.setPersonal(json.getBoolean(ConstantsKeys.Personal));
 
                 driverLogModel.setCurrentCyleId(CurrentCycleId);
-                if(!json.getString(ConstantsKeys.IsViolation).equals("null")){
+                if(json.getString(ConstantsKeys.IsViolation).equals("null")){
                     driverLogModel.setViolation(false);
                 }else {
                     driverLogModel.setViolation(json.getBoolean(ConstantsKeys.IsViolation));
@@ -3083,6 +3083,10 @@ public class HelperMethods {
             e.printStackTrace();
         }
 
+        if(driverLogList.size() == 0){
+            DriverLog driverLogModel = new DriverLog();
+            driverLogList.add(driverLogModel);
+        }
         return driverLogList;
 
     }
@@ -3852,9 +3856,10 @@ public class HelperMethods {
         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
         String CurrentCycleId   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
         String MainDriverName = DriverConst.GetDriverDetails(DriverConst.DriverName, context);
-        //String CoDriverName = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, context);
         String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
         String TrailorNumber = SharedPref.getTrailorNumber(context);
+        String TruckNumber = SharedPref.getTruckNumber(context);
+
         RulesResponseObject RulesObj;
 
         boolean isHaulExcptn;
@@ -3931,7 +3936,8 @@ public class HelperMethods {
                         Global, isHaulExcptn, isShortHaulUpdate,
                         ""+isAdverseExcptn,
                         AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, IsCycleChanged,
-                        SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, hMethods, dbHelper);
+                        SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, TruckNumber, TrailorNumber,
+                        hMethods, dbHelper);
 
 
                 String CurrentDate = Global.GetCurrentDateTime();
@@ -3974,7 +3980,7 @@ public class HelperMethods {
 
                     finalRemarks,
                     currentUTCTime,
-                    Globally.TRUCK_NUMBER,
+                    TruckNumber,
                     TrailorNumber,
                     DriverCompanyId,
                     DriverName,
@@ -4058,7 +4064,7 @@ public class HelperMethods {
                     Global, isHaulExcptn, isShortHaulUpdate,
                     ""+isAdverseExcptn,
                     AdverseExceptionRemarks, LocationType, malAddInfo, IsNorthCanada, IsCycleChanged,
-                    SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, hMethods, dbHelper);
+                    SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, TruckNumber, TrailorNumber, hMethods, dbHelper);
 
 
 

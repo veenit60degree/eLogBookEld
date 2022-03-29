@@ -600,7 +600,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             hMethods            = new HelperMethods();
             dbHelper            = new DBHelper(getApplicationContext());
             global              = new Globally();
-            TruckID             = DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext());
+            TruckID             = SharedPref.getTruckNumber(getApplicationContext());   //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext());
             CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
 
             IntermediateLogId           = SharedPref.getIntermediateLogId(getApplicationContext());
@@ -2311,7 +2311,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         if(malDiaType.equals(Constants.PowerComplianceDiagnostic) || malDiaType.equals(Constants.PowerComplianceMalfunction) ){
             newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
                     "0", "", VinNumber,
-                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                    SharedPref.getTruckNumber(getApplicationContext()),    //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
                     DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
                     lastSavedEngHr,
                     lastSavedOdometer,
@@ -2326,7 +2326,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
                     "0", "", VinNumber,
-                    DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
+                    SharedPref.getTruckNumber(getApplicationContext()), //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext()),
                     DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
                     currentEngHr,
                     currentOdometer,

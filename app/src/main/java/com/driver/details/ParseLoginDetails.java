@@ -87,7 +87,15 @@ public class ParseLoginDetails {
                     }
 
                     if(resultCount == 0) {
-                        int stateListSize = 0;
+
+                        if(!dataObj.isNull("SupportDetail")) {
+                            SupportMethod supportMethod = new SupportMethod();
+                            JSONArray supportArray = new JSONArray(dataObj.getString("SupportDetail"));
+                            supportMethod.SupportHelper(dbHelper, supportArray);
+                        }
+
+
+                       /* int stateListSize = 0;
                         if (!DriverSetting.isNull("States")) {
                             JSONArray stateJsonArray = new JSONArray(DriverSetting.getString("States"));
 
@@ -96,10 +104,6 @@ public class ParseLoginDetails {
 
                                 try {
                                     stateListSize       = statePrefManager.GetState(context).size();
-                                    if(stateListSize > 0){
-                                       // statePrefManager.RemoveState(context);
-                                       // stateListSize = 0;
-                                    }
                                 }catch (Exception e){
                                     stateListSize = 0;
                                 }
@@ -111,104 +115,24 @@ public class ParseLoginDetails {
                                 ParseStateArray(stateJsonArray, resultCount, context);
                             }
                         }
-
-                        if(!dataObj.isNull("SupportDetail")) {
-                            SupportMethod supportMethod = new SupportMethod();
-                            JSONArray supportArray = new JSONArray(dataObj.getString("SupportDetail"));
-                            supportMethod.SupportHelper(dbHelper, supportArray);
-                        }
-
+*/
                     }
 
-                    try{
-
-
-                        if(resultCount == 0) {
-
-                            if(DriverSetting.has(ConstantsKeys.IsAllowLogReCertification)) {
-                                SharedPref.SetCertifcnUnIdenfdSettings(
-                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowLogReCertification),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsPersonal),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsYardMove), context);
-                            }else{
-                                SharedPref.SetCertifcnUnIdenfdSettings(
-                                        false,
-                                        false,
-                                        false,
-                                        false, context);
-                            }
-
-                            if (DriverSetting.has(ConstantsKeys.IsAllowMalfunction)) {
-                                SharedPref.SetDiagnosticAndMalfunctionSettingsMain(
-                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowMalfunction),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowDiagnostic),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsClearMalfunction),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsClearDiagnostic),
-                                         context);
-                            } else {
-                                SharedPref.SetDiagnosticAndMalfunctionSettingsMain(
-                                        false,
-                                        false,
-                                        false,
-                                        false,
-                                         context);
-                            }
-                        }else{
-
-                            if(DriverSetting.has(ConstantsKeys.IsAllowLogReCertification)) {
-                                SharedPref.SetCertifcnUnIdenfdSettingsCo(
-                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowLogReCertification),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsShowUnidentifiedRecords),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsPersonal),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsYardMove), context);
-                            }else{
-                                SharedPref.SetCertifcnUnIdenfdSettingsCo(
-                                        false,
-                                        false,
-                                        false,
-                                        false, context);
-                            }
-
-
-                            if (DriverSetting.has(ConstantsKeys.IsAllowMalfunction)) {
-                                SharedPref.SetDiagnosticAndMalfunctionSettingsCo(
-                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowMalfunction),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsAllowDiagnostic),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsClearMalfunction),
-                                        DriverSetting.getBoolean(ConstantsKeys.IsClearDiagnostic),
-                                         context);
-                            } else {
-                                SharedPref.SetDiagnosticAndMalfunctionSettingsCo(
-                                        false,
-                                        false,
-                                        false,
-                                        false,
-                                         context);
-                            }
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
                 }
 
-                if(!dataObj.isNull("DriverTripDetail")) {
+               /* if(!dataObj.isNull("DriverTripDetail")) {
                     JSONObject DriverTripDetail = new JSONObject(dataObj.getString("DriverTripDetail"));
                     ParseDriverTripDetail(DriverTripDetail, resultCount, context);
-                }
+                }*/
 
-                if(!dataObj.isNull("DriverLogDetail")) {
+             /*   if(!dataObj.isNull("DriverLogDetail")) {
                     JSONObject DriverLogDetail = new JSONObject(dataObj.getString("DriverLogDetail"));
                     ParseDriverLogDetail(DriverLogDetail, resultCount, context);
                     SharedPref.SetIsAOBRD(DriverLogDetail.getBoolean("IsAOBRD"), context);
-
-                  /*  if(!DriverLogDetail.isNull("DriverLog")) {
-                        JSONArray driverLogJsonArray = new JSONArray(DriverLogDetail.getString("DriverLog"));
-                        ParseDriverLogArray(driverLogJsonArray, resultCount, context);
-                    }*/
                 }
+*/
 
-
+/*
 
                 if(dataObj.has("DriverPermission")) {
                     if (!dataObj.isNull("DriverPermission")) {
@@ -218,6 +142,7 @@ public class ParseLoginDetails {
 
                     }
                 }
+*/
 
 
 
@@ -231,7 +156,7 @@ public class ParseLoginDetails {
 
     public void ParseDriverDetail(JSONObject DriverDetail, int position, Context context){
         try{
-            String Drivername = "", DriverId = "", LoadId = "", CompanyId = "", CompanyName = "",
+            String Drivername = "", DriverId = "",  CompanyId = "", CompanyName = "",
                     HomeTerminal = "", Carrier = "", CarrierAddress = "";
 
             SharedPref.SetSystemToken(DriverDetail.getString("DeviceId"), context);
@@ -244,7 +169,6 @@ public class ParseLoginDetails {
             CompanyName     = getStringData(DriverDetail, CompanyName, "CompanyName");
             Carrier         = getStringData(DriverDetail, Carrier, "Carrier");
             CarrierAddress  = getStringData(DriverDetail, CarrierAddress, "CarrierAddress");
-            LoadId          = getStringData(DriverDetail, LoadId, "LoadId");
 
             int valueDrivingSpeed = getIntData(DriverDetail, "DrivingSpeed");
             int valueDrivingMinute = getIntData(DriverDetail, "DrivingMinute");
@@ -255,25 +179,28 @@ public class ParseLoginDetails {
 
 
             if(position == 0) {
-                SharedPref.setLoadId( LoadId , context);                      /*Set Main Load ID */
                 SharedPref.setDriverId( DriverId , context);                  /*Set Driver ID*/
-               // Globally.setUserName( Drivername, context);                 /*Set Driver name*/
                 SharedPref.setCurrentDriverType(DriverConst.StatusSingleDriver, context);      /*Set Driver name*/
-                DriverConst.SetDriverDetails(Drivername, DriverId, LoadId, CompanyName, CompanyId, Carrier,
+                DriverConst.SetDriverDetails(Drivername, DriverId, CompanyName, CompanyId, Carrier,
                         CarrierAddress, HomeTerminal, context);
 
                 //------------ Set User Configured Time ------------------
                 DriverConst.setDriverConfiguredTime(valueDrivingSpeed, valueDrivingMinute, valueOnDutySpeed, valueOnDutyMinute,
                                                         valueOffDutySpeed, valueOffDutyMinute,  context) ;
             }else {
-                Globally.SECOND_DRIVER_NAME = Drivername;
-                DriverConst.SetCoDriverDetails(Drivername, DriverId, LoadId, CompanyName, CompanyId, Carrier,
+                DriverConst.SetCoDriverDetails(Drivername, DriverId, CompanyName, CompanyId, Carrier,
                         CarrierAddress,  HomeTerminal, context);
 
                 //------------ Set Co User Configured Time ------------------
                 DriverConst.setCoDriverConfiguredTime(valueDrivingSpeed, valueDrivingMinute, valueOnDutySpeed, valueOnDutyMinute,
                         valueOffDutySpeed, valueOffDutyMinute,  context) ;
 
+            }
+
+            if(DriverDetail.has(ConstantsKeys.TrailerNumber) && !DriverDetail.getString(ConstantsKeys.TrailerNumber).equals("null")) {
+                SharedPref.setTrailorNumber(DriverDetail.getString(ConstantsKeys.TrailerNumber), context);
+            }else{
+                SharedPref.setTrailorNumber("", context);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -357,19 +284,17 @@ public class ParseLoginDetails {
             if(position == 0) {
                // SharedPref.setVINNumber( VINs, context);
                 SharedPref.setTrailorNumber(Trailors, context);
-                Globally.TRUCK_NUMBER = Trucks;
-                Globally.TRAILOR_NUMBER = Trailors;
-                Globally.CONSIGNEE_NAME = ConsigneeNames;
+            /*    Globally.CONSIGNEE_NAME = ConsigneeNames;
                 Globally.SHIPPER_NAME = ShipperNames;
-                Globally.TRIP_NUMBER = TripNumbers;
-                DriverConst.SetDriverTripDetails(TripIds, Trucks, VINs, Trailors, TripNumbers, ShipperNames, ShipperCitys,
+                Globally.TRIP_NUMBER = TripNumbers;*/
+           /*     DriverConst.SetDriverTripDetails(TripIds, Trucks, VINs, Trailors, TripNumbers, ShipperNames, ShipperCitys,
                         ShipperStates, ConsigneeNames, ConsigneeCitys, ConsigneeStates, VehicleId, EquipmentNumber,
-                        PlateNumber, DeviceMappingId, context);
-            } else {
+                        PlateNumber, DeviceMappingId, context);*/
+            } /*else {
                 DriverConst.SetCoDriverTripDetails(TripIds, Trucks, VINs, Trailors, TripNumbers, ShipperNames, ShipperCitys,
                         ShipperStates, ConsigneeNames, ConsigneeCitys, ConsigneeStates, VehicleId, EquipmentNumber,
                         PlateNumber, DeviceMappingId, context);
-            }
+            }*/
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -414,10 +339,10 @@ public class ParseLoginDetails {
                 DriverConst.SetDriverLogDetails(DrivingHour, OnDutyHour, OffDutyHour, SleeperHour, LeftDayDrivingHour,
                         LeftDayOnDutyHour,LeftWeekDrivingHour,LeftWeekOnDutyHour, TotalDrivingWeekHour, TotalOnDutyWeekHour,
                         StartingPoint, EndingPoint, TotalDistance, Remarks, LogSignImage, context);
-            else
+        /*    else
                 DriverConst.SetCoDriverLogDetails(DrivingHour, OnDutyHour, OffDutyHour, SleeperHour, LeftDayDrivingHour,
                         LeftDayOnDutyHour,LeftWeekDrivingHour,LeftWeekOnDutyHour, TotalDrivingWeekHour, TotalOnDutyWeekHour,
-                        StartingPoint, EndingPoint, TotalDistance, Remarks, LogSignImage, context);
+                        StartingPoint, EndingPoint, TotalDistance, Remarks, LogSignImage, context);*/
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -611,7 +536,6 @@ public class ParseLoginDetails {
             /*=============================== SAVE MAIN DRIVER DATA ======================================*/
 
             /* Set Main Driver Details */
-            SharedPref.setLoadId( DriverConst.GetDriverDetails(DriverConst.LoadID, context),  context );
             SharedPref.setDriverId( DriverConst.GetDriverDetails(DriverConst.DriverID, context) , context);
 
 
@@ -622,15 +546,11 @@ public class ParseLoginDetails {
             SharedPref.setTimeZone( DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, context) , context);
 
             /* Set Main Driver VIN Number Details */
-            SharedPref.setVINNumber( DriverConst.GetDriverTripDetails(DriverConst.VIN, context), context);
 
-            Globally.TRUCK_NUMBER       =  DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
-            Globally.TRAILOR_NUMBER     = DriverConst.GetDriverTripDetails(DriverConst.Trailor, context);
-            Globally.CONSIGNEE_NAME     = DriverConst.GetDriverTripDetails(DriverConst.ConsigneeName, context);
+          /*  Globally.CONSIGNEE_NAME     = DriverConst.GetDriverTripDetails(DriverConst.ConsigneeName, context);
             Globally.SHIPPER_NAME       = DriverConst.GetDriverTripDetails(DriverConst.ShipperName, context);
             Globally.TRIP_NUMBER        = DriverConst.GetDriverTripDetails(DriverConst.TripNumber, context);
-
-            Globally.SECOND_DRIVER_NAME = DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, context);
+*/
             SharedPref.setCurrentDriverType(DriverConst.StatusSingleDriver, context);      /*Set Driver name*/
 
 
@@ -639,7 +559,6 @@ public class ParseLoginDetails {
         /*=============================== SAVE CO DRIVER DATA ======================================*/
 
             /* Set CO Driver Details */
-            SharedPref.setLoadId( DriverConst.GetCoDriverDetails(DriverConst.CoLoadID, context),  context );
             SharedPref.setDriverId( DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context) , context);
 
 
@@ -650,20 +569,25 @@ public class ParseLoginDetails {
             SharedPref.setTimeZone( DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, context) , context);
 
             /* Set CO Driver Trip Details */
-            SharedPref.setVINNumber( DriverConst.GetCoDriverTripDetails(DriverConst.VIN, context), context);
-
+        /*    SharedPref.setVINNumber( DriverConst.GetCoDriverTripDetails(DriverConst.VIN, context), context);
             Globally.TRUCK_NUMBER       =  DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, context);
             Globally.TRAILOR_NUMBER     = DriverConst.GetCoDriverTripDetails(DriverConst.CoTrailor, context);
             Globally.CONSIGNEE_NAME     = DriverConst.GetCoDriverTripDetails(DriverConst.CoConsigneeName, context);
             Globally.SHIPPER_NAME       = DriverConst.GetCoDriverTripDetails(DriverConst.CoShipperName, context);
             Globally.TRIP_NUMBER        = DriverConst.GetCoDriverTripDetails(DriverConst.CoTripNumber, context);
-
+*/
             SharedPref.setCurrentDriverType(DriverConst.StatusTeamDriver, context);      /*Set Driver name*/
 
             // Globally.setTrailorNumber( DriverConst.GetCoDriverTripDetails(DriverConst.CoTrailor, context), context);
             //  Globally.setUserName( DriverConst.GetCoDriverDetails(DriverConst.CoDriverName, context), context);
            // Globally.SECOND_DRIVER_NAME = DriverConst.GetDriverDetails(DriverConst.DriverName, context);
         }
+
+       // SharedPref.setVINNumber( DriverConst.GetDriverTripDetails(DriverConst.VIN, context), context);
+
+       // Globally.TRUCK_NUMBER       = SharedPref.getTruckNumber(context);  // DriverConst.GetDriverTripDetails(DriverConst.Truck, context);
+       // Globally.TRAILOR_NUMBER     = SharedPref.getTrailorNumber(context);   //DriverConst.GetDriverTripDetails(DriverConst.Trailor, context);
+
     }
 
 

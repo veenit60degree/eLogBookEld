@@ -126,6 +126,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     String City = "", State = "", Country = "", CurrentCycleId = "", CurrentJobStatus = "";
     String DriverId = "", CoDriverId = "", tempTruck = "", tempTrailer = "", CreatedDate = "";
     String ByteDriverSign = "", ByteSupervisorSign = "", SelectedDatee = "";
+    String TruckNumber = "", TrailerNumber= "";
     SignDialog signDialog;
     ScrollView inspectionScrollView;
     TextView inspectionTypeTV;
@@ -365,9 +366,11 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         DriverName          = slideMenu.usernameTV.getText().toString();
 
-        Globally.TRAILOR_NUMBER = SharedPref.getTrailorNumber(getActivity());
-        powerInspectionTV.setText(Globally.TRUCK_NUMBER);
-        trailerTextVw.setText(Globally.TRAILOR_NUMBER);
+        TruckNumber         = SharedPref.getTruckNumber(getActivity());
+        TrailerNumber       = SharedPref.getTrailorNumber(getActivity());
+
+        powerInspectionTV.setText(TruckNumber);
+        trailerTextVw.setText(TrailerNumber);
         saveInspectionBtn.setEnabled(true);
 
         CheckTrailerStatus();
@@ -584,7 +587,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                    // DBHelper dbHelper = new DBHelper(getActivity());
                     if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if (Globally.isConnected(getActivity())) {
-                            dialog = new TrailorDialog(getActivity(), "trailor", false, Globally.TRAILOR_NUMBER,
+                            dialog = new TrailorDialog(getActivity(), "trailor", false, TrailerNumber,
                                     0, false, Globally.onDutyRemarks, 0, dbHelper, new TrailorListener());
                             dialog.show();
                         } else {
@@ -734,7 +737,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
                // if(constants.isActionAllowed(getContext())) {
                 if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
-                    if(Globally.TRAILOR_NUMBER.length() > 0 || Globally.TRUCK_NUMBER.length() > 0) {
+                    if(TrailerNumber.length() > 0 || TruckNumber.length() > 0) {
                         CheckInspectionValidation();
                     }else{
                         Globally.EldScreenToast(saveInspectionBtn, "Please update your Truck or Trailer number before save the inspections." , getResources().getColor(R.color.colorVoilation));
@@ -1455,7 +1458,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         CreatedDate         = Globally.GetCurrentDeviceDateTime();
         isLocationChange = false;
         JSONObject inspectionData = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
-                Globally.TRUCK_NUMBER, Globally.TRAILOR_NUMBER, CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected, AboveDefectsNotCorrected,
+                TruckNumber, TrailerNumber, CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected, AboveDefectsNotCorrected,
                 Remarks, Globally.LATITUDE, Globally.LONGITUDE, DriverTimeZone, SupervisorMechanicsName, TruckIssueType, TraiorIssueType, InspectionTypeId,
                 ByteDriverSign, ByteSupervisorSign, Odometer);
 
@@ -1501,7 +1504,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     private void CheckTrailerStatus(){
         try{
-            if(Globally.TRAILOR_NUMBER.equals(Constants.NoTrailer) || Globally.TRAILOR_NUMBER.trim().equals("")){
+            if(TrailerNumber.equals(Constants.NoTrailer) || TrailerNumber.trim().equals("")){
                 inspectTrailerTitleLay.setVisibility(View.GONE);
                 trailerGridLay.setVisibility(View.GONE);
 
@@ -1545,7 +1548,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
                         case SaveTrailer:
                             try {
-                                Globally.TRAILOR_NUMBER = tempTrailer;
+                                TrailerNumber = tempTrailer;
                                 SharedPref.setTrailorNumber( tempTrailer, getActivity());
                                 trailerTextVw.setText(tempTrailer);
 
@@ -1636,7 +1639,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                                             vehicleDialog.dismiss();
                                         }
 
-                                        vehicleDialog = new VehicleDialog(getActivity(), Globally.TRUCK_NUMBER, false, vehicleList, new VehicleListener());
+                                        vehicleDialog = new VehicleDialog(getActivity(), TruckNumber, false, vehicleList, new VehicleListener());
                                         vehicleDialog.show();
 
                                     } catch (final IllegalArgumentException e) {
@@ -1657,7 +1660,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                         case UpdateObdVeh:
                             Globally.EldScreenToast(saveInspectionBtn, "Updated successfully.", getResources().getColor(R.color.colorPrimary));
 
-                            Globally.TRUCK_NUMBER = tempTruck;
+                            TruckNumber = tempTruck;
                             SharedPref.setVINNumber(VIN_NUMBER, getActivity());
                             SharedPref.setLastSavedVINNumber(VIN_NUMBER, getActivity());
 
@@ -1665,13 +1668,9 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                             SharedPref.setVehicleId(EldFragment.VehicleId , getActivity());
                             powerInspectionTV.setText(tempTruck);
 
-                            if(SharedPref.getDriverType(getContext()).equals(DriverConst.TeamDriver)) {
-                                /*Save Trip Details */
-                                Constants.SaveTripDetails(0, tempTruck , VIN_NUMBER, getActivity());
-                                Constants.SaveTripDetails(1, tempTruck , VIN_NUMBER, getActivity());
-                            }else{
-                                Constants.SaveTripDetails(0, tempTruck , VIN_NUMBER, getActivity());
-                            }
+                            SharedPref.setTruckNumber(tempTruck, getActivity());
+                            SharedPref.setVINNumber(VIN_NUMBER, getActivity());
+
 
                             break;
 

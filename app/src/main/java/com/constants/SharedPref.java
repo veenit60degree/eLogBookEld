@@ -160,6 +160,21 @@ public class SharedPref {
         return preferences.getString("TrailorNumber", "");
     }
 
+    // Save Truck Number
+    public static void setTruckNumber( String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("TruckNumber", value);
+        editor.commit();
+    }
+
+    // Get Truck Number -------------------
+    public static String getTruckNumber(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("TruckNumber", "");
+    }
+
+
     // Set Current Saved Time -------------------
     public static void setCurrentDate( String value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -1473,21 +1488,6 @@ public class SharedPref {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("CertifyAlertViewTime", "");
     }
-
-
-    // Set  Load Id -------------------
-    public static void setLoadId( String value, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("LoadId", value);
-        editor.commit();
-    }
-    // Get  Load Id -------------------
-    public static String getLoadsId( Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("LoadId", "");
-    }
-
 
 
 

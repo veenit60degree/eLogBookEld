@@ -494,7 +494,10 @@ public class DriverLogInfoAdapter extends BaseAdapter {
 
                     boolean isMissingEventToClear =  malfunctionDiagnosticMethod.isMissingEventToClear(eventStartUtcDate, dbHelper);
                     if(isMissingEventToClear){
+                        int JobStatusId = LogList.get(position).getDriverStatusId();
+                        boolean isPersonalYardMove = LogList.get(position).isPersonal();
                         Constants.ClearMissingEventTime = eventStartUtcDate;
+                        Constants.ClearMissingEventStatus = Global.JobStatus(JobStatusId, isPersonalYardMove, ""+JobStatusId);
                         Constants.isClearMissingEvent = true;
                         SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 

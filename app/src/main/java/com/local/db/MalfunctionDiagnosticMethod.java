@@ -637,7 +637,7 @@ public class MalfunctionDiagnosticMethod {
 
 
 
-    public JSONArray updateMissingDataToClear(String eventLogDate, boolean isLocationEventToClear, Context context, DBHelper dbHelper){
+    public JSONArray updateMissingDataToClear(String eventLogDate, String eventCurrentStatus, Context context, DBHelper dbHelper){
 
         JSONArray clearedEventArray = new JSONArray();
 
@@ -654,10 +654,12 @@ public class MalfunctionDiagnosticMethod {
                 if (minDiff == 0) {
                     if(eventObj.has(ConstantsKeys.LocationType)){
                         String LocationType = eventObj.getString(ConstantsKeys.LocationType);
+                        String CurrentStatus = eventObj.getString(ConstantsKeys.CurrentStatus);
                         boolean IsClearEvent = eventObj.getBoolean(ConstantsKeys.IsClearEvent);
 
                         // (LocationType.equals("X") || LocationType.equals("E"))
-                        if((LocationType.length() == 0 || isLocationEventToClear) && !IsClearEvent){
+                        if( (LocationType.length() == 0 || CurrentStatus.equals(eventCurrentStatus) ) && !IsClearEvent){
+
                             String clearEventDate = Globally.GetCurrentUTCTimeFormat();
                             eventObj.put(ConstantsKeys.IsClearEvent, true);
                             eventObj.put(ConstantsKeys.ClearEventDateTime, clearEventDate);
@@ -669,7 +671,7 @@ public class MalfunctionDiagnosticMethod {
                             eventObj.put(ConstantsKeys.ClearOdometer, SharedPref.getObdOdometer(context));
 
                             eventObj.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, context));
-                            eventObj.put(ConstantsKeys.UnitNo, DriverConst.GetDriverTripDetails(DriverConst.Truck, context));
+                            eventObj.put(ConstantsKeys.UnitNo, SharedPref.getTruckNumber(context));
 
                             clearedEventArray.put(eventObj);
 
@@ -847,13 +849,16 @@ public class MalfunctionDiagnosticMethod {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = (JSONObject) array.get(i);
                 String DetectionDataEventCode = obj.getString(ConstantsKeys.DetectionDataEventCode);
+                String LocationType = obj.getString(ConstantsKeys.LocationType);
+              //  String CurrentStatus = eventObj.getString(ConstantsKeys.CurrentStatus);
 
                 boolean IsClearEvent = true;
                 if(obj.has(ConstantsKeys.IsClearEvent)) {
                     IsClearEvent = obj.getBoolean(ConstantsKeys.IsClearEvent);
                 }
 
-                if(DetectionDataEventCode.equals(Constants.MissingDataDiagnostic) && !IsClearEvent){
+                if(DetectionDataEventCode.equals(Constants.MissingDataDiagnostic) &&
+                        LocationType.length() == 0 && !IsClearEvent){
 
                     DateTime EventDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.EventDateTime), false);
 
@@ -988,7 +993,7 @@ public class MalfunctionDiagnosticMethod {
 
             clearObj.put(ConstantsKeys.DriverId, DriverId);
             clearObj.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, context));
-            clearObj.put(ConstantsKeys.UnitNo, DriverConst.GetDriverTripDetails(DriverConst.Truck, context));
+            clearObj.put(ConstantsKeys.UnitNo, SharedPref.getTruckNumber(context));
             clearObj.put(ConstantsKeys.EventDateTime, EventDateTime);
             clearObj.put(ConstantsKeys.DetectionDataEventCode, DataEventCode);
 

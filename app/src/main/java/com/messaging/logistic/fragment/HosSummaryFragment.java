@@ -1267,7 +1267,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     //*================== Get Engine Miles===================*//*
     void GetEngineMiles() {
         String CompanyId    = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
-        String VIN          = DriverConst.GetDriverTripDetails(DriverConst.VIN, getActivity());
+        String VIN          = SharedPref.getVINNumber(getActivity()); //DriverConst.GetDriverTripDetails(DriverConst.VIN, getActivity());
 
         // get device current date and day start UTC date
         String currentDateStr = global.GetCurrentDateTime();

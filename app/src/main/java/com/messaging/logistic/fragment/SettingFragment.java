@@ -629,7 +629,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     }else{
                         buttonView.setChecked(isChecked);
                         IsAgriExceptionEnable = false;
-                        SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(), Globally.TRUCK_NUMBER,
+                        SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(), SharedPref.getTruckNumber(getActivity()),
                                 DriverId,CompanyId,
                                 SharedPref.getAgricultureRecord("AgricultureAddress", getContext()),SharedPref.getAgricultureRecord("AgricultureLatitude", getContext()),SharedPref.getAgricultureRecord("AgricultureLongitude", getContext()),SharedPref.getObdEngineHours(getContext()),SharedPref.getObdOdometer(getContext()),"0");
                     }
@@ -1105,7 +1105,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     // save malfunction occur event to server with few inputs
                     JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
                             DriverId, DeviceId, SharedPref.getVINNumber(getActivity()),
-                            DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity()),
+                            SharedPref.getTruckNumber(getActivity()),   //DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity()),
                             DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()),
                             constants.get2DecimalEngHour(getActivity()), //SharedPref.getObdEngineHours(getActivity()),
                             SharedPref.getObdOdometer(getActivity()),
@@ -2378,7 +2378,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                         "(172.6 Miles or 277.80 KM) radius from the source of the commodities.</font>");
                             }else{
                                 IsAgriExceptionEnable = true;
-                                SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(),Globally.TRUCK_NUMBER,DriverId,CompanyId,
+                                SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(),
+                                        SharedPref.getTruckNumber(getActivity()), DriverId,CompanyId,
                                         agricultureAddress,String.valueOf(latitude),String.valueOf(longitude),SharedPref.getObdEngineHours(getContext()),SharedPref.getObdOdometer(getContext()),"1");
 
                                 if (driverAddressDialog != null && driverAddressDialog.isShowing())
@@ -2602,18 +2603,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             SavedCanCycle  = DriverConst.GetDriverSettings(DriverConst.CANCycleId, getActivity());
             SavedUsaCycle  = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
             SavedTimeZone  = DriverConst.GetDriverSettings(DriverConst.TimeZoneID, getActivity());
-            TruckNumber    = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
-            DriverTimeZone = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
         }else{
             DriverType = Constants.CO_DRIVER_TYPE;
             SavedPosition  = 1;
             SavedCanCycle  = DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleId, getActivity());
             SavedUsaCycle  = DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleId, getActivity());
             SavedTimeZone  = DriverConst.GetCoDriverSettings(DriverConst.CoTimeZoneID, getActivity());
-          //  CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, getActivity());
-            TruckNumber    = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
-            DriverTimeZone = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
         }
+
+        TruckNumber    = SharedPref.getTruckNumber(getActivity());  //DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
+        DriverTimeZone = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
 
         isNorthCanada  =  SharedPref.IsNorthCanada(getActivity());
         if(CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2) ){

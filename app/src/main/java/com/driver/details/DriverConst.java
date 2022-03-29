@@ -175,7 +175,7 @@ public class DriverConst {
 
 
     /* ============ Save Driver Details ============*/
-    public static void SetDriverDetails( String Drivername, String DriverId, String LoadId,
+    public static void SetDriverDetails( String Drivername, String DriverId,
                                         String companyName, String companyId, String carrier,
                                          String carrierAddress, String homeTerminal, Context context){
 
@@ -184,7 +184,6 @@ public class DriverConst {
 
         editor.putString(DriverName, Drivername);
         editor.putString(DriverID, DriverId);
-        editor.putString(LoadID, LoadId);
         editor.putString(CompanyName, companyName);
         editor.putString(CompanyId, companyId);
         editor.putString(Carrier, carrier);
@@ -210,7 +209,7 @@ public class DriverConst {
                                     String companyName, String companyId, String carrier,
                                     String carrierAddress, String homeTerminal, Context context){
 
-        DriverConst.SetDriverDetails(Drivername, DriverId, LoadId, companyName, companyId, carrier,
+        DriverConst.SetDriverDetails(Drivername, DriverId, companyName, companyId, carrier,
                 carrierAddress, homeTerminal, context);
     }
 
@@ -226,7 +225,7 @@ public class DriverConst {
         String CarrierAdd   = GetDriverDetails(CarrierAddress, context);
         String HomeTermnl   = GetDriverDetails(HomeTerminal, context);
 
-        DriverConst.SetDriverDetails(Drivername, DriverId, LoadId, company_name, companyID, carrierName,
+        DriverConst.SetDriverDetails(Drivername, DriverId, company_name, companyID, carrierName,
                 CarrierAdd, HomeTermnl, context);
 
     }
@@ -321,6 +320,7 @@ public class DriverConst {
 
 
     /* ============ Save Driver Trip Details ============*/
+/*
     public static void SetDriverTripDetails(
             String TripIds, String Trucks,
             String VINs, String Trailors,
@@ -334,29 +334,34 @@ public class DriverConst {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
 
-        editor.putString(TripId, TripIds);
         editor.putString(Truck, Trucks);
         editor.putString(VIN, VINs);
         editor.putString(Trailor, Trailors);
-        editor.putString(TripNumber, TripNumbers);
-        editor.putString(ShipperName, ShipperNames);
-        editor.putString(ShipperCity, ShipperCitys);
-        editor.putString(ShipperState, ShipperStates);
-        editor.putString(ConsigneeName, ConsigneeNames);
-        editor.putString(ConsigneeCity, ConsigneeCitys);
-        editor.putString(ConsigneeState, ConsigneeStates);
-        editor.putString(VehicleId, vehicleId);
-        editor.putString(EquipmentNumber, equipmentNumber);
-        editor.putString(PlateNumber, plateNumber);
-        editor.putString(DeviceMappingId, deviceMappingId);
+       // editor.putString(VehicleId, vehicleId);
+       // editor.putString(EquipmentNumber, equipmentNumber);
+      //  editor.putString(PlateNumber, plateNumber);
+       // editor.putString(DeviceMappingId, deviceMappingId);
+
+        //editor.putString(TripId, TripIds);
+       // editor.putString(TripNumber, TripNumbers);
+       // editor.putString(ShipperName, ShipperNames);
+       // editor.putString(ShipperCity, ShipperCitys);
+        //editor.putString(ShipperState, ShipperStates);
+       // editor.putString(ConsigneeName, ConsigneeNames);
+       // editor.putString(ConsigneeCity, ConsigneeCitys);
+       // editor.putString(ConsigneeState, ConsigneeStates);
+
 
         editor.commit();
     }
-    /* ============ Get Driver Trip Details ============*/
+    */
+/* ============ Get Driver Trip Details ============*//*
+
     public static String GetDriverTripDetails(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, "");
     }
+*/
 
 
 
@@ -431,7 +436,7 @@ public class DriverConst {
 
 
     /* ================== CoDriver Details ====================*/
-    public static void SetCoDriverDetails( String Drivername, String DriverId, String CoLoadId,
+    public static void SetCoDriverDetails( String Drivername, String DriverId,
                                            String coCompanyName, String coCompanyId, String coCarrier,
                                            String coCarrierAddress, String coHomeTerminal, Context context){
 
@@ -440,7 +445,6 @@ public class DriverConst {
 
         editor.putString(CoDriverName, Drivername);
         editor.putString(CoDriverID, DriverId);
-        editor.putString(CoLoadID, CoLoadId);
         editor.putString(CoCompanyName, coCompanyName);
         editor.putString(CoCompanyId, coCompanyId);
         editor.putString(CoCarrier, coCarrier);
@@ -450,29 +454,12 @@ public class DriverConst {
         editor.commit();
 
     }
+
     /* ============ Get Co Driver Details ============*/
     public static String GetCoDriverDetails(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, "");
     }
-
-
-
-    public static void UpdateCoDriverCarrierName( String carrierName, Context context){
-
-        String Drivername   = GetCoDriverDetails(CoDriverName, context);
-        String DriverId     = GetCoDriverDetails(CoDriverID, context);
-        String LoadId       = GetCoDriverDetails(CoLoadID, context);
-        String company_name = GetCoDriverDetails(CoCompanyName, context);
-        String companyID    = GetCoDriverDetails(CoCompanyId, context);
-        String CarrierAdd   = GetCoDriverDetails(CoCarrierAddress, context);
-        String HomeTermnl   = GetCoDriverDetails(CoHomeTerminal, context);
-
-        DriverConst.SetCoDriverDetails(Drivername, DriverId, LoadId, company_name, companyID, carrierName,
-                CarrierAdd, HomeTermnl, context);
-
-    }
-
 
 
     //------------ Set User Configured Time -------------------
@@ -533,7 +520,7 @@ public class DriverConst {
 
 
     /* ============ Save Driver Settings ============*/
-    public static void SetCoDriverTripDetails(
+/*    public static void SetCoDriverTripDetails(
             String TripIds, String Trucks,
             String VINs, String Trailors,
             String TripNumbers, String ShipperNames,
@@ -564,15 +551,20 @@ public class DriverConst {
 
         editor.commit();
     }
-    /* ============ Get Driver Settings ============*/
-    public static String GetCoDriverTripDetails(String key, Context context) {
+     */
+
+        /* ============ Get Driver Settings ============*/
+  /*  public static String GetCoDriverTripDetails(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, "");
-    }
+    }*/
+
+
 
 
 
     /* ============ Save Driver Log Details ============*/
+/*
     public static void SetCoDriverLogDetails(
             String DrivingHour, String OnDutyHour,
             String OffDutyHour, String SleeperHour,
@@ -605,12 +597,17 @@ public class DriverConst {
 
         editor.commit();
     }
-    /* ============ Get Driver Log Details ============*/
+
+
+    */
+/* ============ Get Driver Log Details ============*//*
+
     public static String GetCoDriverLogDetails(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, "");
     }
 
+*/
 
 
 

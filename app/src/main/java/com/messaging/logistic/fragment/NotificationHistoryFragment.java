@@ -194,18 +194,15 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
         if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             DriverType      = 0;
             DriverId        = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
-            TruckNumber     = DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
-            DriverTimeZone  = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
             isCycleRequest  = SharedPref.IsCycleRequestMain(getActivity());
         }else {
             DriverType      = 1;
             DriverId        = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
-            TruckNumber     = DriverConst.GetCoDriverTripDetails(DriverConst.CoTruck, getActivity());
-            DriverTimeZone  = DriverConst.GetCoDriverSettings(DriverConst.CoDriverTimeZone, getActivity());
             isCycleRequest  = SharedPref.IsCycleRequestCo(getActivity());
         }
 
-
+        TruckNumber     = SharedPref.getTruckNumber(getActivity());  //DriverConst.GetDriverTripDetails(DriverConst.Truck, getActivity());
+        DriverTimeZone  = DriverConst.GetDriverSettings(DriverConst.DriverTimeZone, getActivity());
 
         // Clear unread notification badge count
         constants.ClearUnreadNotifications(DriverType, notificationPref, coNotificationPref,  getActivity());

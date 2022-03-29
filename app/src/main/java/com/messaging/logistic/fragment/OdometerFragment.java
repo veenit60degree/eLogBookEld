@@ -61,7 +61,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
     String DistanceType = "km",  DRIVER_ID = "", DeviceId = "", VIN_NUMBER = "", SelectedDate = "", CompanyId = "",
             StartOdometer = "", EndOdometer = "", ReadingType = "start";
     long StartOdoInt = 0, EndOdoInt = 0;
-    String TruckOdometerId = "", IsEditOdometer = "false";
+    String TruckOdometerId = "", IsEditOdometer = "false", TruckNumber = "";
     final int GetOdometerss         = 1;
     final int SaveOdometers         = 2;
     final int GetOdometers18Days    = 3;
@@ -135,7 +135,6 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         SaveOdometerRequest     = new VolleyRequest(getActivity());
 
         EldTitleTV.setText("Odometer Reading");
-        odometerTruckTV.setText(Globally.TRUCK_NUMBER);
         rightMenuBtn.setVisibility(View.GONE);
         dateActionBarTV.setVisibility(View.VISIBLE);
 
@@ -195,7 +194,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         }
 
         UserInfo();
-        odometerTruckTV.setText(Globally.TRUCK_NUMBER);
+        odometerTruckTV.setText(TruckNumber);
         saveReadingBtn.setEnabled(true);
 
         odometer18DaysArray = new JSONArray();
@@ -226,11 +225,8 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         VIN_NUMBER      = SharedPref.getVINNumber(getActivity());
         DeviceId        = SharedPref.GetSavedSystemToken(getActivity());
 
-        if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
-            CompanyId     = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
-        } else {                                                                                 // If Current driver is Co Driver
-            CompanyId     = DriverConst.GetCoDriverDetails(DriverConst.CoCompanyId, getActivity());
-        }
+        CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+        TruckNumber     = SharedPref.getTruckNumber(getActivity());
 
         SelectedDate = Global.GetCurrentDeviceDateTime();
     }
@@ -458,7 +454,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
         IsOdometerSaved = true;
 
         JSONObject odoJson = odometerhMethod.AddOdometerInArray(DRIVER_ID, DeviceId, VIN_NUMBER, StartOdometer, EndOdometer, DistanceType,
-                SelectedDate, IsEditOdometer, TruckOdometerId, Globally.TRUCK_NUMBER, EldFragment.DriverStatusId);
+                SelectedDate, IsEditOdometer, TruckOdometerId, TruckNumber, EldFragment.DriverStatusId);
 
         odometerArray.put(odoJson);
         odometerhMethod.OdometerHelper(Integer.valueOf(DRIVER_ID), dbHelper, odometerArray);
@@ -623,14 +619,14 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
                     if (odometerArray.length() > 1) {
                         JSONObject obj = odometerhMethod.GetLastJsonObject(odometerArray, 2);
 
-                        if (obj.getString(ConstantsKeys.TruckEquipmentNumber).equals(Globally.TRUCK_NUMBER)) {
+                        if (obj.getString(ConstantsKeys.TruckEquipmentNumber).equals(TruckNumber)) {
                             if (odometerArray.length() > 1) {
                                 StartOdometer = obj.getString(ConstantsKeys.StartOdometer);
                             }
                         } else {
                             if (odometer18DaysArray.length() > 1) {
                                 JSONObject obj1 = odometerhMethod.GetLastJsonObject(odometer18DaysArray, 1);
-                                if (obj1.getString(ConstantsKeys.TruckEquipmentNumber).equals(Globally.TRUCK_NUMBER)) {
+                                if (obj1.getString(ConstantsKeys.TruckEquipmentNumber).equals(TruckNumber)) {
                                     StartOdometer = obj1.getString(ConstantsKeys.StartOdometer);
                                 }
                             }

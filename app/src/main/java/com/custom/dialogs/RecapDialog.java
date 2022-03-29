@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.constants.SharedPref;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
@@ -94,8 +95,8 @@ public class RecapDialog extends Dialog {
         recap_current_cycle_tv.setText(Cycle);
         recap_avail_hr_tv.setText(DriveHrsToday);
 
-        recap_trailer_tv.setText(Globally.TRAILOR_NUMBER);
-        recap_truck_tv.setText(Globally.TRUCK_NUMBER);
+        recap_trailer_tv.setText(SharedPref.getTrailorNumber(getContext()));
+        recap_truck_tv.setText(SharedPref.getTruckNumber(getContext()));
         recap_onDuty_ava_tv.setText(OnDutyHrsToday);
         recap_cycle_Rem_Hrs_tv.setText(CycleRemingToday);
         btnLoadingJob.setBackgroundResource(R.drawable.green_selector);

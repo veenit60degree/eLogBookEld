@@ -80,8 +80,6 @@ public class EldNotificationDialog extends Dialog  {
         DeviceId = SharedPref.GetSavedSystemToken(getContext());
         VehicleId = SharedPref.getVehicleId(getContext());
         MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, getContext());
-        //CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getContext());
-
 
         final TextView notificationDescTV = (TextView) findViewById(R.id.notificationDescTV);
 
