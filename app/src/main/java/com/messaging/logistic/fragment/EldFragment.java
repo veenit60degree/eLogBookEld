@@ -645,7 +645,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         if (SharedPref.GetNewLoginStatus(getActivity()) == false) {
             getDayStartOdometer();
+            constants.IS_ELD_ON_CREATE = false;
+
+            if(Constants.IsHomePageOnCreate){
+                isCertifySignPending( Constants.IsHomePageOnCreate, false);
+            }
         }
+
+        Constants.IsHomePageOnCreate = false;
 
         /*========= Start Service =============*/
         Constants.isEldHome = false;
@@ -659,7 +666,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }else {
             // -------------------------- CALL API --------bluetooth------------------
              if(TabAct.isTabActOnCreate) {
-                 constants.IS_ELD_ON_CREATE = true;
                  TabAct.vehicleList = new ArrayList<VehicleModel>();
                  GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
 
@@ -685,15 +691,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
 
 
-
-
         SharedPref.setStartLocation("", "", "", getActivity());
         SharedPref.setEndLocation("", "", "", getActivity());
-
-        if (!SharedPref.GetNewLoginStatus(getActivity()) && Constants.IsHomePageOnCreate){
-            isCertifySignPending( Constants.IsHomePageOnCreate, false);
-        }
-        Constants.IsHomePageOnCreate = false;
 
 
      emptyTrailerNoAnim.setAnimationListener(new Animation.AnimationListener() {
@@ -1048,8 +1047,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
         }
 
-
     }
+
+
+
+
+
 
     void getDayStartOdometer(){
         String odoSelectedDay = SharedPref.getSelectedDayForPuOdometer(getActivity());
@@ -1496,8 +1499,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         GetOBDAssignedVehicles(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId, DriverCompanyId, VIN_NUMBER);
                     }
                 }
-                GetOnDutyRemarks();
+
             }
+
             DateTime lastDataSavedDate;
             if (SharedPref.getSavedDateTime(getActivity()).length() > 0) {
                 lastDataSavedDate = Global.getDateTimeObj(SharedPref.getSavedDateTime(getActivity()), false);
@@ -7409,8 +7413,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     break;
 
                 case UpdateObdVeh:
-
-
 
                     if (SharedPref.GetNewLoginStatus(getActivity())) {
                         Global.EldScreenToast(loginDialogView, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));

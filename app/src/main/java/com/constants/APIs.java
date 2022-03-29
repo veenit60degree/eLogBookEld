@@ -27,8 +27,8 @@ public class APIs {
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_INDIAN_OPEN ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_INDIAN_OPEN ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
 
@@ -74,7 +74,7 @@ public class APIs {
 
 
     /*-------- ELD API ----------*/
-    public static String SAVE_DRIVER_STATUS     			= "http://182.73.78.171:8954/api/DriverStatus/UpdateDriverStatus";  //DOMAIN_URL_ELD + "SaveELDDriverStatus";
+    public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus"; //"http://182.73.78.171:8954/api/DriverStatus/UpdateDriverStatus";
     //public static String SAVE_DRIVER_EDIT_LOG     			= DOMAIN_URL_ELD + "SaveDriverEditELDStatus";
     public static String SAVE_DRIVER_EDIT_LOG_NEW  			= DOMAIN_URL_ELD + "SaveDriverEditELDStatusNew";
     //  public static String GET_DRIVER_STATUS      			= DOMAIN_URL_ELD + "GetDriverStatusAndLocation";   //GetDriverLogDetail

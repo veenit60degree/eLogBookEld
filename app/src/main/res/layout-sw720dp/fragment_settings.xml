@@ -10,17 +10,16 @@
     >
 
     <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        >
+        android:orientation="vertical">
 
         <include
             android:id="@+id/actionbarMainLay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             layout="@layout/actionbar_eld"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <ScrollView
             android:id="@+id/settingsScrollView"
@@ -28,65 +27,58 @@
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/margin_20"
             android:paddingRight="@dimen/margin_20"
-            android:scrollbars="none"
-            >
+            android:scrollbars="none">
 
             <LinearLayout
                 android:id="@+id/settingsParentView"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/transparent"
                 android:layout_marginTop="@dimen/margin_20"
                 android:layout_marginBottom="@dimen/margin_20"
-                android:weightSum="1"
-                >
+                android:background="@color/transparent"
+                android:orientation="vertical"
+                android:weightSum="1">
 
                 <LinearLayout
                     android:id="@+id/settingsLinearLay"
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/ripple_effect"
+                    android:orientation="horizontal"
                     android:paddingTop="@dimen/margin_short_6"
                     android:paddingBottom="@dimen/margin_short_6"
-                    android:weightSum="1"
-                    >
+                    android:weightSum="1">
 
                     <LinearLayout
-                        android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/view_height_120"
                         android:layout_weight="0.5"
-                        >
+                        android:orientation="horizontal">
 
                         <RelativeLayout
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="@dimen/margin_10"
                             android:layout_weight="0.3"
                             android:gravity="center_vertical"
-                            >
+                            android:orientation="horizontal">
 
                             <LinearLayout
                                 android:id="@+id/canCycleLayout"
-                                android:orientation="horizontal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                >
-
+                                android:orientation="horizontal">
 
 
                                 <TextView
                                     android:id="@+id/caCycle"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
                                     android:text="@string/can_cycle"
                                     android:textColor="@color/gray_text_color"
                                     android:textSize="@dimen/text_size_22"
                                     android:textStyle="bold"
-                                    android:layout_gravity="center"
 
                                     />
 
@@ -94,11 +86,10 @@
                                     android:id="@+id/canEditImgView"
                                     android:layout_width="@dimen/margin_20"
                                     android:layout_height="@dimen/margin_20"
-                                    android:src="@drawable/edit_log_icon"
-                                    android:layout_toRightOf="@+id/caCycle"
                                     android:layout_gravity="center"
                                     android:layout_marginLeft="@dimen/margin_10"
-                                    />
+                                    android:layout_toRightOf="@+id/caCycle"
+                                    android:src="@drawable/edit_log_icon" />
                             </LinearLayout>
 
                             <TextView
@@ -108,40 +99,36 @@
                                 android:layout_below="@+id/canCycleLayout"
                                 android:paddingLeft="@dimen/margin_10"
                                 android:text="@string/current_cyclee"
-                                android:textStyle="bold"
                                 android:textColor="@color/color_eld_theme"
                                 android:textSize="@dimen/text_size_14"
+                                android:textStyle="bold"
                                 android:visibility="invisible" />
 
                             <LinearLayout
-                                android:layout_below="@+id/caCurrentCycleTV"
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingTop="@dimen/margin_short_1"
-                                >
+                                android:layout_below="@+id/caCurrentCycleTV"
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/margin_short_1">
 
                                 <ImageView
                                     android:id="@+id/cycleImgView"
                                     android:layout_width="@dimen/margin_21"
                                     android:layout_height="@dimen/margin_21"
-                                    android:src="@drawable/recycle_icon"
-                                    android:tint="#2F55D4"
                                     android:layout_gravity="center_vertical"
-                                    />
-
+                                    android:src="@drawable/recycle_icon"
+                                    android:tint="#2F55D4" />
 
 
                                 <TextView
                                     android:id="@+id/caCycleTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:paddingLeft="@dimen/margin_10"
                                     android:text="Cycle (120/14)"
                                     android:textColor="@color/gray_category_color"
-                                    android:textSize="@dimen/text_size_16"
-                                    android:paddingLeft="@dimen/margin_10"
-                                    android:layout_gravity="center_vertical"
-                                    />
+                                    android:textSize="@dimen/text_size_16" />
 
                             </LinearLayout>
 
@@ -160,43 +147,39 @@
                                 />
 
 
-
                         </RelativeLayout>
 
                         <RelativeLayout
-                            android:layout_toRightOf="@+id/cycleLayout"
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/cycleLayout"
                             android:layout_weight="0.3"
                             android:gravity="center_vertical"
-                            >
+                            android:orientation="horizontal">
 
                             <LinearLayout
                                 android:id="@+id/usaCycleLayout"
-                                android:orientation="horizontal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                >
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:id="@+id/usCycleTitle"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginRight="@dimen/margin_12"
                                     android:text="@string/usa_cycle"
                                     android:textColor="@color/gray_text_color"
-                                    android:layout_marginRight="@dimen/margin_12"
                                     android:textSize="@dimen/text_size_22"
-                                    android:textStyle="bold"
-                                    />
+                                    android:textStyle="bold" />
 
                                 <ImageView
                                     android:id="@+id/usEditImgView"
                                     android:layout_width="@dimen/margin_20"
                                     android:layout_height="@dimen/margin_20"
-                                    android:src="@drawable/edit_log_icon"
-                                    android:layout_toRightOf="@+id/usCycleTitle"
                                     android:layout_gravity="center"
+                                    android:layout_toRightOf="@+id/usCycleTitle"
+                                    android:src="@drawable/edit_log_icon"
 
                                     />
                             </LinearLayout>
@@ -215,46 +198,42 @@
                                 android:visibility="invisible" />
 
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/usCurrentCycleTV"
-                                android:paddingTop="@dimen/margin_short_1"
-                                >
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/margin_short_1">
 
                                 <ImageView
                                     android:id="@+id/usImgView"
                                     android:layout_width="@dimen/margin_21"
                                     android:layout_height="@dimen/margin_21"
-                                    android:src="@drawable/recycle_icon"
                                     android:layout_gravity="center_vertical"
-                                    />
-
+                                    android:src="@drawable/recycle_icon" />
 
 
                                 <TextView
                                     android:id="@+id/usCycleTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:paddingLeft="@dimen/margin_10"
                                     android:text="Cycle (120/14)"
                                     android:textColor="@color/gray_category_color"
-                                    android:textSize="@dimen/text_size_16"
-                                    android:paddingLeft="@dimen/margin_10"
-                                    android:layout_gravity="center_vertical"
-                                    />
+                                    android:textSize="@dimen/text_size_16" />
 
                             </LinearLayout>
 
                             <Spinner
                                 android:id="@+id/usCycleSpinner"
+                                style="@style/spinner_style_transparent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/margin_15"
-                                android:layout_marginRight="@dimen/margin_15"
                                 android:layout_marginTop="@dimen/margin_15"
+                                android:layout_marginRight="@dimen/margin_15"
                                 android:paddingTop="@dimen/margin_short_7"
                                 android:paddingBottom="@dimen/margin_short_7"
-                                style="@style/spinner_style_transparent"
                                 android:visibility="gone"
 
                                 />
@@ -264,27 +243,24 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/view_height_120"
                         android:layout_weight="0.5"
-                        >
+                        android:orientation="horizontal">
 
                         <RelativeLayout
                             android:id="@+id/cycleLayout"
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.3"
                             android:layout_marginLeft="@dimen/margin_10"
+                            android:layout_weight="0.3"
                             android:gravity="center_vertical"
-                            >
+                            android:orientation="horizontal">
 
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                >
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:id="@+id/timeZonetitle"
@@ -298,75 +274,69 @@
                             </LinearLayout>
 
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
-                                android:paddingTop="@dimen/margin_short_7"
-                                >
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/margin_short_7">
 
                                 <ImageView
                                     android:id="@+id/timeZoneImgView"
                                     android:layout_width="@dimen/margin_21"
                                     android:layout_height="@dimen/margin_21"
-                                    android:src="@drawable/timezone_icon"
                                     android:layout_gravity="center_vertical"
-                                    />
+                                    android:src="@drawable/timezone_icon" />
 
                                 <TextView
                                     android:id="@+id/timeZoneTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:paddingLeft="@dimen/margin_10"
                                     android:text="Cycle (120/14)"
                                     android:textColor="@color/gray_category_color"
-                                    android:textSize="@dimen/text_size_16"
-                                    android:paddingLeft="@dimen/margin_10"
-                                    android:layout_gravity="center_vertical"
-                                    />
+                                    android:textSize="@dimen/text_size_16" />
 
                             </LinearLayout>
 
                             <Spinner
                                 android:id="@+id/timeZoneSpinner"
+                                style="@style/spinner_style_transparent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/margin_15"
-                                android:layout_marginRight="@dimen/margin_15"
                                 android:layout_marginTop="@dimen/margin_15"
+                                android:layout_marginRight="@dimen/margin_15"
                                 android:paddingTop="@dimen/margin_short_7"
                                 android:paddingBottom="@dimen/margin_short_7"
-                                style="@style/spinner_style_transparent"
                                 android:visibility="gone"
 
                                 />
 
 
-
                         </RelativeLayout>
 
                         <RelativeLayout
-                            android:layout_toRightOf="@+id/cycleLayout"
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/cycleLayout"
                             android:layout_weight="0.3"
                             android:gravity="center_vertical"
-                            >
+                            android:orientation="horizontal">
 
                             <LinearLayout
                                 android:id="@+id/timeZoneLayout"
-                                android:orientation="horizontal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                >
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:id="@+id/operatingZoneT"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginRight="@dimen/margin_12"
                                     android:text="@string/Operating_zone"
                                     android:textColor="@color/gray_text_color"
-                                    android:layout_marginRight="@dimen/margin_12"
                                     android:textSize="@dimen/text_size_22"
                                     android:textStyle="bold" />
 
@@ -374,43 +344,38 @@
                                     android:id="@+id/opZoneTmgView"
                                     android:layout_width="@dimen/margin_21"
                                     android:layout_height="@dimen/margin_21"
-                                    android:src="@drawable/edit_log_icon"
-                                    android:layout_toRightOf="@+id/operatingZoneT"
                                     android:layout_gravity="center"
-                                    />
+                                    android:layout_toRightOf="@+id/operatingZoneT"
+                                    android:src="@drawable/edit_log_icon" />
 
                             </LinearLayout>
 
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
-                                android:paddingTop="@dimen/margin_short_7"
-                                >
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/margin_short_7">
 
                                 <ImageView
                                     android:id="@+id/opZoneimgView"
                                     android:layout_width="@dimen/margin_21"
                                     android:layout_height="@dimen/margin_21"
-                                    android:src="@drawable/operatingzone_icon"
                                     android:layout_gravity="center_vertical"
-                                    />
+                                    android:src="@drawable/operatingzone_icon" />
 
                                 <TextView
                                     android:id="@+id/operatingZoneTV"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Cycle (120/14)"
-                                    android:textColor="@color/gray_category_color"
-                                    android:textSize="@dimen/text_size_16"
+                                    android:layout_gravity="center_vertical"
                                     android:paddingLeft="@dimen/margin_10"
                                     android:paddingRight="@dimen/margin_short_5"
-                                    android:layout_gravity="center_vertical"
-                                    />
+                                    android:text="Cycle (120/14)"
+                                    android:textColor="@color/gray_category_color"
+                                    android:textSize="@dimen/text_size_16" />
 
                             </LinearLayout>
-
 
 
                         </RelativeLayout>
@@ -421,12 +386,12 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/ripple_effect"
-                    android:layout_weight="0.5"
                     android:layout_marginTop="@dimen/margin_20"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="vertical"
                     android:paddingTop="@dimen/margin_10"
                     android:paddingBottom="@dimen/margin_10"
 
@@ -435,18 +400,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingBottom="@dimen/margin_10"
                         android:text="@string/USA_Exemption"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/text_size_21"
-                        android:paddingRight="@dimen/margin_20"
-                        android:paddingLeft="@dimen/margin_10"
                         android:textStyle="bold"
-                        android:paddingTop="@dimen/margin_10"
-                        android:paddingBottom="@dimen/margin_10"
                         android:visibility="visible"
 
                         />
-
 
 
                     <RelativeLayout
@@ -480,13 +444,12 @@
                             android:id="@+id/haulExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/usa_take_16_hour_exc"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_19"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/shortHaulImagView"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/usa_take_16_hour_exc"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_19" />
 
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/haulExceptnSwitchButton"
@@ -497,7 +460,6 @@
                             android:layout_marginRight="@dimen/margin_10"
                             android:checked="false"
                             app:theme="@style/Custom.Widget.SwitchCompat" />
-
 
 
                     </RelativeLayout>
@@ -515,8 +477,7 @@
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_adverse"
-                            >
+                            android:background="@drawable/circle_shape_adverse">
 
 
                             <ImageView
@@ -527,18 +488,16 @@
                         </RelativeLayout>
 
 
-
                         <TextView
                             android:id="@+id/adverseExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/usa_adverse_excp"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_19"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/adverseExpImgView"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/usa_adverse_excp"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_19" />
 
 
                         <androidx.appcompat.widget.SwitchCompat
@@ -572,31 +531,28 @@
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_sync"
-                            >
+                            android:background="@drawable/circle_shape_sync">
 
 
                             <ImageView
                                 android:layout_width="@dimen/margin_19"
                                 android:layout_height="@dimen/margin_19"
                                 android:layout_centerInParent="true"
-                                android:tint="@color/on_edit"
-                                android:src="@drawable/adverse_exception" />
+                                android:src="@drawable/adverse_exception"
+                                android:tint="@color/on_edit" />
                         </RelativeLayout>
-
 
 
                         <TextView
                             android:id="@+id/agricultureExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/usa_agriculture_excp"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_19"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/agricultureExpImgView"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/usa_agriculture_excp"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_19" />
 
 
                         <androidx.appcompat.widget.SwitchCompat
@@ -621,12 +577,12 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/ripple_effect"
-                    android:layout_weight="0.5"
                     android:layout_marginTop="@dimen/margin_20"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="vertical"
                     android:paddingTop="@dimen/margin_10"
                     android:paddingBottom="@dimen/margin_10"
 
@@ -636,14 +592,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingBottom="@dimen/margin_10"
                         android:text="@string/CANADA_Exemption"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/text_size_21"
-                        android:paddingRight="@dimen/margin_20"
-                        android:paddingLeft="@dimen/margin_10"
                         android:textStyle="bold"
-                        android:paddingTop="@dimen/margin_10"
-                        android:paddingBottom="@dimen/margin_10"
                         android:visibility="visible"
 
                         />
@@ -661,8 +617,7 @@
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_adverse"
-                            >
+                            android:background="@drawable/circle_shape_adverse">
 
 
                             <ImageView
@@ -673,18 +628,16 @@
                         </RelativeLayout>
 
 
-
                         <TextView
                             android:id="@+id/adverseCanadaExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/canada_adverse_excp"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_19"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/adverseCanadaExpImgView"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/canada_adverse_excp"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_19" />
 
 
                         <androidx.appcompat.widget.SwitchCompat
@@ -708,9 +661,9 @@
                         android:id="@+id/deferralRuleLay"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_65"
-                        android:paddingRight="@dimen/margin_10"
-                        android:paddingLeft="@dimen/margin_10"
                         android:layout_marginBottom="@dimen/margin_10"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_10"
                         android:visibility="visible"
 
                         >
@@ -720,8 +673,7 @@
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_checkinternet"
-                            >
+                            android:background="@drawable/circle_shape_checkinternet">
 
 
                             <ImageView
@@ -737,13 +689,12 @@
                             android:id="@+id/deferralTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/canada_deferral_rule"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_19"
-                            android:paddingLeft="@dimen/margin_10"
                             android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/deferalLayout"
-                            />
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/canada_deferral_rule"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_19" />
 
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/deferralSwitchButton"
@@ -759,12 +710,12 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/ripple_effect"
-                    android:layout_weight="0.5"
                     android:layout_marginTop="@dimen/margin_20"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="vertical"
                     android:paddingTop="@dimen/margin_10"
                     android:paddingBottom="@dimen/margin_10"
 
@@ -776,32 +727,29 @@
                         android:id="@+id/docBtn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_65"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
                         android:layout_margin="@dimen/margin_short_2"
-                        >
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:paddingTop="@dimen/margin_10"
+                            android:paddingRight="@dimen/margin_20"
+                            android:paddingBottom="@dimen/margin_10"
                             android:text="Category 1"
                             android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_21"
-                            android:paddingRight="@dimen/margin_20"
-                            android:paddingLeft="@dimen/margin_10"
                             android:textStyle="bold"
-                            android:paddingTop="@dimen/margin_10"
-                            android:paddingBottom="@dimen/margin_10"
-                            android:visibility="gone"
-                            />
+                            android:visibility="gone" />
 
                         <RelativeLayout
                             android:id="@+id/documentLayout"
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_document"
-                            >
+                            android:background="@drawable/circle_shape_document">
 
 
                             <ImageView
@@ -814,17 +762,15 @@
                         </RelativeLayout>
 
 
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/documents"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_19"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/documentLayout"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/documents"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_19" />
 
 
                         <ImageView
@@ -834,8 +780,7 @@
                             android:layout_centerInParent="true"
                             android:layout_marginRight="@dimen/margin_23"
                             android:src="@drawable/arrow_next_unidentfied"
-                            android:tint="@color/gray_category_color"
-                            />
+                            android:tint="@color/gray_category_color" />
 
                     </RelativeLayout>
 
@@ -843,18 +788,16 @@
                         android:id="@+id/obdDiagnoseBtn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_65"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
                         android:layout_margin="@dimen/margin_short_2"
-                        >
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10">
 
                         <RelativeLayout
                             android:id="@+id/obdDiagnoseLayout"
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
-                            android:background="@drawable/circle_shape_obd"
                             android:layout_centerVertical="true"
-                            >
+                            android:background="@drawable/circle_shape_obd">
 
 
                             <ImageView
@@ -881,34 +824,30 @@
                         <ImageView
                             android:layout_width="@dimen/margin_19"
                             android:layout_height="@dimen/margin_19"
-                            android:layout_centerInParent="true"
-                            android:src="@drawable/arrow_next_unidentfied"
-                            android:tint="@color/gray_category_color"
-                            android:layout_marginRight="@dimen/margin_23"
                             android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
                             android:layout_centerVertical="true"
-                            />
+                            android:layout_marginRight="@dimen/margin_23"
+                            android:src="@drawable/arrow_next_unidentfied"
+                            android:tint="@color/gray_category_color" />
 
                     </RelativeLayout>
-
 
 
                     <RelativeLayout
                         android:id="@+id/SyncDataBtn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_65"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
                         android:layout_margin="@dimen/margin_short_2"
-                        >
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10">
 
                         <RelativeLayout
                             android:id="@+id/settingLayout"
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_sync"
-                            >
+                            android:background="@drawable/circle_shape_sync">
 
                             <com.constants.LoadingSpinImgView
                                 android:id="@+id/settingSpinImgVw"
@@ -923,36 +862,32 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/synchronize_data"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_19"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/settingLayout"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/synchronize_data"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_19" />
 
 
                     </RelativeLayout>
-
 
 
                     <RelativeLayout
                         android:id="@+id/soundbrightnessBtn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_65"
-                        android:paddingLeft="@dimen/margin_10"
+                        android:layout_margin="@dimen/margin_short_2"
                         android:layout_marginBottom="@dimen/margin_10"
                         android:background="@drawable/gray_light_selector"
-                        android:layout_margin="@dimen/margin_short_2"
-                        >
+                        android:paddingLeft="@dimen/margin_10">
 
                         <RelativeLayout
                             android:id="@+id/soundbrightnessBtnLayout"
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_soubright"
-                            >
+                            android:background="@drawable/circle_shape_soubright">
 
 
                             <ImageView
@@ -965,17 +900,15 @@
                         </RelativeLayout>
 
 
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/setting_soundbrightness"
-                            android:textColor="@color/gray_category_color"
-                            android:textSize="@dimen/text_size_19"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/soundbrightnessBtnLayout"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/setting_soundbrightness"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_19" />
 
                     </RelativeLayout>
 
@@ -983,16 +916,15 @@
 
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/ripple_effect"
-                    android:layout_weight="0.5"
                     android:layout_marginTop="@dimen/margin_20"
                     android:layout_marginBottom="@dimen/margin_20"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="vertical"
                     android:paddingTop="@dimen/margin_10"
                     android:paddingBottom="@dimen/margin_10"
-
 
 
                     >
@@ -1001,33 +933,30 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:paddingTop="@dimen/margin_10"
+                        android:paddingRight="@dimen/margin_20"
+                        android:paddingBottom="@dimen/margin_10"
                         android:text="Category 2"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/text_size_21"
-                        android:paddingRight="@dimen/margin_20"
-                        android:paddingLeft="@dimen/margin_10"
                         android:textStyle="bold"
-                        android:paddingTop="@dimen/margin_10"
-                        android:paddingBottom="@dimen/margin_10"
-                        android:visibility="gone"
-                        />
+                        android:visibility="gone" />
 
                     <RelativeLayout
                         android:id="@+id/checkInternetBtn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_65"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
                         android:layout_margin="@dimen/margin_short_2"
-                        >
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10">
 
                         <RelativeLayout
                             android:id="@+id/checkInternetLayout"
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_checkinternet"
-                            >
+                            android:background="@drawable/circle_shape_checkinternet">
 
 
                             <ImageView
@@ -1057,18 +986,16 @@
                         android:id="@+id/checkAppUpdateBtn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_65"
-                        android:paddingLeft="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
                         android:layout_margin="@dimen/margin_short_2"
-                        >
+                        android:background="@drawable/gray_light_selector"
+                        android:paddingLeft="@dimen/margin_10">
 
                         <RelativeLayout
                             android:id="@+id/updateAppLayout"
                             android:layout_width="@dimen/view_height_50"
                             android:layout_height="@dimen/view_height_50"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/circle_shape_checkupdate"
-                            >
+                            android:background="@drawable/circle_shape_checkupdate">
 
 
                             <com.constants.LoadingSpinImgView
@@ -1159,21 +1086,106 @@
 
                     </RelativeLayout>
 
+
                 </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_short_5"
+                    android:layout_marginBottom="@dimen/margin_20"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+
+
+                    >
+
+                    <RelativeLayout
+                        android:id="@+id/checkStorage"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_65"
+                        android:layout_margin="@dimen/margin_short_2"
+                        android:paddingLeft="@dimen/margin_10"
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/checkStorageLayout"
+                            android:layout_width="@dimen/view_height_50"
+                            android:layout_height="@dimen/view_height_50"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_checkinternet">
+
+
+                            <ImageView
+                                android:id="@+id/checkStorageImgView"
+                                android:layout_width="@dimen/margin_19"
+                                android:layout_height="@dimen/margin_19"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/storage_icon"
+
+                                />
+
+
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:id="@+id/storageTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/checkStorageLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="@string/StorageStatus"
+                            android:textColor="@color/gray_category_color"
+                            android:textSize="@dimen/text_size_19"
+
+                            />
+
+                        <RelativeLayout
+                            android:id="@+id/progressBarLayout"
+                            android:layout_width="@dimen/view_height_500"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/margin_15"
+                            android:orientation="horizontal"
+
+                            >
+
+
+                            <ProgressBar
+                                android:id="@+id/storageProgress"
+                                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/gray_eld_drawable"
+                                android:progressDrawable="@drawable/progress_style" />
+
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
 
                 <Button
                     android:id="@+id/settingSaveBtn"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/view_height_40"
+                    android:layout_marginLeft="@dimen/view_height_40"
+                    android:layout_marginTop="@dimen/view_height_60"
+                    android:layout_marginRight="@dimen/view_height_50"
+                    android:background="@drawable/red_btn_selector"
                     android:text="@string/save"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_17"
-                    android:layout_marginLeft="@dimen/view_height_40"
-                    android:layout_marginRight="@dimen/view_height_50"
-                    android:layout_marginTop="@dimen/view_height_60"
-                    android:background="@drawable/red_btn_selector"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
 
             </LinearLayout>

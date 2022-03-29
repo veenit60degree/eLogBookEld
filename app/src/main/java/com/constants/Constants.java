@@ -4926,6 +4926,8 @@ public class Constants {
                 e.printStackTrace();
             }
 
+        }else{
+            SharedPref.saveHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
         }
         return timeInMin;
 

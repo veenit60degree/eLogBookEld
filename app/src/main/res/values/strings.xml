@@ -385,6 +385,7 @@
     <string name="Origin">Origin</string>
     <string name="Malfunction_with_bracket">(Malfunction)</string>
 
+    <string name="StorageStatus">Storage Status</string>
     <string name="lat_long">Lat Long</string>
     <string name="Event">Event</string>
     <string name="geo_loc">Geo Loc</string>
