@@ -3,7 +3,6 @@
     android:id="@+id/malfunctionChildMainLay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     >
 
 
@@ -16,8 +15,6 @@
         android:paddingTop="@dimen/margin_short_8"
         android:paddingRight="@dimen/margin_10"
         android:paddingBottom="@dimen/margin_short_8"
-
-
         >
 
 

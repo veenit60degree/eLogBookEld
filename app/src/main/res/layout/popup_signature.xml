@@ -6,7 +6,7 @@
     android:background="@drawable/white_full_border"
     android:layout_marginLeft="@dimen/margin_10"
     android:layout_marginRight="@dimen/margin_10"
-
+    android:backgroundTint="?attr/layout_color_dot"
     >
     <!--@dimen/view_height_400-->
 
@@ -81,6 +81,7 @@
                     android:id="@+id/inkView"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/view_height_170"
+                    android:backgroundTint="?attr/textColor"
                     app:inkFlags="interpolation|responsiveWeight" />
 
 

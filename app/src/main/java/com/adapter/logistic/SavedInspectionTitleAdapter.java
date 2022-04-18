@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.constants.SharedPref;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.SavedInspectionModel;
 
 import java.util.List;
@@ -74,8 +75,15 @@ public class SavedInspectionTitleAdapter extends BaseAdapter {
         holder.inspectionTimeTV.setVisibility(View.VISIBLE);
 
         holder.inspectionTruckTV.setTypeface(null, Typeface.BOLD);
-        holder.inspectionTruckTV.setTextColor(mContext.getResources().getColor(R.color.color_eld_bg));
-        holder.inspectionItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.eld_gray_bg));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            holder.inspectionItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.unselect_button));
+            holder.inspectionTruckTV.setTextColor(mContext.getResources().getColor(R.color.white));
+            holder.inspectionTimeTV.setTextColor(mContext.getResources().getColor(R.color.white));
+        }else{
+            holder.inspectionItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.eld_gray_bg));
+            holder.inspectionTruckTV.setTextColor(mContext.getResources().getColor(R.color.color_eld_bg));
+            holder.inspectionTimeTV.setTextColor(mContext.getResources().getColor(R.color.color_eld_bg));
+        }
 
         if(inspectionType.equals("pti")){
             holder.inspectionTruckTV.setText(headerTitle);

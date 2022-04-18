@@ -10,7 +10,7 @@
         android:layout_marginTop="@dimen/margin_10"
         android:layout_marginLeft="@dimen/margin_10"
         android:layout_marginRight="@dimen/margin_10"
-        android:background="@color/white_theme"
+        android:background="?attr/bgColor"
 
         >
         <!--margin_22-->
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_23"
             android:textStyle="bold"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/color_eld_theme"
 
             />
 
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_21"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColor"
             android:layout_below="@+id/historyTitleTV"
             android:layout_toLeftOf="@+id/deleteHistoryBtn"
 
@@ -56,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_21"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/color_eld_theme"
             android:layout_marginRight="@dimen/view_height_55"
             android:layout_alignParentRight="true"
 

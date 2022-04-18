@@ -11,7 +11,7 @@
         android:id="@+id/helpDocLay"
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_60"
-        android:background="@color/eld_gray_bg"
+        android:background="?attr/eld_gray_bg1"
 
 
         >
@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Commercial Invoice"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="@dimen/text_size_19"
             android:layout_marginLeft="@dimen/margin_20"
             android:layout_centerVertical="true"
@@ -44,6 +44,7 @@
             android:layout_marginRight="@dimen/view_height_30"
             android:layout_marginLeft="@dimen/margin_10"
             android:src="@drawable/help_pdf_doc"
+            android:tint="?attr/helpDocImageView_icon_color"
 
             />
 

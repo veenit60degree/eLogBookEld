@@ -29,6 +29,7 @@ import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.MalfncnDiagnstcViewPager;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
@@ -368,8 +369,13 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             holder.vehMilesMalTxtVw.setText(_context.getResources().getString(R.string.vehKm));
         }
 
-        holder.malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.blue_button));
-        holder.malfunctionChildMainLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            holder.malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.unselect));
+            holder.malfunctionChildMainLay.setBackgroundColor(_context.getResources().getColor(R.color.unselect_button));
+        }else{
+            holder.malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.blue_button));
+            holder.malfunctionChildMainLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
+        }
 
         int sizePadding =  constants.intToPixel(_context, 5);
         int sizeMargin =  constants.intToPixel(_context, 10);

@@ -24,6 +24,7 @@
         android:orientation="vertical"
         android:background="@drawable/voilet_border"
         android:padding="@dimen/margin_15"
+        android:backgroundTint="?attr/layout_color_dot"
         >
 
 
@@ -52,7 +53,7 @@
                 android:gravity="center_horizontal"
                 android:paddingBottom="@dimen/margin_short_8"
                 android:text="@string/app_name"
-                android:textColor="@color/black"
+                android:textColor="?attr/textColor"
                 android:textSize="@dimen/text_size_19"
                 android:textStyle="bold"
 
@@ -69,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/logout"
                 android:textSize="@dimen/text_size_17"
-                android:textColor="@color/black"
+                android:textColor="?attr/textColor"
                 android:layout_alignParentRight="true"
                 android:paddingRight="@dimen/margin_short_5"
                 android:paddingLeft="@dimen/margin_short_5"
@@ -107,7 +108,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_16"
             android:text="@string/SelectRemark"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColor"
             android:layout_marginTop="@dimen/margin_10"
             android:layout_marginBottom="@dimen/margin_10"
             android:layout_marginLeft="@dimen/margin_10"
@@ -121,7 +122,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_16"
-            android:textColor="@color/gray_text"
+            android:textColor="?attr/gray_text"
             android:layout_marginBottom="@dimen/margin_10"
             android:layout_marginLeft="@dimen/margin_10"
             android:visibility="gone"
@@ -145,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/no_trailer_desc"
                 android:textSize="@dimen/text_size_17"
-                android:textColor="@color/colorBlack"
+                android:textColor="?attr/textColor"
                 android:layout_marginBottom="@dimen/margin_short_5"
 
                 />
@@ -170,7 +171,7 @@
                 android:text="@string/no_trailer"
                 android:checked="false"
                 android:textSize="@dimen/text_size_17"
-                android:textColor="@color/black_semi"
+                android:textColor="?attr/black_semi"
                 android:theme="@style/CustomRadioBtnInspection"
                 />
 
@@ -182,7 +183,7 @@
                 android:text="@string/enter_trailer_number"
                 android:checked="false"
                 android:textSize="@dimen/text_size_17"
-                android:textColor="@color/black_semi"
+                android:textColor="?attr/black_semi"
                 android:theme="@style/CustomRadioBtnInspection"
 
                 />
@@ -207,7 +208,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/start_ododmeter"
                 android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
+                android:textColor="?attr/black_unidenfied"
                 android:textSize="@dimen/text_size_16"
                 android:layout_marginTop="@dimen/margin_short_5"
                 android:textStyle="bold"
@@ -266,7 +267,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/end_ododmeter"
                 android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
+                android:textColor="?attr/black_unidenfied"
                 android:textSize="@dimen/text_size_16"
                 android:textStyle="bold"
                 android:layout_gravity="center_vertical"
@@ -323,7 +324,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/start_loc"
                 android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
+                android:textColor="?attr/black_unidenfied"
                 android:textSize="@dimen/text_size_16"
                 android:layout_marginTop="@dimen/margin_short_5"
                 android:textStyle="bold"
@@ -437,7 +438,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/end_loc"
                 android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
+                android:textColor="?attr/black_unidenfied"
                 android:textSize="@dimen/text_size_16"
                 android:layout_marginTop="@dimen/margin_short_5"
                 android:textStyle="bold"
@@ -580,7 +581,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/Status_colon"
                 android:layout_marginLeft="@dimen/margin_10"
-                android:textColor="@color/black_unidenfied"
+                android:textColor="?attr/black_unidenfied"
                 android:textSize="@dimen/text_size_16"
                 android:layout_marginTop="@dimen/margin_short_5"
                 android:textStyle="bold"
@@ -606,7 +607,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Driving"
-                    android:textColor="@color/black_semi"
+                    android:textColor="?attr/black_semi"
                     android:textSize="@dimen/text_size_14"
                     android:theme="@style/unIdenRadioBtn"
 
@@ -619,7 +620,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/On_Duty"
-                    android:textColor="@color/black_semi"
+                    android:textColor="?attr/black_semi"
                     android:textSize="@dimen/text_size_14"
                     android:theme="@style/unIdenRadioBtn"
                     android:layout_marginLeft="@dimen/margin_short_8"
@@ -632,7 +633,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Personal_Use"
-                    android:textColor="@color/black_semi"
+                    android:textColor="?attr/black_semi"
                     android:textSize="@dimen/text_size_14"
                     android:theme="@style/unIdenRadioBtn"
                     android:layout_marginLeft="@dimen/margin_short_8"
@@ -650,7 +651,7 @@
             android:layout_height="wrap_content"
             android:text="@string/SelectRemark"
             android:textSize="@dimen/text_size_16"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColor"
             android:layout_marginTop="@dimen/margin_short_5"
             android:layout_marginLeft="@dimen/margin_10"
             android:textStyle="bold"
@@ -678,10 +679,9 @@
                 android:id="@+id/ReasonEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
+                android:textColor="?attr/textColor"
                 android:textSize="@dimen/text_size_16"
                 android:imeOptions="actionDone"
-                android:theme="@style/AppTheme.EditText"
                 android:minLines="3"
                 android:maxLines="4"
                 android:maxLength="60"
@@ -694,7 +694,6 @@
                 android:layout_marginLeft="@dimen/margin_10"
                 android:layout_marginRight="@dimen/margin_10"
                 android:visibility="gone"
-
                 />
       <!--  </com.google.android.material.textfield.TextInputLayout>-->
 

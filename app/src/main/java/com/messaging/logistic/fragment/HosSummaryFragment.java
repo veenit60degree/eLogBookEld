@@ -172,6 +172,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         try {
             rootView = inflater.inflate(R.layout.hos_summary, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

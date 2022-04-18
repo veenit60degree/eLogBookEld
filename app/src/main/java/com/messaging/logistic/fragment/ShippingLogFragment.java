@@ -73,6 +73,12 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         rootView = inflater.inflate(R.layout.noti_history_fragment, container, false);
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 

@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/gray_default"
+    android:background="?attr/rods_bg_color"
     >
 
 
@@ -21,7 +21,7 @@
             android:gravity="center"
             android:paddingLeft="@dimen/margin_15"
             android:text="@string/download_logs_Createddate"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/color_eld_theme"
             android:textSize="@dimen/text_size_15" />
 
 
@@ -46,9 +46,8 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
-
                     android:layout_centerInParent="true"
+                    android:tint="?attr/share_icon_color"
                     android:src="@drawable/share" />
             </RelativeLayout>
 
@@ -65,8 +64,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-
-                    android:src="@drawable/download" />
+                    android:tint="?attr/download_icon_color"
+                    android:src="@android:drawable/stat_sys_download" />
 
             </RelativeLayout>
 
@@ -85,6 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:tint="?attr/view_icon_color"
                     android:src="@drawable/view" />
 
             </RelativeLayout>

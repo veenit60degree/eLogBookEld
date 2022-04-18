@@ -3317,4 +3317,46 @@ public class SharedPref {
 
     }
 
+    // Set Day night mode -------------------
+    public static void setDayNightMode( boolean value, Context context) {
+        if(context  != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("day_night_mode", value);
+            editor.commit();
+        }
+    }
+
+    // Get Day night mode -------------------
+    public static boolean getDayNightMode( Context context) {
+        boolean isDayNightMode = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isDayNightMode = preferences.getBoolean("day_night_mode", false);
+        }
+        return isDayNightMode;
+
+    }
+
+    // Set Day night Action Click -------------------
+    public static void setDayNightActionClick( boolean value, Context context) {
+        if(context  != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("day_night_action", value);
+            editor.commit();
+        }
+    }
+
+    // Get Day night Action Click -------------------
+    public static boolean getDayNightActionClick( Context context) {
+        boolean isDayNightAction = false;
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            isDayNightAction = preferences.getBoolean("day_night_action", false);
+        }
+        return isDayNightAction;
+
+    }
+
 }

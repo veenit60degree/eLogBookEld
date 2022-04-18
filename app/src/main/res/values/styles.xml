@@ -1,5 +1,176 @@
 <resources>
 
+    <style name="LightTheme" parent="AppTheme">
+        <item name="textColor">#000000</item>
+        <item name="metaTextColor">#606060</item>
+        <item name="gray_text_Color">#767676</item>
+        <item name="color_eld_theme">#1A3561</item>
+        <item name="gray_category_color">#878787</item>
+        <item name="colorPrimary">#1A3561</item>
+        <item name="eld_gray_bg1">#EEEEEE</item>
+        <item name="bgColor">#ffffff</item>
+        <item name="gray_text2">#555555</item>
+        <item name="splash_gray">#808080</item>
+        <item name="gray_unidenfied">#87888D</item>
+        <item name="black_unidenfied">#464951</item>
+        <item name="black_semi">#7C7C7B</item>
+        <item name="gray_updated_theme_color">#F4F5F6</item>
+        <item name="ripple_effect_gray">#E3E3E1</item>
+        <item name="color_eld_hover_theme">#F2003561</item>
+        <item name="gray_hover">#ABAAAB</item>
+        <item name="setting_cycle_color">#006ECD</item>
+        <item name="recycle_icon_color">#F76F28</item>
+        <item name="timezone_icon_color">#4AB7F0</item>
+        <item name="operatingzone_icon_color">#F62253</item>
+        <item name="info_icon_color">#003162</item>
+        <item name="helpDocImageView_icon_color">#D37C73</item>
+        <item name="circle_shorthaul_color">#EAEEFB</item>
+        <item name="circle_adverse_color">#FDE7ED</item>
+        <item name="circle_agriculture_color">#ECEBFE</item>
+        <item name="circle_document_color">#FEF0E6</item>
+        <item name="circle_obd_color">#E4F4F6</item>
+        <item name="adverse_icon_color">#F62253</item>
+        <item name="agriculture_icon_color">#32C861</item>
+        <item name="deferal_icon_color">#000000</item>
+        <item name="document_icon_color">#F76F28</item>
+        <item name="obddiagnose_icon_color">#0ACDFC</item>
+        <item name="sync_icon_color">#0ACDFC</item>
+        <item name="sound_icon_color">#33E8FF</item>
+        <item name="checkInternet_icon_color">#2F55D4</item>
+        <item name="checkUpdate_icon_color">#6141FF</item>
+        <item name="gray_text">#a8a8a8</item>
+        <item name="gray_background_one">#E2E2E2</item>
+        <item name="text_black">#ffffff</item>
+        <item name="dot_titles_bg">#E9ECEF</item>
+        <item name="hos_location">#0A83FC</item>
+        <item name="blue_button">#256CB4</item>
+        <item name="field_bg_color">#ffffff</item>
+        <item name="layout_color_dot">#ffffff</item>
+        <item name="share_icon_color">#E1084A</item>
+        <item name="download_icon_color">#002249</item>
+        <item name="view_icon_color">#E88E08</item>
+        <item name="rods_bg_color">#EDEEEE</item>
+        <item name="certify_list_color">#1A3561</item>
+        <item name="dot_list_bg_color">#E9ECEF</item>
+        <item name="color_eld_bg">#67A7D8</item>
+        <item name="layout_color_odometer">#ffffff</item>
+        <item name="gray_edit_log">#F6F5F5</item>
+        <item name="hos_summary_bg">#EFF2FC</item>
+        <item name="hos_break_time">#009DFF</item>
+        <item name="hos_used_time">#49869B</item>
+        <item name="holo_green_dark">#ff669900</item>
+        <item name="gray_hos">#5F6168</item>
+        <item name="hos_shift">#39A9C4</item>
+        <item name="obd_diagnose_color">#F4F5F6</item>
+        <item name="active_status_bg">#4A88CC</item>
+        <item name="eld_gray_bg">#EEEEEE</item>
+        <item name="colorVoilation">#C92627</item>
+        <item name="eld_icon_color">#002249</item>
+        <item name="gray_default">#EDEEEE</item>
+        <item name="active_bg_color">#4A88CC</item>
+        <item name="blue_driver_name">#287CD1</item>
+        <item name="bluetooth_icon_color">#464646</item>
+        <item name="color_accent">#354365</item>
+        <item name="color_login_view">#CC354365</item>
+        <item name="wifi_color">#514F4F</item>
+        <item name="bluee_login_hover">#199cdd</item>
+        <item name="grey_text">#736767</item>
+        <item name="app_color_primary">#2E2E2E</item>
+        <item name="deferral_light_blue">#dee7ec</item>
+        <item name="edit_gray_bg">#F0F0F0</item>
+        <item name="sign_record_bg">#F5F6FC</item>
+        <item name="fb_default">#315C94</item>
+        <item name="gray_updated_divider_color">#EAEBEB</item>
+        <item name="actionbar_color">#67A7D8</item>
+
+    </style>
+
+    <style name="DarkTheme" parent="AppTheme">
+        <item name="textColor">#ffffff</item>
+        <item name="gray_text_Color">#ffffff</item>
+        <item name="color_eld_theme">#ffffff</item>
+        <item name="gray_category_color">#ffffff</item>
+        <item name="colorPrimary">#ffffff</item>
+        <item name="metaTextColor">#aeaeae</item>
+        <item name="eld_gray_bg1">#4E4E4E</item>
+        <item name="bgColor">#4E4E4E</item>
+        <item name="gray_text2">#ffffff</item>
+        <item name="splash_gray">#ffffff</item>
+        <item name="gray_unidenfied">#ffffff</item>
+        <item name="black_unidenfied">#ffffff</item>
+        <item name="black_semi">#ffffff</item>
+        <item name="gray_updated_theme_color">#4E4E4E</item>
+        <item name="ripple_effect_gray">#D1D2D3</item>
+        <item name="color_eld_hover_theme">#ffffff</item>
+        <item name="gray_hover">#ffffff</item>
+        <item name="setting_cycle_color">#CDCDD1</item>
+        <item name="recycle_icon_color">#CDCDD1</item>
+        <item name="timezone_icon_color">#CDCDD1</item>
+        <item name="operatingzone_icon_color">#CDCDD1</item>
+        <item name="info_icon_color">#CDCDD1</item>
+        <item name="helpDocImageView_icon_color">#CDCDD1</item>
+        <item name="circle_shorthaul_color">#CDCDD1</item>
+        <item name="circle_adverse_color">#CDCDD1</item>
+        <item name="circle_agriculture_color">#CDCDD1</item>
+        <item name="circle_document_color">#CDCDD1</item>
+        <item name="circle_obd_color">#CDCDD1</item>
+        <item name="adverse_icon_color">#959597</item>
+        <item name="agriculture_icon_color">#959597</item>
+        <item name="deferal_icon_color">#959597</item>
+        <item name="document_icon_color">#959597</item>
+        <item name="obddiagnose_icon_color">#959597</item>
+        <item name="sync_icon_color">#959597</item>
+        <item name="sound_icon_color">#959597</item>
+        <item name="checkInternet_icon_color">#959597</item>
+        <item name="checkUpdate_icon_color">#959597</item>
+        <item name="gray_text">#ffffff</item>
+        <item name="gray_background_one">#4E4E4E</item>
+        <item name="text_black">#000000</item>
+        <item name="dot_titles_bg">#4E4E4E</item>
+        <item name="hos_location">#ffffff</item>
+        <item name="blue_button">#ffffff</item>
+        <item name="field_bg_color">#848485</item>
+        <item name="layout_color_dot">#aeaeae</item>
+        <item name="share_icon_color">#959597</item>
+        <item name="download_icon_color">#959597</item>
+        <item name="view_icon_color">#959597</item>
+        <item name="rods_bg_color">#848485</item>
+        <item name="certify_list_color">#848485</item>
+        <item name="dot_list_bg_color">#848485</item>
+        <item name="color_eld_bg">#ffffff</item>
+        <item name="layout_color_odometer">#C1C0C0</item>
+        <item name="gray_edit_log">#848485</item>
+        <item name="hos_summary_bg">#4E4E4E</item>
+        <item name="hos_break_time">#ffffff</item>
+        <item name="hos_used_time">#ffffff</item>
+        <item name="holo_green_dark">#ffffff</item>
+        <item name="gray_hos">#ffffff</item>
+        <item name="hos_shift">#ffffff</item>
+        <item name="obd_diagnose_color">#aeaeae</item>
+        <item name="active_status_bg">#ffffff</item>
+        <item name="eld_gray_bg">#959597</item>
+        <item name="colorVoilation">#ffffff</item>
+        <item name="eld_icon_color">#ffffff</item>
+        <item name="gray_default">#959597</item>
+        <item name="active_bg_color">#aeaeae</item>
+        <item name="blue_driver_name">#ffffff</item>
+        <item name="bluetooth_icon_color">#ffffff</item>
+        <item name="color_accent">#ffffff</item>
+        <item name="color_login_view">#ffffff</item>
+        <item name="wifi_color">#ffffff</item>
+        <item name="bluee_login_hover">#ffffff</item>
+        <item name="grey_text">#ffffff</item>
+        <item name="app_color_primary">#ffffff</item>
+        <item name="deferral_light_blue">#ffffff</item>
+        <item name="edit_gray_bg">#ffffff</item>
+        <item name="sign_record_bg">#4E4E4E</item>
+        <item name="fb_default">#ffffff</item>
+        <item name="gray_updated_divider_color">#4E4E4E</item>
+        <item name="actionbar_color">#848485</item>
+
+    </style>
+
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight">
         <!-- Customize your theme here. -->
@@ -12,16 +183,16 @@
 
     <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <!-- Used for the buttons -->
-        <item name="colorAccent">@color/hos_distance</item>
-        <item name="colorPrimary">@color/hos_sleeper</item>
-        <item name="colorPrimaryDark">@color/violet</item>
+<!--        <item name="colorAccent">@color/hos_distance</item>-->
+<!--        <item name="colorPrimary">@color/hos_sleeper</item>-->
+<!--        <item name="colorPrimaryDark">@color/violet</item>-->
         <!-- Used for the title and text -->
-        <item name="android:textColorPrimary">@color/black_hover</item>
+        <item name="android:textColorPrimary">?attr/textColor</item>
         <!-- Used for the background -->
-        <item name="android:background">@color/white</item>
+<!--        <item name="android:background">@color/white</item>-->
 
-        <item name="titleTextColor">@color/color_eld_theme</item>
-        <item name="itemTextColor">@color/colorVoilation</item>
+<!--        <item name="titleTextColor">@color/color_eld_theme</item>-->
+<!--        <item name="itemTextColor">@color/colorVoilation</item>-->
 
     </style>
 
@@ -281,16 +452,20 @@
 
     </style>
 
-
     <style name="AppTheme.EditText" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorControlNormal">@color/black_hover</item>
-        <item name="colorControlActivated">@color/black</item>
-        <item name="colorControlHighlight">@color/black_hover</item>
-        <item name="editTextColor">@color/black</item>
-        <item name="android:textColorHint">@color/grey_text</item>
+        <item name="colorControlNormal">?attr/textColor</item>
+        <item name="colorControlActivated">?attr/textColor</item>
+        <item name="colorControlHighlight">?attr/textColor</item>
+        <item name="editTextColor">?attr/textColor</item>
+        <item name="android:textColorHint">?attr/grey_text</item>
         <item name="colorAccent">@color/white</item>
         <item name="android:paddingBottom">@dimen/margin_short_7</item>
 
+    </style>
+
+    <style name="AlertDialogCustom" parent="@android:style/Theme.Holo.Light.Dialog">
+
+        <item name="android:background">?attr/layout_color_dot</item>
     </style>
 
 
@@ -450,8 +625,8 @@
 
 
     <style name="unIdenRadioBtn" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/black_semi</item>
-        <item name="colorControlActivated">@color/hos_location</item>
+        <item name="colorControlNormal">?attr/black_semi</item>
+        <item name="colorControlActivated">?attr/hos_location</item>
 
     </style>
 
@@ -459,7 +634,7 @@
 
     <style name="CustomRadioBtnInspection" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/black_semi</item>
-        <item name="colorControlActivated">@color/color_eld_theme</item>
+        <item name="colorControlActivated">?attr/color_eld_theme</item>
 
     </style>
 

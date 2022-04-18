@@ -68,6 +68,7 @@ import com.local.db.HelperMethods;
 import com.messaging.logistic.EldActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.CanadaDutyStatusModel;
 import com.models.DriverLocationModel;
 import com.models.UnAssignedVehicleModel;
@@ -192,6 +193,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         try {
             rootView = inflater.inflate(R.layout.fragment_dot_canada, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

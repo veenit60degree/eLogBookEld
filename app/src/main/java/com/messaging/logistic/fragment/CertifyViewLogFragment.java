@@ -3835,7 +3835,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     public void ContinueWithoutSignDialog(){
         try {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
             alertDialogBuilder.setTitle("Certify log alert !!");
             alertDialogBuilder.setMessage(getString(R.string.continue_sign_desc));
             alertDialogBuilder.setCancelable(false);

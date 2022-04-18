@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.messaging.logistic.UILApplication;
 import com.models.EldDriverLogModel;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -68,7 +69,11 @@ public class EditedLogAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.editedItemMainLay.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            holder.editedItemMainLay.setBackgroundColor(context.getResources().getColor(R.color.layout_color_dot));
+        }else{
+            holder.editedItemMainLay.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
+        }
 
         String StartTime    = Globally.ConvertToTimeFormat(LogItem.getStartDateTime(), Globally.DateFormatWithMillSec);
         String EndTime      = Globally.ConvertToTimeFormat(LogItem.getEndDateTime(), Globally.DateFormatWithMillSec);
@@ -91,9 +96,15 @@ public class EditedLogAdapter extends BaseAdapter {
             holder.durationEditedTxtView.setTextColor(context.getResources().getColor(R.color.blue_button));
             holder.editedIcoImgVw.setVisibility(View.VISIBLE);
         }else{
-            holder.startTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.sleeper_edit));
-            holder.endTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.sleeper_edit));
-            holder.durationEditedTxtView.setTextColor(context.getResources().getColor(R.color.sleeper_edit));
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                holder.startTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.white));
+                holder.endTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.white));
+                holder.durationEditedTxtView.setTextColor(context.getResources().getColor(R.color.white));
+            }else{
+                holder.startTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.sleeper_edit));
+                holder.endTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.sleeper_edit));
+                holder.durationEditedTxtView.setTextColor(context.getResources().getColor(R.color.sleeper_edit));
+            }
         }
 
         return convertView;

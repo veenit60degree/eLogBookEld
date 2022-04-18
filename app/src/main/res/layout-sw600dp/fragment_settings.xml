@@ -5,14 +5,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?attr/bgColor"
     android:clickable="true"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="?attr/bgColor"
         android:orientation="vertical">
 
         <include
@@ -76,7 +76,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
                                     android:text="@string/can_cycle"
-                                    android:textColor="@color/gray_text_color"
+                                    android:textColor="?attr/gray_text_Color"
                                     android:textSize="@dimen/text_size_20"
                                     android:textStyle="bold"
 
@@ -89,7 +89,9 @@
                                     android:layout_gravity="center"
                                     android:layout_marginLeft="@dimen/margin_10"
                                     android:layout_toRightOf="@+id/caCycle"
-                                    android:src="@drawable/edit_log_icon" />
+                                    android:src="@drawable/edit_log_icon"
+                                    android:tint="?attr/setting_cycle_color"
+                                    />
                             </LinearLayout>
 
                             <TextView
@@ -99,7 +101,7 @@
                                 android:layout_below="@+id/canCycleLayout"
                                 android:paddingLeft="@dimen/margin_10"
                                 android:text="@string/current_cyclee"
-                                android:textColor="@color/color_eld_theme"
+                                android:textColor="?attr/color_eld_theme"
                                 android:textSize="@dimen/text_size_12"
                                 android:textStyle="bold"
                                 android:visibility="invisible" />
@@ -117,7 +119,7 @@
                                     android:layout_height="@dimen/margin_19"
                                     android:layout_gravity="center_vertical"
                                     android:src="@drawable/recycle_icon"
-                                    android:tint="#2F55D4" />
+                                    android:tint="?attr/setting_cycle_color" />
 
 
                                 <TextView
@@ -127,7 +129,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:paddingLeft="@dimen/margin_10"
                                     android:text="Cycle (120/14)"
-                                    android:textColor="@color/gray_category_color"
+                                    android:textColor="?attr/gray_category_color"
                                     android:textSize="@dimen/text_size_14" />
 
                             </LinearLayout>
@@ -169,7 +171,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginRight="@dimen/margin_12"
                                     android:text="@string/usa_cycle"
-                                    android:textColor="@color/gray_text_color"
+                                    android:textColor="?attr/gray_text_Color"
                                     android:textSize="@dimen/text_size_20"
                                     android:textStyle="bold" />
 
@@ -180,6 +182,7 @@
                                     android:layout_gravity="center"
                                     android:layout_toRightOf="@+id/usCycleTitle"
                                     android:src="@drawable/edit_log_icon"
+                                    android:tint="?attr/setting_cycle_color"
 
                                     />
                             </LinearLayout>
@@ -192,7 +195,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:paddingLeft="@dimen/margin_10"
                                 android:text="@string/current_cyclee"
-                                android:textColor="@color/color_eld_theme"
+                                android:textColor="?attr/color_eld_theme"
                                 android:textSize="@dimen/text_size_12"
                                 android:textStyle="bold"
                                 android:visibility="invisible" />
@@ -209,6 +212,7 @@
                                     android:layout_width="@dimen/margin_19"
                                     android:layout_height="@dimen/margin_19"
                                     android:layout_gravity="center_vertical"
+                                    android:tint="?attr/recycle_icon_color"
                                     android:src="@drawable/recycle_icon" />
 
 
@@ -219,7 +223,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:paddingLeft="@dimen/margin_10"
                                     android:text="Cycle (120/14)"
-                                    android:textColor="@color/gray_category_color"
+                                    android:textColor="?attr/gray_category_color"
                                     android:textSize="@dimen/text_size_14" />
 
                             </LinearLayout>
@@ -268,7 +272,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/TimeZone"
-                                    android:textColor="@color/gray_text_color"
+                                    android:textColor="?attr/gray_text_Color"
                                     android:textSize="@dimen/text_size_20"
                                     android:textStyle="bold" />
 
@@ -286,6 +290,7 @@
                                     android:layout_width="@dimen/margin_19"
                                     android:layout_height="@dimen/margin_19"
                                     android:layout_gravity="center_vertical"
+                                    android:tint="?attr/timezone_icon_color"
                                     android:src="@drawable/timezone_icon" />
 
                                 <TextView
@@ -295,7 +300,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:paddingLeft="@dimen/margin_10"
                                     android:text="Cycle (120/14)"
-                                    android:textColor="@color/gray_category_color"
+                                    android:textColor="?attr/gray_category_color"
                                     android:textSize="@dimen/text_size_14" />
 
                             </LinearLayout>
@@ -337,7 +342,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginRight="@dimen/margin_12"
                                     android:text="@string/Operating_zone"
-                                    android:textColor="@color/gray_text_color"
+                                    android:textColor="?attr/gray_text_Color"
                                     android:textSize="@dimen/text_size_20"
                                     android:textStyle="bold" />
 
@@ -347,6 +352,7 @@
                                     android:layout_height="@dimen/margin_19"
                                     android:layout_gravity="center"
                                     android:layout_toRightOf="@+id/operatingZoneT"
+                                    android:tint="?attr/setting_cycle_color"
                                     android:src="@drawable/edit_log_icon" />
 
                             </LinearLayout>
@@ -363,6 +369,7 @@
                                     android:layout_width="@dimen/margin_19"
                                     android:layout_height="@dimen/margin_19"
                                     android:layout_gravity="center_vertical"
+                                    android:tint="?attr/operatingzone_icon_color"
                                     android:src="@drawable/operatingzone_icon" />
 
                                 <TextView
@@ -373,7 +380,7 @@
                                     android:paddingLeft="@dimen/margin_10"
                                     android:paddingRight="@dimen/margin_short_5"
                                     android:text="Cycle (120/14)"
-                                    android:textColor="@color/gray_category_color"
+                                    android:textColor="?attr/gray_category_color"
                                     android:textSize="@dimen/text_size_14" />
 
                             </LinearLayout>
@@ -407,7 +414,7 @@
                         android:paddingRight="@dimen/margin_20"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/USA_Exemption"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="@dimen/text_size_19"
                         android:textStyle="bold"
                         android:visibility="visible"
@@ -438,7 +445,7 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
-
+                                android:tint="?attr/checkInternet_icon_color"
                                 android:src="@drawable/shorthaul_icon" />
                         </RelativeLayout>
 
@@ -450,7 +457,7 @@
                             android:layout_toRightOf="@+id/shortHaulImagView"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/usa_take_16_hour_exc"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
                         <androidx.appcompat.widget.SwitchCompat
@@ -461,7 +468,7 @@
                             android:layout_centerInParent="true"
                             android:layout_marginRight="@dimen/margin_10"
                             android:checked="false"
-                            app:theme="@style/Custom.Widget.SwitchCompat" />
+                            app:theme="?attr/bgColor" />
 
 
                     </RelativeLayout>
@@ -486,6 +493,7 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
+                                android:tint="?attr/adverse_icon_color"
                                 android:src="@drawable/adverse_exception" />
                         </RelativeLayout>
 
@@ -498,7 +506,7 @@
                             android:layout_toRightOf="@+id/adverseExpImgView"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/usa_adverse_excp"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
 
@@ -541,7 +549,7 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
-                                android:tint="@color/on_edit"
+                                android:tint="?attr/agriculture_icon_color"
                                 android:src="@drawable/adverse_exception" />
                         </RelativeLayout>
 
@@ -552,7 +560,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/usa_agriculture_excp"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17"
                             android:layout_toRightOf="@+id/agricultureExpImgView"
                             android:paddingLeft="@dimen/margin_10"
@@ -604,7 +612,7 @@
                         android:paddingRight="@dimen/margin_20"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/CANADA_Exemption"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="@dimen/text_size_19"
                         android:textStyle="bold"
                         android:visibility="visible"
@@ -629,6 +637,7 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
+                                android:tint="?attr/adverse_icon_color"
                                 android:src="@drawable/adverse_exception" />
                         </RelativeLayout>
 
@@ -641,7 +650,7 @@
                             android:layout_toRightOf="@+id/adverseCanadaExpImgView"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/canada_adverse_excp"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
 
@@ -652,6 +661,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerInParent="true"
                             android:layout_marginRight="@dimen/margin_10"
+
                             android:checked="false"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
@@ -688,6 +698,7 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
+                                android:tint="?attr/deferal_icon_color"
                                 android:src="@drawable/deferal_icon" />
                         </RelativeLayout>
 
@@ -699,7 +710,7 @@
                             android:layout_toRightOf="@+id/deferalLayout"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/canada_deferral_rule"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
                         <androidx.appcompat.widget.SwitchCompat
@@ -750,7 +761,7 @@
                             android:paddingRight="@dimen/margin_20"
                             android:paddingBottom="@dimen/margin_10"
                             android:text="Category 1"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="@dimen/text_size_19"
                             android:textStyle="bold"
                             android:visibility="gone" />
@@ -768,6 +779,7 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
+                                android:tint="?attr/document_icon_color"
                                 android:src="@drawable/document_icon" />
                         </RelativeLayout>
 
@@ -779,7 +791,7 @@
                             android:layout_toRightOf="@+id/documentLayout"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/documents"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
 
@@ -799,7 +811,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
                         android:layout_margin="@dimen/margin_short_2"
-                        android:background="@drawable/gray_light_selector"
                         android:paddingLeft="@dimen/margin_10">
 
                         <RelativeLayout
@@ -817,7 +828,7 @@
                                 android:layout_centerInParent="true"
                                 android:src="@drawable/malfunction_other"
 
-                                android:tint="@color/hos_distance" />
+                                android:tint="?attr/obddiagnose_icon_color"/>
                         </RelativeLayout>
 
 
@@ -828,7 +839,7 @@
                             android:layout_toRightOf="@+id/obdDiagnoseLayout"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/obd_diagnose"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
 
@@ -849,7 +860,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
                         android:layout_margin="@dimen/margin_short_2"
-                        android:background="@drawable/gray_light_selector"
                         android:paddingLeft="@dimen/margin_10">
 
                         <RelativeLayout
@@ -863,7 +873,7 @@
                                 android:id="@+id/settingSpinImgVw"
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
-
+                                android:tint="?attr/sync_icon_color"
                                 android:layout_centerInParent="true"
                                 android:src="@drawable/sync_data_spin" />
 
@@ -878,7 +888,7 @@
                             android:layout_toRightOf="@+id/settingLayout"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/synchronize_data"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
                     </RelativeLayout>
@@ -890,7 +900,6 @@
                         android:layout_height="@dimen/view_height_55"
                         android:layout_margin="@dimen/margin_short_2"
                         android:layout_marginBottom="@dimen/margin_10"
-                        android:background="@drawable/gray_light_selector"
                         android:paddingLeft="@dimen/margin_10"
 
 
@@ -909,6 +918,7 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
+                                android:tint="?attr/sound_icon_color"
                                 android:src="@drawable/sound_bright" />
                         </RelativeLayout>
 
@@ -920,7 +930,7 @@
                             android:layout_toRightOf="@+id/soundbrightnessBtnLayout"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/setting_soundbrightness"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
                     </RelativeLayout>
@@ -950,7 +960,7 @@
                         android:paddingRight="@dimen/margin_20"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="Category 2"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="@dimen/text_size_19"
                         android:textStyle="bold"
                         android:visibility="gone" />
@@ -960,7 +970,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
                         android:layout_margin="@dimen/margin_short_2"
-                        android:background="@drawable/gray_light_selector"
                         android:paddingLeft="@dimen/margin_10"
 
                         >
@@ -978,6 +987,7 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
+                                android:tint="?attr/checkInternet_icon_color"
                                 android:src="@drawable/check_internet_icon" />
                         </RelativeLayout>
 
@@ -989,7 +999,7 @@
                             android:layout_toRightOf="@+id/checkInternetLayout"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/Internet_Status"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
                     </RelativeLayout>
@@ -1000,7 +1010,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
                         android:layout_margin="@dimen/margin_short_2"
-                        android:background="@drawable/gray_light_selector"
                         android:paddingLeft="@dimen/margin_10"
 
                         >
@@ -1019,6 +1028,7 @@
                                 android:layout_width="@dimen/margin_18"
                                 android:layout_height="@dimen/margin_18"
                                 android:layout_centerInParent="true"
+                                android:tint="?attr/checkUpdate_icon_color"
                                 android:src="@drawable/update_icon" />
 
 
@@ -1032,7 +1042,7 @@
                             android:layout_toRightOf="@+id/updateAppLayout"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/Update_Status"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17" />
 
                         <RelativeLayout
@@ -1054,7 +1064,7 @@
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
                                 android:src="@drawable/download"
-                                android:tint="@color/update_app"
+                                android:tint="?attr/checkUpdate_icon_color"
                                 android:visibility="gone"
 
                                 />
@@ -1099,6 +1109,61 @@
                                 />
 
                         </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/checkDayNight"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_55"
+                        android:paddingLeft="@dimen/margin_10"
+                        android:layout_margin="@dimen/margin_short_2"
+
+                        >
+
+                        <RelativeLayout
+                            android:id="@+id/checkDayNightLayout"
+                            android:layout_width="@dimen/view_height_40"
+                            android:layout_height="@dimen/view_height_40"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/circle_shape_checkinternet"
+                            >
+
+
+                            <ImageView
+                                android:id="@+id/checkDayNightImgView"
+                                android:layout_width="@dimen/margin_18"
+                                android:layout_height="@dimen/margin_18"
+                                android:layout_centerInParent="true"
+                                android:tint="?attr/checkInternet_icon_color"
+                                android:src="@drawable/day_night" />
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/checkDayNightLayout"
+                            android:paddingLeft="@dimen/margin_10"
+                            android:text="DayNight"
+                            android:textColor="?attr/gray_category_color"
+                            android:textSize="@dimen/text_size_17" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/dayNightSwitchButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginRight="@dimen/margin_10"
+                            android:checked="false"
+                            app:theme="@style/Custom.Widget.SwitchCompat" />
+
+
+
+
 
 
                     </RelativeLayout>

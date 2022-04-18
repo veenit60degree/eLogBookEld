@@ -30,7 +30,7 @@
             android:text="ELD gjhjb"
             android:textStyle="bold"
             android:textSize="@dimen/text_size_17"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColor"
             android:layout_toRightOf="@+id/hosTypeImgView"
             android:paddingLeft="@dimen/margin_10"
 
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:text="ssdasdsads"
             android:textSize="@dimen/text_size_15"
-            android:textColor="@color/splash_gray"
+            android:textColor="?attr/splash_gray"
             android:layout_toRightOf="@+id/hosTypeImgView"
             android:layout_below="@+id/hosTypeTitleTV"
             android:paddingLeft="@dimen/margin_10"

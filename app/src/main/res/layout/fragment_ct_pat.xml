@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/whiteee"
-
+    android:background="?attr/bgColor"
     >
 
 
@@ -32,7 +31,6 @@
             android:orientation="vertical"
             android:focusable="true"
             android:focusableInTouchMode="true"
-
             >
 
 
@@ -66,7 +64,7 @@
                         android:paddingTop="@dimen/margin_10"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/power_unit"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/color_eld_theme"
                         android:textSize="@dimen/text_size_16"
                         android:textStyle="bold" />
 
@@ -79,7 +77,7 @@
                         android:paddingTop="@dimen/margin_10"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/temp_no_value"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/textColor"
                         android:textSize="@dimen/text_size_16"
 
                         />
@@ -90,7 +88,7 @@
                 <View
                     android:layout_width="@dimen/margin_short_1"
                     android:layout_height="match_parent"
-                    android:background="@color/gray_text" />
+                    android:background="?attr/gray_text" />
 
 
                 <LinearLayout
@@ -106,7 +104,7 @@
                         android:paddingTop="@dimen/margin_10"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/trailer_s"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/color_eld_theme"
                         android:textSize="@dimen/text_size_16"
                         android:textStyle="bold" />
 
@@ -119,7 +117,7 @@
                         android:paddingTop="@dimen/margin_10"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/temp_no_value"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/textColor"
                         android:textSize="@dimen/text_size_16"
 
                         />
@@ -133,7 +131,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text" />
+                android:background="?attr/gray_text" />
 
 
             <TextView
@@ -145,13 +143,13 @@
                 android:layout_margin="@dimen/margin_15"
                 android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
-                android:background="@color/color_eld_theme"
+                android:background="?attr/color_eld_theme"
                 android:paddingLeft="@dimen/view_height_55"
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingRight="@dimen/view_height_55"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:text="@string/truck_tractor"
-                android:textColor="@color/whiteee"
+                android:textColor="?attr/text_black"
                 android:textSize="@dimen/text_size_18"
                 android:textStyle="bold"
 
@@ -160,20 +158,20 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gray_background_one"
+                android:background="?attr/gray_background_one"
                 android:layout_marginLeft="@dimen/margin_11"
                 android:layout_marginRight="@dimen/margin_11"
                 >
 
-            <GridView
-                android:id="@+id/ctPatTruckGridVw"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_10"
-                android:numColumns="2"
-                tools:listitem="@layout/item_inspection"
+                <GridView
+                    android:id="@+id/ctPatTruckGridVw"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_10"
+                    android:numColumns="2"
+                    tools:listitem="@layout/item_inspection"
 
-                />
+                    />
             </LinearLayout>
 
 
@@ -181,11 +179,7 @@
                 android:id="@+id/truckCtPatView"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text"
-                android:layout_marginTop="@dimen/margin_10"
-                android:layout_marginBottom="@dimen/margin_10"
-
-
+                android:background="?attr/gray_text"
 
                 />
 
@@ -196,14 +190,16 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/margin_15"
+                android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
-                android:background="@color/color_eld_theme"
+                android:background="?attr/color_eld_theme"
                 android:paddingLeft="@dimen/view_height_55"
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingRight="@dimen/view_height_55"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:text="@string/Trailer"
-                android:textColor="@color/whiteee"
+                android:textColor="?attr/text_black"
                 android:textSize="@dimen/text_size_18"
                 android:textStyle="bold"
 
@@ -212,33 +208,29 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gray_background_one"
+                android:background="?attr/gray_background_one"
                 android:layout_marginRight="@dimen/margin_11"
                 android:layout_marginLeft="@dimen/margin_11"
 
                 >
-            <GridView
-                android:id="@+id/ctPatTrailerGridVw"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_10"
-                android:numColumns="2"
-                tools:listitem="@layout/item_inspection"
+                <GridView
+                    android:id="@+id/ctPatTrailerGridVw"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_10"
+                    android:numColumns="2"
+                    tools:listitem="@layout/item_inspection"
 
-                />
+                    />
             </LinearLayout>
-
-
 
             <View
                 android:id="@+id/agricultureCtPatView"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text"
+                android:background="?attr/gray_text"
                 android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
-
-
                 />
 
             <TextView
@@ -247,14 +239,16 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/margin_15"
+                android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
-                android:background="@color/color_eld_theme"
+                android:background="?attr/color_eld_theme"
                 android:paddingLeft="@dimen/view_height_55"
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingRight="@dimen/view_height_55"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:text="@string/Agriculture"
-                android:textColor="@color/whiteee"
+                android:textColor="?attr/text_black"
                 android:textSize="@dimen/text_size_18"
                 android:textStyle="bold"
 
@@ -263,7 +257,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gray_background_one"
+                android:background="?attr/gray_background_one"
                 android:layout_marginRight="@dimen/margin_11"
                 android:layout_marginLeft="@dimen/margin_11"
 
@@ -279,15 +273,14 @@
                     />
             </LinearLayout>
 
-
             <View
                 android:id="@+id/agricultureReasonCtPatView"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text"
+                android:background="?attr/gray_text"
+                android:visibility="gone"
                 android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
-                android:visibility="gone"
                 />
 
             <LinearLayout
@@ -306,12 +299,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Agriculture_Reason"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
-                    android:textStyle="bold"
                     android:layout_marginTop="@dimen/margin_short_5"
-
-                    />
+                    android:textStyle="bold" />
 
 
                 <EditText
@@ -334,20 +325,13 @@
             </LinearLayout>
 
 
-
-
             <View
                 android:id="@+id/trailerCtPatView"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text"
                 android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
-                android:visibility="gone"
-
-                />
-
-
+                android:background="?attr/gray_text" />
 
             <LinearLayout
                 android:id="@+id/containerIdenLay"
@@ -365,7 +349,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ContainerIden_Reason"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -392,13 +376,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/grey_text"
                 android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
-
-
-                />
-
+                android:background="?attr/gray_text" />
 
 
             <RelativeLayout
@@ -414,7 +394,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/DateAndTime"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -424,7 +404,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginLeft="@dimen/margin_10"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/textColor"
                     android:textSize="@dimen/text_size_15"
 
 
@@ -436,7 +416,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text" />
+                android:background="?attr/gray_text" />
 
 
             <RelativeLayout
@@ -454,7 +434,7 @@
                     android:layout_marginRight="@dimen/margin_10"
                     android:layout_toLeftOf="@+id/arrivalContNoEditTxt"
                     android:text="@string/sealNoAtArrival"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -483,7 +463,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/black" />
+                android:background="?attr/textColor" />
 
 
             <RelativeLayout
@@ -501,7 +481,7 @@
                     android:layout_marginRight="@dimen/margin_10"
                     android:layout_toLeftOf="@+id/departureContNoEditTxt"
                     android:text="@string/sealNoAtDeparture"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold"
 
@@ -534,7 +514,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text" />
+                android:background="?attr/gray_text" />
 
 
             <LinearLayout
@@ -553,7 +533,7 @@
                     android:layout_marginTop="@dimen/margin_short_3"
                     android:layout_toLeftOf="@+id/DriverSecurityConLay"
                     android:text="@string/who_conducted_security"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -613,7 +593,7 @@
                                 android:layout_marginLeft="@dimen/margin_20"
 
                                 android:layout_marginTop="@dimen/view_height_41"
-                                android:background="@color/black" />
+                                android:background="?attr/textColor" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -622,7 +602,7 @@
                                 android:layout_marginTop="@dimen/view_height_43"
                                 android:paddingLeft="@dimen/margin_20"
                                 android:text="@string/signature"
-                                android:textColor="@color/black"
+                                android:textColor="?attr/textColor"
                                 android:textSize="@dimen/text_size_16" />
 
                             <ImageView
@@ -647,7 +627,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text" />
+                android:background="?attr/gray_text" />
 
 
             <LinearLayout
@@ -666,7 +646,7 @@
                     android:layout_marginTop="@dimen/margin_short_3"
                     android:layout_toLeftOf="@+id/DriverSecurityConLay"
                     android:text="@string/who_conducted_followup"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -727,7 +707,7 @@
                                 android:layout_marginLeft="@dimen/margin_20"
 
                                 android:layout_marginTop="@dimen/view_height_41"
-                                android:background="@color/black" />
+                                android:background="?attr/textColor" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -736,7 +716,7 @@
                                 android:layout_marginTop="@dimen/view_height_43"
                                 android:paddingLeft="@dimen/margin_20"
                                 android:text="@string/signature"
-                                android:textColor="@color/black"
+                                android:textColor="?attr/textColor"
                                 android:textSize="@dimen/text_size_16" />
 
                             <ImageView
@@ -761,7 +741,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text" />
+                android:background="?attr/gray_text" />
 
 
             <LinearLayout
@@ -780,7 +760,7 @@
                     android:layout_marginTop="@dimen/margin_short_3"
                     android:layout_toLeftOf="@+id/DriverSecurityConLay"
                     android:text="@string/who_affixed_seal"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -840,7 +820,7 @@
                                 android:layout_marginLeft="@dimen/margin_20"
 
                                 android:layout_marginTop="@dimen/view_height_41"
-                                android:background="@color/black" />
+                                android:background="?attr/textColor" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -849,7 +829,7 @@
                                 android:layout_marginTop="@dimen/view_height_43"
                                 android:paddingLeft="@dimen/margin_20"
                                 android:text="@string/signature"
-                                android:textColor="@color/black"
+                                android:textColor="?attr/textColor"
                                 android:textSize="@dimen/text_size_16" />
 
                             <ImageView
@@ -874,7 +854,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text" />
+                android:background="?attr/gray_text" />
 
 
             <LinearLayout
@@ -893,7 +873,7 @@
                     android:layout_marginTop="@dimen/margin_short_3"
                     android:layout_toLeftOf="@+id/DriverSecurityConLay"
                     android:text="@string/who_verify_physical"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -952,7 +932,7 @@
                                 android:layout_marginLeft="@dimen/margin_20"
 
                                 android:layout_marginTop="@dimen/view_height_41"
-                                android:background="@color/black" />
+                                android:background="?attr/textColor" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -961,7 +941,7 @@
                                 android:layout_marginTop="@dimen/view_height_43"
                                 android:paddingLeft="@dimen/margin_20"
                                 android:text="@string/signature"
-                                android:textColor="@color/black"
+                                android:textColor="?attr/textColor"
                                 android:textSize="@dimen/text_size_16" />
 
                             <ImageView
@@ -986,7 +966,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_short_1"
-                android:background="@color/gray_text"
+                android:background="?attr/gray_text"
                 android:layout_marginBottom="@dimen/view_height_30"
 
                 />

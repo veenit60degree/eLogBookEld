@@ -8,7 +8,7 @@
                 <shape>
                     <stroke
                         android:width="@dimen/margin_short_1"
-                        android:color="@color/gray_text" />
+                        android:color="?attr/gray_text" />
 
                     <corners android:radius="@dimen/margin_short_3" />
 
@@ -27,7 +27,9 @@
             <item>
                 <bitmap
                     android:gravity="center_vertical|right"
-                    android:src="@drawable/dropdown_gray" />
+                    android:src="@drawable/dropdown_gray"
+                    android:tint="?attr/gray_text"
+                    />
 
             </item>
 

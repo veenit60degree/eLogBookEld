@@ -14,11 +14,11 @@
             <item android:bottom="@dimen/margin_short_3" >
                 <shape>
                     <gradient android:angle="270"
-                        android:endColor="@color/gray_default"
-                        android:startColor="@color/gray_default" />
+                        android:endColor="?attr/gray_default"
+                        android:startColor="?attr/gray_default" />
                     <stroke
                         android:width="@dimen/margin_short_1"
-                        android:color="@color/gray_default" />
+                        android:color="?attr/gray_default" />
 
                     <corners android:radius="@dimen/margin_short_4" />
                     <padding

@@ -4,7 +4,6 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
         >
 
 
@@ -21,7 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/actionBarEditLog"
-
         >
 
 
@@ -36,7 +34,7 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/whiteee"
+                android:background="?attr/bgColor"
                 app:tabSelectedTextColor="@color/blue_button"
                 app:tabIndicatorColor="@color/blue_button"
                 app:tabMaxWidth="0dp"
@@ -55,7 +53,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-
             />
 
 

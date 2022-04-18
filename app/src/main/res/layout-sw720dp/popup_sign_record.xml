@@ -35,7 +35,7 @@
             android:text="@string/date"
             android:paddingLeft="@dimen/margin_21"
             android:textSize="@dimen/text_size_21"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColor"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/margin_10"
             />
@@ -90,7 +90,7 @@
             android:textSize="@dimen/text_size_16"
             android:textAllCaps="true"
             android:background="@drawable/certify_border"
-            android:textColor="@color/blue_button"
+            android:textColor="@color/colorVoilation"
             android:layout_toLeftOf="@+id/signRecordRightImg"
             android:layout_centerVertical="true"
 

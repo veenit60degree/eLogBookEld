@@ -109,6 +109,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     Spinner stateInspSpinner, selectDistanceSpinner;
     String EldThemeColor = "#1A3561";
     String BlackColor    = "#7C7C7B";
+    String WhiteColor    = "#ffffff";
+    String OrangeColor   = "#ffff900d";
     RadioGroup prePostRadioGroup, correctRadioGroup;
     RadioButton preTripButton, postTripButton, DefectsCorrectedBtn, DefectsNotCorrectedBtn;
     LinearLayout supervisorNameLay, AobrdLocLay;
@@ -121,7 +123,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     String btnSelectedType = "", SignImageSelected = "", SupervisorSignImage = "", DriverSignImage = "", Odometer = "", OdometerDistanceType = "";
     String  DRIVER_ID = "", VIN_NUMBER = "", DeviceId = "";
     String DriverName = "",CompanyId = "", InspectionDateTime = "", Location = "", PreTripInsp = "false", PostTripInsp = "false",
-            AboveDefectsCorrected = "false", AboveDefectsNotCorrected = "false", Remarks = "",Latitude = "", Longitude = "",
+            AboveDefectsCorrected = "false", AboveDefectsNotCorrected = "false", Remarks = "",  //Latitude = "", Longitude = "",
             SupervisorMechanicsName = "", TruckIssueType = "", TraiorIssueType = "", DriverTimeZone = "", date = "", InspectionTypeId="";
     String City = "", State = "", Country = "", CurrentCycleId = "", CurrentJobStatus = "";
     String DriverId = "", CoDriverId = "", tempTruck = "", tempTrailer = "", CreatedDate = "";
@@ -158,6 +160,12 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
 
         rootView = inflater.inflate(R.layout.inspection_fragment, container, false);
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -260,12 +268,12 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         locInspectionTV.setThreshold(3);
         SelectedDatee = Globally.GetCurrentDeviceDate();
         // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
-        if(UILApplication.getInstance().isNightModeEnabled()){
-            EldThemeColor = "#ffffff";
-            insptnMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
-            // superviserSignLay.setBackgroundColor(Color.parseColor("#E2E2E2") );
-
-        }
+//        if(UILApplication.getInstance().isNightModeEnabled()){
+//            EldThemeColor = "#ffffff";
+//            insptnMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
+//            // superviserSignLay.setBackgroundColor(Color.parseColor("#E2E2E2") );
+//
+//        }
 
         AddStatesInList();
         // Spinner click listener
@@ -1034,20 +1042,40 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     void SetButtonView(String buttonType){
         if(buttonType.equals("pre")){
             PreTripInsp = "true"; PostTripInsp = "false";
-            preTripButton.setTextColor(Color.parseColor(EldThemeColor));
-            postTripButton.setTextColor(Color.parseColor(BlackColor));
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                postTripButton.setTextColor(Color.parseColor(WhiteColor));
+                preTripButton.setTextColor(Color.parseColor(OrangeColor));
+            }else{
+                postTripButton.setTextColor(Color.parseColor(BlackColor));
+                preTripButton.setTextColor(Color.parseColor(EldThemeColor));
+            }
         }else if(buttonType.equals("post")){
             PreTripInsp = "false"; PostTripInsp = "true"; //AboveDefectsCorrected = "false"; AboveDefectsNotCorrected = "false";
-            postTripButton.setTextColor(Color.parseColor(EldThemeColor));
-            preTripButton.setTextColor(Color.parseColor(BlackColor));
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                preTripButton.setTextColor(Color.parseColor(WhiteColor));
+                postTripButton.setTextColor(Color.parseColor(OrangeColor));
+            }else{
+                preTripButton.setTextColor(Color.parseColor(BlackColor));
+                postTripButton.setTextColor(Color.parseColor(EldThemeColor));
+            }
         }else if(buttonType.equals("corrected")){
             AboveDefectsCorrected = "true"; AboveDefectsNotCorrected = "false";  // PreTripInsp = "false"; PostTripInsp = "false";
-            DefectsCorrectedBtn.setTextColor(Color.parseColor(EldThemeColor));
-            DefectsNotCorrectedBtn.setTextColor(Color.parseColor(BlackColor));
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                DefectsNotCorrectedBtn.setTextColor(Color.parseColor(WhiteColor));
+                DefectsCorrectedBtn.setTextColor(Color.parseColor(OrangeColor));
+            }else{
+                DefectsNotCorrectedBtn.setTextColor(Color.parseColor(BlackColor));
+                DefectsCorrectedBtn.setTextColor(Color.parseColor(EldThemeColor));
+            }
         }else if(buttonType.equals("notCorrected")){
             AboveDefectsCorrected = "false"; AboveDefectsNotCorrected = "true";
-            DefectsNotCorrectedBtn.setTextColor(Color.parseColor(EldThemeColor));
-            DefectsCorrectedBtn.setTextColor(Color.parseColor(BlackColor));
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                DefectsCorrectedBtn.setTextColor(Color.parseColor(WhiteColor));
+                DefectsNotCorrectedBtn.setTextColor(Color.parseColor(OrangeColor));
+            }else{
+                DefectsCorrectedBtn.setTextColor(Color.parseColor(BlackColor));
+                DefectsNotCorrectedBtn.setTextColor(Color.parseColor(EldThemeColor));
+            }
         }else if(buttonType.equals("defects")){
             AboveDefectsCorrected = "false"; AboveDefectsNotCorrected = "false";
             DefectsNotCorrectedBtn.setTextColor(Color.parseColor(BlackColor));
@@ -1578,12 +1606,12 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                                 InspectionDateTime      = InspectionObj.getString("InspectionDateTime");
                                 DriverTimeZone          = InspectionObj.getString("DriverTimeZone");
 
-                                if(!InspectionObj.isNull("Latitude"))
+                               /* if(!InspectionObj.isNull("Latitude"))
                                     Latitude            = InspectionObj.getString("Latitude");
 
                                 if(!InspectionObj.isNull("Longitude"))
                                     Longitude           = InspectionObj.getString("Longitude");
-
+*/
                                 date                    = Globally.ConvertDateTimeFormat(InspectionDateTime);
 
 

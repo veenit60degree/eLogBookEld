@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?attr/bgColor"
     android:id="@+id/obdLayScrollView"
 
     >
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="@dimen/margin_15"
-            android:background="@color/gray_updated_theme_color"
+            android:background="?attr/obd_diagnose_color"
             >
 
             <RelativeLayout
@@ -50,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/connect_ble_obd"
-                android:textColor="@color/bluee_login"
+                android:textColor="?attr/color_eld_bg"
                 android:textSize="@dimen/text_size_23"
                 android:padding="@dimen/margin_19"
                 android:textStyle="bold"
@@ -84,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/odometer_details"
-                android:textColor="@color/bluee_login"
+                android:textColor="?attr/color_eld_bg"
                 android:textSize="@dimen/text_size_23"
                 android:padding="@dimen/margin_19"
                 android:textStyle="bold"
@@ -106,7 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/gps_details"
-                android:textColor="@color/bluee_login"
+                android:textColor="?attr/color_eld_bg"
                 android:textSize="@dimen/text_size_23"
                 android:padding="@dimen/margin_19"
                 android:textStyle="bold"
@@ -129,7 +129,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sim_info"
-                android:textColor="@color/bluee_login"
+                android:textColor="?attr/color_eld_bg"
                 android:textSize="@dimen/text_size_23"
                 android:padding="@dimen/margin_19"
                 android:textStyle="bold"
@@ -153,7 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/reset_obd"
-                android:textColor="@color/bluee_login"
+                android:textColor="?attr/color_eld_bg"
                 android:textSize="@dimen/text_size_23"
                 android:padding="@dimen/margin_19"
                 android:textStyle="bold"
@@ -177,7 +177,7 @@
             android:layout_marginLeft="@dimen/margin_20"
             android:layout_marginRight="@dimen/margin_20"
             android:padding="@dimen/margin_short_5"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:background="@color/blue_background_light"
             />
 
@@ -189,7 +189,7 @@
             android:layout_margin="@dimen/margin_20"
             android:padding="@dimen/margin_short_5"
             android:textSize="@dimen/text_size_20"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:background="@color/blue_background_light"
 
             />

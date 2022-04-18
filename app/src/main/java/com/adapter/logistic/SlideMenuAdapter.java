@@ -17,6 +17,7 @@ import com.driver.details.DriverConst;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.SlideMenuModel;
 import com.shared.pref.CoNotificationPref;
@@ -73,6 +74,11 @@ public class SlideMenuAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
 
+         if(UILApplication.getInstance().isNightModeEnabled()){
+            context.setTheme(R.style.DarkTheme);
+        } else {
+             context.setTheme(R.style.LightTheme);
+        }
 
         if (convertView == null) {
             holder = new ViewHolder();
@@ -102,13 +108,25 @@ public class SlideMenuAdapter extends BaseAdapter {
 
             int currentTab = TabAct.host.getCurrentTab();
             if (currentTab == menuList.get(position).getStatus()) {
-                holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.white_hover));
-                holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.color_eld_theme_one), android.graphics.PorterDuff.Mode.MULTIPLY);
-                holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.color_eld_theme_one));
+                if(UILApplication.getInstance().isNightModeEnabled()){
+                    holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.white));
+                    holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                    holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.unselect_button));
+                } else {
+                    holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.color_eld_theme_one), android.graphics.PorterDuff.Mode.MULTIPLY);
+                    holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.color_eld_theme_one));
+                    holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.white_hover));
+                }
             } else {
-                holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
-                holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.slide_menu_default), android.graphics.PorterDuff.Mode.MULTIPLY);
-                holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.gray_unidenfied));
+                if(UILApplication.getInstance().isNightModeEnabled()){
+                    holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.white));
+                    holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                    holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.unselect_button));
+                } else {
+                    holder.menuTitleTxtView.setTextColor(context.getResources().getColor(R.color.gray_unidenfied));
+                    holder.menuImgView.setColorFilter(ContextCompat.getColor(context, R.color.slide_menu_default), android.graphics.PorterDuff.Mode.MULTIPLY);
+                    holder.menuItemLay.setBackgroundColor(context.getResources().getColor(R.color.whiteee));
+                }
 
                 if (menuList.get(position).getStatus() == Constants.VERSION) {
                     holder.menuItemLay.setVisibility(View.GONE);

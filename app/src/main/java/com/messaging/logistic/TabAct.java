@@ -118,6 +118,12 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 //        UILApplication.getInstance().setTheme();
 
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getApplication().setTheme(R.style.DarkTheme);
+        } else {
+            getApplication().setTheme(R.style.LightTheme);
+        }
+
         setContentView(R.layout.chat_friend_list);
 
         dbHelper            = new DBHelper(this);
@@ -560,6 +566,12 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         host.getTabWidget().setVisibility(View.GONE);
         Globally.hideSoftKeyboard(TabAct.this);
 
+        boolean isDayNightAction =   SharedPref.getDayNightActionClick(getApplicationContext());
+
+        if(isDayNightAction){
+            TabAct.host.setCurrentTab(1);
+            SharedPref.setDayNightActionClick(false, getApplicationContext());
+        }
 
     }
 

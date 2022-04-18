@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
 
@@ -42,7 +43,11 @@ public class CanDotEnginePowerAdapter extends RecyclerView.Adapter<CanDotEngineP
 
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
-        holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
+        }else{
+            holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+        }
 
         String EventDateTime = itemsList.get(position).getDateTimeWithMins();
         try {

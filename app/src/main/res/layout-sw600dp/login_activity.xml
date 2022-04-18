@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/mainLoginLayout"
-    android:background="@color/whiteee"
+    android:background="?attr/bgColor"
 
     >
     
@@ -28,7 +28,7 @@
             android:id="@+id/loginScrollChildLay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/whiteee"
+            android:background="?attr/bgColor"
             >
 
         <ImageView
@@ -38,6 +38,7 @@
         android:src="@drawable/als_logo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/view_height_60"
+
 
 
         />
@@ -50,6 +51,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_margin="@dimen/margin_10"
                 android:visibility="gone"
+                android:tint="?attr/wifi_color"
                 />
 
 
@@ -57,7 +59,7 @@
                 android:id="@+id/welcomeToAlsTV"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:layout_marginTop="@dimen/view_height_25"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,6 +75,7 @@
         android:src="@drawable/back"
         android:padding="@dimen/margin_10"
         android:layout_marginTop="@dimen/margin_15"
+                android:tint="?attr/textColor"
         />
 
     <include
@@ -113,7 +116,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/splash_gray"
+        android:textColor="?attr/splash_gray"
         android:textSize="@dimen/text_size_17"
         android:layout_marginBottom="@dimen/margin_16"
         />
@@ -126,7 +129,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:text="@string/Powered_by"
-                        android:textColor="@color/splash_gray"
+                        android:textColor="?attr/splash_gray"
                         android:textSize="@dimen/text_size_11"
                         android:paddingBottom="4dp"
                         />
@@ -139,7 +142,7 @@
         android:layout_alignParentRight="true"
         android:textStyle="bold"
         android:text="@string/dev"
-        android:textColor="@color/gray_text"
+        android:textColor="?attr/gray_text"
         android:textSize="@dimen/text_size_22"
         android:layout_margin="@dimen/margin_10"
         android:visibility="gone"

@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_44"
-        android:background="@color/color_eld_bg">
+        android:background="?attr/actionbar_color">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -28,6 +28,7 @@
                 android:paddingTop="@dimen/margin_short_8"
                 android:paddingRight="@dimen/margin_short_6"
                 android:paddingBottom="@dimen/margin_short_8"
+                android:backgroundTint="?attr/actionbar_color"
 
                 >
 
@@ -37,6 +38,8 @@
                     android:layout_height="@dimen/view_height_30"
                     android:layout_centerVertical="true"
                     android:src="@drawable/slide_menu"
+
+
 
                     />
 
@@ -74,7 +77,7 @@
                 android:background="@drawable/green_with_corner_drawable"
                 android:gravity="center_horizontal"
                 android:visibility="gone"
-
+                android:backgroundTint="?attr/actionbar_color"
                 >
 
                 <ImageView
@@ -97,7 +100,7 @@
                 android:background="@drawable/green_with_corner_drawable"
                 android:gravity="center_horizontal"
                 android:visibility="gone"
-
+                android:backgroundTint="?attr/actionbar_color"
                 >
 
                 <ImageView
@@ -221,7 +224,8 @@
             android:layout_toLeftOf="@+id/rightCornerLay"
             android:background="@drawable/green_with_corner_drawable"
             android:padding="@dimen/margin_short_6"
-            android:visibility="gone">
+            android:visibility="gone"
+            >
 
             <ImageView
                 android:id="@+id/dayNightButton"
@@ -248,7 +252,7 @@
                 android:layout_height="@dimen/view_height_44"
                 android:background="@drawable/green_with_corner_drawable"
                 android:gravity="center_horizontal"
-
+                android:backgroundTint="?attr/actionbar_color"
                 >
 
                 <com.constants.LoadingSpinImgView
@@ -283,7 +287,7 @@
                 android:background="@drawable/green_with_corner_drawable"
                 android:gravity="center_horizontal"
                 android:visibility="gone"
-
+                android:backgroundTint="?attr/actionbar_color"
                 >
 
                 <ImageView

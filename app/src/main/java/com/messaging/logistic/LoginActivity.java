@@ -108,6 +108,11 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		super.onCreate(arg0);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		if(UILApplication.getInstance().isNightModeEnabled()){
+			this.setTheme(R.style.DarkTheme);
+		} else {
+			this.setTheme(R.style.LightTheme);
+		}
 		setContentView(R.layout.login_activity);
 
 		//WiFiConf = new WiFiConfig();
@@ -201,12 +206,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		}
 
 		// if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
-		if(UILApplication.getInstance().isNightModeEnabled()){
-			mainLoginLayout.setBackgroundColor(getResources().getColor(R.color.gray_background));
-			loginScrollChildLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
-			loginLayout.setBackgroundColor(getResources().getColor(R.color.gray_background));
-			loginCoDriverLayout.setBackgroundColor(getResources().getColor(R.color.gray_background));
-		}
+//		if(UILApplication.getInstance().isNightModeEnabled()){
+//			mainLoginLayout.setBackgroundColor(getResources().getColor(R.color.gray_background));
+//			loginScrollChildLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
+//			loginLayout.setBackgroundColor(getResources().getColor(R.color.gray_background));
+//			loginCoDriverLayout.setBackgroundColor(getResources().getColor(R.color.gray_background));
+//		}
 
 		ObdPreference = SharedPref.getObdPreference(getApplicationContext());
 		if(ObdPreference == Constants.OBD_PREF_BLE){
@@ -852,6 +857,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 								if (obj.has(ConstantsKeys.rulesVersion) && !obj.isNull(ConstantsKeys.rulesVersion)) {
 									rulesVersion = obj.getInt(ConstantsKeys.rulesVersion);
 								}
+
 								SharedPref.SetRulesVersion(rulesVersion, getApplicationContext());
 
 								if (status.equalsIgnoreCase("true")) {

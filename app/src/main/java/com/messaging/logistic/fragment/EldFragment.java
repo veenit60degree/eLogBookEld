@@ -249,6 +249,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     final int NotReady              = 250;
     final int OdometerDetailInPu    = 260;
     final int SaveAgricultureException = 270;
+    final int GetStateList          = 271;
 
 
     /*-------- DRIVER STATUS ----------*/
@@ -392,6 +393,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
 
         rootView = inflater.inflate(R.layout.activity_eld_new, container, false);
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -636,7 +643,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         progressD = new ProgressDialog(getActivity());
         progressD.setMessage("Saving ...");
 
-        AddStatesInList();
         initilizeEldView.AddTempRemark();
         GetSavePreferences();
         GetDriversSavedData(false, DriverType);
@@ -645,7 +651,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         if (SharedPref.GetNewLoginStatus(getActivity()) == false) {
             getDayStartOdometer();
+            constants.IS_ELD_ON_CREATE = false;
+
+            if(Constants.IsHomePageOnCreate){
+                isCertifySignPending( Constants.IsHomePageOnCreate, false);
+            }
         }
+
+        Constants.IsHomePageOnCreate = false;
 
         /*========= Start Service =============*/
         Constants.isEldHome = false;
@@ -659,7 +672,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }else {
             // -------------------------- CALL API --------bluetooth------------------
              if(TabAct.isTabActOnCreate) {
-                 constants.IS_ELD_ON_CREATE = true;
                  TabAct.vehicleList = new ArrayList<VehicleModel>();
                  GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
 
@@ -685,15 +697,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
 
 
-
-
         SharedPref.setStartLocation("", "", "", getActivity());
         SharedPref.setEndLocation("", "", "", getActivity());
-
-        if (!SharedPref.GetNewLoginStatus(getActivity()) && Constants.IsHomePageOnCreate){
-            isCertifySignPending( Constants.IsHomePageOnCreate, false);
-        }
-        Constants.IsHomePageOnCreate = false;
 
 
      emptyTrailerNoAnim.setAnimationListener(new Animation.AnimationListener() {
@@ -970,24 +975,27 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
         }
 
-       checkDriverTimeZone(isConnected);
+     //  checkDriverTimeZone(isConnected);
 
 
 
         //---------------- temp delete last item code ---------------
 
-      /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               try {
                     driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                     driverLogArray.remove(driverLogArray.length()-1);
                     driverLogArray.remove(driverLogArray.length()-1);
+                  driverLogArray.remove(driverLogArray.length()-1);
+                  driverLogArray.remove(driverLogArray.length()-1);
+                  driverLogArray.remove(driverLogArray.length()-1);
                     hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray); // saving in db after updating the array
                 } catch (Exception e) {
                     e.printStackTrace();
                     driverLogArray = new JSONArray();
                 }
-            }*/
-
+            }
+*/
 
         SetDataInView();
         IsLogShown = false;
@@ -1048,8 +1056,14 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
         }
 
+        GetStatesInList(true);
 
     }
+
+
+
+
+
 
     void getDayStartOdometer(){
         String odoSelectedDay = SharedPref.getSelectedDayForPuOdometer(getActivity());
@@ -1100,16 +1114,30 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         SharedPref.isEngSyncDiagnstc(getActivity()) ) {
                     malfunctionLay.setVisibility(View.VISIBLE);
                     malfunctionLay.startAnimation(editLogAnimation);
-                    if(isMal && isDia == false) {
-                        malfunctionTV.setText(getString(R.string.malfunction_occur));
-                        malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
-                    }else if(isMal == false && isDia){
-                        malfunctionTV.setText(getString(R.string.diagnostic_occur));
-                        malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
-                    }else{
-                        malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
-                        malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
-                    }
+                    if(UILApplication.getInstance().isNightModeEnabled()){
+                        if(isMal && isDia == false) {
+                            malfunctionTV.setText(getString(R.string.malfunction_occur));
+                            malfunctionLay.setBackgroundColor(getResources().getColor(R.color.layout_color_dot));
+                        }else if(isMal == false && isDia){
+                            malfunctionTV.setText(getString(R.string.diagnostic_occur));
+                            malfunctionLay.setBackgroundColor(getResources().getColor(R.color.layout_color_dot));
+                        }else{
+                            malfunctionLay.setBackgroundColor(getResources().getColor(R.color.layout_color_dot));
+                            malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
+                        }
+        } else {
+                        if(isMal && isDia == false) {
+                            malfunctionTV.setText(getString(R.string.malfunction_occur));
+                            malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
+                        }else if(isMal == false && isDia){
+                            malfunctionTV.setText(getString(R.string.diagnostic_occur));
+                            malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
+                        }else{
+                            malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
+                            malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
+                        }
+        }
+
                 }else {
                     editLogAnimation.cancel();
                     malfunctionLay.setVisibility(View.GONE);
@@ -1213,6 +1241,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
                                 }
+                            }
+
+                            if(UILApplication.getInstance().isNightModeEnabled()){
+                                connectionStatusImgView.setColorFilter(getResources().getColor(R.color.white));
                             }
                         }
                     }
@@ -1496,8 +1528,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         GetOBDAssignedVehicles(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId, DriverCompanyId, VIN_NUMBER);
                     }
                 }
-                GetOnDutyRemarks();
+
             }
+
             DateTime lastDataSavedDate;
             if (SharedPref.getSavedDateTime(getActivity()).length() > 0) {
                 lastDataSavedDate = Global.getDateTimeObj(SharedPref.getSavedDateTime(getActivity()), false);
@@ -1672,29 +1705,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
-
-    private void AddStatesInList() {
-        int stateListSize = 0;
-        StateArrayList = new ArrayList<String>();
-        StateList = new ArrayList<DriverLocationModel>();
-
-        try {
-            StateList = statePrefManager.GetState(getActivity());
-            StateList.add(0, new DriverLocationModel("", "Select", ""));
-            stateListSize = StateList.size();
-        } catch (Exception e) {
-            stateListSize = 0;
-        }
-
-        for (int i = 0; i < stateListSize; i++) {
-            StateArrayList.add(StateList.get(i).getState());
-        }
-
-        if (stateListSize == 0) {
-            LogoutUser();
-        }
-    }
 
 
 
@@ -2032,6 +2042,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         personalUseBtn.setText(getString(R.string.pc_end));
                     }
 
+                    if(UILApplication.getInstance().isNightModeEnabled()){
+                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new);
+                    }else{
+                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+                    }
+
                     yardMoveBtn.setText(getString(R.string.ym_start));
                     StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
 
@@ -2044,6 +2060,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
                     initilizeEldView.InActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
                     StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+
+
+                    if(UILApplication.getInstance().isNightModeEnabled()){
+                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new);
+                    }else{
+                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+                    }
 
                     personalUseBtn.setText(getString(R.string.pc_start));
                     yardMoveBtn.setText(getString(R.string.ym_start));
@@ -2060,10 +2083,18 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     personalUseBtn.setText(getString(R.string.pc_start));
                     yardMoveBtn.setText(getString(R.string.ym_start));
 
-                    if (isViolation) {
-                        StatusMainView.setBackgroundResource(R.drawable.red_default);
-                    } else {
-                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+                    if(UILApplication.getInstance().isNightModeEnabled()){
+                        if (isViolation) {
+                            StatusMainView.setBackgroundResource(R.drawable.red_default);
+                        } else {
+                            StatusMainView.setBackgroundResource(R.drawable.eld_blue_new);
+                        }
+                    }else{
+                        if (isViolation) {
+                            StatusMainView.setBackgroundResource(R.drawable.red_default);
+                        } else {
+                            StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+                        }
                     }
                     break;
 
@@ -2075,10 +2106,18 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                     personalUseBtn.setText(getString(R.string.pc_start));
 
-                    if (isViolation) {
-                        StatusMainView.setBackgroundResource(R.drawable.red_default);
-                    } else {
-                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+                    if(UILApplication.getInstance().isNightModeEnabled()){
+                        if (isViolation) {
+                            StatusMainView.setBackgroundResource(R.drawable.red_default);
+                        } else {
+                            StatusMainView.setBackgroundResource(R.drawable.eld_blue_new);
+                        }
+                    }else{
+                        if (isViolation) {
+                            StatusMainView.setBackgroundResource(R.drawable.red_default);
+                        } else {
+                            StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+                        }
                     }
 
                     break;
@@ -2090,6 +2129,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     initilizeEldView.InActiveView(OnDutyBtn, onDutyViolationTV, onDutyTimeTxtVw, onDutyTxtVw, asPerShiftOnDutyTV, personalUseBtn, IsPersonalUseAllowed, getActivity());
                     initilizeEldView.ActiveView(OffDutyBtn, offDutyViolationTV, offDutyTimeTxtVw, offDutyTxtVw, asPerDateOffDutyTV, false);
                     StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+
+                    if(UILApplication.getInstance().isNightModeEnabled()){
+                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new);
+                    }else{
+                        StatusMainView.setBackgroundResource(R.drawable.eld_blue_new_default);
+                    }
+
                     personalUseBtn.setText(getString(R.string.pc_start));
                     yardMoveBtn.setText(getString(R.string.ym_start));
 
@@ -2194,20 +2240,38 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         if(SharedPref.isPersonalUse75KmCrossed(getActivity())){
                             personalUseBtn.setTextColor(getResources().getColor(R.color.gray_hover));
                         }else {
-                            if (DRIVER_JOB_STATUS == constants.OFF_DUTY && isPersonal.equals("true")) {
-                                personalUseBtn.setTextColor(getResources().getColor(R.color.whiteee));
+                            if(UILApplication.getInstance().isNightModeEnabled()){
+                                if (DRIVER_JOB_STATUS == constants.OFF_DUTY && isPersonal.equals("true")) {
+                                    personalUseBtn.setTextColor(getResources().getColor(R.color.whiteee));
+                                } else {
+                                    personalUseBtn.setTextColor(getResources().getColor(R.color.white));
+                                }
                             } else {
-                                personalUseBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
+                                if (DRIVER_JOB_STATUS == constants.OFF_DUTY && isPersonal.equals("true")) {
+                                    personalUseBtn.setTextColor(getResources().getColor(R.color.whiteee));
+                                } else {
+                                    personalUseBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
+                                }
                             }
                         }
                     } else {
                         personalUseBtn.setTextColor(getResources().getColor(R.color.gray_hover));
                     }
 
-                    if (constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
-                        sendReportBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
+
+
+                    if(UILApplication.getInstance().isNightModeEnabled()){
+                        if (constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
+                            sendReportBtn.setTextColor(getResources().getColor(R.color.white));
+                        } else {
+                            sendReportBtn.setTextColor(getResources().getColor(R.color.gray_hover));
+                        }
                     } else {
-                        sendReportBtn.setTextColor(getResources().getColor(R.color.gray_hover));
+                        if (constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
+                            sendReportBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
+                        } else {
+                            sendReportBtn.setTextColor(getResources().getColor(R.color.gray_hover));
+                        }
                     }
 
                     JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(DRIVER_ID), dbHelper);
@@ -2236,10 +2300,18 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             yardMoveBtn.setTextColor(getResources().getColor(R.color.whiteee));
         }else{
             yardMoveBtn.setText(getString(R.string.ym_start));
-            if (SharedPref.IsYardMoveAllowed(getActivity())) {
-                yardMoveBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                if (SharedPref.IsYardMoveAllowed(getActivity())) {
+                    yardMoveBtn.setTextColor(getResources().getColor(R.color.white));
+                } else {
+                    yardMoveBtn.setTextColor(getResources().getColor(R.color.gray_hover));
+                }
             } else {
-                yardMoveBtn.setTextColor(getResources().getColor(R.color.gray_hover));
+                if (SharedPref.IsYardMoveAllowed(getActivity())) {
+                    yardMoveBtn.setTextColor(getResources().getColor(R.color.color_eld_theme));
+                } else {
+                    yardMoveBtn.setTextColor(getResources().getColor(R.color.gray_hover));
+                }
             }
             yardMoveBtn.setBackgroundResource(R.drawable.gray_eld_selector);
         }
@@ -4205,9 +4277,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         boolean isSignPending             = constants.GetCertifyLogSignStatus(recapViewMethod, DRIVER_ID, dbHelper, SelectedDate, CurrentCycleId, logPermissionObj);
 
         String colorCode                  = "#1A3561";
-        if (UILApplication.getInstance().isNightModeEnabled()) { //UILApplication.getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES
-            colorCode = "#808080";
-        }
+//        if (UILApplication.getInstance().isNightModeEnabled()) { //UILApplication.getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES
+//            colorCode = "#808080";
+//        }
         String title                      = "<font color='" + colorCode + "'><b>Certify Reminder !!</b></font>";
         String titleMsg                   = "<font color='#2E2E2E'><html>" + getResources().getString(R.string.certify_previous_days_log_warning) + " </html></font>";
         String dismissText                = "<font color='" +colorCode+ "'><b>" + getResources().getString(R.string.dismiss) + "</b></font>";
@@ -5923,6 +5995,33 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    private void GetStatesInList(boolean isApiCheck) {
+        int stateListSize = 0;
+        StateArrayList = new ArrayList<String>();
+        StateList = new ArrayList<DriverLocationModel>();
+
+        try {
+            StateList = statePrefManager.GetState(getActivity());
+            StateList.add(0, new DriverLocationModel("", "Select", ""));
+            stateListSize = StateList.size();
+        } catch (Exception e) {
+            stateListSize = 0;
+        }
+
+        for (int i = 0; i < stateListSize; i++) {
+            StateArrayList.add(StateList.get(i).getState());
+        }
+
+        if (stateListSize < 3 && isApiCheck) {
+            //LogoutUser();
+            params = new HashMap<String, String>();
+            GetReCertifyRequest.executeRequest(Request.Method.GET, APIs.GET_STATE_LIST, params, GetStateList,
+                    Constants.SocketTimeout15Sec, ResponseCallBack, ErrorCallBack);
+
+        }
+    }
+
+
 
     //*================== Save Trailer Number ===================*//*
     void SaveTrailerNumber(final String DriverId, final String DeviceId, final String TrailerNumber) {
@@ -6622,8 +6721,25 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                         break;
 
+
+                    case GetStateList:
+
+                        try {
+                            if (!obj.isNull(ConstantsKeys.Data)) {
+                                JSONArray StateArray    = new JSONArray(obj.getString(ConstantsKeys.Data));
+                                parseLoginDetails.ParseStateArray(StateArray, getActivity());
+                                GetStatesInList(false);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+
+                        break;
 
                     case OdometerDetailInPu:
                         try{
@@ -6967,10 +7083,18 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 if(context != null) {
                                     SharedPref.SetCertifyMandatoryStatus(IsCertifyMandatory, getActivity());
 
-                                    if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
-                                        sendReportBtn.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
+                                    if(UILApplication.getInstance().isNightModeEnabled()){
+                                        if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
+                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.white));
+                                        } else {
+                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
+                                        }
                                     } else {
-                                        sendReportBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
+                                        if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
+                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
+                                        } else {
+                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
+                                        }
                                     }
                                 }
 
@@ -7410,8 +7534,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 case UpdateObdVeh:
 
-
-
                     if (SharedPref.GetNewLoginStatus(getActivity())) {
                         Global.EldScreenToast(loginDialogView, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
                     }else{
@@ -7613,7 +7735,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     }
                 }
 
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
                 alertDialogBuilder.setTitle(Html.fromHtml(title));
                 alertDialogBuilder.setMessage("");  //"You have " + time + " remaining in " + OldStatus+"."
                 alertDialogBuilder.setCancelable(false);
@@ -7696,6 +7818,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     saveJobAlertDialog = alertDialogBuilder.create();
                     vectorDialogs.add(saveJobAlertDialog);
                     saveJobAlertDialog.show();
+                    if(UILApplication.getInstance().isNightModeEnabled()) {
+                        saveJobAlertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+                        saveJobAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.white));
+                        saveJobAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.white));
+                    }
                 }
             }
         }catch (Exception e){}
@@ -7732,7 +7859,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                         closeDialogs();
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
                         alertDialogBuilder.setTitle(Html.fromHtml(title));
                         alertDialogBuilder.setMessage(Html.fromHtml(message));
                         alertDialogBuilder.setCancelable(false);
@@ -7773,6 +7900,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         certifyLogAlert = alertDialogBuilder.create();
                         vectorDialogs.add(certifyLogAlert);
                         certifyLogAlert.show();
+
+                        if(UILApplication.getInstance().isNightModeEnabled()) {
+                            certifyLogAlert.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+                            certifyLogAlert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.white));
+                            certifyLogAlert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.white));
+                        }
 
                         SharedPref.setCertifyAlertViewTime(Global.GetCurrentUTCTimeFormat(), getActivity());
                     }
@@ -7843,7 +7976,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 title = "Do you want to add/update your shipping details ?";
                 //}
 
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
                 alertDialogBuilder.setTitle("Shipping Details");
                 alertDialogBuilder.setMessage(title);
                 alertDialogBuilder.setPositiveButton("Yes",
@@ -7873,6 +8006,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 saveJobAlertDialog = alertDialogBuilder.create();
                 vectorDialogs.add(saveJobAlertDialog);
                 saveJobAlertDialog.show();
+
+                if(UILApplication.getInstance().isNightModeEnabled()) {
+                    saveJobAlertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+                    saveJobAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.white));
+                    saveJobAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.white));
+                }
 
             }
         }catch (Exception e){

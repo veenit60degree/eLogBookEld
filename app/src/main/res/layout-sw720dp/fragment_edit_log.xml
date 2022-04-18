@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?attr/bgColor"
     android:id="@+id/editGraphManLay"
 
     >
@@ -27,7 +27,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/whiteee"
+        android:background="?attr/bgColor"
         android:layout_below="@+id/editLogActionBar"
 
         >
@@ -39,7 +39,7 @@
             android:layout_gravity="center_vertical"
             android:paddingLeft="@dimen/margin_15"
             android:paddingRight="@dimen/margin_15"
-            android:background="@color/gray_edit_log"
+            android:background="?attr/gray_edit_log"
 
             >
 
@@ -49,7 +49,7 @@
             <TextView
                 android:layout_width="@dimen/view_height_140"
                 android:layout_height="wrap_content"
-                android:textColor="@color/color_eld_bg"
+                android:textColor="?attr/color_eld_bg"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_22"
@@ -68,7 +68,7 @@
                 android:text="@string/Status"
                 android:layout_marginLeft="@dimen/margin_10"
                 android:layout_marginRight="@dimen/margin_10"
-                android:textColor="@color/color_eld_bg"
+                android:textColor="?attr/color_eld_bg"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_22"
                 />
@@ -82,7 +82,7 @@
                 android:layout_weight="1"
                 android:textStyle="bold"
                 android:text="@string/Start_time"
-                android:textColor="@color/color_eld_bg"
+                android:textColor="?attr/color_eld_bg"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_22"
                 android:layout_marginRight="@dimen/margin_10"
@@ -96,7 +96,7 @@
                 android:layout_weight="1"
                 android:textStyle="bold"
                 android:text="@string/end_date"
-                android:textColor="@color/color_eld_bg"
+                android:textColor="?attr/color_eld_bg"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_22"
                 android:layout_marginRight="@dimen/margin_10"
@@ -114,7 +114,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="5dp"
                 android:text="@string/Duration"
-                android:textColor="@color/color_eld_bg"
+                android:textColor="?attr/color_eld_bg"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_22"
                 android:textStyle="bold"

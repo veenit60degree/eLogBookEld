@@ -12,7 +12,7 @@
             android:id="@+id/supportTypeTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/textColor"
             android:text="Email"
             android:textSize="@dimen/text_size_20"
             android:gravity="center_vertical"
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_10"
                 android:paddingRight="@dimen/margin_10"
-                android:textColor="@color/bluee_login"
+                android:textColor="?attr/color_eld_bg"
                 android:textSize="@dimen/text_size_19"
                 android:layout_centerVertical="true"
 

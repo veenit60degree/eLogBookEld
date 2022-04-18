@@ -4,6 +4,6 @@
 
     <corners android:radius="@dimen/margin_short_5" />
 
-    <solid android:color="@color/color_eld_theme" />
+    <solid android:color="?attr/certify_list_color" />
 
 </shape>

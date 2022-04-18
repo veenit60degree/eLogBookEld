@@ -18,6 +18,7 @@
         android:gravity="center_horizontal"
         android:paddingTop="@dimen/margin_17"
         android:paddingBottom="@dimen/margin_29"
+        android:backgroundTint="?attr/layout_color_dot"
         >
 
 
@@ -31,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="@dimen/text_size_17"
                 android:paddingRight="@dimen/margin_15"
                 android:paddingLeft="@dimen/margin_15"
@@ -39,7 +40,7 @@
                 android:paddingBottom="@dimen/margin_short_8"
                 android:layout_marginRight="@dimen/margin_short_5"
                 android:layout_alignParentRight="true"
-                android:background="@color/whiteee"
+                android:background="?attr/text_black"
 
                 />
 
@@ -52,7 +53,7 @@
             android:layout_height="wrap_content"
             android:text="@string/Day1ofDeferral"
             android:textSize="@dimen/text_size_18"
-            android:textColor="@color/black_download"
+            android:textColor="?attr/textColor"
             />
 
 
@@ -62,7 +63,7 @@
             android:text="@string/ReviewConfirmDef"
             android:textSize="@dimen/text_size_21"
             android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:layout_marginTop="@dimen/margin_short_8"
 
             />
@@ -77,6 +78,7 @@
             android:textSize="@dimen/text_size_18"
             android:layout_marginTop="@dimen/margin_15"
             android:gravity="center_horizontal"
+            android:textColor="?attr/textColor"
             />
 
         <LinearLayout
@@ -98,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:text="Time to defer"
                 android:textSize="@dimen/text_size_17"
-
+                android:textColor="@color/black"
                 />
 
 

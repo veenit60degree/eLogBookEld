@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/eld_gray_bg"
+    android:background="?attr/eld_gray_bg1"
 
     >
 
@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_75"
-        android:background="@color/whiteee"
+        android:background="@drawable/ripple_effect"
         android:paddingRight="@dimen/margin_20"
         android:layout_marginBottom="@dimen/margin_short_3"
 
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/margin_short_1"
                 android:text="@string/temp_distance"
-                android:textColor="@color/color_eld_theme"
+                android:textColor="?attr/color_eld_theme"
                 android:textSize="@dimen/text_size_19"
                 android:textStyle="bold" />
 
@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/temp_uniden"
-            android:textColor="@color/gray_text2"
+            android:textColor="?attr/gray_text2"
             android:textSize="@dimen/text_size_15"
             android:layout_below="@+id/unIdenDistanceTV"
             android:paddingTop="@dimen/margin_short_1"
@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/requested_by_admin"
-            android:textColor="@color/white"
+            android:textColor="?attr/textColor"
             android:textSize="@dimen/text_size_14"
             android:layout_toLeftOf="@+id/unIdenRecorTimeTV"
             android:layout_centerVertical="true"
@@ -98,7 +98,7 @@
             android:id="@+id/unIdenRecordStatusTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/color_eld_theme"
             android:textSize="@dimen/text_size_16"
             android:paddingTop="@dimen/margin_15"
             android:paddingRight="@dimen/margin_short_8"
@@ -127,7 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/temp_time_un"
-            android:textColor="@color/splash_gray"
+            android:textColor="?attr/splash_gray"
             android:textSize="@dimen/text_size_16"
             android:layout_toLeftOf="@+id/unIdenArrow"
             android:layout_centerVertical="true"

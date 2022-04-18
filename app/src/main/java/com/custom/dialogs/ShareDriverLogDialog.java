@@ -58,6 +58,7 @@ import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.DriverLocationModel;
 
@@ -963,6 +964,13 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
+
+            if(UILApplication.getInstance().isNightModeEnabled()) {
+                alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.white));
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.white));
+            }
+
         }catch (Exception e){e.printStackTrace();}
     }
 

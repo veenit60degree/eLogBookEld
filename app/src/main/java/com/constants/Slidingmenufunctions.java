@@ -53,6 +53,7 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.EldDataModelNew;
 import com.shared.pref.CoDriverEldPref;
@@ -299,7 +300,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				String message                   = "<font color='#2E2E2E'><html>" + context.getResources().getString(R.string.certify_previous_days_log_warning) + " </html></font>";
 
 
-				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context,R.style.AlertDialogStyle);
 				alertDialogBuilder.setTitle(Html.fromHtml(title));
 				alertDialogBuilder.setMessage(Html.fromHtml(message));
 				//alertDialogBuilder.setCancelable(false);
@@ -328,9 +329,17 @@ public class Slidingmenufunctions implements OnClickListener {
 				});
 
 				certifyLogAlert = alertDialogBuilder.create();
+				if(UILApplication.getInstance().isNightModeEnabled()) {
+					certifyLogAlert.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+				}
 				vectorDialogs.add(certifyLogAlert);
 				if(context != null) {
 					certifyLogAlert.show();
+					if(UILApplication.getInstance().isNightModeEnabled()) {
+						certifyLogAlert.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+						certifyLogAlert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.white));
+						certifyLogAlert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.white));
+					}
 				}
 
 

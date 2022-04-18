@@ -30,6 +30,7 @@ import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.UnidentifiedActivity;
 import com.models.DriverLocationModel;
 import com.shared.pref.StatePrefManager;
@@ -81,6 +82,13 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         try {
             rootView = inflater.inflate(R.layout.unidentified_details, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

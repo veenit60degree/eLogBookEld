@@ -14,7 +14,7 @@
         android:layout_marginTop="@dimen/margin_15"
         android:paddingRight="@dimen/margin_10"
         app:cardCornerRadius="@dimen/margin_15"
-        app:cardBackgroundColor="@color/sign_record_bg"
+        app:cardBackgroundColor="?attr/sign_record_bg"
 
         >
 
@@ -59,7 +59,7 @@
                     android:text="@string/select_all"
                     android:layout_marginLeft="@dimen/margin_15"
                     android:textSize="@dimen/text_size_18"
-                    android:textColor="@color/color_eld_bg"
+                    android:textColor="?attr/color_eld_bg"
                     android:button="@drawable/unidentified_checkbox_drawable"
                     android:paddingTop="@dimen/margin_short_1"
                     android:paddingLeft="@dimen/margin_short_4"
@@ -72,7 +72,7 @@
                     android:id="@+id/fromToDateTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black_hover"
+                    android:textColor="?attr/textColor"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_18"
                     android:layout_centerHorizontal="true"

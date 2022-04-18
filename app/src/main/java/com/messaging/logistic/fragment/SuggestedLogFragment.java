@@ -45,6 +45,7 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UILApplication;
 import com.models.EldDriverLogModel;
 import com.models.RecapModel;
 import com.simplify.ink.InkView;
@@ -170,6 +171,13 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         try {
             rootView = inflater.inflate(R.layout.activity_edit_log_compare, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -444,7 +452,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
     public void ContinueWithoutSignDialog(){
         try {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
             alertDialogBuilder.setTitle("Certify log alert !!");
             alertDialogBuilder.setMessage(getString(R.string.continue_sign_desc));
             alertDialogBuilder.setCancelable(false);
@@ -475,6 +483,13 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
             alertDialog = alertDialogBuilder.create();
             alertDialog.show();
+
+            if(UILApplication.getInstance().isNightModeEnabled()) {
+                alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.white));
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.white));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

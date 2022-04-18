@@ -47,6 +47,7 @@ import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.DriverLogModel;
 import com.models.EldDataModelNew;
 import com.shared.pref.CoDriverEldPref;
@@ -128,6 +129,12 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
 
         rootView = inflater.inflate(R.layout.fragment_edit_log, container, false);
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

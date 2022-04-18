@@ -25,6 +25,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/polyImg"
         android:layout_marginRight="@dimen/margin_17"
+        android:backgroundTint="?attr/layout_color_dot"
         >
 
 

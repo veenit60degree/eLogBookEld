@@ -27,7 +27,7 @@
             android:text="@string/MainDriver"
             android:textSize="@dimen/text_size_23"
             android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
 
             />
 
@@ -56,16 +56,18 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:textColorHint="?attr/textColor"
+                >
 
             <com.constants.CustomEditText
                 android:id="@+id/userNameText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/Username"
-                android:textColorHint="@color/colorAccentTextHover"
+                android:textColorHint="?attr/color_login_view"
                 android:background="@color/transparent"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:paddingRight="@dimen/margin_10"
                 android:paddingLeft="@dimen/margin_short_8"
                 android:textSize="@dimen/text_size_20"
@@ -80,7 +82,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorPrimary"
+            android:background="?attr/color_accent"
             android:layout_below="@+id/loginLay"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
@@ -115,18 +117,20 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/colorAccent"
+                app:passwordToggleTint="?attr/color_accent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:textColorHint="?attr/textColor"
+                >
 
             <com.constants.CustomEditText
                 android:id="@+id/passwordText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Password"
-                android:textColorHint="@color/colorAccentTextHover"
+                android:textColorHint="?attr/color_login_view"
                 android:background="@color/transparent"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:inputType="textPassword"
                 android:paddingRight="@dimen/margin_10"
                 android:paddingLeft="@dimen/margin_short_8"
@@ -145,7 +149,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorPrimary"
+            android:background="?attr/color_accent"
             android:layout_below="@+id/passLay"
             android:layout_marginLeft="@dimen/margin_12"
             android:layout_marginRight="@dimen/margin_12"

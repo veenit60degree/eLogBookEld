@@ -15,7 +15,7 @@
         android:paddingTop="@dimen/margin_short_8"
         android:paddingLeft="@dimen/margin_short_5"
         android:paddingRight="@dimen/margin_short_5"
-        android:background="@color/color_eld_theme"
+        android:background="?attr/certify_list_color"
         >
 
 
@@ -108,6 +108,7 @@
                 android:layout_height="@dimen/margin_26"
                 android:layout_alignParentRight="true"
                 android:src="@drawable/pencil"
+                android:tint="?attr/color_eld_theme"
                 android:layout_marginRight="@dimen/margin_short_2"
                 android:layout_centerVertical="true"
                android:visibility="gone"
@@ -162,6 +163,7 @@
                 android:layout_marginRight="@dimen/margin_short_3"
                 android:layout_centerVertical="true"
                 android:visibility="gone"
+                android:tint="?attr/color_eld_theme"
                 />
 
         </RelativeLayout>

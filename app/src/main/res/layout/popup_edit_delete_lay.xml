@@ -16,6 +16,7 @@
         android:layout_marginRight="9dp"
         android:layout_marginLeft="5dp"
         android:paddingBottom="15dp"
+        android:backgroundTint="?attr/layout_color_dot"
       
 >
 
@@ -29,7 +30,7 @@
             android:layout_centerHorizontal="true"
             android:textSize="23sp"
             android:layout_marginTop="22dp"
-			android:textColor="@color/colorPrimary"
+			android:textColor="?attr/colorPrimary"
                android:textStyle="bold"
             />
 
@@ -56,7 +57,7 @@
             android:layout_marginRight="15dp"
             android:layout_marginTop="@dimen/margin_15"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/app_colorPrimaryy"
+            android:textColor="?attr/app_color_primary"
 
             />
 
@@ -87,7 +88,7 @@
                         android:textSize="@dimen/text_size_17"
                         android:layout_marginLeft="@dimen/margin_short_6"
                         android:layout_marginRight="@dimen/margin_short_6"
-                        android:textColor="@color/app_colorPrimaryy"
+                        android:textColor="?attr/app_color_primary"
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal"
 
@@ -104,7 +105,7 @@
                         android:layout_marginLeft="@dimen/margin_short_6"
                         android:layout_marginRight="@dimen/margin_short_6"
                         android:layout_marginBottom="@dimen/margin_10"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="?attr/colorPrimary"
 
                         />
 
@@ -132,7 +133,7 @@
                         android:textSize="@dimen/text_size_17"
                         android:layout_marginLeft="@dimen/margin_short_6"
                         android:layout_marginRight="@dimen/margin_short_6"
-                        android:textColor="@color/app_colorPrimaryy"
+                        android:textColor="?attr/app_color_primary"
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal"
                         />
@@ -148,7 +149,7 @@
                         android:layout_marginLeft="@dimen/margin_short_6"
                         android:layout_marginRight="@dimen/margin_short_6"
                         android:layout_marginBottom="@dimen/margin_10"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="?attr/colorPrimary"
 
                         />
 
@@ -201,7 +202,7 @@
                   android:text="@string/Confirm"
                   android:textStyle="bold"
                  android:layout_margin="1dp"
-                  android:textColor="@color/colorPrimary"
+                  android:textColor="?attr/colorPrimary"
                   android:textAllCaps="false"
                   android:textSize="18sp"
                   android:background="@drawable/transparent"
@@ -215,4 +216,6 @@
         
            
     </RelativeLayout>
+
+
 </RelativeLayout>

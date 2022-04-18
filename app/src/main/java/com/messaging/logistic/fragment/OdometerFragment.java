@@ -36,6 +36,7 @@ import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UILApplication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,6 +83,12 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
 
         rootView = inflater.inflate(R.layout.fragment_odometer, container, false);
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

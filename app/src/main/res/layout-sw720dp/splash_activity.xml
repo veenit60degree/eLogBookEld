@@ -8,7 +8,12 @@
     >
 
 
-
+    <RelativeLayout
+        android:id="@+id/splashLay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/bgColor"
+        >
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/splash_gray"
+        android:textColor="?attr/splash_gray"
         android:textSize="@dimen/text_size_23"
         android:layout_marginBottom="@dimen/margin_26"
         />
@@ -35,11 +40,13 @@
     <TextView
         android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-        android:textColor="@color/splash_gray"
+        android:textColor="?attr/splash_gray"
         android:textSize="@dimen/text_size_20"
         android:text="@string/Powered_by"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/margin_short_7"
         />
+
+    </RelativeLayout>
 </RelativeLayout>

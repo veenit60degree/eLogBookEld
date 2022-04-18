@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/transparent"
     >
 
 
@@ -14,7 +13,7 @@
         android:paddingRight="@dimen/margin_20"
         android:paddingTop="@dimen/margin_20"
         android:paddingBottom="@dimen/margin_20"
-        android:background="@drawable/malfunction_header_selector"
+        android:background="@drawable/ripple_effect"
         >
 
         <ImageView
@@ -24,6 +23,7 @@
             android:padding="@dimen/margin_short_6"
             android:layout_marginLeft="@dimen/margin_12"
             android:src="@drawable/info"
+            android:tint="?attr/info_icon_color"
 
             />
 
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Malfunction_with_bracket"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/color_eld_theme"
             android:textSize="@dimen/text_size_21"
             android:paddingLeft="@dimen/margin_12"
             android:layout_centerVertical="true"

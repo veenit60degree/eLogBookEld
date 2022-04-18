@@ -69,7 +69,7 @@ public class ParseLoginDetails {
 
                 if(!dataObj.isNull("DriverSetting")) {
                     JSONObject DriverSetting    = new JSONObject(dataObj.getString("DriverSetting"));
-                    ParseDriverSetting(DriverSetting, resultCount, context);
+                    ParseDriverSetting(DriverSetting, context);
 
                    if(!DriverSetting.isNull("CanadaCycles")) {
                         JSONArray caJsonArray = new JSONArray(DriverSetting.getString("CanadaCycles"));
@@ -208,7 +208,7 @@ public class ParseLoginDetails {
     }
 
 
-    public void ParseDriverSetting(JSONObject DriverSetting, int position, Context context) {
+    public void ParseDriverSetting(JSONObject DriverSetting, Context context) {
         try{
             String CanCycleId="", USCycleId="",CanCycleName="", USCycleName="", TimeZone="", OffSet,
                     TimeZoneId="", CurrentCycle = "", CurrentCycleId = "";
@@ -222,7 +222,6 @@ public class ParseLoginDetails {
             OffSet          = DriverSetting.getString("OffsetHours");
             TimeZoneId      = DriverSetting.getString("TimeZoneID");
 
-            if(position == 0) {
                 SharedPref.setUserCountryCycle(
                         "ca_cycle", DriverSetting.getString("CanadaCycleId"),
                         "us_cycle", DriverSetting.getString("USACycleId"), context);                     /* Set Cycles */
@@ -232,10 +231,6 @@ public class ParseLoginDetails {
                         CanCycleName, USCycleName, TimeZone, OffSet, TimeZoneId, context);
 
                 DriverConst.SetDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
-            }else
-                DriverConst.SetCoDriverSettings(CurrentCycle, CurrentCycleId, CanCycleId, USCycleId,
-                        CanCycleName, USCycleName, TimeZone,  OffSet, TimeZoneId, context);
-           // DriverConst.SetCoDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -414,13 +409,11 @@ public class ParseLoginDetails {
     }
 
 
-    public void ParseStateArray(JSONArray stateArray, int position, Context context) {
+    public void ParseStateArray(JSONArray stateArray, Context context) {
 
         if(statePrefManager == null) {
             statePrefManager = new StatePrefManager();
-            //statePrefManager.AddState(context, new DriverLocationModel("", "Select", ""));
         }
-      //  CoStatePrefManager coStatePrefManager     = new CoStatePrefManager();
 
         try{
             for(int cycleCount = 0 ; cycleCount < stateArray.length() ; cycleCount ++){
@@ -431,16 +424,11 @@ public class ParseLoginDetails {
 
                 DriverLocationModel stateModel = new DriverLocationModel(StateCode, StateName, Country);
                 statePrefManager.AddState(context, stateModel);
-
-             /*   if(position == 0)
-                    statePrefManager.AddState(context, stateModel);
-                else
-                    coStatePrefManager.AddCoState(context, stateModel);*/
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-       // Log.d("ListSize", "state ListSize: " + statePrefManager.GetState(context).size());
+
     }
 
 

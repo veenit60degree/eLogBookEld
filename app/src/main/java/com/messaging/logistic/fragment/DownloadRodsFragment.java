@@ -43,6 +43,7 @@ import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.WebViewActvity;
 import com.models.DownloadLogsModel;
 import com.models.HelpDocModel;
@@ -98,6 +99,13 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         try {
             rootView = inflater.inflate(R.layout.fragment_rods_logs, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

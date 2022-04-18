@@ -23,6 +23,7 @@ import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
 
 import org.json.JSONArray;
@@ -74,7 +75,11 @@ public class DatePickerDialog extends Dialog {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getWindow().setBackgroundDrawable(new ColorDrawable(getContext().getResources().getColor(R.color.layout_color_dot)));
+        } else {
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.popup_datepicker);
        // setCancelable(false);

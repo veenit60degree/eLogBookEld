@@ -16,6 +16,7 @@
         android:orientation="vertical"
         android:minWidth="@dimen/view_height_450"
         android:paddingBottom="@dimen/margin_15"
+        android:backgroundTint="?attr/layout_color_dot"
         >
 
     <TextView
@@ -61,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/notification"
-            android:textColor="@color/black_hover"
+            android:textColor="?attr/textColor"
             android:textSize="@dimen/text_size_16"
             android:gravity="left"
             android:layout_marginTop="@dimen/margin_10"

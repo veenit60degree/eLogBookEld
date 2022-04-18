@@ -117,6 +117,12 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         rootView = inflater.inflate(R.layout.noti_history_fragment, container, false);
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -463,7 +469,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
     public void deleteConfirmationDialog(){
 
         try {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
             alertDialogBuilder.setTitle("Delete Notifications !!");
             alertDialogBuilder.setMessage("Do you really want to delete all notifications history?");
 
@@ -485,6 +491,13 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
             saveJobAlertDialog = alertDialogBuilder.create();
             vectorDialogs.add(saveJobAlertDialog);
             saveJobAlertDialog.show();
+
+            if(UILApplication.getInstance().isNightModeEnabled()) {
+                saveJobAlertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+                saveJobAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.white));
+                saveJobAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.white));
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();

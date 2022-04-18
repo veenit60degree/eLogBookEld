@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/gray_default"
+    android:background="?attr/rods_bg_color"
     >
 
 
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:text="@string/download_logs_Createddate"
         android:gravity="center"
-        android:textColor="@color/color_eld_theme"
+        android:textColor="?attr/color_eld_theme"
         android:textSize="@dimen/text_size_17"
         android:paddingLeft="@dimen/margin_15"
         android:layout_centerVertical="true"
@@ -49,6 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/share"
+                android:tint="?attr/share_icon_color"
                 android:layout_centerInParent="true"
 
 
@@ -69,6 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/download"
+                android:tint="?attr/download_icon_color"
                 android:layout_centerInParent="true"
 
                 />
@@ -93,6 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/view"
+                android:tint="?attr/view_icon_color"
                  android:layout_centerInParent="true"
                 />
 

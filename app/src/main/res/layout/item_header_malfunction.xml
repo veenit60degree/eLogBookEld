@@ -3,7 +3,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/transparent"
     >
 
 
@@ -15,7 +14,7 @@
         android:paddingRight="@dimen/margin_18"
         android:paddingTop="@dimen/margin_14"
         android:paddingBottom="@dimen/margin_14"
-        android:background="@drawable/malfunction_header_selector"
+        android:background="@drawable/ripple_effect"
         >
 
         <ImageView
@@ -25,7 +24,7 @@
             android:padding="@dimen/margin_short_5"
             android:layout_marginLeft="@dimen/margin_short_3"
             android:src="@drawable/info"
-
+            android:tint="?attr/info_icon_color"
             />
 
 
@@ -37,7 +36,7 @@
             android:layout_toRightOf="@+id/malfncnInfoImgView"
             android:paddingLeft="@dimen/margin_short_5"
             android:text="@string/Malfunction_with_bracket"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/color_eld_theme"
             android:textSize="@dimen/text_size_17"
 
             />

@@ -51,6 +51,7 @@ import com.local.db.MalfunctionDiagnosticMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UILApplication;
 import com.models.MalDiaEventModel;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
@@ -125,6 +126,13 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         try {
             rootView = inflater.inflate(R.layout.activity_edit_log_compare, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -648,6 +656,13 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 if (parent != null)
                     parent.removeView(rootViewMal);
             }
+
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                getActivity().setTheme(R.style.DarkTheme);
+            } else {
+                getActivity().setTheme(R.style.LightTheme);
+            }
+
             try {
                 rootViewMal = inflater.inflate(R.layout.fragment_malfunction, container, false);
                 rootViewMal.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

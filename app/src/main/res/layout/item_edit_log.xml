@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         android:paddingTop="@dimen/margin_short_5"
         android:paddingBottom="@dimen/margin_short_5"
-        android:background="@color/white_theme"
+        android:background="?attr/layout_color_dot"
 
         >
 
@@ -38,14 +38,14 @@
                     android:src="@drawable/icon_drag_drop"
                     android:layout_marginTop="@dimen/margin_short_1"
                     android:layout_gravity="center_vertical"
-
+                    android:tint="?attr/textColor"
 
                     />
                 <TextView
                     android:id="@+id/editLogSerialNoTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="?attr/textColor"
                     android:gravity="center_horizontal|center_vertical"
                     android:textSize="@dimen/text_size_17"
                     android:paddingLeft="@dimen/margin_short_8"
@@ -108,7 +108,7 @@
                 android:gravity="center_horizontal|center_vertical"
                 android:text="00:00"
                 android:textSize="@dimen/text_size_16"
-                android:textColor="@color/colorBlack"
+                android:textColor="?attr/textColor"
                 />
 
             <RelativeLayout
@@ -127,7 +127,7 @@
                     android:layout_height="@dimen/margin_22"
                     android:src="@drawable/time_clock"
                     android:layout_centerVertical="true"
-
+                    android:tint="?attr/gray_text"
                     />
 
             </RelativeLayout>
@@ -157,7 +157,7 @@
                 android:layout_toLeftOf="@+id/endTimeIV"
                 android:layout_centerVertical="true"
                 android:gravity="center_horizontal|center_vertical"
-                android:textColor="@color/colorBlack"
+                android:textColor="?attr/textColor"
                 android:text="00:00"
                 android:textSize="@dimen/text_size_16"
                 />
@@ -178,7 +178,7 @@
                     android:layout_width="@dimen/margin_22"
                     android:layout_height="@dimen/margin_22"
                     android:src="@drawable/time_clock"
-
+                    android:tint="?attr/gray_text"
 
                     />
             </RelativeLayout>
@@ -193,7 +193,7 @@
                 android:id="@+id/editLogDurationTV"
                 android:layout_width="@dimen/view_height_115"
                 android:layout_height="match_parent"
-                android:textColor="@color/colorBlack"
+                android:textColor="?attr/textColor"
                 android:layout_gravity="center_vertical"
 
                 android:textSize="@dimen/text_size_16"

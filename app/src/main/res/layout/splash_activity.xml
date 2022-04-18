@@ -11,8 +11,7 @@
         android:id="@+id/splashLay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorWhite"
-
+        android:background="?attr/bgColor"
         >
 
 
@@ -31,7 +30,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/margin_18"
-            android:textColor="@color/splash_gray"
+            android:textColor="?attr/splash_gray"
             android:textSize="@dimen/text_size_15" />
 
         <TextView
@@ -41,7 +40,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/margin_short_5"
             android:text="@string/Powered_by"
-            android:textColor="@color/splash_gray"
+            android:textColor="?attr/splash_gray"
             android:textSize="@dimen/text_size_12" />
 
     </RelativeLayout>

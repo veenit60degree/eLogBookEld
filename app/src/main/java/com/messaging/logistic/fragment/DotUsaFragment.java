@@ -52,6 +52,7 @@ import com.local.db.HelperMethods;
 import com.messaging.logistic.EldActivity;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.CanadaDutyStatusModel;
 import com.models.DotDataModel;
 import com.models.DriverLocationModel;
@@ -160,6 +161,12 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
         Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
 
         rootView = inflater.inflate(R.layout.fragment_dot_us, container, false);
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -363,7 +370,11 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         otherOptionBtn.setVisibility(View.VISIBLE);
         rightMenuBtn.setVisibility(View.GONE);
         previousDateBtn.setVisibility(View.VISIBLE);
-        itemShippingLay.setBackgroundColor(getResources().getColor(R.color.dot_titles_bg));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            itemShippingLay.setBackgroundColor(getResources().getColor(R.color.field_bg_color));
+        }else{
+            itemShippingLay.setBackgroundColor(getResources().getColor(R.color.dot_titles_bg));
+        }
         shippingLayHeight   = itemShippingLay.getMeasuredHeight();
         /*inspectionLayHeight = itemOdometerLay.getHeight();
 

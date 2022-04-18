@@ -2018,7 +2018,7 @@ public class Globally {
 		if(!SharedPref.IsOdometerFromOBD(context)) {
 
 				try {
-					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context,R.style.AlertDialogStyle);
 					alertDialogBuilder.setTitle("Odometer Reading !!");
 					alertDialogBuilder.setMessage(title);
 					alertDialogBuilder.setCancelable(false);
@@ -2060,6 +2060,11 @@ public class Globally {
 					alertDialog = alertDialogBuilder.create();
 					if(context != null) {
 						alertDialog.show();
+						if(UILApplication.getInstance().isNightModeEnabled()) {
+							alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+							alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.white));
+							alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.white));
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -2070,7 +2075,7 @@ public class Globally {
 
 	public void InspectTrailerDialog(final Context context, String title, String msg, AlertDialog alertDialog){
 		try {
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context,R.style.AlertDialogStyle);
 			alertDialogBuilder.setTitle(title);
 			alertDialogBuilder.setMessage(msg);
 			alertDialogBuilder.setCancelable(false);
@@ -2090,6 +2095,10 @@ public class Globally {
 			alertDialog = alertDialogBuilder.create();
 			if(context != null) {
 				alertDialog.show();
+				if(UILApplication.getInstance().isNightModeEnabled()) {
+					alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+					alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.white));
+				}
 			}
 		}catch (Exception e){e.printStackTrace();}
 	}
@@ -2111,8 +2120,13 @@ public class Globally {
 				alertDialog.setTitle(Html.fromHtml(title));
 				alertDialog.setMessage(Html.fromHtml(msg));
 
+				String defaultColor = "#1A3561";
+				if(UILApplication.getInstance().isNightModeEnabled()) {
+					defaultColor = "#ffffff";
+				}
+
 				// Setting OK Button
-				alertDialog.setButton(Html.fromHtml(okText), new DialogInterface.OnClickListener() {
+				alertDialog.setButton(Html.fromHtml("<font color='"+ defaultColor +"'><b>"+okText+"</b></font>"), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 
 						dialog.dismiss();
@@ -2122,6 +2136,9 @@ public class Globally {
 				// Showing Alert Message
 				if (context != null) {
 					alertDialog.show();
+					if(UILApplication.getInstance().isNightModeEnabled()) {
+						alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+					}
 				}
 			}
 
@@ -2134,12 +2151,17 @@ public class Globally {
 
 	public static void DriverSwitchAlert(final Context context, final String title, final String msg, final String okText){
 		try {
-			AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+			AlertDialog alertDialog = new AlertDialog.Builder(context,R.style.AlertDialogStyle).create();
 			alertDialog.setTitle(Html.fromHtml(title));
 			alertDialog.setMessage(Html.fromHtml(msg));
 
+			String defaultColor = "#1A3561";
+			if(UILApplication.getInstance().isNightModeEnabled()) {
+				defaultColor = "#ffffff";
+			}
+
 			// Setting OK Button
-			alertDialog.setButton(Html.fromHtml(okText), new DialogInterface.OnClickListener() {
+			alertDialog.setButton(Html.fromHtml("<font color='"+ defaultColor +"'><b>"+okText+"</b></font>"), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 
 					dialog.dismiss();
@@ -2149,6 +2171,9 @@ public class Globally {
 			// Showing Alert Message
 			if(context != null) {
 				alertDialog.show();
+				if(UILApplication.getInstance().isNightModeEnabled()) {
+					alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+				}
 			}
 		}catch (Exception e){e.printStackTrace();}
 	}
@@ -2157,14 +2182,19 @@ public class Globally {
 
 	public static void SwitchAlertWIthTabPosition(final Context context, final String title, final String msg, final String okText, final int position){
 		try {
-			AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+			AlertDialog alertDialog = new AlertDialog.Builder(context,R.style.AlertDialogStyle).create();
 			alertDialog.setTitle(Html.fromHtml(title));
 			alertDialog.setMessage(Html.fromHtml(msg));
 
+			String defaultColor = "#1A3561";
+			if(UILApplication.getInstance().isNightModeEnabled()) {
+				defaultColor = "#ffffff";
+			}
+
 			// Setting OK Button
-			alertDialog.setButton(Html.fromHtml(okText), new DialogInterface.OnClickListener() {
+			alertDialog.setButton(Html.fromHtml("<font color='"+ defaultColor +"'><b>"+okText+"</b></font>"), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-				//	Constants.isCycleRequestAlert = true;
+					//	Constants.isCycleRequestAlert = true;
 					TabAct.host.setCurrentTab(position);
 					dialog.dismiss();
 				}
@@ -2173,6 +2203,9 @@ public class Globally {
 			// Showing Alert Message
 			if(context != null) {
 				alertDialog.show();
+				if(UILApplication.getInstance().isNightModeEnabled()) {
+					alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+				}
 			}
 		}catch (Exception e){e.printStackTrace();}
 	}
@@ -2180,12 +2213,17 @@ public class Globally {
 
 	public static void ReadViolationDialog(final String title, final Context context){
 		try {
-			AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+			AlertDialog alertDialog = new AlertDialog.Builder(context,R.style.AlertDialogStyle).create();
 			alertDialog.setTitle(Html.fromHtml("<font color='red'><b>Violation !!</b></font>"));
 			alertDialog.setMessage(Html.fromHtml(title));
 
+			String defaultColor = "#1A3561";
+			if(UILApplication.getInstance().isNightModeEnabled()) {
+				defaultColor = "#ffffff";
+			}
+
 			// Setting OK Button
-			alertDialog.setButton(Html.fromHtml("<font color='#1A3561'><b>Ok</b></font>"), new DialogInterface.OnClickListener() {
+			alertDialog.setButton(Html.fromHtml("<font color='"+ defaultColor +"'><b>Ok</b></font>"), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					SharedPref.SetIsReadViolation(true, context);
 					dialog.dismiss();
@@ -2195,6 +2233,9 @@ public class Globally {
 			// Showing Alert Message
 			if(context != null) {
 				alertDialog.show();
+				if(UILApplication.getInstance().isNightModeEnabled()) {
+					alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+				}
 			}
 		}catch (Exception e){e.printStackTrace();}
 	}

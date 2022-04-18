@@ -20,6 +20,7 @@ import com.constants.SharedPref;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
+import com.messaging.logistic.UILApplication;
 
 import org.json.JSONObject;
 
@@ -44,6 +45,13 @@ public class EditedLogConfirmationFragment extends Fragment {
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         try {
             rootView = inflater.inflate(R.layout.webview_log_preview, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

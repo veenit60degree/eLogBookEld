@@ -52,7 +52,7 @@
                 android:layout_marginLeft="@dimen/margin_15"
                 android:layout_toRightOf="@+id/menuImgView"
                 android:text="@string/noti_history"
-                android:textColor="@color/gray_unidenfied"
+                android:textColor="?attr/gray_unidenfied"
                 android:textSize="@dimen/text_size_15" />
 
 
@@ -93,7 +93,7 @@
         android:gravity="center_horizontal"
         android:layout_marginLeft="@dimen/margin_15"
         android:text="@string/Powered_by"
-        android:textColor="@color/gray_unidenfied"
+        android:textColor="?attr/gray_unidenfied"
         android:textSize="@dimen/text_size_13"
         android:layout_marginTop="@dimen/view_height_30"
         android:paddingBottom="@dimen/margin_10"

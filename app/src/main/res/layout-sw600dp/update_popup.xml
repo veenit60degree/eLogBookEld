@@ -20,7 +20,7 @@
         android:layout_marginTop="@dimen/margin_15"
         android:paddingRight="@dimen/margin_10"
         app:cardCornerRadius="@dimen/margin_15"
-
+        android:backgroundTint="?attr/layout_color_dot"
         >
 
 
@@ -53,7 +53,7 @@
                 android:text="@string/current_version_dummy"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_14"
-                android:textColor="@color/fb_default"
+                android:textColor="?attr/fb_default"
                 android:paddingBottom="@dimen/margin_short_5"
                 android:textAllCaps="false"
                 />
@@ -71,7 +71,7 @@
                 android:text="@string/app_version_desc_dummy"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_18"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:paddingLeft="@dimen/margin_17"
                 android:paddingRight="@dimen/margin_17"
                 android:paddingBottom="@dimen/margin_short_4"
@@ -112,7 +112,7 @@
                     android:layout_height="@dimen/view_height_45"
                     android:text="@string/ignore"
                     android:textSize="@dimen/text_size_19"
-                    android:textColor="@color/gray_unidenfied"
+                    android:textColor="?attr/gray_unidenfied"
                     android:background="@drawable/white_cardview_left_selector"
                     android:textAllCaps="false"
                     android:layout_weight="1"
@@ -131,7 +131,7 @@
                     android:layout_height="@dimen/view_height_45"
                     android:text="@string/update"
                     android:textSize="@dimen/text_size_19"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:background="@drawable/white_cardview_selector"
                     android:textAllCaps="false"
                     android:layout_weight="1"

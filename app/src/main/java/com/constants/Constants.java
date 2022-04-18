@@ -50,6 +50,7 @@ import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.CanadaDutyStatusModel;
 import com.models.EldDataModelNew;
@@ -3671,7 +3672,11 @@ public class Constants {
 
     public void setTextStyleNormal(TextView textView){
         textView.setTypeface(null, Typeface.NORMAL);
-        textView.setTextColor(Color.parseColor("#354365"));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            textView.setTextColor(Color.parseColor("#ffffff"));
+        }else{
+            textView.setTextColor(Color.parseColor("#354365"));
+        }
     }
 //textView.setTypeface(null, Typeface.NORMAL);
 
@@ -4926,6 +4931,8 @@ public class Constants {
                 e.printStackTrace();
             }
 
+        }else{
+            SharedPref.saveHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
         }
         return timeInMin;
 

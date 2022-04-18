@@ -57,6 +57,7 @@
     <color name="gray_unidenfied">#87888D</color>
     <color name="slide_menu_default">#A1A0A0</color>
     <color name="ripple_effect_gray">#E3E3E1</color>
+    <color name="ripple_effect_dark_gray">#9D9FA1</color>
     <color name="tint_disabled">#919090</color>
 
 
@@ -80,6 +81,7 @@
 
     <color name="black_download">#333232</color>
     <color name="unselect_button">#4E4E4E</color>
+    <color name="unselect">#43474E</color>
     <color name="blue_text">#5EA3E9</color>
     <color name="color_eld_theme">#1A3561</color>           <!--539640-->
     <color name="color_eld_theme_one">#1A3561</color>
@@ -121,7 +123,7 @@
     <color name="violet">#82387F</color>
     <color name="red_custom">#F44236</color>
     <color name="white_foreground">#F1EFEF</color>
-
+    <color name="layout_color_dot">#aeaeae</color>
     <color name="white_dark">#F6F2F2</color>
 
     <color name="white_dark_hover">#E3D9D9</color>
@@ -235,10 +237,12 @@
     <color name="holo_orange_light">#ff0099cc</color>
     <color name="holo_orange_dark">#ff0099cc</color>
     <color name="dot_titles_bg">#E9ECEF</color>
+    <color name="field_bg_color">#848485</color>
 
 
     <color name="deferral_light_blue">#dee7ec</color>
     <color name="gray_hoverN">#6F6F6F</color>
+
 
 
 

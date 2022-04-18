@@ -35,6 +35,7 @@ import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.CertifyViewLogFragment;
 import com.models.RecapSignModel;
 import com.simplify.ink.InkView;
@@ -234,7 +235,7 @@ public class SignRecordDialog extends Dialog {
 
     public void ContinueWithoutSignDialog(){
         try {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context,R.style.AlertDialogStyle);
             alertDialogBuilder.setTitle("Certify log alert !!");
             alertDialogBuilder.setMessage(context.getResources().getString(R.string.continue_sign_desc));
             alertDialogBuilder.setCancelable(false);
@@ -264,6 +265,11 @@ public class SignRecordDialog extends Dialog {
 
             alertDialog = alertDialogBuilder.create();
             alertDialog.show();
+            if(UILApplication.getInstance().isNightModeEnabled()) {
+                alertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.white));
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.white));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

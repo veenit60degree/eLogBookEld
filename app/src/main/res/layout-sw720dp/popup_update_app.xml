@@ -14,6 +14,7 @@
         android:orientation="vertical"
         android:background="@drawable/voilet_border"
         android:padding="@dimen/view_height_35"
+        android:backgroundTint="?attr/layout_color_dot"
         >
 
 
@@ -28,7 +29,7 @@
             android:text="@string/Alert"
             android:gravity="center_horizontal"
             android:textSize="@dimen/text_size_24"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColor"
             android:paddingBottom="@dimen/margin_short_8"
             android:textStyle="bold"
 
@@ -41,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/logout"
                 android:textSize="@dimen/text_size_25"
-                android:textColor="@color/black_hos"
+                android:textColor="?attr/textColor"
                 android:layout_alignParentRight="true"
                 android:paddingRight="@dimen/margin_10"
                 android:paddingLeft="@dimen/margin_10"
@@ -60,7 +61,7 @@
             android:layout_height="wrap_content"
             android:text="@string/update_desc"
             android:textSize="@dimen/text_size_21"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColor"
             android:layout_marginTop="@dimen/margin_10"
             android:layout_marginBottom="@dimen/margin_10"
             android:layout_marginLeft="@dimen/margin_10"

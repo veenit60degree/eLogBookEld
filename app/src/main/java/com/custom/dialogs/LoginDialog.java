@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.driver.details.DriverConst;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 
 public class LoginDialog extends Dialog {
 
@@ -100,12 +101,21 @@ public class LoginDialog extends Dialog {
             coDriverUserNameText.setEnabled(false);
         }
 
-        driverTitleTV.setTextColor(Color.BLACK);
-        driverDescTV.setTextColor(Color.BLACK);
-        coDriverUserNameText.setTextColor(Color.BLACK);
-        coDriverConfirmPassText.setTextColor(Color.BLACK);
-        userUnderLineView.setBackgroundColor(Color.BLACK);
-        passUnderLineView.setBackgroundColor(Color.BLACK);
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            driverTitleTV.setTextColor(Color.WHITE);
+            driverDescTV.setTextColor(Color.WHITE);
+            coDriverUserNameText.setTextColor(Color.WHITE);
+            coDriverConfirmPassText.setTextColor(Color.WHITE);
+            userUnderLineView.setBackgroundColor(Color.WHITE);
+            passUnderLineView.setBackgroundColor(Color.WHITE);
+        }else {
+            driverTitleTV.setTextColor(Color.BLACK);
+            driverDescTV.setTextColor(Color.BLACK);
+            coDriverUserNameText.setTextColor(Color.BLACK);
+            coDriverConfirmPassText.setTextColor(Color.BLACK);
+            userUnderLineView.setBackgroundColor(Color.BLACK);
+            passUnderLineView.setBackgroundColor(Color.BLACK);
+        }
       //  passInputLay.
 
         passLay.setVisibility(View.INVISIBLE);

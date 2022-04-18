@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
 
@@ -44,7 +45,11 @@ public class CanDotRemarksAdapter extends RecyclerView.Adapter<CanDotRemarksAdap
 
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
-        holder.remarksAnoDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            holder.remarksAnoDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
+        }else{
+            holder.remarksAnoDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+        }
 
         String eventTime = itemsList.get(position).getDateTimeWithMins();
         holder.dateRemarksDotTV.setText(Globally.ConvertDateFormatddMMMyyyy(eventTime, Globally.DateFormat_mm_dd_yy));

@@ -9,7 +9,7 @@
     android:layout_marginBottom="@dimen/margin_15"
     android:layout_marginRight="@dimen/view_height_70"
     android:layout_marginLeft="@dimen/view_height_70"
-
+    android:backgroundTint="?attr/layout_color_dot"
     >
 
 
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/send_driver_log"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:textStyle="bold"
             android:textSize="@dimen/text_size_23"
             android:gravity="center"
@@ -144,7 +144,7 @@
                     android:layout_width="@dimen/view_height_95"
                     android:layout_height="wrap_content"
                     android:text="@string/country"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:paddingLeft="@dimen/margin_short_5"
                     android:paddingRight="@dimen/margin_short_5"
                     android:paddingBottom="@dimen/margin_short_2"
@@ -220,7 +220,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/DataTransmissionThrough"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:paddingLeft="@dimen/margin_short_5"
                     android:paddingRight="@dimen/margin_short_5"
                     android:paddingBottom="@dimen/margin_short_2"
@@ -241,7 +241,7 @@
                     android:textSize="@dimen/text_size_17"
                     android:layout_marginLeft="@dimen/margin_short_5"
                     android:layout_marginRight="@dimen/margin_short_5"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:paddingLeft="@dimen/margin_short_5"
                     android:checked="true"
 
@@ -258,7 +258,7 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/email"
                     android:textSize="@dimen/text_size_17"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:layout_marginLeft="@dimen/margin_10"
                     android:paddingLeft="@dimen/margin_short_5"
 
@@ -295,7 +295,7 @@
                 android:id="@+id/fmcsaDescTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/grey_text"
+                android:textColor="?attr/grey_text"
                 android:paddingLeft="@dimen/margin_10"
                 android:text="@string/fmcsa_desc"
                 android:textSize="@dimen/text_size_13"
@@ -322,7 +322,7 @@
                     android:layout_width="@dimen/view_height_95"
                     android:layout_height="wrap_content"
                     android:text="@string/to"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     />
 
@@ -366,7 +366,7 @@
                     android:layout_width="@dimen/view_height_95"
                     android:layout_height="wrap_content"
                     android:text="@string/LocationTitle"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
                     android:layout_marginRight="@dimen/margin_short_5"
                     android:layout_marginTop="@dimen/margin_short_5"
@@ -431,7 +431,7 @@
                     android:layout_width="@dimen/view_height_95"
                     android:layout_height="wrap_content"
                     android:text="@string/EnterCity"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:layout_marginBottom="@dimen/margin_short_8"
                     android:textSize="@dimen/text_size_16"
                     android:layout_marginRight="@dimen/margin_short_5"
@@ -465,7 +465,7 @@
                     android:layout_width="@dimen/view_height_90"
                     android:layout_height="wrap_content"
                     android:text="@string/SelectState"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:layout_marginTop="@dimen/margin_10"
                     android:textSize="@dimen/text_size_16"
                     android:layout_marginLeft="@dimen/margin_10"
@@ -514,7 +514,7 @@
                         android:layout_width="@dimen/view_height_95"
                         android:layout_height="wrap_content"
                         android:text="@string/from_date"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/color_eld_theme"
                         android:textSize="@dimen/text_size_16"
                         />
 
@@ -552,7 +552,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/to_date"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/color_eld_theme"
                         android:textSize="@dimen/text_size_16"
 
                         />
@@ -600,7 +600,7 @@
                     android:layout_width="@dimen/view_height_95"
                     android:layout_height="wrap_content"
                     android:text="@string/Comments"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_16"
 
                     />

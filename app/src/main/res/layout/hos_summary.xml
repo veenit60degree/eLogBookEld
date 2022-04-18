@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/hos_summary_bg"
+    android:background="?attr/hos_summary_bg"
     android:clickable="true"
 
     >
@@ -71,6 +71,7 @@
                        android:layout_height="match_parent"
                        app:cardElevation="@dimen/margin_short_1"
                        app:cardUseCompatPadding="true"
+                       card_view:cardBackgroundColor="?attr/layout_color_dot"
                        card_view:cardCornerRadius="@dimen/margin_10">
 
 
@@ -96,7 +97,7 @@
                                android:layout_height="wrap_content"
                                android:layout_gravity="center_horizontal"
                                android:text="@string/hos_northsouthTV"
-                               android:textColor="@color/black_hos"
+                               android:textColor="?attr/textColor"
                                android:textSize="@dimen/text_size_17"
                                android:textStyle="bold"
 
@@ -116,7 +117,7 @@
                                    android:layout_height="wrap_content"
                                    android:layout_gravity="center_horizontal"
                                    android:text="@string/hos_per_shift"
-                                   android:textColor="@color/gray_text1"
+                                   android:textColor="?attr/gray_text2"
                                    android:textSize="@dimen/text_size_18"
                                    android:textStyle="bold" />
 
@@ -130,7 +131,7 @@
                                    android:paddingTop="@dimen/margin_short_5"
                                    android:paddingRight="@dimen/margin_short_5"
                                    android:textAllCaps="false"
-                                   android:textColor="@color/colorPrimary"
+                                   android:textColor="?attr/color_eld_theme"
                                    android:textSize="@dimen/text_size_8"
 
                                    />
@@ -155,6 +156,7 @@
                 android:layout_height="match_parent"
                 app:cardElevation="@dimen/margin_short_1"
                 app:cardUseCompatPadding="true"
+                card_view:cardBackgroundColor="?attr/layout_color_dot"
                 card_view:cardCornerRadius="@dimen/margin_10">
 
 
@@ -173,7 +175,7 @@
                         android:layout_gravity="center_horizontal"
                         android:gravity="center"
                         android:text="@string/hos_per_Day"
-                        android:textColor="@color/gray_text1"
+                        android:textColor="?attr/gray_text2"
                         android:textSize="@dimen/text_size_18"
                         android:textStyle="bold" />
 
@@ -188,7 +190,7 @@
                         android:paddingTop="@dimen/margin_short_5"
                         android:paddingRight="@dimen/margin_10"
                         android:text="@string/us_cycle_7days_hos"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="?attr/color_eld_theme"
                         android:textSize="@dimen/text_size_8"
                         android:textStyle="normal"
                         android:visibility="visible" />
@@ -218,7 +220,7 @@
                 android:layout_height="@dimen/view_height_160"
                 android:orientation="horizontal"
                 android:layout_weight="0.5"
-                android:background="@color/white"
+                android:background="?attr/bgColor"
                 android:layout_marginBottom="@dimen/margin_short_5"
                 >
 
@@ -236,6 +238,7 @@
                             android:layout_weight="1"
                             app:cardElevation="@dimen/margin_short_1"
                             app:cardUseCompatPadding="true"
+                            card_view:cardBackgroundColor="?attr/layout_color_dot"
                             card_view:cardCornerRadius="@dimen/margin_10">
 
                             <LinearLayout
@@ -253,7 +256,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:text="@string/hos_driving_shift"
-                                    android:textColor="@color/black_hos"
+                                    android:textColor="?attr/textColor"
                                     android:textSize="@dimen/text_size_17"
                                     android:textStyle="bold" />
 
@@ -286,7 +289,7 @@
                                         CircleProgressView:cpv_seekMode="true"
                                         CircleProgressView:cpv_showUnit="true"
                                         CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                        CircleProgressView:cpv_textColor="@color/hos_break_time"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
                                         CircleProgressView:cpv_unitPosition="right_top"
@@ -300,7 +303,7 @@
                                         android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center_horizontal"
-                                        android:textColor="@color/hos_used_time"
+                                        android:textColor="?attr/hos_used_time"
                                         android:textSize="@dimen/text_size_17"
                                         android:textStyle="bold"
 
@@ -323,6 +326,7 @@
                             app:cardUseCompatPadding="true"
                             card_view:cardCornerRadius="@dimen/margin_10"
                             android:layout_weight="1"
+                            card_view:cardBackgroundColor="?attr/layout_color_dot"
                             >
 
                             <LinearLayout
@@ -341,7 +345,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:text="@string/hos_OnDuty_shift"
-                                    android:textColor="@color/black_hos"
+                                    android:textColor="?attr/textColor"
                                     android:textSize="@dimen/text_size_17"
                                     android:textStyle="bold" />
 
@@ -373,7 +377,7 @@
 
                                         CircleProgressView:cpv_showUnit="true"
                                         CircleProgressView:cpv_spinColor="@color/hos_break_time"
-                                        CircleProgressView:cpv_textColor="@color/hos_break_time"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
                                         CircleProgressView:cpv_unitPosition="right_top"
@@ -387,7 +391,7 @@
                                         android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center_horizontal"
-                                        android:textColor="@color/hos_used_time"
+                                        android:textColor="?attr/hos_used_time"
                                         android:textSize="@dimen/text_size_17"
                                         android:textStyle="bold"
 
@@ -409,6 +413,7 @@
                             android:layout_weight="1"
                             app:cardElevation="@dimen/margin_short_1"
                             app:cardUseCompatPadding="true"
+                            card_view:cardBackgroundColor="?attr/layout_color_dot"
                             card_view:cardCornerRadius="@dimen/margin_10">
 
                             <LinearLayout
@@ -427,7 +432,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:text="@string/hos_break"
-                                    android:textColor="@color/black_hos"
+                                    android:textColor="?attr/textColor"
                                     android:textSize="@dimen/text_size_17"
                                     android:textStyle="bold" />
 
@@ -459,7 +464,7 @@
                                         CircleProgressView:cpv_seekMode="true"
                                         CircleProgressView:cpv_showUnit="true"
                                         CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                        CircleProgressView:cpv_textColor="@color/hos_break_time"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
                                         CircleProgressView:cpv_unitPosition="right_top"
@@ -472,7 +477,7 @@
                                         android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center_horizontal"
-                                        android:textColor="@color/hos_used_time"
+                                        android:textColor="?attr/hos_used_time"
 
                                         android:textSize="@dimen/text_size_17"
                                         android:textStyle="bold" />
@@ -492,7 +497,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/view_height_160"
                     android:layout_weight="0.5"
-                    android:background="@color/white"
+                    android:background="?attr/bgColor"
 
                     >
 
@@ -508,7 +513,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-
+                            card_view:cardBackgroundColor="?attr/layout_color_dot"
                             app:cardElevation="@dimen/margin_short_1"
                             app:cardUseCompatPadding="true"
                             card_view:cardCornerRadius="@dimen/margin_10">
@@ -527,7 +532,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:text="@string/hos_driving_shift"
-                                    android:textColor="@color/black_hos"
+                                    android:textColor="?attr/textColor"
                                     android:textSize="@dimen/text_size_17"
                                     android:textStyle="bold"
                                     android:visibility="gone"
@@ -547,7 +552,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/hos_cycle"
-                                        android:textColor="@color/black_hos"
+                                        android:textColor="?attr/textColor"
                                         android:textStyle="bold"
                                         android:textSize="@dimen/text_size_17"
                                         android:layout_gravity="center_horizontal"
@@ -560,7 +565,7 @@
                                         android:layout_gravity="center_vertical"
                                         android:paddingLeft="@dimen/margin_short_5"
                                         android:text="@string/us_cycle_7days_hos"
-                                        android:textColor="@color/holo_green_dark"
+                                        android:textColor="?attr/holo_green_dark"
                                         android:textSize="@dimen/text_size_10"
                                         android:textStyle="normal"
                                         android:visibility="visible" />
@@ -595,7 +600,7 @@
                                         CircleProgressView:cpv_seekMode="true"
                                         CircleProgressView:cpv_showUnit="true"
                                         CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                        CircleProgressView:cpv_textColor="@color/hos_break_time"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
                                         CircleProgressView:cpv_unitPosition="right_top"
@@ -610,7 +615,7 @@
                                         android:layout_gravity="center_horizontal"
 
                                         android:gravity="center_horizontal"
-                                        android:textColor="@color/hos_used_time"
+                                        android:textColor="?attr/hos_used_time"
                                         android:textSize="@dimen/text_size_17"
                                         android:textStyle="bold" />
 
@@ -628,6 +633,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:cardElevation="@dimen/margin_short_1"
+                            card_view:cardBackgroundColor="?attr/layout_color_dot"
                             app:cardUseCompatPadding="true"
                             card_view:cardCornerRadius="@dimen/margin_10"
                             android:layout_weight="1"
@@ -647,7 +653,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/hos_OnDuty_shift"
-                                    android:textColor="@color/black_hos"
+                                    android:textColor="?attr/textColor"
                                     android:textStyle="bold"
                                     android:textSize="@dimen/text_size_17"
                                     android:layout_gravity="center_horizontal"
@@ -682,7 +688,7 @@
                                         CircleProgressView:cpv_showUnit="true"
                                         CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
 
-                                        CircleProgressView:cpv_textColor="@color/hos_break_time"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
                                         CircleProgressView:cpv_unitPosition="right_top"
@@ -696,7 +702,7 @@
                                         android:id="@+id/hosPerDayUsedOnDutyTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textColor="@color/hos_used_time"
+                                        android:textColor="?attr/hos_used_time"
                                         android:textStyle="bold"
                                         android:textSize="@dimen/text_size_17"
                                         android:layout_gravity="center_horizontal"
@@ -721,6 +727,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             app:cardElevation="@dimen/margin_short_1"
+                            card_view:cardBackgroundColor="?attr/layout_color_dot"
                             app:cardUseCompatPadding="true"
                             card_view:cardCornerRadius="@dimen/margin_10"
                             android:visibility="invisible"
@@ -740,7 +747,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/hos_perDay_offduty"
-                                    android:textColor="@color/black_hos"
+                                    android:textColor="?attr/textColor"
                                     android:textStyle="bold"
                                     android:textSize="@dimen/text_size_17"
                                     android:layout_gravity="center_horizontal"
@@ -775,7 +782,7 @@
                                         CircleProgressView:cpv_showUnit="true"
                                         CircleProgressView:cpv_spinColor="@color/hos_break_time"
 
-                                        CircleProgressView:cpv_textColor="@color/hos_break_time"
+                                        CircleProgressView:cpv_textColor="?attr/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
                                         CircleProgressView:cpv_unitPosition="right_top"
@@ -789,7 +796,7 @@
                                         android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center_horizontal"
-                                        android:textColor="@color/hos_used_time"
+                                        android:textColor="?attr/hos_used_time"
                                         android:textSize="@dimen/text_size_17"
 
                                         android:textStyle="bold" />
@@ -826,7 +833,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/view_height_160"
                 android:layout_weight="0.4"
-                android:background="@drawable/white_right"
+                android:background="?attr/bgColor"
                 android:layout_marginBottom="@dimen/margin_short_5"
 
                 >
@@ -836,6 +843,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:cardElevation="@dimen/margin_short_1"
+                    card_view:cardBackgroundColor="?attr/layout_color_dot"
                     app:cardUseCompatPadding="true"
                     card_view:cardCornerRadius="@dimen/margin_10">
 
@@ -854,7 +862,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:text="@string/hos_shift"
-                            android:textColor="@color/black_hos"
+                            android:textColor="?attr/textColor"
                             android:textSize="@dimen/text_size_17"
                             android:textStyle="bold" />
 
@@ -886,7 +894,7 @@
 
                                 CircleProgressView:cpv_showUnit="true"
                                 CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                CircleProgressView:cpv_textColor="@color/hos_break_time"
+                                CircleProgressView:cpv_textColor="?attr/hos_break_time"
                                 CircleProgressView:cpv_textScale="0"
                                 CircleProgressView:cpv_unitColor="@color/white"
                                 CircleProgressView:cpv_unitPosition="right_top"
@@ -900,7 +908,7 @@
                                 android:layout_centerInParent="true"
                                 android:layout_gravity="center_horizontal"
                                 android:gravity="center_horizontal"
-                                android:textColor="@color/hos_used_time"
+                                android:textColor="?attr/hos_used_time"
                                 android:textSize="@dimen/text_size_17"
 
                                 android:textStyle="bold" />
@@ -920,7 +928,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/view_height_160"
                 android:layout_weight="0.4"
-                android:background="@drawable/white_right"
+                android:background="?attr/bgColor"
 
                 >
 
@@ -932,6 +940,7 @@
                     app:cardElevation="@dimen/margin_short_1"
                     app:cardUseCompatPadding="true"
                     card_view:cardCornerRadius="@dimen/margin_10"
+                    card_view:cardBackgroundColor="?attr/layout_color_dot"
 
                     >
 
@@ -956,7 +965,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:text="@string/hos_cycle"
-                                android:textColor="@color/black_hos"
+                                android:textColor="?attr/textColor"
                                 android:textSize="@dimen/text_size_17"
                                 android:textStyle="bold" />
 
@@ -967,7 +976,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:paddingLeft="@dimen/margin_short_5"
                                 android:text="@string/us_cycle_7days_hos"
-                                android:textColor="@color/holo_green_dark"
+                                android:textColor="?attr/holo_green_dark"
                                 android:textSize="@dimen/text_size_10"
                                 android:textStyle="normal"
                                 android:visibility="visible" />
@@ -1003,7 +1012,7 @@
 
                                 CircleProgressView:cpv_showUnit="true"
                                 CircleProgressView:cpv_spinColor="@color/hos_progress_newbg"
-                                CircleProgressView:cpv_textColor="@color/hos_break_time"
+                                CircleProgressView:cpv_textColor="?attr/hos_break_time"
                                 CircleProgressView:cpv_textScale="0"
                                 CircleProgressView:cpv_unitColor="@color/white"
                                 CircleProgressView:cpv_unitPosition="right_top"
@@ -1017,7 +1026,7 @@
                                 android:layout_centerInParent="true"
                                 android:layout_gravity="center_horizontal"
                                 android:gravity="center_horizontal"
-                                android:textColor="@color/hos_used_time"
+                                android:textColor="?attr/hos_used_time"
                                 android:textSize="@dimen/text_size_17"
                                 android:textStyle="bold"
 
@@ -1047,7 +1056,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/white_default"
+                android:background="?attr/layout_color_dot"
                 android:orientation="horizontal"
                 android:layout_marginLeft="@dimen/margin_short_5"
                 android:layout_marginRight="@dimen/margin_short_5"
@@ -1071,7 +1080,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/AccumPersonalDis"
                     android:textStyle="bold"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?attr/color_eld_theme"
                     android:paddingLeft="@dimen/margin_short_5"
                     android:textSize="@dimen/text_size_15"
 
@@ -1083,7 +1092,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/temp_no_value"
-                    android:textColor="@color/gray_hos"
+                    android:textColor="?attr/gray_hos"
                     android:paddingLeft="@dimen/margin_10"
                     android:textSize="@dimen/text_size_14"
                     />
@@ -1109,7 +1118,7 @@
             android:layout_height="match_parent"
             android:layout_weight=".75"
             card_view:cardCornerRadius="@dimen/margin_10"
-
+            card_view:cardBackgroundColor="?attr/layout_color_dot"
             app:cardElevation="@dimen/margin_short_2"
             app:cardUseCompatPadding="true"
             >
@@ -1147,7 +1156,7 @@
                         android:paddingLeft="@dimen/margin_short_5"
                         android:paddingRight="@dimen/margin_short_4"
                         android:text="@string/distancee"
-                        android:textColor="@color/black_hos"
+                        android:textColor="?attr/textColor"
                         android:textSize="@dimen/text_size_15"
                         android:textStyle="bold"
 
@@ -1158,7 +1167,7 @@
                         android:id="@+id/engHourTxtView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/hos_shift"
+                        android:textColor="?attr/hos_shift"
                         android:textSize="@dimen/text_size_12"
                         android:paddingRight="@dimen/margin_short_3"
                         android:paddingTop="@dimen/margin_short_2"
@@ -1168,7 +1177,6 @@
                         android:id="@+id/obdHosInfoImg"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/media_white_drawable"
                         android:layout_alignParentRight="true"
                         >
 
@@ -1177,7 +1185,7 @@
                             android:layout_height="@dimen/view_height_30"
                             android:padding="@dimen/margin_short_7"
                             android:src="@drawable/info"
-
+                            android:tint="?attr/download_icon_color"
 
                             />
                     </RelativeLayout>
@@ -1190,7 +1198,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/temp_value"
-                    android:textColor="@color/gray_hos"
+                    android:textColor="?attr/gray_hos"
                     android:textSize="@dimen/text_size_13"
                     android:paddingLeft="@dimen/margin_short_8"
                     android:paddingRight="@dimen/margin_short_5"
@@ -1210,6 +1218,7 @@
             card_view:cardCornerRadius="@dimen/margin_10"
             app:cardElevation="@dimen/margin_short_2"
             app:cardUseCompatPadding="true"
+            card_view:cardBackgroundColor="?attr/layout_color_dot"
             >
 
             <LinearLayout
@@ -1239,7 +1248,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/CurrentLocation"
-                        android:textColor="@color/black_hos"
+                        android:textColor="?attr/textColor"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_size_15"
                         android:paddingLeft="@dimen/margin_short_4"
@@ -1250,7 +1259,7 @@
                         android:id="@+id/vinNumberTxtView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/hos_shift"
+                        android:textColor="?attr/hos_shift"
                         android:textSize="@dimen/text_size_12"
                         android:paddingRight="@dimen/margin_short_3"
                         android:paddingLeft="@dimen/margin_short_4"
@@ -1265,7 +1274,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/temp_value"
-                    android:textColor="@color/gray_hos"
+                    android:textColor="?attr/gray_hos"
                     android:textSize="@dimen/text_size_13"
                     android:paddingLeft="@dimen/margin_10"
                     android:paddingRight="@dimen/margin_short_5"

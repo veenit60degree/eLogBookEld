@@ -38,6 +38,7 @@ import com.local.db.DBHelper;
 import com.local.db.InspectionMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.DriverLocationModel;
 import com.models.SavedInspectionModel;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -72,6 +73,8 @@ public class    InspectionDetailView  extends Fragment {
     ViewInspectionGridAdapter truckAdapter, trailerAdapter;
     String EldThemeColor = "#1A3561";
     String BlackColor    = "#7C7C7B";
+    String WhiteColor    = "#ffffff";
+    String OrangeColor   = "#ffff900d";
     VolleyRequest SaveLocationRequest;
     String DeviceId = "", DriverId = "", InspectionId = "0", InspectionDateTime = "", UpdatedLocation = "", oldLocation = "";
     String City = "", State = "", Country = "";
@@ -573,14 +576,23 @@ public class    InspectionDetailView  extends Fragment {
     void setBackgroundUnselected(RadioButton view){
         view.setEnabled(false);
         view.setChecked(false);
-        view.setTextColor(Color.parseColor(BlackColor));
+//        view.setTextColor(Color.parseColor(BlackColor));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            view.setTextColor(Color.parseColor(WhiteColor));
+        }else{
+            view.setTextColor(Color.parseColor(BlackColor));
+        }
     }
 
 
     void setBackgroundSelected(RadioButton view){
         view.setEnabled(true);
         view.setChecked(true);
-        view.setTextColor(Color.parseColor(EldThemeColor));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            view.setTextColor(Color.parseColor(OrangeColor));
+        }else{
+            view.setTextColor(Color.parseColor(EldThemeColor));
+        }
     }
 
 

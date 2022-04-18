@@ -28,6 +28,7 @@ import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.EditLogFragment;
 import com.models.DriverLogModel;
 
@@ -483,7 +484,12 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
             editLogStatusSpinner = itemView.findViewById(R.id.editLogStatusSpinner);
 
-            editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
+                editLogStatusSpinner.setPopupBackgroundDrawable(mContext.getDrawable(R.drawable.edited_log_drawable));
+            } else {
+                editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+            }
            // itemView.setOnClickListener(this);
 
         }
@@ -573,7 +579,11 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     void setViewTextColor(TextView tView, boolean isPermit){
         if(isPermit){
-            tView.setTextColor(Color.BLACK);
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                tView.setTextColor(Color.WHITE);
+            } else {
+                tView.setTextColor(Color.BLACK);
+            }
         }else{
             tView.setTextColor(Color.GRAY);
         }
@@ -598,11 +608,19 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             spinner.setEnabled(true);
             startTimeBtn.setEnabled(true);
             endTimeBtn.setEnabled(true);
-            countTV.setTextColor(Color.BLACK);
-            durationTV.setTextColor(Color.BLACK);
-            startTV.setTextColor(Color.BLACK);
-            endTV.setTextColor(Color.BLACK);
-            editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
+                countTV.setTextColor(Color.WHITE);
+                durationTV.setTextColor(Color.WHITE);
+                startTV.setTextColor(Color.WHITE);
+                endTV.setTextColor(Color.WHITE);
+            } else {
+                editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+                countTV.setTextColor(Color.BLACK);
+                durationTV.setTextColor(Color.BLACK);
+                startTV.setTextColor(Color.BLACK);
+                endTV.setTextColor(Color.BLACK);
+            }
 
         }
     }

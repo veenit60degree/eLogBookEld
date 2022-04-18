@@ -133,7 +133,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     RelativeLayout rightMenuBtn, eldMenuLay, checkAppUpdateBtn, haulExceptionLay, SyncDataBtn, checkInternetBtn,
             obdDiagnoseBtn, docBtn, deferralRuleLay, brightnessSoundEditBtn, settingsMainLay, actionbarMainLay, updateBlinkLayout;
     LinearLayout canCycleLayout, usaCycleLayout, timeZoneLayout;
-    SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton,adverseCanadaSwitchButton,agricultureSwitchButton;
+    SwitchCompat deferralSwitchButton, haulExceptnSwitchButton, adverseSwitchButton,adverseCanadaSwitchButton,agricultureSwitchButton,dayNightSwitchButton;
     List<CycleModel> CanCycleList;
     List<CycleModel> UsaCycleList;
     List<TimeZoneModel> TimeZoneList;
@@ -195,7 +195,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     int leftOffOrSleeperMin = 0;
     long progressPercentage = 0;
     boolean isNorthCanada = false;
-    boolean IsLogPermission = false, IsDownloading = false, IsManualAppDownload = false, isAgricultureExcptn = false, IsAgriExceptionEnable = false;
+    boolean IsLogPermission = false, IsDownloading = false, IsManualAppDownload = false, isAgricultureExcptn = false, IsAgriExceptionEnable = false,isDayNightMode = false;
     DriverPermissionMethod driverPermissionMethod;
     MainDriverEldPref MainDriverPref;
     CoDriverEldPref CoDriverPref;
@@ -248,6 +248,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
+
         try {
             rootView = inflater.inflate(R.layout.fragment_settings, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -362,6 +370,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         adverseSwitchButton = (SwitchCompat)v.findViewById(R.id.adverseSwitchButton);
         adverseCanadaSwitchButton  = (SwitchCompat) v.findViewById(R.id.adverseCanadaSwitchButton);
         agricultureSwitchButton  = (SwitchCompat) v.findViewById(R.id.agricultureSwitchButton);
+        dayNightSwitchButton  = (SwitchCompat) v.findViewById(R.id.dayNightSwitchButton);
 
         showBrightnessSeekBar = (SeekBar)v.findViewById(R.id.sbBrightness);
         showVolumeSeekBar     = (SeekBar)v.findViewById(R.id.sbVolume);
@@ -638,6 +647,45 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             }
         });
 
+        dayNightSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(buttonView.isPressed()) {
+
+                    if (isChecked) {
+
+                        if(!isDayNightMode){
+                            UILApplication.getInstance().setIsNightModeEnabled(true);
+                            getActivity().finish();
+                            Intent intent = new Intent(getActivity(), TabAct.class);
+                            startActivity(intent);
+                            SharedPref.setDayNightMode(true, getActivity());
+                            SharedPref.setDayNightActionClick(true, getActivity());
+
+                        } else {
+                            buttonView.setChecked(isChecked);
+                            UILApplication.getInstance().setIsNightModeEnabled(false);
+                            getActivity().finish();
+                            Intent intent = new Intent(getActivity(), TabAct.class);
+                            startActivity(intent);
+                            SharedPref.setDayNightMode(false, getActivity());
+                            SharedPref.setDayNightActionClick(true, getActivity());
+                        }
+                    }else{
+                        buttonView.setChecked(isChecked);
+                        UILApplication.getInstance().setIsNightModeEnabled(false);
+                        getActivity().finish();
+                        Intent intent = new Intent(getActivity(), TabAct.class);
+                        startActivity(intent);
+                        SharedPref.setDayNightMode(false, getActivity());
+                        SharedPref.setDayNightActionClick(true, getActivity());
+                    }
+
+                }
+            }
+        });
+
 
         /*
 
@@ -745,6 +793,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         adverseSwitchButton.setChecked(isAdverseExcptn);
         deferralSwitchButton.setChecked(isDeferral);
         agricultureSwitchButton.setChecked(isAgricultureExcptn);
+        dayNightSwitchButton.setChecked(isDayNightMode);
 
         if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ){
             adverseCanadaExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
@@ -836,6 +885,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         }
 
         isAgricultureExcptn =   SharedPref.getAgricultureExemption(getActivity());
+        isDayNightMode =   SharedPref.getDayNightMode(getActivity());
     }
 
 
@@ -2717,7 +2767,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
             Log.d("dialog", "dialog is showing" );
         }else {
             closeDialogs();
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
             alertDialogBuilder.setTitle(getString(R.string.enable_excp));
             String message = "<font color='#555555'><b>Note: </b></font>" + getString(R.string.haul_excp_reset_auto) + "<br/> <br/>" + getString(R.string.continue_haul_exception) ;
             alertDialogBuilder.setMessage(Html.fromHtml(message));

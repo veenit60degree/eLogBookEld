@@ -891,7 +891,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     SharedPref.setVehilceMovingStatus(false, getApplicationContext());
 
+                String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
+                if (savedDate.length() == 0 && Double.parseDouble(currentHighPrecisionOdometer) > 0) {
+                    savedDate = global.GetCurrentDateTime();
+                    SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
                 }
+                callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, -1);
+
+            }
 
             if(constants.isValidVinFromObd(ignitionStatus, getApplicationContext()) == false &&
                     SharedPref.IsWrongVinAlertView(getApplicationContext()) == false) {

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.constants.Constants;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
 
@@ -46,7 +47,11 @@ public class CanDotDutyStatusAdapter extends RecyclerView.Adapter<CanDotDutyStat
 
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
-        holder.dutyStatusDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            holder.dutyStatusDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
+        }else{
+            holder.dutyStatusDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
+        }
 
         String EventDateTime = itemsList.get(position).getDateTimeWithMins();
         try {

@@ -25,6 +25,7 @@ import com.constants.ConstantsEnum;
 import com.google.android.material.textfield.TextInputLayout;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.DriverLocationModel;
 
 import java.util.ArrayList;
@@ -144,6 +145,9 @@ public class AdverseRemarksDialog extends Dialog {
             String desc = "<font color='#555555'><b>Note: </b></font>" + getContext().getResources().getString(R.string.reason_for_adverse_excptn_desc) ;
             descTextView.setText(Html.fromHtml(desc));
             descTextView.setTextColor(getContext().getResources().getColor(R.color.gray_text));
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                descTextView.setTextColor(getContext().getResources().getColor(R.color.white));
+            }
             desc2TxtView.setText(". " + getContext().getResources().getString(R.string.excp_reset_auto));
             descTextView.setVisibility(View.VISIBLE);
             desc2TxtView.setVisibility(View.VISIBLE);

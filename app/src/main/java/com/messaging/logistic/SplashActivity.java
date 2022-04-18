@@ -103,6 +103,12 @@ public class SplashActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            this.setTheme(R.style.DarkTheme);
+        } else {
+            this.setTheme(R.style.LightTheme);
+        }
         setContentView(R.layout.splash_activity);
 
         constants = new Constants();
@@ -134,10 +140,10 @@ public class SplashActivity extends Activity implements
         IsTablet    = Globally.isTablet(this);
 
         // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
-        if(UILApplication.getInstance().isNightModeEnabled()){
-            splashMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
-            splashLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
-        }
+//        if(UILApplication.getInstance().isNightModeEnabled()){
+//            splashMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
+//            splashLay.setBackgroundColor(getResources().getColor(R.color.gray_background));
+//        }
 
         SharedPref.setLoginAllowedStatus(true, getApplicationContext());
         SharedPref.setNotiShowTime("", getApplicationContext());

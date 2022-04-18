@@ -33,6 +33,7 @@ import com.constants.SharedPref;
 import com.constants.TcpClient;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.wifi.settings.WiFiConfig;
 
 import org.json.JSONObject;
@@ -91,6 +92,13 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         try {
             rootView = inflater.inflate(R.layout.fragment_obd_diagnose, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -445,7 +453,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     public void ObdDialog(){
 
         try {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
             alertDialogBuilder.setTitle("Reset OBD !!");
             alertDialogBuilder.setMessage("Do you really want to reset the OBD device?");
 
@@ -470,6 +478,12 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             saveJobAlertDialog = alertDialogBuilder.create();
             vectorDialogs.add(saveJobAlertDialog);
             saveJobAlertDialog.show();
+
+            if(UILApplication.getInstance().isNightModeEnabled()) {
+                saveJobAlertDialog.getWindow().setBackgroundDrawableResource(R.color.layout_color_dot);
+                saveJobAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.white));
+                saveJobAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.white));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

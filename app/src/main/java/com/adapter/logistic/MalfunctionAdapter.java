@@ -30,6 +30,7 @@ import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.messaging.logistic.fragment.MalfncnDiagnstcViewPager;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
@@ -142,13 +143,21 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             LinearLayout malfunctionChildLay = (LinearLayout)convertView.findViewById(R.id.malfunctionChildLay);
             if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).size() -1 ) {
                 if(DriverId.equals("0")){
-                    malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                    if(UILApplication.getInstance().isNightModeEnabled()) {
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_dark_gray));
+                    }else{
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                    }
                 }else {
                     malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
                 }
             }else{
                 if(DriverId.equals("0")){
-                    malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                    if(UILApplication.getInstance().isNightModeEnabled()) {
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_dark_gray));
+                    }else{
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                    }
                 }else {
                     malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
                 }
@@ -298,8 +307,14 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             holder.vehMilesMalTxtVw.setText(_context.getResources().getString(R.string.vehKm));
         }
 
-        holder.malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.blue_button));
-        holder.malfunctionChildMainLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            holder.malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.unselect));
+            holder.malfunctionChildMainLay.setBackgroundColor(_context.getResources().getColor(R.color.unselect_button));
+        }else{
+            holder.malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.blue_button));
+            holder.malfunctionChildMainLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
+        }
+
 
         int sizePadding =  constants.intToPixel(_context, 5);
         int sizeMargin =  constants.intToPixel(_context, 10);

@@ -20,6 +20,7 @@
             android:layout_marginRight="@dimen/margin_short_1"
             android:layout_marginLeft="@dimen/margin_short_1"
             android:background="@drawable/white_top_rectangle"
+            android:backgroundTint="?attr/layout_color_dot"
             >
 
             <TextView
@@ -29,7 +30,7 @@
                 android:text="@string/Limited_ELD_Connection"
                 android:textSize="@dimen/text_size_21"
                 android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:paddingLeft="@dimen/margin_10"
                 android:layout_marginTop="@dimen/margin_short_8"
                 android:layout_marginBottom="@dimen/margin_12"
@@ -67,7 +68,7 @@
                 android:layout_toRightOf="@+id/errorImgEcm"
                 android:paddingLeft="@dimen/margin_11"
                 android:text="@string/limited_ecm_desc_new"
-                android:textColor="@color/splash_gray"
+                android:textColor="?attr/splash_gray"
                 android:textSize="@dimen/text_size_17" />
 
 
@@ -78,7 +79,7 @@
                 android:text="@string/ok"
                 android:textSize="@dimen/text_size_18"
                 android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:layout_marginTop="@dimen/margin_short_3"
                 android:layout_below="@+id/limitedConnDescTxtView"
                 android:layout_alignParentRight="true"

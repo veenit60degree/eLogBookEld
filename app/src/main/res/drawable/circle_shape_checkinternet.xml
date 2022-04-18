@@ -4,7 +4,7 @@
     android:shape="oval">
 
     <solid
-        android:color="#EAEEFB"/>
+        android:color="?attr/circle_shorthaul_color"/>
     <corners
         android:radius="@dimen/margin_short_6"
         />

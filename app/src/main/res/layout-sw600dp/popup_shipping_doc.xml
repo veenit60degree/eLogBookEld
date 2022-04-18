@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/white_full_border"
     android:padding="@dimen/margin_10"
+    android:backgroundTint="?attr/layout_color_dot"
     >
 
     <LinearLayout
@@ -13,7 +14,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/white_full_border"
         android:padding="@dimen/margin_short_9"
-
+        android:backgroundTint="?attr/layout_color_dot"
         >
 
 
@@ -23,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ShippingDocNumber"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:textStyle="bold"
             android:textSize="@dimen/text_size_22"
             android:gravity="center"
@@ -45,14 +46,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/bl_or_trip_no"
-
+            android:textColorHint="?attr/textColor"
             >
 
             <com.constants.CustomEditText
                 android:id="@+id/shipperNoEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black_hover"
+                android:textColor="?attr/textColor"
                 android:layout_centerVertical="true"
                 android:textSize="@dimen/text_size_18"
                 android:gravity="center_vertical"
@@ -83,13 +84,14 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/ShippingName"
                 android:layout_weight="1"
+                android:textColorHint="?attr/textColor"
                 >
 
                 <com.constants.CustomEditText
                     android:id="@+id/shipperNameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black_hover"
+                    android:textColor="?attr/textColor"
                     android:layout_centerVertical="true"
                     android:textSize="@dimen/text_size_18"
                     android:gravity="center_vertical"
@@ -114,13 +116,14 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/Commodity"
                 android:layout_weight="1"
+                android:textColorHint="?attr/textColor"
                 >
 
                 <com.constants.CustomEditText
                     android:id="@+id/commodityEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black_hover"
+                    android:textColor="?attr/textColor"
                     android:layout_centerVertical="true"
                     android:textSize="@dimen/text_size_18"
                     style="@style/AppTheme.EditTextBlue"
@@ -157,13 +160,14 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/From"
                 android:layout_weight="1"
+                android:textColorHint="?attr/textColor"
                 >
 
                 <com.constants.CustomEditText
                     android:id="@+id/shipperStateEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black_hover"
+                    android:textColor="?attr/textColor"
                     android:layout_centerVertical="true"
                     android:textSize="@dimen/text_size_18"
                     android:gravity="center_vertical"
@@ -186,13 +190,14 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/too"
                 android:layout_weight="1"
+                android:textColorHint="?attr/textColor"
                 >
 
                 <com.constants.CustomEditText
                     android:id="@+id/shipperPostalEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black_hover"
+                    android:textColor="?attr/textColor"
                     android:layout_centerVertical="true"
                     android:textSize="@dimen/text_size_18"
                     android:gravity="center_vertical"
@@ -239,7 +244,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/HomeTerminal"
                 android:textStyle="bold"
-                android:textColor="@color/bluee_login"
+                android:textColor="?attr/color_eld_bg"
                 android:textSize="@dimen/text_size_19"
                 android:layout_marginRight="@dimen/margin_10"
                 />
@@ -249,7 +254,7 @@
                 android:id="@+id/shipperAddressEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black_hover"
+                android:textColor="?attr/textColor"
                 android:layout_centerVertical="true"
                 android:textSize="@dimen/text_size_17"
                 android:gravity="center_vertical"
@@ -285,7 +290,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/OfficeAddress"
                 android:textStyle="bold"
-                android:textColor="@color/bluee_login"
+                android:textColor="?attr/color_eld_bg"
                 android:textSize="@dimen/text_size_19"
                 android:layout_marginRight="@dimen/margin_10"
                 />
@@ -295,7 +300,7 @@
                 android:id="@+id/shipperCityEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black_hover"
+                android:textColor="?attr/textColor"
                 android:layout_centerVertical="true"
                 android:textSize="@dimen/text_size_17"
                 android:gravity="center_vertical"
@@ -328,7 +333,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"
-                android:textColor="@color/bluee_login"
+                android:textColor="?attr/color_eld_bg"
                 android:textSize="@dimen/text_size_22"
                 android:padding="@dimen/margin_10"
                 android:gravity="center"
@@ -345,7 +350,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/save"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/textColor"
                 android:textSize="@dimen/text_size_22"
                 android:gravity="center"
                 android:padding="@dimen/margin_12"

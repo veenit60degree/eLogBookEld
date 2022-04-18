@@ -624,6 +624,8 @@
     <string name="Select">Select</string>
     <string name="welcome_to_als_realtime">Welcome to ALS Realtime</string>
     <string name="MainDriver">Main Driver</string>
+    <string name="StorageStatus">Storage Status</string>
+
 
     <string name="notification">Notifications</string>
     <string name="news_updates">News &amp; Updates</string>

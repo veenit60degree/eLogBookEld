@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.messaging.logistic.R;
+import com.messaging.logistic.UILApplication;
 import com.models.ShipmentModel;
 
 import java.util.List;
@@ -66,11 +67,19 @@ public class ShippingViewDetailAdapter  extends BaseAdapter {
             holder.shipperFromItemTV.setText(checkNullData(shippingModel.getFromAddress()));
             holder.shipperToItemTV.setText(checkNullData(shippingModel.getToAddress()));
 
-            holder.shipperNoItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
-            holder.commodityItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
-            holder.shipperNameItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
-            holder.shipperFromItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
-            holder.shipperToItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
+           if(UILApplication.getInstance().isNightModeEnabled()){
+               holder.shipperNoItemTV.setTextColor(mContext.getResources().getColor(R.color.white));
+               holder.commodityItemTV.setTextColor(mContext.getResources().getColor(R.color.white));
+               holder.shipperNameItemTV.setTextColor(mContext.getResources().getColor(R.color.white));
+               holder.shipperFromItemTV.setTextColor(mContext.getResources().getColor(R.color.white));
+               holder.shipperToItemTV.setTextColor(mContext.getResources().getColor(R.color.white));
+            }else{
+               holder.shipperNoItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
+               holder.commodityItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
+               holder.shipperNameItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
+               holder.shipperFromItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
+               holder.shipperToItemTV.setTextColor(mContext.getResources().getColor(R.color.black_theme));
+           }
 
             holder.shipperNoItemTV.setTypeface(Typeface.DEFAULT);
             holder.commodityItemTV.setTypeface(Typeface.DEFAULT);

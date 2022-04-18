@@ -12,7 +12,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/view_height_54"
-        android:background="@color/color_eld_bg"
+        android:background="?attr/actionbar_color"
         >
 
 
@@ -29,7 +29,7 @@
                 android:paddingLeft="@dimen/margin_short_8"
                 android:paddingRight="@dimen/margin_15"
                 android:background="@drawable/green_with_corner_drawable"
-
+                android:backgroundTint="?attr/actionbar_color"
 
                 >
             <ImageView
@@ -76,7 +76,7 @@
                 android:layout_toRightOf="@+id/eldCodeTV"
                 android:layout_marginLeft="@dimen/margin_10"
                 android:visibility="gone"
-
+                android:backgroundTint="?attr/actionbar_color"
                 >
 
                 <ImageView
@@ -102,7 +102,7 @@
                 android:background="@drawable/green_with_corner_drawable"
                 android:gravity="center_horizontal"
                 android:visibility="gone"
-
+                android:backgroundTint="?attr/actionbar_color"
                 >
 
                 <ImageView
@@ -207,7 +207,7 @@
         android:layout_toLeftOf="@+id/rightCornerLay"
         android:padding="@dimen/margin_short_6"
         android:visibility="gone"
-
+        android:backgroundTint="?attr/actionbar_color"
         >
 
         <ImageView
@@ -249,6 +249,7 @@
         android:layout_alignParentEnd="true"
         android:background="@drawable/green_with_corner_drawable"
         android:paddingBottom="@dimen/margin_short_1"
+        android:backgroundTint="?attr/actionbar_color"
         >
 
 
@@ -289,6 +290,7 @@
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/green_with_corner_drawable"
                 android:visibility="gone"
+                android:backgroundTint="?attr/actionbar_color"
                 >
 
                 <ImageView

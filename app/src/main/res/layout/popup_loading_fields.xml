@@ -16,6 +16,7 @@
         android:orientation="vertical"
         android:background="@drawable/voilet_border"
         android:padding="@dimen/margin_15"
+        android:backgroundTint="?attr/layout_color_dot"
         >
 
 
@@ -26,7 +27,7 @@
             android:text="@string/driver_confirmation"
             android:gravity="center_horizontal"
             android:textSize="@dimen/text_size_19"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/color_eld_theme"
             android:textStyle="bold"
             android:paddingBottom="@dimen/margin_short_8"
             android:paddingLeft="@dimen/view_height_50"
@@ -52,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/TRACTOR_pop"
-                android:textColor="@color/color_eld_theme"
+                android:textColor="?attr/color_eld_theme"
                 android:textSize="@dimen/text_size_16"
                 android:textStyle="bold"
                 android:layout_marginRight="@dimen/margin_13"
@@ -95,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/TRAILER_pop"
-                android:textColor="@color/color_eld_theme"
+                android:textColor="?attr/color_eld_theme"
                 android:textSize="@dimen/text_size_16"
                 android:textStyle="bold"
                 android:layout_marginRight="@dimen/margin_10"

@@ -37,7 +37,7 @@
             android:layout_marginBottom="@dimen/margin_short_8"
             android:textSize="@dimen/text_size_28"
             android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
 
             />
 
@@ -81,16 +81,18 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:textColorHint="?attr/textColor"
+                >
 
                 <com.constants.CustomEditText
                 android:id="@+id/coDriverUserNameText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/co_driver_username"
-                android:textColorHint="@color/colorAccentTextHover"
+                android:textColorHint="?attr/color_login_view"
                 android:background="@color/transparent"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:paddingRight="@dimen/margin_10"
                 android:paddingLeft="@dimen/margin_short_8"
                 android:textSize="@dimen/text_size_24"
@@ -109,7 +111,7 @@
             android:id="@+id/userUnderLineView"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorPrimary"
+            android:background="?attr/colorPrimary"
             android:layout_below="@+id/loginLay"
             android:layout_marginLeft="@dimen/margin_12"
             android:layout_marginRight="@dimen/margin_12"
@@ -146,18 +148,20 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/passInputLay"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/colorAccent"
+                app:passwordToggleTint="?attr/textColor"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:textColorHint="?attr/textColor"
+                >
 
             <com.constants.CustomEditText
                 android:id="@+id/coDriverPasswordText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/co_driver_pass"
-                android:textColorHint="@color/colorAccentTextHover"
+                android:textColorHint="?attr/color_login_view"
                 android:background="@color/transparent"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:inputType="textPassword"
                 android:paddingRight="@dimen/margin_10"
                 android:paddingLeft="@dimen/margin_short_8"
@@ -203,7 +207,8 @@
                 app:passwordToggleEnabled="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:passwordToggleTint="@color/colorAccent"
+                app:passwordToggleTint="?attr/textColor"
+                android:textColorHint="?attr/textColor"
                 >
 
                 <com.constants.CustomEditText
@@ -212,7 +217,8 @@
                     android:layout_height="match_parent"
                     android:hint="@string/co_driver_pass"
                     android:background="@color/transparent"
-                    android:textColor="@color/colorPrimary"
+                    android:textColorHint="?attr/color_login_view"
+                    android:textColor="?attr/textColor"
                     android:inputType="textPassword"
                     android:paddingRight="@dimen/margin_10"
                     android:paddingLeft="@dimen/margin_short_8"
@@ -236,7 +242,7 @@
             android:id="@+id/passUnderLineView"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorPrimary"
+            android:background="?attr/colorPrimary"
             android:layout_below="@+id/passLay"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"

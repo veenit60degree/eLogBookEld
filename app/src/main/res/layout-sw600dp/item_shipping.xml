@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?attr/eld_gray_bg1"
 
     >
 
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:text="@string/bl_or_trip_no"
             android:textStyle="bold"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/color_eld_theme"
             android:textSize="@dimen/text_size_19"
             android:layout_marginRight="@dimen/margin_15"
             />
@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/ShipperName"
                     android:textStyle="bold"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_19"
                     android:layout_marginRight="@dimen/margin_15"
                     />
@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/Commodity"
                     android:textStyle="bold"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_19"
                     android:layout_marginRight="@dimen/margin_15"
                     />
@@ -164,7 +164,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/From"
                     android:textStyle="bold"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_19"
                     android:layout_marginRight="@dimen/margin_15"
                     />
@@ -195,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/to"
                     android:textStyle="bold"
-                    android:textColor="@color/color_eld_theme"
+                    android:textColor="?attr/color_eld_theme"
                     android:textSize="@dimen/text_size_19"
                     android:layout_marginRight="@dimen/margin_15"
                     />
@@ -234,7 +234,7 @@
             android:layout_height="wrap_content"
             android:text="@string/Edit"
             android:textStyle="bold"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/color_eld_theme"
             android:layout_alignParentRight="true"
             android:textSize="@dimen/text_size_18"
             android:padding="@dimen/margin_17"

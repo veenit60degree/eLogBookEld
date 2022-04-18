@@ -73,7 +73,6 @@ public class SignDialog extends Dialog {
             inkLinLay.setBackgroundColor(getContext().getResources().getColor(R.color.gray_background));
         }
 
-
     }
 
 

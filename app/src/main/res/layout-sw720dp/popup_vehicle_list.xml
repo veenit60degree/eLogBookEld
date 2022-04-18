@@ -26,6 +26,7 @@
         android:background="@drawable/voilet_border"
         android:padding="@dimen/margin_22"
       android:layout_centerVertical="true"
+        android:backgroundTint="?attr/layout_color_dot"
         >
 
 
@@ -43,7 +44,7 @@
                 android:text="@string/select_truck_from_list"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_22"
-                android:textColor="@color/black_hover"
+                android:textColor="?attr/textColor"
                 android:paddingBottom="@dimen/margin_short_8"
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
@@ -61,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/logout"
                 android:textSize="@dimen/text_size_19"
-                android:textColor="@color/black"
+                android:textColor="?attr/textColor"
                 android:layout_alignParentRight="true"
                 android:paddingRight="@dimen/margin_short_5"
                 android:paddingLeft="@dimen/margin_short_5"
@@ -83,7 +84,7 @@
             android:layout_height="wrap_content"
             android:text="@string/select_truck_to_changee"
             android:textSize="@dimen/text_size_21"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColor"
             android:layout_marginTop="@dimen/margin_23"
             android:layout_marginLeft="@dimen/margin_20"
             android:textStyle="bold"

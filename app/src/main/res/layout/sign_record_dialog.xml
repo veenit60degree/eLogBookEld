@@ -13,7 +13,7 @@
         android:layout_marginTop="@dimen/margin_15"
         android:paddingRight="@dimen/margin_10"
         app:cardCornerRadius="@dimen/margin_10"
-        app:cardBackgroundColor="@color/sign_record_bg"
+        app:cardBackgroundColor="?attr/sign_record_bg"
 
         >
 
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_40"
             android:layout_below="@+id/signRecordTitleTv"
-            android:background="@color/gray_updated_divider_color"
+            android:background="?attr/gray_updated_divider_color"
             android:paddingTop="@dimen/margin_short_2"
             android:paddingBottom="@dimen/margin_short_2"
             android:paddingLeft="@dimen/margin_short_5"
@@ -58,7 +58,7 @@
                 android:text="@string/select_all"
                 android:layout_marginLeft="@dimen/margin_10"
                 android:textSize="@dimen/text_size_16"
-                android:textColor="@color/color_eld_bg"
+                android:textColor="?attr/color_eld_bg"
                 android:button="@drawable/unidentified_checkbox_drawable"
                 android:paddingTop="@dimen/margin_short_1"
                 android:paddingLeft="@dimen/margin_short_3"
@@ -72,7 +72,7 @@
                 android:id="@+id/fromToDateTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black_hover"
+                android:textColor="?attr/textColor"
                 android:textStyle="bold"
                 android:textSize="@dimen/text_size_16"
                 android:layout_centerHorizontal="true"

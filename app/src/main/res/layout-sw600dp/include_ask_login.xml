@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?attr/bgColor"
+    >
 
 
   <!--  <ImageView
@@ -42,7 +44,7 @@
                 android:layout_marginTop="@dimen/view_height_40"
                 android:text="@string/login_with"
                 android:textSize="@dimen/text_size_23"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:textStyle="bold"
                 />
 
