@@ -317,14 +317,14 @@ public class    InspectionDetailView  extends Fragment {
 
         Constants.inspectionViewHeight = 0;
         try{
-            truckAdapter = new ViewInspectionGridAdapter(getActivity(),  TruckList);
+            truckAdapter = new ViewInspectionGridAdapter(getActivity(),  TruckList, false);
             truckGridView.setAdapter(truckAdapter);
         }catch (Exception e){
             e.printStackTrace();
         }
 
         try{
-            trailerAdapter = new ViewInspectionGridAdapter(getActivity(), TrailerList);
+            trailerAdapter = new ViewInspectionGridAdapter(getActivity(), TrailerList, false);
             trailerGridView.setAdapter(trailerAdapter);
         }catch (Exception e){
             e.printStackTrace();

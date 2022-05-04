@@ -343,31 +343,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 cycleCircularView.setSeekModeEnabled(false);
                 perShiftCurrentOnDutyCircularView.setSeekModeEnabled(false);
 
-                if(DRIVER_JOB_STATUS == DRIVING){
-                    hosPerShiftDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-                    hosPerDayDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-                    perShiftCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
-                    perDayCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
-                }else if(DRIVER_JOB_STATUS == ON_DUTY){
-                    hosPerShiftOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-                    hosPerDayOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-                    perShiftCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.white));
-                    perDayCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.white));
-                }else if(DRIVER_JOB_STATUS == OFF_DUTY){
-                    hosPerShiftBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-                    hosPerDayOffDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-                    breakCircularView.setRimColor(getResources().getColor(R.color.white));
-                    perDayCurrentOffDutyCircularView.setRimColor(getResources().getColor(R.color.white));
-                } else if(DRIVER_JOB_STATUS == SLEEPER){
-                    hosPerShiftBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-                    hosPerDayOffDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-                    breakCircularView.setRimColor(getResources().getColor(R.color.white));
-                    perDayCurrentOffDutyCircularView.setRimColor(getResources().getColor(R.color.white));
-                }
 
-
-
-
+                resetProgressBarUI();
                 CycleTimeCalculation(true);
                 setDataOnStatusView(DRIVER_JOB_STATUS);
                 getCycleHours();
@@ -501,6 +478,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             hosPerDayOnDutyCardView.setVisibility(View.VISIBLE);
             hosPerDayOffDutyCardView.setVisibility(View.VISIBLE);
             hosCycleCardView.setVisibility(View.VISIBLE);
+
+            resetProgressBarUI();
             CycleTimeCalculation(true);
             getCycleHours();
             setBreakProgress();
@@ -707,6 +686,34 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     }
 
 
+    private void resetProgressBarUI(){
+        if(DRIVER_JOB_STATUS == DRIVING){
+            hosPerShiftDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+            hosPerDayDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+            perShiftCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
+            perDayCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
+        }else if(DRIVER_JOB_STATUS == ON_DUTY){
+            hosPerShiftOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+            hosPerDayOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+            perShiftCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.white));
+            perDayCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.white));
+        }else if(DRIVER_JOB_STATUS == OFF_DUTY){
+            hosPerShiftBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+            hosPerDayOffDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+            breakCircularView.setRimColor(getResources().getColor(R.color.white));
+            perDayCurrentOffDutyCircularView.setRimColor(getResources().getColor(R.color.white));
+            breakCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+
+        } else if(DRIVER_JOB_STATUS == SLEEPER){
+            hosPerShiftBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+            hosPerDayOffDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+            breakCircularView.setRimColor(getResources().getColor(R.color.white));
+            perDayCurrentOffDutyCircularView.setRimColor(getResources().getColor(R.color.white));
+            breakCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+        }
+    }
+
+
     private void setBreakProgress(){
         try {
             if ((CycleId.equals(global.USA_WORKING_6_DAYS) || CycleId.equals(global.USA_WORKING_7_DAYS))) {
@@ -761,7 +768,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         }else {
 
-                int remainingTime = TotalOffDutyHour - UsedOffDutyHoursInt;
+               // int remainingTime = TotalOffDutyHour - UsedOffDutyHoursInt;
 //                if(remainingTime < 0){
 //                    remainingTime = 0;
 //                }else if(remainingTime > 120){

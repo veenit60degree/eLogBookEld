@@ -69,10 +69,9 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/download"
                     android:layout_centerInParent="true"
-                    android:tint="?attr/download_icon_color"
-                    />
+                    android:src="@drawable/download_downward"
+                    android:tint="?attr/download_icon_color" />
 
             </RelativeLayout>
 

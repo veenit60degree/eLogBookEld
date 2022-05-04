@@ -3272,6 +3272,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             }
                         }
 
+                    }else{
+                        String savedDate = SharedPref.getHighPrecesionSavedTime(getApplicationContext());
+                        if (savedDate.length() == 0 && Double.parseDouble(currentHighPrecisionOdometer) > 0) {
+                            savedDate = global.GetCurrentDateTime();
+                            SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, global.GetCurrentDateTime(), getApplicationContext());
+                        }
+
+                        callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate,
+                                SharedPref.getVINNumber(getApplicationContext()), global.GetCurrentDateTime(), -1, -1);
+
                     }
 
 
@@ -5607,8 +5617,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     case SaveMainDriverLogData:
                         BackgroundLocationService.IsAutoChange = false;
                         driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
+                        boolean IsDuplicateStatusAllowed = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
 
-                        if (driverLogArray.length() == 1) {
+                        if (driverLogArray.length() == 1 || !IsDuplicateStatusAllowed) {
                             ClearLogAfterSuccess(driver_id);
 
                             // save Co Driver Data is login with co driver
@@ -5619,18 +5630,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                  In api response we are clearing the entries and in between entry was skipped before upload to server.
                                 So to avoid this we are checking input length and current log length.*/
                             if(driverLogArray.length() == inputDataLength) {
-                                if (RePostDataCountMain > 1) {
+                                if (RePostDataCountMain > 1 || !IsDuplicateStatusAllowed) {
                                     ClearLogAfterSuccess(driver_id);
                                     RePostDataCountMain = 0;
                                 } else {
                                     saveActiveDriverData();
                                     RePostDataCountMain++;
 
-                                    constants.saveObdData("", "SaveLogApiCount: " +RePostDataCountMain, "",
+                                    /*constants.saveObdData("", "SaveLogApiCount: " +RePostDataCountMain, "",
                                             "-1", currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                                             "-1", obdEngineHours, "", "",
                                             DriverId, dbHelper, driverPermissionMethod, obdUtil);
-
+*/
 
                                 }
                             }else{
@@ -5641,12 +5652,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     saveActiveDriverData();
                                     RePostDataCountMain++;
 
-                                    constants.saveObdData("", "SaveLogApiCount: " +RePostDataCountMain, "",
+                                    /*constants.saveObdData("", "SaveLogApiCount: " +RePostDataCountMain, "",
                                             "-1", currentHighPrecisionOdometer, "", "", truckRPM, "-1",
                                             "-1", obdEngineHours, "", "",
                                             DriverId, dbHelper, driverPermissionMethod, obdUtil);
-
-
+*/
                                 }
                             }
                         }
@@ -5655,8 +5665,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                     case SaveCoDriverLogData:
+                        boolean IsDuplicateStatusAllow = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
 
-                        if(RePostDataCountCo > 1){
+                        if(RePostDataCountCo > 1 || !IsDuplicateStatusAllow){
                             ClearLogAfterSuccess(driver_id);
                             RePostDataCountCo = 0;
                         }else {

@@ -952,33 +952,50 @@ public class MalfunctionDiagnosticMethod {
                         String EventEndDateTime, DateTime driverZoneDate, Constants constants, Context context){
         if(!IsClearEvent) {
             if (DetectionDataEventCode.equals(Constants.MissingDataDiagnostic)) {
-               // SharedPref.saveLocDiagnosticStatus(true, driverZoneDate.toString(), EventDateTime, context);
-                constants.saveDiagnstcStatus(context, true);
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, context)) {   // check missing data dia permission
+                    constants.saveDiagnstcStatus(context, true);
+                }
             } else if (DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic)) {
-                SharedPref.savePowerMalfunctionOccurStatus(
-                        SharedPref.isPowerMalfunctionOccurred(context),
-                        true, EventEndDateTime, context);
-                constants.saveDiagnstcStatus(context, true);
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerDataDiag, context)) {   // check power dia permission
+                    SharedPref.savePowerMalfunctionOccurStatus(
+                            SharedPref.isPowerMalfunctionOccurred(context),
+                            true, EventEndDateTime, context);
+                    constants.saveDiagnstcStatus(context, true);
+                }
 
             } else if (DetectionDataEventCode.equals(Constants.EngineSyncDiagnosticEvent) ) {
-                SharedPref.saveEngSyncDiagnstcStatus(true, context);
-                constants.saveDiagnstcStatus(context, true);
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncDiag, context)) {    // check eng sync dia permission
+                    SharedPref.saveEngSyncDiagnstcStatus(true, context);
+                    constants.saveDiagnstcStatus(context, true);
+                }
 
             } else if (DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)) {
-                SharedPref.saveLocMalfunctionOccurStatus(true, driverZoneDate.toString(), EventDateTime, context);
-                constants.saveMalfncnStatus(context, true);
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PostioningComplMal, context)) {   // check position mal permission
+                    SharedPref.saveLocMalfunctionOccurStatus(true, driverZoneDate.toString(), EventDateTime, context);
+                    constants.saveMalfncnStatus(context, true);
+                }
+
             } else if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction)) {
-                SharedPref.savePowerMalfunctionOccurStatus(true,
-                        SharedPref.isPowerDiagnosticOccurred(context),
-                        EventEndDateTime, context);
-                constants.saveMalfncnStatus(context, true);
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerComplianceMal, context)) {   // check power mal permission
+                    SharedPref.savePowerMalfunctionOccurStatus(true,
+                            SharedPref.isPowerDiagnosticOccurred(context),
+                            EventEndDateTime, context);
+                    constants.saveMalfncnStatus(context, true);
+                }
+
             } else if (DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent)) {
-                SharedPref.saveEngSyncMalfunctionStatus(true, context);
-                constants.saveMalfncnStatus(context, true);
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncMal, context)) {     // check eng sync mal permission
+                    SharedPref.saveEngSyncMalfunctionStatus(true, context);
+                    constants.saveMalfncnStatus(context, true);
+                }
             }else if(DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)){
-                constants.saveDiagnstcStatus(context, true);
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.UnidentifiedDiag, context)) {      // check unidentified dia permission
+                    constants.saveDiagnstcStatus(context, true);
+                }
             } else if (DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction)) {
-                constants.saveMalfncnStatus(context, true);
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataRecComMal, context)) {     // check data rec mal permission
+                    constants.saveMalfncnStatus(context, true);
+                }
             }
         }
 

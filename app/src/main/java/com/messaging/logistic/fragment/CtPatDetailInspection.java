@@ -48,6 +48,8 @@ public class CtPatDetailInspection extends Fragment {
     ArrayList<String> TruckList, TrailerList,AgricultureList;
     ViewInspectionGridAdapter truckAdapter, trailerAdapter,agricultureAdapter;
 
+    boolean Clicked = false;
+
     String ArrivalSealNumber = "", DepartureSealNumber = "";
     String SecurityInspectionPersonName = "", ByteInspectionConductorSign = "";
     String FollowUpInspectionPersonName = "", ByteFollowUpConductorSign = "";
@@ -221,6 +223,7 @@ public class CtPatDetailInspection extends Fragment {
         TrailerList = ParseListData(savedInspectionModel.getTraiorIssueType());
         AgricultureList = ParseListData(savedInspectionModel.getAgricultureIssueType());
 
+
         if(TruckList.size() == 0){
             truckCtPatGridTitle.setVisibility(View.GONE);
             truckCtPatView.setVisibility(View.GONE);
@@ -237,28 +240,30 @@ public class CtPatDetailInspection extends Fragment {
 
         }
 
-        if(!AgricultureReason.equals("null")) {
+        if(!AgricultureReason.equals("null") && AgricultureReason.length() > 0) {
             agricutureReasonLay.setVisibility(View.VISIBLE);
             agricultureReasonCtPatView.setVisibility(View.VISIBLE);
+            AgricultureList.add(0,"Area of Inspection");
+            Clicked = true;
         }
 
 
         try{
-            truckAdapter = new ViewInspectionGridAdapter(getActivity(),  TruckList);
+            truckAdapter = new ViewInspectionGridAdapter(getActivity(),  TruckList,false);
             ctPatTruckGridVw.setAdapter(truckAdapter);
         }catch (Exception e){
             e.printStackTrace();
         }
 
         try{
-            trailerAdapter = new ViewInspectionGridAdapter(getActivity(), TrailerList);
+            trailerAdapter = new ViewInspectionGridAdapter(getActivity(), TrailerList,false);
             ctPatTrailerGridVw.setAdapter(trailerAdapter);
         }catch (Exception e){
             e.printStackTrace();
         }
 
         try{
-            agricultureAdapter = new ViewInspectionGridAdapter(getActivity(), AgricultureList);
+            agricultureAdapter = new ViewInspectionGridAdapter(getActivity(), AgricultureList,Clicked);
             ctPatAgricultureGridVw.setAdapter(agricultureAdapter);
         }catch (Exception e){
             e.printStackTrace();

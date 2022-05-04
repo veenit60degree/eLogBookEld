@@ -332,6 +332,15 @@ public class ConstantsKeys {
     public static String StartOdometerInKm              = "StartOdometerInKm";
     public static String EndOdometerInKm                = "EndOdometerInKm";
 
+    public static String UnidentifiedDiag               = "UnidentifiedDiag";
+    public static String IsDuplicateStatusAllowed       = "IsDuplicateStatusAllowed";
+    public static String MissingDataDiag                = "MissingDataDiag";
+    public static String DataTransferDiag               = "DataTransferDiag";
+    public static String DataTransferComplMal           = "DataTransferComplMal";
+    public static String DataRecComMal                  = "DataRecComMal";
+    public static String TimingCompMal                  = "TimingCompMal";
+
+
 
     public static String IsUnidentifiedCo               = "IsUnidentifiedCo";
     public static String IsMalfunctionCo                = "IsMalfunctionCo";

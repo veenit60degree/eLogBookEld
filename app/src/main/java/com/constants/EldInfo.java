@@ -9,6 +9,9 @@ public class EldInfo {
     // https://eld.alsrealtime.com/Home/ManualAndroidOBDAPK
     // http://develd.alsrealtime.com/Home/ManualAndroidOBDAPK
 
+
+
+
     /* -------- Upload OBD server updated APK to ALS server URL --------- */
     // http://eld.alsrealtime.com/Home/AndroidOBDAPK
 
@@ -31,5 +34,7 @@ public class EldInfo {
     // http://104.167.9.210:47654/
 
 
+    // ELD Task status google drive link
+    //https://docs.google.com/spreadsheets/d/1aaLXNqSzG9v4MCs0iBPtCSQoevjygMBkUCVIIfHyfQk/edit#gid=1221139531
 
 }

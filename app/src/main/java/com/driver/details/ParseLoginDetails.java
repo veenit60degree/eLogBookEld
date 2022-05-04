@@ -95,7 +95,7 @@ public class ParseLoginDetails {
                         }
 
 
-                       /* int stateListSize = 0;
+                        int stateListSize = 0;
                         if (!DriverSetting.isNull("States")) {
                             JSONArray stateJsonArray = new JSONArray(DriverSetting.getString("States"));
 
@@ -112,18 +112,22 @@ public class ParseLoginDetails {
                          //   Log.d("stateListSize", "state ListSize0: " + stateListSize);
 
                             if(stateListSize == 0) {
-                                ParseStateArray(stateJsonArray, resultCount, context);
+                                ParseStateArray(stateJsonArray, context);
                             }
                         }
-*/
+
                     }
 
                 }
 
-               /* if(!dataObj.isNull("DriverTripDetail")) {
+                if(!dataObj.isNull("DriverTripDetail")) {
                     JSONObject DriverTripDetail = new JSONObject(dataObj.getString("DriverTripDetail"));
-                    ParseDriverTripDetail(DriverTripDetail, resultCount, context);
-                }*/
+                    //ParseDriverTripDetail(DriverTripDetail, resultCount, context);
+
+                    SharedPref.setTrailorNumber(DriverTripDetail.getString(ConstantsKeys.Trailor), context);
+
+
+                }
 
              /*   if(!dataObj.isNull("DriverLogDetail")) {
                     JSONObject DriverLogDetail = new JSONObject(dataObj.getString("DriverLogDetail"));
@@ -327,7 +331,7 @@ public class ParseLoginDetails {
             if(!DriverLogDetail.isNull("EndingPoint"))
                 EndingPoint           = DriverLogDetail.getString("EndingPoint");
 
-            if(!DriverLogDetail.isNull("DriverDetail"))
+            if(!DriverLogDetail.isNull("Remarks"))
                 Remarks           = DriverLogDetail.getString("Remarks");
 
             if(position == 0)

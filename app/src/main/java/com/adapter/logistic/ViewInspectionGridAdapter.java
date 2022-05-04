@@ -25,10 +25,12 @@ public class ViewInspectionGridAdapter extends BaseAdapter {
     private Context mContext;
     LayoutInflater mInflater;
     ArrayList<String> SelectedItemArray;
+    boolean clicked;
 
-    public ViewInspectionGridAdapter(Context c, ArrayList<String> selectedItemArray) {
+    public ViewInspectionGridAdapter(Context c, ArrayList<String> selectedItemArray,boolean checked) {
         mContext = c;
         SelectedItemArray = selectedItemArray;
+        clicked = checked;
         mInflater = LayoutInflater.from(mContext);
     }
 
@@ -71,7 +73,11 @@ public class ViewInspectionGridAdapter extends BaseAdapter {
         holder.inspectionTruckTV.setText(SelectedItemArray.get(position));
 
 // holder.inspectionItemLay.getLayoutParams().height;  //holder.inspectionItemLay.getHeight()
-        holder.checkboxInspection.setChecked(true);
+        if(clicked == true && position == 0){
+            holder.checkboxInspection.setChecked(false);
+        }else {
+            holder.checkboxInspection.setChecked(true);
+        }
         holder.checkboxInspection.setClickable(false);
 
         if(Constants.inspectionViewHeight == 0) {

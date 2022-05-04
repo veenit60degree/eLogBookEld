@@ -865,8 +865,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 									try {
 										global.DisConnectBleDevice(LoginActivity.this);
 										String CompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
-										malfunctionDiagnosticMethod.UnidentifiedLogoutRecordHelper(Integer.valueOf(CompanyId),
-												new DBHelper(getApplicationContext()), new JSONArray());
+										if(CompanyId.length() > 0) {
+											malfunctionDiagnosticMethod.UnidentifiedLogoutRecordHelper(Integer.valueOf(CompanyId),
+													new DBHelper(getApplicationContext()), new JSONArray());
+										}
 									}catch (Exception e){
 										e.printStackTrace();
 									}

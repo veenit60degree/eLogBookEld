@@ -536,8 +536,10 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                     followUpInspectionPersonName = inspectionItemObj.getString(ConstantsKeys.FollowUpInspectionPersonName);
                     affixedSealPersonName = inspectionItemObj.getString(ConstantsKeys.AffixedSealPersonName);
                     verificationPersonName = inspectionItemObj.getString(ConstantsKeys.VerificationPersonName);
-                    agricultureReason      = inspectionItemObj.getString(ConstantsKeys.AreaOfInspectionRemarks);
-                    conatinerIdentification = inspectionItemObj.getString(ConstantsKeys.ContainerIdentification);
+
+                    agricultureReason = constant.checkStringInJsonObj(inspectionItemObj,ConstantsKeys.AreaOfInspectionRemarks);
+                    conatinerIdentification = constant.checkStringInJsonObj(inspectionItemObj, ConstantsKeys.ContainerIdentification);
+
 
                     byteInspectionConductorSign = getByteImage(inspectionItemObj, ConstantsKeys.SecurityInspectionPersonSignature, ConstantsKeys.ByteInspectionConductorSign);
                     byteFollowUpConductorSign = getByteImage(inspectionItemObj, ConstantsKeys.FollowUpInspectionPersonSignature, ConstantsKeys.ByteFollowUpConductorSign);

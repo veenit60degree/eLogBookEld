@@ -24,9 +24,11 @@ public class CtPatAdapter extends BaseAdapter {
     LayoutInflater mInflater;
     ArrayList<String> SelectedItemNameArray;
     ArrayList<Integer> SelectedItemIdArray;
-    boolean IsChecked, IsClicked;
+    boolean IsChecked;
+    public boolean IsClicked;
 
-    public CtPatAdapter(Context c, boolean isChecked, boolean isSelectAllBtnClicked, List<PrePostModel> list, ArrayList<String> selectedItemArray, ArrayList<Integer> selectedItemIdArray) {
+    public CtPatAdapter(Context c, boolean isChecked, boolean isSelectAllBtnClicked, List<PrePostModel> list,
+                        ArrayList<String> selectedItemArray, ArrayList<Integer> selectedItemIdArray) {
         mContext = c;
         itemsArray = list;
         SelectedItemNameArray = selectedItemArray;

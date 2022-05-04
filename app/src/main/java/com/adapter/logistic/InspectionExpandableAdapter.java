@@ -192,14 +192,14 @@ public class InspectionExpandableAdapter extends BaseExpandableListAdapter {
             ArrayList<String> TrailerList = supportModel.getTrailerList();
 
             try{
-                truckAdapter = new ViewInspectionGridAdapter(_context,  TruckList);
+                truckAdapter = new ViewInspectionGridAdapter(_context,  TruckList, false);
                 holder.truckGridView.setAdapter(truckAdapter);
             }catch (Exception e){
                 e.printStackTrace();
             }
 
             try{
-                trailerAdapter = new ViewInspectionGridAdapter(_context, TrailerList);
+                trailerAdapter = new ViewInspectionGridAdapter(_context, TrailerList, false);
                 holder.trailerGridView.setAdapter(trailerAdapter);
             }catch (Exception e){
                 e.printStackTrace();

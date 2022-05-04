@@ -718,35 +718,32 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     // check Unidentified event occurrence
     private void checkUnIdentifiedDiagnosticEvent(int speed, boolean isVehicleInMotion){
         try{
-            boolean isUnidentifiedDiaEvent = SharedPref.isUnidentifiedDiaEvent(getApplicationContext());
-            if (!isUnidentifiedDiaEvent) {
-                if(CompanyId.length() > 0) {
-                    boolean isVehicleMotionChanged = malfunctionDiagnosticMethod.isVehicleMotionChanged(isVehicleInMotion,
-                            Integer.parseInt(CompanyId), dbHelper);
+            // check unidentified dia permission status
+            if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.UnidentifiedDiag, getApplicationContext())) {
 
-                    if (isVehicleMotionChanged) {
-                        malfunctionDiagnosticMethod.saveVehicleMotionChangeTime(speed, Integer.parseInt(CompanyId), dbHelper);
+                boolean isUnidentifiedDiaEvent = SharedPref.isUnidentifiedDiaEvent(getApplicationContext());
+                if (!isUnidentifiedDiaEvent) {
+                    if (CompanyId.length() > 0) {
+                        boolean isVehicleMotionChanged = malfunctionDiagnosticMethod.isVehicleMotionChanged(isVehicleInMotion,
+                                Integer.parseInt(CompanyId), dbHelper);
+
+                        if (isVehicleMotionChanged) {
+                            malfunctionDiagnosticMethod.saveVehicleMotionChangeTime(speed, Integer.parseInt(CompanyId), dbHelper);
+                        }
                     }
 
-                    /*constants.saveObdData(constants.getObdSource(getApplicationContext()), "UnIdentified Diagnostic event: " +
-                                    malfunctionDiagnosticMethod.getUnidentifiedLogoutArray(Integer.parseInt(CompanyId), dbHelper).toString(),
-                            "", "-1",  currentHighPrecisionOdometer, "", ignitionStatus, truckRPM,
-                            "-1","-1", EngineSeconds, "", "",
-                            "0", dbHelper, driverPermissionMethod, obdUtil);
-                    */
+                } else {
+
+                    DateTime StartDateTime = Globally.getDateTimeObj(SharedPref.getUnidentifiedDiaOccTime(getApplicationContext()), false);
+                    DateTime EndDateTime = Globally.GetCurrentUTCDateTime();
+                    long eventDuration = Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
+
+                    long dayInMin = 1440;
+                    if (eventDuration > dayInMin) {   // after 24 hour event will be occurred again
+                        SharedPref.saveUnidentifiedEventStatus(false, "", getApplicationContext());
+                    }
+
                 }
-
-            } else {
-
-                DateTime StartDateTime = Globally.getDateTimeObj(SharedPref.getUnidentifiedDiaOccTime(getApplicationContext()), false);
-                DateTime EndDateTime = Globally.GetCurrentUTCDateTime();
-                long eventDuration = Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
-
-                long dayInMin = 1440;
-                if (eventDuration > dayInMin) {   // after 24 hour event will be occurred again
-                    SharedPref.saveUnidentifiedEventStatus(false, "", getApplicationContext());
-                }
-
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1927,16 +1924,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             UnidentifiedApiInProgress = true;
             SaveUpdateUnidentifiedApi.PostDriverLogData(unPostedLogArray, APIs.ADD_UNIDENTIFIED_RECORD, Constants.SocketTimeout20Sec,
                     SaveUnidentifiedEvent);
-
-          /*  constants.saveObdData(constants.getObdSource(getApplicationContext()), "UnIdentified Event Occurred",
-                    unPostedLogArray.toString(), currentHighPrecisionOdometer,
-                    currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "-1",
-                    "", EngineSeconds, global.GetCurrentDateTime(), "",
-                    "0", dbHelper, driverPermissionMethod, obdUtil);
-*/
-
         }
-      //  constants.saveTempUnidentifiedLog(unPostedLogArray.toString(), obdUtil);
     }
 
 
@@ -2161,7 +2149,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         boolean isEventOccurred = false;
         try{
-            if(SharedPref.isPowerMalfunctionOccurred(getApplicationContext()) == false) {
+
+            if(SharedPref.isPowerMalfunctionOccurred(getApplicationContext()) == false ) {
                 isEventOccurred = true;
 
                 boolean isPowerCompMalAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerComplianceMal, getApplicationContext());

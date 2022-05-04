@@ -47,8 +47,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:tint="?attr/share_icon_color"
-                    android:src="@drawable/share" />
+                    android:src="@drawable/share"
+                    android:tint="?attr/share_icon_color" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -64,8 +64,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:tint="?attr/download_icon_color"
-                    android:src="@android:drawable/stat_sys_download" />
+                    android:padding="@dimen/margin_short_3"
+                    android:src="@drawable/download_downward"
+                    android:tint="?attr/download_icon_color" />
 
             </RelativeLayout>
 
@@ -84,8 +85,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:tint="?attr/view_icon_color"
-                    android:src="@drawable/view" />
+                    android:src="@drawable/view"
+                    android:tint="?attr/view_icon_color" />
 
             </RelativeLayout>
 

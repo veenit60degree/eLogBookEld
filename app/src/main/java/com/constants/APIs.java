@@ -19,7 +19,7 @@ public class APIs {
 
 
     static String ALS_DOMAIN_INDIAN_OPEN = "http://182.73.78.171:8952/api/LogisticsApi/";
-    static String ELD_DOMAIN_INDIAN_OPEN = "http://182.73.78.171:8954/api/ELDAPI/"; //8951
+    static String ELD_DOMAIN_INDIAN_OPEN = "http://182.73.78.171:8954/api/ELDAPI/"; //8954
 
     static String ALS_DOMAIN_INDIAN      = "http://192.168.0.10:8952/api/LogisticsApi/";       //  http://103.66.204.26
     static String ELD_DOMAIN_INDIAN      = "http://192.168.0.10:8251/api/ELDAPI/";             //http://182.73.78.171:8287
@@ -27,8 +27,8 @@ public class APIs {
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_INDIAN_OPEN ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_INDIAN_OPEN ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
     public static String LOGIN_DEMO 						= DOMAIN_URL_ALS + "LoginDemo";

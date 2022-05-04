@@ -33,6 +33,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.ConstantsEnum;
 import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
@@ -92,9 +93,9 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
     VolleyRequest GetCtPatInspRequest, ctPatInsp18DaysRequest;
     Map<String, String> params;
     Constants constant;
-    String  DRIVER_ID = "", VIN_NUMBER = "", DeviceId = "", CreatedDate = "", TruckIssueType = "", TraiorIssueType = "",AgricultureIssueType = "",
+    String  DRIVER_ID = "", VIN_NUMBER = "", DeviceId = "", CreatedDate = "", TruckIssueType = "", TraiorIssueType = "",
             CurrentCycleId = "", SelectedDatee = "";
-
+    String AgricultureIssueType = "101,103,104,105,106";
 
     String ArrivalSealNumber = "", DepartureSealNumber = "";
     String SecurityInspectionPersonName = "", ByteInspectionConductorSign = "";
@@ -195,7 +196,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
         ctPatTruckGridVw        = (GridView) view.findViewById(R.id.ctPatTruckGridVw);
         ctPatTrailerGridVw      = (GridView) view.findViewById(R.id.ctPatTrailerGridVw);
-        ctPatAgricultureGridVw      = (GridView) view.findViewById(R.id.ctPatAgricultureGridVw);
+        ctPatAgricultureGridVw  = (GridView) view.findViewById(R.id.ctPatAgricultureGridVw);
 
         conductedSecIV          = (ImageView) view.findViewById(R.id.conductedSecIV);
         followSecLayIV          = (ImageView) view.findViewById(R.id.followSecLayIV);
@@ -246,6 +247,9 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         }, 500);
 
 
+        agricultureAdapter = new CtPatAdapter(getActivity(), true, true, AgricultureInspList, AgricultureList, AgricultureIdList);
+        ctPatAgricultureGridVw.setAdapter(agricultureAdapter);
+
         // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
 //        if(UILApplication.getInstance().isNightModeEnabled()){
 //            scrollChildMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
@@ -277,6 +281,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         DriverName          = slideMenu.usernameTV.getText().toString();
         CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
         CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+
 
         EldTitleTV.setText(getResources().getString(R.string.ctPat));
         CreatedDate = Globally.GetCurrentDeviceDateTime();
@@ -354,21 +359,12 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                 AgricultureReason      = agricultureReasonEditText.getText().toString().trim();
                 ContainerIdentification = containerIdenEditText.getText().toString().trim();
 
-                if(constant.isActionAllowed(getContext())) {
+                if (SharedPref.getDriverStatusId(getActivity()).equals(Globally.ON_DUTY )) {
+                    if(constant.isActionAllowed(getContext())) {
 
-                    if(AgricultureIssueType.contains("101")) {
-                        if (ArrivalSealNumber.length() > 0 || DepartureSealNumber.length() > 0) {
-                            AgricultureReason = "null";
-                            SaveInspectionOfflineWithAPI();
-                        } else {
-                            //  inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
-                            // cityEditText.requestFocus();
-                            Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.arrival_departure_seal_number),
-                                    getResources().getColor(R.color.colorVoilation));
-                        }
-                    }else{
-                        if(AgricultureReason.length()> 0){
+                        if(AgricultureIssueType.contains("101")) {
                             if (ArrivalSealNumber.length() > 0 || DepartureSealNumber.length() > 0) {
+                                AgricultureReason = "null";
                                 SaveInspectionOfflineWithAPI();
                             } else {
                                 //  inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
@@ -377,14 +373,28 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                                         getResources().getColor(R.color.colorVoilation));
                             }
                         }else{
-                            Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.agriculture_unacceptable_reason),
-                                    getResources().getColor(R.color.colorVoilation));
+                            if(AgricultureReason.length()> 0){
+                                if (ArrivalSealNumber.length() > 0 || DepartureSealNumber.length() > 0) {
+                                    SaveInspectionOfflineWithAPI();
+                                } else {
+                                    //  inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
+                                    // cityEditText.requestFocus();
+                                    Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.arrival_departure_seal_number),
+                                            getResources().getColor(R.color.colorVoilation));
+                                }
+                            }else{
+                                Globally.EldScreenToast(ctPatInspectionBtn, getResources().getString(R.string.agriculture_unacceptable_reason),
+                                        getResources().getColor(R.color.colorVoilation));
+                            }
                         }
+                    }else{
+                        Globally.EldScreenToast(ctPatInspectionBtn, getString(R.string.stop_vehicle_alert),
+                                getResources().getColor(R.color.colorVoilation));
                     }
                 }else{
-                    Globally.EldScreenToast(ctPatInspectionBtn, getString(R.string.stop_vehicle_alert),
-                            getResources().getColor(R.color.colorVoilation));
+                    Globally.EldScreenToast(ctPatInspectionBtn, ConstantsEnum.CTPAT_SAVE_ONDUTY_ONLY, getResources().getColor(R.color.colorVoilation));
                 }
+
 
                 break;
 
@@ -419,6 +429,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
             case R.id.ctPatInspctTV:
 
+                agricultureAdapter.IsClicked = false;
                 TruckIssueType = "";      TraiorIssueType = ""; AgricultureIssueType = "";
 
                 TruckIssueType = GetItemsId(TruckList, TruckIdList);
@@ -652,16 +663,25 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         TrailerIdList = new ArrayList<>();
         AgricultureList = new ArrayList<>();
         AgricultureIdList = new ArrayList<>();
+        AgricultureInspList = new ArrayList<>();
+        // reset lists
+        TruckInspList = constant.CtPatTruckList();
+        TrailerInspList = constant.CtPatTrailerList();
+        AgricultureInspList = constant.CtPatAgricultureList();
 
         SetDataInList(TruckInspList, TruckList, TruckIdList);
         SetDataInList(TrailerInspList, TrailerList, TrailerIdList);
         SetDataInList(AgricultureInspList, AgricultureList, AgricultureIdList);
 
+
+
         truckAdapter = new CtPatAdapter(getActivity(), false, false, TruckInspList, TruckList, TruckIdList);
-        trailerAdapter = new CtPatAdapter(getActivity(), false, false, TrailerInspList, TrailerList, TrailerIdList);
-        agricultureAdapter = new CtPatAdapter(getActivity(), false, false, AgricultureInspList, AgricultureList, AgricultureIdList);
         ctPatTruckGridVw.setAdapter(truckAdapter);
+
+        trailerAdapter = new CtPatAdapter(getActivity(), false, false, TrailerInspList, TrailerList, TrailerIdList);
         ctPatTrailerGridVw.setAdapter(trailerAdapter);
+
+        agricultureAdapter = new CtPatAdapter(getActivity(), true, true, AgricultureInspList, AgricultureList, AgricultureIdList);
         ctPatAgricultureGridVw.setAdapter(agricultureAdapter);
 
         arrivalContNoEditTxt.setText("");
@@ -677,6 +697,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         TraiorIssueType      = "";
         AgricultureIssueType = "";
         ContainerIdentification = "";
+       // AgricultureIssueType = "101,103,104,105,106";
 
         conductedSecIV.setBackgroundDrawable(null);
         followSecLayIV.setBackgroundDrawable(null);
@@ -688,6 +709,10 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         FollowUpInspectionPersonName = "";  ByteFollowUpConductorSign   = "";
         AffixedSealPersonName        = "";  ByteSealFixerSign           = "";
         VerificationPersonName       = "";  ByteSealVerifierSign        = "";
+        AgricultureReason = "";
+
+        agricutureReasonLay.setVisibility(View.GONE);
+        agricultureReasonCtPatView.setVisibility(View.GONE);
         AgricultureReason = "";
 
         ScrollUpView();
@@ -719,11 +744,10 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         SetDataInList(AgricultureInspList, AgricultureList, AgricultureIdList);
 
         truckAdapter = new CtPatAdapter(getActivity(), false, false, TruckInspList, TruckList, TruckIdList);
-        trailerAdapter = new CtPatAdapter(getActivity(), false, false, TrailerInspList, TrailerList, TrailerIdList);
-        agricultureAdapter = new CtPatAdapter(getActivity(), true, true, AgricultureInspList, AgricultureList, AgricultureIdList);
         ctPatTruckGridVw.setAdapter(truckAdapter);
+
+        trailerAdapter = new CtPatAdapter(getActivity(), false, false, TrailerInspList, TrailerList, TrailerIdList);
         ctPatTrailerGridVw.setAdapter(trailerAdapter);
-        ctPatAgricultureGridVw.setAdapter(agricultureAdapter);
 
         final int truckViewCount      = TruckInspList.size() / 2 + TruckInspList.size() % 2;
         final int trailerViewCount    = TrailerInspList.size() / 2 + TrailerInspList.size() % 2;
@@ -797,13 +821,14 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                 DriverName, CompanyId, EldFragment.VehicleId, VIN_NUMBER,
                 SharedPref.getTruckNumber(getActivity()), SharedPref.getTrailorNumber(getActivity()), CreatedDate,
                 ArrivalSealNumber , DepartureSealNumber, SecurityInspectionPersonName , FollowUpInspectionPersonName,
-                AffixedSealPersonName , VerificationPersonName, Globally.LATITUDE, Globally.LONGITUDE, TruckIssueType, TraiorIssueType,
-                ByteInspectionConductorSign, ByteFollowUpConductorSign, ByteSealFixerSign, ByteSealVerifierSign,AgricultureIssueType,
-                AgricultureReason, ContainerIdentification );
+                AffixedSealPersonName , VerificationPersonName, Globally.LATITUDE, Globally.LONGITUDE, TruckIssueType,
+                TraiorIssueType, ByteInspectionConductorSign, ByteFollowUpConductorSign, ByteSealFixerSign,
+                ByteSealVerifierSign, AgricultureIssueType,  AgricultureReason, ContainerIdentification );
 
         // Add inspection JSON obj in 18 Days Array
         JSONArray reverseArray = shipmentHelperMethod.ReverseArray(inspection18DaysArray);
-        JSONObject inspectionFor18DaysObj = ctPatInspectionMethod.AddCtPat18DaysObj(inspectionData, TruckList, TruckIdList, TrailerList, TrailerIdList,AgricultureList,AgricultureIdList);
+        JSONObject inspectionFor18DaysObj = ctPatInspectionMethod.AddCtPat18DaysObj(inspectionData, TruckList, TruckIdList,
+                TrailerList, TrailerIdList, AgricultureList, AgricultureIdList);
         reverseArray.put(inspectionFor18DaysObj);
 
         // again reverse Array to show last item at top
@@ -833,7 +858,6 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
             },1200);
 
         }
-
 
 
     }

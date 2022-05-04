@@ -36,16 +36,18 @@ public class ConstantsEnum {
     public static String EDIT_LOG_REASON_ALERT    = "Enter minimum 4 char for Edit Log reason";
     public static String PROPER_REASON_MAX_ALERT  = "Maximum char for personal use reason are 160";
     public static String YARD_MOVE_MAX_DESC       = "Maximum char for Yard Move description are 160";
-    public static String SELECT_TRAILER_ALERT = "Please enter Trailer Number";
-    public static String CHANGE_TRAILER_ALERT = "Please enter different Trailer Number to switch the trailer";
-    public static String StrTruckAttachedTxt  = "We can't see any truck attached with you. Please contact with your support team";
-    public static String No_TRAILER_ALERT     = "You can not select (Trailer Drop) reason when there is no trailer attached";
-    public static String No_PICKUP_ALERT      = ". So can not pick another trailer. You can change your trailer with (Trailer Switch) option";  //
-    public static String ALREADY_ATTACHED     = "You already have a trailer";
-    public static String TRUCK_CHANGE         = "Sorry, you can't change the truck while driving or vehicle is moving";
-    public static String TRAILER_CHANGE       = "Sorry, you can't change the trailer while driving or vehicle is moving";
-    public static String HOS_NOT_REFRESHED    = "ELD Cycle/Shift time is updated but driver miles and locations can not not updated due to network issue";
-    public static String UPDATED              = "HOS view updated";
+    public static String SELECT_TRAILER_ALERT   = "Please enter Trailer Number";
+    public static String CHANGE_TRAILER_ALERT   = "Please enter different Trailer Number to switch the trailer";
+    public static String StrTruckAttachedTxt    = "We can't see any truck attached with you. Please contact with your support team";
+    public static String No_TRAILER_ALERT       = "You can not select (Trailer Drop) reason when there is no trailer attached";
+    public static String No_PICKUP_ALERT        = ". So can not pick another trailer. You can change your trailer with (Trailer Switch) option";  //
+    public static String ALREADY_ATTACHED       = "You already have a trailer";
+    public static String TRUCK_CHANGE           = "Sorry, you can't change the truck while driving or vehicle is moving";
+    public static String TRAILER_CHANGE         = "Sorry, you can't change the trailer while driving or vehicle is moving";
+    public static String PTI_SAVE_ONDUTY_ONLY   = "You can save PTI only in OnDuty status.";
+    public static String CTPAT_SAVE_ONDUTY_ONLY = "You can save Ct-Pat only in OnDuty status.";
+    public static String HOS_NOT_REFRESHED      = "ELD Cycle/Shift time is updated but driver miles and locations can not not updated due to network issue";
+    public static String UPDATED                = "HOS view updated";
 
     public static String CANADA_MINIMUM_OFFDUTY_HOURS_VIOLATION = "CANADA MINIMUM OFF DUTY HOURS VIOLATION;";
 

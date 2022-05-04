@@ -2134,6 +2134,41 @@ public class SharedPref {
     }
 
 
+    // Save others malfunction/Diagnostic status
+    public static void saveOtherMalDiaStatus( boolean UnidentifiedDiag, boolean IsDuplicateStatusAllowed, boolean DataTransferDiag,
+                                                   boolean MissingDataDiag, boolean DataTransferComplMal,  boolean DataRecComMal,
+                                                   boolean TimingCompMal, Context context) {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putBoolean(ConstantsKeys.UnidentifiedDiag, UnidentifiedDiag);
+        editor.putBoolean(ConstantsKeys.IsDuplicateStatusAllowed, IsDuplicateStatusAllowed);
+        editor.putBoolean(ConstantsKeys.DataTransferDiag, DataTransferDiag);
+
+        editor.putBoolean(ConstantsKeys.MissingDataDiag, MissingDataDiag);
+        editor.putBoolean(ConstantsKeys.DataTransferComplMal, DataTransferComplMal);
+
+        editor.putBoolean(ConstantsKeys.DataRecComMal, DataRecComMal);
+        editor.putBoolean(ConstantsKeys.TimingCompMal, TimingCompMal);
+
+
+        editor.commit();
+    }
+
+
+    // Get others malfunction/Diagnostic status -------------------
+    public static boolean GetOtherMalDiaStatus(String key,  Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(key, false);
+        }else {
+            return false;
+        }
+    }
+
+
+
     // Save particular malfunction/Diagnostic status
     public static void saveParticularMalDiaStatus( boolean PowerComplianceMal, boolean EnginSyncMal, boolean PostioningComplMal,
                                                    boolean PowerDataDiag, boolean EnginSyncDiag, Context context) {

@@ -2242,8 +2242,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 endHour     = endDate.getHours() * 60;
                 endMin      = endDate.getMinutes();
 
-                if( driverLogJsonArray.length() == 1) {
-                    long diff = global.DateDifference(startDate, endDate);
+                if( driverLogJsonArray.length() > 0) {
+                    long diff =  constants.getDayDiff(startDateTime, endDateTime); //global.DateDifference(startDate, endDate);
                     if (diff > 0 && endDate.getHours() == 0) {
                         endHour = 24 * 60;
                     }
@@ -2914,8 +2914,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     private void saveMissingDiagnostic(String remarks, String type){
         try {
             boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
+            boolean IsAllowMissingDataDiagnostic = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, getActivity());
 
-            if(!isExemptDriver && !isMissingEventAlreadyWithStatus) {
+            if(IsAllowMissingDataDiagnostic && !isMissingEventAlreadyWithStatus && !isExemptDriver ) {
+
                 // save malfunction occur event to server with few inputs
                 JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
                         DRIVER_ID, DeviceId, SharedPref.getVINNumber(getActivity()),

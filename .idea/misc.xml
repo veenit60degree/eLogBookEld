@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DesignSurface">
-    <option name="filePathToZoomLevelMap">
-      <map>
-        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/fragment_certify_log.xml" value="0.162109375" />
-        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/popup_datepicker.xml" value="0.244140625" />
-        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/fragment_certify_log.xml" value="0.1" />
-        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/popup_datepicker.xml" value="0.1" />
-        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/fragment_certify_log.xml" value="0.1" />
-        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/popup_datepicker.xml" value="0.13020833333333334" />
-      </map>
-    </option>
-  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

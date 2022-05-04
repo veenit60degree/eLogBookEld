@@ -981,21 +981,19 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         //---------------- temp delete last item code ---------------
 
-       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               try {
                     driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                     driverLogArray.remove(driverLogArray.length()-1);
-                    driverLogArray.remove(driverLogArray.length()-1);
-                  driverLogArray.remove(driverLogArray.length()-1);
-                  driverLogArray.remove(driverLogArray.length()-1);
-                  driverLogArray.remove(driverLogArray.length()-1);
-                    hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray); // saving in db after updating the array
+                //  driverLogArray.remove(driverLogArray.length()-1);
+
+                  hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray); // saving in db after updating the array
                 } catch (Exception e) {
                     e.printStackTrace();
                     driverLogArray = new JSONArray();
                 }
-            }
-*/
+            }*/
+
 
         SetDataInView();
         IsLogShown = false;
@@ -1038,22 +1036,26 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         confirmDeferralRuleDays();
 
         if(VIN_NUMBER.length() > 0) {
-            boolean isStorageMalfunction = malfunctionDiagnosticMethod.isStorageMalfunction(dbHelper, getActivity());
-            int AvailableStorageSpace = constants.getAvailableSpace();
-            if (AvailableStorageSpace <= 200 && !isStorageMalfunction) {    // 200 mb
-                Constants.isStorageMalfunctionEvent = true;
-                SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
-                startService();
-            } else {
-                if(isStorageMalfunction) {
-                    boolean isStorageMal24HrOld = malfunctionDiagnosticMethod.isStorageMal24HrOldToClear(dbHelper);
-                    if (AvailableStorageSpace > 200  && isStorageMal24HrOld) {
-                        Constants.isClearStorageMalEvent = true;
-                        SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
-                        startService();
+            boolean IsDataRecComMalAllowed = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataRecComMal, getActivity());
+            if(IsDataRecComMalAllowed){
+                boolean isStorageMalfunction = malfunctionDiagnosticMethod.isStorageMalfunction(dbHelper, getActivity());
+                int AvailableStorageSpace = constants.getAvailableSpace();
+                if (AvailableStorageSpace <= 200 && !isStorageMalfunction) {    // 200 mb
+                    Constants.isStorageMalfunctionEvent = true;
+                    SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+                    startService();
+                } else {
+                    if(isStorageMalfunction) {
+                        boolean isStorageMal24HrOld = malfunctionDiagnosticMethod.isStorageMal24HrOldToClear(dbHelper);
+                        if (AvailableStorageSpace > 200  && isStorageMal24HrOld) {
+                            Constants.isClearStorageMalEvent = true;
+                            SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+                            startService();
+                        }
                     }
                 }
             }
+
         }
 
         GetStatesInList(true);
@@ -1125,7 +1127,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             malfunctionLay.setBackgroundColor(getResources().getColor(R.color.layout_color_dot));
                             malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
                         }
-        } else {
+            } else {
                         if(isMal && isDia == false) {
                             malfunctionTV.setText(getString(R.string.malfunction_occur));
                             malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
@@ -4225,7 +4227,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
         // save missing diagnostic
-        if(!constants.isObdConnectedWithELD(getActivity()) && !isExemptDriver ) {
+        boolean IsAllowMissingDataDiagnostic = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, getActivity());
+        if(!constants.isObdConnectedWithELD(getActivity()) &&
+                IsAllowMissingDataDiagnostic && !isExemptDriver ) {
             boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithStatus(DRIVER_JOB_STATUS,
                     isPersonal, ""+DRIVER_JOB_STATUS, dbHelper);
             if (!isMissingEventAlreadyWithStatus) {
@@ -5126,27 +5130,33 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
                     }else {
-                        LocationType = "X";
-                        SharedPref.setLocationEventType(LocationType, getActivity());
-                        currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
 
-                        // save driver job status on ignore location with missing diagnostic
-                        isLocMalfunction = false;
-                        saveInAobrdMalfnModeStatus(JobType);
+                        boolean IsAllowMissingDataDiagnostic = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, getActivity());
 
-                        // save missing diagnostic
-                        saveMissingDiagnostic(getString(R.string.ignore_to_save_loc), currentUtcTimeDiffFormat);
+                        if(IsAllowMissingDataDiagnostic) {
+                            LocationType = "X";
+                            SharedPref.setLocationEventType(LocationType, getActivity());
+                            currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
 
-                        Globally.PlayNotificationSound(getActivity());
-                        Global.ShowLocalNotification(getActivity(),
-                                getResources().getString(R.string.missing_dia_event),
-                                getResources().getString(R.string.missing_event_occured_desc), 2091);
+                            // save driver job status on ignore location with missing diagnostic
+                            isLocMalfunction = false;
+                            saveInAobrdMalfnModeStatus(JobType);
 
-                        SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
-                                SharedPref.isMalfunctionOccur(getActivity()), true,
-                                SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+                            // save missing diagnostic
+                            saveMissingDiagnostic(getString(R.string.ignore_to_save_loc), currentUtcTimeDiffFormat);
 
-                        setMalfnDiagnEventInfo();
+                            Globally.PlayNotificationSound(getActivity());
+                            Global.ShowLocalNotification(getActivity(),
+                                    getResources().getString(R.string.missing_dia_event),
+                                    getResources().getString(R.string.missing_event_occured_desc), 2091);
+
+                            SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
+                                    SharedPref.isMalfunctionOccur(getActivity()), true,
+                                    SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+
+                            setMalfnDiagnEventInfo();
+                        }
+
                     }
                 }
 
@@ -6370,8 +6380,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             }else {
 
                                 GetDriversSavedData(false, DriverType);
+                                boolean IsDuplicateStatusAllowed = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getActivity());
 
-                                if (DriverJsonArray.length() == 1) {
+                                if (DriverJsonArray.length() == 1 || !IsDuplicateStatusAllowed) {
                                     ClearLogAfterSuccess(isLoad, IsRecap);
                                 } else {
                                      /*Check Reason: some times data was uploading in background and user entered new status in between.
@@ -7151,6 +7162,19 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                             getActivity());
                                 }
 
+
+
+
+                                SharedPref.saveOtherMalDiaStatus(
+                                        dataJObject.getBoolean(ConstantsKeys.UnidentifiedDiag),
+                                        dataJObject.getBoolean(ConstantsKeys.IsDuplicateStatusAllowed),
+                                        dataJObject.getBoolean(ConstantsKeys.DataTransferDiag),
+
+                                        dataJObject.getBoolean(ConstantsKeys.MissingDataDiag),
+                                        dataJObject.getBoolean(ConstantsKeys.DataTransferComplMal),
+
+                                        dataJObject.getBoolean(ConstantsKeys.DataRecComMal),
+                                        dataJObject.getBoolean(ConstantsKeys.TimingCompMal), getActivity() );
 
                                 int ObdPreference = Constants.OBD_PREF_WIFI;
                                 if(dataJObject.has(ConstantsKeys.ObdPreference) && !dataJObject.isNull(ConstantsKeys.ObdPreference) ) {

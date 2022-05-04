@@ -1049,23 +1049,93 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             diagnosticChildHashMap      = new HashMap<>();
             malfunctionChildList        = new ArrayList<>();
 
-            // Adding same type events in single group for Expandable ListView
-            parseListInHashMap(malDiaArray, Constants.PowerComplianceDiagnostic);
-            parseListInHashMap(malDiaArray, Constants.PowerComplianceMalfunction);
+           /* if(!IsClearEvent) {
+                if (DetectionDataEventCode.equals(Constants.MissingDataDiagnostic)) {
+                } else if (DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic)) {
 
-            parseListInHashMap(malDiaArray, Constants.EngineSyncDiagnosticEvent);
-            parseListInHashMap(malDiaArray, Constants.EngineSyncMalfunctionEvent);
+                        SharedPref.savePowerMalfunctionOccurStatus(
+                                SharedPref.isPowerMalfunctionOccurred(context),
+                                true, EventEndDateTime, context);
+                        constants.saveDiagnstcStatus(context, true);
+                    }
 
-            parseListInHashMap(malDiaArray, Constants.MissingDataDiagnostic);
-            parseListInHashMap(malDiaArray, Constants.PositionComplianceMalfunction);
+                } else if (DetectionDataEventCode.equals(Constants.EngineSyncDiagnosticEvent) ) {
 
-            parseListInHashMap(malDiaArray, Constants.DataTransferDiagnostic);
-            parseListInHashMap(malDiaArray, Constants.DataTransferMalfunction);
+                        SharedPref.saveEngSyncDiagnstcStatus(true, context);
+                        constants.saveDiagnstcStatus(context, true);
+                    }
 
-            parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
+                } else if (DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction)) {
 
-            parseListInHashMap(malDiaArray, Constants.DataRecordingComplianceMalfunction);
+                        SharedPref.saveLocMalfunctionOccurStatus(true, driverZoneDate.toString(), EventDateTime, context);
+                        constants.saveMalfncnStatus(context, true);
+                    }
 
+                } else if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction)) {
+
+                        SharedPref.savePowerMalfunctionOccurStatus(true,
+                                SharedPref.isPowerDiagnosticOccurred(context),
+                                EventEndDateTime, context);
+                        constants.saveMalfncnStatus(context, true);
+                    }
+
+                } else if (DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent)) {
+
+                        SharedPref.saveEngSyncMalfunctionStatus(true, context);
+                        constants.saveMalfncnStatus(context, true);
+                    }
+                }else if(DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic)){
+
+                        constants.saveDiagnstcStatus(context, true);
+                    }
+                } else if (DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction)) {
+
+                        constants.saveMalfncnStatus(context, true);
+                    }
+                }
+            }*/
+
+
+            // Adding same type events in single group for Expandable ListView with permission check
+            if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerDataDiag, getActivity())) {   // check power dia permission
+                parseListInHashMap(malDiaArray, Constants.PowerComplianceDiagnostic);
+            }
+
+            if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerComplianceMal, getActivity())) {   // check power mal permission
+                parseListInHashMap(malDiaArray, Constants.PowerComplianceMalfunction);
+            }
+
+
+            if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncDiag, getActivity())) {    // check eng sync dia permission
+                parseListInHashMap(malDiaArray, Constants.EngineSyncDiagnosticEvent);
+            }
+            if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncMal, getActivity())) {     // check eng sync mal permission
+                parseListInHashMap(malDiaArray, Constants.EngineSyncMalfunctionEvent);
+            }
+
+
+            if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PostioningComplMal, getActivity())) {   // check position mal permission
+                parseListInHashMap(malDiaArray, Constants.PositionComplianceMalfunction);
+            }
+            if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, getActivity())) {   // check missing data dia permission
+                parseListInHashMap(malDiaArray, Constants.MissingDataDiagnostic);
+            }
+
+
+            if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataTransferDiag, getActivity())) {      // check data transfer dia permission
+                parseListInHashMap(malDiaArray, Constants.DataTransferDiagnostic);
+            }
+            if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataTransferComplMal, getActivity())) {      // check Data Transfer Mal permission
+                parseListInHashMap(malDiaArray, Constants.DataTransferMalfunction);
+            }
+
+
+            if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.UnidentifiedDiag, getActivity())) {      // check unidentified dia permission
+                parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
+            }
+            if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataRecComMal, getActivity())) {     // check data rec mal permission
+                parseListInHashMap(malDiaArray, Constants.DataRecordingComplianceMalfunction);
+            }
 
 
             setPagerAdapter(position, false);
@@ -1089,26 +1159,22 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 String DetectionDataEventCode = mainObj.getString(ConstantsKeys.DetectionDataEventCode);
 
                 if(EventType.equals(DetectionDataEventCode)) {
-                   /* if (globally.isSingleDriver(getActivity())) {
+
+                    String DrId = mainObj.getString(ConstantsKeys.DriverId);
+
+                    if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
+                            DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
+                            DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction) ||
+                            DetectionDataEventCode.equals(Constants.DataTransferMalfunction) ||
+                            DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic) ||
+                            DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction)) {
                         parseData(mainObj);
-                    } else {*/
-
-                        String DrId = mainObj.getString(ConstantsKeys.DriverId);
-
-                        if (DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
-                                DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
-                                DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction) ||
-                                DetectionDataEventCode.equals(Constants.DataTransferMalfunction) ||
-                                DetectionDataEventCode.equals(Constants.UnIdentifiedDrivingDiagnostic) ||
-                                DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction)) {
+                    } else {
+                        if (DrId.equals(DriverId) || DrId.equals("0")) {
                             parseData(mainObj);
-                        } else {
-                            if (DrId.equals(DriverId) || DrId.equals("0")) {
-                                parseData(mainObj);
-                            }
                         }
+                    }
 
-                   // }
                 }
             }
 

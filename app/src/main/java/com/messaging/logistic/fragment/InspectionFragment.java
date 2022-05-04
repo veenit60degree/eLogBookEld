@@ -743,15 +743,20 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             case R.id.saveInspectionBtn:
 
-               // if(constants.isActionAllowed(getContext())) {
-                if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
-                    if(TrailerNumber.length() > 0 || TruckNumber.length() > 0) {
-                        CheckInspectionValidation();
+                 CurrentJobStatus = SharedPref.getDriverStatusId(getActivity());
+
+                if (CurrentJobStatus.equals(Globally.ON_DUTY )) {
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                        if(TrailerNumber.length() > 0 || TruckNumber.length() > 0) {
+                            CheckInspectionValidation();
+                        }else{
+                            Globally.EldScreenToast(saveInspectionBtn, "Please update your Truck or Trailer number before save the inspections." , getResources().getColor(R.color.colorVoilation));
+                        }
                     }else{
-                        Globally.EldScreenToast(saveInspectionBtn, "Please update your Truck or Trailer number before save the inspections." , getResources().getColor(R.color.colorVoilation));
+                        Globally.EldScreenToast(saveInspectionBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
                     }
-                }else{
-                    Globally.EldScreenToast(saveInspectionBtn, getString(R.string.stop_vehicle_alert), getResources().getColor(R.color.colorVoilation));
+                }else {
+                    Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.PTI_SAVE_ONDUTY_ONLY, getResources().getColor(R.color.colorVoilation));
                 }
 
                 break;

@@ -76,7 +76,6 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
     List<DownloadLogsModel> downloadLogsModelList;
     Constants constants;
     ListView downloadLogListView;
-    LinearLayout rodsFileViewLay;
     SwitchMultiButton usDotSwitchBtn;
     JSONArray dotUsLogArray = new JSONArray();
     JSONArray dotCanLogArray = new JSONArray();

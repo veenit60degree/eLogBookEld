@@ -1147,8 +1147,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     private void saveMissingDiagnostic(String remarks, String type){
         try {
+            boolean IsAllowMissingDataDiagnostic = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, getActivity());
+            if(!constants.isObdConnectedWithELD(getActivity()) &&
+                    IsAllowMissingDataDiagnostic && !isExemptDriver) {
 
-            if(!constants.isObdConnectedWithELD(getActivity()) && !isExemptDriver) {
                 boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
 
                 if (!isMissingEventAlreadyWithStatus) {

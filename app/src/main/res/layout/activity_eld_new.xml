@@ -156,7 +156,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_short_1"
             android:layout_marginTop="@dimen/margin_short_4"
-            android:layout_toLeftOf="@+id/shippingDocLay"
             android:layout_toRightOf="@+id/currentCycleLay"
             android:singleLine="true"
             android:text="Cycle Time Left: 45:36"

@@ -260,8 +260,8 @@
 
             <TextView
                 android:id="@+id/agricultureCtPatGridTitle"
-                android:layout_width="169dp"
-                android:layout_height="42dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/margin_10"

@@ -158,22 +158,46 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                 diagnosticChildHashMap      = new HashMap<>();
                 malfunctionChildList        = new ArrayList<>();
 
-                // Adding same type events in single group for Expandable ListView
-                parseListInHashMap(malDiaArray, Constants.PowerComplianceDiagnostic);
-                parseListInHashMap(malDiaArray, Constants.PowerComplianceMalfunction);
+                // Adding same type events in single group for Expandable ListView with permission check
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerDataDiag, getActivity())) {   // check power dia permission
+                    parseListInHashMap(malDiaArray, Constants.PowerComplianceDiagnostic);
+                }
 
-                parseListInHashMap(malDiaArray, Constants.EngineSyncDiagnosticEvent);
-                parseListInHashMap(malDiaArray, Constants.EngineSyncMalfunctionEvent);
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerComplianceMal, getActivity())) {   // check power mal permission
+                    parseListInHashMap(malDiaArray, Constants.PowerComplianceMalfunction);
+                }
 
-                parseListInHashMap(malDiaArray, Constants.MissingDataDiagnostic);
-                parseListInHashMap(malDiaArray, Constants.PositionComplianceMalfunction);
 
-                parseListInHashMap(malDiaArray, Constants.DataTransferDiagnostic);
-                parseListInHashMap(malDiaArray, Constants.DataTransferMalfunction);
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncDiag, getActivity())) {    // check eng sync dia permission
+                    parseListInHashMap(malDiaArray, Constants.EngineSyncDiagnosticEvent);
+                }
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncMal, getActivity())) {     // check eng sync mal permission
+                    parseListInHashMap(malDiaArray, Constants.EngineSyncMalfunctionEvent);
+                }
 
-                parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
 
-                parseListInHashMap(malDiaArray, Constants.DataRecordingComplianceMalfunction);
+                if(SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PostioningComplMal, getActivity())) {   // check position mal permission
+                    parseListInHashMap(malDiaArray, Constants.PositionComplianceMalfunction);
+                }
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, getActivity())) {   // check missing data dia permission
+                    parseListInHashMap(malDiaArray, Constants.MissingDataDiagnostic);
+                }
+
+
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataTransferDiag, getActivity())) {      // check data transfer dia permission
+                    parseListInHashMap(malDiaArray, Constants.DataTransferDiagnostic);
+                }
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataTransferComplMal, getActivity())) {      // check Data Transfer Mal permission
+                    parseListInHashMap(malDiaArray, Constants.DataTransferMalfunction);
+                }
+
+
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.UnidentifiedDiag, getActivity())) {      // check unidentified dia permission
+                    parseListInHashMap(malDiaArray, Constants.UnIdentifiedDrivingDiagnostic);
+                }
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataRecComMal, getActivity())) {     // check data rec mal permission
+                    parseListInHashMap(malDiaArray, Constants.DataRecordingComplianceMalfunction);
+                }
 
 
                 notifyMalfunctionAdapter(noRecordTV, diagnosticExpandList, diagnosticHeaderList, diagnosticChildHashMap);
