@@ -1,6 +1,7 @@
 package com.adapter.logistic;
 
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,7 +36,7 @@ public class EditItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
                           RecyclerView.ViewHolder target) {
         mAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-
+      //  mAdapter.notifyDataSetChanged();
         return true;
     }
 

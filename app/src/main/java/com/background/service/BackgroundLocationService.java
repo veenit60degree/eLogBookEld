@@ -688,7 +688,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                 String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
-                Log.d("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
+              //  Log.d("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
                 // this check is used when ble obd is disconnected
                 if(SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
                     if (!SharedPref.getRPM(getApplicationContext()).equals("0") && lastIgnitionStatus.equals("true")) {
@@ -1766,7 +1766,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 boolean isEngineSyncMalAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncMal, getApplicationContext());
                 boolean isEngineSyncDiaAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.EnginSyncDiag, getApplicationContext());
                 String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
-                Log.d("lastIgnitionStatus", "lastIgnitionStatus: " +lastIgnitionStatus );
+               // Log.d("lastIgnitionStatus", "lastIgnitionStatus: " +lastIgnitionStatus );
 
                 if ((isEngineSyncMalAllowed || isEngineSyncDiaAllowed) && lastIgnitionStatus.equals("ON")) {
 
@@ -2746,11 +2746,16 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     void callEldRuleForWired( int speed, double calculatedSpeedFromOdo){
         // call cycle rule
         try {
+            int obdType = constants.WIRED_OBD;
+            if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                obdType = constants.BLE_OBD;
+            }
+
             VehicleSpeed = speed;
             obdVehicleSpeed = (int) calculatedSpeedFromOdo;
             serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, VehicleSpeed,
                     hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
-                    odometerhMethod, true, constants.WIRED_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
+                    odometerhMethod, true, obdType, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -5618,8 +5623,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         BackgroundLocationService.IsAutoChange = false;
                         driverLogArray = constants.GetDriversSavedArray(getApplicationContext(), MainDriverPref, CoDriverPref);
                         boolean IsDuplicateStatusAllowed = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
+                        boolean IsEditedData = SharedPref.IsEditedData(getApplicationContext());
 
-                        if (driverLogArray.length() == 1 || !IsDuplicateStatusAllowed) {
+                        if (driverLogArray.length() == 1 || !IsDuplicateStatusAllowed || IsEditedData) {
                             ClearLogAfterSuccess(driver_id);
 
                             // save Co Driver Data is login with co driver
@@ -5660,6 +5666,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 }
                             }
                         }
+
+                        SharedPref.SetEditedLogStatus(false, getApplicationContext());
 
                         break;
 
@@ -5930,7 +5938,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     public void run() {
                         //Setup the message for invocation
                         try {
-                            Log.d(TAG_OBD, "Wired Server Call");
+                           // Log.d(TAG_OBD, "Wired Server Call");
 
                             //Set the ReplyTo Messenger for processing the invocation response
                             Message msg1 = new Handler().obtainMessage();

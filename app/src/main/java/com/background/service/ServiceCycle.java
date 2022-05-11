@@ -84,6 +84,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
     final int WIRED_OBD      = 1001;
     final int WIFI_OBD       = 1002;
+    final int BLE_OBD        = 1006;
     final int API            = 1003;
     final int OFFLINE        = 1004;
 
@@ -778,8 +779,13 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 connectionSource = "Wired_tablet";
                 break;
 
+            case BLE_OBD:
+                connectionSource = "Ble_OBD";
+                break;
+
+
             case WIFI_OBD:
-                connectionSource = "wifi_OBD";
+                connectionSource = "WIFI_OBD";
                 break;
 
             case API:
@@ -787,7 +793,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 break;
 
             case OFFLINE:
-                connectionSource = "offline_GPS";
+                connectionSource = "Offline_GPS";
                 break;
 
             default:

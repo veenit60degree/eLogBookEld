@@ -1428,10 +1428,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                     constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, currentHighPrecisionOdometer, getApplicationContext());
 
-                    Log.d("BleObd","onReceive Data: "+ truckRPM + ", VehicleSpeed: " + VehicleSpeed);
+                   // Log.d("BleObd","onReceive Data: "+ truckRPM + ", VehicleSpeed: " + VehicleSpeed);
 
                     String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
-                    Log.d("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
+                    //Log.d("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
                     // this check is used when ble obd is disconnected
                     if(SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
                         if (!SharedPref.getRPM(getApplicationContext()).equals("0") && lastIgnitionStatus.equals("true")) {

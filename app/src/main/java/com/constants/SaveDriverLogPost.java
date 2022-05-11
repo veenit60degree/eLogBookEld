@@ -48,7 +48,6 @@ public class SaveDriverLogPost
                     @Override
                     public void onResponse(String response) {
                         Log.d("Response ", ">>>Response: " + response);
-                        SharedPref.SetEditedLogStatus(false, context);
                         postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag, driverLogData.length());
                     }
                 },

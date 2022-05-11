@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -87,6 +88,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         IsDrivingPermission = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.DrivingKey);
         IsOnDutyPermission  = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.OnDutyKey);
 
+        IsDrivingPermission = false;
         if(isUnAssignedMileRecord){
             IsDrivingPermission = true;
         }else{
@@ -120,6 +122,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public int getItemViewType(int position) {
         return TYPE_ITEM;
+       // return super.getItemViewType(position);
     }
 
 
@@ -225,17 +228,20 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                Log.d("TouchTest", "----Touch Up00");
                 int touchPos = viewHolder.getAdapterPosition();
                 if(position < EditLogFragment.oDriverLogDetail.size()-1){
                     DriverLogModel logModelNextPos = EditLogFragment.oDriverLogDetail.get(position );
                     int Status = logModelNextPos.getDriverStatusId();
                     boolean isEnabled = isEnabled(Status);
 
-                   // Log.d("Touch permission", "Touch permission: " + isEnabled);
                     if(isEnabled){
-                        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                        //MotionEventCompat.getActionMasked(event)
+                        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                             mDragStartListener.onStartDrag(viewHolder);
-                            Log.d("TouchTest", "Touch down");
+                            Log.d("TouchTest", "----Touch down");
+                        }else if (event.getActionMasked() == MotionEvent.ACTION_UP){
+                            Log.d("TouchTest", "----Touch Up");
                         }
                     }
                 }
@@ -458,7 +464,8 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
 
-    public class ViewHolderItem extends RecyclerView.ViewHolder implements View.OnClickListener ,ItemTouchHelperViewHolder{
+    public class ViewHolderItem extends RecyclerView.ViewHolder implements View.OnClickListener,
+            ItemTouchHelperViewHolder, RecyclerView.OnItemTouchListener {
 
         private TextView editLogSerialNoTV, startTimeTV, endTimeTV, editLogDurationTV;
         private RelativeLayout startTimeLayout, endTimeLayout, endTimeBtn, startTimeBtn, dragLay;
@@ -509,6 +516,22 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         @Override
         public void onItemClear() {
             itemView.setBackgroundColor(0);
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+            Log.d("Drag Tag", "---------onInterceptTouchEvent");
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+            Log.d("Drag Tag", "---------onTouchEvent");
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            Log.d("Drag Tag", "---------onRequestDisallowInterceptTouchEvent");
         }
     }
 

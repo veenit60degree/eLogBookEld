@@ -353,6 +353,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
             driverLogRecyclerView.setAdapter(editLogRecyclerAdapter);
 
+            driverLogRecyclerView.setItemViewCacheSize(oDriverLogDetail.size());
+
         }catch (Exception e){
             e.printStackTrace();
         }

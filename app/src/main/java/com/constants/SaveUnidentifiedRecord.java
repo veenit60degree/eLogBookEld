@@ -47,7 +47,7 @@ public class SaveUnidentifiedRecord
                     @Override
                     public void onResponse(String response) {
                         Log.d("Response ", ">>>Response: " + response);
-                        SharedPref.SetEditedLogStatus(false, context);
+                       // SharedPref.SetEditedLogStatus(false, context);
                         postResponse.getResponse(response,flag);
 
                     }

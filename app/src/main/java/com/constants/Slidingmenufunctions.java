@@ -183,78 +183,103 @@ public class Slidingmenufunctions implements OnClickListener {
 	void listItemClick(int status){
 
 		//boolean isActionAllowedWithCoDriver = constants.isActionAllowedWithCoDriver(context, dbHelper, hMethod, global, SharedPref.getDriverId(context));
+		boolean isActionAllowedWhileDriving = hMethod.isActionAllowedWhileDriving(context, global, SharedPref.getDriverId(context), dbHelper);
+		if(isActionAllowedWhileDriving){
+			switch (status){
 
-		switch (status){
+				case Constants.ELD_HOS:
+					Constants.ELDActivityLaunchCount = 0;
+					TabAct.host.setCurrentTab(0);
+					break;
 
-			case Constants.ELD_HOS:
-				Constants.ELDActivityLaunchCount = 0;
-				TabAct.host.setCurrentTab(0);
-				break;
-
-			case Constants.PTI_INSPECTION:
-				//if(isActionAllowedWithCoDriver) {
+				case Constants.PTI_INSPECTION:
+					//if(isActionAllowedWithCoDriver) {
 					TabAct.host.setCurrentTab(4);
 			/*	}else{
 					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.stop_vehicle_alert), context.getResources().getColor(R.color.colorVoilation));
 				}*/
-				break;
+					break;
 
-			case Constants.CT_PAT_INSPECTION:
-				TabAct.host.setCurrentTab(8);
-				break;
+				case Constants.CT_PAT_INSPECTION:
+					TabAct.host.setCurrentTab(8);
+					break;
 
-			case Constants.ODOMETER_READING:
-				if(!SharedPref.IsOdometerFromOBD(context)) {
-					EldFragment.IsMsgClick = false;
-					TabAct.host.setCurrentTab(5);
-				}else{
-					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.odometer_permission_desc), context.getResources().getColor(R.color.colorSleeper));
-				}
-				break;
+				case Constants.ODOMETER_READING:
+					if(!SharedPref.IsOdometerFromOBD(context)) {
+						EldFragment.IsMsgClick = false;
+						TabAct.host.setCurrentTab(5);
+					}else{
+						global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.odometer_permission_desc), context.getResources().getColor(R.color.colorSleeper));
+					}
+					break;
 
-			case Constants.NOTIFICATION_HISTORY:
-				TabAct.host.setCurrentTab(3);
-				break;
+				case Constants.NOTIFICATION_HISTORY:
+					TabAct.host.setCurrentTab(3);
+					break;
 
-			case Constants.SHIPPING_DOC:
-				TabAct.host.setCurrentTab(7);
-				break;
+				case Constants.SHIPPING_DOC:
+					TabAct.host.setCurrentTab(7);
+					break;
 
-			case Constants.ELD_DOC:
-				TabAct.host.setCurrentTab(10);
-				break;
+				case Constants.ELD_DOC:
+					TabAct.host.setCurrentTab(10);
+					break;
 
-			case Constants.UNIDENTIFIED_RECORD:
-				TabAct.host.setCurrentTab(11);
-				break;
+				case Constants.UNIDENTIFIED_RECORD:
+					TabAct.host.setCurrentTab(11);
+					break;
 
-			case Constants.DATA_MALFUNCTION:
-				TabAct.host.setCurrentTab(12);
-				break;
+				case Constants.DATA_MALFUNCTION:
+					TabAct.host.setCurrentTab(12);
+					break;
 
-			case Constants.SETTINGS:
-				TabAct.host.setCurrentTab(1);
-				break;
+				case Constants.SETTINGS:
+					TabAct.host.setCurrentTab(1);
+					break;
 
-			case Constants.ALS_SUPPORT:
-				TabAct.host.setCurrentTab(6);
-				break;
+				case Constants.ALS_SUPPORT:
+					TabAct.host.setCurrentTab(6);
+					break;
 
-			case Constants.ALS_TERMS_COND:
-				TabAct.host.setCurrentTab(13);
-				break;
+				case Constants.ALS_TERMS_COND:
+					TabAct.host.setCurrentTab(13);
+					break;
 
-			case Constants.LOGOUT:
+				case Constants.LOGOUT:
 
-				logoutEvent();
+					logoutEvent();
 
-				if (context != null && !constants.isObdConnectedWithELD(context)) {
-					global.InternetErrorDialog(context, true, true);
-				}
+					if (context != null && !constants.isObdConnectedWithELD(context)) {
+						global.InternetErrorDialog(context, true, true);
+					}
 
-				break;
+					break;
+
+			}
+		} else {
+
+			switch (status) {
+
+				case Constants.ELD_HOS:
+					Constants.ELDActivityLaunchCount = 0;
+					TabAct.host.setCurrentTab(0);
+					break;
+
+				case Constants.ALS_SUPPORT:
+					TabAct.host.setCurrentTab(6);
+					break;
+
+				default:
+					global.EldScreenToast(MainDriverBtn, context.getString(R.string.stop_vehicle_alert),
+							context.getResources().getColor(R.color.colorVoilation));
+					break;
+			}
 
 		}
+
+
+
+
 	}
 
 	void logoutEvent(){

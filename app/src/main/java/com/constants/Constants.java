@@ -317,9 +317,10 @@ public class Constants {
     final int DiagnosticInactive    = 4;
     
     public static int WIRED_OBD = 1001;
-    public static int WIFI_OBD = 1002;
-    public static int API = 1003;
-    public static int OFFLINE = 1004;
+    public static int WIFI_OBD  = 1002;
+    public static int BLE_OBD   = 1006;
+    public static int API       = 1003;
+    public static int OFFLINE   = 1004;
     public static int OTHER_SOURCE = 1005;
 
      // EventCode Type Inside the list

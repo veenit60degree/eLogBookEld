@@ -1202,7 +1202,14 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             case R.id.sendLogHosBtn:
 
                 if (constants.IsSendLog(DriverId, driverPermissionMethod, dbHelper)) {
-                    shareDriverLogDialog();
+
+                    if(hMethods.isActionAllowedWhileDriving(getActivity(), global, DriverId, dbHelper)){
+                        shareDriverLogDialog();
+                    } else {
+                        global.EldScreenToast(sendLogHosBtn, getString(R.string.stop_vehicle_alert),
+                                getResources().getColor(R.color.colorVoilation));
+                    }
+
                 }else{
                     global.EldToastWithDuration(sendLogHosBtn, getResources().getString(R.string.share_not_allowed), getResources().getColor(R.color.colorVoilation) );
                 }
