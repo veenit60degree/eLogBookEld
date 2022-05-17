@@ -1131,12 +1131,14 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
     private void MoveFragment(String date ){
+        Constants.IsInspectionDetailViewBack = false;
         Constants.SelectedDatePti = date;
         InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
         Bundle bundle = new Bundle();
         bundle.putString("date", date);
         bundle.putString("inspection_type", "pti");
         savedInspectionFragment.setArguments(bundle);
+        Constants.SelectedDatePti = date;
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();
@@ -1144,7 +1146,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 android.R.anim.fade_in,android.R.anim.fade_out);
         fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
         fragmentTran.addToBackStack("inspection");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
 
     }

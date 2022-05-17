@@ -668,15 +668,24 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 }
 
-                PreviousLatitude = htBleData.getLatitude();
-                PreviousLongitude = htBleData.getLongitude();
-                PreviousOdometer = currentHighPrecisionOdometer;
-
-                if(Globally.LATITUDE.length() < 5){
+                if(Globally.LATITUDE.length() < 4){
                     SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
+
+                    if(Globally.GPS_LATITUDE.length() > 3){
+                        Globally.LATITUDE = Globally.GPS_LATITUDE;
+                        Globally.LONGITUDE = Globally.GPS_LONGITUDE;
+                    }else {
+                        Globally.LATITUDE = "";
+                        Globally.LONGITUDE = "";
+                    }
+
                 }else{
                     SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
                 }
+
+                PreviousLatitude = htBleData.getLatitude();
+                PreviousLongitude = htBleData.getLongitude();
+                PreviousOdometer = currentHighPrecisionOdometer;
 
                 constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, currentHighPrecisionOdometer, getApplicationContext());
 

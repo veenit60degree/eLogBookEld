@@ -2754,7 +2754,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 android.R.anim.fade_in,android.R.anim.fade_out);
         fragmentTran.add(R.id.job_fragment, fragment);
         fragmentTran.addToBackStack("obd_diagnose");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
 
     }

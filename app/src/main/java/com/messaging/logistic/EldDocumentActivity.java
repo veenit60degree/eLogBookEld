@@ -28,7 +28,7 @@ public class EldDocumentActivity extends FragmentActivity {
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, documentFragment);
         fragmentTran.addToBackStack("eld_doc");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
     }
 

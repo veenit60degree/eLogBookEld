@@ -836,7 +836,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			progressDialog.setCancelable(false);
 			progressDialog.show();
 
-			StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.LOGIN_USER,
+			StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.LOGIN_NEW,
 					new Response.Listener<String>() {
 						@Override
 						public void onResponse(String response) {

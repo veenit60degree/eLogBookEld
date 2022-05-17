@@ -270,6 +270,10 @@ public class Slidingmenufunctions implements OnClickListener {
 					break;
 
 				default:
+
+					if(	TabAct.host.getCurrentTab() != 0){
+						TabAct.host.setCurrentTab(0);
+					}
 					global.EldScreenToast(MainDriverBtn, context.getString(R.string.stop_vehicle_alert),
 							context.getResources().getColor(R.color.colorVoilation));
 					break;
@@ -795,6 +799,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 							SharedPref.SetCoDriverSwitchTime(Globally.GetCurrentDateTime(), context);
 							Constants.isDriverSwitchEvent = true;
+							Constants.isDriverSwitchEventForHome = true;
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 							startService();
 
@@ -820,6 +825,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 							SharedPref.SetCoDriverSwitchTime(Globally.GetCurrentDateTime(), context);
 							Constants.isDriverSwitchEvent = true;
+							Constants.isDriverSwitchEventForHome = true;
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 							startService();
 

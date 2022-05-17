@@ -85,7 +85,7 @@ public class SavedInspectionTitleAdapter extends BaseAdapter {
             holder.inspectionTimeTV.setTextColor(mContext.getResources().getColor(R.color.color_eld_bg));
         }
 
-        if(inspectionType.equals("pti")){
+        if(inspectionType.contains("pti")){
             holder.inspectionTruckTV.setText(headerTitle);
         }else{
             holder.inspectionTruckTV.setText(mContext.getResources().getString(R.string.ctPat));

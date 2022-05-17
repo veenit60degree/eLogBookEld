@@ -32,7 +32,7 @@ public class AlsSupportActivity extends FragmentActivity {
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, supportFragment);
         fragmentTran.addToBackStack("support");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
     }
 

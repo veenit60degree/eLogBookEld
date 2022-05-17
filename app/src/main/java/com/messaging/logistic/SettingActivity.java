@@ -29,7 +29,7 @@ public class SettingActivity extends FragmentActivity {
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, settingFragment);
         fragmentTran.addToBackStack("setting");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
 
     }

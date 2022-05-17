@@ -62,27 +62,23 @@
                 />
 
 
-
-
             <lib.kingja.switchbutton.SwitchMultiButton
                 android:id="@+id/canDotSwitchBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:backgroundTint="?attr/bgColor"
                 android:paddingLeft="@dimen/margin_10"
-                android:paddingRight="@dimen/margin_10"
                 android:paddingTop="@dimen/margin_short_8"
+                android:paddingRight="@dimen/margin_10"
                 android:paddingBottom="@dimen/margin_short_8"
+                app:selectedColor="@color/colorPrimary"
+                app:selectedTab="1"
                 app:strokeRadius="@dimen/margin_short_5"
                 app:strokeWidth="@dimen/margin_short_1"
-                app:selectedTab="1"
-                app:selectedColor="@color/colorPrimary"
                 app:switchTabs="@array/switch_tabs"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                app:textSize="@dimen/text_size_14"
-                android:backgroundTint="?attr/bgColor"
 
-                />
+                app:textSize="@dimen/text_size_14" />
 
 
 

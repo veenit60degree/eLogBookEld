@@ -252,7 +252,7 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
                 android.R.anim.fade_in,android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, detailFragment);
         fragmentTran.addToBackStack("unidentified");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
 
     }

@@ -460,6 +460,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                 Bundle bundle = new Bundle();
                 bundle.putString("date", date);
                 bundle.putString("inspection_type", "ct_pat");
+                Constants.SelectedDatePti = date;
 
                 savedInspectionFragment.setArguments(bundle);
 
@@ -469,7 +470,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                         android.R.anim.fade_in, android.R.anim.fade_out);
                 fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
                 fragmentTran.addToBackStack("ctpat_inspection");
-                fragmentTran.commit();
+                fragmentTran.commitAllowingStateLoss();
             }
         }catch (Exception e){
             e.printStackTrace();

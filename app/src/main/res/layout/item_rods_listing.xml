@@ -48,7 +48,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/share"
-                    android:tint="?attr/share_icon_color" />
+
+                    />
+
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -66,7 +69,7 @@
                     android:layout_centerInParent="true"
                     android:padding="@dimen/margin_short_3"
                     android:src="@drawable/download_downward"
-                    android:tint="?attr/download_icon_color" />
+                    android:tint="@color/red_eld" />
 
             </RelativeLayout>
 
@@ -86,7 +89,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/view"
-                    android:tint="?attr/view_icon_color" />
+
+                    />
 
             </RelativeLayout>
 

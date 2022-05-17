@@ -1391,16 +1391,19 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     EngineSeconds = htBleData.getEngineHours();
                     obdOdometer = htBleData.getOdoMeter();
                     currentHighPrecisionOdometer = htBleData.getOdoMeter();
-                    String lat = htBleData.getLatitude();
-                    String lon = htBleData.getLongitude();
 
+                   /* String lat = htBleData.getLatitude();
+                    String lon = htBleData.getLongitude();
                     if(lat.equalsIgnoreCase("X")){
                         lat = Constants.getLocationType(getApplicationContext());
                         lon = lat;
                     }
-
-                    Globally.LATITUDE = lat;
+                     Globally.LATITUDE = lat;
                     Globally.LONGITUDE = lon ;
+                    */
+
+                    Globally.LATITUDE = htBleData.getLatitude();
+                    Globally.LONGITUDE = htBleData.getLongitude() ;
 
                     // this check is using to confirm loc update, because in loc disconnection ble OBD is sending last saved location.
                     if(Globally.LATITUDE.equals(PreviousLatitude) && Globally.LONGITUDE.equals(PreviousLongitude) &&
@@ -1410,15 +1413,24 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                     }
 
-                    PreviousLatitude = lat;
-                    PreviousLongitude = lon;
-                    PreviousOdometer = currentHighPrecisionOdometer;
-
-                    if(Globally.LATITUDE.length() < 5){
+                    if(Globally.LATITUDE.length() < 4){
                         SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
+
+                        if(Globally.GPS_LATITUDE.length() > 3){
+                            Globally.LATITUDE = Globally.GPS_LATITUDE;
+                            Globally.LONGITUDE = Globally.GPS_LONGITUDE;
+                        }else {
+                            Globally.LATITUDE = "";
+                            Globally.LONGITUDE = "";
+                        }
+
                     }else{
                         SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
                     }
+
+                    PreviousLatitude = htBleData.getLatitude();
+                    PreviousLongitude = htBleData.getLongitude();
+                    PreviousOdometer = currentHighPrecisionOdometer;
 
                     if(constants.isObdVinValid(VinNumber)){
                         SharedPref.setVehicleVin(VinNumber, getApplicationContext());

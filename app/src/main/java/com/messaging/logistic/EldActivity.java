@@ -81,7 +81,7 @@ public class EldActivity extends FragmentActivity  {
                     android.R.anim.fade_in, android.R.anim.fade_out);
             fragmentTran.replace(R.id.job_fragment, detailFragment);
             fragmentTran.addToBackStack("eld");
-            fragmentTran.commit();
+            fragmentTran.commitAllowingStateLoss();
 
     }
 

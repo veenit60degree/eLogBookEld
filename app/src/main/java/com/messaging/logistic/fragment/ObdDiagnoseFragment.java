@@ -46,7 +46,8 @@ import obdDecoder.Decoder;
 public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListener{
 
     View rootView;
-    TextView bleObdTxtView, odometerTxtView, gpsTxtView, simInfoTxtView, resetObdTxtView, obdDataTxtView, EldTitleTV, responseRawTxtView;
+    TextView bleObdTxtView, odometerTxtView, gpsTxtView, simInfoTxtView, resetObdTxtView, obdDataTxtView;
+    TextView EldTitleTV, responseRawTxtView, updateObdInfo;
     RelativeLayout rightMenuBtn;
     RelativeLayout eldMenuLay;
     ImageView eldMenuBtn;
@@ -132,6 +133,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         obdDataTxtView  = (TextView) v.findViewById(R.id.obdDataTxtView);
         EldTitleTV      = (TextView) v.findViewById(R.id.EldTitleTV);
         responseRawTxtView = (TextView) v.findViewById(R.id.responseRawTxtView);
+        updateObdInfo   = (TextView)v.findViewById(R.id.dateActionBarTV);
 
         obdProgressBar  = (ProgressBar)v.findViewById(R.id.obdProgressBar);
         rightMenuBtn    = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
@@ -148,6 +150,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
         button2.setVisibility(View.GONE);
         field1.setVisibility(View.GONE);
+        updateObdInfo.setVisibility(View.VISIBLE);
 
         obdDataTxtView.setOnClickListener(this);
         bleObdTxtView.setOnClickListener(this);
@@ -157,6 +160,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         resetObdTxtView.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
         button2.setOnClickListener(this);
+        updateObdInfo.setOnClickListener(this);
 
         if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
             EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (WIFI)");
@@ -172,39 +176,29 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             obdDataTxtView.setText(getString(R.string.no_obd_settings));
         }
 
-    /*    final Button testBtn = (Button) rootView.findViewById(R.id.testBtn);
-        testBtn.setVisibility(View.VISIBLE);
-        if(BackgroundLocationService.OBD_DISCONNECTED){
-            testBtn.setText("OBD Connected");
-        }else{
-            testBtn.setText("OBD Disconnect");
-        }*/
+        updateObdInfo.setText(getString(R.string.update_obd_info));
 
-        EldTitleTV.setOnClickListener(new View.OnClickListener() {
+
+
+      /*  EldTitleTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // String message = "";
                 if(BackgroundLocationService.OBD_DISCONNECTED){
                     BackgroundLocationService.OBD_DISCONNECTED = false;
                 }else{
                     BackgroundLocationService.OBD_DISCONNECTED = true;
-//                    SharedPref.SetIgnitionOffCallTime(Globally.GetCurrentDateTime(), getActivity());
                 }
 
-               /* try{
-                    OBDDeviceData data = decoder.DecodeTextAndSave(message, new OBDDeviceData());
-                    JSONObject simObj = new JSONObject(data.toString());
-                    simNumber = simObj.getString("SIM");
-                    obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlBlueFont + "<b>Sim Number: </b>" +simNumber + closeFont));
-                }catch (Exception e){
-                    e.printStackTrace();
-                }*/
+            }
+        });*/
 
 
+        updateObdInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });
-
 
     }
 
@@ -445,6 +439,12 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 eldMenuLay.setEnabled(false);
                 getParentFragmentManager().popBackStack();
                 break;
+
+
+            case R.id.dateActionBarTV:
+
+                break;
+
         }
     }
 

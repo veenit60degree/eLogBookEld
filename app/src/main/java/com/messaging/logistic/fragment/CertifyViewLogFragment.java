@@ -2599,6 +2599,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         Bundle bundle = new Bundle();
         bundle.putString("date", date);
         bundle.putString("inspection_type", "pti");
+        Constants.SelectedDatePti = date;
 
         savedInspectionFragment.setArguments(bundle);
 
@@ -2608,7 +2609,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 android.R.anim.fade_in,android.R.anim.fade_out);
         fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
         fragmentTran.addToBackStack("inspection");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
 
     }
@@ -3070,7 +3071,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     android.R.anim.fade_in, android.R.anim.fade_out);
             fragmentTran.replace(R.id.job_fragment, editLogFragment);
             fragmentTran.addToBackStack(null);
-            fragmentTran.commit();
+            fragmentTran.commitAllowingStateLoss();
         } else {
             global.EldScreenToast(eldMenuBtn, "You don't have edit permission to edit your log. Please contact to your company.", Color.parseColor(colorVoilation));
         }

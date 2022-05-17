@@ -28,7 +28,7 @@ public class UnidentifiedActivity extends FragmentActivity {
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, fragment);
         fragmentTran.addToBackStack("unidentified_log");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
     }
 

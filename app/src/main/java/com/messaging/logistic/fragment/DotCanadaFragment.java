@@ -578,7 +578,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 android.R.anim.fade_in,android.R.anim.fade_out);
         fragmentTran.add(R.id.job_fragment, dotFragment);
         fragmentTran.addToBackStack("dot_can");  //"dot_log"
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
     }
 
@@ -641,8 +641,9 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         InspectionsHistoryFragment savedInspectionFragment = new InspectionsHistoryFragment();
         Bundle bundle = new Bundle();
         bundle.putString("date", date);
-        bundle.putString("inspection_type", "pti");
+        bundle.putString("inspection_type", "pti_dot");
         savedInspectionFragment.setArguments(bundle);
+        Constants.SelectedDatePti = date;
 
         FragmentManager fragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTran = fragManager.beginTransaction();
@@ -650,7 +651,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 android.R.anim.fade_in,android.R.anim.fade_out);
         fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
         fragmentTran.addToBackStack("inspection");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
 
     }
@@ -772,7 +773,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 android.R.anim.fade_in,android.R.anim.fade_out);
         fragmentTran.add(R.id.job_fragment, logFragment);
         fragmentTran.addToBackStack("inspection");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
 
     }

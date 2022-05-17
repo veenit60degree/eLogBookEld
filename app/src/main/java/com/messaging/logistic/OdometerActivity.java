@@ -29,7 +29,7 @@ public class OdometerActivity extends FragmentActivity {
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, detailFragment);
         fragmentTran.addToBackStack("odometer");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
     }
 

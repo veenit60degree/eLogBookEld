@@ -39,7 +39,7 @@ public class CtPatActivity extends FragmentActivity {
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, ctPatFragment);
         fragmentTran.addToBackStack("ct_pat");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
 
     }

@@ -26,7 +26,7 @@ public class MalfunctionActivity extends FragmentActivity {
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, fragment);
         fragmentTran.addToBackStack("malfunction_log");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
     }
 

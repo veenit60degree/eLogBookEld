@@ -144,10 +144,11 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
         isDOT               = SharedPref.IsDOT(getActivity());
 
-        if(Constants.IsInspectionDetailViewBack) {
-            InspectionDateTime = Constants.SelectedDatePti;
-            inspectionType = "pti";
-        }else{
+        if(!Constants.IsInspectionDetailViewBack) {
+           /* InspectionDateTime = Constants.SelectedDatePti;
+            inspectionType = "pti_dot";
+
+        }else{*/
             Bundle getBundle = this.getArguments();
             if (getBundle != null) {
                 InspectionDateTime = getBundle.getString("date");
@@ -175,7 +176,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
         // Check from server
         if(Globally.isConnected(getActivity()) ) {
-            if (inspectionType.equals("pti")){
+            if (inspectionType.contains("pti")){
                 GetSavedInspection(DRIVER_ID, DeviceId, InspectionDateTime);
             }
         }
@@ -221,6 +222,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
             case R.id.eldMenuLay:
                 eldMenuLay.setEnabled(false);
+
                 getParentFragmentManager().popBackStack();
                 break;
 
@@ -300,6 +302,8 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
             e.printStackTrace();
         }
         bundle.putInt("position", position);
+        bundle.putString("inspectionType", inspectionType);
+        bundle.putString("date", InspectionDateTime);
 
         savedInspectionFragment.setArguments(bundle);
         ctPatDetailInspectionFragment.setArguments(bundle);
@@ -310,12 +314,14 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
         if (inspectionType.equals("pti")) {
             fragmentTran.replace(R.id.job_fragment, savedInspectionFragment);
+        }else if(inspectionType.equals("pti_dot")){
+            fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
         }else{
             fragmentTran.add(R.id.job_fragment, ctPatDetailInspectionFragment);
         }
 
-        fragmentTran.addToBackStack(null);
-        fragmentTran.commit();
+        fragmentTran.addToBackStack(inspectionType);
+        fragmentTran.commitAllowingStateLoss();
 
 
     }
@@ -389,7 +395,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         // Get Local Saved Data
         GetLocalInspectionArray();
 
-        if (inspectionType.equals("pti")) {
+        if (inspectionType.equals("pti") ) {
             // Get data from Server
             if (Globally.isConnected(getActivity())) {
                 GetSavedInspection(DRIVER_ID, DeviceId, SelectedDate);
@@ -521,7 +527,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                 String byteInspectionConductorSign = "", byteFollowUpConductorSign = "", byteSealFixerSign = "", byteSealVerifierSign = "",agricultureReason = "";
                 String conatinerIdentification = "";
 
-                if (inspectionType.equals("pti")) {
+                if (inspectionType.contains("pti") ) {
                     PreTripInspectionSatisfactory = inspectionItemObj.getBoolean(ConstantsKeys.PreTripInspectionSatisfactory);
                     PostTripInspectionSatisfactory = inspectionItemObj.getBoolean(ConstantsKeys.PostTripInspectionSatisfactory);
                     AboveDefectsCorrected = inspectionItemObj.getBoolean(ConstantsKeys.AboveDefectsCorrected);
@@ -530,15 +536,15 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
                     SupervisorMechanicsName = inspectionItemObj.getString(ConstantsKeys.SupervisorMechanicsName);
                     Remarks = inspectionItemObj.getString(ConstantsKeys.Remarks);
                 }else{
-                    arrivalSealNumber = inspectionItemObj.getString(ConstantsKeys.ArrivalSealNumber);
-                    departureSealNumber = inspectionItemObj.getString(ConstantsKeys.DepartureSealNumber);
-                    securityInspectionPersonName = inspectionItemObj.getString(ConstantsKeys.SecurityInspectionPersonName);
-                    followUpInspectionPersonName = inspectionItemObj.getString(ConstantsKeys.FollowUpInspectionPersonName);
-                    affixedSealPersonName = inspectionItemObj.getString(ConstantsKeys.AffixedSealPersonName);
-                    verificationPersonName = inspectionItemObj.getString(ConstantsKeys.VerificationPersonName);
+                    arrivalSealNumber = Constants.checkStringInJsonObj(inspectionItemObj, ConstantsKeys.ArrivalSealNumber);   //inspectionItemObj.getString(ConstantsKeys.ArrivalSealNumber);
+                    departureSealNumber = Constants.checkStringInJsonObj(inspectionItemObj, ConstantsKeys.DepartureSealNumber);    //inspectionItemObj.getString(ConstantsKeys.DepartureSealNumber);
+                    securityInspectionPersonName = Constants.checkStringInJsonObj(inspectionItemObj, ConstantsKeys.SecurityInspectionPersonName);
+                    followUpInspectionPersonName = Constants.checkStringInJsonObj(inspectionItemObj, ConstantsKeys.FollowUpInspectionPersonName);
+                    affixedSealPersonName = Constants.checkStringInJsonObj(inspectionItemObj, ConstantsKeys.AffixedSealPersonName);
+                    verificationPersonName = Constants.checkStringInJsonObj(inspectionItemObj, ConstantsKeys.VerificationPersonName);
 
-                    agricultureReason = constant.checkStringInJsonObj(inspectionItemObj,ConstantsKeys.AreaOfInspectionRemarks);
-                    conatinerIdentification = constant.checkStringInJsonObj(inspectionItemObj, ConstantsKeys.ContainerIdentification);
+                    agricultureReason = Constants.checkStringInJsonObj(inspectionItemObj,ConstantsKeys.AreaOfInspectionRemarks);
+                    conatinerIdentification = Constants.checkStringInJsonObj(inspectionItemObj, ConstantsKeys.ContainerIdentification);
 
 
                     byteInspectionConductorSign = getByteImage(inspectionItemObj, ConstantsKeys.SecurityInspectionPersonSignature, ConstantsKeys.ByteInspectionConductorSign);
@@ -638,7 +644,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
     private void GetLocalInspectionArray(){
 
-        if (inspectionType.equals("pti")) {
+        if (inspectionType.contains("pti")) {
             savedInspectionArray = inspectionMethod.getSavedInspectionArray(Integer.valueOf(DRIVER_ID), dbHelper);
             EldTitleTV.setText(getResources().getString(R.string.SavedPrePostTripIns));
         }else{

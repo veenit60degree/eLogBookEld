@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.adapter.logistic.ViewInspectionGridAdapter;
 import com.android.volley.Request;
@@ -53,7 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class    InspectionDetailView  extends Fragment {
+public class InspectionDetailView  extends Fragment {
 
     View rootView;
     TextView inspectionTypeTV, noDefectLabel, inspectionDateTv, powerInspectionTV, trailerInspectionTV;
@@ -77,6 +79,7 @@ public class    InspectionDetailView  extends Fragment {
     String OrangeColor   = "#ffff900d";
     VolleyRequest SaveLocationRequest;
     String DeviceId = "", DriverId = "", InspectionId = "0", InspectionDateTime = "", UpdatedLocation = "", oldLocation = "";
+    String date = "", inspectionType = "";
     String City = "", State = "", Country = "";
     JSONArray savedInspectionArray;
     DBHelper dbHelper;
@@ -171,11 +174,18 @@ public class    InspectionDetailView  extends Fragment {
 
         Bundle getBundle  = this.getArguments();
         int position  = getBundle.getInt("position");
-       // getBundle.clear();
+        inspectionType = getBundle.getString("inspectionType");
+        date = getBundle.getString("InspectionDateTime");
+
+        // getBundle.clear();
 
         DriverId            = SharedPref.getDriverId( getActivity());
         DeviceId            = SharedPref.GetSavedSystemToken(getActivity());
         //InspectionId, InspectionDateTime
+
+        if(inspectionType.contains("dot")){
+            changeLocBtn.setVisibility(View.GONE);
+        }
 
         try{
             JSONObject responseObj = new JSONObject(getBundle.getString("selectedObj") );
@@ -193,7 +203,6 @@ public class    InspectionDetailView  extends Fragment {
 
         SavedInspectionModel savedInspectionModel = InspectionsHistoryFragment.savedInspectionList.get(position);
         if(savedInspectionModel.getInspectionTypeId() == Constants.Trailer){
-            // inspectionTypeTV.setText("Trailer Inspection" );
             truckTrailerTVLay.setVisibility(View.GONE);
             truckTrailerLayout.setVisibility(View.GONE);
         }
@@ -372,6 +381,8 @@ public class    InspectionDetailView  extends Fragment {
         eldMenuLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Constants.IsInspectionDetailViewBack = true;
                 getParentFragmentManager().popBackStack();
             }
         });

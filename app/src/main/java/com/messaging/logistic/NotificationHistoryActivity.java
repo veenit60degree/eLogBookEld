@@ -27,7 +27,7 @@ public class NotificationHistoryActivity extends FragmentActivity {
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, detailFragment);
         fragmentTran.addToBackStack("history");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
     }
 

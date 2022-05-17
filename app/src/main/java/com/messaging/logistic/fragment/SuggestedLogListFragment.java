@@ -147,7 +147,7 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
                         android.R.anim.fade_in, android.R.anim.fade_out);
                 fragmentTran.replace(R.id.job_fragment, logFragment);
                 fragmentTran.addToBackStack("SuggestedLog");
-                fragmentTran.commit();
+                fragmentTran.commitAllowingStateLoss();
 
             }
         });

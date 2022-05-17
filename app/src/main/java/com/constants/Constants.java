@@ -295,6 +295,7 @@ public class Constants {
     public static boolean isStorageMalfunctionEvent = false;
     public static boolean isClearStorageMalEvent = false;
     public static boolean isDriverSwitchEvent   = false;
+    public static boolean isDriverSwitchEventForHome   = false;
     public static boolean isClearMissingEvent   = false;
 
     public static String lastDriverId = "0";
@@ -2677,17 +2678,19 @@ public class Constants {
         int UsaMaxDays = 8;
         int CanMaxDays = 14;
         int DriverPermitMaxDays = 0;
-
-        if(logPermissionObj != null) {
+        boolean isLogNull = false;
+        if(logPermissionObj != null && logPermissionObj.toString().length() > 2) {
             try {
                 DriverPermitMaxDays = logPermissionObj.getInt(ConstantsKeys.ViewCertifyDays);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }else{
+            isLogNull = true;
         }
 
         if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS) ) {
-            if(IsDot){
+            if(IsDot || isLogNull){
                 DriverPermitMaxDays = UsaMaxDays;
             }else {
                 if (DriverPermitMaxDays > UsaMaxDays) {
@@ -2695,7 +2698,7 @@ public class Constants {
                 }
             }
         }else{
-            if(IsDot){
+            if(IsDot || isLogNull){
                 DriverPermitMaxDays = CanMaxDays;
             }
         }

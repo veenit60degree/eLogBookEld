@@ -28,7 +28,7 @@ public class ObdConfigActivity extends FragmentActivity {
                 android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTran.replace(R.id.job_fragment, obdConfigFragment);
         fragmentTran.addToBackStack("obd_config_log");
-        fragmentTran.commit();
+        fragmentTran.commitAllowingStateLoss();
 
     }
 

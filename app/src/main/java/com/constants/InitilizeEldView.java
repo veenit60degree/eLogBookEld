@@ -160,7 +160,7 @@ public class InitilizeEldView {
                 fragmentTran.replace(R.id.job_fragment, detailFragment);
             }
             fragmentTran.addToBackStack("eld_certify_log");
-            fragmentTran.commit();
+            fragmentTran.commitAllowingStateLoss();
 
         }catch (Exception e){
             e.printStackTrace();
