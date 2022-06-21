@@ -548,7 +548,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     if(malfunctionHeaderList.size() > 0 || diagnosticHeaderList.size() > 0) {
                         //if(constants.isActionAllowed(getContext())) {
 
-                        if(helperMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                        if(helperMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                             malfunctionDialog = new MalfunctionDialog(getActivity(), new ArrayList<MalfunctionModel>(),
                                     new MalfunctionDiagnosticListener());
                             malfunctionDialog.show();

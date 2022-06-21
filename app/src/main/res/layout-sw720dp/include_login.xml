@@ -57,7 +57,6 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="?attr/textColor"
                 >
 
             <com.constants.CustomEditText
@@ -67,7 +66,6 @@
                 android:hint="@string/Username"
                 android:background="@color/transparent"
                 android:textColor="?attr/colorPrimary"
-                android:textColorHint="?attr/color_login_view"
                 android:paddingRight="@dimen/margin_10"
                 android:paddingLeft="@dimen/margin_short_8"
                 android:textSize="@dimen/text_size_20"
@@ -120,7 +118,6 @@
                 app:passwordToggleTint="?attr/textColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="?attr/textColor"
                 >
 
             <com.constants.CustomEditText
@@ -130,7 +127,6 @@
                 android:hint="Password"
                 android:background="@color/transparent"
                 android:textColor="?attr/colorPrimary"
-                android:textColorHint="?attr/color_login_view"
                 android:inputType="textPassword"
                 android:paddingRight="@dimen/margin_10"
                 android:paddingLeft="@dimen/margin_short_8"

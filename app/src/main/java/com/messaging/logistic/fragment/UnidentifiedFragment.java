@@ -245,7 +245,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                     //if(constants.isActionAllowed(getContext())) {
                     HelperMethods helperMethods = new HelperMethods();
                     DBHelper dbHelper = new DBHelper(getActivity());
-                    if(helperMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                    if(helperMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if (claimArray.length() > 0) {
                             unidentifiedDialog = new UnidentifiedDialog(getActivity(), getResources().getString(R.string.claim), new UnIdentifiedListener());
                             unidentifiedDialog.show();

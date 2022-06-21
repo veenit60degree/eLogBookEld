@@ -28,8 +28,7 @@
         >
 
 
-        <include
-            layout="@layout/item_inspection_layout"
+        <include layout="@layout/item_inspection_layout"
 
             />
 

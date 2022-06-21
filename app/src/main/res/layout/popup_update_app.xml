@@ -68,8 +68,23 @@
             android:textSize="@dimen/text_size_16"
             android:textColor="?attr/textColor"
             android:layout_marginTop="@dimen/margin_10"
-            android:layout_marginBottom="@dimen/margin_10"
+            android:layout_marginBottom="@dimen/margin_short_5"
             android:layout_marginLeft="@dimen/margin_10"
+            android:gravity="center_horizontal"
+
+            />
+
+
+
+        <TextView
+            android:id="@+id/timezoneDetailIssueTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_13"
+            android:textColor="?attr/textColor"
+            android:layout_marginBottom="@dimen/margin_10"
+            android:layout_marginLeft="@dimen/view_height_60"
+            android:layout_marginRight="@dimen/view_height_60"
             android:gravity="center_horizontal"
 
             />
@@ -82,8 +97,7 @@
 
 
 
-
-            <Button
+        <Button
                 android:id="@+id/btnUpdateApp"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/view_height_35"

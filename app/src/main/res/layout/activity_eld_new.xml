@@ -737,20 +737,18 @@
                 >
 
 
-
                 <TextView
                     android:id="@+id/onDutyTimeTxtVw"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/onDutyTxtVw"
                     android:layout_centerVertical="true"
-                    android:textColor="?attr/color_eld_theme"
+                    android:layout_toLeftOf="@+id/onDutyTxtVw"
                     android:padding="0dp"
-                    android:textSize="@dimen/text_size_16"
                     android:text="@string/time_default"
-                    android:textStyle="bold"
-                    />
+                    android:textColor="?attr/color_eld_theme"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold" />
 
 
                 <TextView
@@ -968,15 +966,13 @@
                 >
 
 
-
-
                 <TextView
                     android:id="@+id/offDutyTimeTxtVw"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/offDutyTxtVw"
                     android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/offDutyTxtVw"
                     android:maxLength="7"
                     android:text="@string/time_default"
                     android:textColor="?attr/color_eld_theme"
@@ -1014,7 +1010,7 @@
                     />
 
 
-              <TextView
+                <TextView
                     android:id="@+id/asPerDateOffDutyTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

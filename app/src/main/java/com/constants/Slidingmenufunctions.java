@@ -183,7 +183,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	void listItemClick(int status){
 
 		//boolean isActionAllowedWithCoDriver = constants.isActionAllowedWithCoDriver(context, dbHelper, hMethod, global, SharedPref.getDriverId(context));
-		boolean isActionAllowedWhileDriving = hMethod.isActionAllowedWhileDriving(context, global, SharedPref.getDriverId(context), dbHelper);
+		boolean isActionAllowedWhileDriving = hMethod.isActionAllowedWhileMoving(context, global, SharedPref.getDriverId(context), dbHelper);
 		if(isActionAllowedWhileDriving){
 			switch (status){
 
@@ -733,14 +733,19 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void RefreshActivity(){
 		try {
-			final int currentTab = TabAct.host.getCurrentTab();
+			/*final int currentTab = TabAct.host.getCurrentTab();
 			TabAct.host.setCurrentTab(2);
 			new Handler().postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					TabAct.host.setCurrentTab(currentTab);
 				}
-			}, 100);
+			}, 200);
+*/
+
+			Intent intent = ((Activity) context).getIntent();
+			((Activity) context).finish();
+			context.startActivity(intent);
 
 		}catch (Exception e){
 			e.printStackTrace();
@@ -771,8 +776,13 @@ public class Slidingmenufunctions implements OnClickListener {
 
 		@Override
 		public void CancelReady() {
+
+			SharedPref.saveCoDriverSwitchingStatus(false, context);
+
 			if(loginDialog != null)
 				loginDialog.dismiss();
+
+
 		}
 
 
@@ -784,8 +794,8 @@ public class Slidingmenufunctions implements OnClickListener {
 						if(userName.equals(MainDriverName) && Password.equals(MainDriverPass)){
 							global.hideKeyboardView(context, PasswordEditText);
 
-							if(loginDialog != null)
-								loginDialog.dismiss();
+							// this check is use to avoid cycle call at driver switching time
+							SharedPref.saveCoDriverSwitchingStatus(true, context);
 
 							Constants.lastDriverId = SharedPref.getDriverId(context);
 							MainDriverView(context);
@@ -793,9 +803,10 @@ public class Slidingmenufunctions implements OnClickListener {
 							usernameTV.setText(DriverConst.GetDriverDetails( DriverConst.DriverName, context));
 							SharedPref.setDrivingAllowedStatus(true, "", context);
 
-							RefreshActivity();
+						//	RefreshActivity();
 							global.hideKeyboardView(context, PasswordEditText);
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
+
 
 							SharedPref.SetCoDriverSwitchTime(Globally.GetCurrentDateTime(), context);
 							Constants.isDriverSwitchEvent = true;
@@ -803,6 +814,10 @@ public class Slidingmenufunctions implements OnClickListener {
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 							startService();
 
+							if(loginDialog != null)
+								loginDialog.dismiss();
+
+							RefreshActivity();
 
 						}else{
 							global.EldScreenToast(UsernameEditText, "Incorrect Password", eldWarningColor );
@@ -811,8 +826,8 @@ public class Slidingmenufunctions implements OnClickListener {
 						if(userName.equals(CoDriverName) && Password.equals(CoDriverPass)){
 							global.hideKeyboardView(context, PasswordEditText);
 
-							if(loginDialog != null)
-								loginDialog.dismiss();
+							// this check is use to avoid cycle call at driver switching time
+							SharedPref.saveCoDriverSwitchingStatus(true, context);
 
 							Constants.lastDriverId = SharedPref.getDriverId(context);
 							CoDriverView(context, false);
@@ -820,7 +835,7 @@ public class Slidingmenufunctions implements OnClickListener {
 							usernameTV.setText(DriverConst.GetCoDriverDetails( DriverConst.CoDriverName, context));
 							SharedPref.setDrivingAllowedStatus(true, "", context);
 
-							RefreshActivity();
+							//RefreshActivity();
 							global.EldScreenToast(MainDriverBtn, "Password confirmed", eldGreenColor );
 
 							SharedPref.SetCoDriverSwitchTime(Globally.GetCurrentDateTime(), context);
@@ -829,6 +844,10 @@ public class Slidingmenufunctions implements OnClickListener {
 							SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 							startService();
 
+							if(loginDialog != null)
+								loginDialog.dismiss();
+
+							RefreshActivity();
 
 						}else{
 							global.EldScreenToast(UsernameEditText, "Incorrect password", eldWarningColor );
@@ -885,8 +904,10 @@ public class Slidingmenufunctions implements OnClickListener {
 			@Override
 			public void onResponse(String response) {
 
-				if(dialog != null && dialog.isShowing()) {
-					dialog.dismiss();
+				if (context != null) {
+					if (dialog != null && dialog.isShowing()) {
+						dialog.dismiss();
+					}
 				}
 
 					Log.d("response", " logout response: " + response);

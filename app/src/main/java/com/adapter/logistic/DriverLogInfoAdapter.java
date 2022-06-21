@@ -187,7 +187,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         SetTextDataInView(holder,  LogItem, Global.JobStatus(JobStatus, LogItem.isPersonal(), ""+JobStatus),  String.valueOf(position + 1)+ "." );
 
         if(SharedPref.IsCCMTACertified(context) && !IsCurrentDate) {
-            if (JobStatus == Constants.DRIVING && IsDrivingAllowForSwap && IsEditView &&
+            if (JobStatus == Constants.DRIVING && IsDrivingAllowForSwap &&  //IsEditView &&
                     !LogItem.getDuration().equals("00:00")) {
                 holder.drivingSwapCheckBox.setVisibility(View.VISIBLE);
             }

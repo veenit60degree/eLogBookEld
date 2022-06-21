@@ -112,7 +112,7 @@ public class HelperMethods {
         return endDateTime;
     }
 
-    public int getLastStatusDuration(JSONArray driverLogArray, int currentStatus, boolean isPer){
+    public int getLastStatusDuration(JSONArray driverLogArray, int currentStatus, boolean isPer, DateTime CurrentTime){
         int StatusDuration = 0;
         try {
             for(int i = driverLogArray.length()-1 ; i >= 0 ; i--){
@@ -125,7 +125,7 @@ public class HelperMethods {
                     DateTime StartDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.StartDateTime), false);
                     DateTime EndDateTime;   // = Globally.getDateTimeObj(obj.getString(ConstantsKeys.EndDateTime), false);
                     if(i == driverLogArray.length()-1) {
-                        EndDateTime = Globally.GetCurrentJodaDateTime();
+                        EndDateTime = CurrentTime; //Globally.GetCurrentJodaDateTime()
                     }else{
                         EndDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.EndDateTime), false);
                     }
@@ -151,12 +151,11 @@ public class HelperMethods {
         boolean isAppRestricted = SharedPref.IsAppRestricted(context);
         boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
 
-        if (Global.isSingleDriver(context)) {
-            if(isAppRestricted && isVehicleMoving){
-                isActionAllowed = false;
-            }
+        if(isAppRestricted && isVehicleMoving){
+            isActionAllowed = false;
         }else{
-            if(isAppRestricted && isVehicleMoving) {
+            if (!Global.isSingleDriver(context)) {
+
                 int SelectedDriverStatus = 1;
                 boolean isSelectedDriverPersonalUse = false;
                 boolean isSelectedDriverYardMove = false;
@@ -167,18 +166,69 @@ public class HelperMethods {
                     isSelectedDriverYardMove = Boolean.parseBoolean(selectedDriverInfo.get(2));
                 }
 
-
-                if (SelectedDriverStatus == Constants.DRIVING || isSelectedDriverPersonalUse || isSelectedDriverYardMove) {
+                if (isVehicleMoving && (SelectedDriverStatus == Constants.DRIVING || isSelectedDriverPersonalUse || isSelectedDriverYardMove)) {
                     isActionAllowed = false;
                 }
+
             }
         }
+
+
 
         return isActionAllowed;
     }
 
 
-    public boolean isDrivingAllowedWithCoDriver(Context context, Globally Global, String selectedDriverId, boolean isDriveChanging, DBHelper dbHelper){
+
+
+    public boolean isActionAllowedWhileMoving(Context context, Globally Global, String selectedDriverId, DBHelper dbHelper){
+        boolean isActionAllowed = true;
+        boolean isAppRestricted = SharedPref.IsAppRestricted(context);
+        boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
+
+            if (!Global.isSingleDriver(context)) {
+
+                int SelectedDriverStatus = 1;
+                boolean isSelectedDriverPersonalUse = false;
+                boolean isSelectedDriverYardMove = false;
+                ArrayList<String> selectedDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
+                if (selectedDriverInfo.size() > 2) {
+                    SelectedDriverStatus = Integer.valueOf(selectedDriverInfo.get(0));
+                    isSelectedDriverPersonalUse = Boolean.parseBoolean(selectedDriverInfo.get(1));
+                    isSelectedDriverYardMove = Boolean.parseBoolean(selectedDriverInfo.get(2));
+                }
+
+                if(isAppRestricted && isVehicleMoving) {
+                    boolean IsMainDriverInDrPcYm = false;
+                    if (SelectedDriverStatus == Constants.DRIVING || isSelectedDriverPersonalUse || isSelectedDriverYardMove) {
+                      //  isActionAllowed = false;
+                        IsMainDriverInDrPcYm = true;
+                    }
+
+                    boolean IsCoDriverInDrPcYm = IsCoDriverInDrPcYm(selectedDriverId, context, dbHelper);
+                    if(!IsCoDriverInDrPcYm){
+                        isActionAllowed = false;
+                    }else{
+                        if(IsMainDriverInDrPcYm && isVehicleMoving){
+                            isActionAllowed = false;
+                        }
+                    }
+
+                }
+            }else {
+                if(isAppRestricted && isVehicleMoving){
+                    isActionAllowed = false;
+                }
+            }
+
+
+
+        return isActionAllowed;
+    }
+
+
+    public boolean isDrivingAllowedWithCoDriver(Context context, Globally Global, String selectedDriverId,
+                                                boolean isDriveChanging, DBHelper dbHelper){
         boolean isDrivingAllowed = true;
 
         if (Global.isSingleDriver(context) == false) {
@@ -194,29 +244,11 @@ public class HelperMethods {
             }
 
 
-            if ((SelectedDriverStatus == Constants.DRIVING || isSelectedDriverPersonalUse || isSelectedDriverYardMove) && isDriveChanging == false ) {
-               // if(isPC75KmCrossed == false)
-                 //   isDrivingAllowed = false;
+            if ( (SelectedDriverStatus == Constants.DRIVING || isSelectedDriverPersonalUse || isSelectedDriverYardMove) && isDriveChanging == false ) {
+
             }else {
-                String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
-                String CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
-
-                if (selectedDriverId.equals(MainDriverId)) {
-                    // get co driver data
-                    selectedDriverId = CoDriverId;
-                } else {
-                    // get main driver data
-                    selectedDriverId = MainDriverId;
-                }
-
-                ArrayList<String> coDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
-                if (coDriverInfo.size() > 2) {
-                    int CoDriverStatus = Integer.valueOf(coDriverInfo.get(0));
-                    boolean isCoDriverPersonalUse = Boolean.parseBoolean(coDriverInfo.get(1));
-                    boolean isCoDriverYardMove = Boolean.parseBoolean(coDriverInfo.get(2));
-                    if (CoDriverStatus == Constants.DRIVING || isCoDriverYardMove || isCoDriverPersonalUse ) {  //&& isPC75KmCrossed == false
-                        isDrivingAllowed = false;
-                    }
+                if(IsCoDriverInDrPcYm(selectedDriverId, context, dbHelper)){
+                    isDrivingAllowed = false;
                 }
             }
 
@@ -230,6 +262,37 @@ public class HelperMethods {
         return isDrivingAllowed;
     }
 
+    private boolean IsCoDriverInDrPcYm(String selectedDriverId, Context context, DBHelper dbHelper){
+
+        boolean IsCoDriverInDrPcYm = false;
+        try{
+            String MainDriverId = DriverConst.GetDriverDetails(DriverConst.DriverID, context);
+            String CoDriverId = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, context);
+
+            if (selectedDriverId.equals(MainDriverId)) {
+                // get co driver data
+                selectedDriverId = CoDriverId;
+            } else {
+                // get main driver data
+                selectedDriverId = MainDriverId;
+            }
+
+            ArrayList<String> coDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
+            if (coDriverInfo.size() > 2) {
+                int CoDriverStatus = Integer.valueOf(coDriverInfo.get(0));
+                boolean isCoDriverPersonalUse = Boolean.parseBoolean(coDriverInfo.get(1));
+                boolean isCoDriverYardMove = Boolean.parseBoolean(coDriverInfo.get(2));
+                if (CoDriverStatus == Constants.DRIVING || isCoDriverYardMove || isCoDriverPersonalUse ) {  //&& isPC75KmCrossed == false
+                    IsCoDriverInDrPcYm = true;
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return IsCoDriverInDrPcYm;
+
+    }
 
     // Some times wrong auto status were changed when driver switched from main to co driver. Now we will wait for 25 sec, afterthat we will check
     public boolean isSwitchedTimeGreater10Sec(boolean isDrivingAllowed, Context context){
@@ -507,7 +570,7 @@ public class HelperMethods {
         String isPCYM = ConstantsKeys.False;
         try {
 
-            if(array != null && array.length() >= 0) {
+            if(array != null && array.length() > 0) {
 
                 JSONObject lastJob = GetLastJsonFromArray(array);
                 int lastStatus = lastJob.getInt(ConstantsKeys.DriverStatusId);
@@ -584,6 +647,11 @@ public class HelperMethods {
         try {
             JSONArray driverLogArray = getSavedLogArray(DriverId, dbHelper);
             JSONObject lastItemJson = GetLastJsonFromArray(driverLogArray);
+
+           /* Log.d("@@@lastItemJson", "lastItemJson-11: " + lastItemJson);
+            Log.d("@@@DriverId", "DRIVER_ID-11: " + DriverId);
+            Log.d("@@@LastStatus", "LastStatus-11: " + lastItemJson.getInt(ConstantsKeys.DriverStatusId));
+*/
             return lastItemJson.getInt(ConstantsKeys.DriverStatusId);
         }catch (Exception e){
             return -1;
@@ -1521,6 +1589,112 @@ public class HelperMethods {
         return sameStatusJson;
     }
 
+    public JSONObject AddOffDutyStatusForFreshLogin(String DriverId, DateTime currentDateTime, DateTime currentUTCTime,
+                                                    int offsetFromUTC, String CurrentCycleId, String selectedStart,
+                                                    String selectedStartUtc){
+        JSONObject sameStatusJson = new JSONObject();
+        String startDate = Globally.GetCurrentDeviceDateDefault() + "T00:00:00";
+        DateTime startJodaDate  = Globally.getDateTimeObj(startDate, false);
+        String startUTCDate     = Globally.GetUTCFromDate(String.valueOf(startJodaDate), offsetFromUTC);
+        int TotalMin = currentDateTime.getMinuteOfDay() - startJodaDate.getMinuteOfDay();
+
+        try {
+            int DriverLogId = 1;
+
+            sameStatusJson.put(ConstantsKeys.DriverLogId, DriverLogId);
+            sameStatusJson.put(ConstantsKeys.DriverId, DriverId);
+
+            sameStatusJson.put(ConstantsKeys.ProjectId, Globally.PROJECT_ID);
+            sameStatusJson.put(ConstantsKeys.DriverStatusId, Constants.OFF_DUTY);
+
+            sameStatusJson.put(ConstantsKeys.startDateTime, startDate);
+            sameStatusJson.put(ConstantsKeys.utcStartDateTime, startUTCDate);
+
+            if(selectedStart.length() > 0){
+                sameStatusJson.put(ConstantsKeys.endDateTime, selectedStart);
+                sameStatusJson.put(ConstantsKeys.utcEndDateTime, selectedStartUtc);
+            }else {
+                sameStatusJson.put(ConstantsKeys.endDateTime, currentDateTime);
+                sameStatusJson.put(ConstantsKeys.utcEndDateTime, currentUTCTime);
+            }
+
+            sameStatusJson.put(ConstantsKeys.totalMin, TotalMin);
+
+            sameStatusJson.put(ConstantsKeys.StartLatitude, "");
+            sameStatusJson.put(ConstantsKeys.StartLongitude, "");
+            sameStatusJson.put(ConstantsKeys.EndLatitude, "");
+            sameStatusJson.put(ConstantsKeys.EndLongitude, "");
+
+            sameStatusJson.put(ConstantsKeys.YardMove, false);
+            sameStatusJson.put(ConstantsKeys.Personal, false);
+            sameStatusJson.put(ConstantsKeys.CurrentCycleId, CurrentCycleId);
+            sameStatusJson.put(ConstantsKeys.DriverName, "");
+
+            sameStatusJson.put(ConstantsKeys.createdDate, currentDateTime);
+            sameStatusJson.put(ConstantsKeys.Remarks, "");
+            sameStatusJson.put(ConstantsKeys.Trailor, "");
+            sameStatusJson.put(ConstantsKeys.StartLocation, "");
+            sameStatusJson.put(ConstantsKeys.EndLocation, "");
+            sameStatusJson.put(ConstantsKeys.Truck, "");
+
+            sameStatusJson.put(ConstantsKeys.StartLocationKm,  "");
+
+            sameStatusJson.put(ConstantsKeys.IsViolation, false);
+            sameStatusJson.put(ConstantsKeys.ViolationReason, "");
+
+            sameStatusJson.put(ConstantsKeys.IsStatusAutomatic, false);
+            sameStatusJson.put(ConstantsKeys.OBDSpeed,          "0");
+            sameStatusJson.put(ConstantsKeys.GPSSpeed,          "0");
+            sameStatusJson.put(ConstantsKeys.PlateNumber,       "");
+            sameStatusJson.put(ConstantsKeys.IsShortHaulException, false);
+            sameStatusJson.put(ConstantsKeys.IsShortHaulUpdate, false );
+
+            sameStatusJson.put(ConstantsKeys.DecesionSource,    "");
+            sameStatusJson.put(ConstantsKeys.IsAdverseException, false);
+            sameStatusJson.put(ConstantsKeys.AdverseExceptionRemarks, "");
+            sameStatusJson.put(ConstantsKeys.LocationType, "");
+
+            sameStatusJson.put(ConstantsKeys.MalfunctionDefinition, "");
+            sameStatusJson.put(ConstantsKeys.IsNorthCanada, false);
+
+            sameStatusJson.put(ConstantsKeys.StartOdometerInKm, "0");
+            sameStatusJson.put(ConstantsKeys.EndOdometerInKm, "0");
+
+            sameStatusJson.put(ConstantsKeys.CoDriverId, "");
+            sameStatusJson.put(ConstantsKeys.CoDriverName, "");
+
+            sameStatusJson.put(ConstantsKeys.IsUnAssignedMileRecord, false);
+            sameStatusJson.put(ConstantsKeys.UnAssignedVehicleMilesId, "0");
+           // sameStatusJson.put(ConstantsKeys.CustomRecord, true);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return sameStatusJson;
+    }
+
+    public boolean isNeededOffDutyStatus(JSONArray driverLogArray){
+
+        boolean isNeededOffDutyStatus = false;
+        try{
+            if(driverLogArray.length() == 0){
+                isNeededOffDutyStatus = true;
+            }else{
+                JSONObject lastItemJson = GetLastJsonFromArray(driverLogArray);
+                String startTime =  lastItemJson.getString(ConstantsKeys.startDateTime);    //lastItemJson.getInt(ConstantsKeys.DriverStatusId);
+                if(!startTime.contains("00:00:00")){
+                    isNeededOffDutyStatus = true;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isNeededOffDutyStatus;
+    }
+
+
     // Remove All data after 18 days from list
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public JSONArray RemoveOldDateLogFromArray(JSONArray jsonArray, String currentDate){
@@ -2352,7 +2526,80 @@ public class HelperMethods {
 
 
 
-    // -------- Get Array Before Selected Date --------------
+
+
+    // -------- check New Driver Day Start Log --------------
+    public JSONArray checkNewDriverDayStartLog(JSONArray driverLogJsonArray, JSONArray selectedLogArray,
+                                               String DRIVER_ID, int offsetFromUTC,
+                                               ShipmentHelperMethod shipmentHelper, Context context){
+
+        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+        DateTime currentDateTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);    // Current Date Time
+        DateTime currentUTCTime = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
+
+        if(driverLogJsonArray.length() == 0 && selectedLogArray.length() == 0){
+            JSONObject defaultObjForNewDriver = AddOffDutyStatusForFreshLogin(DRIVER_ID,
+                    currentDateTime, currentUTCTime, offsetFromUTC, CurrentCycleId, "", "");
+            selectedLogArray.put(defaultObjForNewDriver);
+        }else {
+            try {
+                if (driverLogJsonArray.length() > 0) {
+                    JSONObject mainLogObj = (JSONObject) driverLogJsonArray.get(0);
+
+                    if (selectedLogArray.length() > 0) {
+                        JSONObject selectedLogObj = (JSONObject) selectedLogArray.get(0);
+
+                        String selectedStart = mainLogObj.getString(ConstantsKeys.StartDateTime);
+                        String selectedStartUtc = mainLogObj.getString(ConstantsKeys.UTCStartDateTime);
+                        DateTime mainObjStartTime = Globally.getDateTimeObj(selectedStart, false);
+                        DateTime selObjStartTime = Globally.getDateTimeObj(selectedLogObj.getString(ConstantsKeys.StartDateTime), false);
+                        int mainObjLogId = mainLogObj.getInt(ConstantsKeys.DriverLogId);
+                        int selObjLogId = selectedLogObj.getInt(ConstantsKeys.DriverLogId);
+                        int mainObjLogStatus = mainLogObj.getInt(ConstantsKeys.DriverStatusId);
+                        int selObjLogStatus = selectedLogObj.getInt(ConstantsKeys.DriverStatusId);
+                        Log.d("---date", "date: " + mainObjStartTime.toString().substring(11, 16));
+                        if (mainObjStartTime.equals(selObjStartTime) && mainObjStartTime.toString().substring(11, 16).equals("00:00") &&
+                                selObjStartTime.toString().substring(11, 16).equals("00:00")) {
+                            if (mainObjLogId == selObjLogId && mainObjLogStatus == selObjLogStatus) {
+
+
+                                JSONObject defaultObjForNewDriver = AddOffDutyStatusForFreshLogin(DRIVER_ID,
+                                        currentDateTime, currentUTCTime, offsetFromUTC, CurrentCycleId, selectedStart, selectedStartUtc);
+
+
+                                // reverse Array to add item at the end
+                                JSONArray reverseArray = shipmentHelper.ReverseArray(selectedLogArray);
+                                reverseArray.put(defaultObjForNewDriver);
+
+                                // again reverse Array to show last item at top
+                                selectedLogArray = new JSONArray();
+                                selectedLogArray = shipmentHelper.ReverseArray(reverseArray);
+
+
+                            }
+                        }
+
+                    }
+
+
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+            return selectedLogArray;
+        }
+
+
+
+
+
+
+
+
+        // -------- Get Array Before Selected Date --------------
     public void UpdateAndMaintain18DaysArray(JSONArray driverLog18daysArray, DateTime selectedDate, JSONObject selectedObj, String DriverId, DBHelper dbHelper){
 
 
@@ -4012,7 +4259,8 @@ public class HelperMethods {
                     "0",
                     CoDriverId,
                     CoDriverName,
-                    ""+IsSkipRecord
+                    ""+IsSkipRecord,
+                    Constants.getLocationSource(context)
 
             );
 

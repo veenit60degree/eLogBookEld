@@ -150,7 +150,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
         button2.setVisibility(View.GONE);
         field1.setVisibility(View.GONE);
-        updateObdInfo.setVisibility(View.VISIBLE);
+        updateObdInfo.setVisibility(View.GONE);
 
         obdDataTxtView.setOnClickListener(this);
         bleObdTxtView.setOnClickListener(this);

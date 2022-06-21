@@ -158,54 +158,61 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         VehicleSpeed             = vehicleSpeed;
         PersonalUse75Km          = false;
 
-        boolean isDrivingAllowed = hMethods.isDrivingAllowedWithCoDriver(context, Global, ""+DriverId, false, dbHelper);
-        if(isDrivingAllowed == false && VehicleSpeed >= 8){
-          //  Log.d("isDrivingAllowed", "Driving not Allowed"  );
-            SharedPref.setDrivingAllowedStatus(false, Global.GetCurrentDateTime(), context);
-        }else {
-            SharedPref.setDrivingAllowedStatus(true, "", context);
-            isPcYmAlertChangeStatus = false;
 
-            oDriverLogDetail         = new ArrayList<DriverLog>();
-            RulesObj                 = new RulesResponseObject();
-            RemainingTimeObj         = new RulesResponseObject();
-            eldSharedPref            = new EldSingleDriverLogPref();
-            coEldSharedPref          = new EldCoDriverLogPref();
+        boolean isCoDriverSwitching = SharedPref.isCoDriverSwitching(context);
 
-            notificationMethod       = notiMethod;
-            shipmentHelper           = shipingHelper;
-            odometerhMethod          = odometerMethod;
-            isALSConnection          = isConnection;
-            connectionType           = connection_type;
-            OBDVehicleSpeed          = obdVehicleSpeed;
-            GPSVehicleSpeed          = gpsVehicleSpeed;
-            this.obdUtil             = obdUtil;
+        // If drivers are switching then ignore Cycle rules call at that time
+        if(!isCoDriverSwitching) {
+            boolean isDrivingAllowed = hMethods.isDrivingAllowedWithCoDriver(context, Global, "" + DriverId, false, dbHelper);
+            if (isDrivingAllowed == false && VehicleSpeed >= 8) {
+                //  Log.d("isDrivingAllowed", "Driving not Allowed"  );
+                SharedPref.setDrivingAllowedStatus(false, Global.GetCurrentDateTime(), context);
+            } else {
+                SharedPref.setDrivingAllowedStatus(true, "", context);
+                isPcYmAlertChangeStatus = false;
 
-            getConnectionSource(connectionType);
+                oDriverLogDetail = new ArrayList<DriverLog>();
+                RulesObj = new RulesResponseObject();
+                RemainingTimeObj = new RulesResponseObject();
+                eldSharedPref = new EldSingleDriverLogPref();
+                coEldSharedPref = new EldCoDriverLogPref();
 
-            final DateTime currentDateTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), false);    // Current Date Time
-            final DateTime currentUTCTime  = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), true);
-            //offsetFromUTC            = currentDateTime.getHourOfDay() - currentUTCTime.getHourOfDay();
-            offsetFromUTC            = (int) Global.GetTimeZoneOffSet();
-            IsAppForground           = UILApplication.isActivityVisible();
-            DeviceId                 = SharedPref.GetSavedSystemToken(context);
-            isSingleDriver           = Global.isSingleDriver(context);
-            syncingMethod            = new SyncingMethod();
+                notificationMethod = notiMethod;
+                shipmentHelper = shipingHelper;
+                odometerhMethod = odometerMethod;
+                isALSConnection = isConnection;
+                connectionType = connection_type;
+                OBDVehicleSpeed = obdVehicleSpeed;
+                GPSVehicleSpeed = gpsVehicleSpeed;
+                this.obdUtil = obdUtil;
 
-            try {
-                driver18DaysLogArray = hMethods.getSavedLogArray(DriverId, dbHelper);
+                getConnectionSource(connectionType);
 
-                 // Thread.sleep(500); // 500 milli sec delay to get updated data from db
-                    CheckEldRule(driver18DaysLogArray, currentDateTime, currentUTCTime,  isSingleDriver,  IsLogApiACalled,
-                            serviceResponse,  latLongHelper,  locMethod,
-                            hMethods,  dbHelper,  serviceError);
+                final DateTime currentDateTime = Global.getDateTimeObj(Global.GetCurrentDateTime(), false);    // Current Date Time
+                final DateTime currentUTCTime = Global.getDateTimeObj(Global.GetCurrentUTCTimeFormat(), true);
+                //offsetFromUTC            = currentDateTime.getHourOfDay() - currentUTCTime.getHourOfDay();
+                offsetFromUTC = (int) Global.GetTimeZoneOffSet();
+                IsAppForground = UILApplication.isActivityVisible();
+                DeviceId = SharedPref.GetSavedSystemToken(context);
+                isSingleDriver = Global.isSingleDriver(context);
+                syncingMethod = new SyncingMethod();
+
+                try {
+                    driver18DaysLogArray = hMethods.getSavedLogArray(DriverId, dbHelper);
+
+                    // Thread.sleep(500); // 500 milli sec delay to get updated data from db
+                    CheckEldRule(driver18DaysLogArray, currentDateTime, currentUTCTime, isSingleDriver, IsLogApiACalled,
+                            serviceResponse, latLongHelper, locMethod,
+                            hMethods, dbHelper, serviceError);
 
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+        }else{
+            SharedPref.saveCoDriverSwitchingStatus(false, context);
         }
-
     }
 
 
@@ -447,17 +454,11 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                             boolean isApplicable = false;
 
-                                        /*if (connectionType == constants.API) {
-                                            if (VehicleSpeed <= OnDutySpeedLimit ) {
-                                                isApplicable = true;
-                                            }
-                                        } else*/
-                                            if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
+                                            if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD || connectionType == constants.BLE_OBD ) {
                                                 if (OBDVehicleSpeed <= OnDutySpeedLimit) {
                                                     isApplicable = true;
                                                 }
                                             }
-
 
                                             if (isApplicable) {
 
@@ -554,7 +555,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             } else {
 
                                                 boolean isApplicable = false;
-                                                if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
+                                                if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD || connectionType == constants.BLE_OBD) {
                                                     if (OBDVehicleSpeed >= DrivingSpeedLimit && VehicleSpeed >= DrivingSpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
                                                         isApplicable = true;
                                                     }
@@ -615,7 +616,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                     boolean isApplicable = false;
                                                     DrivingSpeedLimit = 32; // in canada cycle for Yard Move status if speed will be more then on equal to 32 km/h, change to driving.
 
-                                                    if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD) {
+                                                    if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD || connectionType == constants.BLE_OBD) {
                                                         if (OBDVehicleSpeed >= DrivingSpeedLimit && VehicleSpeed >= DrivingSpeedLimit) {    //VehicleSpeed <= OnDutySpeedLimit && (
                                                             isApplicable = true;
                                                         }
@@ -929,39 +930,43 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                 if (ChangedDriverStatus == DRIVING || ChangedDriverStatus == ON_DUTY) {
 
-                    String LocationType = "";
-                    if (SharedPref.isLocMalfunctionOccur(context) || SharedPref.isLocDiagnosticOccur(context)) { //constants.isLocMalfunctionEvent(context, DriverType)
-                        LocationType = SharedPref.getLocationEventType(context);
+                    try {
+                        String LocationType = "";
+                        if (SharedPref.isLocMalfunctionOccur(context) || SharedPref.isLocDiagnosticOccur(context)) { //constants.isLocMalfunctionEvent(context, DriverType)
+                            LocationType = SharedPref.getLocationEventType(context);
+                        }
+
+                        JSONArray logArray = constants.AddNewStatusInList("", String.valueOf(ChangedDriverStatus), "", "no_address",
+                                String.valueOf(DriverId), "", "", "", "", "",
+                                CurrentCycleId, "", "false", isViolation,
+                                "false", String.valueOf(OBDVehicleSpeed),
+                                "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
+                                SharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus, false,
+                                Global, isHaulExcptn, false,
+                                "" + isAdverseExcptn,
+                                "", LocationType, "", isNorthCanada, false,
+                                SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, TruckNo,
+                                SharedPref.getTrailorNumber(context), hMethods, dbHelper);
+
+                        String CurrentDate = Global.GetCurrentDateTime();
+                        String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
+                        int rulesVersion = SharedPref.GetRulesVersion(context);
+
+                        List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
+                        DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
+                                DriverId, offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
+                                DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, isNorthCanada,
+                                rulesVersion, oDriverLog, context);
+
+                        if (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2)) {
+                            oDriverDetail1.setCanAdverseException(isAdverseExcptn);
+                        }
+
+                        RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), ChangedDriverStatus, oDriverDetail1);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
-
-                    JSONArray logArray = constants.AddNewStatusInList("", String.valueOf(ChangedDriverStatus), "", "no_address",
-                            String.valueOf(DriverId), "", "", "", "","",
-                            CurrentCycleId, "", "false", isViolation,
-                            "false", String.valueOf(OBDVehicleSpeed),
-                            "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
-                            SharedPref.GetCurrentTruckPlateNo(context), connectionSource + LastStatus, false,
-                            Global, isHaulExcptn, false,
-                            "" + isAdverseExcptn,
-                            "", LocationType, "", isNorthCanada, false,
-                            SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, TruckNo,
-                            SharedPref.getTrailorNumber(context), hMethods, dbHelper);
-
-                    String CurrentDate = Global.GetCurrentDateTime();
-                    String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
-                    int rulesVersion = SharedPref.GetRulesVersion(context);
-
-                    List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
-                    DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
-                            DriverId, offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
-                            DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, isNorthCanada,
-                            rulesVersion, oDriverLog, context);
-
-                    if(CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2) ) {
-                        oDriverDetail1.setCanAdverseException(isAdverseExcptn);
-                    }
-
-                    RulesObj = hMethods.CheckDriverRule(Integer.valueOf(CurrentCycleId), ChangedDriverStatus, oDriverDetail1);
-
 
                 }
 
@@ -1278,8 +1283,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         "false", "false", "0",
                         CoDriverId,
                         CoDriverName,
-                        ""+IsSkipRecord
-
+                        ""+IsSkipRecord,
+                        Constants.getLocationSource(context)
 
 
                 );

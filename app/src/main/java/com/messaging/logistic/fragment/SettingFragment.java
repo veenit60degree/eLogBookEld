@@ -1468,7 +1468,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
 
                     //if(constants.isActionAllowed(getActivity())) {
-                    if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                    if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if(isSleepOffDuty()) {
                             changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
                         }else{
@@ -1491,7 +1491,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
 
                        // if(constants.isActionAllowed(getActivity())) {
-                        if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                        if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                             if(isSleepOffDuty()) {
                                 changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
                             }else{
@@ -1529,7 +1529,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 brightnessCardView.setVisibility(View.GONE);
                     if (CurrentCycleId.equals(global.CANADA_CYCLE_1) || CurrentCycleId.equals(global.CANADA_CYCLE_2)) {
                         //if(constants.isActionAllowed(getActivity())) {
-                        if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                        if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                             if(isOnDuty()) {
                                 changeCycleZoneDialog("operating_zone", CurrentCycleId, operatingZoneTV.getText().toString());
                             }else{

@@ -1065,6 +1065,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                 String IsStatusAutomatic = "false", OBDSpeed = "0", GPSSpeed = "0", TruckNumber = "",
                         DecesionSource = "", PlateNumber = "", isHaulException = "false", IsShortHaulUpdate = "false";
                 String isAdverseException = "false", adverseExceptionRemark = "", IsNorthCanada = "false", IsCycleChanged = "false";
+                int LocationSource = -1;
 
                 if(obj.has(ConstantsKeys.IsStatusAutomatic)){
                     IsStatusAutomatic = obj.getString(ConstantsKeys.IsStatusAutomatic);
@@ -1120,6 +1121,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
                 if (obj.has(ConstantsKeys.IsCycleChanged)) {
                     IsCycleChanged = obj.getString(ConstantsKeys.IsCycleChanged);
+                }
+
+                if (obj.has(ConstantsKeys.LocationSource)) {
+                    LocationSource = obj.getInt(ConstantsKeys.LocationSource);
                 }
 
 
@@ -1198,7 +1203,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         UnAssignedVehicleMilesId,
                         obj.getString(ConstantsKeys.CoDriverId),
                         obj.getString(ConstantsKeys.CoDriverName),
-                        "false"
+                        "false", LocationSource
+
                 );
 
                 logList.add(logModel);
@@ -1333,6 +1339,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     DecesionSource = obj.getString(ConstantsKeys.DecesionSource);
                 }
 
+                int LocationSource = -1;
+                if (obj.has(ConstantsKeys.LocationSource)) {
+                    LocationSource = obj.getInt(ConstantsKeys.LocationSource);
+                }
 
                 EldDataModelNew eldModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1380,7 +1390,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         UnAssignedVehicleMilesId,
                         CoDriverId,
                         CoDriverName,
-                        "false"
+                        "false",
+                        LocationSource
                         );
 
                     if(eldModel != null) {

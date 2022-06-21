@@ -384,7 +384,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
             case R.id.confirmCertifyBtn:
                // if(constants.isActionAllowed(getActivity())) {
-                if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                     certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false , "", new CertificationListener());
                     certifyConfirmationDialog.show();
                 }else{
@@ -398,7 +398,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                 //if(constants.isActionAllowed(getActivity())) {
               //  HelperMethods helperMethods = new HelperMethods();
                // DBHelper dbHelper = new DBHelper(getActivity());
-                if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                     if(globally.isConnected(getActivity())){
                         confirmationDialog.ShowAlertDialog(getString(R.string.cancel_edit_record), getString(R.string.cancel_edit_record_desc),
                                 getString(R.string.yes), getString(R.string.no),

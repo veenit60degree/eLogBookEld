@@ -479,10 +479,12 @@
     <string name="carrier_principal_address">Principal Place Of Business (Address)</string>
     <string name="CurrentOperatingZone">Current Operating Zone</string>
     <string name="CurrentOdometer">Current Odometer: </string>
+    <string name="OdometerTitle">Odometer: </string>
     <string name="total_hrs">Total Hrs</string>
     <string name="total_hrs_in_work">(In Work Shift)</string>
     <string name="seven_or_fourteen">(7 or 14)</string>
     <string name="in_cycle">(In Cycle)</string>
+    <string name="in_a_day">In a day</string>
     <string name="remaining_hrs">Remaining Hrs</string>
     <string name="off_duty_time_deff">Off Duty Time defferal </string>
     <string name="date_time_deff">(Status &amp; Time Deff)</string>
@@ -742,6 +744,8 @@
     <string name="personal_use_limit_75">Your Personal Use limit (75 km) is exceeded for the day in Canada cycle.</string>
     <string name="connect_with_obd_first">Please connect your ELD with truck ECM</string>
     <string name="pc_ym_alert_with_dr">Please change your status to other duty status first to select Special Driving Conditions (PC/YM).</string>
+    <string name="ym_alert_with_us">Please change your status to OnDuty(others) status first to select YardMove</string>
+    <string name="pc_alert_with_us">Please change your status to OffDuty first to select Personal Use.</string>
 
     <string name="loading">Loading</string>
     <string name="TrailerDrop">Trailer Drop</string>

@@ -649,7 +649,7 @@ public class Globally {
 
 
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-	public boolean isCorrectTime(Context context){
+	public boolean isCorrectTime(Context context, boolean IsOnCreateView){
     	boolean isTimeCorrect = true;
 		String utcDate = SharedPref.getCurrentUTCTime(context);
 		DateTime savedUtcDateTime = getDateTimeObj(utcDate, false);
@@ -664,12 +664,12 @@ public class Globally {
 				if (Math.max(-9, minDiff) == Math.min(minDiff, 9)) {	//minDiff >= -5
 					isTimeCorrect = true;
 				} else {
-					if(isConnected(context)) {
+					if(isConnected(context) && !IsOnCreateView) {
 						isTimeCorrect = false;
 					}
 				}
 			}else{
-				if(isConnected(context)) {
+				if(isConnected(context) && !IsOnCreateView) {
 					isTimeCorrect = false;
 				}
 			}
@@ -1732,16 +1732,20 @@ public class Globally {
 
 
 	public static String ConvertImageToByteAsString(String file){
-		Bitmap bm = BitmapFactory.decodeFile(file);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		bm.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
-		byte[] byteArray = baos.toByteArray();
+		String byteStr = "";
+		try {
+			Bitmap bm = BitmapFactory.decodeFile(file);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bm.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
+			byte[] byteArray = baos.toByteArray();
 
-		Bitmap bitmap1 = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		bitmap1.compress(Bitmap.CompressFormat.PNG, 70, stream);
-		String byteStr = Base64.encodeToString(stream.toByteArray(), Base64.NO_WRAP);
-
+			Bitmap bitmap1 = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			bitmap1.compress(Bitmap.CompressFormat.PNG, 70, stream);
+			byteStr = Base64.encodeToString(stream.toByteArray(), Base64.NO_WRAP);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		return byteStr;
 	}
 

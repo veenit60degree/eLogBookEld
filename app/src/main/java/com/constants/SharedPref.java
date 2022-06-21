@@ -69,13 +69,26 @@ public class SharedPref {
     // Get Total Personal use Odometer For the Day -------------------
     public static String getTotalPUOdometerForDay( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("TotalPUOdometerForDay", "0");
+        String TotalPUOdometerForDay = preferences.getString("TotalPUOdometerForDay", "0");
+        if(TotalPUOdometerForDay.trim().equals("null") || TotalPUOdometerForDay.length() == 0){
+            TotalPUOdometerForDay = "0";
+        }
+        return TotalPUOdometerForDay;
+
+
     }
 
     // Get selected day for Personal use Odometer  -------------------
     public static String getSelectedDayForPuOdometer( Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("PUOdometerDate", "");
+
+        String PUOdometerDate = preferences.getString("PUOdometerDate", "0");
+        if(PUOdometerDate.trim().equals("null") || PUOdometerDate.length() == 0){
+            PUOdometerDate = "0";
+        }
+        return PUOdometerDate;
+
+
     }
 
 
@@ -1074,6 +1087,50 @@ public class SharedPref {
     }
 
 
+    // Set First Time Login status main Driver -------------------
+    public static void SetFirstTimeLoginStatusMain( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("FirstTimeLoginMain", value);
+        editor.commit();
+    }
+
+
+    // Get First Time Login Status main driver -------------------
+    public static boolean IsFirstTimeLoginMain( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("FirstTimeLoginMain", false);
+    }
+
+
+    // Set First Time Login status for co driver -------------------
+    public static void SetFirstTimeLoginStatusCo( boolean value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("FirstTimeLoginCo", value);
+        editor.commit();
+    }
+
+
+    // Get First Time Login Status for co Driver -------------------
+    public static boolean IsFirstTimeLoginCo( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("FirstTimeLoginCo", false);
+    }
+
+    // Get driver First Login Time -------------------
+    public static void setFirstLoginTime( String time, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("FirstLoginTime", time);
+        editor.commit();
+    }
+
+    // Get driver First Login Time -------------------
+    public static String getFirstLoginTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("FirstLoginTime", "");
+    }
 
 
     // Set Inspection Issues -------------------
@@ -2113,6 +2170,25 @@ public class SharedPref {
 
 
 
+    // Save Co-Driver Switching status  -------------------
+    public static void saveCoDriverSwitchingStatus( boolean IsEngSyncDia, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.CoDriverSwitching, IsEngSyncDia);
+
+        editor.commit();
+    }
+
+    // Get Co Driver Switching status -------------------
+    public static boolean isCoDriverSwitching( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.CoDriverSwitching, false);
+        }else {
+            return false;
+        }
+    }
+
 
     // Save Engine sync diagnostic status  -------------------
     public static void saveEngSyncDiagnstcStatus( boolean IsEngSyncDia, Context context) {
@@ -2833,7 +2909,12 @@ public class SharedPref {
     // Get wired Obd Odometer -------------------
     public static String getObdOdometer(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("wired_obd_odometer", "0");
+
+        String wired_obd_odometer = preferences.getString("wired_obd_odometer", "0");
+        if(wired_obd_odometer.trim().equals("null") || wired_obd_odometer.length() == 0){
+            wired_obd_odometer = "0";
+        }
+        return wired_obd_odometer;
 
     }
 
@@ -2850,7 +2931,13 @@ public class SharedPref {
     // Get wired Obd Odometer in miles-------------------
     public static String getObdOdometerInMiles(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("wired_obd_odometer_miles", "0");
+        String wired_obd_odometer_miles = preferences.getString("wired_obd_odometer_miles", "0");
+        if(wired_obd_odometer_miles.trim().equals("null") || wired_obd_odometer_miles.length() == 0){
+            wired_obd_odometer_miles = "0";
+        }
+        return wired_obd_odometer_miles;
+
+
 
     }
 
@@ -2887,7 +2974,13 @@ public class SharedPref {
     // Get Day start Odometer value in km -------------------
     public static String getDayStartOdometerKm(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("dayStartOdometerKm", "0");
+
+        String dayStartOdometerKm = preferences.getString("dayStartOdometerKm", "0");
+        if(dayStartOdometerKm.trim().equals("null") || dayStartOdometerKm.length() == 0){
+            dayStartOdometerKm = "0";
+        }
+        return dayStartOdometerKm;
+
     }
 
     // Get Day start Odometer value in miles -------------------

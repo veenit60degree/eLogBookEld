@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.messaging.logistic.Globally;
 
@@ -1465,6 +1466,8 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_DRIVER_LOG + " WHERE " +
                 DRIVER_ID_KEY + "=?", new String[]{Integer.toString(DriverId)});
+
+//        Log.d("@@@DriverId","HelperDriverId: " +DriverId );
         return res;
     }
 

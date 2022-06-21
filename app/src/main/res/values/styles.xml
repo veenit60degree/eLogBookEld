@@ -82,6 +82,7 @@
         <item name="fb_default">#315C94</item>
         <item name="gray_updated_divider_color">#EAEBEB</item>
         <item name="actionbar_color">#67A7D8</item>
+        <item name="color_sleeper">#B7D5EA</item>
 
     </style>
 
@@ -167,6 +168,10 @@
         <item name="fb_default">#ffffff</item>
         <item name="gray_updated_divider_color">#4E4E4E</item>
         <item name="actionbar_color">#848485</item>
+
+        <item name="color_sleeper">#848485</item>
+
+
 
     </style>
 

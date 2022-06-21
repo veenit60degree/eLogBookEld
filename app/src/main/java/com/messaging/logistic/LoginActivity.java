@@ -635,7 +635,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		StrSinglePass = passwordText.getText().toString();
 		StrCoDriverUsername = coDriverUserNameText.getText().toString().trim();
 		StrCoDriverPass = coDriverPasswordText.getText().toString();
-		StrOSType = "Android - " + AppVersion;
+		StrOSType = "Android-" + Build.VERSION.RELEASE + " | ELD-" + AppVersion ;
 
 		CheckDeviceIDsStatus();
 		getMyPhoneNumber();
@@ -770,6 +770,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.saveLocDiagnosticStatus(SharedPref.isLocDiagnosticOccur(getApplicationContext()), Globally.GetCurrentDateTime(),
 					Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
 
+			SharedPref.saveOtherMalDiaStatus( false, false, false, false,
+					false, false, false, getApplicationContext());
+
 
 			// clear array in table
 			if(CompanyId.length() > 0) {
@@ -826,9 +829,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			}
 
 			if (IsTablet) {
-				deviceType = "Tablet";
+				deviceType = "Tab";
 			} else {
-				deviceType = "Mobile";
+				deviceType = "Mob";
 			}
 
 			progressDialog = new ProgressDialog(LoginActivity.this);
@@ -1087,7 +1090,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		global.hideKeyboard(LoginActivity.this, mainLoginLayout);
 		StrCoDriverUsername = coDriverUserNameText.getText().toString().trim();
 		StrCoDriverPass = coDriverPasswordText.getText().toString();
-		StrOSType = "Android - " + AppVersion;
+		StrOSType = "Android-" + Build.VERSION.RELEASE + " | ELD-" + AppVersion ;
 
 		CheckDeviceIDsStatus();
 
@@ -1221,6 +1224,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 								Sim1 = subscriptionInfo.getNumber();
 								Sim1SerialNumber = subscriptionInfo.getIccId();
 
+								if(Sim1SerialNumber.length() == 0){
+									Sim1SerialNumber = Constants.getSerialNumber(LoginActivity.this);
+								}
 							} else {
 								Sim2 = subscriptionInfo.getNumber();
 								Sim2SerialNumber = subscriptionInfo.getIccId();
@@ -1246,9 +1252,11 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			if(Sim1.length() > 0){
 				MobileNo = Sim1;
 			}else{
-				MobileNo = Sim2;
-				operatorSIM = info.getNETWORK_OPERATOR_NAME(1);
-				Sim1SerialNumber = Sim2SerialNumber;
+				if(Sim2.length() > 0) {
+					MobileNo = Sim2;
+					operatorSIM = info.getNETWORK_OPERATOR_NAME(1);
+					Sim1SerialNumber = Sim2SerialNumber;
+				}
 			}
 
 			DeviceSimInfo = constants.DeviceSimInfo(MobileNo, Sim1SerialNumber, BrandName, Model, Version, operatorSIM);

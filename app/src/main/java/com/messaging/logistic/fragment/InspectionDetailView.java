@@ -59,7 +59,7 @@ public class InspectionDetailView  extends Fragment {
 
     View rootView;
     TextView inspectionTypeTV, noDefectLabel, inspectionDateTv, powerInspectionTV, trailerInspectionTV;
-    TextView invisibleTV, dateActionBarTV, EldTitleTV, currentOdometerTV;
+    TextView invisibleTV, dateActionBarTV, EldTitleTV, currentOdometerTV, odometerTitleTv;
     RadioGroup prePostRadioGroup, correctRadioGroup;
     Button changeLocBtn, saveInspectionBtn;
     RelativeLayout rightMenuBtn, truckTrailerTVLay, inspectTrailerTitleLay, truckTrailerLayout, superviserSignLay, eldMenuLay;
@@ -131,6 +131,7 @@ public class InspectionDetailView  extends Fragment {
         dateActionBarTV          = (TextView)view.findViewById(R.id.dateActionBarTV);
         EldTitleTV               = (TextView)view.findViewById(R.id.EldTitleTV);
         currentOdometerTV        = (TextView)view.findViewById(R.id.currentOdometerTV);
+        odometerTitleTv          = (TextView)view.findViewById(R.id.odometerTitleTv);
 
         prePostRadioGroup        = (RadioGroup)view.findViewById(R.id.prePostRadioGroup);
         correctRadioGroup        = (RadioGroup)view.findViewById(R.id.correctRadioGroup);
@@ -171,6 +172,7 @@ public class InspectionDetailView  extends Fragment {
         selectDistanceSpinner.setVisibility(View.GONE);
         odometerEditTxt.setVisibility(View.GONE);
         currentOdometerTV.setVisibility(View.VISIBLE);
+        odometerTitleTv.setText(getString(R.string.OdometerTitle));
 
         Bundle getBundle  = this.getArguments();
         int position  = getBundle.getInt("position");

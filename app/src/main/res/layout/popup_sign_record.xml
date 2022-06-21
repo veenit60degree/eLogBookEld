@@ -73,26 +73,25 @@
             />
 
 
+        <TextView
+            android:id="@+id/certifyStatusTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_10"
+            android:layout_toLeftOf="@+id/signRecordRightImg"
+            android:background="@drawable/uncertify_border"
+            android:paddingLeft="@dimen/margin_20"
+            android:paddingTop="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_20"
+            android:paddingBottom="@dimen/margin_short_3"
+            android:text="@string/certify"
+            android:textAllCaps="true"
+            android:textColor="@color/colorVoilation"
+            android:textSize="@dimen/text_size_13"
+            android:textStyle="bold"
 
-    <TextView
-        android:id="@+id/certifyStatusTxtView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/certify"
-        android:textStyle="bold"
-        android:paddingTop="@dimen/margin_short_3"
-        android:paddingBottom="@dimen/margin_short_3"
-        android:paddingRight="@dimen/margin_20"
-        android:paddingLeft="@dimen/margin_20"
-        android:layout_marginRight="@dimen/margin_10"
-        android:textSize="@dimen/text_size_13"
-        android:textAllCaps="true"
-        android:background="@drawable/uncertify_border"
-        android:textColor="@color/colorVoilation"
-        android:layout_toLeftOf="@+id/signRecordRightImg"
-        android:layout_centerVertical="true"
-
-        />
+            />
 
         <ImageView
             android:id="@+id/signRecordRightImg"

@@ -87,6 +87,6 @@
         <attr name="fb_default" format="color"/>
         <attr name="gray_updated_divider_color" format="color"/>
         <attr name="actionbar_color" format="color"/>
-
+    <attr name="color_sleeper" format="color"/>
 
 </resources>

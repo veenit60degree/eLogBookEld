@@ -996,6 +996,14 @@ public class MalfunctionDiagnosticMethod {
                 if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataRecComMal, context)) {     // check data rec mal permission
                     constants.saveMalfncnStatus(context, true);
                 }
+            } else if (DetectionDataEventCode.equals(Constants.DataTransferDiagnostic)) {
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataTransferDiag, context)) {      // check Data Transfer dia permission
+                    constants.saveDiagnstcStatus(context, true);
+                }
+            } else if (DetectionDataEventCode.equals(Constants.DataTransferMalfunction)) {
+                if(SharedPref.GetOtherMalDiaStatus(ConstantsKeys.DataTransferComplMal, context)) {      // check Data Transfer Mal permission
+                    constants.saveMalfncnStatus(context, true);
+                }
             }
         }
 

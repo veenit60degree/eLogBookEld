@@ -238,7 +238,7 @@ public class RecapViewMethod {
                     if (!json.getString(ConstantsKeys.LogSignImage).equalsIgnoreCase("null"))
                         LogSignImage = json.getString(ConstantsKeys.LogSignImage);
 
-                    recapJson.put(ConstantsKeys.CycleDaysDriverLogModel, json.getJSONArray(ConstantsKeys.CycleDaysDriverLogModel));
+                    recapJson.put(ConstantsKeys.CycleDaysDriverLogModel, new JSONArray());
 
                     recapJson.put(ConstantsKeys.LogSignImage, LogSignImage);
                     recapJson.put(ConstantsKeys.LogSignImageInByte, json.getString(ConstantsKeys.LogSignImageInByte));

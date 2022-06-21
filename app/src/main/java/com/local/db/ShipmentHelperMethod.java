@@ -360,6 +360,8 @@ public class ShipmentHelperMethod {
                     e.printStackTrace();
                 }
             }
+        }else{
+            isShippingCleared = true;
         }
             return isShippingCleared;
     }

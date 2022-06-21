@@ -228,11 +228,16 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         }else{
             if(distance.contains(".")){
                 String[] array = distance.split("\\.");
-               // if(array[0].length() > 7){
+                if(array.length > 1){
+                    if(!array[1].equals("0")){
+                        distance = constants.meterToKmWith0DecPlaces(distance);
+                    }else{
+                        distance = array[0];
+                    }
+                }else{
                     distance = constants.meterToKmWith0DecPlaces(distance);
-               /* }else{
-                    distance = constants.Convert2DecimalPlacesDouble(Double.parseDouble(distance));
-                }*/
+                }
+
             }else {
                // if (distance.length() > 7) {
                     distance = constants.meterToKmWith0DecPlaces(distance);
@@ -356,7 +361,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
                // if(constants.isActionAllowed(_context)) {
                 HelperMethods helperMethods = new HelperMethods();
                 DBHelper dbHelper = new DBHelper(_context);
-                if(helperMethods.isActionAllowedWhileDriving(_context, new Globally(), DriverId, dbHelper)){
+                if(helperMethods.isActionAllowedWhileMoving(_context, new Globally(), DriverId, dbHelper)){
                     if (malfunctionDialog != null && malfunctionDialog.isShowing())
                         malfunctionDialog.dismiss();
 

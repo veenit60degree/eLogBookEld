@@ -46,9 +46,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/bl_or_trip_no"
-            android:textColorHint="?attr/textColor"
-            >
 
+            >
+            <!--android:textColorHint="?attr/textColor"
+            -->
             <com.constants.CustomEditText
                 android:id="@+id/shipperNoEditText"
                 android:layout_width="match_parent"
@@ -84,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/ShippingName"
                 android:layout_weight="1"
-                android:textColorHint="?attr/textColor"
+
                 >
 
                 <com.constants.CustomEditText
@@ -116,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/Commodity"
                 android:layout_weight="1"
-                android:textColorHint="?attr/textColor"
+
                 >
 
                 <com.constants.CustomEditText
@@ -160,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/From"
                 android:layout_weight="1"
-                android:textColorHint="?attr/textColor"
+
                 >
 
                 <com.constants.CustomEditText
@@ -190,7 +191,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/too"
                 android:layout_weight="1"
-                android:textColorHint="?attr/textColor"
+
                 >
 
                 <com.constants.CustomEditText

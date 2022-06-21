@@ -52,6 +52,7 @@ import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.Slidingmenufunctions;
+import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.SignDialog;
@@ -60,6 +61,7 @@ import com.custom.dialogs.VehicleDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.local.db.InspectionMethod;
 import com.local.db.ShipmentHelperMethod;
@@ -73,6 +75,7 @@ import com.models.PrePostModel;
 import com.models.VehicleModel;
 import com.shared.pref.StatePrefManager;
 import com.simplify.ink.InkView;
+import com.wifi.settings.WiFiConfig;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,6 +87,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import obdDecoder.Decoder;
+import webapi.LocalCalls;
 
 
 public class InspectionFragment extends Fragment implements View.OnClickListener,
@@ -155,7 +160,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     SaveDriverLogPost saveInspectionPost;
     Constants constants;
     CsvReader csvReader;
-
+    Utils obdUtil;
+    DriverPermissionMethod driverPermissionMethod;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -184,6 +190,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         hMethods = new HelperMethods();
         inspectionMethod = new InspectionMethod();
         shipmentHelperMethod = new ShipmentHelperMethod();
+        driverPermissionMethod = new DriverPermissionMethod();
         dbHelper = new DBHelper(getActivity());
         SaveTrailerNumber = new VolleyRequest(getActivity());
         GetInspectionRequest = new VolleyRequest(getActivity());
@@ -191,6 +198,13 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         SaveOBDVehRequest = new VolleyRequest(getActivity());
         GetAddFromLatLngRequest = new VolleyRequest(getActivity());
         saveInspectionPost = new SaveDriverLogPost(getActivity(), saveInspectionResponse);
+
+        try{
+            obdUtil         = new Utils(getActivity());
+            obdUtil.createLogFile();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         queue = Volley.newRequestQueue(getActivity());
         pDialog = new ProgressDialog(getActivity());
@@ -383,6 +397,9 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         CheckTrailerStatus();
         setOdometerWithView();
+
+      //  String odo = constants.kmToMeter1("867621.03");
+      //  String odo1 = constants.kmToMeter1("475924.135");
 
         if(IsAOBRD && !IsAOBRDAutomatic){
            // Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
@@ -593,7 +610,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
                  //   HelperMethods helperMethods = new HelperMethods();
                    // DBHelper dbHelper = new DBHelper(getActivity());
-                    if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                    if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if (Globally.isConnected(getActivity())) {
                             dialog = new TrailorDialog(getActivity(), "trailor", false, TrailerNumber,
                                     0, false, Globally.onDutyRemarks, 0, dbHelper, new TrailorListener());
@@ -618,7 +635,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                     Globally.EldScreenToast(saveInspectionBtn, ConstantsEnum.TRUCK_CHANGE, getResources().getColor(R.color.colorVoilation));
                 }else {
                    // if(constants.isActionAllowed(getContext())) {
-                    if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                    if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if (Globally.isConnected(getActivity())) {
                             inspectionTruckLay.setEnabled(false);
                             inspectionProgressBar.setVisibility(View.VISIBLE);
@@ -743,10 +760,23 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             case R.id.saveInspectionBtn:
 
+                boolean isCurrentStatusMismatch = false;
                  CurrentJobStatus = SharedPref.getDriverStatusId(getActivity());
+                Log.d("CurrentJobStatus","CurrentJobStatus: "+CurrentJobStatus);
 
-                if (CurrentJobStatus.equals(Globally.ON_DUTY )) {
-                    if(hMethods.isActionAllowedWhileDriving(getActivity(), new Globally(), DriverId, dbHelper)){
+                try {
+                    JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
+                    JSONObject lastJsonItem = hMethods.GetLastJsonFromArray(driverLogArray);
+                    String CurrentJobStatusByLog = lastJsonItem.getString(ConstantsKeys.DriverStatusId);
+                    if(!CurrentJobStatusByLog.equals(CurrentJobStatus)){
+                        isCurrentStatusMismatch = true;
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                if (CurrentJobStatus.equals(Globally.ON_DUTY ) || isCurrentStatusMismatch) {
+                    if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if(TrailerNumber.length() > 0 || TruckNumber.length() > 0) {
                             CheckInspectionValidation();
                         }else{
@@ -848,22 +878,44 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     void CheckInspectValidationPart2() {
 
-         if(!constants.isObdConnectedWithELD(getActivity()) || Odometer.equals("0")){
-             /*Odometer = SharedPref.getObdOdometer(getContext());
-        }else{*/
+        boolean isObdConnected = constants.isObdConnectedWithELD(getActivity());
+
+         if(!isObdConnected){
+
              Odometer = odometerEditTxt.getText().toString().trim();
+
              if(Odometer.length() > 0){
-                 if(OdometerDistanceType.equals("KM")){
-                     Odometer = Constants.kmToMeter1(Odometer);
-                 }else if(OdometerDistanceType.equals("Miles")){
+                 if(OdometerDistanceType.equals("Miles")){
                      Odometer = Constants.milesToMeter(Odometer);
+                 }else{ // if(OdometerDistanceType.equals("KM"))
+                     Odometer = Constants.kmToMeter1(Odometer);
                  }
              }
+
+             if(odometerEditTxt.getVisibility() != View.VISIBLE) {
+                 currentOdometerTV.setVisibility(View.GONE);
+                 selectDistanceSpinner.setVisibility(View.VISIBLE);
+                 odometerEditTxt.setVisibility(View.VISIBLE);
+             }
+
         }else{
+             Odometer = Constants.kmToMeter1(SharedPref.getObdOdometer(getContext()));
              OdometerDistanceType = "KM";   // temp to pass check
+
+             if(odometerEditTxt.getVisibility() == View.VISIBLE) {
+                 currentOdometerTV.setVisibility(View.VISIBLE);
+                 selectDistanceSpinner.setVisibility(View.GONE);
+                 odometerEditTxt.setVisibility(View.GONE);
+
+             }
+
         }
 
-        if(Odometer.length() > 0 && !Odometer.equals("0") && (OdometerDistanceType.equals("KM") || OdometerDistanceType.equals("Miles")) ) {
+       /* if( (isObdConnected || Odometer.length() == 0 || !Odometer.equals("0") ) &&
+                (OdometerDistanceType.equals("KM") || OdometerDistanceType.equals("Miles")) ) {
+          */
+
+
             if (correctRadioGroup.getVisibility() == View.VISIBLE && (TruckIssueType.length() > 0 || TraiorIssueType.length() > 0)) {
                 if (AboveDefectsCorrected.equals("true") || AboveDefectsNotCorrected.equals("true")) {
                     CallSaveInspectionAPI();
@@ -875,7 +927,9 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 TraiorIssueType = "";
                 CallSaveInspectionAPI();
             }
-        }else{
+
+
+       /* }else{
             inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
             odometerEditTxt.requestFocus();
 
@@ -885,11 +939,23 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             if(Odometer.length() == 0 || Odometer.equals("0")){
                 Globally.EldScreenToast(inspectionDateTv, "Enter current odometer of your vehicle.", getResources().getColor(R.color.colorVoilation));
+
+                constants.saveObdData("", "", "", "",
+                        "", "No Odometer: " + Odometer +
+                                ", odometerEditTxt: " + odometerEditTxt.getText().toString().trim() +
+                                ", isObdConnected: " +  isObdConnected +
+                                ", obdPreference: " +  SharedPref.getObdPreference(getActivity())
+                        , "","","",
+                        String.valueOf(-1), "", "", "",
+                        DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
+
             }else{
                 Globally.EldScreenToast(inspectionDateTv, "Select odometer unit first.", getResources().getColor(R.color.colorVoilation));
             }
 
         }
+        */
+
     }
 
     @Override
@@ -974,7 +1040,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         if(constants.isObdConnectedWithELD(getActivity())){
             Odometer = Constants.kmToMeter1(odometerInKm);
 
-            if(!Odometer.equals("0")){
+            if(Odometer.length() == 0 || !Odometer.equals("0")){
 
                 String odometerInMiles = Constants.kmToMiles(odometerInKm);
 

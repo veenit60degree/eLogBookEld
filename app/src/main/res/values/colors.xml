@@ -153,9 +153,14 @@
     <color name="blue_background_layout">#A2C8E2</color>
 
     <color name="car_detail_layout">#B7D5EA</color>
+    <color name="hos_offduty_background">#FEEDCB</color>
 
     <color name="blue_background">#c3dcee</color>
     <color name="blue_background_light">#99c3dcee</color>
+
+    <color name="divider_light_blue_line">#9BB7CC</color>
+
+    <color name="divider_light_grey_line">#F8F9F9</color>
 
     <color name="blue_transparent_background">#00284d</color>
 
@@ -181,9 +186,7 @@
     <color name="fb_line">#2C5283</color>
 
 
-    <color name="divider_light_blue_line">#9BB7CC</color>
 
-    <color name="divider_light_grey_line">#F8F9F9</color>
 
 
 
@@ -191,6 +194,7 @@
     <color name="orange">#ffff900d</color>
 
     <color name="camera_blue">#1E7FF0</color>
+    <color name="color_sleeper">#F8851B</color>
 
     <color name="bottom_background_color">#ffc4c2bc</color>
 

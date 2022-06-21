@@ -9,12 +9,10 @@ public class APIs {
 
     /*=============== ALS SERVER URL =============== */
     static String ALS_DOMAIN_DEV         = "http://dev.alsrealtime.com/api/LogisticsApi/";
-    static String ALS_DOMAIN_SINGAPORE 	 = "http://103.20.169.122:9287/api/LogisticsApi/";       //http://arethos.com:55557
     static String ALS_DOMAIN_PRODUCTION  = "https://alsrealtime.com/api/LogisticsApi/";
 
     /*=============== ELD SERVER URL =============== */
     static String ELD_DOMAIN_DEV         = "http://develd.alsrealtime.com/api/ELDAPI/";
-    static String ELD_DOMAIN_SINGAPORE   = "http://103.20.169.122:9289/api/ELDAPI/";            //http://arethos.com:8285
     static String ELD_DOMAIN_PRODUCTION  = "https://eld.alsrealtime.com/api/ELDAPI/";           //http://104.167.9.210:8285/
 
 
@@ -28,7 +26,7 @@ public class APIs {
 
     /*========================= API URLs =========================*/
     public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION  ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
     public static String LOGIN_DEMO 						= DOMAIN_URL_ALS + "LoginDemo";
@@ -74,8 +72,8 @@ public class APIs {
 
 
     /*-------- ELD API ----------*/
-    public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus"; //"http://182.73.78.171:8954/api/DriverStatus/UpdateDriverStatus";
-    //public static String SAVE_DRIVER_EDIT_LOG     			= DOMAIN_URL_ELD + "SaveDriverEditELDStatus";
+    public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
+   // public static String SAVE_DRIVER_STATUS     			= "http://develd.alsrealtime.com/api/DriverStatus/UpdateDriverStatus";
     public static String SAVE_DRIVER_EDIT_LOG_NEW  			= DOMAIN_URL_ELD + "SaveDriverEditELDStatusNew";
     //  public static String GET_DRIVER_STATUS      			= DOMAIN_URL_ELD + "GetDriverStatusAndLocation";   //GetDriverLogDetail
     public static String GET_ONDUTY_REMARKS					= DOMAIN_URL_ELD + "GetOnDutyRemarks";
@@ -97,12 +95,12 @@ public class APIs {
     public static String UPDATE_DRIVER_LATLONG_LOCATION		= DOMAIN_URL_ELD + "UpdateDriverLatLongLocation";
     public static String UPDATE_OFF_LINE_DRIVER_LOG	    	= DOMAIN_URL_ELD + "UpdateOfflineDriverLog";
     public static String GET_DRIVER_LOG_18_DAYS	    	    = DOMAIN_URL_ELD + "GetDriverLogEighteenDaysDetail";
-    public static String GET_DRIVER_LOG_18_DAYS_DETAILS 	= DOMAIN_URL_ELD + "GetDriverLogEighteenDaysPastDetail";
+    public static String GET_DRIVER_LOG_18_DAYS_DETAILS 	= DOMAIN_URL_ELD + "GetDriverLogEighteenDaysPastDetailVersion2";    //
     //public static String GET_DRIVER_LOG_18_DAYS_DETAILS_TEST= DOMAIN_URL_ELD + "GetDriverLogEighteenDaysPastDetailTesting";
 
     public static String GET_SHIPPING_INFO_OFFLINE	  	    = DOMAIN_URL_ELD + "GetShippingInfoOffline";
     public static String GET_ODOMETER_OFFLINE	  	        = DOMAIN_URL_ELD + "GetOdometerOffline";
-    public static String SAVE_LOG_TEXT_FILE 	  	        = DOMAIN_URL_ELD + "SaveLogTextFile";
+    public static String SAVE_LOG_TEXT_FILE 	  	        = DOMAIN_URL_ELD + "SaveLogTextFile";   // use for sync data with violation file
     public static String SAVE_WIRED_LOG_FILE 	  	        = DOMAIN_URL_ELD + "SaveDriverLogTextFile";
     public static String SAVE_APP_USAGE_LOG_FILE 	        = DOMAIN_URL_ELD + "AppUsageLog";
     public static String SAVE_LAT_LONG 	  	                = DOMAIN_URL_ELD + "SaveLatLong";

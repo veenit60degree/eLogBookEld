@@ -110,6 +110,10 @@ public class Constants {
     public static final int OBD_PREF_WIRED    = 2;
     public static final int OBD_PREF_BLE      = 3;
 
+    public static final int LocationSourceGps  = 1;
+    public static final int LocationSourceObd  = 2;
+
+    public static int CurrentDriverJob   = 1;
 
     // Mal/Dia defination
     public static String ConstLocationMissing           = "LM";
@@ -570,6 +574,7 @@ public class Constants {
         locationObj.put(ConstantsKeys.CoDriverId,   ListModel.getCoDriverId());
         locationObj.put(ConstantsKeys.CoDriverName, ListModel.getCoDriverName());
         locationObj.put(ConstantsKeys.IsSkipRecord, ListModel.getIsSkipRecord());
+        locationObj.put(ConstantsKeys.LocationSource, ListModel.getLocationSource());
 
         jsonArray.put(locationObj);
     }
@@ -720,7 +725,9 @@ public class Constants {
         }
 
 
-        if(obdReceivedVin.length() < 8 || obdReceivedVin.equals(VINNumberFromApi) || !ignitionStatus.equals("ON")){
+        if(obdReceivedVin.length() < 8 ||
+                obdReceivedVin.equalsIgnoreCase(VINNumberFromApi) ||
+                !ignitionStatus.equalsIgnoreCase("ON")){
             return true;
         }else{
             return false;
@@ -1477,6 +1484,16 @@ public class Constants {
     }
 
 
+    public static int getLocationSource(Context context){
+
+        if(SharedPref.IsLocReceivedFromObd(context)) {
+            return LocationSourceObd;
+        }else{
+            return LocationSourceGps;
+        }
+    }
+
+
     public static int getDayDiff(String savedDate, String currentDate){
         int dayDiff = -1;
         try {
@@ -1547,6 +1564,30 @@ public class Constants {
         try {
             JSONObject deviceInfoObj = new JSONObject();
             deviceInfoObj.put("Phone", Phone);
+            deviceInfoObj.put("SerialNo", SerialNo);
+            deviceInfoObj.put("Brand", Brand);
+
+            deviceInfoObj.put("Model", Model);
+            deviceInfoObj.put("Version", Version);
+            deviceInfoObj.put("OperatorName", OperatorName);
+
+            DeviceInfo = deviceInfoObj.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return DeviceInfo;
+
+
+    }
+
+
+    public String GetObdInfo(String Phone, String SerialNo, String Brand, String Model,
+                                String Version, String OperatorName) {
+
+        String DeviceInfo = "";
+        try {
+            JSONObject deviceInfoObj = new JSONObject();
+            deviceInfoObj.put(ConstantsKeys.DriverId, Phone);
             deviceInfoObj.put("SerialNo", SerialNo);
             deviceInfoObj.put("Brand", Brand);
 
@@ -1896,7 +1937,7 @@ public class Constants {
         }
         JSONObject lastItemJson = hMethods.GetLastJsonFromArray(driverArray);
 
-        if (lastItemJson != null) {
+        if (driverArray.length() > 0 && lastItemJson != null && lastItemJson.length() > 0) {
             try {
                 DriverLogId = lastItemJson.getLong(ConstantsKeys.DriverLogId);
                 lastDateTimeStr = lastItemJson.getString(ConstantsKeys.startDateTime);
@@ -1907,6 +1948,9 @@ public class Constants {
 
         try {
             DateTime currentDateTime = Global.getDateTimeObj(StartDeviceCurrentTime, false);
+            if(lastDateTimeStr.length() < 10){
+                lastDateTimeStr = StartDeviceCurrentTime;
+            }
             DateTime lastDateTime = Global.getDateTimeObj(lastDateTimeStr, false);
             LastJobTotalMin = currentDateTime.getMinuteOfDay() - lastDateTime.getMinuteOfDay();
 
@@ -1935,9 +1979,9 @@ public class Constants {
             }
         }
 
-        if(Reason.equals("Border Crossing")){
+        /*if(Reason.equals("Border Crossing")){
             IsCycleChanged = true;
-        }
+        }*/
 
         DriverLogId = DriverLogId + 1;
         JSONObject newJsonData = hMethods.AddJobInArray(
@@ -2162,7 +2206,7 @@ public class Constants {
 
             }
 
-            for (int i = initilizeValue; i > daysValidationValue; i--) {
+            for (int i = initilizeValue; i >= daysValidationValue; i--) {
                 try {
                     JSONObject obj = (JSONObject) recap18DaysArray.get(i);
                     String date = Globally.ConvertDateFormatyyyy_MM_dd(obj.getString(ConstantsKeys.Date));
@@ -2570,7 +2614,7 @@ public class Constants {
     }
 
 
-    static String getSerialNumber(Context context){
+    public static String getSerialNumber(Context context){
         String SerialNumber = "";
 
         try {
@@ -2580,11 +2624,8 @@ public class Constants {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 return "";
             }
-            /*
-             * getSubscriberId() returns the unique subscriber ID,
-             */
+
             SerialNumber = telephonyManager.getSimSerialNumber();
-            //Log.d("subscriberId", "subscriberId: " + telephonyManager.getSubscriberId());
 
             if(SerialNumber.equals("null") || SerialNumber.length() == 0) {
                 SerialNumber = telephonyManager.getLine1Number();
@@ -5299,8 +5340,10 @@ public class Constants {
 //  ----------- checking Obd Connection Without aby Restriction-------------------
     public boolean isObdConnectedWithELD(Context context){
         boolean isObdConnected;
-        if (SharedPref.getObdStatus(context) == Constants.WIFI_CONNECTED || SharedPref.getObdStatus(context) == Constants.WIRED_CONNECTED
-                || SharedPref.getObdStatus(context) == Constants.BLE_CONNECTED){
+        int ObdStatus = SharedPref.getObdStatus(context);
+        if (ObdStatus == Constants.WIFI_CONNECTED ||
+                ObdStatus == Constants.WIRED_CONNECTED ||
+                ObdStatus == Constants.BLE_CONNECTED){
             isObdConnected = true;
         }else{
             isObdConnected = false;

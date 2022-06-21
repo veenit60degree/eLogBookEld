@@ -71,14 +71,20 @@ public class OdometerAdapter extends BaseAdapter {
         StartOdometer   = odometerM.getStartOdometer();
         EndOdometer     = odometerM.getEndOdometer();
 
-        if(!StartOdometer.equalsIgnoreCase("null"))
+        if(!StartOdometer.equalsIgnoreCase("null")) {
+            if(StartOdometer.contains(".")){
+                StartOdometer = StartOdometer.split(".")[0];
+            }
             holder.startReadingTV.setText(StartOdometer);
-        else
+        }else
             holder.startReadingTV.setText("--");
 
-        if(!EndOdometer.equalsIgnoreCase("null"))
+        if(!EndOdometer.equalsIgnoreCase("null")) {
+            if(EndOdometer.contains(".")){
+                EndOdometer = EndOdometer.split(".")[0];
+            }
             holder.endReadingTV.setText(EndOdometer);
-        else
+        }else
             holder.endReadingTV.setText("--");
 
         DistanceKm      = odometerM.getTotalKM();
@@ -87,12 +93,20 @@ public class OdometerAdapter extends BaseAdapter {
         if(DistanceKm.equalsIgnoreCase("null") || DistanceKm.length() == 0)
             DistanceKm = "--";
         else{
+            if(DistanceKm.contains(".")){
+                DistanceKm = DistanceKm.split(".")[0];
+            }
+
             DistanceKm    = DistanceKm + " km";// +DistanceType;
         }
 
         if(DistanceMiles.equalsIgnoreCase("null") || DistanceMiles.length() == 0)
             DistanceMiles = "--";
         else{
+            if(DistanceMiles.contains(".")){
+                DistanceMiles = DistanceMiles.split(".")[0];
+            }
+
             DistanceMiles    = DistanceMiles + " miles";// +DistanceType;
         }
 

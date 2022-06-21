@@ -7,6 +7,7 @@ public class ConstantsKeys {
     public static String DriverLogId        = "DriverLogId";
     public static String DriverId           = "DriverId";
     public static String DriverID           = "DriverID";
+    public static String CustomRecord           = "CustomRecord";
 
     public static String ProjectId          = "ProjectId";
     public static String DriverStatusId     = "DriverStatusId";
@@ -16,6 +17,7 @@ public class ConstantsKeys {
     public static String utcStartDateTime   = "UTCStartDateTime";
     public static String utcEndDateTime     = "UTCEndDateTime";
 
+    public static String FirstTimeLogin     = "FirstTimeLogin";
     public static String totalMin           = "TotalHours";
     public static String isNewRecord        = "isNewRecord";    // used at Edit log time when new log is inserted.
 
@@ -309,6 +311,7 @@ public class ConstantsKeys {
     public static String LocDiaOccurUtcTime             = "LocDiaOccurUtcTime";
     public static String LocDiaOccurTimeForMal          = "LocDiaOccurTimeForMal";
 
+    public static String CoDriverSwitching              = "CoDriverSwitching";
     public static String EngSyncDiagnstc                = "EngSyncDiagnstc";
     public static String EngSyncDiagnstcCo              = "EngSyncDiagnstcCo";
     public static String EngSyncMalfunction             = "EngSyncMalfunction";
@@ -618,6 +621,7 @@ public class ConstantsKeys {
     public static String IsAppRestricted                = "IsAppRestricted";
     public static String LocReceivedFromObd             = "LocReceivedFromObd";
     public static String IsCycleChanged                 = "IsCycleChanged";
+    public static String LocationSource                 = "LocationSource";
 
     public static String IsDismissDialog                = "IsDismissDialog";
     public static String ChangedToOthers                = "ChangedToOthers";

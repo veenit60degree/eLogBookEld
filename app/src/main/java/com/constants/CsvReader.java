@@ -54,39 +54,46 @@ public class CsvReader {
     public String getShortestAddress(Context context){
 
         String finalAddress = "";
-        if(Globally.LATITUDE.length() > 4) {
-            if (canadaLocationList.size() == 0) {
-                canadaLocationList = getCanadaLocationList(context);
-            }
 
-            CanadaLocModel dataModel = null;
-            double distance = 0;
-            if (canadaLocationList.size() > 1) {
-                for (int i = 1; i < canadaLocationList.size(); i++) {
+        try {
+            if (Globally.LATITUDE.length() > 4) {
+                if (canadaLocationList.size() == 0) {
+                    canadaLocationList = getCanadaLocationList(context);
+                }
 
-                    double selectedLat = Double.parseDouble(canadaLocationList.get(i).getLatitude());
-                    double selectedLong = Double.parseDouble(canadaLocationList.get(i).getLongitude());
-                    if (i == 1) {
-                        dataModel = canadaLocationList.get(i);
-                        distance = CalculateDistanceInCanada(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE),
-                                selectedLat, selectedLong);
-                    } else {
-                        double distanceCalculated = CalculateDistanceInCanada(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE),
-                                selectedLat, selectedLong);
-                        if (distanceCalculated < distance) {
-                            dataModel = canadaLocationList.get(i);
-                            distance = distanceCalculated;
+                CanadaLocModel dataModel = null;
+                double distance = 0;
+                if (canadaLocationList.size() > 1) {
+                    for (int i = 1; i < canadaLocationList.size(); i++) {
+
+                        double selectedLat = Double.parseDouble(canadaLocationList.get(i).getLatitude());
+                        double selectedLong = Double.parseDouble(canadaLocationList.get(i).getLongitude());
+
+                        if(Globally.LATITUDE.length() > 3) {
+                            if (i == 1) {
+                                dataModel = canadaLocationList.get(i);
+                                distance = CalculateDistanceInCanada(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE),
+                                        selectedLat, selectedLong);
+                            } else {
+                                double distanceCalculated = CalculateDistanceInCanada(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE),
+                                        selectedLat, selectedLong);
+                                if (distanceCalculated < distance) {
+                                    dataModel = canadaLocationList.get(i);
+                                    distance = distanceCalculated;
+                                }
+                            }
                         }
                     }
-
                 }
-            }
 
-            String stateName = GetStateByName(dataModel.getState());
-            String degree = getLocationInDegree(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE));
-            DecimalFormat dec = new DecimalFormat("0.0");
-            //String finalAddress = dec.format(distance) + " mi from " + dataModel.getGeographicalName() + " " + stateName ;
-            finalAddress = dec.format(distance) + " km " + degree + " " + stateName + " " + dataModel.getGeographicalName();
+                String stateName = GetStateByName(dataModel.getState());
+                String degree = getLocationInDegree(Double.parseDouble(Globally.LATITUDE), Double.parseDouble(Globally.LONGITUDE));
+                DecimalFormat dec = new DecimalFormat("0.0");
+                //String finalAddress = dec.format(distance) + " mi from " + dataModel.getGeographicalName() + " " + stateName ;
+                finalAddress = dec.format(distance) + " km " + degree + " " + stateName + " " + dataModel.getGeographicalName();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         return finalAddress;

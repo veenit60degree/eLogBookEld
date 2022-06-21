@@ -65,6 +65,20 @@ public class ParseLoginDetails {
                     // Save current UTC date time
                     SharedPref.setCurrentUTCTime( DriverDetail.getString("CurrentUTCDateTime") , context );
 
+                    if(DriverDetail.has(ConstantsKeys.FirstTimeLogin) && !DriverDetail.isNull(ConstantsKeys.FirstTimeLogin)) {
+                        boolean FirstTimeLogin = DriverDetail.getBoolean(ConstantsKeys.FirstTimeLogin);
+                        if (resultCount == 0) {
+                            SharedPref.SetFirstTimeLoginStatusMain(FirstTimeLogin, context);
+                        } else {
+                            SharedPref.SetFirstTimeLoginStatusCo(FirstTimeLogin, context);
+                        }
+
+                        if(FirstTimeLogin){
+                            SharedPref.setFirstLoginTime(Globally.GetCurrentDateTime(), context);
+                        }else{
+                            SharedPref.setFirstLoginTime("", context);
+                        }
+                    }
                 }
 
                 if(!dataObj.isNull("DriverSetting")) {

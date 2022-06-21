@@ -451,7 +451,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         public void onClick(View v) {
 
             //hMethods.isActionAllowedWhileDriving(getContext(), globally, DRIVER_ID, true, dbHelper);
-            boolean isActionAllowed = hMethods.isActionAllowedWhileDriving(getContext(), globally, DRIVER_ID, dbHelper);
+            boolean isActionAllowed = hMethods.isActionAllowedWhileMoving(getContext(), globally, DRIVER_ID, dbHelper);
             if(isActionAllowed) {
                 City = cityShareEditText.getText().toString().trim();
                 String MailCheck = String.valueOf(checkboxEmail.isChecked());

@@ -570,7 +570,7 @@
                                         android:layout_gravity="center_vertical"
                                         android:paddingLeft="@dimen/margin_short_5"
                                         android:text="@string/us_cycle_7days_hos"
-                                        android:textColor="?attr/holo_green_dark"
+                                        android:textColor="?attr/bluee_login_hover"
                                         android:textSize="@dimen/text_size_10"
                                         android:textStyle="normal"
                                         android:visibility="visible" />
@@ -700,21 +700,17 @@
                                         />
 
 
-
-
-
                                     <TextView
                                         android:id="@+id/hosPerDayUsedOnDutyTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textColor="?attr/hos_used_time"
-                                        android:textStyle="bold"
-                                        android:textSize="@dimen/text_size_17"
+                                        android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center_horizontal"
-                                        android:layout_centerInParent="true"
+                                        android:textColor="?attr/hos_used_time"
+                                        android:textSize="@dimen/text_size_17"
 
-                                        />
+                                        android:textStyle="bold" />
 
 
 
@@ -747,16 +743,41 @@
                                 >
 
 
-                                <TextView
-                                    android:id="@+id/hosPerDayOffDutyTV"
+
+                                <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/hos_perDay_offduty"
-                                    android:textColor="?attr/textColor"
-                                    android:textStyle="bold"
-                                    android:textSize="@dimen/text_size_19"
                                     android:layout_gravity="center_horizontal"
-                                    />
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/hosPerDayOffDutyTV"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/hos_perDay_offduty"
+                                        android:textColor="?attr/textColor"
+                                        android:textStyle="bold"
+                                        android:textSize="@dimen/text_size_19"
+                                        android:layout_gravity="center_horizontal"
+                                        />
+
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:paddingLeft="@dimen/margin_short_3"
+                                        android:text="@string/in_a_day"
+                                        android:textColor="?attr/bluee_login_hover"
+                                        android:textSize="@dimen/text_size_12"
+                                        android:textStyle="normal"
+                                        android:visibility="visible" />
+
+                                </LinearLayout>
+
+
+
 
                                 <RelativeLayout
                                     android:layout_width="@dimen/view_height_110"
@@ -770,8 +791,11 @@
                                         android:id="@+id/perDayOffDutyCircularView"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_margin="@dimen/margin_short_3"
                                         android:layout_centerInParent="true"
+                                        android:layout_marginStart="@dimen/margin_short_3"
+                                        android:layout_marginTop="@dimen/margin_short_3"
+                                        android:layout_marginEnd="@dimen/margin_short_3"
+                                        android:layout_marginBottom="@dimen/margin_short_3"
                                         CircleProgressView:cpv_autoTextSize="true"
                                         CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
                                         CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
@@ -783,27 +807,25 @@
                                         CircleProgressView:cpv_seekMode="true"
                                         CircleProgressView:cpv_showUnit="true"
                                         CircleProgressView:cpv_spinColor="@color/hos_break_time"
+
                                         CircleProgressView:cpv_textColor="?attr/hos_break_time"
                                         CircleProgressView:cpv_textScale="0"
                                         CircleProgressView:cpv_unitColor="@color/white"
                                         CircleProgressView:cpv_unitPosition="right_top"
-                                        CircleProgressView:cpv_unitScale="0"
-
-                                        />
+                                        CircleProgressView:cpv_unitScale="0" />
 
 
                                     <TextView
                                         android:id="@+id/hosPerDayUsedOffDutyTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textColor="?attr/hos_used_time"
-                                        android:textStyle="bold"
-                                        android:textSize="@dimen/text_size_17"
+                                        android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center_horizontal"
-                                        android:layout_centerInParent="true"
+                                        android:textColor="?attr/hos_used_time"
+                                        android:textSize="@dimen/text_size_17"
 
-                                        />
+                                        android:textStyle="bold" />
 
 
 
@@ -977,9 +999,9 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_vertical"
-                                    android:paddingLeft="@dimen/margin_short_5"
+                                    android:paddingLeft="@dimen/margin_short_3"
                                     android:text="@string/us_cycle_7days_hos"
-                                    android:textColor="?attr/holo_green_dark"
+                                    android:textColor="?attr/bluee_login_hover"
                                     android:textSize="@dimen/text_size_12"
                                     android:textStyle="normal"
                                     android:visibility="visible" />

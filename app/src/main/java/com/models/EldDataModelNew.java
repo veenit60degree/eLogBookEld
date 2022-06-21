@@ -56,7 +56,7 @@ public class EldDataModelNew {
     String CoDriverId;
     String CoDriverName;
     String IsSkipRecord;
-
+    int LocationSource;
 
 
     public EldDataModelNew(String projectId, String driverId, String driverStatusId, String isYard,
@@ -69,7 +69,7 @@ public class EldDataModelNew {
                            String isNorthCanada, String DrivingStartTime, String IsAobrd,
                            String CurrentCycleId, String isDeferral, String UnassignedVehicleMilesId,
                            String isNewRecord, String isCycleChanged, String unAssignedVehicleMilesId,
-                           String coDriverId, String coDriverName, String isSkipRecord
+                           String coDriverId, String coDriverName, String isSkipRecord, int locationSource
     ) {
 
         ProjectId           = projectId;
@@ -115,6 +115,7 @@ public class EldDataModelNew {
         CoDriverId = coDriverId;
         CoDriverName = coDriverName;
         IsSkipRecord = isSkipRecord;
+        LocationSource = locationSource;
 
     }
 
@@ -300,4 +301,9 @@ public class EldDataModelNew {
     public String getIsSkipRecord() {
         return IsSkipRecord;
     }
+
+    public int getLocationSource() {
+        return LocationSource;
+    }
+
 }

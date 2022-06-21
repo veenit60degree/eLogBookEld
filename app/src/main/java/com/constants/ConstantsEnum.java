@@ -53,12 +53,7 @@ public class ConstantsEnum {
 
 
     // App usage enum
-    public static String StatusOnline           = "Online";
-    public static String StatusOffline          = "Offline";
-    public static String StatusScreenOn         = "ScreenOn";
-    public static String StatusScreenOff        = "ScreenOff";
-    public static String StatusBackground       = "App in background";
-    public static String StatusForeground       = "App in foreground";
+   // public static String StatusForeground       = "App in foreground";
     public static String StatusAppKilled        = "App Killed but auto restart service";
     public static String StatusServiceStopped   = "Service stopped";
     public static String StatusPuAuto           = "PU_Odometer_auto";

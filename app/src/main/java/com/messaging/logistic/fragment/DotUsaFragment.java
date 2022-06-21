@@ -920,51 +920,53 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
             String status = "", Message = "";
             JSONObject dataObj = null;
-            try {
-                JSONObject obj = new JSONObject(response);
 
-                status = obj.getString("Status");
-                Message = obj.getString("Message");
-                if (!obj.isNull("Data")) {
-                    dataObj = new JSONObject(obj.getString("Data"));
-                }
-
-            } catch (JSONException e) {
-            }
-
-            if (status.equalsIgnoreCase("true")) {
-
-                LogSignImage = "";
-                TotalOnDutyHours         = "00:00";
-                TotalDrivingHours        = "00:00";
-                TotalOffDutyHours        = "00:00";
-                TotalSleeperBerthHours   = "00:00";
-
+            if(response != null && response.length() > 0) {
                 try {
-                    TotalOffDutyHours       = dataObj.getString(ConstantsKeys.TotalOffDutyHours);
-                    TotalSleeperBerthHours  = dataObj.getString(ConstantsKeys.TotalSleeperHours);
-                    TotalDrivingHours       = dataObj.getString(ConstantsKeys.TotalDrivingHours);
-                    TotalOnDutyHours        = dataObj.getString(ConstantsKeys.TotalOnDutyHours);
-                    IsMalfunction           = dataObj.getBoolean(ConstantsKeys.IsMalfunction);
-                    LogSignImage            = dataObj.getString(ConstantsKeys.LogSignImage);
-                    if(LogSignImage.equals("null")){
-                        LogSignImage = "";
+                    JSONObject obj = new JSONObject(response);
+
+                    status = obj.getString("Status");
+                    Message = obj.getString("Message");
+                    if (!obj.isNull("Data")) {
+                        dataObj = new JSONObject(obj.getString("Data"));
                     }
 
-                    TotalOffDutyHours      = TotalOffDutyHours.replaceAll("-", "");
-                    TotalOnDutyHours       = TotalOnDutyHours.replaceAll("-", "");
-                    TotalDrivingHours      = TotalDrivingHours.replaceAll("-", "");
-                    TotalSleeperBerthHours = TotalSleeperBerthHours.replaceAll("-", "");
+                } catch (JSONException e) {
+                }
 
-                    setDataOnView(dataObj);
-                    CheckSignatureVisibilityStatus();
-                    JSONArray dotLogArray = new JSONArray(dataObj.getString(ConstantsKeys.oReportList));
-                    setDataOnList(dotLogArray);
+                if (status.equalsIgnoreCase("true")) {
 
-                    JSONArray shippingLogArray = new JSONArray(dataObj.getString(ConstantsKeys.ShippingInformationModel));
-                    setShippingDataOnList(shippingLogArray);
+                    LogSignImage = "";
+                    TotalOnDutyHours = "00:00";
+                    TotalDrivingHours = "00:00";
+                    TotalOffDutyHours = "00:00";
+                    TotalSleeperBerthHours = "00:00";
 
-                    ParseGraphData(dotLogArray);
+                    try {
+                        TotalOffDutyHours = dataObj.getString(ConstantsKeys.TotalOffDutyHours);
+                        TotalSleeperBerthHours = dataObj.getString(ConstantsKeys.TotalSleeperHours);
+                        TotalDrivingHours = dataObj.getString(ConstantsKeys.TotalDrivingHours);
+                        TotalOnDutyHours = dataObj.getString(ConstantsKeys.TotalOnDutyHours);
+                        IsMalfunction = dataObj.getBoolean(ConstantsKeys.IsMalfunction);
+                        LogSignImage = dataObj.getString(ConstantsKeys.LogSignImage);
+                        if (LogSignImage.equals("null")) {
+                            LogSignImage = "";
+                        }
+
+                        TotalOffDutyHours = TotalOffDutyHours.replaceAll("-", "");
+                        TotalOnDutyHours = TotalOnDutyHours.replaceAll("-", "");
+                        TotalDrivingHours = TotalDrivingHours.replaceAll("-", "");
+                        TotalSleeperBerthHours = TotalSleeperBerthHours.replaceAll("-", "");
+
+                        setDataOnView(dataObj);
+                        CheckSignatureVisibilityStatus();
+                        JSONArray dotLogArray = new JSONArray(dataObj.getString(ConstantsKeys.oReportList));
+                        setDataOnList(dotLogArray);
+
+                        JSONArray shippingLogArray = new JSONArray(dataObj.getString(ConstantsKeys.ShippingInformationModel));
+                        setShippingDataOnList(shippingLogArray);
+
+                        ParseGraphData(dotLogArray);
 
                /*     if(IsMalfunction){
                         dotMalfunctionTV.setVisibility(View.VISIBLE);
@@ -972,19 +974,20 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                         dotMalfunctionTV.setVisibility(View.GONE);
                     }*/
 
-                }catch (Exception e){
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else {
+                    htmlAppendedText = "";
+
+                    String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
+                    ReloadWebView(CloseTag);
+
+                    global.EldScreenToast(eldMenuLay, Message, getResources().getColor(R.color.colorVoilation));
+
                 }
-
-
-            }else{
-                htmlAppendedText    = "";
-
-                String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
-                ReloadWebView(CloseTag);
-
-                global.EldScreenToast(eldMenuLay, Message, getResources().getColor(R.color.colorVoilation));
-
             }
         }
     };

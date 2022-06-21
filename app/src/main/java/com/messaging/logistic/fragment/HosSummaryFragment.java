@@ -2,6 +2,7 @@ package com.messaging.logistic.fragment;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -508,7 +509,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             }
 
 
-            perDayCurrentOffDutyCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+            //perDayCurrentOffDutyCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
 
 
         }catch (Exception e){
@@ -647,36 +648,58 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         reportView.setText(Html.fromHtml(getHtmlText("U " + global.FinalValue(usedHour), "R " + global.FinalValue(leftHour))));
     }
 
-    void setProgressbarValuesDayWise(CircleProgressView progressView, TextView reportView, int usedHour, int leftHour, boolean isOffDutyCircle){
+    void setProgressbarValuesDayWise(CircleProgressView progressView, TextView reportView, int usedTimeInMin, int leftTimeInMin, boolean isOffDutyCircle){
         //     value settings
 
         if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
-             int totalValue = usedHour + leftHour;
+             int totalValue = usedTimeInMin + leftTimeInMin;
         if(totalValue == 0){
             progressView.setMaxValue(100);
             progressView.setValue(0);
         }else {
-            progressView.setMaxValue(usedHour + leftHour);
-            progressView.setValue(usedHour);
+            progressView.setMaxValue(usedTimeInMin + leftTimeInMin);
+            progressView.setValue(usedTimeInMin);
         }
-            reportView.setText(Html.fromHtml(getHtmlText("U " + global.FinalValue(usedHour), "R " + global.FinalValue(leftHour))));
+            reportView.setText(Html.fromHtml(getHtmlText("U " + global.FinalValue(usedTimeInMin), "R " + global.FinalValue(leftTimeInMin))));
+
+            if(reportView.getId() == R.id.hosPerDayUsedOffDutyTV){
+                if(UILApplication.getInstance().isNightModeEnabled()){
+                    hosPerDayOffDutyCardView.setBackgroundColor(getResources().getColor(R.color.field_bg_color));
+                    progressView.setBarColor(getResources().getColor(R.color.colorSleeper));
+                }else {
+                    if (leftTimeInMin < 600) {
+                        hosPerDayOffDutyCardView.setBackgroundColor(getResources().getColor(R.color.hos_offduty_background));
+                        progressView.setBarColor(getResources().getColor(R.color.colorSleeper));
+                        progressView.setRimColor(getResources().getColor(R.color.hos_progress_bg));
+
+                    } else {
+                        hosPerDayOffDutyCardView.setBackgroundColor(getResources().getColor(R.color.whiteee));
+                        progressView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+                        progressView.setRimColor(getResources().getColor(R.color.hos_progress_bg));
+                    }
+
+                }
+            }
+
         }else{
-            int totalValue = usedHour + leftHour;
+            int totalValue = usedTimeInMin + leftTimeInMin;
              if(totalValue == 0){
             progressView.setMaxValue(100);
             progressView.setValue(0);
         }else {
-                 progressView.setMaxValue(usedHour + leftHour);
-                 progressView.setValue(usedHour);
+                 progressView.setMaxValue(usedTimeInMin + leftTimeInMin);
+                 progressView.setValue(usedTimeInMin);
              }
-            reportView.setText(Html.fromHtml(getHtmlTextDayWise("U " + global.FinalValue(usedHour), "R " + global.FinalValue(0))));
+            reportView.setText(Html.fromHtml(getHtmlTextDayWise("U " + global.FinalValue(usedTimeInMin), "R " + global.FinalValue(0))));
         }
 
 
         if(isOffDutyCircle){
-            progressView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+            if(reportView.getId() != R.id.hosPerDayUsedOffDutyTV) {
+                progressView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+            }
         }else {
-            if (leftHour <= 0) {
+            if (leftTimeInMin <= 0) {
                 progressView.setBarColor(getResources().getColor(R.color.colorVoilation));
             } else {
                 progressView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
@@ -720,7 +743,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
                 if((DRIVER_JOB_STATUS == DRIVING || DRIVER_JOB_STATUS == ON_DUTY)) {
-                    perShiftUsedOffDutyTV.setText(Html.fromHtml(getHtmlText("U " + global.FinalValue(UsedNextBreak), "R " + global.FinalValue(LeftNextBreak))));
+                    //"U " + global.FinalValue(UsedNextBreak), "R " + global.FinalValue(LeftNextBreak)
+                    perShiftUsedOffDutyTV.setText(Html.fromHtml(getHtmlText("in " + global.FinalValue(LeftNextBreak), "") ));
                     int TotalValue = LeftNextBreak+UsedNextBreak;
                     if(TotalValue == 0){
                         breakCircularView.setMaxValue(100);
@@ -844,8 +868,9 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     private String getHtmlText(String usedTime, String remainedTime){
         String usedTimeStr = "<html> " + usedTime;
         String remainingTimeStr = "";
-        remainingTimeStr = "<br/>"+"<small> <font  color='\"+ HOS_REMAIN_COLOR +\"'>"+ remainedTime +"</font> </html>";
-
+        if(remainedTime.length() > 0) {
+            remainingTimeStr = "<br/>" + "<small> <font  color='\"+ HOS_REMAIN_COLOR +\"'>" + remainedTime + "</font> </html>";
+        }
         return usedTimeStr + remainingTimeStr;
     }
 
@@ -990,18 +1015,34 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         try{
 
             String dayStartSavedDate    = SharedPref.getDayStartSavedTime(getActivity());
-            String dayStartOdometerStr  = SharedPref.getDayStartOdometerKm(getActivity());
-            String currentOdometerStr   = SharedPref.getObdOdometer(getContext());
+            final String dayStartOdometerStr  = SharedPref.getDayStartOdometerKm(getActivity());
+            final String currentOdometerStr   = SharedPref.getObdOdometer(getContext());
 
             if(dayStartSavedDate.length() > 0) {
                 if (dayStartSavedDate.equals(global.GetCurrentDeviceDate())) {
 
                     distanceInKm = Double.parseDouble(currentOdometerStr) - Double.parseDouble(dayStartOdometerStr);
-                    String distanceKmInStr = constants.getBeforeDecimalValue(String.valueOf(distanceInKm));
 
-                    String distance = "(" + constants.getBeforeDecimalValue(dayStartOdometerStr) + " - " +  constants.getBeforeDecimalValue(currentOdometerStr)
-                                                + ") = <b>" + distanceKmInStr + " Km </b>";
-                    hosDistanceTV.setText(Html.fromHtml(distance));
+                    getActivity().runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            if(distanceInKm < 0){
+                                distanceInKm = 0;
+                                hosDistanceTV.setText(Html.fromHtml("<b>0</b>"));
+
+                            }else {
+                                String distanceKmInStr = constants.getBeforeDecimalValue(String.valueOf(distanceInKm));
+
+                                String distance = "(" + constants.getBeforeDecimalValue(dayStartOdometerStr) + " - " + constants.getBeforeDecimalValue(currentOdometerStr)
+                                        + ") = <b>" + distanceKmInStr + " Km </b>";
+                                hosDistanceTV.setText(Html.fromHtml(distance));
+                            }
+                        }
+                    });
+
+
                 }
             }
         }catch (Exception e){
@@ -1084,15 +1125,43 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void run() {
 
-                        if(oDriverDetail != null) {
-                            if (localCalls.IsTake24HoursOffDuty(oDriverDetail)) {
-                                offDutyRestTV.setText(Html.fromHtml("24 hours OffDuty in 14 days (<b>Completed</b>)"));
-                                offDutyRestTV.setTextColor(getResources().getColor(R.color.colorPrimary));
-                            } else {
-                                offDutyRestTV.setText(Html.fromHtml("24 hours OffDuty in 14 days (<b>Pending</b>)"));
-                                offDutyRestTV.setTextColor(getResources().getColor(R.color.red_bg));
+                      //  int leftHoursss = (int)(70 - 45.0);
+                        String response = "";
+                        if(oDriverDetail != null)
+                        {
+                            if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME)){
+
+                                int offDutyDays = localCalls.IsTake24HoursOffDutyIn14Days(oDriverDetail);
+                                int pendingDays= 14 - offDutyDays;
+                                response = "24 hours OffDuty should be taken within " + pendingDays + " days";
+
+                            }else if( CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
+                                double offDutyMin = localCalls.IsTake24HoursOffDutyWithIn70Hours(oDriverDetail);
+
+                                if(offDutyMin < 0){
+                                    response = "24 hours OffDuty completed within 70 hours.";
+                                }else{
+                                   int leftMin = (int)(70*60 - offDutyMin);
+                                    String offDutyLeftHour = String.valueOf(leftMin/60);
+                                    String offDutyLeftMin = String.valueOf(leftMin%60);
+                                    if(offDutyLeftHour.length() == 1){
+                                        offDutyLeftHour = "0" + offDutyLeftHour;
+                                    }
+                                    if(offDutyLeftMin.length() == 1){
+                                        offDutyLeftMin = "0" + offDutyLeftMin;
+                                    }
+
+                                    response = "24 hours OffDuty should be taken within " + offDutyLeftHour +":"+offDutyLeftMin+ " hours.";
+
+
+                                }
+
                             }
+
                         }
+
+                        offDutyRestTV.setText(response);
+                        //  offDutyRestTV.setTextColor(getResources().getColor(R.color.colorPrimary));
 
                         if (LeftShiftHoursInt < 0) {
                             LeftShiftHoursInt = 0;
@@ -1203,7 +1272,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
                 if (constants.IsSendLog(DriverId, driverPermissionMethod, dbHelper)) {
 
-                    if(hMethods.isActionAllowedWhileDriving(getActivity(), global, DriverId, dbHelper)){
+                    if(hMethods.isActionAllowedWhileMoving(getActivity(), global, DriverId, dbHelper)){
                         shareDriverLogDialog();
                     } else {
                         global.EldScreenToast(sendLogHosBtn, getString(R.string.stop_vehicle_alert),

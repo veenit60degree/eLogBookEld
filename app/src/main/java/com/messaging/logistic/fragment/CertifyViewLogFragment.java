@@ -1076,6 +1076,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate, offsetFromUTC);
             recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
             TrailerNo = recapViewMethod.getTrailerNumberFromArray(recap18DaysArray, LogDate);
+
+            selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
+                                offsetFromUTC, shipmentHelper, getActivity());
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1090,12 +1095,22 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         String engineHours = Constants.get2DecimalEngHour(getActivity()); //sharedPref.getObdEngineHours(getActivity());
         int ObdStatus = sharedPref.getObdStatus(getActivity());
+
+
         if((ObdStatus == Constants.WIRED_CONNECTED || ObdStatus == Constants.WIFI_CONNECTED
                 || ObdStatus == Constants.BLE_CONNECTED) && engineHours.length() > 1) {
+
+            try {
              EngineHourTV.setText(constants.Convert1DecimalPlacesDouble(Double.parseDouble(engineHours)));
+            }catch (Exception e){
+                e.printStackTrace();
+                EngineHourTV.setText(engineHours);
+            }
+
         }else{
             EngineHourTitle.setVisibility(View.GONE);
         }
+
 
        /* if(Globally.isConnected(getActivity())){
             GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
@@ -1231,7 +1246,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
             case R.id.saveSignatureBtn:
                 // if(constants.isActionAllowed(getActivity())) {
-                if(hMethods.isActionAllowedWhileDriving(getActivity(), global, DRIVER_ID, dbHelper)){
+                if(hMethods.isActionAllowedWhileMoving(getActivity(), global, DRIVER_ID, dbHelper)){
                     isSaveCertifyClicked = true;
                     certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false, "", new CertificationListener());
                     certifyConfirmationDialog.show();
@@ -1244,7 +1259,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
             case R.id.editLogBtn:
 //if(constants.isActionAllowed(getActivity())) {
-                if(hMethods.isActionAllowedWhileDriving(getActivity(), global, DRIVER_ID, dbHelper)){
+                if(hMethods.isActionAllowedWhileMoving(getActivity(), global, DRIVER_ID, dbHelper)){
                     String driverType = "";
                     if(DriverType == Constants.MAIN_DRIVER_TYPE){
                         driverType = DriverConst.StatusSingleDriver;
@@ -3244,6 +3259,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                            // SelectedCoDriverId = dataObj.getString(ConstantsKeys.CoDriverId);
 
                                             selectedArray = new JSONArray(logModel);
+                                            selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
+                                                    offsetFromUTC, shipmentHelper, getActivity());
+
                                             ParseLogData(dataObj, false);     // Parse Log Data
                                         }
 
@@ -3375,6 +3393,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                         hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, resultArray);
                                         driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
                                         selectedArray = hMethods.GetSingleDateArray(driverLogArray, selectedDateTime, currentDateTime, selectedUtcTime, IsCurrentDate, offsetFromUTC);
+
+                                        selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
+                                                offsetFromUTC, shipmentHelper, getActivity());
+
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -3624,6 +3646,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         selectedArray = hMethods.GetSingleDateArray(driverLogArray,  selectedDateTime, currentDateTime,
                 selectedUtcTime, IsCurrentDate, offsetFromUTC);
 
+        selectedArray = hMethods.checkNewDriverDayStartLog( driverLogArray, selectedArray, DRIVER_ID,
+                offsetFromUTC, shipmentHelper, getActivity());
 
         JSONObject obj = new JSONObject();
         ParseLogData(obj, true);

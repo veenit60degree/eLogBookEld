@@ -234,23 +234,28 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                             SharedPref.SetCycleRequestAlertViewStatus(true, TabAct.this);
 
                         } else if (IsELDNotification && isFreshLogin == false) {
-                            if (SharedPref.IsELDNotificationAlertShownAlready(TabAct.this) == false) {
-                                try {
-                                    if (eldNotificationDialog != null && eldNotificationDialog.isShowing()) {
-                                        eldNotificationDialog.dismiss();
+
+                            if(EldFragment.eldNotificationDialog != null && !EldFragment.eldNotificationDialog.isShowing()) {
+                                if (SharedPref.IsELDNotificationAlertShownAlready(TabAct.this) == false) {
+                                    try {
+                                        if (eldNotificationDialog != null && eldNotificationDialog.isShowing()) {
+                                            eldNotificationDialog.dismiss();
+                                        }
+
+                                        String ELDNotification = intent.getStringExtra(ConstantsKeys.DriverELDNotificationList);
+                                        eldNotificationDialog = new EldNotificationDialog(TabAct.this, ELDNotification, true);
+                                        eldNotificationDialog.show();
+
+                                    } catch (final IllegalArgumentException e) {
+                                        e.printStackTrace();
+                                    } catch (final Exception e) {
+                                        e.printStackTrace();
                                     }
-
-                                    String ELDNotification = intent.getStringExtra(ConstantsKeys.DriverELDNotificationList);
-                                    eldNotificationDialog = new EldNotificationDialog(TabAct.this, ELDNotification, true);
-                                    eldNotificationDialog.show();
-
-                                } catch (final IllegalArgumentException e) {
-                                    e.printStackTrace();
-                                } catch (final Exception e) {
-                                    e.printStackTrace();
                                 }
                             }
+
                             SharedPref.SetELDNotificationAlertViewStatus(true, TabAct.this);
+
                         }else{
                             if (intent.hasExtra(ConstantsKeys.IsEngineRestarted)) {
 

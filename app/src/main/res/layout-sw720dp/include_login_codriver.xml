@@ -82,7 +82,6 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="?attr/textColor"
                 >
 
                 <com.constants.CustomEditText
@@ -90,7 +89,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/co_driver_username"
-                android:textColorHint="?attr/color_login_view"
                 android:background="@color/transparent"
                 android:textColor="?attr/colorPrimary"
                 android:paddingRight="@dimen/margin_10"
@@ -151,7 +149,6 @@
                 app:passwordToggleTint="?attr/textColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="?attr/textColor"
                 >
 
             <com.constants.CustomEditText
@@ -159,7 +156,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/co_driver_pass"
-                android:textColorHint="?attr/color_login_view"
                 android:background="@color/transparent"
                 android:textColor="?attr/colorPrimary"
                 android:inputType="textPassword"
@@ -207,7 +203,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:passwordToggleTint="?attr/textColor"
-                android:textColorHint="?attr/textColor"
                 >
 
                 <com.constants.CustomEditText
@@ -216,7 +211,6 @@
                     android:layout_height="match_parent"
                     android:hint="@string/co_driver_pass"
                     android:background="@color/transparent"
-                    android:textColorHint="?attr/color_login_view"
                     android:textColor="?attr/textColor"
                     android:inputType="textPassword"
                     android:paddingRight="@dimen/margin_10"
