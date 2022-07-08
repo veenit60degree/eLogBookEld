@@ -175,7 +175,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     final int GetOdometers18Days    = 5;
     final int GetRecapViewData      = 6;
     final int GetDriverLog18Days    = 7;
-    final int GetDriverPermission   = 8;
     final int SaveCertifyOnResume   = 9;
     final int SaveCertifyLog        = 10;
     final int GetReCertifyRecords   = 11;
@@ -245,7 +244,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     private DisplayImageOptions options;
     VolleyRequest GetLogRequest, GetOdometerRequest, GetShipmentRequest, GetShippingRequest,
-            GetLog18DaysRequest, GetRecapView18DaysData, GetPermissions, GetReCertifyRequest;
+            GetLog18DaysRequest, GetRecapView18DaysData, GetReCertifyRequest;
     Map<String, String> params;
     WebView graphWebView;
     ProgressBar progressBarDriverLog;
@@ -409,7 +408,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         GetShippingRequest      = new VolleyRequest(getActivity());
         GetRecapView18DaysData  = new VolleyRequest(getActivity());
         GetLog18DaysRequest     = new VolleyRequest(getActivity());
-        GetPermissions          = new VolleyRequest(getActivity());
         GetReCertifyRequest     = new VolleyRequest(getActivity());
 
         Constants.IS_ACTIVE_ELD = false;
@@ -421,12 +419,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         eldWarningColor         = getActivity().getResources().getColor(R.color.colorVoilation);
 
-
-        if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
-            DriverType = Constants.MAIN_DRIVER_TYPE;
-        }else{
-            DriverType = Constants.CO_DRIVER_TYPE;
-        }
+        DriverType              = DriverConst.GetCurrentDriverType(getActivity());
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading...");
@@ -464,10 +457,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
-        if(CurrentCycleId.equalsIgnoreCase("null"))
-            CurrentCycleId = Globally.NO_CYCLE;
 
 
 
@@ -1038,8 +1027,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
 
         isNorthCanada       =  sharedPref.IsNorthCanada(getActivity());
-        CountryCycle        = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
         CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+        CountryCycle        = DriverConst.GetCurrentCycleName(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
+        CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverType, getActivity());
 
         if(sharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
             certifyDriverNameTV.setText(MainDriverName);
@@ -2675,28 +2665,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     }
 
-    //*================== Get Driver Status Permissions ===================*//*
-    void GetDriverStatusPermission(final String DriverId, final String DeviceId, final String VehicleId ){
-
-        String Country = "";
-        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
-        if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
-            Country = "CANADA";
-        } else {
-            Country = "USA";
-        }
-        params = new HashMap<String, String>();
-        params.put(ConstantsKeys.DriverId, DriverId);
-        params.put(ConstantsKeys.DeviceId, DeviceId );
-        params.put(ConstantsKeys.VehicleId, VehicleId );
-        params.put(ConstantsKeys.VIN, SharedPref.getVINNumber(getActivity()));
-        params.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()) );
-        params.put(ConstantsKeys.Country, Country );
-
-        GetPermissions.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS_PERMISSION, params, GetDriverPermission,
-                Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
-
-    }
 
 
     //*================== Get Re-Certify Records info ===================*//*
@@ -3403,26 +3371,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                 }
                                 break;
 
-                            case GetDriverPermission:
-                                try {
-                                    if (!obj.isNull("Data")) {
-                                        JSONObject dataJObject = new JSONObject(obj.getString("Data"));
-                                        driverPermissionMethod.DriverPermissionHelper(Integer.valueOf(DRIVER_ID), dbHelper, dataJObject);
-                                        logPermissionObj = dataJObject;
-                                        isPermissionResponse = true;
-                                        isTrueAnyPermission = driverPermissionMethod.isTrueAnyPermission(dataJObject);
-                                        DriverPermitMaxDays = logPermissionObj.getInt(ConstantsKeys.ViewCertifyDays);
-                                        IsEditLocation      = driverPermissionMethod.getPermissionStatus(dataJObject, ConstantsKeys.LocationKey);
-                                        if(logPermissionObj.has(ConstantsKeys.EditDays)) {
-                                            EditDaysCount = logPermissionObj.getInt(ConstantsKeys.EditDays);
-                                        }
-
-                                        CheckSignatureVisibilityStatus(selectedArray);
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                break;
 
                             case GetReCertifyRecords:
 

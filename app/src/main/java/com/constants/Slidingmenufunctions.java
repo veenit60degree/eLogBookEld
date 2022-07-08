@@ -265,10 +265,10 @@ public class Slidingmenufunctions implements OnClickListener {
 					TabAct.host.setCurrentTab(0);
 					break;
 
-				case Constants.ALS_SUPPORT:
+			/*	case Constants.ALS_SUPPORT:
 					TabAct.host.setCurrentTab(6);
 					break;
-
+*/
 				default:
 
 					if(	TabAct.host.getCurrentTab() != 0){
@@ -292,14 +292,19 @@ public class Slidingmenufunctions implements OnClickListener {
 		SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 		startService();
 
-		if(constants.isActionAllowed(context)){
+
+		if(constants.isActionAllowed(context) && !SharedPref.getDriverStatusId(context).equals(Globally.DRIVING)){
 			if(isSignPending()){
 				certifyLogAlert();
 			}else {
 				logoutDialog();
 			}
 		}else{
-			global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
+			if(SharedPref.getDriverStatusId(context).equals(Globally.DRIVING)){
+				global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.chnge_dr_to_othr), context.getResources().getColor(R.color.colorVoilation));
+			}else {
+				global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
+			}
 		}
 	}
 
@@ -308,7 +313,7 @@ public class Slidingmenufunctions implements OnClickListener {
 		if(SharedPref.getDriverId(context).trim().length() > 0) {
 			JSONObject logPermissionObj = driverPermissionMethod.getDriverPermissionObj(Integer.valueOf(SharedPref.getDriverId(context)), dbHelper);
 			boolean isSignPending = constants.GetCertifyLogSignStatus(recapViewMethod, SharedPref.getDriverId(context), dbHelper, global.GetCurrentDeviceDate(),
-					DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context), logPermissionObj);
+							DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context), logPermissionObj);
 			return isSignPending;
 		}else{
 			return false;
@@ -349,11 +354,16 @@ public class Slidingmenufunctions implements OnClickListener {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
 
-						if(SharedPref.isSuggestedEditOccur(context) && SharedPref.IsCCMTACertified(context)){
-							logoutDialog();
+						if(constants.isActionAllowed(context)) {
+							if(SharedPref.isSuggestedEditOccur(context) && SharedPref.IsCCMTACertified(context)){
+								logoutDialog();
+							}else{
+								callLogoutApi();
+							}
 						}else{
-							callLogoutApi();
+							global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
 						}
+
 					}
 				});
 
@@ -533,8 +543,11 @@ public class Slidingmenufunctions implements OnClickListener {
 			@Override
 			public void onClick(View v) {
 				picker.dismiss();
-
-				callLogoutApi();
+				if(constants.isActionAllowed(context)) {
+					callLogoutApi();
+				}else{
+					global.EldScreenToast(MainDriverBtn, context.getResources().getString(R.string.logout_speed_alert), context.getResources().getColor(R.color.colorVoilation));
+				}
 
 			}
 		});

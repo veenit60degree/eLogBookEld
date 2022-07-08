@@ -225,7 +225,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
         getDriverInfo();
         DateTime currentDate    = globally.getDateTimeObj(globally.GetCurrentDateTime(), false);
-        String CurrentCycleId   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        String CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
 
         try {
             if (currentDate.toString().length() > 10) {
@@ -622,15 +622,15 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                     progressDialog.show();
                     clearRecordPost.SaveLogJsonObj(clearEventObj, APIs.CLEAR_MALFNCN_DIAGSTC_EVENT, Constants.SocketTimeout30Sec, true, false, 0, 101);
                 }else{
-                    if(SharedPref.IsClearDiagnostic(getActivity()) && SharedPref.IsClearMalfunction(getActivity())){
+                   // if(SharedPref.IsClearDiagnostic(getActivity()) && SharedPref.IsClearMalfunction(getActivity())){
                         globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_diagnostc_valid), getResources().getColor(R.color.colorVoilation));
-                    }else{
+                 /*   }else{
                         if(SharedPref.IsClearDiagnostic(getActivity())){
                             globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_diagnostic_records), getResources().getColor(R.color.colorVoilation));
                         }else{
                             globally.EldScreenToast(confirmCertifyTV, getString(R.string.no_malfunction_records), getResources().getColor(R.color.colorVoilation));
                         }
-                    }
+                    }*/
 
                 }
             }catch (Exception e){

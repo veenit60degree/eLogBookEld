@@ -98,6 +98,10 @@ public class ConstantsKeys {
     public static String Text                  = "Text";
     public static String Selected              = "Selected";
 
+    public static String Mode                  = "Mode";
+    public static String TimeOfChange          = "TimeOfChange";
+    public static String ModeTime              = "ModeTime";
+
     public static String UTCDateTime            = "UTCDateTime";
     public static String TrailorNumber          = "TrailorNumber";
     public static String TruckNumber            = "TruckNumber";
@@ -593,6 +597,9 @@ public class ConstantsKeys {
     public static String DriverIdDiaMalMain             = "DriverIdDiaMalMain";
     public static String UnIdentifiedAlertStatus        = "UnIdentifiedDialogAlertStatus";
     public static String UnIdentifiedAlertStatusCo      = "UnIdentifiedDialogAlertStatusCo";
+    public static String IsBleEnabled                   = "IsBleEnabled";
+    public static String IsGpsEnabled                   = "IsGpsEnabled";
+    public static String LocationStatus                 = "LocationStatus";
 
     public static String IsAllowLogReCertificationCo    = "IsAllowLogReCertificationCo";
     public static String IsShowUnidentifiedRecordsCo    = "IsShowUnidentifiedRecordsCo";
@@ -618,6 +625,8 @@ public class ConstantsKeys {
     public static String StartLocationKm                = "StartLocationKm";
     public static String IsOdoCalculationAllowed        = "IsOdoCalculationAllowed";
     public static String IsEngineRestarted              = "IsEngineRestarted";
+    public static String IsActiveHosScreen              = "IsActiveHosScreen";
+    public static String IsActiveHomeScreen             = "IsActiveHomeScreen";
     public static String IsAppRestricted                = "IsAppRestricted";
     public static String LocReceivedFromObd             = "LocReceivedFromObd";
     public static String IsCycleChanged                 = "IsCycleChanged";

@@ -113,6 +113,19 @@ public class Constants {
     public static final int LocationSourceGps  = 1;
     public static final int LocationSourceObd  = 2;
 
+    public static final int LogEventTypeBle  = 1;
+    public static final int LogEventTypeGps  = 2;
+
+    // BluetoothConnectionType
+    public static final int UNKNOWN = 0;
+    public static final int RESETTING = 1;
+    public static final int UNSUPPORTED = 2;
+    public static final int UNAUTHORIZED = 3;
+    public static final int POWERED_OFF = 4;
+    public static final int POWERED_ON = 5;
+    public static final int OBD_CONNECTED = 6;
+    public static final int OBD_DISCONNECT = 7;
+
     public static int CurrentDriverJob   = 1;
 
     // Mal/Dia defination
@@ -280,6 +293,8 @@ public class Constants {
 
     public static int ELDActivityLaunchCount = 0;
     public static boolean IS_ACTIVE_ELD = false;
+    public static boolean IS_ACTIVE_HOS = false;
+    public static boolean IS_HOS_AUTO_CALLED = false;
     public static boolean IS_NOTIFICATION = false;
     public static boolean IS_SCREENSHOT = false;
     public static boolean IS_ELD_ON_CREATE = true;
@@ -2834,7 +2849,9 @@ public class Constants {
             DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
             DateTime currentUTCTime = global.getDateTimeObj(global.GetCurrentUTCTimeFormat(), true);
             int offsetFromUTC = (int) global.GetTimeZoneOffSet();
-            String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+            //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+            String  CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
+
             boolean isSingleDriver = global.isSingleDriver(context);
             int DRIVER_JOB_STATUS = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
             int rulesVersion = SharedPref.GetRulesVersion(context);
@@ -3484,8 +3501,8 @@ public class Constants {
             Context context){
 
         JSONObject obj = new JSONObject();
-        boolean isClearDiagnostic  = SharedPref.IsClearDiagnostic(context);
-        boolean isClearMalfunction = SharedPref.IsClearMalfunction(context);
+      //  boolean isClearDiagnostic  = SharedPref.IsClearDiagnostic(context);
+      //  boolean isClearMalfunction = SharedPref.IsClearMalfunction(context);
         try {
             obj.put(ConstantsKeys.DriverId , DriverId);
             obj.put(ConstantsKeys.Remarks , reason);
@@ -3493,7 +3510,8 @@ public class Constants {
 
             for(int i = 0 ; i < MalHeaderList.size() ; i++){
                 // Malfunction. (S type event code is not eligible for clear)
-                if(isClearMalfunction && MalHeaderList.get(i).getEventCode().equalsIgnoreCase("S")){
+                //isClearMalfunction &&
+                if( MalHeaderList.get(i).getEventCode().equalsIgnoreCase("S")){
                     List<MalfunctionModel> childList = MalfunctionChildMap.get(MalHeaderList.get(i).getEventCode());
                     for(int j = 0; j < childList.size() ; j++){
                         EventsList.put(childList.get(j).getId());
@@ -3504,7 +3522,8 @@ public class Constants {
             if(DiaHeaderList != null) {
                 for (int j = 0; j < DiaHeaderList.size(); j++) {
                     // Diagnostic (4 and 5 event code are not eligible for clear)
-                    if (isClearDiagnostic && !DiaHeaderList.get(j).getEventCode().equals("4") &&
+                    //isClearDiagnostic &&
+                    if (!DiaHeaderList.get(j).getEventCode().equals("4") &&
                             !DiaHeaderList.get(j).getEventCode().equals("5")) {
                         List<MalfunctionModel> childList = DiafunctionChildMap.get(DiaHeaderList.get(j).getEventCode());
                         for (int k = 0; k < childList.size(); k++) {
@@ -3603,7 +3622,9 @@ public class Constants {
 
         String CountryName = "";
 
-        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+        //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+        String  CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
+
         if(CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2) ){
             CountryName = "CANADA";
         }else if(CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)){
@@ -4059,7 +4080,9 @@ public class Constants {
 
         try {
             /* ------------- Save Cycle details with time is different with earlier cycle --------------*/
-            String CurrentCycle   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
+            //String CurrentCycle   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
+            String CurrentCycle     = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
+
             if(CycleId != 0 && !CurrentCycle.equals(""+CycleId)) {
                 JSONArray cycleDetailArray = global.getSaveCycleRecords(CycleId, changeType, context);
                 SharedPref.SetCycleOfflineDetails(cycleDetailArray.toString(), context);
@@ -4068,38 +4091,49 @@ public class Constants {
             e.printStackTrace();
         }
 
+        // If active driver is Main Driver
+        if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+            switch (CycleId){
+                case 1:
+                    DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
+                    break;
 
-        switch (CycleId){
+                case 2:
+                    DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, context);
+                    break;
 
-            case 1:
-                DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
-               // DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
-                break;
+                case 3:
+                    DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, context);
+                    break;
 
-            case 2:
-                DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, context);
-               // DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, context);
-                break;
+                case 4:
+                    DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, context);
+                    break;
+            }
+        }else{
+            // If active driver is Co Driver
+            switch (CycleId){
+                case 1:
+                     DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
+                    break;
 
-            case 3:
-                DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, context);
-               // DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, context);
-                break;
+                case 2:
+                     DriverConst.SetCoDriverCurrentCycle(Globally.CANADA_CYCLE_2_NAME, Globally.CANADA_CYCLE_2, context);
+                    break;
 
-            case 4:
-                DriverConst.SetDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, context);
-               // DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, context);
-                break;
+                case 3:
+                     DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_6_DAYS_NAME, Globally.USA_WORKING_6_DAYS, context);
+                    break;
 
-            default:
-                DriverConst.SetDriverCurrentCycle(Globally.CANADA_CYCLE_1_NAME, Globally.CANADA_CYCLE_1, context);
-                break;
+                case 4:
+                     DriverConst.SetCoDriverCurrentCycle(Globally.USA_WORKING_7_DAYS_NAME, Globally.USA_WORKING_7_DAYS, context);
+                    break;
+
+            }
         }
 
         // Save Current Date
         SharedPref.setCurrentDate(currentUtcDate, context);
-
-
 
     }
 
@@ -4958,7 +4992,7 @@ public class Constants {
 
 
 
-    public int minDiff(String savedTime, Globally global, Context context){
+    public int minDiff(String savedTime, Globally global, boolean isPcYm, Context context){
 
         int timeInMin = 0;
         if(savedTime.length() > 10) {
@@ -4968,7 +5002,11 @@ public class Constants {
                 DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
 
                 if(savedDateTime.isAfter(currentDateTime)){
-                    SharedPref.saveHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
+                    if(isPcYm){
+                        SharedPref.savePcYmAlertCallTime(Globally.GetCurrentDateTime(), context);
+                    }else {
+                        SharedPref.saveHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
+                    }
                 }
                // timeInMin = Minutes.minutesBetween(savedDateTime, currentDateTime).getMinutes();
                 timeInMin = (int) getDateTimeDuration(savedDateTime, currentDateTime).getStandardMinutes();
@@ -4977,7 +5015,11 @@ public class Constants {
             }
 
         }else{
-            SharedPref.saveHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
+            if(isPcYm){
+                SharedPref.savePcYmAlertCallTime(Globally.GetCurrentDateTime(), context);
+            }else {
+                SharedPref.saveHighPrecisionOdometer(SharedPref.getHighPrecisionOdometer(context), global.GetCurrentDateTime(), context);
+            }
         }
         return timeInMin;
 

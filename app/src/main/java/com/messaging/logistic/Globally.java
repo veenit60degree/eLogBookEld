@@ -1815,7 +1815,7 @@ public class Globally {
 				if(changeType.equals("border_crossing")){
 
 					int cycleIdInt = Integer.valueOf(CurrentCycleId);
-					String CurrentSavedCycle   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
+					String CurrentSavedCycle   = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context );
 
 					// Add cycle change record in cycle array
 					if(cycleIdInt != 0 && !CurrentSavedCycle.equals(cycleIdInt)) {

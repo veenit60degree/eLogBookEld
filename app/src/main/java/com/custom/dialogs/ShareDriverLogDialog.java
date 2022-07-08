@@ -51,6 +51,7 @@ import com.android.volley.toolbox.Volley;
 import com.constants.APIs;
 import com.constants.AlertDialogEld;
 import com.constants.Constants;
+import com.constants.CsvReader;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
@@ -110,7 +111,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     int CanMaxDays          = 13;   // 1 = 13  = 14 days
     int MaxDays, SelectedCountry = 0;
     boolean IsAOBRD;
-    private String City = "", Country = "", canSelectedEmail = "", selectedCountry = "Select";
+    private String City = "", Country = "", canSelectedEmail = "", selectedCountry = "Select", LocationFromApi = "" ;
     List<DriverLocationModel> StateList;
     List<String> StateArrayList;
     Spinner stateSharedSpinner;
@@ -121,6 +122,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     HelperMethods hMethods;
     DBHelper dbHelper;
     AlertDialogEld statusEndConfDialog;
+    CsvReader csvReader;
 
 
     public ShareDriverLogDialog(Context context, FragmentActivity activity, String dRIVER_ID,
@@ -155,6 +157,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         StartDate = new Date();
         constant  = new Constants();
         globally  = new Globally();
+        csvReader = new CsvReader();
 
         GetAddFromLatLngRequest = new VolleyRequest(getContext());
 
@@ -217,6 +220,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         countrySpinner.setAdapter(countryAdapter);
 
 
+        getOfflineAddress();
 
         inspCmntEditTxt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -372,6 +376,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
         setMinMaxDateOnView(CanMaxDays, false);
 
+       // getOfflineAddress();
 
     }
 
@@ -390,6 +395,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         }
 
         setMinMaxDateOnView(UsaMaxDays, false);
+       // locLogAutoComplete.setText(Globally.LATITUDE + "," + Globally.LONGITUDE);
+
     }
 
 
@@ -772,20 +779,21 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                         JSONObject dataJObject = new JSONObject(obj.getString("Data"));
                         City = dataJObject.getString(ConstantsKeys.City);
                         Country = dataJObject.getString(ConstantsKeys.Country);
-                        String Location = dataJObject.getString(ConstantsKeys.Location);
+                        LocationFromApi = dataJObject.getString(ConstantsKeys.Location);
 
                         if (Country.contains("China") || Country.contains("Russia") || Country.contains("null")) {
-                            Location = Globally.LATITUDE + "," + Globally.LONGITUDE;
+                            LocationFromApi = Globally.LATITUDE + "," + Globally.LONGITUDE;
                         } else {
-                            if (Country.length() > 0 && !Location.contains(Country)) {
-                                Location = dataJObject.getString(ConstantsKeys.Location) + ", " + Country;
+                            if (Country.length() > 0 && !LocationFromApi.contains(Country)) {
+                                LocationFromApi = dataJObject.getString(ConstantsKeys.Location) + ", " + Country;
                             }
                         }
 
-                        locLogAutoComplete.setText(Location);
-
+                        locLogAutoComplete.setText(LocationFromApi);
 
                     }
+                }else{
+                    getOfflineAddress();
                 }
                 }catch (JSONException e) {
                     e.printStackTrace();
@@ -799,10 +807,28 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         @Override
         public void getError(VolleyError error, int flag) {
            Log.d("error", "error");
+            getOfflineAddress();
         }
     };
 
 
+
+    private void getOfflineAddress(){
+        String AddressLine = "";
+        if(LocationFromApi.length() == 0) {
+            if ((CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2))
+                    && !SharedPref.IsAOBRD(getContext())) {
+                AddressLine = csvReader.getShortestAddress(getContext());
+            } else {
+                if (Globally.LATITUDE.length() > 4) {
+                    AddressLine = Globally.LATITUDE + "," + Globally.LONGITUDE;
+                }
+            }
+            locLogAutoComplete.setText(AddressLine);
+        }else{
+            locLogAutoComplete.setText(LocationFromApi);
+        }
+    }
 
 
 

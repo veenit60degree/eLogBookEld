@@ -19,6 +19,8 @@ import com.constants.SharedPref;
 import com.custom.dialogs.LoginDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.HelperMethods;
 import com.messaging.logistic.fragment.EldFragment;
 
 /**
@@ -29,13 +31,16 @@ public class EldActivity extends FragmentActivity  {
 
 
 
-    FragmentManager fragManager;
+    public static FragmentManager fragManager;
     public static EldActivity instance;
     LoginDialog loginDialog;
     public static TextView DOTButton;
     String MainDriverName = "", MainDriverPass = "", CoDriverName = "" , CoDriverPass = "";
     boolean isOnStart = false;
     Globally globally;
+    HelperMethods hMethods;
+    DBHelper dbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,8 @@ public class EldActivity extends FragmentActivity  {
         setContentView(R.layout.frame_layout);
 
         globally = new Globally();
+        hMethods = new HelperMethods();
+        dbHelper = new DBHelper(this);
 
         DOTButton = (TextView)findViewById(R.id.tripTitleTV);
 
@@ -213,32 +220,39 @@ public class EldActivity extends FragmentActivity  {
             if (TabAct.smenu.isMenuShowing()) {
                 TabAct.smenu.toggle();
             } else {
-                int count = fragManager.getBackStackEntryCount();
 
-                if (count > 2) {
-                    Constants.IsEdiLogBackStack = true;
-                }
-                if (count > 1) {
+                boolean isActionAllowedWhileMoving = hMethods.isActionEventAllowedWithSpeed(getApplicationContext(), globally,
+                        SharedPref.getDriverId( getApplicationContext()), dbHelper);
+                if (isActionAllowedWhileMoving) {
+                    int count = fragManager.getBackStackEntryCount();
                     if (count > 2) {
-                        fragManager.popBackStack();
-                    } else {
-                        if(SharedPref.IsDOT(getApplicationContext())){
-                            ConfirmDOT();
-                        }else {
+                        Constants.IsEdiLogBackStack = true;
+                    }
+                    if (count > 1) {
+                        if (count > 2) {
                             fragManager.popBackStack();
+                        } else {
+                            if (SharedPref.IsDOT(getApplicationContext())) {
+                                ConfirmDOT();
+                            } else {
+                                fragManager.popBackStack();
+                            }
                         }
-                    }
-                } else {
-                    Constants.IsEdiLogBackStack = false;
-                    if (ExitStrategy.canExit()) {
-                        finish();
                     } else {
-                        ExitStrategy.startExitDelay(2000);
-                        globally.EldScreenToast(EldFragment.refreshLogBtn, getString(R.string.exit_msg), getResources().getColor(R.color.colorPrimary));
+                        Constants.IsEdiLogBackStack = false;
+                        if (ExitStrategy.canExit()) {
+                            finish();
+                        } else {
+                            ExitStrategy.startExitDelay(2000);
+                            globally.EldScreenToast(EldFragment.refreshLogBtn, getString(R.string.exit_msg), getResources().getColor(R.color.colorPrimary));
+                        }
+
                     }
-
-
+                }else{
+                    Globally.EldScreenToast(DOTButton, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
                 }
+
             }
 
         }catch (Exception e){

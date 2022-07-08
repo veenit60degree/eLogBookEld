@@ -158,7 +158,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     public static int EnginePowerHeaderCount = 1;
 */
 
-    String DayName, MonthFullName , MonthShortName , CurrentCycleId, CountryCycle;
+    String DayName, MonthFullName , MonthShortName , CurrentCycleId;  // CountryCycle;
     String DefaultLine      = " <g class=\"event \">\n";
 
     String DriverId = "", DeviceId = "", AddressLine = "", AddressLat = "", AddressLon = "";
@@ -416,7 +416,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     MonthShortName = getBundle.getString("month_short_name");
                     CurrentCycleId = getBundle.getString("cycle");
                     SelectedDayOfMonth = getBundle.getInt("day_of_month");
-                    CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
+                    //CountryCycle =DriverConst.GetCurrentCycleName(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
                     //  getBundle.clear();
                 }
             }catch (Exception e){
@@ -668,7 +668,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
             }else if(position == 2){
                 generateRodsDialog = new GenerateRodsDialog(getActivity(), countryList, new GenerateRodsListner(),
-                                        DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity()));
+                        DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity()));
                 generateRodsDialog.show();
             }else {
                 MoveDownloadLogFragment();

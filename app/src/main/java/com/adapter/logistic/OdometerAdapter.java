@@ -73,7 +73,7 @@ public class OdometerAdapter extends BaseAdapter {
 
         if(!StartOdometer.equalsIgnoreCase("null")) {
             if(StartOdometer.contains(".")){
-                StartOdometer = StartOdometer.split(".")[0];
+                StartOdometer = StartOdometer.split("\\.")[0];
             }
             holder.startReadingTV.setText(StartOdometer);
         }else
@@ -81,7 +81,7 @@ public class OdometerAdapter extends BaseAdapter {
 
         if(!EndOdometer.equalsIgnoreCase("null")) {
             if(EndOdometer.contains(".")){
-                EndOdometer = EndOdometer.split(".")[0];
+                EndOdometer = EndOdometer.split("\\.")[0];
             }
             holder.endReadingTV.setText(EndOdometer);
         }else
@@ -94,7 +94,7 @@ public class OdometerAdapter extends BaseAdapter {
             DistanceKm = "--";
         else{
             if(DistanceKm.contains(".")){
-                DistanceKm = DistanceKm.split(".")[0];
+                DistanceKm = DistanceKm.split("\\.")[0];
             }
 
             DistanceKm    = DistanceKm + " km";// +DistanceType;
@@ -104,7 +104,7 @@ public class OdometerAdapter extends BaseAdapter {
             DistanceMiles = "--";
         else{
             if(DistanceMiles.contains(".")){
-                DistanceMiles = DistanceMiles.split(".")[0];
+                DistanceMiles = DistanceMiles.split("\\.")[0];
             }
 
             DistanceMiles    = DistanceMiles + " miles";// +DistanceType;

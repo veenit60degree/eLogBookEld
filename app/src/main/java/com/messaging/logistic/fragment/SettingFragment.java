@@ -2498,6 +2498,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     }else{
                         if(flag == ChangeCycle){
                             Globally.DriverSwitchAlert(getActivity(), "Cycle Change Request !!", Message, "Ok");
+                        }else if(flag == AddressLatLong){
+                            Toast.makeText(getActivity(), Message, Toast.LENGTH_SHORT).show();
                         }else if(flag == GetAppUpdate || flag == OperatingZone || flag == SaveAgricultureException){
                             global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorVoilation));
                         }
@@ -2647,7 +2649,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     void getSavedCycleData(){
 
-        CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+       // CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        CurrentCycleId = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
 
         if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) {
             DriverType = Constants.MAIN_DRIVER_TYPE;
@@ -2733,7 +2736,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         DriverConst.GetCoDriverSettings(DriverConst.TimeZoneID, getActivity()), getActivity());
             }
 
-           // DriverConst.SetCoDriverCurrentCycle(changedCycleName, CurrentCycleId, getActivity());
+            DriverConst.SetCoDriverCurrentCycle(changedCycleName, CurrentCycleId, getActivity());
         }
 
 
@@ -2855,7 +2858,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     public boolean isAllowToEnableException(String DriverId){
         boolean isAllow = false;
         exceptionDesc = "";
-        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        String CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
 
         try {
 
@@ -2896,8 +2899,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     public boolean isAllowToEnableExceptionn(String DriverId, boolean isAdverse){
         boolean isAllow = false;
         exceptionDesc = "";
-        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
-
+        String CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
         try {
             String ValidateCycle1, ValidateCycle2;
 

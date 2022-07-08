@@ -374,7 +374,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
         DriverId            = DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
         CoDriverId          = DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
-        CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
 
         DRIVER_ID           = SharedPref.getDriverId( getActivity());
         VIN_NUMBER          = SharedPref.getVINNumber(getActivity());

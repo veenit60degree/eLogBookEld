@@ -227,6 +227,7 @@ public class HelperMethods {
     }
 
 
+
     public boolean isDrivingAllowedWithCoDriver(Context context, Globally Global, String selectedDriverId,
                                                 boolean isDriveChanging, DBHelper dbHelper){
         boolean isDrivingAllowed = true;
@@ -261,6 +262,41 @@ public class HelperMethods {
 
         return isDrivingAllowed;
     }
+
+    public boolean isActionEventAllowedWithSpeed(Context context, Globally Global, String selectedDriverId, DBHelper dbHelper){
+        boolean isActionAllowed = true;
+        boolean isAppRestricted = SharedPref.IsAppRestricted(context);
+        boolean isVehicleMoving = SharedPref.isVehicleMoving(context);
+
+        if (!Global.isSingleDriver(context)) {
+
+            int SelectedDriverStatus = 1;
+            boolean isSelectedDriverPersonalUse = false;
+            boolean isSelectedDriverYardMove = false;
+            ArrayList<String> selectedDriverInfo = GetDriverStatusWithPCUse(Integer.valueOf(selectedDriverId), dbHelper);
+            if (selectedDriverInfo.size() > 2) {
+                SelectedDriverStatus = Integer.valueOf(selectedDriverInfo.get(0));
+                isSelectedDriverPersonalUse = Boolean.parseBoolean(selectedDriverInfo.get(1));
+                isSelectedDriverYardMove = Boolean.parseBoolean(selectedDriverInfo.get(2));
+            }
+
+            if(isAppRestricted && isVehicleMoving) {
+                if (SelectedDriverStatus == Constants.DRIVING || isSelectedDriverPersonalUse || isSelectedDriverYardMove) {
+                    isActionAllowed = false;
+                }
+            }
+        }else {
+            if(isAppRestricted && isVehicleMoving){
+                isActionAllowed = false;
+            }
+        }
+
+
+
+        return isActionAllowed;
+    }
+
+
 
     private boolean IsCoDriverInDrPcYm(String selectedDriverId, Context context, DBHelper dbHelper){
 
@@ -695,6 +731,7 @@ public class HelperMethods {
 
                     String startDateStr = dayStartDateTime.toString().substring(0, 10) + "T00:00:00";
                     String endDateStr;
+
                     if(i == dayDiff-1){
                         endDateStr   = Globally.GetCurrentDateTime();
                     }else{
@@ -2533,7 +2570,9 @@ public class HelperMethods {
                                                String DRIVER_ID, int offsetFromUTC,
                                                ShipmentHelperMethod shipmentHelper, Context context){
 
-        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+        //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+        String  CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
+
         DateTime currentDateTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);    // Current Date Time
         DateTime currentUTCTime = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
 
@@ -3423,7 +3462,9 @@ public class HelperMethods {
         LocalCalls CallDriverRule = new LocalCalls();
 
         List<DriverLog> oDriverLog3DaysList = getNumberOffDaysLog(DriverId, 3, currentDate, currentUTCDate, dbHelper);   // 3 days log list
-        oDriverLog3DaysList.get(oDriverLog3DaysList.size()-1).setCurrentCyleId(eldCyclesId);
+        if(oDriverLog3DaysList.size() > 0) {
+            oDriverLog3DaysList.get(oDriverLog3DaysList.size() - 1).setCurrentCyleId(eldCyclesId);
+        }
         DriverDetail oDriverDetailRemaining = getDriverList(currentDate, currentUTCDate, DriverId,
                 offsetFromUTC, eldCyclesId, isSingleDriver, LastStatus, isOldRecord, isHaulException, isAdverseException, isNorthCanada,
                 rulesVersion, oDriverLog3DaysList, context);  //oDriverLog3DaysList
@@ -4101,7 +4142,7 @@ public class HelperMethods {
         String currentUTCTime = Global.GetCurrentUTCTime();
         String CurrentDeviceDate = Global.GetCurrentDateTime();
         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
-        String CurrentCycleId   = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context );
+        String CurrentCycleId   = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context );
         String MainDriverName = DriverConst.GetDriverDetails(DriverConst.DriverName, context);
         String DriverCompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
         String TrailorNumber = SharedPref.getTrailorNumber(context);

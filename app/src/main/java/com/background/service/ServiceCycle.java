@@ -237,7 +237,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 isSingleDriver = false;
             }
             isNorthCanada  =  SharedPref.IsNorthCanada(context);
-            CurrentCycleId  = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+           // CurrentCycleId  = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+            CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
 
             if(SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {  // If Current driver is Main Driver
                 DriverType = Constants.MAIN_DRIVER_TYPE;     // Single Driver Type and Position is 0
@@ -644,23 +645,27 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             }
 
 
-                                            if (Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit) {
-                                                Constants.isPcYmAlertButtonClicked = false;
-                                                BackgroundLocationService.IsAutoChange = true;
-                                                message = " Duty status switched to DRIVING due to not confirming YardMove status.";
-                                                LastStatus = "_YM_NotConfirmedByDriver ";
+                                            String pcYmAlertCallTime = SharedPref.getPcYmAlertCallTime(context);
+                                            int callTimeDiff = constants.minDiff(pcYmAlertCallTime, Global, true, context);
+                                            if (callTimeDiff > 0) {
+                                                if (Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit) {
+                                                    Constants.isPcYmAlertButtonClicked = false;
+                                                    BackgroundLocationService.IsAutoChange = true;
+                                                    message = " Duty status switched to DRIVING due to not confirming YardMove status.";
+                                                    LastStatus = "_YM_NotConfirmedByDriver ";
 
-                                                isPcYmAlertChangeStatus = true;
-                                                CHANGED_STATUS = DRIVING;
+                                                    isPcYmAlertChangeStatus = true;
+                                                    CHANGED_STATUS = DRIVING;
+                                                    SharedPref.savePcYmAlertCallTime("", context);
 
-                                                dismissEngineRestartDialog(true);
+                                                    dismissEngineRestartDialog(true);
 
-                                                ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                                        driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                                    ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                            driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
 
 
+                                                }
                                             }
-
                                         }
                                     }
 
@@ -726,24 +731,29 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 }
 
                                             }
+
+
                                         }
                                     }
                                 }
 
-                                if (isPersonal && Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit) {
-                                    Constants.isPcYmAlertButtonClicked = false;
-                                    isPcYmAlertChangeStatus = true;
-                                    BackgroundLocationService.IsAutoChange = true;
-                                    message = " Duty status switched to DRIVING due to not confirming Personal use status.";
-                                    LastStatus = "_PU_NotConfirmedByDriver ";
+                                String pcYmAlertCallTime = SharedPref.getPcYmAlertCallTime(context);
+                                int callTimeDiff = constants.minDiff(pcYmAlertCallTime, Global, true, context);
+                                if (callTimeDiff > 0) {
+                                    if (isPersonal && Constants.isPcYmAlertButtonClicked && VehicleSpeed >= DrivingSpeedLimit) {
+                                        Constants.isPcYmAlertButtonClicked = false;
+                                        isPcYmAlertChangeStatus = true;
+                                        BackgroundLocationService.IsAutoChange = true;
+                                        message = " Duty status switched to DRIVING due to not confirming Personal use status.";
+                                        LastStatus = "_PU_NotConfirmedByDriver ";
 
-                                    dismissEngineRestartDialog(true);
-
-                                    CHANGED_STATUS = DRIVING;
-                                    ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
-                                            driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                        dismissEngineRestartDialog(true);
+                                        SharedPref.savePcYmAlertCallTime("", context);
+                                        CHANGED_STATUS = DRIVING;
+                                        ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
+                                                driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, true, false);
+                                    }
                                 }
-
 
                             }
                         }

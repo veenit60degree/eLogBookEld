@@ -75,6 +75,8 @@ public class ContinueStatusDialog extends Dialog {
             continueStatusDescTV.setText(getContext().getString(R.string.ConfirmDutyStatus));
         }
 
+        SharedPref.savePcYmAlertCallTime(Globally.GetCurrentDateTime(), getContext());
+
         if(SharedPref.GetAfterLoginConfStatus(getContext()) == false && isLogin){
             continueStatusDescTV.setVisibility(View.INVISIBLE );
             continueStatusTitleTV.setText(getContext().getResources().getString(R.string.LoginConfirmation) );

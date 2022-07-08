@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
+import com.constants.Constants;
+import com.constants.SharedPref;
+import com.messaging.logistic.Globally;
+
 
 public class DriverConst {
 
@@ -275,20 +279,61 @@ public class DriverConst {
 
 
     /* ============ Save Co Driver Settings ============*/
-   /* public static void SetCoDriverCurrentCycle( String currentCycleName, String currentCycleId, Context context){
+    public static void SetCoDriverCurrentCycle( String currentCycleName, String currentCycleId, Context context){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(CoCurrentCycle, currentCycleName);
         editor.putString(CoCurrentCycleId, currentCycleId);
         editor.commit();
     }
-    *//* ============ Get Driver Login Details ============*//*
+    //* ============ Get Driver Login Details ============*/
     public static String GetCoDriverCurrentCycle(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, "1");     //default value is canada Cycle 1
-    }*/
+    }
 
-    
+
+    public static String GetCurrentCycleName(int DriverType, Context context){
+        String CurrentCycleName = Globally.NO_CYCLE_NAME;
+        if(context != null) {
+            if (DriverType == Constants.MAIN_DRIVER_TYPE) {
+                CurrentCycleName = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, context);
+            } else {
+                CurrentCycleName = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycle, context);
+            }
+        }
+        if (CurrentCycleName.equalsIgnoreCase("null") || CurrentCycleName.length() == 0) {
+            CurrentCycleName = Globally.NO_CYCLE_NAME;
+        }
+
+        return CurrentCycleName;
+    }
+
+
+    public static String GetCurrentCycleId(int DriverType, Context context){
+        String CurrentCycleId = Globally.NO_CYCLE;
+        if(context != null) {
+            if (DriverType == Constants.MAIN_DRIVER_TYPE) {
+                CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+            } else {
+                CurrentCycleId = DriverConst.GetCoDriverCurrentCycle(DriverConst.CoCurrentCycleId, context);
+            }
+        }
+
+        if (CurrentCycleId.equalsIgnoreCase("null") || CurrentCycleId.length() == 0) {
+            CurrentCycleId = Globally.NO_CYCLE;
+        }
+
+        return CurrentCycleId;
+    }
+
+    public static int GetCurrentDriverType (Context context) {
+        if (SharedPref.getCurrentDriverType(context).equals(DriverConst.StatusSingleDriver)) {
+            return Constants.MAIN_DRIVER_TYPE;
+        } else {
+            return Constants.CO_DRIVER_TYPE;
+        }
+    }
 
     public static void SetDriverSettings(
             String currentCycle, String currentCycleId,

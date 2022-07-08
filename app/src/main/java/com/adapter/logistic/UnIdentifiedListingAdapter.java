@@ -121,7 +121,9 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
             holder.requestedByTxtVw.setVisibility(View.VISIBLE);
         }
 
-        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+       String CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
+        //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+
         if (CurrentCycleId.equals(Globally.USA_WORKING_6_DAYS) || CurrentCycleId.equals(Globally.USA_WORKING_7_DAYS)) {
             holder.unIdenDistanceTV.setText(unIdentifiedList.get(position).getTotalMiles() + " Miles");
         }else{

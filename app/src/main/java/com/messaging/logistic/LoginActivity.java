@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -101,7 +102,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	RequestQueue queue;
 	Animation connectionStatusAnimation;
 	MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
-
+	boolean isApiCalled = false;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -413,6 +414,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			} else {
 				Log.v("TAG", "Permission is revoked");
 				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+				Toast.makeText(this, getString(R.string.storage_per_revoked), Toast.LENGTH_SHORT).show();
+				//requestLocationPermission();
+
 				return false;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
@@ -483,6 +487,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			} else {
 				Log.v("TAG", "Permission is revoked");
 				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 5);
+
+				//login();
+				Toast.makeText(this, getString(R.string.phone_per_revoked), Toast.LENGTH_SHORT).show();
+
 				return false;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
@@ -507,6 +515,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			} else {
 				Log.v("TAG", "Permission is revoked");
 				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 2);
+				//requestPermissionPhone();
+				Toast.makeText(this, getString(R.string.loc_per_revoked), Toast.LENGTH_SHORT).show();
+
 				return false;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
@@ -766,6 +777,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
 			SharedPref.SetIgnitionOffCalled(false, getApplicationContext());
 			SharedPref.setAgricultureExemption(false, getApplicationContext());
+			SharedPref.saveCoDriverSwitchingStatus(false, getApplicationContext());
 
 			SharedPref.saveLocDiagnosticStatus(SharedPref.isLocDiagnosticOccur(getApplicationContext()), Globally.GetCurrentDateTime(),
 					Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
@@ -802,188 +814,194 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 		if(SharedPref.isLoginAllowed(LoginActivity.this)) {
 
+			if(!isApiCalled) {
+				isApiCalled = true;
+				clearUnIdentifiedRecordBeforeLogin();
 
-			clearUnIdentifiedRecordBeforeLogin();
+				loginBtn.setEnabled(false);
+				try {
+					MainDriverEldPref MainDriverPref = new MainDriverEldPref();
+					CoDriverEldPref CoDriverPref = new CoDriverEldPref();
+					MainDriverPref.ClearLocFromList(LoginActivity.this);
+					CoDriverPref.ClearLocFromList(LoginActivity.this);
 
-			loginBtn.setEnabled(false);
-			try {
-				MainDriverEldPref MainDriverPref = new MainDriverEldPref();
-				CoDriverEldPref CoDriverPref = new CoDriverEldPref();
-				MainDriverPref.ClearLocFromList(LoginActivity.this);
-				CoDriverPref.ClearLocFromList(LoginActivity.this);
-
-			} catch (Exception e) {
-			}
-
-			try {
-				if (obdUtil == null) {
-					obdUtil = new Utils(LoginActivity.this);
+				} catch (Exception e) {
 				}
-				constants.saveLoginDetails(username, OSType, DeviceSimInfo, ImeiNumber, obdUtil);
 
-				// delete previous obd server logs
-				obdUtil.deleteServerObdLog();
+				try {
+					if (obdUtil == null) {
+						obdUtil = new Utils(LoginActivity.this);
+					}
+					constants.saveLoginDetails(username, OSType, DeviceSimInfo, ImeiNumber, obdUtil);
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+					// delete previous obd server logs
+					obdUtil.deleteServerObdLog();
 
-			if (IsTablet) {
-				deviceType = "Tab";
-			} else {
-				deviceType = "Mob";
-			}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
-			progressDialog = new ProgressDialog(LoginActivity.this);
-			progressDialog.setMessage("Loading...");
-			progressDialog.setCancelable(false);
-			progressDialog.show();
+				if (IsTablet) {
+					deviceType = "Tab";
+				} else {
+					deviceType = "Mob";
+				}
 
-			StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.LOGIN_NEW,
-					new Response.Listener<String>() {
-						@Override
-						public void onResponse(String response) {
-							Log.d("Response", ">>>response: " + response);
+				progressDialog = new ProgressDialog(LoginActivity.this);
+				progressDialog.setMessage("Loading...");
+				progressDialog.setCancelable(false);
+				progressDialog.show();
 
-							SharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
-							//SharedPref.SetConnectionType(constants.ConnectionMalfunction, getApplicationContext());
-							Globally.TEMP_USERNAME = userNameText.getText().toString();
-							Globally.TEMP_PASSWORD = passwordText.getText().toString();
+				StringRequest postRequest = new StringRequest(Request.Method.POST, APIs.LOGIN_NEW,
+						new Response.Listener<String>() {
+							@Override
+							public void onResponse(String response) {
+								Log.d("Response", ">>>response: " + response);
 
-							try {
+								isApiCalled = false;
+								SharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
+								//SharedPref.SetConnectionType(constants.ConnectionMalfunction, getApplicationContext());
+								Globally.TEMP_USERNAME = userNameText.getText().toString();
+								Globally.TEMP_PASSWORD = passwordText.getText().toString();
 
-								JSONObject obj = new JSONObject(response);
-								status = obj.getString("Status");
-								message = obj.getString("Message");
-								int rulesVersion = 1;
+								try {
 
-								if (obj.has(ConstantsKeys.rulesVersion) && !obj.isNull(ConstantsKeys.rulesVersion)) {
-									rulesVersion = obj.getInt(ConstantsKeys.rulesVersion);
-								}
+									JSONObject obj = new JSONObject(response);
+									status = obj.getString("Status");
+									message = obj.getString("Message");
+									int rulesVersion = 1;
 
-								SharedPref.SetRulesVersion(rulesVersion, getApplicationContext());
-
-								if (status.equalsIgnoreCase("true")) {
-
-									try {
-										global.DisConnectBleDevice(LoginActivity.this);
-										String CompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
-										if(CompanyId.length() > 0) {
-											malfunctionDiagnosticMethod.UnidentifiedLogoutRecordHelper(Integer.valueOf(CompanyId),
-													new DBHelper(getApplicationContext()), new JSONArray());
-										}
-									}catch (Exception e){
-										e.printStackTrace();
+									if (obj.has(ConstantsKeys.rulesVersion) && !obj.isNull(ConstantsKeys.rulesVersion)) {
+										rulesVersion = obj.getInt(ConstantsKeys.rulesVersion);
 									}
 
-									if (!obj.isNull("Data")) {
-										loginResponseData = obj.getString("Data");
-										// reset user data
-										Constants.IS_ELD_ON_CREATE = true;
+									SharedPref.SetRulesVersion(rulesVersion, getApplicationContext());
+
+									if (status.equalsIgnoreCase("true")) {
+
+										try {
+											global.DisConnectBleDevice(LoginActivity.this);
+											String CompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
+											if (CompanyId.length() > 0) {
+												malfunctionDiagnosticMethod.UnidentifiedLogoutRecordHelper(Integer.valueOf(CompanyId),
+														new DBHelper(getApplicationContext()), new JSONArray());
+											}
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+
+										if (!obj.isNull("Data")) {
+											loginResponseData = obj.getString("Data");
+											// reset user data
+											Constants.IS_ELD_ON_CREATE = true;
 
 
-										resetValues();
+											resetValues();
 
-										new ParseLoginJsonData().execute();
+											new ParseLoginJsonData().execute();
 
-									} else {
+										} else {
+											loginBtn.setEnabled(true);
+											if (progressDialog != null && progressDialog.isShowing()) {
+												progressDialog.dismiss();
+											}
+
+											global.EldScreenToast(mainLoginLayout, "Error, Info not found." + message, getResources().getColor(R.color.colorVoilation));
+										}
+
+
+									} else if (status.equalsIgnoreCase("false")) {
 										loginBtn.setEnabled(true);
 										if (progressDialog != null && progressDialog.isShowing()) {
 											progressDialog.dismiss();
 										}
 
-										global.EldScreenToast(mainLoginLayout, "Error, Info not found." +message, getResources().getColor(R.color.colorVoilation));
+										String errorStr = getErrorMsg(message);
+										global.EldScreenToast(mainLoginLayout, errorStr, getResources().getColor(R.color.colorVoilation));
+
 									}
-
-
-								} else if (status.equalsIgnoreCase("false")) {
+								} catch (Exception e) {
+									e.printStackTrace();
 									loginBtn.setEnabled(true);
+									global.EldScreenToast(mainLoginLayout, "Error", getResources().getColor(R.color.colorVoilation));
+
 									if (progressDialog != null && progressDialog.isShowing()) {
 										progressDialog.dismiss();
 									}
 
-									String errorStr = getErrorMsg(message);
-									global.EldScreenToast(mainLoginLayout, errorStr, getResources().getColor(R.color.colorVoilation));
-
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-								loginBtn.setEnabled(true);
-								global.EldScreenToast(mainLoginLayout, "Error", getResources().getColor(R.color.colorVoilation));
-
-								if (progressDialog != null && progressDialog.isShowing()) {
-									progressDialog.dismiss();
 								}
 
 							}
+						},
+						new Response.ErrorListener() {
+							@Override
+							public void onErrorResponse(VolleyError error) {
+								isApiCalled = false;
 
-						}
-					},
-					new Response.ErrorListener() {
-						@Override
-						public void onErrorResponse(VolleyError error) {
+								try {
+									if (progressDialog != null && progressDialog.isShowing()) {
+										progressDialog.dismiss();
+									}
+									loginBtn.setEnabled(true);
 
-							try {
-								if (progressDialog != null && progressDialog.isShowing()) {
-									progressDialog.dismiss();
+									Log.d("error", "error: " + error);
+									String message = error.toString();    ////  com.android.volley.TimeoutError
+									if (message.contains("TimeoutError")) {
+										message = "Connection timeout. Please try again.";
+									} else if (message.contains("ServerError")) {
+										message = "ALS server not responding";
+									} else if (message.contains("NoConnectionError")) {
+										message = "Internet connection error";
+									}
+									global.EldScreenToast(mainLoginLayout, message, getResources().getColor(R.color.colorVoilation));
+								} catch (Exception e) {
+									e.printStackTrace();
 								}
-								loginBtn.setEnabled(true);
-
-								Log.d("error", "error: " + error);
-								String message = error.toString();	////  com.android.volley.TimeoutError
-								if (message.contains("TimeoutError")) {
-									message = "Connection timeout. Please try again.";
-								} else if (message.contains("ServerError")) {
-									message = "ALS server not responding";
-								} else if (message.contains("NoConnectionError")) {
-									message = "Internet connection error";
-								}
-								global.EldScreenToast(mainLoginLayout, message, getResources().getColor(R.color.colorVoilation));
-							} catch (Exception e) {
-								e.printStackTrace();
 							}
 						}
+				) {
+
+					@Override
+					protected Response<String> parseNetworkResponse(NetworkResponse response) {
+						if (response.headers == null) {
+							// cant just set a new empty map because the member is final.
+							response = new NetworkResponse(
+									response.statusCode,
+									response.data,
+									Collections.<String, String>emptyMap(), // this is the important line, set an empty but non-null map.
+									response.notModified,
+									response.networkTimeMs);
+						}
+						return super.parseNetworkResponse(response);
 					}
-			) {
 
-				@Override
-				protected Response<String> parseNetworkResponse(NetworkResponse response) {
-					if (response.headers == null) {
-						// cant just set a new empty map because the member is final.
-						response = new NetworkResponse(
-								response.statusCode,
-								response.data,
-								Collections.<String, String>emptyMap(), // this is the important line, set an empty but non-null map.
-								response.notModified,
-								response.networkTimeMs);
+					@Override
+					protected Map<String, String> getParams() {
+						Map<String, String> params = new HashMap<String, String>();
+
+						params.put(ConstantsKeys.DeviceId, DeviceId);
+						params.put(ConstantsKeys.Password, pass);
+						params.put(ConstantsKeys.Username, username);
+						params.put(ConstantsKeys.CoDriverUsername, CoDriverUsername);
+						params.put(ConstantsKeys.CoDriverPassword, CoDriverPassword);
+						params.put(ConstantsKeys.TeamDriverType, TeamDriverType);
+						params.put(ConstantsKeys.IMEINumber, ImeiNumber);
+						params.put(ConstantsKeys.OSType, OSType);
+						params.put(ConstantsKeys.DeviceType, deviceType);
+						params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
+
+						params.put(ConstantsKeys.SIM1, DeviceSimInfo);
+						//params.put("SIM2, "");
+
+						return params;
 					}
-					return super.parseNetworkResponse(response);
-				}
+				};
 
-				@Override
-				protected Map<String, String> getParams() {
-					Map<String, String> params = new HashMap<String, String>();
+				postRequest.setRetryPolicy(policy);
+				queue.add(postRequest);
 
-					params.put(ConstantsKeys.DeviceId, DeviceId);
-					params.put(ConstantsKeys.Password, pass);
-					params.put(ConstantsKeys.Username, username);
-					params.put(ConstantsKeys.CoDriverUsername, CoDriverUsername);
-					params.put(ConstantsKeys.CoDriverPassword, CoDriverPassword);
-					params.put(ConstantsKeys.TeamDriverType, TeamDriverType);
-					params.put(ConstantsKeys.IMEINumber, ImeiNumber);
-					params.put(ConstantsKeys.OSType, OSType);
-					params.put(ConstantsKeys.DeviceType, deviceType);
-					params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
+			}
 
-					params.put(ConstantsKeys.SIM1, DeviceSimInfo);
-					//params.put("SIM2, "");
-
-					return params;
-				}
-			};
-
-			postRequest.setRetryPolicy(policy);
-			queue.add(postRequest);
 		}else{
 			global.EldScreenToast(mainLoginLayout, getString(R.string.login_speed_alert), getResources().getColor(R.color.colorVoilation));
 		}

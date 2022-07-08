@@ -194,7 +194,6 @@
                                 android:gravity="center"
                                 android:paddingLeft="@dimen/margin_15"
                                 android:paddingRight="@dimen/margin_15"
-                                android:text="@string/us_cycle_7days_hos"
                                 android:textColor="?attr/colorPrimary"
                                 android:textSize="@dimen/text_size_10"
                                 android:textStyle="normal"

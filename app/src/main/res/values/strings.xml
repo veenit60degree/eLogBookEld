@@ -555,6 +555,9 @@
     <string name="data_saving_inProgress">Please wait, Data is saving.</string>
     <string name="change_cycle_to">Change cycle to </string>
     <string name="change_op_zone_to">Change Operating Zone to </string>
+    <string name="storage_per_revoked">Storage permission is revoked</string>
+    <string name="loc_per_revoked">Location permission is revoked</string>
+    <string name="phone_per_revoked">Phone permission is revoked</string>
 
     <string name="DOT">DOT</string>
     <string name="inspection_date">Inspection Date : </string>
@@ -746,6 +749,7 @@
     <string name="pc_ym_alert_with_dr">Please change your status to other duty status first to select Special Driving Conditions (PC/YM).</string>
     <string name="ym_alert_with_us">Please change your status to OnDuty(others) status first to select YardMove</string>
     <string name="pc_alert_with_us">Please change your status to OffDuty first to select Personal Use.</string>
+    <string name="chnge_dr_to_othr">Please change your status from Driving to other duty status first.</string>
 
     <string name="loading">Loading</string>
     <string name="TrailerDrop">Trailer Drop</string>
@@ -940,7 +944,7 @@
     <string name="can_not_select">Can\'t select due to missing elements. Go to detail page to Claim/Reject this event.</string>
 
     <string name="BleOBDConnErr">BLE OBD Connection Error</string>
-    <string name="connErrorDesc">E-Log book is getting different MAC address. Please check your BLE device configuration.</string>
+    <string name="connErrorDesc">Device connection error. Please check your BLE device configuration or restart the tablet.</string>
     <string name="AlsEld">ALS ELD</string>
     <string name="Inter_record_occ">Intermediate record occurred</string>
     <string name="driving_rec_occurred">Unidentified Driving Record occurred as vehicle is moving but no Driver is logged in</string>

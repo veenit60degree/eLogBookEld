@@ -112,7 +112,7 @@ public class DatePickerDialog extends Dialog {
             datePicker.setMaxDate(maxDate);             // Till current date
 
             String[] cycleArray = CurrentCycleId.split(",");
-            if (cycleArray.length > 1) {
+            if (cycleArray.length > 0) {
                 CurrentCycleId = cycleArray[0];
 
                 if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
@@ -121,8 +121,10 @@ public class DatePickerDialog extends Dialog {
                     DriverPermitMaxDays = isGenerateRods == true ? 8 :7;
                 }
 
-                if(cycleArray[1].equals("sendLog")){
-                    setDateJob.setText("Select Date");
+                if (cycleArray.length > 1) {
+                    if (cycleArray[1].equals("sendLog")) {
+                        setDateJob.setText("Select Date");
+                    }
                 }
             } else {
                 DriverPermitMaxDays = constants.GetDriverPermitDaysCount(logPermissionObj, CurrentCycleId, IsDot);

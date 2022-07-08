@@ -22,6 +22,8 @@ public class APIs {
     static String ALS_DOMAIN_INDIAN      = "http://192.168.0.10:8952/api/LogisticsApi/";       //  http://103.66.204.26
     static String ELD_DOMAIN_INDIAN      = "http://192.168.0.10:8251/api/ELDAPI/";             //http://182.73.78.171:8287
 
+    static String ELD_SETTING_DOMAIN_PRODUCTION = "https://eld.alsrealtime.com/api/DriverSettingsApi/";
+    static String ELD_SETTING_DOMAIN_DEV        =  "http://develd.alsrealtime.com/api/DriverSettingsApi/";
 
 
     /*========================= API URLs =========================*/
@@ -127,6 +129,8 @@ public class APIs {
     public static String GET_DRIVER_DEVICE_ID               = DOMAIN_URL_ELD + "GetDriverDeviceId";
     public static String UPDATE_DRIVER_ELD_SETTING_NOTIFICATIONS               = DOMAIN_URL_ELD + "UpdateDriverELDSettingNotifications";
 
+    public static String ADD_DEVICE_GPS_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceGpsSettings";
+    public static String ADD_DEVICE_BLE_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceBluetoothSettings";
 
 }
 

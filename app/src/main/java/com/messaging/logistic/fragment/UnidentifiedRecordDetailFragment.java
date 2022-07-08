@@ -168,7 +168,8 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         });
 
 
-        CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+       // CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        CurrentCycleId = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
 
         eldMenuLay.setOnClickListener(this);
         rejectRecordBtn.setOnClickListener(this);

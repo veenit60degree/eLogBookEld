@@ -189,7 +189,6 @@
                         android:paddingLeft="@dimen/margin_10"
                         android:paddingTop="@dimen/margin_short_5"
                         android:paddingRight="@dimen/margin_10"
-                        android:text="@string/us_cycle_7days_hos"
                         android:textColor="?attr/color_eld_theme"
                         android:textSize="@dimen/text_size_8"
                         android:textStyle="normal"
@@ -272,8 +271,8 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerInParent="true"
-                                        android:layout_marginStart="@dimen/margin_short_3"
 
+                                        android:layout_marginStart="@dimen/margin_short_3"
                                         android:layout_marginTop="@dimen/margin_short_3"
                                         android:layout_marginEnd="@dimen/margin_short_3"
                                         android:layout_marginBottom="@dimen/margin_short_3"
@@ -282,8 +281,8 @@
                                         CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
                                         CircleProgressView:cpv_innerContourSize="0dp"
                                         CircleProgressView:cpv_maxValue="100"
-                                        CircleProgressView:cpv_outerContourSize="0dp"
 
+                                        CircleProgressView:cpv_outerContourSize="0dp"
                                         CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
                                         CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
                                         CircleProgressView:cpv_seekMode="true"

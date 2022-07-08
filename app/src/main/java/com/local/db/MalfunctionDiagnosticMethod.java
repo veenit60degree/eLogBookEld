@@ -658,7 +658,8 @@ public class MalfunctionDiagnosticMethod {
                         boolean IsClearEvent = eventObj.getBoolean(ConstantsKeys.IsClearEvent);
 
                         // (LocationType.equals("X") || LocationType.equals("E"))
-                        if( (LocationType.length() == 0 || CurrentStatus.equals(eventCurrentStatus) ) && !IsClearEvent){
+                        if( (LocationType.length() == 0 || CurrentStatus.equals(eventCurrentStatus) ||
+                                CurrentStatus.equals("On Duty")) && !IsClearEvent){
 
                             String clearEventDate = Globally.GetCurrentUTCTimeFormat();
                             eventObj.put(ConstantsKeys.IsClearEvent, true);
@@ -928,7 +929,8 @@ public class MalfunctionDiagnosticMethod {
                     if(DetectionDataEventCode.equals(Constants.PowerComplianceMalfunction) ||
                             DetectionDataEventCode.equals(Constants.EngineSyncMalfunctionEvent) ||
                             DetectionDataEventCode.equals(Constants.PositionComplianceMalfunction) ||
-                                    DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction)){
+                                    DetectionDataEventCode.equals(Constants.DataRecordingComplianceMalfunction) ||
+                                    DetectionDataEventCode.equals(Constants.DataTransferMalfunction)){
                         UpdateStatus(IsClearEvent, DetectionDataEventCode, EventDateTime, EventEndDateTime, driverZoneDate, constants, context);
                     }else {
                         if (DriverId.equals(EventDriverId) || EventDriverId.equals("0")) {
@@ -1183,8 +1185,12 @@ public class MalfunctionDiagnosticMethod {
                                 if (Constants.isDiagnosticEvent(EventCode)) {
 
                                     if(EventCode.equals(Constants.MissingDataDiagnostic) ){
-                                        String LocationType = obj.getString(ConstantsKeys.LocationType);
-                                        if(LocationType.length() > 0){
+                                       // String LocationType = obj.getString(ConstantsKeys.LocationType);
+                                        String CurrentStatus = obj.getString(ConstantsKeys.CurrentStatus);
+                                        // LocationType.length() > 0 ||
+                                        if(CurrentStatus.equals("Off Duty") || CurrentStatus.equals("Sleeper") ||
+                                                CurrentStatus.equals("On Duty") || CurrentStatus.equals("Driving") ||
+                                                CurrentStatus.equals("Personal")){
                                             JSONObject clearObj = getJsonObjForClearEvent(DriverId, EventDateTime, DataEventCode, isClear,
                                                     obj, isAlreadyCleared, context);
 

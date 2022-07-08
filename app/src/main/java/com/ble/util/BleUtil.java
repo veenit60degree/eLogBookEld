@@ -166,7 +166,7 @@ public class BleUtil {
     public static String decodeDataChange(HTBleData data, String address){
 
         String decodedData = "";
-        String accDateTime = data.getRTCDate() + data.getRTCTime();
+        String accDateTime = data.getACC_ON_Date();   //RTCDate() + data.getRTCTime();
 
         decodedData = // "<b>Device Name:</b> " + name + "<br/>" +
                  "<b>MAC Address:</b> " + address + "<br/><br/>" +
@@ -175,7 +175,8 @@ public class BleUtil {
                 "<b>Event Code:</b> " + data.getEventCode()+ "<br/>" +
                 "<b>Date:</b> " + data.getRTCDate() + "<br/>" +
                 "<b>Time:</b> " + data.getRTCTime() + "<br/>" +
-                "<b>Latest ACC ON time:</b> " + accDateTime + "<br/>" +
+                "<b>Latest ACC ON Time:</b> " + accDateTime + "<br/>" +
+                "<b>Latest RTC Time:</b> " + data.getRTCDate() + data.getRTCTime() + "<br/>" +
                 "<b>Event Data:</b> " + data.getEventData() + "<br/>" +
                 "<b>Vehicle Speed:</b> " + data.getVehicleSpeed() + "<br/>" +
                 "<b>Engine RPM:</b> " + data.getEngineSpeed() + "<br/>" +

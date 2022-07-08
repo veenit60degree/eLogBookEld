@@ -35,6 +35,7 @@ import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
+import com.constants.CsvReader;
 import com.constants.InitilizeEldView;
 import com.constants.LoadingSpinImgView;
 import com.constants.SharedPref;
@@ -96,10 +97,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     String DriverId;
     String DeviceId;
     String CycleId;
+    String LocationFromApi = "";
     SwitchCompat dotSwitchButton;
-    //String vin = "";
+    CsvReader csvReader;
 
-    long MIN_TIME_BW_UPDATES = 60000;  // 60 Sec
+    long MIN_TIME_BW_UPDATES = 30000;  // 60 Sec
     final int OFF_DUTY = 1;
     final int SLEEPER = 2;
     final int DRIVING = 3;
@@ -163,11 +165,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     double distanceInKm = 0;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+        Constants.IS_ACTIVE_HOS = true;
         if (rootView != null) {
             ViewGroup parent = (ViewGroup) rootView.getParent();
             if (parent != null)
@@ -200,6 +204,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         constants               = new Constants();
         global                  = new Globally();
         hMethods                = new HelperMethods();
+        csvReader               = new CsvReader();
         dbHelper                = new DBHelper(getActivity());
         localCalls              = new LocalCalls();
         driverPermissionMethod  = new DriverPermissionMethod();
@@ -413,12 +418,25 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (buttonView.isPressed()) {
-                    setReverseCycleName();
-                    if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
-                        canadaDotView();
+
+                    if (global.isSingleDriver(getActivity()) && SharedPref.IsAppRestricted(getActivity()) && SharedPref.isVehicleMoving(getActivity())) {
+                        Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                                getResources().getColor(R.color.colorVoilation));
+
+                        if(buttonView.isChecked()){
+                            buttonView.setChecked(false);
+                        }else{
+                            buttonView.setChecked(true);
+                        }
                     }else{
-                        usaDotView();
+                        setReverseCycleName();
+                        if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
+                            canadaDotView();
+                        }else{
+                            usaDotView();
+                        }
                     }
+
                 }
 
             }
@@ -433,6 +451,22 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         hosLocationCardView.setOnClickListener(this);
         rightMenuBtn.setOnClickListener(this);
         EldFragment.summaryBtn.setEnabled(true);
+
+        if(Constants.IS_HOS_AUTO_CALLED){
+            Constants.IS_HOS_AUTO_CALLED = false;
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(getActivity() != null) {
+
+                        resetAllBar();
+                        CycleTimeCalculation(true);
+
+                    }
+                }
+            }, Constants.SocketTimeout5Sec);
+        }
     }
 
 
@@ -468,48 +502,53 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     void canadaDotView(){
         try{
 
-            hosFlagImgView.setImageResource(R.drawable.can_flag);
-            perDayDrivingTV.setVisibility(View.VISIBLE);
-            hos_CycleViewChange.setVisibility(View.GONE);
-            hosOperatingZoneTV.setVisibility(View.VISIBLE);
-            dotSwitchButton.setText("CAN");
-            hosPerDayTv.setText("PER DAY");
-            perDayDrivingTV.setText("Driving");
-            hosCycleTV.setText(CurrentCycle);
-            hosPerDayOnDutyCardView.setVisibility(View.VISIBLE);
-            hosPerDayOffDutyCardView.setVisibility(View.VISIBLE);
-            hosCycleCardView.setVisibility(View.VISIBLE);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-            resetProgressBarUI();
-            CycleTimeCalculation(true);
-            getCycleHours();
-            setBreakProgress();
-            setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt, false);
-            setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt,
-                    LeftDayOffDutyDrivingHoursInt, true);
-            setProgressbarValuesDayWise(perDayCurrentDrivingCircularView, perDayUsedDrivingTV, UsedDayDrivingHoursInt, LeftDayDrivingHoursInt, false);
-            setProgressbarValues(perShiftCurrentDrivingCircularView, perShiftUsedDrivingTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
-            setProgressbarValues(perShiftCurrentOnDutyCircularView, perShiftUsedOnDutyTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
+                    hosFlagImgView.setImageResource(R.drawable.can_flag);
+                    perDayDrivingTV.setVisibility(View.VISIBLE);
+                    hos_CycleViewChange.setVisibility(View.GONE);
+                    hosOperatingZoneTV.setVisibility(View.VISIBLE);
+                    dotSwitchButton.setText("CAN");
+                    hosPerDayTv.setText("PER DAY");
+                    perDayDrivingTV.setText("Driving");
+                    hosCycleTV.setText(CurrentCycle);
+                    hosPerDayOnDutyCardView.setVisibility(View.VISIBLE);
+                    hosPerDayOffDutyCardView.setVisibility(View.VISIBLE);
+                    hosCycleCardView.setVisibility(View.VISIBLE);
 
-
-            if(LeftDayDrivingHoursInt > 0 && LeftDayDrivingHoursInt <= 30){
-                perDayCurrentDrivingCircularView.setBarColor(getResources().getColor(R.color.colorSleeper));
-            }else if(LeftDayDrivingHoursInt == 0){
-                perDayCurrentDrivingCircularView.setBarColor(getResources().getColor(R.color.colorVoilation));
-            }else{
-                perDayCurrentDrivingCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
-            }
-
-            if(LeftDayOnDutyDrivingHoursInt > 0 && LeftDayOnDutyDrivingHoursInt <= 30){
-                perDayCurrentOnDutyCircularView.setBarColor(getResources().getColor(R.color.colorSleeper));
-            }else if(LeftDayOnDutyDrivingHoursInt == 0){
-                perDayCurrentOnDutyCircularView.setBarColor(getResources().getColor(R.color.colorVoilation));
-            }else{
-                perDayCurrentOnDutyCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
-            }
+                    resetProgressBarUI();
+                    CycleTimeCalculation(true);
+                    getCycleHours();
+                    setBreakProgress();
+                    setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt, false);
+                    setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt,
+                            LeftDayOffDutyDrivingHoursInt, true);
+                    setProgressbarValuesDayWise(perDayCurrentDrivingCircularView, perDayUsedDrivingTV, UsedDayDrivingHoursInt, LeftDayDrivingHoursInt, false);
+                    setProgressbarValues(perShiftCurrentDrivingCircularView, perShiftUsedDrivingTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
+                    setProgressbarValues(perShiftCurrentOnDutyCircularView, perShiftUsedOnDutyTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
 
 
-            //perDayCurrentOffDutyCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+                    if(LeftDayDrivingHoursInt > 0 && LeftDayDrivingHoursInt <= 30){
+                        perDayCurrentDrivingCircularView.setBarColor(getResources().getColor(R.color.colorSleeper));
+                    }else if(LeftDayDrivingHoursInt == 0){
+                        perDayCurrentDrivingCircularView.setBarColor(getResources().getColor(R.color.colorVoilation));
+                    }else{
+                        perDayCurrentDrivingCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+                    }
+
+                    if(LeftDayOnDutyDrivingHoursInt > 0 && LeftDayOnDutyDrivingHoursInt <= 30){
+                        perDayCurrentOnDutyCircularView.setBarColor(getResources().getColor(R.color.colorSleeper));
+                    }else if(LeftDayOnDutyDrivingHoursInt == 0){
+                        perDayCurrentOnDutyCircularView.setBarColor(getResources().getColor(R.color.colorVoilation));
+                    }else{
+                        perDayCurrentOnDutyCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+                    }
+
+                }
+            });
+
 
 
         }catch (Exception e){
@@ -521,26 +560,32 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     void usaDotView(){
         try{
 
-            hosFlagImgView.setImageResource(R.drawable.usa_flag);
-            perDayDrivingTV.setVisibility(View.GONE);
-            hosOperatingZoneTV.setVisibility(View.GONE);
-            hos_CycleViewChange.setVisibility(View.VISIBLE);
-            hosCycleTVUsa.setText("(" + CurrentCycle + ")");
-            dotSwitchButton.setText("USA");
-            hosPerDayTv.setText("CYCLE");
-            hosPerDayOnDutyCardView.setVisibility(View.INVISIBLE);
-            hosPerDayOffDutyCardView.setVisibility(View.INVISIBLE);
-            hosCycleCardView.setVisibility(View.INVISIBLE);
-            CycleTimeCalculation(true);
-            getCycleHours();
-            setBreakProgress();
-            setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt, false);
-            setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt,
-                    LeftDayOffDutyDrivingHoursInt, true);
-            setProgressbarValues(perShiftCurrentDrivingCircularView, perShiftUsedDrivingTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
-            setProgressbarValues(perShiftCurrentOnDutyCircularView, perShiftUsedOnDutyTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
+                    hosFlagImgView.setImageResource(R.drawable.usa_flag);
+                    perDayDrivingTV.setVisibility(View.GONE);
+                    hosOperatingZoneTV.setVisibility(View.GONE);
+                    hos_CycleViewChange.setVisibility(View.VISIBLE);
+                    hosCycleTVUsa.setText("(" + CurrentCycle + ")");
+                    dotSwitchButton.setText("USA");
+                    hosPerDayTv.setText("CYCLE");
+                    hosPerDayOnDutyCardView.setVisibility(View.INVISIBLE);
+                    hosPerDayOffDutyCardView.setVisibility(View.INVISIBLE);
+                    hosCycleCardView.setVisibility(View.INVISIBLE);
+                    CycleTimeCalculation(true);
+                    getCycleHours();
+                    setBreakProgress();
+                    setProgressbarValuesDayWise(perDayCurrentOnDutyCircularView, perDayUsedOnDutyTV, UsedDayOnDutyDrivingHoursInt, LeftDayOnDutyDrivingHoursInt, false);
+                    setProgressbarValuesDayWise(perDayCurrentOffDutyCircularView, perDayUsedOffDutyTV, UsedDayOffDutyHoursInt,
+                            LeftDayOffDutyDrivingHoursInt, true);
+                    setProgressbarValues(perShiftCurrentDrivingCircularView, perShiftUsedDrivingTV, UsedDrivingHoursInt, LeftDrivingHoursInt);
+                    setProgressbarValues(perShiftCurrentOnDutyCircularView, perShiftUsedOnDutyTV, UsedOnDutyHoursInt, LeftOnDutyHoursInt);
 
+                }
+
+            });
 
         }catch (Exception e){
             e.printStackTrace();
@@ -552,26 +597,26 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
+
+        Constants.IS_ACTIVE_HOS = true;
+
         eldMenuLay.setEnabled(true);
         RestartTimer();
 
-//        if(SharedPref.isSuggestedEditOccur(getActivity()) && SharedPref.IsCCMTACertified(getActivity()) ){
-//            malfunctionTV.setText(getString(R.string.review_carrier_edits));
-//            //  malfunctionTV.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
-//            malfunctionLay.setVisibility(View.VISIBLE);
-//            malfunctionLay.startAnimation(editLogAnimation);
-//        }else{
-//            editLogAnimation.cancel();
-//            malfunctionLay.setVisibility(View.GONE);
-//        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
         clearTimer();
 
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Constants.IS_ACTIVE_HOS = false;
     }
 
 
@@ -710,29 +755,96 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
     private void resetProgressBarUI(){
-        if(DRIVER_JOB_STATUS == DRIVING){
-            hosPerShiftDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-            hosPerDayDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-            perShiftCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
-            perDayCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
-        }else if(DRIVER_JOB_STATUS == ON_DUTY){
-            hosPerShiftOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-            hosPerDayOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-            perShiftCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.white));
-            perDayCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.white));
-        }else if(DRIVER_JOB_STATUS == OFF_DUTY){
-            hosPerShiftBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-            hosPerDayOffDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-            breakCircularView.setRimColor(getResources().getColor(R.color.white));
-            perDayCurrentOffDutyCircularView.setRimColor(getResources().getColor(R.color.white));
-            breakCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
 
-        } else if(DRIVER_JOB_STATUS == SLEEPER){
-            hosPerShiftBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-            hosPerDayOffDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
-            breakCircularView.setRimColor(getResources().getColor(R.color.white));
-            perDayCurrentOffDutyCircularView.setRimColor(getResources().getColor(R.color.white));
-            breakCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(DRIVER_JOB_STATUS == DRIVING){
+                    hosPerShiftDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+                    hosPerDayDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+                    perShiftCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
+                    perDayCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
+                }else if(DRIVER_JOB_STATUS == ON_DUTY){
+                    hosPerShiftOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+                    hosPerDayOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+                    perShiftCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.white));
+                    perDayCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.white));
+                }else if(DRIVER_JOB_STATUS == OFF_DUTY){
+                    hosPerShiftBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+                    hosPerDayOffDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+                    breakCircularView.setRimColor(getResources().getColor(R.color.white));
+                    perDayCurrentOffDutyCircularView.setRimColor(getResources().getColor(R.color.white));
+                    breakCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+
+                } else if(DRIVER_JOB_STATUS == SLEEPER){
+                    hosPerShiftBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+                    hosPerDayOffDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
+                    breakCircularView.setRimColor(getResources().getColor(R.color.white));
+                    perDayCurrentOffDutyCircularView.setRimColor(getResources().getColor(R.color.white));
+                    breakCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+                }
+            }
+        });
+
+    }
+
+
+    private void resetAllBar(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    hosPerShiftDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.white));
+                    hosPerDayDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.white));
+                    hosPerShiftOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.white));
+                    hosPerDayOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.white));
+                    hosPerShiftBreakCardView.setCardBackgroundColor(getResources().getColor(R.color.white));
+                    hosPerDayOffDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.white));
+
+                    perShiftCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.hos_progress_bg));
+                    perDayCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.hos_progress_bg));
+                    perShiftCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.hos_progress_bg));
+                    perDayCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.hos_progress_bg));
+                    perDayCurrentOffDutyCircularView.setRimColor(getResources().getColor(R.color.hos_progress_bg));
+                    breakCircularView.setRimColor(getResources().getColor(R.color.hos_progress_bg));
+
+                    breakCircularView.setBarColor(getResources().getColor(R.color.hos_progress_newbg));
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+    }
+
+    private void resetCycle(){
+        try{
+            String CurrentCycleId = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
+            if(!CycleId.equals(CurrentCycleId)){
+                setReverseCycleName();
+                if(CurrentCycle.equals(Globally.CANADA_CYCLE_1_NAME) || CurrentCycle.equals(Globally.CANADA_CYCLE_2_NAME)){
+                    canadaDotView();
+                }else{
+                    usaDotView();
+                }
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(dotSwitchButton.isChecked()){
+                            dotSwitchButton.setChecked(false);
+                        }else{
+                            dotSwitchButton.setChecked(true);
+                        }
+                    }
+                });
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -1054,13 +1166,17 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         try {
 
+            DRIVER_JOB_STATUS = Integer.parseInt(SharedPref.getDriverStatusId(getActivity()));
             calculateLocalOdometersDistance();
 
             if (isUpdateUI && global.isConnected(getActivity())) {
+                resetProgressBarUI();
                 GetAddFromLatLng();
                 if(distanceInKm == 0) {
                     GetEngineMiles();  //=============================================================================================
                 }
+            }else{
+                getOfflineAddress();
             }
 
             currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
@@ -1070,7 +1186,10 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             rulesVersion = SharedPref.GetRulesVersion(getActivity());
 
             List<DriverLog> oDriverLogDetail = hMethods.getSavedLogList(Integer.valueOf(DriverId), currentDateTime, currentUTCTime, dbHelper);
-            oDriverLogDetail.get(oDriverLogDetail.size()-1).setCurrentCyleId(Integer.valueOf(CycleId));
+            if(oDriverLogDetail.size() > 0) {
+                oDriverLogDetail.get(oDriverLogDetail.size() - 1).setCurrentCyleId(Integer.valueOf(CycleId));
+            }
+
             final DriverDetail oDriverDetail = hMethods.getDriverList(currentDateTime, currentUTCTime, Integer.valueOf(DriverId),
                     offsetFromUTC, Integer.valueOf(CycleId), isSingleDriver, DRIVER_JOB_STATUS, false,
                     isHaulExcptn, isAdverseExcptn, isNorthCanada,
@@ -1208,12 +1327,34 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     }
 
 
+    private void getOfflineAddress(){
+
+        String AddressLine = "";
+        if(LocationFromApi.length() == 0) {
+            if ((CycleId.equals(Globally.CANADA_CYCLE_1) || CycleId.equals(Globally.CANADA_CYCLE_2))
+                    && !SharedPref.IsAOBRD(getContext())) {
+                AddressLine = csvReader.getShortestAddress(getContext());
+            } else {
+                if (Globally.LATITUDE.length() > 4) {
+                    AddressLine = Globally.LATITUDE + "," + Globally.LONGITUDE;
+                }
+            }
+            hosLocationTV.setText(AddressLine);
+        }else{
+            hosLocationTV.setText(LocationFromApi);
+        }
+    }
+
 
     private class HosTimerTask extends TimerTask {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void run() {
-            CycleTimeCalculation(true);
+            if(global.isSingleDriver(getActivity()) && SharedPref.isVehicleMoving(getActivity())) {
+                resetAllBar();
+                resetCycle();
+            }
 
+            CycleTimeCalculation(true);
 
         }
     }
@@ -1247,11 +1388,20 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
+
+        boolean isActionEventAllowedWithSpeed = hMethods.isActionEventAllowedWithSpeed(getActivity(), global, DriverId, dbHelper);
+
         switch (v.getId()){
 
             case R.id.obdHosInfoImg:
-                ObdDataInfoDialog obdDialog = new ObdDataInfoDialog(getActivity(), DriverId);
-                obdDialog.show();
+
+                if (isActionEventAllowedWithSpeed) {
+                    ObdDataInfoDialog obdDialog = new ObdDataInfoDialog(getActivity(), DriverId);
+                    obdDialog.show();
+                }else {
+                    Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
+                }
 
                 break;
 
@@ -1263,46 +1413,69 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
             case R.id.eldMenuLay:
-                eldMenuLay.setEnabled(false);
-                getParentFragmentManager().popBackStack();
+
+                if (isActionEventAllowedWithSpeed) {
+                    eldMenuLay.setEnabled(false);
+                    getParentFragmentManager().popBackStack();
+                }else{
+                    Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
+                }
 
                 break;
 
             case R.id.sendLogHosBtn:
 
-                if (constants.IsSendLog(DriverId, driverPermissionMethod, dbHelper)) {
+                if (isActionEventAllowedWithSpeed) {
+                    if (constants.IsSendLog(DriverId, driverPermissionMethod, dbHelper)) {
 
-                    if(hMethods.isActionAllowedWhileMoving(getActivity(), global, DriverId, dbHelper)){
-                        shareDriverLogDialog();
+                        if (hMethods.isActionAllowedWhileMoving(getActivity(), global, DriverId, dbHelper)) {
+                            shareDriverLogDialog();
+                        } else {
+                            global.EldScreenToast(sendLogHosBtn, getString(R.string.stop_vehicle_alert),
+                                    getResources().getColor(R.color.colorVoilation));
+                        }
+
                     } else {
-                        global.EldScreenToast(sendLogHosBtn, getString(R.string.stop_vehicle_alert),
-                                getResources().getColor(R.color.colorVoilation));
+                        global.EldToastWithDuration(sendLogHosBtn, getResources().getString(R.string.share_not_allowed), getResources().getColor(R.color.colorVoilation));
                     }
-
                 }else{
-                    global.EldToastWithDuration(sendLogHosBtn, getResources().getString(R.string.share_not_allowed), getResources().getColor(R.color.colorVoilation) );
+                    Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
                 }
+
+
 
                 break;
 
             case R.id.rightMenuBtn:
 
-                isRefreshBtnClicked = true;
-                loadingSpinEldIV.startAnimation();
-                CycleTimeCalculation(true);
+                if (isActionEventAllowedWithSpeed) {
+                    isRefreshBtnClicked = true;
+                    loadingSpinEldIV.startAnimation();
+                    resetAllBar();
+                    CycleTimeCalculation(true);
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(getActivity() != null && !getActivity().isFinishing()){
-                            if(!global.isConnected(getActivity())) {
-                                loadingSpinEldIV.stopAnimation();
-                                global.EldScreenToast(loadingSpinEldIV, ConstantsEnum.UPDATED, getResources().getColor(R.color.colorSleeper));
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (getActivity() != null && !getActivity().isFinishing()) {
+                                if (!global.isConnected(getActivity())) {
+                                    loadingSpinEldIV.stopAnimation();
+                                    global.EldScreenToast(loadingSpinEldIV, ConstantsEnum.UPDATED, getResources().getColor(R.color.colorSleeper));
+                                }
                             }
-                        }
 
-                    }
-                },Constants.SocketTimeout1Sec);
+                        }
+                    }, Constants.SocketTimeout1Sec);
+                }else{
+                    Globally.EldScreenToast(eldMenuLay, getString(R.string.stop_vehicle_alert),
+                            getResources().getColor(R.color.colorVoilation));
+                }
+
+
+
+
                 break;
 
 
@@ -1423,10 +1596,10 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
                                         JSONObject dataJObject = new JSONObject(obj.getString("Data"));
                                         //String Country     = dataJObject.getString(ConstantsKeys.Country);
-                                        String AddressLine = dataJObject.getString(ConstantsKeys.Location);   //+ ", " + Country
+                                        LocationFromApi = dataJObject.getString(ConstantsKeys.Location);   //+ ", " + Country
 
-                                        if (AddressLine.length() > 0 && !AddressLine.equals("null")) {
-                                            hosLocationTV.setText(AddressLine);
+                                        if (LocationFromApi.length() > 0 && !LocationFromApi.equals("null")) {
+                                            hosLocationTV.setText(LocationFromApi);
                                         } else {
                                             if(Globally.LATITUDE.length() > 4) {
                                                 hosLocationTV.setText(Globally.LATITUDE + ", " + Globally.LONGITUDE);
@@ -1437,6 +1610,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                }else{
+                                    getOfflineAddress();
                                 }
 
 
@@ -1499,8 +1674,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                         if (isRefreshBtnClicked) {
                             global.EldToastWithDuration(loadingSpinEldIV, ConstantsEnum.UPDATED, getResources().getColor(R.color.colorSleeper));
                         }
+                        loadingSpinEldIV.stopAnimation();
+                    }else if(flag == GetAddFromLatLng){
+                        getOfflineAddress();
                     }
-                    loadingSpinEldIV.stopAnimation();
+
                 }
             }catch (Exception e){
                 e.printStackTrace();

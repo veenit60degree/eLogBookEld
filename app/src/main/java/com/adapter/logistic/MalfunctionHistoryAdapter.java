@@ -62,7 +62,8 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         constants = new Constants();
         globally    = new Globally();
 
-        CurrentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, _context);
+        //CurrentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, _context);
+        CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(_context), _context);
 
         clearRecordPost   = new SaveLogJsonObj(_context, apiResponse );
         progressDialog    = new ProgressDialog(_context);
@@ -250,11 +251,17 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                 String[] array = distance.split("\\.");
 
                 if(array.length > 1){
-                    if(!array[1].equals("0")){
+                    if(array[0].length() > 8){
                         distance = constants.meterToKmWith0DecPlaces(distance);
                     }else{
                         distance = array[0];
                     }
+
+                    /*if(!array[1].equals("0")){
+                        distance = constants.meterToKmWith0DecPlaces(distance);
+                    }else{
+                        distance = array[0];
+                    }*/
                 }else{
                     distance = constants.meterToKmWith0DecPlaces(distance);
                 }
@@ -425,11 +432,11 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                 }
             } else {
                 // EventCode value is an String is malfunction
-                if (!SharedPref.IsClearMalfunction(_context)) {
+              /*  if (!SharedPref.IsClearMalfunction(_context)) {
                     holder.clearEventBtn.setVisibility(View.GONE);
-                } else {
+                } else {*/
                     holder.clearEventBtn.setVisibility(View.VISIBLE);
-                }
+               // }
             }
         }
 

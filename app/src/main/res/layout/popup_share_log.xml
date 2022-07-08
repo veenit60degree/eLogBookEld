@@ -378,17 +378,16 @@
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/changeLocLogBtn"
                     android:layout_toRightOf="@+id/locLogTitle"
-                    android:paddingTop="@dimen/margin_short_5"
-                    android:paddingBottom="@dimen/margin_short_5"
-                    android:paddingLeft="@dimen/margin_short_8"
-                    android:paddingRight="@dimen/margin_short_5"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_size_16"
-                    android:hint="@string/no_location"
-                    android:inputType="textEmailAddress"
-                    android:imeOptions="flagNoExtractUi"
                     android:background="@drawable/edittext_black_hover"
-                    />
+                    android:hint="@string/no_location"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textEmailAddress"
+                    android:paddingLeft="@dimen/margin_short_8"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingRight="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16" />
 
 
                 <Button

@@ -125,7 +125,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
    // String PRODUCTION_URL   = "https://alsrealtime.com/";
    // String logUrl = PRODUCTION_URL + "DriverLog/MobileELDView?driverId=";
     String LogDate, DayName, MonthFullName , MonthShortName , CurrentCycleId, selectedCountryRods = "";
-    String CurrentDate, CountryCycle, DRIVER_ID, DeviceId ;
+    String CurrentDate, DRIVER_ID, DeviceId ;   //CountryCycle
     String DefaultLine      = " <g class=\"event \">\n";
 
     String htmlAppendedText = "";
@@ -303,7 +303,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                     CurrentCycleId = DriverConst.GetDriverSettings(DriverConst.USACycleId, getActivity());
                 }
 
-                String obdCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+                String obdCycleId = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
                 if (obdCycleId.equals(global.USA_WORKING_6_DAYS) || obdCycleId.equals(global.USA_WORKING_7_DAYS)) {
                     moveToDotMode(LogDate, DayName, MonthFullName, MonthShortName, CurrentCycleId);
                 } else {
@@ -337,7 +337,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             MonthShortName = getBundle.getString("month_short_name");
             CurrentCycleId = getBundle.getString("cycle");
             SelectedDayOfMonth = getBundle.getInt("day_of_month");
-            CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
+           // CountryCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getActivity());
            // getBundle.clear();
         }
 

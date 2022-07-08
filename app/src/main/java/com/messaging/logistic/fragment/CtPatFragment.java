@@ -280,7 +280,8 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         VIN_NUMBER          = SharedPref.getVINNumber(getActivity());
         DriverName          = slideMenu.usernameTV.getText().toString();
         CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
-        CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        //CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
 
 
         EldTitleTV.setText(getResources().getString(R.string.ctPat));

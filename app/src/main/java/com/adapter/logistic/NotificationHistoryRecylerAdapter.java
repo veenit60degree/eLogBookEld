@@ -89,7 +89,8 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
             holder.historyTitleTV.setText(context.getResources().getString(R.string.cycle_change_request));
 
             String changedCycleName = "";
-            String currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, context);
+            //String currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, context);
+            String currentCycle      = DriverConst.GetCurrentCycleName(DriverConst.GetCurrentDriverType(context), context);
             String changedCycleId = itemModel.getTitle();
 
 

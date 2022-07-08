@@ -63,7 +63,8 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         constants = new Constants();
         globally    = new Globally();
 
-        CurrentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, _context);
+        //CurrentCycleId    = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, _context);
+        CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(_context), context);
 
         clearRecordPost   = new SaveLogJsonObj(_context, apiResponse );
         progressDialog    = new ProgressDialog(_context);
@@ -229,7 +230,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             if(distance.contains(".")){
                 String[] array = distance.split("\\.");
                 if(array.length > 1){
-                    if(!array[1].equals("0")){
+                    if(array[0].length() > 8){
                         distance = constants.meterToKmWith0DecPlaces(distance);
                     }else{
                         distance = array[0];

@@ -83,7 +83,7 @@ public class ParseLoginDetails {
 
                 if(!dataObj.isNull("DriverSetting")) {
                     JSONObject DriverSetting    = new JSONObject(dataObj.getString("DriverSetting"));
-                    ParseDriverSetting(DriverSetting, context);
+                    ParseDriverSetting(DriverSetting, resultCount, context);
 
                    if(!DriverSetting.isNull("CanadaCycles")) {
                         JSONArray caJsonArray = new JSONArray(DriverSetting.getString("CanadaCycles"));
@@ -129,6 +129,8 @@ public class ParseLoginDetails {
                         }*/
 
                     }
+
+
 
                 }
 
@@ -223,7 +225,7 @@ public class ParseLoginDetails {
     }
 
 
-    public void ParseDriverSetting(JSONObject DriverSetting, Context context) {
+    public void ParseDriverSetting(JSONObject DriverSetting, int position, Context context) {
         try{
             String CanCycleId="", USCycleId="",CanCycleName="", USCycleName="", TimeZone="", OffSet,
                     TimeZoneId="", CurrentCycle = "", CurrentCycleId = "";
@@ -237,15 +239,32 @@ public class ParseLoginDetails {
             OffSet          = DriverSetting.getString("OffsetHours");
             TimeZoneId      = DriverSetting.getString("TimeZoneID");
 
+                             /* Set Cycles */
+                SharedPref.setTimeZone( DriverSetting.getString("DriverTimeZone") , context);             /* Set TimeZone */
+
+                /*   SharedPref.setUserCountryCycle(
+                        "ca_cycle", DriverSetting.getString("CanadaCycleId"),
+                        "us_cycle", DriverSetting.getString("USACycleId"), context);
+                DriverConst.SetDriverSettings(CurrentCycle, CurrentCycleId, CanCycleId, USCycleId,
+                        CanCycleName, USCycleName, TimeZone, OffSet, TimeZoneId, context);
+                DriverConst.SetDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);  */
+
+
+            if(position == 0) {
                 SharedPref.setUserCountryCycle(
                         "ca_cycle", DriverSetting.getString("CanadaCycleId"),
                         "us_cycle", DriverSetting.getString("USACycleId"), context);                     /* Set Cycles */
-                SharedPref.setTimeZone( DriverSetting.getString("DriverTimeZone") , context);             /* Set TimeZone */
 
                 DriverConst.SetDriverSettings(CurrentCycle, CurrentCycleId, CanCycleId, USCycleId,
                         CanCycleName, USCycleName, TimeZone, OffSet, TimeZoneId, context);
 
                 DriverConst.SetDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
+            }else {
+                DriverConst.SetCoDriverSettings(CurrentCycle, CurrentCycleId, CanCycleId, USCycleId,
+                        CanCycleName, USCycleName, TimeZone, OffSet, TimeZoneId, context);
+                DriverConst.SetCoDriverCurrentCycle(CurrentCycle, CurrentCycleId, context);
+            }
+
 
         }catch (Exception e){
             e.printStackTrace();

@@ -188,7 +188,9 @@ public class EldNotificationDialog extends Dialog  {
     void GetDriverStatusPermission(final String DriverId, final String DeviceId, final String VehicleId ){
 
         String Country = "";
-        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getContext());
+        //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getContext());
+        String  CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getContext()), getContext());
+
         if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
             Country = "CANADA";
         } else {

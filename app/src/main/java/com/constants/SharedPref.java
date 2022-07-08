@@ -616,6 +616,39 @@ public class SharedPref {
 
 
 
+    // Set bluetooth and GPS status when action changed-------------------
+    public static void SetGpsBlePermission(boolean IsBleEnabled, boolean IsGpsEnabled, int LocationStatus, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.IsBleEnabled, IsBleEnabled);
+        editor.putBoolean(ConstantsKeys.IsGpsEnabled, IsGpsEnabled);
+        editor.putInt(ConstantsKeys.LocationStatus, LocationStatus);
+
+        editor.commit();
+    }
+
+
+    // Get last GPS Status -------------------
+    public static boolean WasGpsEnabled(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(ConstantsKeys.IsGpsEnabled, false);
+    }
+
+
+    // Get last location permission Status -------------------
+    public static int GetLocationStatus(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt(ConstantsKeys.LocationStatus, 0);
+    }
+
+      // Get last bluetooth Status -------------------
+   public static boolean WasBleEnabled(Context context) {
+       SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+       return preferences.getBoolean(ConstantsKeys.IsBleEnabled, false);
+   }
+
+
+
     // Set Re-Certification and Unidentified Records allow status -------------------
     public static void SetCertifcnUnIdenfdSettings( boolean isReCertification, boolean IsUnidentifiedRecords,
                                                     boolean IsPersonal, boolean IsYardMove, Context context) {
@@ -3016,6 +3049,22 @@ public class SharedPref {
     public static String getHighPrecesionSavedTime(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString("HighPrecesionSavedTime", "");
+    }
+
+
+
+    // Set Pc Ym Alert Call time   -------------------
+    public static void savePcYmAlertCallTime( String savedTime, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("PcYmAlertCallTime", savedTime);
+        editor.commit();
+    }
+
+    // Get Pc Ym Alert Call time -------------------
+    public static String getPcYmAlertCallTime(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("PcYmAlertCallTime", "");
     }
 
 

@@ -102,8 +102,8 @@ public class CycleChangeRequestDialog extends Dialog {
         cycleRuleLay.setVisibility(View.VISIBLE);
 
 
-        String currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycle, getContext());
-        String currentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getContext());
+        String currentCycle = DriverConst.GetCurrentCycleName(DriverConst.GetCurrentDriverType(getContext()), getContext());
+        String currentCycleId = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getContext()), getContext());
 
         if(changedCycleId.equals(Globally.CANADA_CYCLE_1)){
             changedCycleName = Globally.CANADA_CYCLE_1_NAME;

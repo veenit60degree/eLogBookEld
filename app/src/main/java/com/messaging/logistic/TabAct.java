@@ -267,6 +267,35 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                                     YardMovePersonalStatusAlert(IsYardMove, IsPersonal);
                                 }
 
+                            }else if(intent.hasExtra(ConstantsKeys.IsActiveHosScreen)){
+                                if(intent.getBooleanExtra(ConstantsKeys.IsActiveHosScreen, false)){
+                                    Log.d("Tab", "Current Tab: "+ TabAct.host.getCurrentTab());
+
+                                    if(TabAct.host.getCurrentTab() == 0) {
+                                        Constants.IS_HOS_AUTO_CALLED = true;
+                                        EldFragment.calendarBtn.performClick();
+                                    }else{
+                                        Constants.IS_HOS_AUTO_CALLED = true;
+                                        TabAct.host.setCurrentTab(0);
+                                        EldFragment.calendarBtn.performClick();
+
+                                    }
+
+                                }else if(intent.getBooleanExtra(ConstantsKeys.IsActiveHomeScreen, false)){
+
+                                    if(TabAct.host.getCurrentTab() == 0) {
+                                        EldActivity.fragManager = EldActivity.instance.getSupportFragmentManager();
+                                        int count = EldActivity.fragManager.getBackStackEntryCount();
+                                        if (count > 1) {
+                                            EldActivity.fragManager.popBackStack();
+                                        }
+
+                                    }else{
+                                        TabAct.host.setCurrentTab(0);
+                                    }
+
+
+                                }
                             }
 
                         }
@@ -402,6 +431,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         @Override
         public void ContinueBtnReady(String TruckIgnitionStatus) {
+            SharedPref.savePcYmAlertCallTime("", getApplicationContext());
             SharedPref.SetTruckStartLoginStatus(false, getApplicationContext());
             SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", global.getCurrentDate(), getApplicationContext());
 
@@ -413,6 +443,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             SharedPref.SetTruckIgnitionStatusForContinue(TruckIgnitionStatus, "home", global.getCurrentDate(), getApplicationContext());
 
             if (Globally.VEHICLE_SPEED < 10) {
+                SharedPref.savePcYmAlertCallTime("", getApplicationContext());
                 if(isYardMove){
                     EldFragment.autoOnDutyBtn.performClick();
                 }else {
@@ -426,8 +457,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         }
     }
 
-    private
-    void setSlidingMenu() {
+    private void setSlidingMenu() {
         if(getApplicationContext() != null) {
             try {
 

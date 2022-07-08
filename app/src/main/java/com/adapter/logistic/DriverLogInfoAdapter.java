@@ -112,7 +112,8 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         this.dbHelper       = db_helper;
         this.hMethods       = h_methods;
         Global = new Globally();
-        currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+        //currentCycle = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, context);
+        currentCycle      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(context), context);
 
         malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
 

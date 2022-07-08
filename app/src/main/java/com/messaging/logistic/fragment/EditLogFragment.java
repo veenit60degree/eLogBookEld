@@ -235,6 +235,13 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
             if(IsUnAssignedMileRecord){
                 IsDrivingPermission = true;
+            }else{
+                if(SharedPref.IsCCMTACertified(getActivity()) ) {
+                    IsOffDutyPermission = true;
+                    IsSleeperPermission = true;
+                    IsOnDutyPermission  = true;
+                    IsDrivingPermission = false;
+                }
             }
 
             setRecyclerAdapter();
@@ -1225,7 +1232,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     void GetDriverStatusPermission(final String DriverId, final String DeviceId, final String VehicleId ){
 
         String Country = "";
-        String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
+        String  CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
         if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
             Country = "CANADA";
         } else {
@@ -1497,6 +1505,17 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                             IsOnDutyPermission   = driverPermissionMethod.getPermissionStatus(dataJObject, ConstantsKeys.OnDutyKey);
 
                             isPermissionResponse = true;
+
+                            if(IsUnAssignedMileRecord){
+                                IsDrivingPermission = true;
+                            }else{
+                                if(SharedPref.IsCCMTACertified(getActivity()) ) {
+                                    IsOffDutyPermission = true;
+                                    IsSleeperPermission = true;
+                                    IsOnDutyPermission  = true;
+                                    IsDrivingPermission = false;
+                                }
+                            }
 
                             setRecyclerAdapter();
 
