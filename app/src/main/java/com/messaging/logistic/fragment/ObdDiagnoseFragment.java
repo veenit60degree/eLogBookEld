@@ -180,7 +180,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
 
 
-      /*  EldTitleTV.setOnClickListener(new View.OnClickListener() {
+     /*   EldTitleTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(BackgroundLocationService.OBD_DISCONNECTED){

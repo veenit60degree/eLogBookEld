@@ -64,6 +64,7 @@ import org.joda.time.Days;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +84,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	JSONArray coDriverArray = new JSONArray();
 	final int MainDriver = 101;
 	final int CoDriver = 102;
+	final int SaveMalDiagnstcEvent          = 1616;
 	public static LinearLayout driversLayout;
 	public static Button MainDriverBtn, CoDriverBtn;
 	LoginDialog loginDialog;
@@ -564,6 +566,12 @@ public class Slidingmenufunctions implements OnClickListener {
 				if (global.isWifiOrMobileDataEnabled(context)) {
 					dialog.show();
 
+					boolean IsAllowMissingDataDiagnostic = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, context);
+					// create logout time missing data diagnostic
+					if(!constants.isObdConnectedWithELD(context) && IsAllowMissingDataDiagnostic){
+						saveMissingDiagnostic(context.getString(R.string.obd_data_is_missing), "Logout Event");
+					}
+
 					if (SharedPref.getDriverId(context).trim().length() > 0) {
 						DriverId = Integer.valueOf(SharedPref.getDriverId(context));
 					}
@@ -590,6 +598,7 @@ public class Slidingmenufunctions implements OnClickListener {
 							}
 						}
 					}
+
 
 				} else {
 					global.EldScreenToast(MainDriverBtn, global.CHECK_INTERNET_MSG, context.getResources().getColor(R.color.colorSleeper));
@@ -626,6 +635,52 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 	}
+
+
+	private void saveMissingDiagnostic(String remarks, String type){
+		try {
+
+			// save malfunction occur event to server with few inputs
+			JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
+					SharedPref.getDriverId(context), SharedPref.GetSavedSystemToken(context), SharedPref.getVINNumber(context),
+					SharedPref.getTruckNumber(context),
+					DriverConst.GetDriverDetails(DriverConst.CompanyId, context),
+					constants.get2DecimalEngHour(context),
+					SharedPref.getObdOdometer(context),
+					SharedPref.getObdOdometer(context),
+					Globally.GetCurrentUTCTimeFormat(), constants.MissingDataDiagnostic,
+					remarks + " " + type,
+					false, "", "",
+					"", "", type);
+
+			// save Occurred event locally until not posted to server
+			JSONArray malArray = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
+			malArray.put(newOccuredEventObj);
+			malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, malArray);
+
+			// save malfunction entry in duration table
+			malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, SharedPref.getDriverId(context),
+					Globally.GetCurrentUTCTimeFormat(),  Globally.GetCurrentUTCTimeFormat(),
+					Constants.MissingDataDiagnostic, type, "", type,
+					constants, context);
+
+
+			// call api
+			if (malArray.length() > 0) {
+
+				Globally.PlayNotificationSound(context);
+				Globally.ShowLocalNotification(context,
+						context.getResources().getString(R.string.missing_dia_event),
+						context.getResources().getString(R.string.missing_event_occured_desc) + " in logout event", 2091);
+
+				saveDriverLogPost.PostDriverLogData(malArray, APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout15Sec,
+						false, false, 1, SaveMalDiagnstcEvent);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
 
 
 
@@ -677,18 +732,29 @@ public class Slidingmenufunctions implements OnClickListener {
 		@Override
 		public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
 
-			if(global.isSingleDriver(context)) {
-				LogoutUser(SharedPref.getDriverId(context));
-			}else{
-				if(DriverType == MainDriver){
-					if(coDriverArray.length() > 0){
-						SaveDataToServer(coDriverArray, CoDriver);
-					}else{
+			try {
+				if (global.isSingleDriver(context)) {
+					LogoutUser(SharedPref.getDriverId(context));
+				} else {
+					if (DriverType == MainDriver) {
+						if (coDriverArray.length() > 0) {
+							SaveDataToServer(coDriverArray, CoDriver);
+						} else {
+							LogoutUser(SharedPref.getDriverId(context));
+						}
+					} else {
 						LogoutUser(SharedPref.getDriverId(context));
 					}
-				}else{
-					LogoutUser(SharedPref.getDriverId(context));
 				}
+
+
+				if(flag == SaveMalDiagnstcEvent){
+					// clear malfunction array
+					malfunctionDiagnosticMethod.MalfnDiagnstcLogHelper(dbHelper, new JSONArray());
+				}
+
+			}catch (Exception e){
+				e.printStackTrace();
 			}
 
 

@@ -3574,6 +3574,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             pushStatusToServerAfterSave();
 
         } else {
+            EnableJobViews();
             Globally.EldScreenToast(OnDutyBtn, "Please add Truck before start Driving.", getResources().getColor(R.color.colorPrimary));
         }
     }
@@ -3659,6 +3660,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
         } else {
+            EnableJobViews();
             Globally.EldScreenToast(OnDutyBtn, "Please add Truck before start On Duty.", getResources().getColor(R.color.colorPrimary));
         }
 
@@ -3741,6 +3743,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 pushStatusToServerAfterSave();
 
             } else {
+                EnableJobViews();
                 Globally.EldScreenToast(OnDutyBtn, "Please add Truck before start Sleeper.", getResources().getColor(R.color.colorPrimary));
             }
         }

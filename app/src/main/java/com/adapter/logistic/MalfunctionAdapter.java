@@ -117,7 +117,7 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
             String DriverId = childData.getMasterDetectionDataEventId();
             String EngineHour = childData.getEngineHours();
             if(EngineHour.length() > 0 && !EngineHour.equals("--") && !EngineHour.equals("null") ) {
-                EngineHour = constants.Convert1DecimalPlacesDouble(Double.parseDouble(EngineHour));
+                EngineHour = Constants.Convert2DecimalPlacesString(EngineHour);
             }
 
             engHoursMalTxtVw.setText(EngineHour);

@@ -103,9 +103,12 @@ public class TimeZoneDialog extends Dialog {
                 String offset = DriverConst.GetDriverSettings(DriverConst.OffsetHours, mContext);
                 if (offset.length() > 0) {
                     int offSetFromServer = Integer.valueOf(offset);
+                    if(offSetFromServer < 0){
+                        offSetFromServer = Math.abs(Integer.valueOf(offset));
+                    }
                     savedUtcDateTime = savedUtcDateTime.minusHours(offSetFromServer);
                     String serverSavedTime = global.ConvertDateFormatMMddyyyyHHmm(savedUtcDateTime.toString());
-                    String timeAlert = fontColor + "<b>Driver Time:</b>+  </font> " + serverSavedTime + fontColor +
+                    String timeAlert = fontColor + "<b>Driver Time:</b>   </font> " + serverSavedTime + fontColor +
                             "<br/><b>Device Time:</b> </font> " +
                             global.GetCurrentDeviceDateTime();
                     timezoneDetailIssueTV.setText(Html.fromHtml(timeAlert));

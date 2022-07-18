@@ -1142,7 +1142,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                    
                     try {
                         if(currTotalEng.length() > 0 && !currTotalEng.equals("--")) {
-                            currTotalEng = constants.Convert1DecimalPlacesDouble(Double.parseDouble(currTotalEng));
+                            currTotalEng = Constants.Convert2DecimalPlacesString(currTotalEng);
                         }
                     }catch (Exception e){
                         currTotalEng = engineObj.getString("EndEngineHours");

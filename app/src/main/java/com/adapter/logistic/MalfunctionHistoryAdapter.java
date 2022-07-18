@@ -121,7 +121,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                 String StartEngineHour = childData.getHexaSequenceNo();  // passing start engine hour value in this parameter
 
                 if(StartEngineHour.length() > 0 && !StartEngineHour.equals("--")) {
-                    StartEngineHour = constants.Convert1DecimalPlacesDouble(Double.parseDouble(StartEngineHour));
+                    StartEngineHour = Constants.Convert2DecimalPlacesString(StartEngineHour);
                 }
                 endTimeMalTxtVw.setText(StartEngineHour);
 
@@ -137,12 +137,14 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             String DriverId = childData.getMasterDetectionDataEventId();
             String EngineHour = childData.getEngineHours();
             if(EngineHour.length() > 0 && !EngineHour.equals("--")) {
-                EngineHour = constants.Convert1DecimalPlacesDouble(Double.parseDouble(EngineHour));
+                EngineHour = Constants.Convert2DecimalPlacesString(EngineHour);
             }
             engHoursMalTxtVw.setText(EngineHour);
 
             if(DriverId.equals("0")) {
                 unIdenMalTxtVw.setVisibility(View.VISIBLE);
+            }else{
+                unIdenMalTxtVw.setVisibility(View.INVISIBLE);
             }
 
 

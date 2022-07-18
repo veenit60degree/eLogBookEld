@@ -2232,10 +2232,11 @@ public class Constants {
 
                     if(selectedDateTime.isAfter(lastDateTime) || selectedDateTime.equals(lastDateTime)) {
                         String image = obj.getString(ConstantsKeys.LogSignImage);
+                        boolean isReCertifyRequired = isReCertifyRequired(context, null, selectedDateTime.toString());
                         if (image.length() == 0) {
-                            recapSignatureList.add(new RecapSignModel(false, isLocationMissing, selectedDateTime));
+                            recapSignatureList.add(new RecapSignModel(false, isLocationMissing, isReCertifyRequired, selectedDateTime));
                         }else{
-                            recapSignatureList.add(new RecapSignModel(true, isLocationMissing, selectedDateTime));
+                            recapSignatureList.add(new RecapSignModel(true, isLocationMissing, isReCertifyRequired, selectedDateTime));
                         }
                     }else{
                         break;
@@ -2296,24 +2297,45 @@ public class Constants {
             }
 
 // JSONArray currentDayArray = hMethods.GetSingleDateArray(driverLogArray, currentDateTime, currentDateTime, currentUTCTime, true, offsetFromUTC);
-            for (int i = initilizeValue; i > daysValidationValue; i--) {
-                try {
-                    JSONObject obj = (JSONObject) recap18DaysArray.get(i);
-                    String date = Globally.ConvertDateFormatyyyy_MM_dd(obj.getString(ConstantsKeys.Date));
-                    DateTime selectedDateTime = Globally.getDateTimeObj( date + "T00:00:00", false);
+            if(initilizeValue == daysValidationValue){
+                for (int i = initilizeValue; i >= 0; i--) {
+                    try {
+                        if(initilizeValue < recap18DaysArray.length()) {
+                            JSONObject obj = (JSONObject) recap18DaysArray.get(i);
+                            String image = obj.getString(ConstantsKeys.LogSignImage);
+                            String LogSignImageInByte = obj.getString(ConstantsKeys.LogSignImageInByte);
 
-                    if(selectedDateTime.isAfter(lastDateTime) || selectedDateTime.equals(lastDateTime)) {
-                        String image = obj.getString(ConstantsKeys.LogSignImage);
-                        if (image.length() == 0) {
-                            IsPendingSignature = true;
+                            if (image.length() == 0 && LogSignImageInByte.length() == 0) {
+                                IsPendingSignature = true;
+                                break;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+            }else {
+                for (int i = initilizeValue; i > daysValidationValue; i--) {
+                    try {
+                        JSONObject obj = (JSONObject) recap18DaysArray.get(i);
+                        String date = Globally.ConvertDateFormatyyyy_MM_dd(obj.getString(ConstantsKeys.Date));
+                        DateTime selectedDateTime = Globally.getDateTimeObj(date + "T00:00:00", false);
+
+                        if (selectedDateTime.isAfter(lastDateTime) || selectedDateTime.equals(lastDateTime)) {
+                            String image = obj.getString(ConstantsKeys.LogSignImage);
+                            if (image.length() == 0) {
+                                IsPendingSignature = true;
+                                break;
+                            }
+
+                        } else {
                             break;
                         }
-
-                    }else{
-                        break;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -2339,7 +2361,6 @@ public class Constants {
                     JSONObject obj = (JSONObject) reCertifyArray.get(i);
 
                     if(obj.getBoolean(ConstantsKeys.IsRecertifyRequied)) {
-                        //  String date = Globally.ConvertDateFormatyyyy_MM_dd(obj.getString(ConstantsKeys.Date));
                         DateTime selectedDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.LogDate), false);
 
                         if (selectedDateTime.isAfter(fromDateTime) || selectedDateTime.equals(fromDateTime)) {
@@ -2533,6 +2554,26 @@ public class Constants {
         }catch (Exception e){
             e.printStackTrace();
             return ""+value;
+        }
+
+    }
+
+    public static String Convert2DecimalPlacesString(String value) {
+        try{
+            String[] array = value.split("\\.");
+            if(array.length > 1){
+                String val = array[1];
+                if(val.length() > 2){
+                    val = val.substring(0,2);
+                }
+
+                return array[0] + "." + val;
+            }else{
+                return value;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return value;
         }
 
     }
@@ -3666,7 +3707,8 @@ public class Constants {
                 JSONObject obj = (JSONObject) reCertifyArray.get(i);
 
                 DateTime selectedDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.LogDate), false);
-                if (dateTime.equals(selectedDateTime)) {
+                int DaysDiff = Constants.getDayDiff(dateTime.toString(), selectedDateTime.toString());
+                if (DaysDiff == 0) {    //dateTime.equals(selectedDateTime)
                     IsRecertifyRequied = obj.getBoolean(ConstantsKeys.IsRecertifyRequied);
                     break;
                 }
@@ -4243,7 +4285,7 @@ public class Constants {
                                                 SharedPref.isPowerDiagnosticOccurred(context), global.GetCurrentUTCTimeFormat(), context);
 
                                         constants.saveObdData("PowerMalEvent - Ignition- " + lastIgnitionStatus +
-                                                        ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour +
+                                                        ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour +", LastOdometer: " + lastodometer +
                                                         ", Duration: " + totalDuration,  "",
                                                "", currentHighPrecisionOdometer,
                                                 currentHighPrecisionOdometer, "", ignitionStatus, "", "",
@@ -4267,7 +4309,7 @@ public class Constants {
                                             true,  global.GetCurrentUTCTimeFormat(), context);
 
                                     constants.saveObdData("PowerDiaEvent - Ignition- " + lastIgnitionStatus +
-                                                    ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour +
+                                                    ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour + ", LastOdometer: " + lastodometer +
                                                     ", TotalDuration: " + totalDuration + ", PreviousLocDiaTime: " +previousDiaEventTime,  "",
                                             "", currentHighPrecisionOdometer,
                                             currentHighPrecisionOdometer, "", ignitionStatus, "", "",
@@ -4278,12 +4320,6 @@ public class Constants {
 
                             }
                         }
-                        // save updated values with truck ignition status
-                        SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, WiredOBD, global.getCurrentDate(),
-                                global.GetCurrentUTCTimeFormat(),
-                                SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, context),
-                                SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, context),
-                                context);
 
                         constants.saveObdData("PowerDiaEvent Duration - Ignition- " + lastIgnitionStatus +
                                         ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour +
@@ -4292,6 +4328,14 @@ public class Constants {
                                 currentHighPrecisionOdometer, "", ignitionStatus, "", "",
                                 String.valueOf(-1), obdEngineHours, "", "",
                                 DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
+                    }else{
+                        // save updated values with truck ignition status
+                        SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, WiredOBD, global.getCurrentDate(),
+                                global.GetCurrentUTCTimeFormat(),
+                                SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, context),
+                                SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, context),
+                                context);
 
                     }
 

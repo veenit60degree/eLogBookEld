@@ -1214,19 +1214,32 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                 DateTime EventDateTime = globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventDateTime), false);
                 String driverTimeZone = String.valueOf(EventDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
 
-                String EngHrs = "", StartOdometer = "0";
-                if (mainObj.has(ConstantsKeys.ClearEngineHours)) {
-                    EngHrs = mainObj.getString(ConstantsKeys.ClearEngineHours);
+                String EngHrs = "", StartOdometer = "0", clearOdometer = "0", finalOdometer = "0";
+                if (mainObj.has(ConstantsKeys.EngineHours)) {
+                    EngHrs = mainObj.getString(ConstantsKeys.EngineHours);
                 }
 
                 if (mainObj.has(ConstantsKeys.StartOdometer)) {
                     StartOdometer = mainObj.getString(ConstantsKeys.StartOdometer); //constants.kmToMiles(
+                }
 
+                if (mainObj.has(ConstantsKeys.ClearOdometer)) {
+                    clearOdometer = mainObj.getString(ConstantsKeys.ClearOdometer);
                 }
 
                 try {
-                    if(constants.isExponentialValue(StartOdometer)){
-                        StartOdometer = BigDecimal.valueOf(Double.parseDouble(StartOdometer)).toPlainString();
+                    if(EventType.equals(Constants.PowerComplianceMalfunction) && clearOdometer.length() > 0){
+                        if (constants.isExponentialValue(clearOdometer)) {
+                            finalOdometer = BigDecimal.valueOf(Double.parseDouble(clearOdometer)).toPlainString();
+                        }else{
+                            finalOdometer = clearOdometer;
+                        }
+                    }else {
+                        if (constants.isExponentialValue(StartOdometer)) {
+                            finalOdometer = BigDecimal.valueOf(Double.parseDouble(StartOdometer)).toPlainString();
+                        }else{
+                            finalOdometer = StartOdometer;
+                        }
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -1255,7 +1268,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                         CompanyId,
                         mainObj.getString(ConstantsKeys.EventDateTime),
                         EngHrs,
-                        StartOdometer,
+                        finalOdometer,
                         mainObj.getString(ConstantsKeys.DetectionDataEventCode),
                         mainObj.getString(ConstantsKeys.DriverId), "",
                         "", "", "", "",

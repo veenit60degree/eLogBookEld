@@ -293,6 +293,7 @@
    <!-- <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>-->
     <string name="eng_sync_dia_occured_desc">Engine synchronization data diagnostic event occurred.</string>
     <string name="eng_sync_dia_clear_desc">Engine synchronization data diagnostic event has been cleared.</string>
+    <string name="codr_eng_sync_dia_clear_desc">CoDriver\'s engine synchronization data diagnostic event has been cleared.</string>
     <string name="eng_sync_mal_clear_desc">Engine synchronization compliance malfunction event has been cleared.</string>
     <string name="power_dia_clear_desc">Power data diagnostic event has been cleared.</string>
     <string name="power_mal_clear_desc">Power compliance malfunction event has been cleared.</string>
@@ -592,10 +593,13 @@
     <string name="save_location">Save Location</string>
     <string name="save">Save</string>
     <string name="save_and_certify">Save &amp; Certify</string>
+    <string name="save_and_recertify">Save &amp; Recertify</string>
     <string name="certified">Certified</string>
+    <string name="Recertify">Recertify</string>
     <string name="uncertified">Uncertified</string>
     <string name="uncertify_log">Uncertified Logs</string>
     <string name="certify">Certify</string>
+    <string name="recertify">Recertify</string>
     <string name="Logout_confirmation">Logout</string>
     <string name="Logout">Logout</string>
     <string name="Confirm">Confirm</string>
@@ -943,6 +947,7 @@
     <string name="BleObdNotFound">Bluetooth OBD not found. Please check your bluetooth device.</string>
     <string name="can_not_select">Can\'t select due to missing elements. Go to detail page to Claim/Reject this event.</string>
 
+    <string name="OBDDisconnected">OBD disconnected</string>
     <string name="BleOBDConnErr">BLE OBD Connection Error</string>
     <string name="connErrorDesc">Device connection error. Please check your BLE device configuration or restart the tablet.</string>
     <string name="AlsEld">ALS ELD</string>

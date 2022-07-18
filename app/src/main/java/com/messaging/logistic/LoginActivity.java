@@ -768,6 +768,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setTotalPUOdometerForDay("0","", getApplicationContext());
 			SharedPref.SetWrongVinAlertView(false, getApplicationContext());
 			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , getApplicationContext());
+			SharedPref.setTruckNumber("", getApplicationContext());
+			SharedPref.saveCoDriverEngSyncDiaStatus(false, getApplicationContext());
 
 			SharedPref.saveMissingDiaStatus(false, getApplicationContext());
 			constants.saveMalfncnStatus(getApplicationContext(), false);
@@ -832,10 +834,14 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					if (obdUtil == null) {
 						obdUtil = new Utils(LoginActivity.this);
 					}
-					constants.saveLoginDetails(username, OSType, DeviceSimInfo, ImeiNumber, obdUtil);
 
 					// delete previous obd server logs
 					obdUtil.deleteServerObdLog();
+
+					constants.saveLoginDetails(username, OSType, DeviceSimInfo, ImeiNumber, obdUtil);
+
+					// delete previous obd server logs
+					//obdUtil.deleteServerObdLog();
 
 				} catch (Exception e) {
 					e.printStackTrace();

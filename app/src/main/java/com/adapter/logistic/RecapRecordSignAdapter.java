@@ -185,7 +185,11 @@ public class RecapRecordSignAdapter extends BaseAdapter {
             holder.certifyStatusTxtView.setBackgroundResource(R.drawable.certify_border);
             holder.noSignErrorImg.setVisibility(View.GONE);
         }else{
-            holder.certifyStatusTxtView.setText(context.getResources().getString(R.string.uncertified));
+            if(eventItem.isRecertificationReq()){
+                holder.certifyStatusTxtView.setText(context.getResources().getString(R.string.Recertify));
+            }else {
+                holder.certifyStatusTxtView.setText(context.getResources().getString(R.string.uncertified));
+            }
             holder.certifyStatusTxtView.setTextColor(context.getResources().getColor(R.color.colorVoilation));
             holder.certifyStatusTxtView.setBackgroundResource(R.drawable.uncertify_border);
             holder.noSignErrorImg.setVisibility(View.VISIBLE);

@@ -116,21 +116,19 @@
                 />
 
 
-
-
             <ListView
                 android:id="@+id/signRecordListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:dividerHeight="@dimen/margin_short_1"
+                android:layout_below="@+id/actionLabelLayout"
                 android:layout_marginLeft="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
-                android:paddingRight="@dimen/margin_10"
                 android:divider="@color/divider_sign_list"
-                android:layout_below="@+id/actionLabelLayout"
+                android:dividerHeight="@dimen/margin_short_1"
+                android:paddingRight="@dimen/margin_10"
                 tools:listitem="@layout/popup_sign_record"
 
-        />
+                />
 
         </RelativeLayout>
 

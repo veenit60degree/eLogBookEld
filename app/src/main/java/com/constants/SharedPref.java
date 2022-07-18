@@ -2243,6 +2243,27 @@ public class SharedPref {
     }
 
 
+    // Save co driver Engine sync diagnostic status  -------------------
+    public static void saveCoDriverEngSyncDiaStatus( boolean IsEngSyncDia, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.EngSyncDiagnstcCo, IsEngSyncDia);
+
+        editor.commit();
+    }
+
+    // Getco driver Engine sync diagnostic status -------------------
+    public static boolean isCoDriverEngSyncDia( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.EngSyncDiagnstcCo, false);
+        }else {
+            return false;
+        }
+    }
+
+
+
     // Save others malfunction/Diagnostic status
     public static void saveOtherMalDiaStatus( boolean UnidentifiedDiag, boolean IsDuplicateStatusAllowed, boolean DataTransferDiag,
                                                    boolean MissingDataDiag, boolean DataTransferComplMal,  boolean DataRecComMal,

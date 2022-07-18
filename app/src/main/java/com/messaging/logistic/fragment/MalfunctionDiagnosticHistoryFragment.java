@@ -292,8 +292,15 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                     EngHrs = mainObj.getString(ConstantsKeys.ClearEngineHours);
                 }
 
-                if (mainObj.has(ConstantsKeys.StartOdometer)) {
-                    StartOdometer = mainObj.getString(ConstantsKeys.StartOdometer);
+                if(EventType.equals(Constants.PowerComplianceMalfunction))
+                {
+                    if (mainObj.has(ConstantsKeys.ClearOdometer)) {
+                        StartOdometer = mainObj.getString(ConstantsKeys.ClearOdometer);
+                    }
+                }else {
+                    if (mainObj.has(ConstantsKeys.StartOdometer)) {
+                        StartOdometer = mainObj.getString(ConstantsKeys.StartOdometer);
+                    }
                 }
                 if (mainObj.has(ConstantsKeys.EngineHours)) {
                     StartEngineHours = mainObj.getString(ConstantsKeys.EngineHours);

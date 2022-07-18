@@ -93,7 +93,7 @@ public class CanDotEnginePowerAdapter extends RecyclerView.Adapter<CanDotEngineP
 
         String EngineHour = itemsList.get(position).getTotalEngineHours();
         if(EngineHour.length() > 0 && !EngineHour.equals("--") && !EngineHour.equals("null")) {
-            EngineHour = constants.Convert1DecimalPlacesDouble(Double.parseDouble(EngineHour));
+            EngineHour = Constants.Convert2DecimalPlacesString(EngineHour);
         }
 
         holder.hoursTotalEDotTV.setText(EngineHour);

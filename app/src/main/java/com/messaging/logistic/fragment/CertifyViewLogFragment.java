@@ -1091,7 +1091,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 || ObdStatus == Constants.BLE_CONNECTED) && engineHours.length() > 1) {
 
             try {
-             EngineHourTV.setText(constants.Convert1DecimalPlacesDouble(Double.parseDouble(engineHours)));
+             EngineHourTV.setText(Constants.Convert2DecimalPlacesString(engineHours));
             }catch (Exception e){
                 e.printStackTrace();
                 EngineHourTV.setText(engineHours);
@@ -1202,7 +1202,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             File f = new File(imagePath);
             if (isCertifySignExist) {
                 String signBtnTxt = saveSignatureBtn.getText().toString();
-                if (f.exists() && signBtnTxt.equals(getString(R.string.save_and_certify))) {
+                if (f.exists() && (signBtnTxt.equals(getString(R.string.save_and_certify)) || signBtnTxt.equals(getString(R.string.save_and_recertify))) ) {
                     SaveDriverSignArray();
                 } else {
                     ContinueWithoutSignDialog();
@@ -2419,13 +2419,20 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
             try {
                 if (signDialog != null) {
+                    boolean isReCertifyRequired = constants.isReCertifyRequired(getActivity(), null, selectedDateTime.toString());
+
                     if (IsSigned) {
                         SignatureMainLay.setVisibility(View.VISIBLE);
                         signLogTitle2.setVisibility(View.GONE);
                         signImageView.setBackground(null);
                         signImageView.setImageResource(R.drawable.transparent);
                         imagePath = constants.GetSignatureBitmap(inkView, signImageView, getActivity());
-                        saveSignatureBtn.setText(getString(R.string.save_and_certify));
+
+                        if (isReCertifyRequired) {
+                            saveSignatureBtn.setText(getString(R.string.save_and_recertify));
+                        } else{
+                            saveSignatureBtn.setText(getString(R.string.save_and_certify));
+                        }
 
                         driverLogScrollView.post(new Runnable() {
                             @Override
@@ -2440,7 +2447,13 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         imagePath = "";
                         signImageView.setBackground(null);
                         signImageView.setImageResource(R.drawable.sign_here);
-                        saveSignatureBtn.setText(getString(R.string.certify));
+
+                        if (isReCertifyRequired) {
+                            saveSignatureBtn.setText(getString(R.string.recertify));
+                        } else {
+                            saveSignatureBtn.setText(getString(R.string.certify));
+                        }
+
                         signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
                         SignatureMainLay.setVisibility(View.GONE);
                     }
@@ -2519,16 +2532,27 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         try {
             if(getActivity() != null && !getActivity().isFinishing()) {
                 isCertifySignExist = constants.isCertifySignExist(recapViewMethod, DRIVER_ID, dbHelper);
+                boolean isReCertifyRequired = constants.isReCertifyRequired(getActivity(), null, selectedDateTime.toString());
+
                 if (!LogDate.equals(CurrentDate) && LogJsonArray.length() > 0) {
 
                     if (isCertifySignExist) {
                         SignatureMainLay.setVisibility(View.GONE);
                         signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
-                        saveSignatureBtn.setText(getString(R.string.certify));
+                        if (isReCertifyRequired) {
+                            saveSignatureBtn.setText(getString(R.string.recertify));
+                        } else {
+                            saveSignatureBtn.setText(getString(R.string.certify));
+                        }
+
                     } else {
                         SignatureMainLay.setVisibility(View.VISIBLE);
                         signLogTitle2.setVisibility(View.GONE);
-                        saveSignatureBtn.setText(getString(R.string.save_and_certify));
+                        if (isReCertifyRequired) {
+                            saveSignatureBtn.setText(getString(R.string.save_and_recertify));
+                        } else {
+                            saveSignatureBtn.setText(getString(R.string.save_and_certify));
+                        }
                     }
 
                     if (LogSignImage.length() > 0 || LogSignImageInByte.length() > 0) {
@@ -2550,11 +2574,19 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         if (isCertifySignExist) {
                             SignatureMainLay.setVisibility(View.GONE);
                             signLogTitle2.setVisibility(View.GONE);  //signLogTitle2.setVisibility(View.VISIBLE);
-                            saveSignatureBtn.setText(getString(R.string.certify));
+                            if (isReCertifyRequired) {
+                                saveSignatureBtn.setText(getString(R.string.recertify));
+                            } else {
+                                saveSignatureBtn.setText(getString(R.string.certify));
+                            }
                         } else {
                             SignatureMainLay.setVisibility(View.VISIBLE);
                             signLogTitle2.setVisibility(View.GONE);
-                            saveSignatureBtn.setText(getString(R.string.save_and_certify));
+                            if (isReCertifyRequired) {
+                                saveSignatureBtn.setText(getString(R.string.save_and_recertify));
+                            } else {
+                                saveSignatureBtn.setText(getString(R.string.save_and_certify));
+                            }
                         }
 
                         saveSignatureBtn.setVisibility(View.VISIBLE);
@@ -2786,6 +2818,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     private void SaveDriverSignArray(){
         isLoadImageCalled = false;
+        boolean isReCertifyRequired = constants.isReCertifyRequired(getActivity(), null, selectedDateTime.toString());
 
         try {
             if (IsContinueWithSign) {
@@ -2807,7 +2840,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         global.InternetErrorDialog(getActivity(), true, true);
                         Toast.makeText(getActivity(), getString(R.string.certify_log_offline_saved), Toast.LENGTH_LONG).show();
 
-                        saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
+                       // saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
 
                     }else{
                         global.EldToastWithDuration(TabAct.sliderLay, getString(R.string.certify_log_offline_saved), getResources().getColor(R.color.colorSleeper));
@@ -2825,8 +2858,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                 }
                 IsContinueWithSign = false;
-                saveSignatureBtn.setText(getString(R.string.certify));
-
+                if (isReCertifyRequired) {
+                    saveSignatureBtn.setText(getString(R.string.recertify));
+                } else {
+                    saveSignatureBtn.setText(getString(R.string.certify));
+                }
             } else {
                 File f = new File(imagePath);
                 if (f.exists()) {
@@ -2845,7 +2881,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                             global.InternetErrorDialog(getActivity(), true, true);
                             Toast.makeText(getActivity(), getString(R.string.certify_log_offline_saved), Toast.LENGTH_LONG).show();
 
-                            saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
+                      //      saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
 
 
                         }else{
@@ -2859,7 +2895,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                     }
                     imagePath = "";
-                    saveSignatureBtn.setText(getString(R.string.certify));
+                    if (isReCertifyRequired) {
+                        saveSignatureBtn.setText(getString(R.string.recertify));
+                    } else {
+                        saveSignatureBtn.setText(getString(R.string.certify));
+                    }
 
                 } else {
                     signImageView.setBackground(null);
@@ -3090,7 +3130,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         global.InternetErrorDialog(getActivity(), true, true);
                         Toast.makeText(getActivity(), getString(R.string.has_been_certified), Toast.LENGTH_LONG).show();
 
-                        saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
+                      //  saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
 
                     }else{
                         Globally.EldScreenToast(previousDateBtn, getString(R.string.has_been_certified),
@@ -3143,7 +3183,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                             global.InternetErrorDialog(getActivity(), true, true);
                             Toast.makeText(getActivity(), getString(R.string.certify_log_offline_saved), Toast.LENGTH_LONG).show();
 
-                            saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
+                          //  saveMissingDiagnostic(getString(R.string.obd_data_is_missing), "Certify Log");
 
                         }else{
                             global.EldToastWithDuration(TabAct.sliderLay, getString(R.string.certify_log_offline_saved), getResources().getColor(R.color.colorSleeper));

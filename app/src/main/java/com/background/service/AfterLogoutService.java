@@ -2164,6 +2164,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             if(SharedPref.isPowerMalfunctionOccurred(getApplicationContext()) == false ) {
                 isEventOccurred = true;
+                String currentDate = Globally.GetCurrentUTCTimeFormat();
 
                 boolean isPowerCompMalAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerComplianceMal, getApplicationContext());
                 boolean isPowerCompDiaAllowed = SharedPref.GetParticularMalDiaStatus(ConstantsKeys.PowerDataDiag, getApplicationContext());
@@ -2177,78 +2178,49 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     if (PowerEventStatus.length() > 0) {
                         if (PowerEventStatus.contains(constants.MalfunctionEvent)) {
                             if (isPowerCompMalAllowed) {
-                                //  eventType = "PowerMalfunction";
-                                SharedPref.savePowerMalfunctionOccurStatus(true,
-                                        SharedPref.isPowerDiagnosticOccurred(getApplicationContext()),
-                                        global.GetCurrentUTCTimeFormat(), getApplicationContext()); //global.getCurrentDate()
 
-                                // save occurred event in malfunction/diagnostic table
-                                saveMalfunctionEventInTable(constants.PowerComplianceMalfunction,
-                                        getString(R.string.power_comp_mal_occured),
-                                        global.GetCurrentUTCTimeFormat() );
+                                if (isPowerCompDiaAllowed) {
+                                    currentDate = SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext());
 
-                                // save malfunction entry in duration table
-                                malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, "0",
-                                        global.GetCurrentUTCTimeFormat(),
-                                        global.GetCurrentUTCTimeFormat(),
-                                        Constants.PowerComplianceMalfunction, "-1",
-                                        Constants.getLocationType(getApplicationContext()), "",
-                                        constants, getApplicationContext());
+                                    // save power diagnostic event also when malfunction occurred
+                                    savePowerDiagnosticRecordInTable(currentDate);
+                                    SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                }
 
-                                // update mal/dia status for enable disable according to log
-                                malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
+                                currentDate = global.GetCurrentUTCTimeFormat();
 
-                                constants.saveMalfncnStatus(getApplicationContext(), true);
-                                SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+                                // updated values after save diagnostic with truck ignition status because in this case we are saving last ignition time in diagnostic
+                                SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, Constants.WiredOBD, global.getCurrentDate(),
+                                        currentDate,
+                                        SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
+                                        SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
+                                        getApplicationContext());
 
-                             /*   constants.saveObdData(constants.getObdSource(getApplicationContext()), "PowerMalEvent",
-                                        malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper).toString(), currentHighPrecisionOdometer,
-                                        currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "-1",
-                                        "", EngineSeconds, global.GetCurrentDateTime(), "",
-                                        "0", dbHelper, driverPermissionMethod, obdUtil);
-*/
-
-
+                                savePowerMalfunctionRecordInTable(currentDate);
                             }
                         } else {
                             if (isPowerCompDiaAllowed) {
 
-                                SharedPref.savePowerMalfunctionOccurStatus(
-                                        SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
-                                        true, global.GetCurrentUTCTimeFormat(), getApplicationContext());
-
-                                constants.saveDiagnstcStatus(getApplicationContext(), true);
-
-                                // save occurred event in malfunction/diagnostic table
-                                saveMalfunctionEventInTable(constants.PowerComplianceDiagnostic, getString(R.string.power_dia_occured),
-                                        Globally.GetCurrentUTCTimeFormat());
-
-
-                                // save malfunction entry in duration table
-                                malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, "0",
-                                        Globally.GetCurrentUTCTimeFormat(),
-                                        global.GetCurrentUTCTimeFormat(),
-                                        Constants.PowerComplianceDiagnostic,  "-1",
-                                        Constants.getLocationType(getApplicationContext()), "",
-                                        constants, getApplicationContext());
+                                savePowerDiagnosticRecordInTable(currentDate);
 
                                 // update mal/dia status for enable disable according to log
                                 malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
                                 SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
 
-
-                               /* constants.saveObdData(constants.getObdSource(getApplicationContext()), "PowerDiaEvent",
-                                        malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper).toString(), currentHighPrecisionOdometer,
-                                        currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "-1",
-                                        "", EngineSeconds, global.GetCurrentDateTime(), "",
-                                        "0", dbHelper, driverPermissionMethod, obdUtil);
-
-*/
                             }
                         }
 
 
                     }
+
+                    // updated values after save diagnostic with truck ignition status because in this case we are saving last ignition time in diagnostic
+                    SharedPref.SaveTruckInfoOnIgnitionChange(ignitionStatus, Constants.WiredOBD, global.getCurrentDate(),
+                            global.GetCurrentUTCTimeFormat(),
+                            SharedPref.GetTruckInfoOnIgnitionChange(Constants.EngineHourMalDia, getApplicationContext()),
+                            SharedPref.GetTruckInfoOnIgnitionChange(Constants.OdometerMalDia, getApplicationContext()),
+                            getApplicationContext());
+
+
 
                 }
             }
@@ -2292,6 +2264,68 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+
+
+
+    void savePowerDiagnosticRecordInTable(String currentDate){
+        try{
+
+            SharedPref.savePowerMalfunctionOccurStatus(
+                    SharedPref.isPowerMalfunctionOccurred(getApplicationContext()),
+                    true, currentDate, getApplicationContext());
+
+            constants.saveDiagnstcStatus(getApplicationContext(), true);
+
+            // save occurred event in malfunction/diagnostic table
+            saveMalfunctionEventInTable(constants.PowerComplianceDiagnostic, getString(R.string.power_dia_occured),
+                    currentDate);
+
+
+            // save malfunction entry in duration table
+            malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, "0",
+                    currentDate,
+                    currentDate,
+                    Constants.PowerComplianceDiagnostic,  "-1",
+                    Constants.getLocationType(getApplicationContext()), "",
+                    constants, getApplicationContext());
+
+        }catch (Exception e){e.printStackTrace();}
+    }
+
+
+
+    void savePowerMalfunctionRecordInTable(String currentDate){
+        try{
+            SharedPref.savePowerMalfunctionOccurStatus(true,
+                    SharedPref.isPowerDiagnosticOccurred(getApplicationContext()),
+                    currentDate, getApplicationContext()); //global.getCurrentDate()
+
+            // save occurred event in malfunction/diagnostic table
+            saveMalfunctionEventInTable(constants.PowerComplianceMalfunction,
+                    getString(R.string.power_comp_mal_occured),
+                    currentDate);
+
+
+            // save malfunction entry in duration table
+            malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, "0",
+                    global.GetCurrentUTCTimeFormat(),
+                    global.GetCurrentUTCTimeFormat(),
+                    Constants.PowerComplianceMalfunction, "-1",
+                    Constants.getLocationType(getApplicationContext()), "",
+                    constants, getApplicationContext());
+
+            // update mal/dia status for enable disable according to log
+            malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
+
+            constants.saveMalfncnStatus(getApplicationContext(), true);
+            SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
+
+
+
+        }catch (Exception e){e.printStackTrace();}
+
     }
 
 
