@@ -121,6 +121,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     JSONArray powerEventInputArray = new JSONArray();
 
     boolean UnidentifiedApiInProgress = false;
+    boolean isMalEventApiInProgress = false;
     final int GetMalDiaEventDuration        = 20;
     final int SaveUnidentifiedEvent         = 30;
     Map<String, String> params;
@@ -142,7 +143,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private Messenger replyTo = null;       //invocation replies are processed by this Messenger
     private Handler mHandler = new Handler();
     private Handler bleHandler = new Handler();
-    private Handler bleTimeHandler = new Handler();
+   // private Handler bleTimeHandler = new Handler();
     NotificationManagerSmart mNotificationManager;
     boolean isWiredCallBackCalled = false;
 
@@ -155,7 +156,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     int bleScanCount = 0;
     private BluetoothAdapter mBTAdapter;
     private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
-    private LinkedList<HTBleData> mHtblData = new LinkedList<>();
+   // private LinkedList<HTBleData> mHtblData = new LinkedList<>();
     Intent locServiceIntent;
 
 
@@ -170,8 +171,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
     DriverPermissionMethod driverPermissionMethod;
 
-    double tempOdo = 1179884000;  //1.090133595E9
-    double tempEngHour = 22999.95;
+    //double tempOdo = 1179884000;  //1.090133595E9
+   // double tempEngHour = 22999.95;
 
     Utils obdUtil;
 
@@ -219,7 +220,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         initUnidentifiedObj();
 
         if(ObdPreference == Constants.OBD_PREF_BLE) {
-            registerReceiver(broadcastReceiver, constants.makeFilter());
+            registerReceiver(broadcastReceiver, makeFilter());
 
         }else if(ObdPreference == Constants.OBD_PREF_WIRED) {
             checkWiredObdConnection();
@@ -236,23 +237,31 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         bleHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message message) {
-                checkPermissionsBeforeScanBle();
+                try {
+                    StartScanHtBle();   //Device connection after scanning is turned on
+                }catch (Exception e){ }
             }
         };
 
-        bleTimeHandler = new Handler(Looper.getMainLooper()) {
+  /*      bleTimeHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message message) {
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // set request interval 3 sec
-                        HTBleSdk.Companion.getInstance().setIntervalEvent(3);
-                    }
-                }, 3000);
+                try {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // set request interval 3 sec
+                            if (HTBleSdk.Companion.getInstance() != null) {
+                                HTBleSdk.Companion.getInstance().setIntervalEvent(3);
+                            }
+
+                        }
+                    }, 3000);
+
+                }catch (Exception e){  }
             }
-        };
+        };*/
 
     }
 
@@ -852,17 +861,17 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         }else {
             if (ObdPreference == Constants.OBD_PREF_BLE) {
                // int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
-                boolean isConnected = HTBleSdk.Companion.getInstance().isConnected();
-                if(pingStatus.equals("ble_start")){
-                    //if (!isConnected || ObdStatus != Constants.BLE_CONNECTED ) { //!mIsScanning &&
-
+                if (TruckID.length() > 0 && CompanyId.length() > 0) {
+                    if (pingStatus.equals("ble_start")) {
+                        //if (!isConnected || ObdStatus != Constants.BLE_CONNECTED ) { //!mIsScanning &&
+                        boolean isConnected = HTBleSdk.Companion.getInstance().isConnected();
                         if (!isBleConnected || !isConnected) { // if device not `connected
                             checkPermissionsBeforeScanBle();
                         }
 
-                   // }
+                        // }
+                    }
                 }
-
             } else if (ObdPreference == Constants.OBD_PREF_WIRED) {
                 StartStopServer(constants.WiredOBD);
             } else {
@@ -913,104 +922,118 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         public void run() {
            // Log.e(TAG, "-----Running Logout timerTask");
 
-            if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
-                    !SharedPref.getPassword(getApplicationContext()).equals("")) {
-                Log.e("Log", "--stop");
-                StopService();
+            try {
+                if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
+                        !SharedPref.getPassword(getApplicationContext()).equals("")) {
+                    Log.e("Log", "--stop");
+                    StopService();
 
-            }else{
+                } else {
 
-                // communicate with wired OBD server app with Message
-                if(ObdPreference == Constants.OBD_PREF_BLE) {
+                    // communicate with wired OBD server app with Message
+                    if (ObdPreference == Constants.OBD_PREF_BLE) {
 
-                    if(!isBleConnected || !HTBleSdk.Companion.getInstance().isConnected()){
-                        sendBroadcast(false);
+                        if (!HTBleSdk.Companion.getInstance().isConnected()) { // if device not `connected
+                            checkPermissionsBeforeScanBle();
 
-                        // And this is how you call it from the worker thread:
-                        Message message = bleHandler.obtainMessage();
-                        message.sendToTarget();
+                            if (!isBleConnected ) {
+                                sendBroadcast(false);
 
-                        // call handler callback method to check malfunction/diagnostic when disconnected
-                        // StartStopServer(constants.WiredOBD);
+                       /* try {
+                            // And this is how you call it from the worker thread:
+                            Message message = bleHandler.obtainMessage();
+                            message.sendToTarget();
+                        }catch (Exception e){}*/
 
-                        truckRPM = SharedPref.getRPM( getApplicationContext());
-                        ignitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
-                        EngineSeconds = "0";
-                        currentHighPrecisionOdometer = "0";
+                                // checkPermissionsBeforeScanBle();
 
-                        // call rule method to check malfunction/diagnostic when disconnected
-                        checkObdDataWithRule(-1);
+                                // call handler callback method to check malfunction/diagnostic when disconnected
+                                // StartStopServer(constants.WiredOBD);
 
-                    }
+                                truckRPM = SharedPref.getRPM(getApplicationContext());
+                                ignitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
+                                EngineSeconds = "0";
+                                currentHighPrecisionOdometer = "0";
+
+                                // call rule method to check malfunction/diagnostic when disconnected
+                                checkObdDataWithRule(-1);
+
+                            }
+
+                        }
 
 
-                }else if(ObdPreference == Constants.OBD_PREF_WIRED) {
 
-                    checkWiredObdConnection();
+                       // Log.e(TAG, "-----Running timer htble 1");
+                    } else if (ObdPreference == Constants.OBD_PREF_WIRED) {
 
-                    if(isWiredCallBackCalled == false && SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED){
-                        StartStopServer(constants.WiredOBD);
-                    }else{
+                        checkWiredObdConnection();
 
-                        String obdLastCallDate = SharedPref.getWiredObdServerCallTime(getApplicationContext());
-                        if (obdLastCallDate.length() > 10) {
-                            int lastCalledDiffInSec = constants.getSecDifference(obdLastCallDate, Globally.GetCurrentDateTime());
-                            if (lastCalledDiffInSec >= 20) {
+                        if (isWiredCallBackCalled == false && SharedPref.getObdStatus(getApplicationContext()) == Constants.WIRED_CONNECTED) {
+                            StartStopServer(constants.WiredOBD);
+                        } else {
+
+                            String obdLastCallDate = SharedPref.getWiredObdServerCallTime(getApplicationContext());
+                            if (obdLastCallDate.length() > 10) {
+                                int lastCalledDiffInSec = constants.getSecDifference(obdLastCallDate, Globally.GetCurrentDateTime());
+                                if (lastCalledDiffInSec >= 20) {
+                                    StartStopServer(constants.WiredOBD);
+                                }
+                            } else {
                                 StartStopServer(constants.WiredOBD);
                             }
-                        }else{
-                            StartStopServer(constants.WiredOBD);
+
                         }
 
+                    } else {
+                        checkWifiOBDConnection();
                     }
 
-                }else{
-                    checkWifiOBDConnection();
-                }
+                    // if unidentified events from OBD settings was false in web permissions then it will worked on app side other wise on backend side.
+                    if (apiCallCount == 0) {
+                        apiCallCount++;
+                        if (!SharedPref.IsUnidentifiedFromOBD(getApplicationContext())) {
+                            if (CompanyId.length() > 0 && SharedPref.isUnidentifiedDiaEvent(getApplicationContext()) == false) {
+                                timerCount++;
+                                if (timerCount > 3 && VehicleSpeed >= 8) {
+                                    timerCount = 0;
+                                    // String odometer = Constants.Convert2DecimalPlacesDouble(Double.parseDouble(Constants.meterToKmWithObd(currentHighPrecisionOdometer)));
+                                    String odometer = Constants.ConvertToBeforeDecimal(Constants.meterToKmWithObd(currentHighPrecisionOdometer));
 
-                // if unidentified events from OBD settings was false in web permissions then it will worked on app side other wise on backend side.
-                if(apiCallCount == 0) {
-                    apiCallCount++;
-                    if (!SharedPref.IsUnidentifiedFromOBD(getApplicationContext())) {
-                        if (CompanyId.length() > 0 && SharedPref.isUnidentifiedDiaEvent(getApplicationContext()) == false) {
-                            timerCount++;
-                            if (timerCount > 3 && VehicleSpeed >= 8) {
-                                timerCount = 0;
-                                // String odometer = Constants.Convert2DecimalPlacesDouble(Double.parseDouble(Constants.meterToKmWithObd(currentHighPrecisionOdometer)));
-                                String odometer = Constants.ConvertToBeforeDecimal(Constants.meterToKmWithObd(currentHighPrecisionOdometer));
+                                    // save unidentified events if vehicle is in motion for 30 min in last 24 hour
+                                    malfunctionDiagnosticMethod.saveVehicleMotionStatus(odometer, EngineSeconds, Integer.parseInt(CompanyId),
+                                            TruckID, VinNumber, VehicleSpeed, dbHelper, constants,
+                                            driverPermissionMethod, obdUtil, getApplicationContext());
+                                }
 
-                                // save unidentified events if vehicle is in motion for 30 min in last 24 hour
-                                malfunctionDiagnosticMethod.saveVehicleMotionStatus(odometer, EngineSeconds, Integer.parseInt(CompanyId),
-                                        TruckID, VinNumber, VehicleSpeed, dbHelper, constants,
-                                        driverPermissionMethod, obdUtil, getApplicationContext());
                             }
-
+                            postEventsToServer();
                         }
-                        postEventsToServer();
+                        if (apiCallCount > 12) {
+                            apiCallCount = 0;
+                        }
                     }
-                    if(apiCallCount > 12){
-                        apiCallCount = 0;
+
+                    final boolean isGpsEnabled = constants.CheckGpsStatusToCheckMalfunction(getApplicationContext());
+                    if (!isGpsEnabled) {
+                        Globally.GPS_LATITUDE = "";
+                        Globally.GPS_LONGITUDE = "";
+
+                        if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+                            Globally.LATITUDE = "";
+                            Globally.LONGITUDE = "";
+                        }
+
                     }
+
+                    // check positioning malfunction event ..
+                    checkPositionMalfunction(currentHighPrecisionOdometer, global.GetCurrentDateTime());
+
+
                 }
-
-                final boolean isGpsEnabled = constants.CheckGpsStatusToCheckMalfunction(getApplicationContext());
-                if (!isGpsEnabled) {
-                    Globally.GPS_LATITUDE = "";
-                    Globally.GPS_LONGITUDE = "";
-
-                    if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
-                        Globally.LATITUDE = "";
-                        Globally.LONGITUDE = "";
-                    }
-
-                }
-
-                // check positioning malfunction event ..
-                checkPositionMalfunction(currentHighPrecisionOdometer, global.GetCurrentDateTime());
-
-
+            }catch (Exception e){
+                e.printStackTrace();
             }
-
 
         }
     };
@@ -1032,6 +1055,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     /*================== Get Unidentified Records ===================*/
     void GetMalDiaEventsDurationList(){
 
+        if(!isMalEventApiInProgress){
+
+            isMalEventApiInProgress = true;
         String startEventDate = Globally.GetCurrentJodaDateTime().toString();   //.minusDays(15)
 
         params = new HashMap<String, String>();
@@ -1039,7 +1065,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         params.put(ConstantsKeys.EventDateTime, startEventDate);
 
         GetMalfunctionEvents.executeRequest(Request.Method.POST, APIs.GET_MALFUNCTION_LIST_BY_TRUCK , params, GetMalDiaEventDuration,
-                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
+                Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack); }
     }
 
 
@@ -1295,18 +1321,17 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         if (!constants.isFastClick())//prevent consecutive calls
             return;
-
-
+        Log.e("TAG", "checkPermissionsBeforeScanBle");
         initHtBle();
 
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter != null) {
                 if (!bluetoothAdapter.isEnabled()) {
                     //  bluetoothAdapter.enable();//Implicitly try to force the bluetooth switch on
                     return;
                 }
-
+                Log.e(TAG, "-----Running Permission htble 0");
                 if (HTBleSdk.Companion.getInstance().isConnected()) { //device connected
                     Log.d(TAG_OBD, "The Bluetooth connection is successful, and the subsequent command operation will be performed after a delay of 3 seconds.");
                     initBleListener();//Register data listener callback
@@ -1318,14 +1343,19 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                     return;
                 }
+                Log.e(TAG, "-----Running Permission htble 1");
 
                 if (constants.CheckGpsStatusToCheckMalfunction(getApplicationContext())) {  //Check if positioning is available, mainly used for bluetooth scanning)
-                    StartScanHtBle();   //Device connection after scanning is turned on
+                    // And this is how you call it from the worker thread:
+                    Message message = bleHandler.obtainMessage();
+                    message.sendToTarget();
                 }
 
             }
 
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -1333,22 +1363,23 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void initHtBle(){
 
-        if (!BleUtil.isBLESupported(this)) {
-            Log.d(TAG_BLE, getResources().getString(R.string.ble_not_supported));
-            return;
-        }
 
-        // BT check
-        BluetoothManager manager = BleUtil.getManager(this);
-        if (manager != null) {
-            mBTAdapter = manager.getAdapter();
+            if (!BleUtil.isBLESupported(this)) {
+                Log.d(TAG_BLE, getResources().getString(R.string.ble_not_supported));
+                return;
+            }
 
-        }
+            // BT check
+            BluetoothManager manager = BleUtil.getManager(this);
+            if (manager != null) {
+                mBTAdapter = manager.getAdapter();
 
-        if (mBTAdapter == null) {
-            Log.d(TAG_BLE, getResources().getString(R.string.bt_unavailable));
-            return;
-        }
+            }
+
+            if (mBTAdapter == null) {
+                Log.d(TAG_BLE, getResources().getString(R.string.bt_unavailable));
+                return;
+            }
 
       /*  if (!mBTAdapter.isEnabled()) {
             mBTAdapter.enable();
@@ -1360,7 +1391,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     void initBleListener(){
 
 
-        try {
+      /*  try {
             if (onReceiveTotalCountOnReq > 1) {
                 HTBleSdk.Companion.getInstance().unRegisterCallBack();
                 Log.d("initBleListener", "initBleListener unRegisterCallBack");
@@ -1374,143 +1405,180 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         onReceiveTotalCountOnReq++;
         Log.d("initBleListener", "initBleListener: " +onReceiveTotalCountOnReq);
+*/
+        try {
+            HTBleSdk.Companion.getInstance().registerCallBack(new IReceiveListener() {
+                @Override
+                public void onConnected(@org.jetbrains.annotations.Nullable String s) {
 
+                    Log.d("BleObd", "onConnected");
 
-        HTBleSdk.Companion.getInstance().registerCallBack(new IReceiveListener() {
-            @Override
-            public void onConnected(@org.jetbrains.annotations.Nullable String s) {
-                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_CONNECTED, s));
-                Log.d("BleObd","onConnected");
-                sendBroadcast(true);
-                bleConnectionCount = 0;
-                    SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(),
-                            global.GetCurrentUTCTimeFormat(), getApplicationContext());
+                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_CONNECTED, s));
+                    sendBroadcast(true);
+                    bleConnectionCount = 0;
+                   // SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(),  global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
-                // set request interval 3 sec
-                Message message = bleTimeHandler.obtainMessage();
-                message.sendToTarget();
+                    /*try {
+                        // set request interval 3 sec
+                        Message message = bleTimeHandler.obtainMessage();
+                        message.sendToTarget();
+                    } catch (Exception e) {
+                    }*/
 
-            }
-
-            @Override
-            public void onConnectTimeout(@org.jetbrains.annotations.Nullable String s) {
-                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_TIMEOUT, s));
-                SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-                Log.d("BleObd","onConnectTimeout");
-                sendBroadcast(false);
-                isBleConnected = false;
-
-                if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-
-                    if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                        HTBleSdk.Companion.getInstance().unRegisterCallBack();
-                        SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
-                                global.GetCurrentUTCTimeFormat(), getApplicationContext());
-
-                        global.ShowLocalNotification(getApplicationContext(),
-                                getString(R.string.BleOBDTimeOutErr),
-                                getString(R.string.connErrorDesc), 2081);
-                    }
+                   /* try {
+                        if (HTBleSdk.Companion.getInstance() != null) {
+                            Thread.sleep(500);
+                            HTBleSdk.Companion.getInstance().setIntervalEvent(3);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }*/
                 }
 
-            }
+                @Override
+                public void onConnectTimeout(@org.jetbrains.annotations.Nullable String s) {
+                    Log.d("BleObd", "onConnectTimeout");
 
-            @Override
-            public void onConnectionError(@NotNull String s, int i, int i1) {
-                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_ERROR, s));
-                Log.d("BleObd","onConnectionError");
-                isBleConnected = false;
+                    try {
+                        EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_TIMEOUT, s));
+                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+                        sendBroadcast(false);
+                        isBleConnected = false;
 
-                if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-                    sendBroadcast(false);
+                        if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
 
-                    if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                        HTBleSdk.Companion.getInstance().unRegisterCallBack();
-                        SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
-                                global.GetCurrentUTCTimeFormat(), getApplicationContext());
-
-                        global.ShowLocalNotification(getApplicationContext(),
-                                getString(R.string.BleOBDConnErr),
-                                getString(R.string.connErrorDesc) , 2081);
-
-
-
-                    }
-
-
-
-                }
-
-            }
-
-            @Override
-            public void onDisconnected(@org.jetbrains.annotations.Nullable String address) {
-                Log.e("TAG", "onDisconnected==" + address);
-                HTBleSdk.Companion.getInstance().unRegisterCallBack();
-                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, address));
-                isBleConnected = false;
-
-                sendBroadcast(false);
-                SharedPref.setLoginAllowedStatus(true, getApplicationContext());
-
-                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
-                        global.GetCurrentUTCTimeFormat(), getApplicationContext());
-
-                if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
-                    global.ShowLocalNotification(getApplicationContext(),
-                            getString(R.string.BluetoothOBD),
-                            getString(R.string.obd_ble_disconnected), 2081);
-
-                    // check Unidentified event occurrence
-                    checkUnIdentifiedDiagnosticEvent(-1, false);
-                }
-
-               // StartStopServer(constants.WiredOBD);
-
-            }
-
-            @Override
-            public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
-               // Log.e("TAG", "onReceive==" + htBleData);
-                isBleConnected = true;
-                onReceiveTotalCountOnReq = 0;
-
-                mHtblData.add(htBleData);
-                if (htBleData.getEventType() == 0 && htBleData.getEventCode() == 1) {
-                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
-                } else {
-                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_QUERY_DATA_AVAILABLE, address, uuid, htBleData));
-                }
-
-                String savedOnReceiveTime = SharedPref.getBleOnReceiveTime(getApplicationContext());
-                if (savedOnReceiveTime.length() > 10) {
-                    int timeInSec = constants.getSecDifference(savedOnReceiveTime, Globally.GetCurrentDateTime());
-                    if (timeInSec > 1) {
-                        SharedPref.setBleOnReceiveTime(getApplicationContext());
-
-                        String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
-                        if(savedMacAddress.length() == 0 || savedMacAddress.equals(address)) {
-                            Log.e("TAG", "onReceiveTime==" + htBleData);
-                            SharedPref.SaveBleOBDMacAddress(address, getApplicationContext());
-
-                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
-                                bleConnectionCount  = 0;
-                                SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(),
+                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                               // HTBleSdk.Companion.getInstance().unRegisterCallBack();
+                                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
                                         global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
                                 global.ShowLocalNotification(getApplicationContext(),
-                                        getString(R.string.BluetoothOBD),
-                                        getString(R.string.obd_ble), 2081);
+                                        getString(R.string.BleOBDTimeOutErr),
+                                        getString(R.string.connErrorDesc), 2081);
+                            }
+                        }
+
+                    } catch (Exception e) {
+                    }
+
+                }
+
+                @Override
+                public void onConnectionError(@NotNull String s, int i, int i1) {
+
+                    Log.d("BleObd", "onConnectionError");
+
+                    try {
+                        EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_ERROR, s));
+
+                        isBleConnected = false;
+
+                        if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
+                            sendBroadcast(false);
+
+                            if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+                                //HTBleSdk.Companion.getInstance().unRegisterCallBack();
+                                SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
+                                        global.GetCurrentUTCTimeFormat(), getApplicationContext());
+
+                                global.ShowLocalNotification(getApplicationContext(),
+                                        getString(R.string.BleOBDConnErr),
+                                        getString(R.string.connErrorDesc), 2081);
+
 
                             }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-                            sendBroadcast(true);
-                            VehicleSpeed = Integer.valueOf(htBleData.getVehicleSpeed());
-                            truckRPM = htBleData.getEngineSpeed();
-                            VinNumber = htBleData.getVIN_Number();
-                            EngineSeconds = htBleData.getEngineHours();
-                            obdOdometer = htBleData.getOdoMeter();
-                            currentHighPrecisionOdometer = htBleData.getOdoMeter();
+
+                }
+
+                @Override
+                public void onDisconnected(@org.jetbrains.annotations.Nullable String address) {
+                    Log.e("TAG", "onDisconnected==" + address);
+
+                    try {
+                        if(onReceiveTotalCountOnReq == 0) {
+                            Log.e("TAG", "onDisconnected unRegister==" );
+                            HTBleSdk.Companion.getInstance().unRegisterCallBack();
+                        }
+                        onReceiveTotalCountOnReq++;
+
+
+                        EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, address));
+                        isBleConnected = false;
+
+                        sendBroadcast(false);
+                        SharedPref.setLoginAllowedStatus(true, getApplicationContext());
+
+                        if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_DISCONNECTED) {
+
+                            global.ShowLocalNotification(getApplicationContext(),
+                                    getString(R.string.BluetoothOBD),
+                                    getString(R.string.obd_ble_disconnected), 2081);
+
+                            // check Unidentified event occurrence
+                            checkUnIdentifiedDiagnosticEvent(-1, false);
+                        }
+
+                        SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, global.getCurrentDate(),
+                                global.GetCurrentUTCTimeFormat(), getApplicationContext());
+
+
+                        // StartStopServer(constants.WiredOBD);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+
+                @Override
+                public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
+                    Log.e("TAG", "onReceive==" + htBleData);
+                    isBleConnected = true;
+                    onReceiveTotalCountOnReq = 0;
+
+                    try {
+                      //  mHtblData.add(htBleData);
+                        if (htBleData.getEventType() == 0 && htBleData.getEventCode() == 1) {
+                            EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
+                        } else {
+                            EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_QUERY_DATA_AVAILABLE, address, uuid, htBleData));
+                        }
+
+                        String savedOnReceiveTime = SharedPref.getBleOnReceiveTime(getApplicationContext());
+                        if (savedOnReceiveTime.length() > 10) {
+                            int timeInSec = constants.getSecDifference(savedOnReceiveTime, Globally.GetCurrentDateTime());
+                            if (timeInSec > 1) {
+                                SharedPref.setBleOnReceiveTime(getApplicationContext());
+
+                                String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
+                                if (savedMacAddress.length() == 0 || savedMacAddress.equals(address)) {
+                                  //  Log.e("TAG", "onReceiveTime==" + htBleData);
+                                    SharedPref.SaveBleOBDMacAddress(address, getApplicationContext());
+
+                                    if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
+                                        bleConnectionCount = 0;
+                                        SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(),
+                                                global.GetCurrentUTCTimeFormat(), getApplicationContext());
+
+                                        global.ShowLocalNotification(getApplicationContext(),
+                                                getString(R.string.BluetoothOBD),
+                                                getString(R.string.obd_ble), 2081);
+
+                                    }
+
+                                    sendBroadcast(true);
+                                    VehicleSpeed = Integer.valueOf(htBleData.getVehicleSpeed());
+                                    truckRPM = htBleData.getEngineSpeed();
+                                    VinNumber = htBleData.getVIN_Number();
+                                    EngineSeconds = htBleData.getEngineHours();
+                                    obdOdometer = htBleData.getOdoMeter();
+                                    currentHighPrecisionOdometer = htBleData.getOdoMeter();
 
                    /* String lat = htBleData.getLatitude();
                     String lon = htBleData.getLongitude();
@@ -1522,131 +1590,93 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     Globally.LONGITUDE = lon ;
                     */
 
-                            Globally.LATITUDE = htBleData.getLatitude();
-                            Globally.LONGITUDE = htBleData.getLongitude() ;
+                                    Globally.LATITUDE = htBleData.getLatitude();
+                                    Globally.LONGITUDE = htBleData.getLongitude();
 
-                            // this check is using to confirm loc update, because in loc disconnection ble OBD is sending last saved location.
-                            if(Globally.LATITUDE.equals(PreviousLatitude) && Globally.LONGITUDE.equals(PreviousLongitude) &&
-                                    !currentHighPrecisionOdometer.equals(PreviousOdometer)){
-                                Globally.LATITUDE = Globally.GPS_LATITUDE;
-                                Globally.LONGITUDE = Globally.GPS_LONGITUDE;
+                                    // this check is using to confirm loc update, because in loc disconnection ble OBD is sending last saved location.
+                                    if (Globally.LATITUDE.equals(PreviousLatitude) && Globally.LONGITUDE.equals(PreviousLongitude) &&
+                                            !currentHighPrecisionOdometer.equals(PreviousOdometer)) {
+                                        Globally.LATITUDE = Globally.GPS_LATITUDE;
+                                        Globally.LONGITUDE = Globally.GPS_LONGITUDE;
 
-                            }
-
-                            if(Globally.LATITUDE.length() < 4){
-                                SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
-
-                                if(Globally.GPS_LATITUDE.length() > 3){
-                                    Globally.LATITUDE = Globally.GPS_LATITUDE;
-                                    Globally.LONGITUDE = Globally.GPS_LONGITUDE;
-                                }else {
-                                    Globally.LATITUDE = "";
-                                    Globally.LONGITUDE = "";
-                                }
-
-                            }else{
-                                SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
-                            }
-
-                            PreviousLatitude = htBleData.getLatitude();
-                            PreviousLongitude = htBleData.getLongitude();
-                            PreviousOdometer = currentHighPrecisionOdometer;
-
-                            if(constants.isObdVinValid(VinNumber)){
-                                SharedPref.setVehicleVin(VinNumber, getApplicationContext());
-                            }else{
-                                VinNumber = SharedPref.getVINNumber(getApplicationContext());
-                            }
-
-                            constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, currentHighPrecisionOdometer, getApplicationContext());
-
-
-                            String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
-                            //Log.d("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
-                            // this check is used when ble obd is disconnected
-                            if(SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
-                                if (!SharedPref.getRPM(getApplicationContext()).equals("0") && lastIgnitionStatus.equals("true")) {
-                                    truckRPM = SharedPref.getRPM(getApplicationContext());
-                                    ignitionStatus = "ON";
-                                }
-
-                                checkObdDataWithRule(VehicleSpeed);
-
-                            }else {
-
-                                if (truckRPM.length() > 0) {
-                                    if (Integer.valueOf(truckRPM) > 0) {
-                                        ignitionStatus = "ON";
-                                    } else {
-                                        ignitionStatus = "OFF";
                                     }
 
-                                    checkObdDataWithRule(VehicleSpeed);
+                                    if (Globally.LATITUDE.length() < 4) {
+                                        SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
 
+                                        if (Globally.GPS_LATITUDE.length() > 3) {
+                                            Globally.LATITUDE = Globally.GPS_LATITUDE;
+                                            Globally.LONGITUDE = Globally.GPS_LONGITUDE;
+                                        } else {
+                                            Globally.LATITUDE = "";
+                                            Globally.LONGITUDE = "";
+                                        }
+
+                                    } else {
+                                        SharedPref.SetLocReceivedFromObdStatus(true, getApplicationContext());
+                                    }
+
+                                    PreviousLatitude = htBleData.getLatitude();
+                                    PreviousLongitude = htBleData.getLongitude();
+                                    PreviousOdometer = currentHighPrecisionOdometer;
+
+                                    if (constants.isObdVinValid(VinNumber)) {
+                                        SharedPref.setVehicleVin(VinNumber, getApplicationContext());
+                                    } else {
+                                        VinNumber = SharedPref.getVINNumber(getApplicationContext());
+                                    }
+
+                                    constants.saveEcmLocationWithTime(Globally.LATITUDE, Globally.LONGITUDE, currentHighPrecisionOdometer, getApplicationContext());
+
+
+                                    String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
+                                    //Log.d("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
+                                    // this check is used when ble obd is disconnected
+                                    if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
+                                        if (!SharedPref.getRPM(getApplicationContext()).equals("0") && lastIgnitionStatus.equals("true")) {
+                                            truckRPM = SharedPref.getRPM(getApplicationContext());
+                                            ignitionStatus = "ON";
+                                        }
+
+                                        checkObdDataWithRule(VehicleSpeed);
+
+                                    } else {
+
+                                        if (truckRPM.length() > 0) {
+                                            if (Integer.valueOf(truckRPM) > 0) {
+                                                ignitionStatus = "ON";
+                                            } else {
+                                                ignitionStatus = "OFF";
+                                            }
+
+                                            checkObdDataWithRule(VehicleSpeed);
+
+                                        }
+                                    }
+
+                                } else {
+                                    if (HTBleSdk.Companion.getInstance().isConnected()) {
+                                        HTBleSdk.Companion.getInstance().disAllConnect();
+                                        HTBleSdk.Companion.getInstance().unRegisterCallBack();//Remove data callback listener
+                                    }
                                 }
-                            }
 
-                        }else{
-                            if (HTBleSdk.Companion.getInstance().isConnected()) {
-                                HTBleSdk.Companion.getInstance().disAllConnect();
-                                HTBleSdk.Companion.getInstance().unRegisterCallBack();//Remove data callback listener
                             }
+                        } else {
+                            SharedPref.setBleOnReceiveTime(getApplicationContext());
                         }
 
+                    } catch (Exception e) {
                     }
-                }else{
-                    SharedPref.setBleOnReceiveTime(getApplicationContext());
-                }
 
 
-
-
-
-            }
-
-            @Override
-            public void onResponse(@NotNull String address, @NotNull String uuid, @NotNull String sequenceID, @NotNull int status) {
-                Log.e("status", "==" + status + "==" + address);
-                bleScanCount = 0;
-                EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_RESPONSE, address, uuid, status));
-            }
-        });
-
-    }
-
-
-    public void StartScanHtBle(){
-
-        try {
-            HTBleSdk.Companion.getInstance().startHTBleScan(new HTBleScanListener() {
-                @Override
-                public void onScanStart() {
-                    mHTBleDevices.clear();
-
-                    ScanStart = true;
-                    bleScanCount++;
-                    mIsScanning = true;
                 }
 
                 @Override
-                public void onScanning(@org.jetbrains.annotations.Nullable HTBleDevice htBleDevice) {
-                    if (mHTBleDevices.contains(htBleDevice))
-                        return;
-
-                    mIsScanning = false;
-                    mHTBleDevices.add(htBleDevice);
-                    connectHtBle(htBleDevice);
-                }
-
-                @Override
-                public void onScanFailed(int i) {
-                    mIsScanning = false;
-                }
-
-                @Override
-                public void onScanStop() {
-                    mIsScanning = false;
-                   // if (HTBleSdk.Companion.getInstance().isConnected()) ;
+                public void onResponse(@NotNull String address, @NotNull String uuid, @NotNull String sequenceID, @NotNull int status) {
+                    Log.e("status", "==" + status + "==" + address);
+                    bleScanCount = 0;
+                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_RESPONSE, address, uuid, status));
                 }
             });
         }catch (Exception e){
@@ -1655,25 +1685,72 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     }
 
 
-    private void connectHtBle(final HTBleDevice htBleDevice) {
-        HTBleSdk.Companion.getInstance().stopHTBleScan();
-        if (HTBleSdk.Companion.getInstance().isAllConnected()) {
-            initBleListener();//Register data listener callback
-        } else {
+    public void StartScanHtBle(){
 
-           // HTBleSdk.Companion.getInstance().connect(htBleDevice);
+        try {
 
-            String macAddress = htBleDevice.getAddress();
-            String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
-            if(savedMacAddress.length() == 0 || savedMacAddress.equals(macAddress)) {
-                HTBleSdk.Companion.getInstance().connect(htBleDevice);
-                initBleListener();//Register data listener callback
-            }else{
-                Globally.ShowLogoutSpeedNotification(getApplicationContext(),
-                        getString(R.string.BleOBDConnErr),
-                        getString(R.string.connErrorDesc) , 2005);
+            if (TruckID.length() > 0 && CompanyId.length() > 0) {
+                HTBleSdk.Companion.getInstance().startHTBleScan(new HTBleScanListener() {
+                    @Override
+                    public void onScanStart() {
+                        mHTBleDevices.clear();
+
+                        ScanStart = true;
+                        bleScanCount++;
+                        mIsScanning = true;
+                    }
+
+                    @Override
+                    public void onScanning(@org.jetbrains.annotations.Nullable HTBleDevice htBleDevice) {
+                        if (mHTBleDevices.contains(htBleDevice))
+                            return;
+
+                        mIsScanning = false;
+                        mHTBleDevices.add(htBleDevice);
+                        connectHtBle(htBleDevice);
+                    }
+
+                    @Override
+                    public void onScanFailed(int i) {
+                        mIsScanning = false;
+                    }
+
+                    @Override
+                    public void onScanStop() {
+                        mIsScanning = false;
+                        // if (HTBleSdk.Companion.getInstance().isConnected()) ;
+                    }
+                });
             }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
+
+    private void connectHtBle(final HTBleDevice htBleDevice) {
+        try {
+            HTBleSdk.Companion.getInstance().stopHTBleScan();
+            if (HTBleSdk.Companion.getInstance().isAllConnected()) {
+                initBleListener();//Register data listener callback
+            } else {
+
+                // HTBleSdk.Companion.getInstance().connect(htBleDevice);
+
+                String macAddress = htBleDevice.getAddress();
+                String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
+                if (savedMacAddress.length() == 0 || savedMacAddress.equals(macAddress)) {
+                    HTBleSdk.Companion.getInstance().connect(htBleDevice);
+                    initBleListener();//Register data listener callback
+                } else {
+                    Globally.ShowLogoutSpeedNotification(getApplicationContext(),
+                            getString(R.string.BleOBDConnErr),
+                            getString(R.string.connErrorDesc), 2005);
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -1691,11 +1768,18 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             intent.putExtra("location", "torestore");
             sendBroadcast(intent);
         }else{
-            Log.d(TAG, "Service stopped");
+            Log.d(TAG, "Service stopped" );
 
             if(ObdPreference == Constants.OBD_PREF_BLE) {
                 //  ------------- BLE OBD ----------
-
+                if (TruckID.length() > 0 && CompanyId.length() > 0) {
+                    unregisterReceiver(broadcastReceiver);
+                    if (mIsScanning)
+                        HTBleSdk.Companion.getInstance().stopHTBleScan();
+                    if (HTBleSdk.Companion.getInstance().isAllConnected())
+                        HTBleSdk.Companion.getInstance().disAllConnect();
+                    HTBleSdk.Companion.getInstance().unRegisterCallBack();//Remove data callback listener
+                }
             }else {
                 //  ------------- Wired OBD ----------
                 if(isBound){
@@ -2093,6 +2177,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     if (status.equalsIgnoreCase("true")) {
 
                         if(flag == GetMalDiaEventDuration){
+                            isMalEventApiInProgress = false;
                             try {
 
                                 JSONArray durationArray = new JSONArray();
@@ -2104,9 +2189,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                     JSONObject objItem = (JSONObject) dataArray.get(i);
 
                                     String EngineHours = "",StartOdometer = "", ClearEngineHour = "", ClearOdometer = "";
+                                    int TotalMinutes = 0;
+
                                     if(!objItem.isNull(ConstantsKeys.EngineHours)){
                                         EngineHours = objItem.getString(ConstantsKeys.EngineHours);
-                                        ClearEngineHour = EngineHours;
+
                                     }
 
                                     if(!objItem.getString(ConstantsKeys.ClearEngineHours).equals("null")){
@@ -2146,12 +2233,18 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                         CurrentStatus = obj.getString(ConstantsKeys.CurrentStatus);
                                     }
 
+                                    if(DetectionDataEventCode.equals(Constants.PowerComplianceDiagnostic)){
+                                        TotalMinutes = (int)constants.getEngineHourDiff(EngineHours, ClearEngineHour);
+                                    }else{
+                                        TotalMinutes = objItem.getInt(ConstantsKeys.TotalMinutes);
+                                    }
+
                                     JSONObject item = malfunctionDiagnosticMethod.getNewMalDiaDurationObj(
                                             "0",
                                             EventDateTime,
                                             objItem.getString(ConstantsKeys.EventEndDateTime),
                                             DetectionDataEventCode,
-                                            objItem.getInt(ConstantsKeys.TotalMinutes),
+                                            TotalMinutes,
                                             objItem.getBoolean(ConstantsKeys.IsClearEvent),
                                             ClearEngineHour,
                                             ClearOdometer,
@@ -2177,7 +2270,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                 malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
 
-                                Log.d("----durationArray", ">>>>durationArray: "+ durationArray);
+                             //   Log.d("----durationArray", ">>>>durationArray: "+ durationArray);
 
 
                             }catch (Exception e){
@@ -2204,6 +2297,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     }else{
                         if(flag == SaveUnidentifiedEvent){
                             UnidentifiedApiInProgress = false;
+                        }else if(flag == GetMalDiaEventDuration){
+                            isMalEventApiInProgress = false;
                         }
                     }
                 }
@@ -2228,6 +2323,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                 if (flag == SaveUnidentifiedEvent) {
                     UnidentifiedApiInProgress = false;
+                }else if (flag == GetMalDiaEventDuration){
+                    isMalEventApiInProgress = false;
                 }
             }
 
@@ -2353,7 +2450,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                     currentDate = SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext());
 
                                     // save power diagnostic event also when malfunction occurred
-                                    savePowerDiagnosticRecordInTable(currentDate);
+                                    savePowerDiagnosticRecordInTable(currentDate, false);
                                     // update mal/dia status for enable disable according to log
                                    // malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
                                     SharedPref.setClearEventCallTime(global.GetCurrentDateTime(), getApplicationContext());
@@ -2369,7 +2466,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                         getApplicationContext());
 
 
-                                savePowerMalfunctionRecordInTable(currentDate);
+                                savePowerMalfunctionRecordInTable(currentDate, true);
                             }
                         } else {
                             if (isPowerCompDiaAllowed) {
@@ -2377,7 +2474,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                // SharedPref.setPowerClearEventCallTime(currentDate, getApplicationContext());
                                 currentDate = SharedPref.GetTruckInfoOnIgnitionChange(Constants.IgnitionUtcTimeMalDia, getApplicationContext());
 
-                                savePowerDiagnosticRecordInTable(currentDate);
+                                savePowerDiagnosticRecordInTable(currentDate, true);
 
                                 Log.d("Power event", ">>>>>Power event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
 
@@ -2418,8 +2515,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 int secDiff = constants.getSecDifference(dateee, currentDate);
                 int callTimeSecDiff = constants.getSecDifference(PowerClearEventCallTime, currentDate);
 
-                // clear Power Diagnostic event after 5 min automatically when ECM is connected.
-                if (secDiff > 30 && callTimeSecDiff > 18) {
+                // clear Power Diagnostic event after 1 min automatically when ECM is connected.
+                if (secDiff > 60 && callTimeSecDiff > 18) {
                     SharedPref.setPowerClearEventCallTime(global.getCurrentDate(), getApplicationContext());
                     Log.d("Clear event", ">>>>>Clear event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
 
@@ -2482,7 +2579,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
 
-    void savePowerDiagnosticRecordInTable(String currentDate){
+    void savePowerDiagnosticRecordInTable(String currentDate, boolean isUpload){
         try{
 
             SharedPref.savePowerMalfunctionOccurStatus(
@@ -2493,7 +2590,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             // save occurred event in malfunction/diagnostic table
             saveMalfunctionEventInTable(constants.PowerComplianceDiagnostic, getString(R.string.power_dia_occured),
-                    currentDate);
+                    currentDate, isUpload);
 
             DateTime endDateTime = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), false).plusSeconds(90);
              String endDate = Globally.formatDatePatternMilli(endDateTime.toString());
@@ -2511,7 +2608,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
 
-    void savePowerMalfunctionRecordInTable(String currentDate){
+    void savePowerMalfunctionRecordInTable(String currentDate, boolean isUpload){
         try{
             SharedPref.savePowerMalfunctionOccurStatus(true,
                     SharedPref.isPowerDiagnosticOccurred(getApplicationContext()),
@@ -2520,7 +2617,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             // save occurred event in malfunction/diagnostic table
             saveMalfunctionEventInTable(constants.PowerComplianceMalfunction,
                     getString(R.string.power_comp_mal_occured),
-                    currentDate);
+                    currentDate, isUpload);
 
 
             // save malfunction entry in duration table
@@ -2547,7 +2644,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
     // Save Malfunction/Diagnostic Event Details
-    void saveMalfunctionEventInTable(String malDiaType, String MalfunctionDefinition, String occurredTime){
+    void saveMalfunctionEventInTable(String malDiaType, String MalfunctionDefinition, String occurredTime, boolean isUpload){
 
         String clearedTime = "", clearTimeOdmeter = "", clearedTimeEngineHour = "";
         JSONObject newOccuredEventObj = new JSONObject();
@@ -2608,8 +2705,9 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
         // call api
-        SaveMalfnDiagnstcLogToServer(malArray, "0");
-
+        if(isUpload) {
+            SaveMalfnDiagnstcLogToServer(malArray, "0");
+        }
 
     }
 
@@ -2771,7 +2869,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                 // save occurred event in malfunction/diagnostic table
                                 saveMalfunctionEventInTable(Constants.EngineSyncDiagnosticEvent,
                                         getString(R.string.eng_sync_dia_occured),
-                                        global.GetCurrentUTCTimeFormat() );
+                                        global.GetCurrentUTCTimeFormat(), true );
 
 
                                 // save malfunction entry in duration table
@@ -2824,7 +2922,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                                 // save occurred event in malfunction/diagnostic table
                                                 saveMalfunctionEventInTable(Constants.EngineSyncMalfunctionEvent,
                                                         getString(R.string.eng_sync_mal_occured),
-                                                        global.GetCurrentUTCTimeFormat());  //SharedPref.getObdLastStatusUtcTime(getApplicationContext())
+                                                        global.GetCurrentUTCTimeFormat(), true);  //SharedPref.getObdLastStatusUtcTime(getApplicationContext())
 
 
                                                 // save malfunction entry in duration table
@@ -2971,7 +3069,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                     // save occurred event in malfunction/diagnostic table
                                     saveMalfunctionEventInTable(Constants.PositionComplianceMalfunction, getString(R.string.pos_mal_occured),
-                                            global.GetCurrentUTCTimeFormat());  //SharedPref.getEcmObdUtcTime(getApplicationContext())
+                                            global.GetCurrentUTCTimeFormat(), true);  //SharedPref.getEcmObdUtcTime(getApplicationContext())
 
                                     // save malfunction entry in duration table
                                     malfunctionDiagnosticMethod.addNewMalDiaEventInDurationArray(dbHelper, "0",
@@ -3059,6 +3157,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     };
 
 
+    private IntentFilter makeFilter() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        return filter;
+    }
 
 
 }

@@ -817,9 +817,9 @@ public class SharedPref {
     public static int getObdPreference(Context context) {
         if(context != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            return preferences.getInt(ConstantsKeys.ObdPreference, Constants.OBD_PREF_WIFI);
+            return preferences.getInt(ConstantsKeys.ObdPreference, Constants.OBD_PREF_BLE);
         }
-        return Constants.OBD_PREF_WIFI;
+        return Constants.OBD_PREF_BLE;
     }
 
 

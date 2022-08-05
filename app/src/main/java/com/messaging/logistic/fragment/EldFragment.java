@@ -7423,7 +7423,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                         dataJObject.getBoolean(ConstantsKeys.DataRecComMal),
                                         dataJObject.getBoolean(ConstantsKeys.TimingCompMal), getActivity() );
 
-                                int ObdPreference = Constants.OBD_PREF_WIFI;
+                                int ObdPreference = Constants.OBD_PREF_BLE;
                                 if(dataJObject.has(ConstantsKeys.ObdPreference) && !dataJObject.isNull(ConstantsKeys.ObdPreference) ) {
                                     ObdPreference = dataJObject.getInt(ConstantsKeys.ObdPreference);
                                     int savedObdPref = SharedPref.getObdPreference(getActivity());

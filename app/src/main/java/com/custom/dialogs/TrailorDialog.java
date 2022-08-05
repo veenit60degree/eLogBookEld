@@ -462,41 +462,46 @@ public class TrailorDialog extends Dialog {
 
                             } else if (updatedReason.equals(getContext().getResources().getString(R.string.loading)) && SharedPref.IsDrivingShippingAllowed(getContext())) {
 
-                                JSONArray shipment18DaysJsonArray = shipmentMethod.getShipment18DaysArray(Integer.valueOf(SharedPref.getDriverId(getContext())), dbHelper);
-                                String shippingDocumentNumber = "", toAddress = "";
-                                if (shipment18DaysJsonArray.length() > 0) {
-                                    try {
-                                        JSONObject obj = shipmentMethod.GetLastJsonObject(shipment18DaysJsonArray, 0);
-                                        shippingDocumentNumber = obj.getString(ConstantsKeys.ShippingDocumentNumber);
-                                        toAddress = obj.getString(ConstantsKeys.ShipperPostalCode);
+                                if(Trailer.length() == 0 || Trailer.equals("No Trailer") || Trailer.equals("")){
+                                    Global.EldScreenToast(btnLoadingJob, "Enter trailer number", getContext().getResources().getColor(R.color.colorVoilation));
+                                }else{
+                                    JSONArray shipment18DaysJsonArray = shipmentMethod.getShipment18DaysArray(Integer.valueOf(SharedPref.getDriverId(getContext())), dbHelper);
+                                    String shippingDocumentNumber = "", toAddress = "";
+                                    if (shipment18DaysJsonArray.length() > 0) {
+                                        try {
+                                            JSONObject obj = shipmentMethod.GetLastJsonObject(shipment18DaysJsonArray, 0);
+                                            shippingDocumentNumber = obj.getString(ConstantsKeys.ShippingDocumentNumber);
+                                            toAddress = obj.getString(ConstantsKeys.ShipperPostalCode);
 
-                                        if (shippingDocumentNumber.equals(getContext().getResources().getString(R.string.Empty)) ||
-                                                shippingDocumentNumber.trim().length() == 0 ||
-                                                toAddress.trim().length() == 0) {
-                                            Global.EldScreenToast(btnLoadingJob, "Update your shipping detail first", getContext().getResources().getColor(R.color.colorVoilation));
-                                        } else {
-                                            readyListener.JobBtnReady(
-                                                    Trailer,
-                                                    updatedReason,
-                                                    type,
-                                                    isUpdatedTrailer,
-                                                    ItemPosition,
-                                                    TrailorNoEditText,
-                                                    ReasonEditText);
+                                            if (shippingDocumentNumber.equals(getContext().getResources().getString(R.string.Empty)) ||
+                                                    shippingDocumentNumber.trim().length() == 0 ||
+                                                    toAddress.trim().length() == 0) {
+                                                Global.EldScreenToast(btnLoadingJob, "Update your shipping detail first", getContext().getResources().getColor(R.color.colorVoilation));
+                                            } else {
+                                                readyListener.JobBtnReady(
+                                                        Trailer,
+                                                        updatedReason,
+                                                        type,
+                                                        isUpdatedTrailer,
+                                                        ItemPosition,
+                                                        TrailorNoEditText,
+                                                        ReasonEditText);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+
+                                    } else {
+                                        readyListener.JobBtnReady(
+                                                Trailer,
+                                                updatedReason,
+                                                type,
+                                                isUpdatedTrailer,
+                                                ItemPosition,
+                                                TrailorNoEditText,
+                                                ReasonEditText);
                                     }
 
-                                } else {
-                                    readyListener.JobBtnReady(
-                                            Trailer,
-                                            updatedReason,
-                                            type,
-                                            isUpdatedTrailer,
-                                            ItemPosition,
-                                            TrailorNoEditText,
-                                            ReasonEditText);
                                 }
 
                             } else {

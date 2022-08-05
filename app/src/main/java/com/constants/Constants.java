@@ -740,13 +740,23 @@ public class Constants {
             e.printStackTrace();
         }
 
+        boolean isObdConnected = false;
+        int ObdStatus = SharedPref.getObdStatus(context);
+        if (ObdStatus == WIFI_CONNECTED ||
+                ObdStatus == WIRED_CONNECTED ||
+                ObdStatus == BLE_CONNECTED){
+            isObdConnected = true;
+        }
 
-        if(obdReceivedVin.length() < 8 ||
-                obdReceivedVin.equalsIgnoreCase(VINNumberFromApi) ||
-                !ignitionStatus.equalsIgnoreCase("ON")){
-            return true;
+        if(isObdConnected) {
+            if (obdReceivedVin.length() < 8 || obdReceivedVin.equalsIgnoreCase(VINNumberFromApi) ||
+                    !ignitionStatus.equalsIgnoreCase("ON")) {
+                return true;
+            } else {
+                return false;
+            }
         }else{
-            return false;
+            return true;
         }
     }
 
@@ -4146,13 +4156,6 @@ public class Constants {
     }
 
 
-    public IntentFilter makeFilter() {
-        IntentFilter filter = new IntentFilter();
-        if(BluetoothAdapter.ACTION_STATE_CHANGED != null) {
-            filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        }
-            return filter;
-    }
 
 
     // Save Driver Cycle From OBD data those are getting from als server.

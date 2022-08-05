@@ -1045,6 +1045,8 @@
     <string name="malfunction_event">Malfunction event</string>
     <string name="dia_event">Diagnostic event</string>
     <string name="missing_dia_event">Missing Diagnostic event</string>
+    <string name="ble_disabled">Bluetooth disabled</string>
+    <string name="ble_enabled_desc">Please turn on your bluetooth from device settings.</string>
 
     <string name="malfunction_events">Malfunction Event</string>
     <string name="dia_events">Diagnostic Event</string>
