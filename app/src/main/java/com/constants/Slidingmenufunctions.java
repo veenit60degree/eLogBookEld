@@ -290,9 +290,11 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void logoutEvent(){
 
+/*
 		Constants.isLogoutEvent = true;
 		SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
 		startService();
+*/
 
 
 		if(constants.isActionAllowed(context) && !SharedPref.getDriverStatusId(context).equals(Globally.DRIVING)){
@@ -567,10 +569,25 @@ public class Slidingmenufunctions implements OnClickListener {
 					dialog.show();
 
 					boolean IsAllowMissingDataDiagnostic = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, context);
+					String RPM = SharedPref.getRPM(context);
+
 					// create logout time missing data diagnostic
-					if(!constants.isObdConnectedWithELD(context) && IsAllowMissingDataDiagnostic){
-						saveMissingDiagnostic(context.getString(R.string.obd_data_is_missing), "Logout Event");
+					if((RPM.equals("0") || !constants.isObdConnectedWithELD(context) ) &&
+							IsAllowMissingDataDiagnostic && !constants.isExemptDriver(context)) {
+
+						//   boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
+
+						saveMissingDiagnostic(context.getString(R.string.obd_data_is_missing), RPM, "Logout Event");
+
 					}
+
+
+
+					// clear other diagnostic events in service like engine sync
+					Constants.isLogoutEvent = true;
+					SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, context);
+					startService();
+
 
 					if (SharedPref.getDriverId(context).trim().length() > 0) {
 						DriverId = Integer.valueOf(SharedPref.getDriverId(context));
@@ -637,8 +654,16 @@ public class Slidingmenufunctions implements OnClickListener {
 	}
 
 
-	private void saveMissingDiagnostic(String remarks, String type){
+	private void saveMissingDiagnostic(String remarks, String RPM, String type){
 		try {
+
+			String desc = "";
+			if (RPM.equals("0")) {
+				remarks = "Vehicle ignition is off at ";
+				desc = " due to Vehicle ignition is off.";
+			} else {
+				desc = " due to OBD not connected with E-Log Book";
+			}
 
 			// save malfunction occur event to server with few inputs
 			JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
@@ -671,7 +696,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				Globally.PlayNotificationSound(context);
 				Globally.ShowLocalNotification(context,
 						context.getResources().getString(R.string.missing_dia_event),
-						context.getResources().getString(R.string.missing_event_occured_desc) + " in logout event", 2091);
+						context.getResources().getString(R.string.missing_event_occured_desc) + " in logout event " + desc, 2091);
 
 				saveDriverLogPost.PostDriverLogData(malArray, APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout15Sec,
 						false, false, 1, SaveMalDiagnstcEvent);
@@ -1043,9 +1068,11 @@ public class Slidingmenufunctions implements OnClickListener {
 			@Override
 			protected Map<String, String> getParams()
 			{
+				String date = global.getCurrentDate();
 				Map<String,String> params = new HashMap<String, String>();
 				params.put(ConstantsKeys.DriverId, DriverId);
-				params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
+				params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
+				params.put(ConstantsKeys.MobileUtcDate, Globally.GetCurrentUTCTimeFormat());
 				params.put(ConstantsKeys.TruckEquipment, TRUCK_NUMBER);
 				params.put(ConstantsKeys.CompanyId, DriverCompanyId);
 				params.put(ConstantsKeys.VIN, VIN);
@@ -1055,7 +1082,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);
 				params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
-
+				Log.d("DateLogout", "MobileDeviceCurrentDateTime: " +date);
 				return params;
 			}
 		};

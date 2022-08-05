@@ -20,10 +20,11 @@ public class EldInfo {
 
 
     /* ----------- Wired OBD log files -------- */
-    //http://eld.alsrealtime.com/Home/DriverLogFile
+    // https://eld.alsrealtime.com/Home/DriverLogFile
+    // http://develd.alsrealtime.com/Home/DriverLogFile
 
     /*----------- Driver Logs ------------- */
-    // http://eld.alsrealtime.com/HOme/DriverlogYear
+    // https://eld.alsrealtime.com/HOme/DriverlogYear
     // http://develd.alsrealtime.com/Home/DriverLogYearLive/
 
     /*----------- Delete mal/dia events by driver id ------------- */

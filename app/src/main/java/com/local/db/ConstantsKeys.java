@@ -164,6 +164,7 @@ public class ConstantsKeys {
     // --------------------- Odometer params -------------------------
     public static String VIN                    = "VIN";
     public static String Odometer               = "Odometer";
+    public static String strOdometersKm         = "strOdometersKm";
     public static String StartOdometer          = "StartOdometer";
     public static String EndOdometer            = "EndOdometer";
     public static String DistanceType           = "DistanceType";
@@ -373,6 +374,8 @@ public class ConstantsKeys {
     public static String ClearOdometer                  = "ClearOdometer";
     public static String ClearEngineHours               = "ClearEngineHours";
     public static String ClearEventDateTime             = "ClearEventDateTime";
+    public static String IsOccurEventAlreadyUploaded    = "IsOccurEventAlreadyUploaded";
+
 
 
     public static String EngineHours                    = "EngineHours";
@@ -436,6 +439,7 @@ public class ConstantsKeys {
     public static String HoursWorked                    = "HoursWorked";
 
     public static String UTCDate                        = "UTCDate";
+    public static String MobileUtcDate                  = "MobileUtcDate";
 
     /*=================== Support Constant =================== */
     public static String SupportDetailId                = "SupportDetailId";

@@ -240,6 +240,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             dateActionBarTV.setText(Html.fromHtml("<b><u>Events History" +
                     "</u></b>"));
 
+            loadData();
 
             if (globally.isConnected(getContext())) {
                 confirmCertifyLay.setVisibility(View.VISIBLE);
@@ -247,17 +248,12 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
                 if (malArray1.length() > 0) {
                     saveDriverLogPost.PostDriverLogData(malArray1, APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout30Sec, false, false, 1, 0);
-                }else{
-                    loadData();
-                   // GetMalfunctionEvents(DriverId, VIN, FromDateTime, ToDateTime, Country, OffsetFromUTC, CompanyId);
                 }
 
             } else {
                 confirmCertifyLay.setVisibility(View.GONE);
-
-                loadData();
-
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -580,7 +576,11 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
             case R.id.dateActionBarTV:
                // TabAct.host.setCurrentTab(0);
 
-                MoveFragment(new MalfunctionDiagnosticHistoryFragment());
+               MoveFragment(new MalfunctionDiagnosticHistoryFragment());
+
+                //Globally.PlayNotificationSound(getActivity());
+               // Globally.ShowLocalNotification(getActivity(), "ELD", "Test Notification", 2091);
+
 
                 break;
 
@@ -1270,7 +1270,8 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
                         EngHrs,
                         finalOdometer,
                         mainObj.getString(ConstantsKeys.DetectionDataEventCode),
-                        mainObj.getString(ConstantsKeys.DriverId), "",
+                        mainObj.getString(ConstantsKeys.DriverId),
+                        mainObj.getString(ConstantsKeys.CurrentStatus),
                         "", "", "", "",
                         driverTimeZone, "--", "--", TotalMinutes   //TotalMinutes value is passing in getId()
                 );

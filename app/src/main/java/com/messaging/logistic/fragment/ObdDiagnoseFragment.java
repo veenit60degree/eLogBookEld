@@ -47,7 +47,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
     View rootView;
     TextView bleObdTxtView, odometerTxtView, gpsTxtView, simInfoTxtView, resetObdTxtView, obdDataTxtView;
-    TextView EldTitleTV, responseRawTxtView, updateObdInfo;
+    TextView EldTitleTV, responseRawTxtView, updateObdInfo, bleNameTxtView;
     RelativeLayout rightMenuBtn;
     RelativeLayout eldMenuLay;
     ImageView eldMenuBtn;
@@ -126,6 +126,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         obdLayScrollView= (ScrollView)v.findViewById(R.id.obdLayScrollView);
         loaderProgress  = (ProgressBar)v.findViewById(R.id.loaderProgress);
         bleObdTxtView   = (TextView) v.findViewById(R.id.bleObdTxtView);
+        bleNameTxtView  = (TextView) v.findViewById(R.id.bleNameTxtView);
         odometerTxtView = (TextView) v.findViewById(R.id.odometerTxtView);
         gpsTxtView      = (TextView) v.findViewById(R.id.gpsTxtView);
         simInfoTxtView  = (TextView) v.findViewById(R.id.simInfoTxtView);
@@ -167,6 +168,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             bleObdTxtView.setVisibility(View.GONE);
         }else if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_BLE){
             EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (Bluetooth)");
+            bleNameTxtView.setText(Globally.BLE_NAME);
             wifiObdLay.setVisibility(View.GONE);
         }else {
             bleObdTxtView.setText(getString(R.string.wired_tablettt));
@@ -204,14 +206,18 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
 
     void scanBtnClick(){
-        int bleStatus = SharedPref.getObdStatus(getActivity());
-        if(bleStatus == Constants.BLE_CONNECTED){
+       int bleStatus = SharedPref.getObdStatus(getActivity());
+        if(bleStatus != Constants.BLE_CONNECTED){
             //stopBleObdData();
-            ToastUtil.show(getActivity(), getString(R.string.device_already_connected));
-        }else {
+            // ToastUtil.show(getActivity(), getString(R.string.device_already_connected));
 
             loaderProgress.setVisibility(View.VISIBLE);
             bleObdTxtView.setText(getString(R.string.start_scan));
+
+
+        } /*else {
+*/
+
             SharedPref.SetPingStatus("start", getActivity());
             SharedPref.saveBleScanCount(0, getActivity());
 
@@ -220,7 +226,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 getActivity().startForegroundService(serviceIntent);
             }
             getActivity().startService(serviceIntent);
-        }
+       // }
     }
 
 
@@ -246,7 +252,9 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             if (SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI ) {
                 String rawdata = intent.getStringExtra("raw_message");
                 responseRawTxtView.setText(rawdata);
+                bleNameTxtView.setText("");
             }else if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIRED){
+                bleNameTxtView.setText("");
                 int lastObdStatus = SharedPref.getObdStatus(getActivity());
                 if(lastObdStatus == Constants.WIRED_CONNECTED){
                     bleObdTxtView.setText(getString(R.string.wired_tablet_connected));
@@ -257,6 +265,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 }
 
             }else{
+                bleNameTxtView.setText(Globally.BLE_NAME);
                 if(SharedPref.getObdStatus(getActivity()) == Constants.BLE_CONNECTED){
                     bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
                 }else{

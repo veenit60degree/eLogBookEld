@@ -31,6 +31,7 @@ import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
+import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -307,9 +308,19 @@ public class VehicleDialogLogin  extends Dialog {
     //*================== Logout User request ===================*//*
     void LogoutUser(final String DriverId){
         progressD.show();
+
+        String date = global.getCurrentDate();
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
-        params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
+        params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
+        params.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, getContext()));
+        params.put(ConstantsKeys.LocationType, SharedPref.getLocationEventType(getContext()));
+
+        params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);
+        params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+
+
+        Log.d("DateLogout", "MobileDeviceCurrentDateTime: " +date);
 
         LogoutRequest.executeRequest(Request.Method.POST, APIs.DRIVER_LOGOUT , params, 1,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);

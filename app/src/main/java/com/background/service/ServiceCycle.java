@@ -14,6 +14,7 @@ import com.constants.Utils;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.local.db.LatLongHelper;
 import com.local.db.LocationMethod;
@@ -132,6 +133,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     SyncingMethod syncingMethod;
     JSONArray driver18DaysLogArray = new JSONArray();
     Utils obdUtil;
+    DriverPermissionMethod driverPermissionMethod;
+
 
     public ServiceCycle(Context context) {
         this.context        = context;
@@ -141,6 +144,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         csvReader           = new CsvReader();
         notificationPref    = new NotificationPref();
         coNotificationPref  = new CoNotificationPref();
+        driverPermissionMethod  = new DriverPermissionMethod();
 
     }
 
@@ -434,6 +438,17 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                             if (VehicleSpeed >= DrivingSpeedLimit && minutesDiff >= DrivingInterval) {
 
+
+                                             /*   constants.saveObdData(constants.getObdSource(context),
+                                                        "ChangeToDrivingFrom " + DRIVER_JOB_STATUS + " - Rpm: " + SharedPref.getRPM(context),
+                                                        "", SharedPref.getObdOdometer(context),
+                                                        SharedPref.getObdOdometer(context), "",
+                                                        SharedPref.getIgnitionStatus(context), SharedPref.getRPM(context),
+                                                        ""+VehicleSpeed,
+                                                        "", SharedPref.getObdEngineHours(context), Global.GetCurrentDateTime(), "",
+                                                        ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+*/
+
                                                 BackgroundLocationService.IsAutoChange = true;
                                                 message = "Duty status switched to DRIVING due to vehicle moving above threshold speed.";
 
@@ -481,13 +496,17 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                     }
 
                                                     if (ContinueSpeedCounter >= OnDutyInterval) {
-                                                  /*  try {
-                                                        if (UILApplication.isActivityVisible()) {
-                                                            TabAct.speedAlertBtn.performClick();
-                                                        }
-                                                    }catch (Exception e){
-                                                        e.printStackTrace();
-                                                    }*/
+
+                                                        /*constants.saveObdData(constants.getObdSource(context),
+                                                                "ChangeToOnDuty - Rpm: " + SharedPref.getRPM(context),
+                                                                "", SharedPref.getObdOdometer(context),
+                                                                SharedPref.getObdOdometer(context), "",
+                                                                SharedPref.getIgnitionStatus(context), SharedPref.getRPM(context),
+                                                                ""+VehicleSpeed,
+                                                                "", SharedPref.getObdEngineHours(context), Global.GetCurrentDateTime(), "",
+                                                                ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+*/
+
                                                         LastStatus = "_eld_From_" + DRIVER_JOB_STATUS;
                                                         ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
                                                                 driverLogArray, currentDateTime, currentUTCTime, CHANGED_STATUS, isEldToast, IsAOBRDAutoDrive);
@@ -516,9 +535,10 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                         if (!isYardMove) {   // if isYardMove = true. No ELD rule called when Truck in yardfor USA.
 
-                                            BackgroundLocationService.IsAutoChange = true;
-                                            message = "Duty status switched to DRIVING due to vehicle moving above threshold speed of 8 Km/h (5 miles per hour).";
-
+                                            if(VehicleSpeed >= 8) {
+                                                BackgroundLocationService.IsAutoChange = true;
+                                                message = "Duty status switched to DRIVING due to vehicle moving above threshold speed of 8 Km/h (5 miles per hour).";
+                                            }
 
                                             if (IsAOBRD) {
                                                 if (IsAOBRDAutomatic) {
@@ -536,6 +556,16 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                                 }
                                                             }
                                                             /* =================================================================================== */
+
+                                                         /*   constants.saveObdData(constants.getObdSource(context),
+                                                                    "ChangeToDrivingFromOnDuty - Rpm: " + SharedPref.getRPM(context),
+                                                                    "", SharedPref.getObdOdometer(context),
+                                                                    SharedPref.getObdOdometer(context), "",
+                                                                    SharedPref.getIgnitionStatus(context), SharedPref.getRPM(context),
+                                                                    ""+VehicleSpeed,
+                                                                    "", SharedPref.getObdEngineHours(context), Global.GetCurrentDateTime(), "",
+                                                                    ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+*/
 
                                                             LastStatus = "_aobrd_From_" + DRIVER_JOB_STATUS;
                                                             CHANGED_STATUS = DRIVING;
@@ -595,6 +625,17 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                         if (BackgroundLocationService.IsAutoChange) {
                                                             dismissEngineRestartDialog(true);
                                                         }
+
+                                                      /*  constants.saveObdData(constants.getObdSource(context),
+                                                                "ChangeToDrivingFromYM - Rpm: " + SharedPref.getRPM(context),
+                                                                "", SharedPref.getObdOdometer(context),
+                                                                SharedPref.getObdOdometer(context), "",
+                                                                SharedPref.getIgnitionStatus(context), SharedPref.getRPM(context),
+                                                                ""+VehicleSpeed,
+                                                                "", SharedPref.getObdEngineHours(context), Global.GetCurrentDateTime(), "",
+                                                                ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+*/
+
                                                         Constants.isPcYmAlertButtonClicked = false;
                                                         LastStatus = "_YMNotConfirmed_From_" + DRIVER_JOB_STATUS;
                                                         CHANGED_STATUS = DRIVING;
@@ -680,6 +721,15 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                 if ((isPersonal || isYmPcAlertShown) && (CurrentCycleId.equals(Global.CANADA_CYCLE_1) || CurrentCycleId.equals(Global.CANADA_CYCLE_2))) {
                                     boolean isPersonalUse75KmCrossed = SharedPref.isPersonalUse75KmCrossed(context);
 
+                                    String eventData = "";
+                                    if (isPersonalUse75KmCrossed){
+                                        double AccumulativePersonalDistance = constants.getAccumulativePersonalDistance(""+DriverId, offsetFromUTC, Globally.GetCurrentJodaDateTime(),
+                                                Globally.GetCurrentUTCDateTime(), hMethods, dbHelper, context);
+                                        eventData = "TotalPuDiaFromApi: " +SharedPref.getTotalPUOdometerForDay(context) +
+                                                ", CurrOdo: " + SharedPref.getObdOdometer(context) +
+                                                ", AccumulativePuDis: " +AccumulativePersonalDistance;
+                                    }
+
                                     if (isPersonalUse75KmCrossed || isYmPcAlertShown) {
                                         DateTime lastSaveUtcDate = Global.getDateTimeObj(SharedPref.getCurrentUTCTime(context), false);
 
@@ -692,6 +742,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             if (VehicleSpeed >= DrivingSpeedLimit) {
 
                                                 if (isPersonalUse75KmCrossed) {
+
                                                     PersonalUse75Km = true;
                                                     LastStatus = "_PU_Crossed75Km";
                                                     message = "Duty status switched to DRIVING due to Personal Use limit (75 km) is exceeded for the day";
@@ -707,6 +758,16 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                                 }
 
+                                                constants.saveObdData(constants.getObdSource(context),
+                                                        "ChangeToDrivingFromPU - Rpm: " + SharedPref.getRPM(context),
+                                                        eventData, SharedPref.getObdOdometer(context),
+                                                        SharedPref.getObdOdometer(context), "",
+                                                        SharedPref.getIgnitionStatus(context), SharedPref.getRPM(context),
+                                                        ""+VehicleSpeed,
+                                                        "", SharedPref.getObdEngineHours(context), Global.GetCurrentDateTime(), "",
+                                                        ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
+
                                                 Constants.isPcYmAlertButtonClicked = false;
                                                 CHANGED_STATUS = DRIVING;
                                                 ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
@@ -720,6 +781,16 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                                     // set value false when PU status has been changed
                                                     SharedPref.SetTruckStartLoginStatus(false, context);
+
+                                                    constants.saveObdData(constants.getObdSource(context),
+                                                            "ChangeToDrivingFromPU - Rpm: " + SharedPref.getRPM(context),
+                                                            eventData, SharedPref.getObdOdometer(context),
+                                                            SharedPref.getObdOdometer(context), "",
+                                                            SharedPref.getIgnitionStatus(context), SharedPref.getRPM(context),
+                                                            ""+VehicleSpeed,
+                                                            "", SharedPref.getObdEngineHours(context), Global.GetCurrentDateTime(), "",
+                                                            ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
 
                                                     CHANGED_STATUS = OFF_DUTY;
                                                     ChangeStatusWithAlertMsg(VehicleSpeed, serviceResponse, dbHelper, hMethods,
@@ -746,6 +817,17 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                         BackgroundLocationService.IsAutoChange = true;
                                         message = " Duty status switched to DRIVING due to not confirming Personal use status.";
                                         LastStatus = "_PU_NotConfirmedByDriver ";
+
+                                       constants.saveObdData(constants.getObdSource(context),
+                                                "ChangeToDrivingFromPU2 - Rpm: " + SharedPref.getRPM(context),
+                                                "", SharedPref.getObdOdometer(context),
+                                                SharedPref.getObdOdometer(context), "",
+                                                SharedPref.getIgnitionStatus(context), SharedPref.getRPM(context),
+                                                ""+VehicleSpeed,
+                                                "", SharedPref.getObdEngineHours(context), Global.GetCurrentDateTime(), "",
+                                                ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
+
 
                                         dismissEngineRestartDialog(true);
                                         SharedPref.savePcYmAlertCallTime("", context);

@@ -101,6 +101,7 @@ public class Globally {
 	public static String registrationId = "";
 	public static String LATITUDE = "", LONGITUDE = "";
 	public static String GPS_LATITUDE = "", GPS_LONGITUDE = "";
+	public static String BLE_NAME = "";
 	public static int VEHICLE_SPEED = -1;
 	public static JSONObject obj ;
 	public static Intent i;
@@ -542,6 +543,31 @@ public class Globally {
 
 	}
 
+
+
+	/*========================= SnackBar Violation View =====================*/
+	public static void SnackBarMandatory10HrOff(View v, final String message, final Context context) {
+
+		try {
+			final Snackbar mSnackBar = Snackbar.make(v, message.replaceAll(";", ".  "), Snackbar.LENGTH_LONG);
+			View view = mSnackBar.getView();
+			FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
+			params.gravity = Gravity.TOP;
+			view.setLayoutParams(params);
+			view.setBackgroundColor(Color.parseColor("#F8851B"));  // Alert orange color
+			TextView mainTextView = (TextView) (view).findViewById(R.id.snackbar_text);
+			mainTextView.setTextColor(Color.WHITE);
+
+			mSnackBar.setActionTextColor(Color.WHITE);
+			if(context != null) {
+				mSnackBar.show();
+			}
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+	}
 
 
 	public void AlertDialog(final Dialog AlertPicker, String title, String desc, String type, int notification,
@@ -1127,6 +1153,19 @@ public class Globally {
 		return StringCurrentDate;
 	}
 
+	public String getCurrentDateLocalUtc(){
+		SimpleDateFormat currentDateFormat = new SimpleDateFormat(DateFormatLocal);
+		currentDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		Calendar c = Calendar.getInstance();
+		String StringCurrentDate = "";
+
+		try {
+			StringCurrentDate = currentDateFormat.format(c.getTime());
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return StringCurrentDate;
+	}
 
 
 	public static DateTime GetCurrentUTCDateTime(){
@@ -1315,6 +1354,9 @@ public class Globally {
 
         try {
             if (date != null && date != "") {
+				if(date.length() > 19){
+					date = date.substring(0, 19);
+				}
                 if (requireOnlyTime) {
                     dtf = org.joda.time.format.DateTimeFormat.forPattern("HH:mm:ss");
                     oDate = dtf.parseDateTime(date);
@@ -1326,13 +1368,16 @@ public class Globally {
                         oDate = new DateTime(date, DateTimeZone.UTC);
                         // oDate = DateTime.parse(date);
                     } else {
+
                         if (date.contains(".")) {
                             oDate = DateTime.parse(date).toDateTime(DateTimeZone.UTC);
                         } else {
                             oDate = new LocalDateTime(date).toDateTime(DateTimeZone.UTC);
                         }
+
                     }
-                }
+
+				}
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -1340,6 +1385,21 @@ public class Globally {
         return oDate;
     }
 
+
+	public static String formatDatePatternMilli(String value ){
+		if(value.length() > 19) {
+			DateTimeFormatter formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+			value = value.substring(0, value.lastIndexOf('.'));
+			DateTime datetime = formatter.parseDateTime(value);
+
+// *** create the formatter with the "no-millis" format ***
+			DateTimeFormatter formatterNoMillis = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+			value = datetime.toString(formatterNoMillis);
+			System.out.println("Formatted dateTime: " +value );
+		}
+
+		return value;
+	}
 
 
     public String GetDayOfWeek(String SelectedDate){

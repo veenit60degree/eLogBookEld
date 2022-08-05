@@ -271,11 +271,10 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                                 if(intent.getBooleanExtra(ConstantsKeys.IsActiveHosScreen, false)){
                                     Log.d("Tab", "Current Tab: "+ TabAct.host.getCurrentTab());
 
+                                    Constants.IS_HOS_AUTO_CALLED = true;
                                     if(TabAct.host.getCurrentTab() == 0) {
-                                        Constants.IS_HOS_AUTO_CALLED = true;
                                         EldFragment.calendarBtn.performClick();
                                     }else{
-                                        Constants.IS_HOS_AUTO_CALLED = true;
                                         TabAct.host.setCurrentTab(0);
                                         EldFragment.calendarBtn.performClick();
 

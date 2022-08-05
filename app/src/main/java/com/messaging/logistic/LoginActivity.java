@@ -66,6 +66,7 @@ import com.local.db.MalfunctionDiagnosticMethod;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -731,7 +732,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.SetAfterLoginConfStatus(false, getApplicationContext());
 			SharedPref.SaveObdStatus(Constants.NO_CONNECTION,  "", "", getApplicationContext());
 			SharedPref.setRefreshDataTime("", getApplicationContext());
-			SharedPref.setDayStartOdometer("0", "0", "", getApplicationContext());
+			SharedPref.setDayStartOdometer("-1", "-1", "", getApplicationContext());
 			SharedPref.setCertifyAlertViewTime("", getApplicationContext());
 			SharedPref.setEldOccurences(false, false, false, false, getApplicationContext());
 			SharedPref.setEldOccurencesCo(false, false, false, false, getApplicationContext());
@@ -760,12 +761,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setDeferralForMain(false, "", "0", getApplicationContext());
 			SharedPref.setDeferralForCo(false, "", "0", getApplicationContext());
 			SharedPref.SetLocReceivedFromObdStatus(false, getApplicationContext());
-			SharedPref.SaveTruckInfoOnIgnitionChange("", "","", "","0", "0", getApplicationContext());
+		//	SharedPref.SaveTruckInfoOnIgnitionChange("", "","", "","0", "0", getApplicationContext());
 			SharedPref.setUnIdenLastDutyStatus("", getApplicationContext());
 			SharedPref.SaveUnidentifiedIntermediateRecord("", "", "", "", "", getApplicationContext());
 			SharedPref.setUnAssignedVehicleMilesId("", getApplicationContext());
 			SharedPref.setIntermediateLogId("", getApplicationContext());
-			SharedPref.setTotalPUOdometerForDay("0","", getApplicationContext());
+			SharedPref.setTotalPUOdometerForDay("-1","", getApplicationContext());
 			SharedPref.SetWrongVinAlertView(false, getApplicationContext());
 			SharedPref.saveParticularMalDiaStatus( false ,false ,false ,false ,false , getApplicationContext());
 			SharedPref.setTruckNumber("", getApplicationContext());
@@ -985,6 +986,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					protected Map<String, String> getParams() {
 						Map<String, String> params = new HashMap<String, String>();
 
+						String date = global.getCurrentDate();
+
 						params.put(ConstantsKeys.DeviceId, DeviceId);
 						params.put(ConstantsKeys.Password, pass);
 						params.put(ConstantsKeys.Username, username);
@@ -994,10 +997,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 						params.put(ConstantsKeys.IMEINumber, ImeiNumber);
 						params.put(ConstantsKeys.OSType, OSType);
 						params.put(ConstantsKeys.DeviceType, deviceType);
-						params.put(ConstantsKeys.MobileDeviceCurrentDateTime, global.getCurrentDate());
+						params.put(ConstantsKeys.MobileDeviceCurrentDateTime, date);
 
 						params.put(ConstantsKeys.SIM1, DeviceSimInfo);
 						//params.put("SIM2, "");
+
+						Log.d("DateLogin", ">>>MobileDeviceCurrentDateTime: " +date);
 
 						return params;
 					}
@@ -1299,7 +1304,11 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			case R.id.loginBleStatusBtn:
 
-
+			/*	DateTime selectedDateTime = Globally.GetCurrentUTCDateTime().minusHours(25);
+				DateTime currentUtcDate = Globally.GetCurrentUTCDateTime();
+				long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardHours();
+				Log.d("HourDiff", "hourDiff: " +hourDiff);
+*/
 /*
 				String abc = "{\"note_text\":\"tertsetresrs sdfds fsd fsdfs f\"}";
 				//abc = abc.replaceAll("\"", "");
@@ -1344,6 +1353,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				break;
 
 			case R.id.coDriverLoginBtn:
+
 				LoginWithCoDriver();
 				break;
 

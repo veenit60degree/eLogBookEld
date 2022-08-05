@@ -78,13 +78,13 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
     View rootView;
     Button availableHourBtnTV;
-    TextView EldTitleTV, hosDistanceTV, hosLocationTV, hosOperatingZoneTV, statusNewInfoTV;
+    TextView EldTitleTV, hosDistanceTV, hosLocationTV, hosOperatingZoneTV, statusNewInfoTV, malfunctionTV;
     TextView perShiftDrivingTV,perShiftOnDutyTV,perShiftNextBreakTV,perShiftTV,perDayDrivingTV,perDayOnDutyTV,perDayOffDutyTV,cycleTV,currentCycleHosTV,hosPerDayTv,hosCycleTV;
     TextView perShiftUsedDrivingTV,perShiftUsedOnDutyTV,perShiftUsedOffDutyTV,perShiftUsedTimeTV;
     TextView perDayUsedDrivingTV,perDayUsedOnDutyTV,perDayUsedOffDutyTV,cycleUsedTimeTV,hosCycleTVUsa,offDutyRestTV, accPerDistanceTv;
     ImageView eldMenuBtn,hosFlagImgView;
     LoadingSpinImgView loadingSpinEldIV;
-    RelativeLayout eldMenuLay, obdHosInfoImg;
+    RelativeLayout eldMenuLay, obdHosInfoImg, malfunctionLay;
     CircleProgressView breakCircularView, shiftCircularView, perShiftCurrentDrivingCircularView,perShiftCurrentOnDutyCircularView,perShiftCurrentOffDutyCircularView,perDayCurrentDrivingCircularView,perDayCurrentOnDutyCircularView,perDayCurrentOffDutyCircularView,cycleCircularView,hosUsaCycleCircularView;
     CardView hosDistanceCardView, hosLocationCardView,sendLogHosBtn,hosPerDayDrivingCardView,hosPerDayOnDutyCardView,hosPerDayOffDutyCardView,hosCycleCardView,hosPerShiftDrivingCardView,hosPerShiftOnDutyCardView,hosPerShiftBreakCardView;
     RelativeLayout rightMenuBtn;
@@ -101,7 +101,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     SwitchCompat dotSwitchButton;
     CsvReader csvReader;
 
-    long MIN_TIME_BW_UPDATES = 30000;  // 60 Sec
+    long MIN_TIME_BW_UPDATES = 30000;  // 30 Sec
     final int OFF_DUTY = 1;
     final int SLEEPER = 2;
     final int DRIVING = 3;
@@ -162,6 +162,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     boolean isHaulExcptn;
     boolean isAdverseExcptn;
     boolean isNorthCanada;
+    boolean isAutoCalled = false;
     double distanceInKm = 0;
 
 
@@ -236,6 +237,8 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         eldMenuLay              = (RelativeLayout)v.findViewById(R.id.eldMenuLay);
         obdHosInfoImg           = (RelativeLayout)v.findViewById(R.id.obdHosInfoImg);
+        malfunctionLay          = (RelativeLayout)v.findViewById(R.id.malfunctionLay);
+
         eldMenuBtn              = (ImageView)v.findViewById(R.id.eldMenuBtn);
 
         cycleCircularView       = (CircleProgressView)v.findViewById(R.id.cycleCircularView);
@@ -263,6 +266,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         hosOperatingZoneTV      = (TextView)v.findViewById(R.id.hosOperatingZoneTV);
         statusNewInfoTV         = (TextView)v.findViewById(R.id.statusNewInfoTV);
         accPerDistanceTv        = (TextView)v.findViewById(R.id.accPerDistanceTv);
+        malfunctionTV           = (TextView)v.findViewById(R.id.malfunctionTV);
 
         hosFlagImgView       = (ImageView)v.findViewById(R.id.hosFlagView);
         loadingSpinEldIV     = (LoadingSpinImgView)v.findViewById(R.id.loadingSpinEldIV);
@@ -317,6 +321,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
             hosCycleTV.setText(CurrentCycle);
             dotSwitchButton.setText("USA");
         }
+
 
 
         try {
@@ -454,6 +459,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         if(Constants.IS_HOS_AUTO_CALLED){
             Constants.IS_HOS_AUTO_CALLED = false;
+            isAutoCalled = true;
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -620,6 +626,62 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
     }
 
 
+
+    void getExceptionStatus(){
+
+        try {
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean isMal = SharedPref.isMalfunctionOccur(getActivity());
+                        boolean isDia = SharedPref.isDiagnosticOccur(getActivity());
+                        boolean isLocMal = constants.isAllowLocMalfunctionEvent(getActivity());
+
+                        if (isLocMal || SharedPref.isEngSyncMalfunction(getActivity())) {
+                            isMal = true;
+                        }
+
+                        if (isMal || isDia || SharedPref.isEngSyncDiagnstc(getActivity())) {
+                            malfunctionLay.setVisibility(View.VISIBLE);
+                            malfunctionLay.startAnimation(editLogAnimation);
+                            if (UILApplication.getInstance().isNightModeEnabled()) {
+                                if (isMal && isDia == false) {
+                                    malfunctionTV.setText(getString(R.string.malfunction_occur));
+                                    malfunctionLay.setBackgroundColor(getResources().getColor(R.color.layout_color_dot));
+                                } else if (isMal == false && isDia) {
+                                    malfunctionTV.setText(getString(R.string.diagnostic_occur));
+                                    malfunctionLay.setBackgroundColor(getResources().getColor(R.color.layout_color_dot));
+                                } else {
+                                    malfunctionLay.setBackgroundColor(getResources().getColor(R.color.layout_color_dot));
+                                    malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
+                                }
+                            } else {
+                                if (isMal && isDia == false) {
+                                    malfunctionTV.setText(getString(R.string.malfunction_occur));
+                                    malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
+                                } else if (isMal == false && isDia) {
+                                    malfunctionTV.setText(getString(R.string.diagnostic_occur));
+                                    malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorSleeper));
+                                } else {
+                                    malfunctionLay.setBackgroundColor(getResources().getColor(R.color.colorVoilation));
+                                    malfunctionTV.setText(getString(R.string.malfunction_diag_occur));
+                                }
+                            }
+                        } else {
+                            editLogAnimation.cancel();
+                            malfunctionLay.setVisibility(View.GONE);
+                        }
+                    }
+                });
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     void getBundleData(){
         try {
             Bundle bundle = this.getArguments();
@@ -764,6 +826,12 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                     hosPerDayDrivingCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
                     perShiftCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
                     perDayCurrentDrivingCircularView.setRimColor(getResources().getColor(R.color.white));
+
+                    if(isAutoCalled) {
+                        perShiftCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.deferral_light_blue));
+                        perDayCurrentOnDutyCircularView.setRimColor(getResources().getColor(R.color.deferral_light_blue));
+                    }
+
                 }else if(DRIVER_JOB_STATUS == ON_DUTY){
                     hosPerShiftOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
                     hosPerDayOnDutyCardView.setCardBackgroundColor(getResources().getColor(R.color.deferral_light_blue));
@@ -1167,16 +1235,21 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         try {
 
             DRIVER_JOB_STATUS = Integer.parseInt(SharedPref.getDriverStatusId(getActivity()));
+            Log.d("DriverJob","CurrentDriverJob: " +DRIVER_JOB_STATUS);
             calculateLocalOdometersDistance();
 
-            if (isUpdateUI && global.isConnected(getActivity())) {
+            if (isUpdateUI) {
                 resetProgressBarUI();
-                GetAddFromLatLng();
-                if(distanceInKm == 0) {
-                    GetEngineMiles();  //=============================================================================================
+                getExceptionStatus();
+
+                if(global.isConnected(getActivity())) {
+                    GetAddFromLatLng();
+                    if (distanceInKm == 0) {
+                        GetEngineMiles();  //=============================================================================================
+                    }
+                }else{
+                    getOfflineAddress();
                 }
-            }else{
-                getOfflineAddress();
             }
 
             currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
@@ -1329,20 +1402,32 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
     private void getOfflineAddress(){
 
-        String AddressLine = "";
-        if(LocationFromApi.length() == 0) {
-            if ((CycleId.equals(Globally.CANADA_CYCLE_1) || CycleId.equals(Globally.CANADA_CYCLE_2))
-                    && !SharedPref.IsAOBRD(getContext())) {
-                AddressLine = csvReader.getShortestAddress(getContext());
-            } else {
-                if (Globally.LATITUDE.length() > 4) {
-                    AddressLine = Globally.LATITUDE + "," + Globally.LONGITUDE;
+        getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                try {
+                    String AddressLine = "";
+                    if (LocationFromApi.length() == 0) {
+                        if ((CycleId.equals(Globally.CANADA_CYCLE_1) || CycleId.equals(Globally.CANADA_CYCLE_2))
+                                && !SharedPref.IsAOBRD(getContext())) {
+                            AddressLine = csvReader.getShortestAddress(getContext());
+                        } else {
+                            if (Globally.LATITUDE.length() > 4) {
+                                AddressLine = Globally.LATITUDE + "," + Globally.LONGITUDE;
+                            }
+                        }
+                        hosLocationTV.setText(AddressLine);
+                    } else {
+                        hosLocationTV.setText(LocationFromApi);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
-            hosLocationTV.setText(AddressLine);
-        }else{
-            hosLocationTV.setText(LocationFromApi);
-        }
+        });
+
     }
 
 
@@ -1641,7 +1726,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
                                     }
                                 } catch (Exception e) {
-                                    //  hosDistanceTV.setText(Html.fromHtml(" <b>" + "-- </b>" ));
+
                                     e.printStackTrace();
                                 }
                                 break;

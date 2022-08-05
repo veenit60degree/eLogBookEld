@@ -694,21 +694,17 @@
                                         CircleProgressView:cpv_unitScale="0" />
 
 
-
-
-
                                     <TextView
                                         android:id="@+id/hosPerDayUsedOnDutyTV"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textColor="?attr/hos_used_time"
-                                        android:textStyle="bold"
-                                        android:textSize="@dimen/text_size_17"
+                                        android:layout_centerInParent="true"
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center_horizontal"
-                                        android:layout_centerInParent="true"
+                                        android:textColor="?attr/hos_used_time"
+                                        android:textSize="@dimen/text_size_17"
 
-                                        />
+                                        android:textStyle="bold" />
 
 
 

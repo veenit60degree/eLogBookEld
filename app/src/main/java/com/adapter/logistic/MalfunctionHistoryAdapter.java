@@ -103,9 +103,11 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         TextView statusMalTxtVw = (TextView) convertView.findViewById(R.id.statusMalTxtVw);
         TextView vehMilesMalTxtVw = (TextView) convertView.findViewById(R.id.vehMilesMalTxtVw);
         TextView engHoursMalTxtVw = (TextView) convertView.findViewById(R.id.engHoursMalTxtVw);
-        TextView totalMinTxtVw = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
+        TextView missingEventStatus = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
         TextView endTimeMalTxtVw = (TextView) convertView.findViewById(R.id.endTimeMalTxtVw);
         TextView unIdenMalTxtVw = (TextView) convertView.findViewById(R.id.unIdenMalTxtVw);
+
+       // TextView seqIdMalTxtVw  = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
 
         endTimeMalTxtVw.setVisibility(View.VISIBLE);
 
@@ -154,25 +156,31 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                 seqIdMalTxtVw.setText(childData.getSequenceNo());
             }
           if(constants.isMalfunction(childData.getDetectionDataEventCode())){
-              totalMinTxtVw.setVisibility(View.GONE);
+              missingEventStatus.setVisibility(View.GONE);
          }else {
 
           }*/
 
-            totalMinTxtVw.setVisibility(View.VISIBLE);
            /* if (childData.getId().equals("--")) {
-                totalMinTxtVw.setText(childData.getId());
+                missingEventStatus.setText(childData.getId());
             } else {
                 //TotalMinutes value is passing in getId()
                 if(childData.getDetectionDataEventCode().equals(Constants.PowerComplianceDiagnostic) ||
                         childData.getDetectionDataEventCode().equals(Constants.PowerComplianceMalfunction) ){
-                    totalMinTxtVw.setText(childData.getId() + " min");
+                    missingEventStatus.setText(childData.getId() + " min");
                 }else{
-                    totalMinTxtVw.setText(childData.getId() + " min");
+                    missingEventStatus.setText(childData.getId() + " min");
                 }
 
             }*/
-            totalMinTxtVw.setText(childData.getId() + " min");
+
+            missingEventStatus.setVisibility(View.VISIBLE);
+            if(childData.getDetectionDataEventCode().equals(Constants.MissingDataDiagnostic)){
+                missingEventStatus.setText(childData.getEventCode());
+            }else{
+                missingEventStatus.setText(childData.getId() + " min");
+            }
+
 
             String distance = childData.getMiles(); //constants.getBeforeDecimalValue();
 
@@ -372,12 +380,14 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             holder.engHoursMalTxtVw.setText(_context.getString(R.string.end_eng_hr));
         }
 
-       /* if(constants.isMalfunction(headerModel.getEventCode())){
-            holder.seqIdMalTxtVw.setVisibility(View.GONE);
-        }*/
-
         holder.seqIdMalTxtVw.setVisibility(View.VISIBLE);
-        holder.seqIdMalTxtVw.setText("Difference");
+
+
+        if(headerModel.getEventCode().equals(Constants.MissingDataDiagnostic)){
+            holder.seqIdMalTxtVw.setText(_context.getString(R.string.Status));
+        }else{
+            holder.seqIdMalTxtVw.setText(_context.getString(R.string.Difference));
+        }
 
         setViewTextColorWithStyle(holder.timeMalTxtVw, holder.statusMalTxtVw, holder.vehMilesMalTxtVw,
                 holder.engHoursMalTxtVw, holder.seqIdMalTxtVw, holder.startEngHrTxtVw);

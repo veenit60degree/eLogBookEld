@@ -51,12 +51,11 @@
 
         />
 
-<include
-    android:id="@+id/eldActionBar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    layout="@layout/actionbar_eld"
-    />
+    <include
+        android:id="@+id/eldActionBar"
+        layout="@layout/actionbar_eld"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
 

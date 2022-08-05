@@ -279,7 +279,8 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
 
 
                 if(mainObj.has(ConstantsKeys.EventEndDateTime) && mainObj.getString(ConstantsKeys.EventEndDateTime).length() > 15) {
-                    DateTime EventEndDateTime = Globally.getDateTimeObj(mainObj.getString(ConstantsKeys.EventEndDateTime), false);
+                    String EventEndDateTimeStr = mainObj.getString(ConstantsKeys.EventEndDateTime);
+                    DateTime EventEndDateTime = Globally.getDateTimeObj(EventEndDateTimeStr, false);
                     driverEndTimeZone = String.valueOf(EventEndDateTime.plusHours(Integer.parseInt(OffsetFromUTC)));
                 }else{
                     if(EventType.equals(Constants.PowerComplianceDiagnostic) || EventType.equals(Constants.PowerComplianceMalfunction)){
@@ -328,7 +329,8 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
                         EngHrs,
                         StartOdometer,
                         mainObj.getString(ConstantsKeys.DetectionDataEventCode),
-                        mainObj.getString(ConstantsKeys.DriverId), "",
+                        mainObj.getString(ConstantsKeys.DriverId),
+                        mainObj.getString(ConstantsKeys.CurrentStatus),
                         "", "", "", driverEndTimeZone,  // passing event end date into to date
                         driverTimeZone, "--", StartEngineHours, TotalMinutes   //TotalMinutes value is passing in getId()
                 );

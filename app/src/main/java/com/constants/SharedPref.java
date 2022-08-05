@@ -447,6 +447,22 @@ public class SharedPref {
 
 
 
+    // save Ble OnReceive callback Time -------------------
+    public static void setBleOnReceiveTime( Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("BleOnReceiveTime", Globally.GetCurrentDateTime());
+        editor.commit();
+    }
+
+
+    // get Ble OnReceive callback Time -------------------
+    public static String getBleOnReceiveTime( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("BleOnReceiveTime", "");
+    }
+
+
     // Set Wrong Vin Alert View status  -------------------
     public static void SetWrongVinAlertView( boolean status, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -2132,6 +2148,26 @@ public class SharedPref {
     }
 
 
+    // Set login time (UTC) and occurrence event status -------------------
+    public static void setLoginTimeUTC( String value, boolean isLoginEvent, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("login_time_utc", value);
+        editor.putBoolean("is_login_event_occ", isLoginEvent);
+        editor.commit();
+    }
+
+    // Get login time (UTC)  -------------------
+    public static String getLoginTimeUTC( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString("login_time_utc", "");
+    }
+
+    // get Login Missing Event Occurrence -------------------
+    public static boolean isLoginMissingEventOcc( Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("is_login_event_occ", false);
+    }
 
     // Get background Service OnDestory method status -------------------
     public static boolean isServiceOnDestoryCalled( Context context) {
@@ -2205,11 +2241,12 @@ public class SharedPref {
 
     // Save Co-Driver Switching status  -------------------
     public static void saveCoDriverSwitchingStatus( boolean IsEngSyncDia, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(ConstantsKeys.CoDriverSwitching, IsEngSyncDia);
-
-        editor.commit();
+        if(context != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(ConstantsKeys.CoDriverSwitching, IsEngSyncDia);
+            editor.commit();
+        }
     }
 
     // Get Co Driver Switching status -------------------

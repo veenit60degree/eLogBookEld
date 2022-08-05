@@ -292,11 +292,16 @@
     <string name="eng_sync_dia_event">Engine sync diagnostic event</string>
    <!-- <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>-->
     <string name="eng_sync_dia_occured_desc">Engine synchronization data diagnostic event occurred.</string>
+    <string name="eng_sync_dia_occ_with_pwr">Engine synchronization data diagnostic event occurred and clear after ECM connected with eLog book.</string>
     <string name="eng_sync_dia_clear_desc">Engine synchronization data diagnostic event has been cleared.</string>
+    <string name="event_clear_desc">Event has been cleared.</string>
     <string name="codr_eng_sync_dia_clear_desc">CoDriver\'s engine synchronization data diagnostic event has been cleared.</string>
     <string name="eng_sync_mal_clear_desc">Engine synchronization compliance malfunction event has been cleared.</string>
     <string name="power_dia_clear_desc">Power data diagnostic event has been cleared.</string>
     <string name="power_mal_clear_desc">Power compliance malfunction event has been cleared.</string>
+
+    <string name="clear_event_desc"> event has been cleared and posted to server automatically as internet connection resumed.</string>
+
 
     <string name="unidentified_dia_occured_desc">Unidentified driving record data diagnostic event occurred.</string>
     <string name="missing_data_dia_clear_desc">Missing required data element data diagnostic event has been cleared.</string>
@@ -319,6 +324,7 @@
     <string name="ignore_to_save_loc">Driver ignore to save location in </string>
     <string name="obd_data_is_missing">OBD data is missing in </string>
     <string name="obd_data_is_missing_at">OBD data is missing at </string>
+    <string name="veh_ignition_off_at">Vehicle ignition is off at </string>
 
     <string name="hos_limitation">New HOS Limitations</string>
     <string name="hos_limitation_old">Old HOS Limitations</string>
@@ -366,6 +372,7 @@
     <string name="Carrier">Carrier</string>
     <string name="StartEndOdometer">Start End Odometer</string>
 
+    <string name="Difference">Difference</string>
     <string name="OdometerDifference">Odometer Difference</string>
     <string name="TruckTractorVIN">Truck Tractor VIN</string>
     <string name="ExemptDriverStatus">Exempt Driver Status</string>
@@ -949,6 +956,7 @@
 
     <string name="OBDDisconnected">OBD disconnected</string>
     <string name="BleOBDConnErr">BLE OBD Connection Error</string>
+    <string name="BleOBDTimeOutErr">BLE OBD TimeOut Error</string>
     <string name="connErrorDesc">Device connection error. Please check your BLE device configuration or restart the tablet.</string>
     <string name="AlsEld">ALS ELD</string>
     <string name="Inter_record_occ">Intermediate record occurred</string>
@@ -1170,6 +1178,7 @@
     <string name="ht_clear_data">Clear Data</string>
     <string name="ht_connect_error_other">Device connection failed, please check if there is a device connection</string>
     <string name="ht_scan_error">Scanning device failed</string>
+    <string name="ht_ble_disabled_error">Bluetooth is disabled.</string>
     <string name="ht_unConnect">The device has not been connected and cannot be reconnected</string>
     <string name="device_already_connected">Device already connected.</string>
     <string name="ht_scan_completed">Scan Completed</string>

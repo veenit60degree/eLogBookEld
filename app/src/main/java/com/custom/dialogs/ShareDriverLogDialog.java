@@ -850,6 +850,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                                 final String IsMail, final String IsService, final String latitude,
                                 final String longitude, final String DriverTimeZone){
 
+        shareDriverLogBtn.setEnabled(false);
+
         final ProgressDialog pDialog = new ProgressDialog(getContext());
         pDialog.setMessage("Sending ...");
         pDialog.setCancelable(false);
@@ -864,7 +866,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                         Log.d("Response ", "---Response: " + response);
 
                         pDialog.dismiss();
-                       // sendLogProgressBar.setVisibility(View.GONE);
+                        shareDriverLogBtn.setEnabled(true);
+
                         try {
                             JSONObject dataObj;
                             JSONObject obj = new JSONObject(response);
@@ -900,7 +903,8 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("error ", "---error: " + error);
-                       // sendLogProgressBar.setVisibility(View.GONE);
+                        shareDriverLogBtn.setEnabled(true);
+
                         globally.EldToastWithDuration4Sec(shareDriverLogBtn, "Error", getContext().getResources().getColor(R.color.colorVoilation));
                         pDialog.dismiss();
                     }

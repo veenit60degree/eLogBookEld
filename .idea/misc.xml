@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/actionbar_eld.xml" value="0.40384615384615385" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/activity_eld_new.xml" value="0.4375" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/fragment_obd_diagnose.xml" value="0.4150641025641026" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/hos_summary.xml" value="0.4" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/include_login.xml" value="0.4519230769230769" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/include_login_codriver.xml" value="0.4519230769230769" />
@@ -10,6 +13,7 @@
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/item_rods_listing.xml" value="0.3017578125" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/popup_shipping_doc.xml" value="0.3886217948717949" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/popup_update_app.xml" value="0.264" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/fragment_obd_diagnose.xml" value="0.17691256830601093" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/hos_summary.xml" value="0.1875" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/include_login.xml" value="0.1875" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/include_login_codriver.xml" value="0.1875" />
@@ -29,6 +33,7 @@
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/include_login_codriver.xml" value="0.25" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/inspection_fragment.xml" value="0.19384057971014493" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_child_malfunction.xml" value="0.2259963768115942" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_dot_odo_logs.xml" value="0.2" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_inspection_layout.xml" value="0.19882246376811594" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_rods_listing.xml" value="0.1609375" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/login_activity.xml" value="0.25" />

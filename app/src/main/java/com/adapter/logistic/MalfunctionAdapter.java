@@ -105,6 +105,12 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
         TextView vehMilesMalTxtVw = (TextView) convertView.findViewById(R.id.vehMilesMalTxtVw);
         TextView engHoursMalTxtVw = (TextView) convertView.findViewById(R.id.engHoursMalTxtVw);
         TextView unIdenMalTxtVw = (TextView) convertView.findViewById(R.id.unIdenMalTxtVw);
+        TextView seqIdMalTxtVw  = (TextView) convertView.findViewById(R.id.seqIdMalTxtVw);
+
+        if(childData.getDetectionDataEventCode().equals(Constants.MissingDataDiagnostic)){
+            seqIdMalTxtVw.setVisibility(View.VISIBLE);
+            seqIdMalTxtVw.setText(childData.getEventCode());
+        }
 
         try{
             if(childData.getDriverZoneEventDate().length() > 10) {
@@ -124,6 +130,8 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
 
             if(DriverId.equals("0")) {
                 unIdenMalTxtVw.setVisibility(View.VISIBLE);
+            }else{
+                unIdenMalTxtVw.setVisibility(View.INVISIBLE);
             }
 
             String distance = childData.getMiles();
@@ -305,6 +313,10 @@ public class MalfunctionAdapter extends BaseExpandableListAdapter {
 
         if(constants.isMalfunction(headerModel.getEventCode())){
             holder.seqIdMalTxtVw.setVisibility(View.GONE);
+        }else if(headerModel.getEventCode().equals(Constants.MissingDataDiagnostic)){
+            holder.seqIdMalTxtVw.setVisibility(View.VISIBLE);
+            holder.seqIdMalTxtVw.setText(_context.getString(R.string.Status));
+
         }
 
         holder.malfHeaderTxtVw.setText(headerModel.getEventName());

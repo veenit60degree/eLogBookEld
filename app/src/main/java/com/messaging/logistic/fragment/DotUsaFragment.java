@@ -1031,6 +1031,20 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                     DateFormat format = new SimpleDateFormat(Globally.DateFormat, Locale.ENGLISH);
                     Date date = format.parse(time);
 
+                    String remarks = constants.CheckNullString(obj.getString(ConstantsKeys.Remarks));
+                    String strEventType = constants.checkNullString(obj.getString(ConstantsKeys.strEventType));
+
+                    try {
+                        if (obj.getString(ConstantsKeys.EventType).equals("7")) {
+                            strEventType = obj.getString(ConstantsKeys.AdditionalInfo);
+                            if (remarks.length() == 0) {
+                                remarks = constants.getLoginLogoutEventName(7, obj.getInt(ConstantsKeys.EventCode));
+                            }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
                     DotDataModel dotLogItem = new DotDataModel(
                             constants.checkNullString(obj.getString(ConstantsKeys.strEventType)),
                             time,
@@ -1043,8 +1057,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                             constants.checkNullString(obj.getString(ConstantsKeys.OdometerInKm)),
                             constants.checkNullString(obj.getString(ConstantsKeys.TotalVehicleMiles)),
                             constants.checkNullString(obj.getString(ConstantsKeys.TotalEngineHours)),
-                            constants.checkNullString(obj.getString(ConstantsKeys.strEventType)),
-                            constants.checkNullString(obj.getString(ConstantsKeys.Remarks)),
+                            strEventType,
+                            remarks,
                             constants.checkNullString(obj.getString(ConstantsKeys.Origin)),
                             constants.checkNullString(obj.getString(ConstantsKeys.SequenceNumber)),
                             date

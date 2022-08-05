@@ -54,6 +54,20 @@
 
                 />
 
+
+                <TextView
+                    android:id="@+id/bleNameTxtView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/margin_15"
+                    android:textColor="?attr/color_eld_bg"
+                    android:textSize="@dimen/text_size_15"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/margin_15"
+
+                    />
+
+
             <ProgressBar
                     android:id="@+id/loaderProgress"
                     android:layout_width="33dp"

@@ -1148,12 +1148,22 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     private void saveMissingDiagnostic(String remarks, String type){
         try {
             boolean IsAllowMissingDataDiagnostic = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, getActivity());
-            if(!constants.isObdConnectedWithELD(getActivity()) &&
+            String RPM = SharedPref.getRPM(getActivity());
+
+            if((RPM.equals("0") || !constants.isObdConnectedWithELD(getActivity()) ) &&
                     IsAllowMissingDataDiagnostic && !isExemptDriver) {
 
-                boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
+             //   boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
 
-                if (!isMissingEventAlreadyWithStatus) {
+                String desc = "";
+                if(RPM.equals("0")){
+                    remarks = "Vehicle ignition is off at ";
+                    desc = " due to Vehicle ignition is off.";
+                }else {
+                    desc = " due to OBD not connected with E-Log Book";
+                }
+
+           //     if (!isMissingEventAlreadyWithStatus) {
                     // save malfunction occur event to server with few inputs
                     JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
                             DriverId, DeviceId, SharedPref.getVINNumber(getActivity()),
@@ -1184,11 +1194,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     Globally.ShowLocalNotification(getActivity(),
                             getString(R.string.missing_dia_event),
                             getString(R.string.missing_event_occured_desc) + " in " +
-                                    type + " due to OBD not connected with E-Log Book", 2091);
+                                    type + desc, 2091);
 
 
+                    SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
+                            SharedPref.isMalfunctionOccur(getActivity()), true,
+                            SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
 
-                }
+             //   }
             }
         }catch (Exception e){
             e.printStackTrace();

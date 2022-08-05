@@ -504,7 +504,9 @@ public class TrailorDialog extends Dialog {
                                     Trailer = Constants.NoTrailer;
                                 }
 
-                                if (type.equals("trailor_driving") && Trailer.length() == 0) {
+                                if ((type.equals("trailor_driving") && Trailer.length() == 0) ||
+                                        ((updatedReason.equals(getContext().getResources().getString(R.string.loading)) || (updatedReason.equals(getContext().getResources().getString(R.string.Unloading)))
+                                                && (Trailer.equals("No Trailer") || Trailer.equals(""))) ) ) {
                                     Global.EldScreenToast(btnLoadingJob, "Enter trailer number", getContext().getResources().getColor(R.color.colorVoilation));
                                 } else {
                                     readyListener.JobBtnReady(

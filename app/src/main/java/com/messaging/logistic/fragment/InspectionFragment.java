@@ -928,34 +928,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 CallSaveInspectionAPI();
             }
 
-
-       /* }else{
-            inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
-            odometerEditTxt.requestFocus();
-
-            odometerEditTxt.setVisibility(View.VISIBLE);
-            selectDistanceSpinner.setVisibility(View.VISIBLE);
-            currentOdometerTV.setVisibility(View.GONE);
-
-            if(Odometer.length() == 0 || Odometer.equals("0")){
-                Globally.EldScreenToast(inspectionDateTv, "Enter current odometer of your vehicle.", getResources().getColor(R.color.colorVoilation));
-
-                constants.saveObdData("", "", "", "",
-                        "", "No Odometer: " + Odometer +
-                                ", odometerEditTxt: " + odometerEditTxt.getText().toString().trim() +
-                                ", isObdConnected: " +  isObdConnected +
-                                ", obdPreference: " +  SharedPref.getObdPreference(getActivity())
-                        , "","","",
-                        String.valueOf(-1), "", "", "",
-                        DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
-
-            }else{
-                Globally.EldScreenToast(inspectionDateTv, "Select odometer unit first.", getResources().getColor(R.color.colorVoilation));
-            }
-
-        }
-        */
-
     }
 
     @Override

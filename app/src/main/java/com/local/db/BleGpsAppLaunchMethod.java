@@ -269,7 +269,7 @@ public class BleGpsAppLaunchMethod {
                         (coarseLocation == PackageManager.PERMISSION_GRANTED);
 
                 if (isAppLocationPermissionGranted) {
-                    Log.e(Tag, "Location permission is granted");
+                   // Log.e(Tag, "Location permission is granted");
                     CurrentLocationStatus = AuthorizedAlways;
                 } else {
                     Log.e(Tag, "Location permission is not granted");
@@ -282,7 +282,7 @@ public class BleGpsAppLaunchMethod {
             SharedPref.SetGpsBlePermission( SharedPref.WasBleEnabled(context), isGpsEnabled, CurrentLocationStatus, context);
 
             // write location status chlog
-            SaveBleGpsAppLogInTable(Constants.LogEventTypeGps,CurrentLocationStatus, global.getCurrentDateLocal(), dbHelper);
+            SaveBleGpsAppLogInTable(Constants.LogEventTypeGps,CurrentLocationStatus, global.getCurrentDateLocalUtc(), dbHelper);
 
         }
 

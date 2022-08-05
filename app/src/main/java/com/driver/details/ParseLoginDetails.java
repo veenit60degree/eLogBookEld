@@ -64,6 +64,7 @@ public class ParseLoginDetails {
 
                     // Save current UTC date time
                     SharedPref.setCurrentUTCTime( DriverDetail.getString("CurrentUTCDateTime") , context );
+                    SharedPref.setLoginTimeUTC(DriverDetail.getString("CurrentUTCDateTime"), false, context);
 
                     if(DriverDetail.has(ConstantsKeys.FirstTimeLogin) && !DriverDetail.isNull(ConstantsKeys.FirstTimeLogin)) {
                         boolean FirstTimeLogin = DriverDetail.getBoolean(ConstantsKeys.FirstTimeLogin);

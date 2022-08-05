@@ -2937,10 +2937,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     private void saveMissingDiagnostic(String remarks, String type){
         try {
-            boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
+          //  boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
             boolean IsAllowMissingDataDiagnostic = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.MissingDataDiag, getActivity());
 
-            if(IsAllowMissingDataDiagnostic && !isMissingEventAlreadyWithStatus && !isExemptDriver ) {
+            if(IsAllowMissingDataDiagnostic && !isExemptDriver ) {  //!isMissingEventAlreadyWithStatus &&
 
                 // save malfunction occur event to server with few inputs
                 JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
