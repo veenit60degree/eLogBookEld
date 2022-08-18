@@ -74,8 +74,8 @@ public class APIs {
 
 
     /*-------- ELD API ----------*/
+    // public static String SAVE_DRIVER_STATUS     			= "http://develd.alsrealtime.com/api/DriverStatus/UpdateDriverStatus";
     public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
-   // public static String SAVE_DRIVER_STATUS     			= "http://develd.alsrealtime.com/api/DriverStatus/UpdateDriverStatus";
     public static String SAVE_DRIVER_EDIT_LOG_NEW  			= DOMAIN_URL_ELD + "SaveDriverEditELDStatusNew";
     //  public static String GET_DRIVER_STATUS      			= DOMAIN_URL_ELD + "GetDriverStatusAndLocation";   //GetDriverLogDetail
     public static String GET_ONDUTY_REMARKS					= DOMAIN_URL_ELD + "GetOnDutyRemarks";

@@ -424,7 +424,8 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.dateActionBarTV:
-                ShowDateDialog();
+                //ShowDateDialog();
+                MoveFragment(Globally.GetCurrentDeviceDate());
                 break;
 
 
@@ -480,7 +481,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
+/*
     void ShowDateDialog(){
         try {
             if (dateDialog != null && dateDialog.isShowing())
@@ -496,7 +497,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    private class DateListener implements DatePickerDialog.DatePickerListener{
+   private class DateListener implements DatePickerDialog.DatePickerListener{
         @Override
         public void JobBtnReady(String SelectedDate, String dayOfTheWeek, String MonthFullName, String MonthShortName, int dayOfMonth) {
 
@@ -511,7 +512,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
             SelectedDatee = SelectedDate;
             MoveFragment(SelectedDate);
         }
-    }
+    }*/
 
 
 

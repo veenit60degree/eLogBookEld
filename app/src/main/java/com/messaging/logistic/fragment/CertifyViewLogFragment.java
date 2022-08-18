@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +23,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -136,6 +139,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     OdometerAdapter odometerAdapter;
     ShippingViewDetailAdapter shippingAdapter;
 
+    Animation editLogAnimation;
     Button swapDrivingBtn;
     public static Button saveSignatureBtn, editLogBtn, showHideRecapBtn;
     public static TextView invisibleRfreshBtn ;
@@ -147,12 +151,13 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             certifyHomeTV, certifyFromTV, certifyToTV, certifyRemarksTV, shipperNameTV, blNumberTV, commodityRecapTV;
     TextView totalCycleHrsTV, leftCycleTV, HrsAvailTV, HrsWorkedTV, hourAvailableTomoTV; // startReadingTV, endReadingTV, distanceReadingTV, vehicleReadingTV;
     TextView dayRecapTV, dateRecapTV, hourRecapTV, certifyLocView, certifyEldView, totalDisOdoTV, totalMilesOdoTV;
-    TextView dateActionBarTV, plateNoTV, vinNumberTV, certifyExcptnTV, signLogTitle2;
+    TextView dateActionBarTV, plateNoTV, vinNumberTV, certifyExcptnTV, signLogTitle2, malfunctionTV;
     int RecapViewHeight = 0, odometerLayHeight = 0, shippingLayHeight = 0;
 
     LinearLayout certifyLogLay, logHistorylay, recapLayout, LogInfoLay, certifyLogItemLay,
             itemOdometerLay, itemShippingLay, certifyLocLay;
-    RelativeLayout rightMenuBtn, signLay, SignatureMainLay, eldMenuLay, recapItemLay, viewDetailMaiLay, certifyRecordsListLay;
+    RelativeLayout rightMenuBtn, signLay, SignatureMainLay, eldMenuLay, recapItemLay, viewDetailMaiLay,
+            certifyRecordsListLay, malfunctionLay;
 
     String LogDate = "", CurrentDate = "", CurrentDateDefault = "", DayName = "", MonthFullName = "", MonthShortName = "", DRIVER_ID = "";
     String CountryCycle = "",  CompanyId = "", TruckNumber = "", TrailorNumber = "";
@@ -179,6 +184,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     final int SaveCertifyLog        = 10;
     final int GetReCertifyRecords   = 11;
     final int SwapDriving           = 12;
+    final int SaveEditedLog         = 13;
 
     //int displayHeight   = 0;
     int displayWidth    = 0;
@@ -339,6 +345,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         certifyRecordsListLay       = (RelativeLayout)view.findViewById(R.id.certifyRecordsListLay);
         rightMenuBtn                = (RelativeLayout) view.findViewById(R.id.rightMenuBtn);
+        malfunctionLay              = (RelativeLayout)view.findViewById(R.id.malfunctionLay);
+
         certifyLogLay               = (LinearLayout)view.findViewById(R.id.certifyLogLay);
         logHistorylay               = (LinearLayout)view.findViewById(R.id.logHistorylay);
         recapLayout                 = (LinearLayout)view.findViewById(R.id.recapLayout);
@@ -396,6 +404,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         vinNumberTV                 = (TextView)view.findViewById(R.id.vinNumberTV);
         certifyExcptnTV             = (TextView)view.findViewById(R.id.certifyExcptnTV);
         signLogTitle2               = (TextView)view.findViewById(R.id.signLogTitle2);
+        malfunctionTV               = (TextView)view.findViewById(R.id.malfunctionTV);
 
         itemOdometerLay.measure(0,0);
         itemShippingLay.measure(0,0);
@@ -516,7 +525,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             if(SelectedDayOfMonth == constants.CertifyLog){
                 openSignRecordDialog(false);
             }else{
-                openMissingDialogAlert();
+                if(Globally.IS_CERTIFY_CALLED) {
+                    openMissingDialogAlert();
+                }
             }
        // }
 
@@ -581,10 +592,14 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         if( diff < 2 && isTrueAnyPermission ) {
 
                             if(diff == 0 && EditDaysCount != -1){
-                                if(sharedPref.IsCCMTACertified(getActivity()) == false) {
+                               /* if(sharedPref.IsCCMTACertified(getActivity()) == false) {
                                     IsEditBtnVisible = true;
                                     editLogBtn.setVisibility(View.VISIBLE);
-                                }
+                                }*/
+
+                                IsEditBtnVisible = true;
+                                editLogBtn.setVisibility(View.VISIBLE);
+
                             }else if(diff == 1 && EditDaysCount == 1){
                                 IsEditBtnVisible = true;
                                 editLogBtn.setVisibility(View.VISIBLE);
@@ -627,6 +642,35 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             Toast.makeText(getActivity(), "Date format issue. Please select again.", Toast.LENGTH_LONG).show();
             getParentFragmentManager().popBackStack();
         }
+
+        if(!Globally.IS_CERTIFY_CALLED) {
+            /*global.DriverSwitchAlert(getActivity(), getString(R.string.Note),
+                    getString(R.string.book_not_applicable_govt), "Ok");*/
+        }
+
+        editLogAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+        editLogAnimation.setDuration(1500);
+
+        malfunctionLay.setVisibility(View.VISIBLE);
+        malfunctionLay.setBackgroundColor(getResources().getColor(R.color.hos_shift));
+        malfunctionTV.setText(R.string.book_not_applicable_govt);
+        malfunctionLay.startAnimation(editLogAnimation);
+        Globally.IS_CERTIFY_CALLED = false;
+
+
+        editLogAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {  }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                malfunctionLay.startAnimation(editLogAnimation);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {  }
+        });
+
 
         eldMenuLay.setOnClickListener(this);
         signLay.setOnClickListener(this);
@@ -970,6 +1014,35 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     }
 
 
+    // Call API to save driver job status ..................
+    private void saveEditedLogData(){
+        if(!EldFragment.IsSaveOperationInProgress) {
+            JSONArray DriverJsonArray = hMethods.GetDriversSavedData(getActivity(), DriverType, MainDriverPref, CoDriverPref, constants);
+            int socketTimeout;
+            int logArrayCount = DriverJsonArray.length();
+            if (logArrayCount < 3) {
+                socketTimeout = Constants.SocketTimeout10Sec;  //10 seconds
+            } else if (logArrayCount < 10) {
+                socketTimeout = Constants.SocketTimeout20Sec;  //20 seconds
+            } else {
+                socketTimeout = Constants.SocketTimeout40Sec;  //40 seconds
+            }
+
+            EldFragment.IsSaveOperationInProgress = true;
+
+            String SavedLogApi = "";
+            if (SharedPref.IsEditedData(getActivity())) {
+                SavedLogApi = APIs.SAVE_DRIVER_EDIT_LOG_NEW;
+            } else {
+                SavedLogApi = APIs.SAVE_DRIVER_STATUS;
+            }
+
+            saveCertifyLogPost.PostDriverLogData(DriverJsonArray, SavedLogApi, socketTimeout, false, false,
+                    DriverType, SaveEditedLog);
+        }
+    }
+
+
     private void GetSavePreferences(){
 
         global.hideSoftKeyboard(getActivity());
@@ -984,9 +1057,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
             if (!LogDate.equals(CurrentDate)) {
                 UpdateRecapOffLineData();
-
                 global.DriverSwitchAlert(getActivity(), "Recertify Alert !!", "You need to ReCertify after editing log.", "Ok");
+            }
 
+            if (Globally.isConnected(getActivity())) {
+                saveEditedLogData();
             }
 
         }else{
@@ -1970,6 +2045,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                             isExceptionEnabledForDay, driverLogArray, selectedDateTime , selectedDateTime,
                             offsetFromUTC, isDrivingAllowForSwap, dbHelper, hMethods );
                     certifyLogListView.setAdapter(LogInfoAdapter);
+                    LogInfoAdapter.notifyDataSetChanged();
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -2073,6 +2149,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                             IsEditLocation, diff, Integer.valueOf(DRIVER_ID), IsCurrentDate, isExceptionEnabledForDay, driverLogArray,
                             selectedDateTime , selectedDateTime, offsetFromUTC, isDrivingAllowForSwap, dbHelper, hMethods );
                     certifyLogListView.setAdapter(LogInfoAdapter);
+                    LogInfoAdapter.notifyDataSetChanged();
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -3122,6 +3199,21 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     CertifyLogArray = new JSONArray();
                     certifyLogMethod.CertifyLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, CertifyLogArray );
 
+                    if(flag == SaveEditedLog){
+                        EldFragment.IsSaveOperationInProgress = false;
+
+                        // Clear edited Log locally in offline table After Success
+                        if (DriverType == Constants.MAIN_DRIVER_TYPE) // Single Driver Type and Position is 0
+                            MainDriverPref.ClearLocFromList(getActivity());
+                        else
+                            CoDriverPref.ClearLocFromList(getActivity());
+
+                    }
+
+                }else{
+                    if(flag == SaveEditedLog) {
+                        EldFragment.IsSaveOperationInProgress = false;
+                    }
                 }
 
                 if(flag == SaveCertifyLog){
@@ -3199,7 +3291,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         }
 
 
+                    }else if(flag == SaveEditedLog) {
+                        EldFragment.IsSaveOperationInProgress = false;
                     }
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }

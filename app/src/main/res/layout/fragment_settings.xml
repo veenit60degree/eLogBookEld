@@ -964,17 +964,15 @@
                         </RelativeLayout>
 
 
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/synchronize_data"
-                            android:textColor="?attr/gray_category_color"
-                            android:textSize="@dimen/text_size_15"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/settingLayout"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/synchronize_data"
+                            android:textColor="?attr/gray_category_color"
+                            android:textSize="@dimen/text_size_15" />
 
                     </RelativeLayout>
 

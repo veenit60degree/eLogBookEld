@@ -1120,10 +1120,10 @@
                     android:id="@+id/graphWebView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:minWidth="@dimen/view_height_500"
-                    android:minHeight="@dimen/view_height_150"
                     android:layout_marginTop="@dimen/margin_short_4"
                     android:fillViewport="true"
+                    android:minWidth="@dimen/view_height_500"
+                    android:minHeight="@dimen/view_height_150"
 
                     />
 

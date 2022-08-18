@@ -18,6 +18,9 @@
     <string name="rods_log_type">Log Type</string>
     <string name="Generate_Rods">Generate RODS</string>
 
+    <string name="unidentified_login_logout_desc">Data Diagnostic and Malfunction</string>
+    <string name="UnidentifiedViewLog">Unidentified Driver Log</string>
+
     <string name="mal_dia_history">Events History (Cleared)</string>
     <string name="child_text">LOAD#661\n3785 BOUL LAURIER EST,QUEBEC,CA\n\nLOAD#NISD662\n3785 BOUL LAURIER EST,QUEBEC,CA</string>
     <string name="title_activity_maps_activityyy">Map</string>
@@ -288,6 +291,7 @@
     <string name="loc_miss_event">Location Missing Event</string>
     <string name="loc_missing">Location Missing</string>
     <string name="add_loc_desc">Please add location for this event in Certify screen.</string>
+    <string name="book_not_applicable_govt">This log is not applicable for Govt. Inspections</string>
 
     <string name="eng_sync_dia_event">Engine sync diagnostic event</string>
    <!-- <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>-->
@@ -869,6 +873,7 @@
     <string name="title">Title</string>
     <string name="Description">Description</string>
     <string name="Alert">Alert !</string>
+    <string name="Note">Note !</string>
     <string name="ALS_ELD">ELD</string>
     <string name="driver">Driver</string>
     <string name="driverr">Driver: </string>

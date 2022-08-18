@@ -3,46 +3,61 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/drawable/edit_log_bg_default.xml" value="0.2145" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/actionbar_eld.xml" value="0.40384615384615385" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/activity_eld_new.xml" value="0.4375" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/fragment_dot_canada.xml" value="0.22263450834879406" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/fragment_edit_log.xml" value="0.4439102564102564" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/fragment_obd_diagnose.xml" value="0.4150641025641026" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/hos_summary.xml" value="0.4" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/include_login.xml" value="0.4519230769230769" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/include_login_codriver.xml" value="0.4519230769230769" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/item_child_malfunction.xml" value="0.3998397435897436" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/item_edit_log.xml" value="0.4439102564102564" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/item_rods_listing.xml" value="0.3017578125" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/popup_shipping_doc.xml" value="0.3886217948717949" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/popup_update_app.xml" value="0.264" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw600dp/unidentified_dot.xml" value="0.11612021857923498" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/fragment_dot_canada.xml" value="0.1" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/fragment_edit_log.xml" value="0.1875" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/fragment_obd_diagnose.xml" value="0.17691256830601093" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/hos_summary.xml" value="0.1875" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/include_login.xml" value="0.1875" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/include_login_codriver.xml" value="0.1875" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/item_child_malfunction.xml" value="0.17042349726775957" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/item_edit_log.xml" value="0.1875" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/item_rods_listing.xml" value="0.176" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/popup_shipping_doc.xml" value="0.16564207650273224" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/popup_update_app.xml" value="0.1875" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout-sw720dp/unidentified_dot.xml" value="0.11612021857923498" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/actionbar_eld.xml" value="0.19882246376811594" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/activity_eld_new.xml" value="0.18478260869565216" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/fragment_certify_log.xml" value="0.18432971014492755" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/fragment_dot_canada.xml" value="0.19429347826086957" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/fragment_dot_us.xml" value="0.23369565217391305" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/fragment_edit_log.xml" value="0.19972826086956522" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/fragment_obd_diagnose.xml" value="0.2246376811594203" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/fragment_settings.xml" value="0.2246376811594203" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/hos_summary.xml" value="0.19067028985507245" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/include_drive_daily_info.xml" value="0.17028985507246377" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/include_login.xml" value="0.25" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/include_login_codriver.xml" value="0.25" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/inspection_fragment.xml" value="0.19384057971014493" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_child_malfunction.xml" value="0.2259963768115942" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_dot_odo_logs.xml" value="0.2" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_edit_log.xml" value="0.25" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_editlog_spinner.xml" value="0.25" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_inspection_layout.xml" value="0.19882246376811594" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/item_rods_listing.xml" value="0.1609375" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/login_activity.xml" value="0.25" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/noti_history_fragment.xml" value="0.15534420289855072" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/popup_share_log.xml" value="0.24320652173913043" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/popup_shipping_doc.xml" value="0.13020833333333334" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/popup_sign_record.xml" value="0.22826086956521738" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/popup_trailor_fields.xml" value="0.1933876811594203" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/popup_update_app.xml" value="0.176" />
         <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/sign_record_dialog.xml" value="0.1322463768115942" />
+        <entry key="..\:/OldSystemData/Eld projects/EldDarkMode/eLogBookAls/app/src/main/res/layout/unidentified_dot.xml" value="0.1539855072463768" />
       </map>
     </option>
   </component>

@@ -2,6 +2,7 @@ package com.messaging.logistic.fragment;
 // Hello
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.adapter.logistic.UnIdentifiedListingAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
@@ -38,6 +40,7 @@ import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
@@ -71,7 +74,9 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     final int GetUnidentifiedRecordFlag  = 101;
     UnIdentifiedListingAdapter listingAdapter;
     ArrayList<String> recordSelectedList = new ArrayList<>();
-    List<UnIdentifiedRecordModel>  unIdentifiedRecordList = new ArrayList<>();
+    List<UnIdentifiedRecordModel> unIdentifiedRecordList = new ArrayList<>();
+    DBHelper dbHelper;
+    MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
 
     SaveDriverLogPost claimRejectRecordPost;
     final int ClaimRecords          = 101;
@@ -80,6 +85,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     UnidentifiedDialog unidentifiedDialog;
     ProgressDialog progressDialog;
     RecyclerView notiHistoryRecyclerView;
+    static int offsetFromUTC = 0;
 
 
     @Override
@@ -114,6 +120,8 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
     void initView(View view) {
 
+        dbHelper                = new DBHelper(getActivity());
+        malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
         global                  = new Globally();
         constants               = new Constants();
         GetUnidentifiedRecords  = new VolleyRequest(getActivity());
@@ -150,7 +158,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
 
         EldTitleTV.setText(getResources().getString(R.string.unIdentified_records));
-
+        offsetFromUTC = Integer.valueOf(DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity()));
 
         checkboxUnIdentifiedRecord.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -213,6 +221,16 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
     }
 
 
+    private void startService(){
+        Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getActivity().startForegroundService(serviceIntent);
+        }
+        getActivity().startService(serviceIntent);
+
+    }
+
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -239,12 +257,12 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                     unidentifiedDialog.dismiss();
 
                 JSONArray claimArray = Constants.getClaimRecordsInArray("", "", "", "",
-                        unIdentifiedRecordList,  recordSelectedList);
+                        unIdentifiedRecordList,  recordSelectedList, malfunctionDiagnosticMethod, offsetFromUTC,
+                        dbHelper, getActivity());
 
                 if(getActivity() != null && !getActivity().isFinishing()) {
                     //if(constants.isActionAllowed(getContext())) {
                     HelperMethods helperMethods = new HelperMethods();
-                    DBHelper dbHelper = new DBHelper(getActivity());
                     if(helperMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
                         if (claimArray.length() > 0) {
                             unidentifiedDialog = new UnidentifiedDialog(getActivity(), getResources().getString(R.string.claim), new UnIdentifiedListener());
@@ -265,8 +283,10 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 if (unidentifiedDialog != null && unidentifiedDialog.isShowing())
                     unidentifiedDialog.dismiss();
 
-                JSONArray companyRejectedArray = Constants.getCompanyRejectRecordsInArray("", "", unIdentifiedRecordList,  recordSelectedList);
-                JSONArray rejectedArray = Constants.getRejectRecordsInArray( "", "", unIdentifiedRecordList,  recordSelectedList);
+                JSONArray companyRejectedArray = Constants.getCompanyRejectRecordsInArray("", "", unIdentifiedRecordList,
+                        recordSelectedList);
+                JSONArray rejectedArray = Constants.getRejectRecordsInArray( "", "", unIdentifiedRecordList,
+                        recordSelectedList, malfunctionDiagnosticMethod, offsetFromUTC, dbHelper, getActivity());
 
                 if(getActivity() != null && !getActivity().isFinishing()) {
                     if (companyRejectedArray.length() > 0 || rejectedArray.length() > 0) {
@@ -294,7 +314,9 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 unidentifiedDialog.dismiss();
 
             if(recordType.equals(getResources().getString(R.string.claim))) {
-                JSONArray claimArray = Constants.getClaimRecordsInArray( DriverId, DriverName, reason, status, unIdentifiedRecordList, recordSelectedList);
+                JSONArray claimArray = Constants.getClaimRecordsInArray( DriverId, DriverName, reason, status,
+                        unIdentifiedRecordList, recordSelectedList, malfunctionDiagnosticMethod,
+                        offsetFromUTC, dbHelper, getActivity());
 
                 if (claimArray.length() > 0) {
                     progressDialog.show();
@@ -302,8 +324,11 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 }
 
             }else{
-                JSONArray companyRejectedArray = Constants.getCompanyRejectRecordsInArray(DriverId, reason,  unIdentifiedRecordList, recordSelectedList);
-                JSONArray rejectedArray = Constants.getRejectRecordsInArray( DriverId, reason, unIdentifiedRecordList, recordSelectedList);
+                JSONArray companyRejectedArray = Constants.getCompanyRejectRecordsInArray(DriverId, reason,
+                        unIdentifiedRecordList, recordSelectedList);
+                JSONArray rejectedArray = Constants.getRejectRecordsInArray( DriverId, reason, unIdentifiedRecordList,
+                        recordSelectedList, malfunctionDiagnosticMethod,
+                        offsetFromUTC, dbHelper, getActivity());
 
                 if (companyRejectedArray.length() > 0 || rejectedArray.length() > 0) {
 
@@ -360,6 +385,10 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                                         e.printStackTrace();
                                     }
 
+                                }else{
+                                    Constants.isCallMalDiaEvent = true;
+                                    SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
+                                    startService();
                                 }
 
                                 break;
@@ -595,24 +624,13 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                 noDataEldTV.setVisibility(View.GONE);
                 unIdentifiedTopLay.setVisibility(View.VISIBLE);
 
+                setEventOccurrenceStatus(true);
             }else {
 
                 noDataEldTV.setVisibility(View.VISIBLE);
                 unIdentifiedTopLay.setVisibility(View.GONE);
-                if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {    // Single Driver Type and Position is 0
-                  //  SharedPref.setUnidentifiedAlertViewStatus(false, getContext());
-                    SharedPref.setEldOccurences(false,
-                            SharedPref.isMalfunctionOccur(getActivity()),
-                            SharedPref.isDiagnosticOccur(getActivity()),
-                            SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
-                }else{
-                   // SharedPref.setUnidentifiedAlertViewStatusCo(false, getContext());
-                    SharedPref.setEldOccurencesCo(false,
-                            SharedPref.isMalfunctionOccurCo(getActivity()),
-                            SharedPref.isDiagnosticOccurCo(getActivity()),
-                            SharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
-                }
 
+                setEventOccurrenceStatus(false);
             }
             EldTitleTV.setText(getResources().getString(R.string.unIdentified_records) + " (" + unIdentifiedRecordList.size() + ")");
 
@@ -620,4 +638,23 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
             e.printStackTrace();
         }
     }
+
+    void setEventOccurrenceStatus(boolean isEventOccurred){
+        if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {    // Single Driver Type and Position is 0
+            //  SharedPref.setUnidentifiedAlertViewStatus(false, getContext());
+            SharedPref.setEldOccurences(isEventOccurred,
+                    SharedPref.isMalfunctionOccur(getActivity()),
+                    SharedPref.isDiagnosticOccur(getActivity()),
+                    SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
+        }else{
+            // SharedPref.setUnidentifiedAlertViewStatusCo(false, getContext());
+            SharedPref.setEldOccurencesCo(isEventOccurred,
+                    SharedPref.isMalfunctionOccurCo(getActivity()),
+                    SharedPref.isDiagnosticOccurCo(getActivity()),
+                    SharedPref.isSuggestedEditOccurCo(getActivity()), getActivity());
+        }
+
+    }
+
+
 }

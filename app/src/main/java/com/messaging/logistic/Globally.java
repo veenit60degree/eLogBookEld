@@ -132,6 +132,8 @@ public class Globally {
 	public static boolean IS_LOGOUT 			= false;
 	public static boolean IS_CONNECTED 			= false;
 	public static boolean IS_OBD_IGNITION		= false;
+	public static boolean IS_CERTIFY_CALLED		= false;
+
 	public static String CONNECTION_ERROR		= "Connection Error";
 	public static String INTERNET_MSG 			= "Not connected to Internet";
 	public static String CHECK_INTERNET_MSG 	= "Your internet connection is not working.";

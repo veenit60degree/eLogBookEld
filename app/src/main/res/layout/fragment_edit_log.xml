@@ -104,8 +104,8 @@
                 android:layout_width="@dimen/view_height_115"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:padding="5dp"
-                android:layout_marginRight="5dp"
+                android:padding="@dimen/margin_short_5"
+                android:layout_marginRight="@dimen/view_height_30"
                 android:text="@string/Duration"
                 android:textColor="?attr/color_eld_bg"
                 android:gravity="center_horizontal"
@@ -135,11 +135,10 @@
             android:id="@+id/driverLogRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_marginTop="@dimen/view_height_40"
             android:paddingBottom="@dimen/view_height_60"
             android:scrollbars="vertical"
-         />
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 
 

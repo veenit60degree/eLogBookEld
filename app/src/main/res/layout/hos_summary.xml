@@ -455,9 +455,9 @@
                                         CircleProgressView:cpv_barColor="@color/hos_progress_newbg"
                                         CircleProgressView:cpv_barWidth="@dimen/margin_short_7"
                                         CircleProgressView:cpv_innerContourSize="0dp"
+
                                         CircleProgressView:cpv_maxValue="100"
                                         CircleProgressView:cpv_outerContourSize="0dp"
-
                                         CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
                                         CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
                                         CircleProgressView:cpv_seekMode="true"
@@ -796,8 +796,8 @@
                                         CircleProgressView:cpv_innerContourSize="0dp"
                                         CircleProgressView:cpv_maxValue="100"
                                         CircleProgressView:cpv_outerContourSize="0dp"
-                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
 
+                                        CircleProgressView:cpv_rimColor="@color/hos_progress_bg"
                                         CircleProgressView:cpv_rimWidth="@dimen/margin_short_7"
                                         CircleProgressView:cpv_seekMode="true"
                                         CircleProgressView:cpv_showUnit="true"

@@ -41,7 +41,10 @@ import com.adapter.logistic.CanDotDutyStatusAdapter;
 import com.adapter.logistic.CanDotEnginePowerAdapter;
 import com.adapter.logistic.CanDotLogInOutAdapter;
 import com.adapter.logistic.CanDotRemarksAdapter;
-import com.adapter.logistic.CanDotUnAssignedVehAdapter;
+import com.adapter.logistic.UnidentifiedDutyStatusAdapter;
+import com.adapter.logistic.UnidentifiedEnginePowerAdapter;
+import com.adapter.logistic.UnidentifiedLogInOutAdapter;
+import com.adapter.logistic.UnidentifiedRemarksAdapter;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.background.service.BackgroundLocationService;
@@ -72,6 +75,7 @@ import com.messaging.logistic.UILApplication;
 import com.models.CanadaDutyStatusModel;
 import com.models.DriverLocationModel;
 import com.models.UnAssignedVehicleModel;
+import com.models.UnidentifiedEventModel;
 import com.shared.pref.StatePrefManager;
 
 import org.joda.time.DateTime;
@@ -83,6 +87,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -104,17 +109,26 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     TextView trailerIdCTV, carrierNameCTV, carrierHomeTerCTV, carrierPrinPlaceCTV, currOperZoneCTV, curreCycleCTV;
     TextView totalHrsCTV, totalhrsCycleCTV, remainingHourCTV, offDutyDeffCTV, datDiagCTV, unIdenDriRecCTV;
     TextView malfStatusCTV, eldIdCTV, eldProviderCTV, eldCerCTV, eldAuthCTV, eventDotETV;   //canDotModeTxtVw
+
+    TextView unIdnfddateRodsTV, unIdnfddayStartTimeTV, unIdnfdtimeZoneCTV, unIdnfdcurrLocCTV, unIdnfdcommentCTV, unIdnfddateTimeCTV;
+    TextView unIdnfddriverNameCTV, unIdnfddriverIdCTV, unIdnfdexemptDriverCTV, unIdnfddriLicNoCTV, unIdnfdcoDriverNameCTV, unIdnfdcoDriverIdCTV;
+    TextView unIdnfdviewMoreTV;
+    TextView unIdnfdtruckTractorIdTV, unIdnfdtruckTractorVinTV, unIdnfdtotalDisCTV, unIdnfddistanceTodayCTV, unIdnfdcurrTotalDisTV, unIdnfdcurrTotalEngTV;
+    TextView unIdnfdtrailerIdCTV, unIdnfdcarrierNameCTV, unIdnfdcarrierHomeTerCTV, unIdnfdcarrierPrinPlaceCTV, unIdnfdcurrOperZoneCTV, unIdnfdcurreCycleCTV;
+    TextView unIdnfdtotalHrsCTV, unIdnfdtotalhrsCycleCTV, unIdnfdremainingHourCTV, unIdnfdoffDutyDeffCTV, unIdnfddatDiagCTV, UnunIdenDriRecCTV;
+    TextView unIdnfdmalfStatusCTV, unIdnfdeldIdCTV, unIdnfdeldProviderCTV, unIdnfdeldCerCTV, unIdnfdeldAuthCTV;
+
     RelativeLayout eldMenuLay, rightMenuBtn, scrollUpBtn, scrollDownBtn, otherOptionBtn;
-    LinearLayout canDotViewMorelay;
+    LinearLayout canDotViewMorelay , unIdnfdcanDotViewMorelay;
     ImageView eldMenuBtn, nextDateBtn, previousDateBtn; // canDotModeImgVw;
 
-    WebView canDotGraphWebView;
+    WebView canDotGraphWebView,unIdnfdcanDotGraphWebView;
     ProgressBar canDotProgressBar;
     NestedScrollView canDotScrollView;
     SwitchMultiButton canDotSwitchBtn;
 
-    RecyclerView dutyChangeDotListView,loginLogDotListView,cycleOpZoneDotListView,remAnotnDotListView,enginePwrDotListView,unIdnfdVehDotListView;
-
+    RecyclerView dutyChangeDotListView,loginLogDotListView,cycleOpZoneDotListView,remAnotnDotListView,enginePwrDotListView;
+    RecyclerView unIdnfddutyChangeDotListView,unIdnfdloginLogDotListView,unIdnfdremAnotnDotListView,unIdnfdenginePwrDotListView;
 
     Constants constants;
     Globally global;
@@ -128,15 +142,28 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     CanDotCycleOpZoneAdapter canDotCycleOpZoneAdapter;
     CanDotRemarksAdapter canDotRemarksAdapter;
     CanDotEnginePowerAdapter canDotEnginePowerAdapter;
-    CanDotUnAssignedVehAdapter canDotUnAssignedVehAdapter;
     DotOtherOptionDialog dotOtherOptionDialog;
+
+    UnidentifiedDutyStatusAdapter unidentifiedDutyStatusAdapter;
+    UnidentifiedLogInOutAdapter unidentifiedLogInOutAdapter;
+    UnidentifiedRemarksAdapter unidentifiedRemarksAdapter;
+    UnidentifiedEnginePowerAdapter unidentifiedEnginePowerAdapter;
+
+    List<CanadaDutyStatusModel> VerifyDutyStatusList = new ArrayList();
+    List<CanadaDutyStatusModel> VerifyEnginePowerList = new ArrayList();
+    List<CanadaDutyStatusModel> VerifyLoginLogoutList = new ArrayList();
+    List<CanadaDutyStatusModel> VerifyCommentsRemarksList = new ArrayList();
 
     List<CanadaDutyStatusModel> DutyStatusList = new ArrayList();
     List<CanadaDutyStatusModel> LoginLogoutList = new ArrayList();
     List<CanadaDutyStatusModel> CycleOpZoneList = new ArrayList();
     List<CanadaDutyStatusModel> CommentsRemarksList = new ArrayList();
     List<CanadaDutyStatusModel> EnginePowerList = new ArrayList();
-    List<UnAssignedVehicleModel> UnAssignedVehicleList = new ArrayList<>();
+
+    List<CanadaDutyStatusModel> UnIdnfdDutyStatusList = new ArrayList();
+    List<CanadaDutyStatusModel> UnIdnfdLoginLogoutList = new ArrayList();
+    List<CanadaDutyStatusModel> UnIdnfdCommentsRemarksList = new ArrayList();
+    List<CanadaDutyStatusModel> UnIdnfdEnginePowerList = new ArrayList();
 
     GenerateRodsDialog generateRodsDialog;
     DatePickerDialog dateDialog;
@@ -145,12 +172,13 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     List<DriverLocationModel> StateList = new ArrayList<>();
     List<String> countryList = new ArrayList<>();
 
-
+    int DaysDiff = 0;
     int SelectedDayOfMonth  = 0;
     int UsaMaxDays          = 7;
     int CanMaxDays          = 14;
     int MaxDays;
     final int GetAddFromLatLng      = 160;
+    boolean isUnidentified = false;
 
    /* public static int DutyStatusHeaderCount  = 1;
     public static int LoginLogoutHeaderCount = 1;
@@ -163,11 +191,15 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     String DriverId = "", DeviceId = "", AddressLine = "", AddressLat = "", AddressLon = "";
     String htmlAppendedText = "", LogDate = "", CurrentDate = "", LogSignImage = "", selectedCountryRods = "";
-
+    String htmlUnidentifiedAppendedText = "";
     String TotalOnDutyHours         = "00:00";
     String TotalDrivingHours        = "00:00";
     String TotalOffDutyHours        = "00:00";
     String TotalSleeperBerthHours   = "00:00";
+    String TotalUnidenitifiedOffDutyHours = "00:00";
+    String TotalUnidenitifiedDrivingHours = "00:00";
+    String TotalUnidenitifiedSleeperHours = "00:00";
+    String TotalUnidenitifiedOnDutyHours = "00:00";
 
 
     int inspectionLayHeight = 0;
@@ -273,9 +305,57 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         cycleOpZoneDotListView    = (RecyclerView)view.findViewById(R.id.addHrsDotListView);
         loginLogDotListView  = (RecyclerView) view.findViewById(R.id.loginLogDotListView);
         enginePwrDotListView = (RecyclerView) view.findViewById(R.id.enginePwrDotListView);
-        unIdnfdVehDotListView= (RecyclerView) view.findViewById(R.id.unIdnfdVehDotListView);
 
         canDotViewMorelay   = (LinearLayout)view.findViewById(R.id.canDotViewMorelay);
+
+        unIdnfddateRodsTV              = (TextView)view.findViewById(R.id.unIdnfddateRodsTV);
+        unIdnfddayStartTimeTV          = (TextView)view.findViewById(R.id.unIdnfddayStartTimeTV);
+        unIdnfdtimeZoneCTV             = (TextView)view.findViewById(R.id.unIdnfdtimeZoneCTV);
+        unIdnfdcurrLocCTV              = (TextView)view.findViewById(R.id.unIdnfdcurrLocCTV);
+        unIdnfdcommentCTV              = (TextView)view.findViewById(R.id.unIdnfdcommentCTV);
+        unIdnfddateTimeCTV             = (TextView)view.findViewById(R.id.unIdnfddateTimeCTV);
+
+        unIdnfddriverNameCTV           = (TextView)view.findViewById(R.id.unIdnfddriverNameCTV);
+        unIdnfddriverIdCTV             = (TextView)view.findViewById(R.id.unIdnfddriverIdCTV);
+        unIdnfdexemptDriverCTV         = (TextView)view.findViewById(R.id.unIdnfdexemptDriverCTV);
+        unIdnfddriLicNoCTV             = (TextView)view.findViewById(R.id.unIdnfddriLicNoCTV);
+        unIdnfdcoDriverNameCTV         = (TextView)view.findViewById(R.id.unIdnfdcoDriverNameCTV);
+        unIdnfdcoDriverIdCTV           = (TextView)view.findViewById(R.id.unIdnfdcoDriverIdCTV);
+
+        unIdnfdtruckTractorIdTV        = (TextView)view.findViewById(R.id.unIdnfdtruckTractorIdTV);
+        unIdnfdtruckTractorVinTV       = (TextView)view.findViewById(R.id.unIdnfdtruckTractorVinTV);
+        unIdnfdtotalDisCTV             = (TextView)view.findViewById(R.id.unIdnfdtotalDisCTV);
+        unIdnfddistanceTodayCTV        = (TextView)view.findViewById(R.id.unIdnfddistanceTodayCTV);
+        unIdnfdcurrTotalDisTV          = (TextView)view.findViewById(R.id.unIdnfdcurrTotalDisTV);
+        unIdnfdcurrTotalEngTV          = (TextView)view.findViewById(R.id.unIdnfdcurrTotalEngTV);
+
+        unIdnfdtrailerIdCTV            = (TextView)view.findViewById(R.id.unIdnfdtrailerIdCTV);
+        unIdnfdcarrierNameCTV          = (TextView)view.findViewById(R.id.unIdnfdcarrierNameCTV);
+        unIdnfdcarrierHomeTerCTV       = (TextView)view.findViewById(R.id.unIdnfdcarrierHomeTerCTV);
+        unIdnfdcarrierPrinPlaceCTV     = (TextView)view.findViewById(R.id.unIdnfdcarrierPrinPlaceCTV);
+        unIdnfdcurrOperZoneCTV         = (TextView)view.findViewById(R.id.unIdnfdcurrOperZoneCTV);
+        unIdnfdcurreCycleCTV           = (TextView)view.findViewById(R.id.unIdnfdcurreCycleCTV);
+
+        unIdnfdtotalHrsCTV             = (TextView)view.findViewById(R.id.unIdnfdtotalHrsCTV);
+        unIdnfdtotalhrsCycleCTV        = (TextView)view.findViewById(R.id.unIdnfdtotalhrsCycleCTV);
+        unIdnfdremainingHourCTV        = (TextView)view.findViewById(R.id.unIdnfdremainingHourCTV);
+        unIdnfdoffDutyDeffCTV          = (TextView)view.findViewById(R.id.unIdnfdoffDutyDeffCTV);
+        unIdnfddatDiagCTV              = (TextView)view.findViewById(R.id.unIdnfddatDiagCTV);
+        UnunIdenDriRecCTV              = (TextView)view.findViewById(R.id.UnunIdenDriRecCTV);
+
+        unIdnfdmalfStatusCTV           = (TextView)view.findViewById(R.id.unIdnfdmalfStatusCTV);
+        unIdnfdeldIdCTV                = (TextView)view.findViewById(R.id.unIdnfdeldIdCTV);
+        unIdnfdeldProviderCTV          = (TextView)view.findViewById(R.id.unIdnfdeldProviderCTV);
+        unIdnfdeldCerCTV               = (TextView)view.findViewById(R.id.unIdnfdeldCerCTV);
+        unIdnfdeldAuthCTV              = (TextView)view.findViewById(R.id.unIdnfdeldAuthCTV);
+
+        unIdnfddutyChangeDotListView   = (RecyclerView) view.findViewById(R.id.unIdnfddutyChangeDotListView);
+        unIdnfdremAnotnDotListView     = (RecyclerView) view.findViewById(R.id.unIdnfdremAnotnDotListView);
+        unIdnfdloginLogDotListView     = (RecyclerView) view.findViewById(R.id.unIdnfdloginLogDotListView);
+        unIdnfdenginePwrDotListView    = (RecyclerView) view.findViewById(R.id.unIdnfdenginePwrDotListView);
+
+        unIdnfdviewMoreTV              = (TextView)view.findViewById(R.id.unIdnfdviewMoreTV);
+        unIdnfdcanDotViewMorelay       = (LinearLayout)view.findViewById(R.id.unIdnfdcanDotViewMorelay);
 
         eldMenuLay          = (RelativeLayout)view.findViewById(R.id.eldMenuLay);
         rightMenuBtn        = (RelativeLayout)view.findViewById(R.id.rightMenuBtn);
@@ -289,6 +369,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
       //  canDotModeImgVw     = (ImageView)view.findViewById(R.id.canDotModeImgVw);
 
         canDotGraphWebView  = (WebView)view.findViewById(R.id.canDotGraphWebView);
+        unIdnfdcanDotGraphWebView = (WebView)view.findViewById(R.id.unIdnfdcanDotGraphWebView);
+
         canDotProgressBar   = (ProgressBar)view.findViewById(R.id.canDotProgressBar);
         canDotScrollView    = (NestedScrollView) view.findViewById(R.id.canDotScrollView);
 
@@ -298,12 +380,16 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         eldMenuBtn.setImageResource(R.drawable.back_btn);
         viewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_more) + "</u>"));
+        unIdnfdviewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_more) + "</u>"));
         rightMenuBtn.setVisibility(View.GONE);
         otherOptionBtn.setVisibility(View.VISIBLE);
 
         getBundleData();
         initilizeWebView();
         ReloadWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
+
+        initilizeUnidentiWebView();
+        ReloadUnidentiWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
 
         countryList.add("Select");
         countryList.add("CANADA");
@@ -357,6 +443,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         eldMenuLay.setOnClickListener(this);
         viewMoreTV.setOnClickListener(this);
+        unIdnfdviewMoreTV.setOnClickListener(this);
         nextDateBtn.setOnClickListener(this);
         previousDateBtn.setOnClickListener(this);
        // canDotModeImgVw.setOnClickListener(this);
@@ -523,6 +610,20 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 break;
 
+            case R.id.unIdnfdviewMoreTV:
+                if(unIdnfdcanDotViewMorelay.getVisibility() == View.VISIBLE){
+                    unIdnfdcanDotViewMorelay.setVisibility(View.GONE);
+                    unIdnfdviewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_more) + "</u>"));
+                    int scrollPos = canDotScrollView.getScrollY();
+                    ObjectAnimator.ofInt(canDotScrollView, "scrollY",  scrollPos - 1500).setDuration(600).start();
+//                    canDotScrollView.fullScroll(View.FOCUS_UP);
+                }else{
+                    unIdnfdcanDotViewMorelay.setVisibility(View.VISIBLE);
+                    unIdnfdviewMoreTV.setText(Html.fromHtml("<u>" + getResources().getString(R.string.view_less) + "</u>"));
+                }
+
+                break;
+
 
            /* case R.id.canDotModeImgVw:
                 canDotModeTxtVw.performClick();
@@ -599,7 +700,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 selectedDateTime = selectedDateTime.minusDays(1);
             }
 
-            int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
+            DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
             Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
 
             if ( DaysDiff >= 0 && DaysDiff <= MaxDays) {
@@ -731,7 +832,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 String currentDateStr = global.ConvertDateFormat(CurrentDate);
                 DateTime selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
                 DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
-                int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
+                DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
                 Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
 
                 DOTBtnVisibility(DaysDiff, MaxDays);
@@ -826,6 +927,32 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    void initilizeUnidentiWebView(){
+        WebSettings webSettings = unIdnfdcanDotGraphWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setPluginState(WebSettings.PluginState.ON);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setAllowContentAccess(true);
+        webSettings.setAllowFileAccessFromFileURLs(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
+        unIdnfdcanDotGraphWebView.setWebViewClient(new WebViewClient());
+        unIdnfdcanDotGraphWebView.setWebChromeClient(new WebChromeClient());
+        unIdnfdcanDotGraphWebView.addJavascriptInterface( new WebAppInterface(), "Android");
+
+        try {
+            if (Build.VERSION.SDK_INT >= 19) {
+                // chromium, enable hardware acceleration
+                unIdnfdcanDotGraphWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            } else {
+                // older android version, disable hardware acceleration
+                unIdnfdcanDotGraphWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     void setdataOnAdapter(){
 
@@ -866,12 +993,40 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             enginePwrDotListView.setAdapter(canDotEnginePowerAdapter);
         }catch (Exception e){}
 
+    }
+
+    void setdataOnUnIdnfdAdapter(){
+
         try {
-            canDotUnAssignedVehAdapter = new CanDotUnAssignedVehAdapter(getActivity(), UnAssignedVehicleList);
+            unidentifiedDutyStatusAdapter = new UnidentifiedDutyStatusAdapter(getActivity(), UnIdnfdDutyStatusList);
             LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-            unIdnfdVehDotListView.setLayoutManager(manager);
-            unIdnfdVehDotListView.setAdapter(canDotUnAssignedVehAdapter);
+            unIdnfddutyChangeDotListView.setLayoutManager(manager);
+            unIdnfddutyChangeDotListView.setAdapter(unidentifiedDutyStatusAdapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+            unidentifiedLogInOutAdapter = new UnidentifiedLogInOutAdapter(getActivity(), UnIdnfdLoginLogoutList);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            unIdnfdloginLogDotListView.setLayoutManager(manager);
+            unIdnfdloginLogDotListView.setAdapter(unidentifiedLogInOutAdapter);
         }catch (Exception e){}
+
+        try {
+            unidentifiedRemarksAdapter = new UnidentifiedRemarksAdapter(getActivity(), UnIdnfdCommentsRemarksList);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            unIdnfdremAnotnDotListView.setLayoutManager(manager);
+            unIdnfdremAnotnDotListView.setAdapter(unidentifiedRemarksAdapter);
+        }catch (Exception e){}
+
+        try {
+            unidentifiedEnginePowerAdapter = new UnidentifiedEnginePowerAdapter(getActivity(), UnIdnfdEnginePowerList);
+            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+            unIdnfdenginePwrDotListView.setLayoutManager(manager);
+            unIdnfdenginePwrDotListView.setAdapter(unidentifiedEnginePowerAdapter);
+        }catch (Exception e){}
+
 
 
     }
@@ -905,6 +1060,30 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                             constants.dpToPx(getActivity(), 250)) );
                 }else{
                     canDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            constants.dpToPx(getActivity(), 160)) );
+                }
+
+
+            }
+        }, 500);
+
+
+    }
+
+    void ReloadUnidentiWebView(final String closeTag){
+        unIdnfdcanDotGraphWebView.clearCache(true);
+        unIdnfdcanDotGraphWebView.loadData("", "text/html; charset=UTF-8", null );
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String data = ConstantHtml.GraphHtml + htmlUnidentifiedAppendedText + closeTag;
+                unIdnfdcanDotGraphWebView.loadDataWithBaseURL("" , data, "text/html", "UTF-8", "");
+                if(global.isTablet(getActivity())){
+                    unIdnfdcanDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            constants.dpToPx(getActivity(), 250)) );
+                }else{
+                    unIdnfdcanDotGraphWebView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                             constants.dpToPx(getActivity(), 160)) );
                 }
 
@@ -1015,9 +1194,115 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         } catch (Exception e) {
             e.printStackTrace();
             ReloadWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
+
         }
 
     }
+
+    void ParseUnidentifiedGraphData(ArrayList<UnidentifiedEventModel> driverLogList) {
+
+        try {
+            htmlUnidentifiedAppendedText    = "";
+
+            for (int logCount = 0; logCount < driverLogList.size(); logCount++) {
+                //JSONObject logObj = (JSONObject) driverLogJsonArray.get(logCount);
+                UnidentifiedEventModel eventModel = driverLogList.get(logCount);
+                int DRIVER_JOB_STATUS = eventModel.getEventCode();
+                int EventType = eventModel.getEventType();
+
+                boolean isYardMoveOrPersonal = false;
+
+                if (EventType == 9 ) {
+
+                    if(DRIVER_JOB_STATUS == 1){
+                        DRIVER_JOB_STATUS = Constants.OFF_DUTY;
+                    }else if(DRIVER_JOB_STATUS == 2 || DRIVER_JOB_STATUS == 3) {
+                        DRIVER_JOB_STATUS = Constants.DRIVING;
+                    }else if(DRIVER_JOB_STATUS == 4){
+                        DRIVER_JOB_STATUS = Constants.ON_DUTY;
+                    }
+
+
+                }else{
+                    if(logCount == 0) {
+                        DRIVER_JOB_STATUS = Constants.OFF_DUTY;
+                    }
+
+
+                }
+
+
+
+                String startDateTime = eventModel.getStartTime();   //logObj.getString("DateTimeWithMins");
+                String endDateTime = eventModel.getEndDateTime();   //logObj.getString("EndDateTime");
+
+                if (endDateTime.equals("null")) {
+                    endDateTime = global.GetCurrentDateTime();
+                }
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(global.DateFormat);  //:SSSZ
+                Date startDate = new Date();
+                Date endDate = new Date();
+                startHour = 0;
+                startMin = 0;
+                endHour = 0;
+                endMin = 0;
+
+             /*   if (logCount > 0 && logCount == driverLogJsonArray.length() - 1) {
+                    if (LogDate.equals(CurrentDate)) {
+                        endDateTime = global.GetCurrentDateTime();
+                    } else {
+                        if (endDateTime.length() > 16 && endDateTime.substring(11, 16).equals("00:00")) {
+                            endDateTime = endDateTime.substring(0, 11) + "23:59" + endDateTime.substring(16, endDateTime.length());
+                        }
+                    }
+                }*/
+
+                try {
+                    startDate = simpleDateFormat.parse(startDateTime);
+                    endDate = simpleDateFormat.parse(endDateTime);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                startHour = startDate.getHours() * 60;
+                startMin = startDate.getMinutes();
+                endHour = endDate.getHours() * 60;
+                endMin = endDate.getMinutes();
+
+                hLineX1 = startHour + startMin;
+                hLineX2 = endHour + endMin;
+
+                int VerticalLineX = constants.VerticalLine(OldStatus);
+                int VerticalLineY = constants.VerticalLine(DRIVER_JOB_STATUS);
+
+                if (hLineX2 > hLineX1) {
+                    if (OldStatus != -1) {
+                        DrawUnidentifiedGraph(hLineX1, hLineX2, VerticalLineX, VerticalLineY, isYardMoveOrPersonal);
+                    } else {
+                        DrawUnidentifiedGraph(hLineX1, hLineX2, VerticalLineY, VerticalLineY, isYardMoveOrPersonal);
+                    }
+                }
+
+                if (EventType == 9 ) {
+                    OldStatus = DRIVER_JOB_STATUS;
+                }
+
+            }
+
+
+            String CloseTag = constants.HtmlCloseTag(TotalUnidenitifiedOffDutyHours, TotalUnidenitifiedSleeperHours, TotalUnidenitifiedDrivingHours, TotalUnidenitifiedOnDutyHours);
+            ReloadUnidentiWebView(CloseTag);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            ReloadUnidentiWebView(constants.HtmlCloseTag("00:00", "00:00", "00:00", "00:00"));
+        }
+
+    }
+
+
 
 
 
@@ -1030,6 +1315,22 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     "                  </g>\n";
         } else {
             htmlAppendedText = htmlAppendedText + DefaultLine +
+                    constants.AddHorizontalLine(hLineX1, hLineX2, vLineY2) +
+                    constants.AddVerticalLine(hLineX1, vLineY1, vLineY2) +
+                    "                  </g>\n";
+        }
+
+    }
+
+    void DrawUnidentifiedGraph(int hLineX1, int hLineX2, int vLineY1, int vLineY2, boolean isDottedLine){
+
+        if (isDottedLine) {
+            htmlUnidentifiedAppendedText = htmlUnidentifiedAppendedText + DefaultLine +
+                    constants.AddHorizontalDottedLine(hLineX1, hLineX2, vLineY2) +
+                    constants.AddVerticalLine(hLineX1, vLineY1, vLineY2) +
+                    "                  </g>\n";
+        } else {
+            htmlUnidentifiedAppendedText = htmlUnidentifiedAppendedText + DefaultLine +
                     constants.AddHorizontalLine(hLineX1, hLineX2, vLineY2) +
                     constants.AddVerticalLine(hLineX1, vLineY1, vLineY2) +
                     "                  </g>\n";
@@ -1209,6 +1510,140 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    void setDataOnUnIdnfdTextView(JSONObject dataObj){
+        try{
+            unIdnfddateRodsTV.setText(global.ConvertDateFormatddMMMyyyy(dataObj.getString("RecordDate"), Globally.DateFormat_dd_MMM_yyyy));
+            unIdnfddayStartTimeTV.setText(dataObj.getString("PeriodStartingTime"));
+            unIdnfdtimeZoneCTV.setText(dataObj.getString("TimeZone"));
+
+            unIdnfdcommentCTV.setText("--");
+            unIdnfddateTimeCTV.setText(global.ConvertDateFormatMMddyyyyHHmm(dataObj.getString("CurrentDate")));
+
+            unIdnfddriverNameCTV.setText("Unidentified Driver");
+            unIdnfddriverIdCTV.setText("Unidentified");
+            unIdnfdexemptDriverCTV.setText(dataObj.getString("ExemptDriverStatus"));
+            unIdnfddriLicNoCTV.setText("");
+            unIdnfdcoDriverNameCTV.setText("");
+            unIdnfdcoDriverIdCTV.setText("");
+
+            unIdnfdtrailerIdCTV.setText(dataObj.getString("TrailerId"));
+            unIdnfdcarrierNameCTV.setText(dataObj.getString("Carrier"));
+            unIdnfdcarrierHomeTerCTV.setText(dataObj.getString("Hometerminal"));
+            unIdnfdcarrierPrinPlaceCTV.setText(dataObj.getString("OfficeAddress"));
+            unIdnfdcurrOperZoneCTV.setText("");
+            unIdnfdcurreCycleCTV.setText("");    // + "\n" + dataObj.getString("cycledetail"));
+
+
+//3.3 km N Mountain View CA <br/> (37.42, -122.08)
+            try {
+                String CurrentOBDLocation = dataObj.getString("CurrentOBDLocation");
+                String CurrentOBDLatLong = dataObj.getString("CurrentOBDLatLong");
+
+                if (CurrentOBDLocation.equals("null")) {
+                    unIdnfdcurrLocCTV.setText(Html.fromHtml(dataObj.getString("CurrentLocation")));
+                } else {
+                    // AddressLat = Constants.Convert2DecimalPlacesDouble(Double.parseDouble(AddressLat));
+                    // AddressLon = Constants.Convert2DecimalPlacesDouble(Double.parseDouble(AddressLon));
+                    unIdnfdcurrLocCTV.setText(Html.fromHtml(CurrentOBDLocation + "<br/>(" + CurrentOBDLatLong + ")"));
+                }
+
+            }catch (Exception e){
+                //currLocCTV.setText(Html.fromHtml(AddressLine + "<br/>(" + AddressLat + ", " + AddressLon + ")"));
+                unIdnfdcurrLocCTV.setText(Html.fromHtml(dataObj.getString("CurrentLocation")));
+                e.printStackTrace();
+            }
+
+            String truckTractorId = "", truckTractorVin = "", totalVehDistance = "", distanceToday = "",  currTotalDis = "", currTotalEng = "";
+
+            JSONArray EngineHourArray = constants.checkNullArray(dataObj,ConstantsKeys.EngineHourMilesReportListUnidentified);
+            if(EngineHourArray.length() > 0) {
+
+                for (int i = 0; i < EngineHourArray.length(); i++) {
+                    JSONObject engineObj = (JSONObject) EngineHourArray.get(i);
+                    if(i == 0) {
+                        truckTractorId  = "" + (i+1) + ") "+ engineObj.getString("TruckEquipmentNo");
+                        truckTractorVin = "" + (i+1) + ") "+ engineObj.getString("CMVVIN");
+                        totalVehDistance       = "" + (i+1) + ") "+ engineObj.getString("StartOdometr") + " - " + engineObj.getString("EndOdometer");
+                        distanceToday   = "" + (i+1) + ") "+ engineObj.getString("DifferenceKM") ;
+                    }else{
+                        truckTractorId  = truckTractorId     + "\n" + (i+1) + ") "+ engineObj.getString("TruckEquipmentNo");
+                        truckTractorVin = truckTractorVin   + "\n" + (i+1) + ") "+ engineObj.getString("CMVVIN");
+                        totalVehDistance= totalVehDistance  + "\n" + (i+1) + ") "+ engineObj.getString("StartOdometr") + " - " + engineObj.getString("EndOdometer");
+                        distanceToday   = distanceToday     + "\n" + (i+1) + ") "+ engineObj.getString("DifferenceKM") ;
+                    }
+
+                    currTotalDis = engineObj.getString("EndOdometer");
+                    currTotalEng = engineObj.getString("EndEngineHours");
+
+                    try {
+                        if(currTotalEng.length() > 0 && !currTotalEng.equals("--")) {
+                            currTotalEng = Constants.Convert2DecimalPlacesString(currTotalEng);
+                        }
+                    }catch (Exception e){
+                        currTotalEng = engineObj.getString("EndEngineHours");
+                    }
+                }
+
+            }else{
+                truckTractorId  = dataObj.getString("TruckTractorID");
+                truckTractorVin = dataObj.getString("TruckTractorVIN");
+            }
+
+            unIdnfdtruckTractorIdTV.setText(truckTractorId);
+            unIdnfdtruckTractorVinTV.setText(truckTractorVin);
+            unIdnfdtotalDisCTV.setText(totalVehDistance);
+            unIdnfddistanceTodayCTV.setText(distanceToday);
+            unIdnfdcurrTotalDisTV.setText(currTotalDis);
+            unIdnfdcurrTotalEngTV.setText(currTotalEng);
+
+
+        /*    String currentCycle = "";
+            if (SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver)) {
+
+                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
+                    currentCycle = "USA Cycle \n" + DriverConst.GetDriverSettings(DriverConst.USACycleName, getActivity());
+                }else{
+                    currentCycle = "CAN Cycle \n" + DriverConst.GetDriverSettings(DriverConst.CANCycleName, getActivity());
+                }
+            }else{
+                if (CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS)) {
+                    currentCycle = "USA Cycle \n" + DriverConst.GetCoDriverSettings(DriverConst.CoUSACycleName, getActivity());
+                }else{
+                    currentCycle = "CAN Cycle \n" + DriverConst.GetCoDriverSettings(DriverConst.CoCANCycleName, getActivity());
+                }
+            }
+            curreCycleCTV.setText(currentCycle);*/
+
+            JSONObject DriverLogDetailModelObj = new JSONObject(dataObj.getString("DriverLogDetailModel"));
+            JSONObject RulesApiModelNewCanadaObj = new JSONObject(DriverLogDetailModelObj.getString("RulesApiModelNewCanada"));
+
+            int TotalHrsInShift = (int)RulesApiModelNewCanadaObj.getDouble("shiftUsedMinutes");
+            int TotalHrsInCycle = (int)RulesApiModelNewCanadaObj.getDouble("cycleUsedMinutes");
+            int RemainingHrsCycle = (int)RulesApiModelNewCanadaObj.getDouble("cycleRemainingMinutes");
+            // int OffDutyTimeDefferal = (int)RulesApiModelNewCanadaObj.getDouble("");
+
+
+
+            unIdnfdtotalHrsCTV.setText("");
+            unIdnfdtotalhrsCycleCTV.setText("");
+            unIdnfdremainingHourCTV.setText("");
+            unIdnfdoffDutyDeffCTV.setText("");
+
+
+            unIdnfddatDiagCTV.setText(constants.checkNullString(dataObj.getString("DataDiagnosticIndicatorsUn")));
+            UnunIdenDriRecCTV.setText(dataObj.getString("UnIdentifiedDriverRecords"));
+
+            unIdnfdmalfStatusCTV.setText(constants.checkNullString(dataObj.getString("ELDMalfunctionIndicatorsUn")));
+            unIdnfdeldIdCTV.setText(dataObj.getString("ELDID"));
+            unIdnfdeldProviderCTV.setText(dataObj.getString("ELDManufacturer"));
+            unIdnfdeldCerCTV.setText(constants.checkNullString(dataObj.getString("ELDCertificationID")) );
+            unIdnfdeldAuthCTV.setText(constants.checkNullString(dataObj.getString("ELDAuthenticationValue")) );
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -1262,11 +1697,30 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                             TotalOffDutyHours = "00:00";
                             TotalSleeperBerthHours = "00:00";
 
+                            TotalUnidenitifiedOffDutyHours = "00:00";
+                            TotalUnidenitifiedDrivingHours = "00:00";
+                            TotalUnidenitifiedSleeperHours = "00:00";
+                            TotalUnidenitifiedOnDutyHours = "00:00";
+
+                            VerifyDutyStatusList = new ArrayList();
+                            VerifyEnginePowerList = new ArrayList();
+                            VerifyLoginLogoutList  = new ArrayList();
+                            VerifyCommentsRemarksList = new ArrayList<>();
+
                             DutyStatusList = new ArrayList();
                             LoginLogoutList = new ArrayList();
                             CommentsRemarksList = new ArrayList();
                             CycleOpZoneList = new ArrayList();
                             EnginePowerList = new ArrayList();
+
+
+                            UnIdnfdDutyStatusList = new ArrayList();
+                            UnIdnfdLoginLogoutList = new ArrayList();
+                            UnIdnfdCommentsRemarksList = new ArrayList();
+                            UnIdnfdEnginePowerList = new ArrayList();
+                            JSONArray dotUnidentifdLogArray = new JSONArray();
+                            JSONArray dotUnidentifdLogArray2 = new JSONArray();
+                            JSONArray UnIdnfdEnginePowerArray = new JSONArray();
 
 
                             try {
@@ -1275,37 +1729,99 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                                 TotalDrivingHours = dataObj.getString("TotalDrivingHours");
                                 TotalOnDutyHours = dataObj.getString("TotalOnDutyHours");
 
+                                TotalUnidenitifiedOffDutyHours = dataObj.getString("TotalUnidenitifiedOffDutyHours");
+                                TotalUnidenitifiedDrivingHours = dataObj.getString("TotalUnidenitifiedDrivingHours");
+                                TotalUnidenitifiedSleeperHours = dataObj.getString("TotalUnidenitifiedSleeperHours");
+                                TotalUnidenitifiedOnDutyHours = dataObj.getString("TotalUnidenitifiedOnDutyHours");
+
                                 TotalOffDutyHours = TotalOffDutyHours.replaceAll("-", "");
                                 TotalOnDutyHours = TotalOnDutyHours.replaceAll("-", "");
                                 TotalDrivingHours = TotalDrivingHours.replaceAll("-", "");
                                 TotalSleeperBerthHours = TotalSleeperBerthHours.replaceAll("-", "");
 
+                                TotalUnidenitifiedOffDutyHours =  TotalUnidenitifiedOffDutyHours.replaceAll("-", "");
+                                TotalUnidenitifiedDrivingHours =  TotalUnidenitifiedDrivingHours.replaceAll("-", "");
+                                TotalUnidenitifiedSleeperHours =  TotalUnidenitifiedSleeperHours.replaceAll("-", "");
+                                TotalUnidenitifiedOnDutyHours =  TotalUnidenitifiedOnDutyHours.replaceAll("-", "");
+
+
                                 JSONArray dotLogArray = constants.checkNullArray(dataObj, ConstantsKeys.graphRecordList);
+
+                                JSONArray unidentifiedgraphArray = constants.checkNullArray(dataObj, ConstantsKeys.oReportList);
+
+                                for(int i  = 0 ;i< unidentifiedgraphArray.length(); i++){
+                                    JSONObject object = (JSONObject) unidentifiedgraphArray.get(i);
+                                    int EventType = object.getInt(ConstantsKeys.EventType);
+                                    if(EventType == 9){
+                                        dotUnidentifdLogArray.put(object);
+                                        dotUnidentifdLogArray2.put(object);
+                                    }
+
+                                    if(EventType == 6 && object.getBoolean(ConstantsKeys.IsUnidentified)){
+                                        UnIdnfdEnginePowerArray.put(object);
+                                    }
+
+                                    if(i == 0 && EventType != 9){
+                                        object.put(ConstantsKeys.DateTimeWithMins, global.ConvertDateFormat(LogDate));
+                                        object.put(ConstantsKeys.EndDateTime, global.ConvertDateFormat(LogDate));
+                                        dotUnidentifdLogArray.put(object);
+                                    }
+                                }
+
+
                                 ParseGraphData(dotLogArray);
+                                String selectedDateStr = global.ConvertDateFormat(LogDate);
+                               // dotUnidentifdLogArray = constants.setUnidentifiedGraphData(selectedDateStr, DaysDiff, dotUnidentifdLogArray);
+
+                                ArrayList<UnidentifiedEventModel> UnidentifiedEventList = constants.getUnidentifiedEventList(selectedDateStr, DaysDiff, dotUnidentifdLogArray);
+                                ParseUnidentifiedGraphData(UnidentifiedEventList);
 
                                 JSONArray dutyStatusArray = constants.checkNullArray(dataObj, ConstantsKeys.dutyStatusChangesList);
                                 JSONArray loginLogoutArray = constants.checkNullArray(dataObj, ConstantsKeys.loginAndLogoutList);
                                 JSONArray ChangeInDriversCycleList = constants.checkNullArray(dataObj, ConstantsKeys.ChangeInDriversCycleList);
                                 JSONArray commentsRemarksArray = constants.checkNullArray(dataObj, ConstantsKeys.commentsRemarksList);
                                 JSONArray enginePowerArray = constants.checkNullArray(dataObj, ConstantsKeys.enginePowerUpAndShutDownList);
-                                JSONArray unIdentifiedVehArray = constants.checkNullArray(dataObj, ConstantsKeys.UnAssignedVehicleMilesList);
 
 
                                 DutyStatusList = constants.parseCanadaDotInList(dutyStatusArray, true);
-                                if (dataObj.has(ConstantsKeys.loginAndLogoutDates)) {
-                                    JSONArray loginSortingArray = constants.checkNullArray(dataObj, ConstantsKeys.loginAndLogoutDates);
-                                    LoginLogoutList = constants.parseCanadaLogoutLoginList(loginSortingArray);
-                                } else {
-                                    LoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray, true);
-                                }
-                                CommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray, false);
-                                CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList, true);
                                 EnginePowerList = constants.parseCanadaDotInList(enginePowerArray, true);
+                                VerifyLoginLogoutList = constants.parseCanadaDotInList(loginLogoutArray, true);
+                                VerifyCommentsRemarksList = constants.parseCanadaDotInList(commentsRemarksArray, false);
 
-                                UnAssignedVehicleList = constants.parseCanadaDotUnIdenfdVehList(unIdentifiedVehArray);
+                                UnIdnfdDutyStatusList = constants.parseCanadaDotInList(dotUnidentifdLogArray2, true);
+                                UnIdnfdEnginePowerList = constants.parseCanadaDotInList(UnIdnfdEnginePowerArray, true);
+
+
+
+
+                                for(int i = 0 ; i < VerifyLoginLogoutList.size() ; i++){
+                                    if(VerifyLoginLogoutList.get(i).isUnidentified()){
+                                        UnIdnfdLoginLogoutList.addAll(Collections.singletonList(VerifyLoginLogoutList.get(i)));
+                                    }else{
+                                        if (dataObj.has(ConstantsKeys.loginAndLogoutDates)) {
+                                            JSONArray loginSortingArray = constants.checkNullArray(dataObj, ConstantsKeys.loginAndLogoutDates);
+                                            LoginLogoutList = constants.parseCanadaLogoutLoginList(loginSortingArray);
+                                        } else {
+                                            LoginLogoutList.addAll(Collections.singletonList(VerifyLoginLogoutList.get(i)));
+                                        }
+                                    }
+                                }
+
+                                for(int i = 0 ; i < VerifyCommentsRemarksList.size() ; i++){
+                                    if(VerifyCommentsRemarksList.get(i).isUnidentified()){
+                                        UnIdnfdCommentsRemarksList.addAll(Collections.singleton((VerifyCommentsRemarksList.get(i))));
+                                    }else{
+                                        CommentsRemarksList.addAll(Collections.singleton((VerifyCommentsRemarksList.get(i))));
+                                    }
+                                }
+
+                                CycleOpZoneList = constants.parseCanadaDotInList(ChangeInDriversCycleList, true);
 
                                 setdataOnAdapter();
                                 setDataOnTextView(dataObj);
+
+                                setdataOnUnIdnfdAdapter();
+                                setDataOnUnIdnfdTextView(dataObj);
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -1314,9 +1830,12 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                         }
                     } else {
                         htmlAppendedText = "";
+                        htmlUnidentifiedAppendedText = "";
 
                         String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
+                        String CloseTagUnidetified = constants.HtmlCloseTag(TotalUnidenitifiedOffDutyHours, TotalSleeperBerthHours, TotalUnidenitifiedDrivingHours, TotalUnidenitifiedOnDutyHours);
                         ReloadWebView(CloseTag);
+                        ReloadUnidentiWebView(CloseTagUnidetified);
 
                         global.EldScreenToast(scrollUpBtn, Message, getResources().getColor(R.color.colorVoilation));
 
@@ -1339,14 +1858,22 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     canDotProgressBar.setVisibility(View.GONE);
                     global.EldScreenToast(scrollUpBtn, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
                     htmlAppendedText = "";
+                    htmlUnidentifiedAppendedText = "";
                     TotalOnDutyHours = "00:00";
                     TotalDrivingHours = "00:00";
                     TotalOffDutyHours = "00:00";
                     TotalSleeperBerthHours = "00:00";
 
+                    TotalUnidenitifiedOffDutyHours = "00:00";
+                    TotalUnidenitifiedDrivingHours = "00:00";
+                    TotalUnidenitifiedSleeperHours = "00:00";
+                    TotalUnidenitifiedOnDutyHours = "00:00";
+
 
                     String CloseTag = constants.HtmlCloseTag(TotalOffDutyHours, TotalSleeperBerthHours, TotalDrivingHours, TotalOnDutyHours);
+                    String CloseTagUnidetified = constants.HtmlCloseTag(TotalUnidenitifiedOffDutyHours, TotalSleeperBerthHours, TotalUnidenitifiedDrivingHours, TotalUnidenitifiedOnDutyHours);
                     ReloadWebView(CloseTag);
+                    ReloadUnidentiWebView(CloseTagUnidetified);
                 }catch (Exception e){
                     e.printStackTrace();
                 }

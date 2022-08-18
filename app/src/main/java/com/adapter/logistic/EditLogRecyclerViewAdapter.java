@@ -1,8 +1,8 @@
 package com.adapter.logistic;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -18,12 +18,19 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.MotionEventCompat;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.constants.Constants;
+import com.constants.DrawableUtils;
 import com.constants.SharedPref;
+import com.constants.ViewUtils;
 import com.custom.dialogs.TimerDialog;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemState;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
+import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 import com.local.db.ConstantsKeys;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
@@ -39,18 +46,14 @@ import org.json.JSONObject;
 import java.util.Collections;
 import java.util.List;
 
-public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ItemTouchHelperAdapter {
+public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecyclerViewAdapter.ViewHolderItem> implements DraggableItemAdapter<EditLogRecyclerViewAdapter.ViewHolderItem>{
 
 
 
     private List<DriverLogModel> driverLogList;
-
-    OnItemClickListener mItemClickListener;
     private static final int TYPE_ITEM = 0;
     private final LayoutInflater mInflater;
-    private final OnStartDragListener mDragStartListener;
     private Context mContext;
-
     String[] list = {"Off Duty", "Sleeper", "Driving", "On Duty", "Personal", "On Duty (YM)"};
     String SelectedDateTime ;
     int offsetFromUTC,  parentPosition = 0;
@@ -64,17 +67,16 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     final int SLEEPER        = 2;
     final int DRIVING        = 3;
     final int ON_DUTY        = 4;
-    RecyclerView parentView ;
-
+    RecyclerView parentView;
+    Globally global;
+    AdapterCallback adapterCallback;
 
     public EditLogRecyclerViewAdapter(Context context, RecyclerView eldMenuBtn, List<DriverLogModel> oDriverLogDetail, String selectedDate, int offset,
                                       JSONObject permitLog, DriverPermissionMethod pMethod, HelperMethods h_method,
-                                      boolean isCurrentDate, boolean isUnAssignedMileRecord, OnStartDragListener dragListner) {
+                                      boolean isCurrentDate, boolean isUnAssignedMileRecord, AdapterCallback callback) {
         this.driverLogList = oDriverLogDetail;
         this.mInflater = LayoutInflater.from(context);
-        this.mDragStartListener = dragListner;
         this.mContext = context;
-
         this.parentView = eldMenuBtn;
         this.SelectedDateTime = selectedDate;
         this.offsetFromUTC = offset;
@@ -82,13 +84,12 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         this.permitMethod = pMethod;
         this.hMethods     = h_method;
         this.IsCurrentDate = isCurrentDate;
-
+        this.adapterCallback = callback;
         IsOffDutyPermission = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.OffDutyKey);
         IsSleeperPermission = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.SleeperKey);
         IsDrivingPermission = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.DrivingKey);
         IsOnDutyPermission  = permitMethod.getPermissionStatus(logPermissionObj, ConstantsKeys.OnDutyKey);
 
-        IsDrivingPermission = false;
         if(isUnAssignedMileRecord){
             IsDrivingPermission = true;
         }else{
@@ -100,46 +101,71 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             }
         }
 
+        setHasStableIds(true);
+
 
     }
 
-
-
-    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        if (viewType == TYPE_ITEM) {
-            //inflate your layout and pass it to view viewHolder
-            View v = mInflater.inflate(R.layout.item_edit_log, viewGroup, false);
-            return new ViewHolderItem(v );
-        }
+    public ViewHolderItem onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        final View v = inflater.inflate(R.layout.item_edit_log , parent, false);
+        return new ViewHolderItem(v);
+    }
 
-        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
-
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
 
     @Override
     public int getItemViewType(int position) {
         return TYPE_ITEM;
-       // return super.getItemViewType(position);
+    }
+
+    public interface AdapterCallback{
+        void onItemClicked(int position);
     }
 
 
-    @SuppressLint("RecyclerView")
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, final int position) {
-
-      //  viewHolder.setIsRecyclable(false);
+    public void onBindViewHolder(@NonNull final ViewHolderItem viewHolder, final int position) {
 
         String startTime = "", endTime = "";
         int TotalHours = 0, status = 1;
         boolean isPersonal = false, isYardMove = false;
+        global = new Globally();
+
+        final DraggableItemState dragState = viewHolder.getDragState();
+
+        if (dragState.isUpdated()) {
+            int bgResId;
+
+            if (dragState.isActive()) {
+                bgResId = R.drawable.edit_log_bg_default;
+                DrawableUtils.clearState(viewHolder.editLogItemLay.getForeground());
+            }else {
+                bgResId = R.drawable.white_border;
+            }
+
+            viewHolder.editLogItemLay.setBackgroundResource(bgResId);
+
+        }
+
+        ((ViewHolderItem) viewHolder).deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(adapterCallback != null) {
+                    adapterCallback.onItemClicked(position);
+                }
+            }
+        });
+
 
         ((ViewHolderItem) viewHolder).startTimeBtn.setTag(position);
         ((ViewHolderItem) viewHolder).endTimeBtn.setTag(position);
-
-
         ((ViewHolderItem) viewHolder).startTimeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,7 +174,8 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 int Hour = Integer.valueOf(time.split(":")[0] );
                 int min = Integer.valueOf(time.split(":")[1] );
 
-                timerDialog = new TimerDialog(mContext, parentPosition, Hour, min, ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeTV, "start", new TimePickerListener());
+                timerDialog = new TimerDialog(mContext, parentPosition, Hour, min, ((ViewHolderItem) viewHolder).startTimeTV,
+                        ((ViewHolderItem) viewHolder).endTimeTV, "start", new TimePickerListener());
                 timerDialog.show();
 
             }
@@ -163,11 +190,14 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 String time = ((ViewHolderItem) viewHolder).endTimeTV.getText().toString() ;
                 int Hour = Integer.valueOf(time.split(":")[0] );
                 int min = Integer.valueOf(time.split(":")[1] );
-                timerDialog = new TimerDialog(mContext, parentPosition, Hour, min, ((ViewHolderItem) viewHolder).startTimeTV, ((ViewHolderItem) viewHolder).endTimeTV, "end", new TimePickerListener());
+                timerDialog = new TimerDialog(mContext, parentPosition, Hour, min, ((ViewHolderItem) viewHolder).startTimeTV,
+                        ((ViewHolderItem) viewHolder).endTimeTV, "end", new TimePickerListener());
                 timerDialog.show();
 
             }
         });
+
+
 
 
 
@@ -217,37 +247,6 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             public boolean onTouch(View v, MotionEvent event) {
                 isTouch = true;
                 return false;
-            }
-        });
-
-
-
-
-
-        ((ViewHolderItem) viewHolder).dragLay.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.d("TouchTest", "----Touch Up00");
-                int touchPos = viewHolder.getAdapterPosition();
-                if(position < EditLogFragment.oDriverLogDetail.size()-1){
-                    DriverLogModel logModelNextPos = EditLogFragment.oDriverLogDetail.get(position );
-                    int Status = logModelNextPos.getDriverStatusId();
-                    boolean isEnabled = isEnabled(Status);
-
-                    if(isEnabled){
-                        //MotionEventCompat.getActionMasked(event)
-                        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                            mDragStartListener.onStartDrag(viewHolder);
-                            Log.d("TouchTest", "----Touch down");
-                        }else if (event.getActionMasked() == MotionEvent.ACTION_UP){
-                            Log.d("TouchTest", "----Touch Up");
-                        }
-                    }
-                }
-
-
-                return true;
             }
         });
 
@@ -438,11 +437,6 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     ((ViewHolderItem) viewHolder).editLogItemLay, position, IsOffDutyPermission);
         }
 
-
-
-
-
-
     }
 
     @Override
@@ -450,27 +444,69 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return driverLogList.size();
     }
 
+    @Override
+    public boolean onCheckCanStartDrag(@NonNull ViewHolderItem holder, int position, int x, int y) {
+//        selectedPostion = position;
+        final View containerView = holder.editLogItemLay;
+        final View dragHandleView = holder.dragLay;
+
+        final int offsetX = containerView.getLeft() + (int) (containerView.getTranslationX() + 0.5f);
+        final int offsetY = containerView.getTop() + (int) (containerView.getTranslationY() + 0.5f);
+
+        return ViewUtils.hitTest(dragHandleView, x - offsetX, y - offsetY);
+    }
+
+    @Nullable
+    @Override
+    public ItemDraggableRange onGetItemDraggableRange(@NonNull ViewHolderItem holder, int position) {
+        return null;
+    }
 
     @Override
-    public void onItemDismiss(int position) {
-        driverLogList.remove(position);
-        notifyItemRemoved(position);
+    public void onMoveItem(int fromPosition, int toPosition) {
+
+        if (fromPosition < driverLogList.size() && toPosition < driverLogList.size()) {
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(driverLogList, i, i + 1);
+                    //  Collections.swap(EditGraphFragment.oDriverLogDetail, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(driverLogList, i, i - 1);
+                    //  Collections.swap(EditGraphFragment.oDriverLogDetail, i, i - 1);
+                }
+            }
+
+            notifyItemMoved(fromPosition, toPosition);
+
+        }
+    }
+
+    @Override
+    public boolean onCheckCanDrop(int draggingPosition, int dropPosition) {
+        return true;
+    }
+
+    @Override
+    public void onItemDragStarted(int position) {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
         notifyDataSetChanged();
     }
 
 
-    public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
-    }
 
+    public class ViewHolderItem extends AbstractDraggableItemViewHolder{
 
-    public class ViewHolderItem extends RecyclerView.ViewHolder implements View.OnClickListener,
-            ItemTouchHelperViewHolder, RecyclerView.OnItemTouchListener {
-
-        private TextView editLogSerialNoTV, startTimeTV, endTimeTV, editLogDurationTV;
-        private RelativeLayout startTimeLayout, endTimeLayout, endTimeBtn, startTimeBtn, dragLay;
-        private LinearLayout editLogItemLay;
-        private Spinner editLogStatusSpinner;
+        public TextView editLogSerialNoTV, startTimeTV, endTimeTV, editLogDurationTV;
+        public RelativeLayout startTimeLayout, endTimeLayout, endTimeBtn, startTimeBtn, dragLay;
+        public LinearLayout editLogItemLay;
+        public Spinner editLogStatusSpinner;
+        public RelativeLayout deleteBtn;
 
 
         public ViewHolderItem(View itemView) {
@@ -490,6 +526,8 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             editLogItemLay       = itemView.findViewById(R.id.editLogItemLay);
 
             editLogStatusSpinner = itemView.findViewById(R.id.editLogStatusSpinner);
+            deleteBtn            = itemView.findViewById(R.id.deleteBtn);
+
 
             if(UILApplication.getInstance().isNightModeEnabled()){
                 editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
@@ -497,69 +535,14 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             } else {
                 editLogItemLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
             }
-           // itemView.setOnClickListener(this);
 
         }
 
-        @Override
-        public void onClick(View v) {
-            if (mItemClickListener != null) {
-                mItemClickListener.onItemClick(v, getPosition());
-            }
-        }
-
-        @Override
-        public void onItemSelected() {
-            itemView.setBackgroundColor(Color.LTGRAY);
-        }
-
-        @Override
-        public void onItemClear() {
-            itemView.setBackgroundColor(0);
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-            Log.d("Drag Tag", "---------onInterceptTouchEvent");
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-            Log.d("Drag Tag", "---------onTouchEvent");
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-            Log.d("Drag Tag", "---------onRequestDisallowInterceptTouchEvent");
-        }
     }
 
 
 
 
-    @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
-        //Log.v("", "Log position" + fromPosition + " " + toPosition);
-        if (fromPosition < driverLogList.size() && toPosition < driverLogList.size()) {
-            if (fromPosition < toPosition) {
-                for (int i = fromPosition; i < toPosition; i++) {
-                    Collections.swap(driverLogList, i, i + 1);
-                  //  Collections.swap(EditGraphFragment.oDriverLogDetail, i, i + 1);
-                }
-            } else {
-                for (int i = fromPosition; i > toPosition; i--) {
-                    Collections.swap(driverLogList, i, i - 1);
-                  //  Collections.swap(EditGraphFragment.oDriverLogDetail, i, i - 1);
-                }
-            }
-
-            notifyItemMoved(fromPosition, toPosition);
-         //   notifyDataSetChanged();
-
-        }
-        return true;
-    }
 
     public void updateList(List<DriverLogModel> list) {
         driverLogList = list;
@@ -567,9 +550,11 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
 
-    public void removeItem(int position) {
+    public Object removeItem(int position) {
         driverLogList.remove(position);
-        notifyItemRemoved(position);
+        notifyDataSetChanged();
+        //notifyItemRemoved(position);
+        return null;
     }
 
     public void restoreItem(DriverLogModel item, int position) {
@@ -716,24 +701,24 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                 if(isEnabled(Status)){
                     DriverLogModel nextPosLogModel = getDriverNextLog(EditLogFragment.oDriverLogDetail, position + 1, endView.getText().toString());
                     EditLogFragment.oDriverLogDetail.set(position + 1, nextPosLogModel);
+
+                    notifyItemChanged(position + 1);
+
+                }else{
+                    notifyItemChanged(position);
                 }
             }
 
             timerDialog.dismiss();
-            notifyItemChanged(position);
 
-            if(EditLogFragment.oDriverLogDetail.size() > position+1 ) {
-                notifyItemChanged(position + 1);
-            }
 
-          //  notifyDataSetChanged();
         }
     }
 
 
     boolean isEnabled(int Status){
 
-        boolean isEnabled = false;
+        boolean isEnabled = true;
         switch (Status){
             case OFF_DUTY:
                 isEnabled = IsOffDutyPermission;
@@ -750,6 +735,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             case ON_DUTY:
                 isEnabled = IsOnDutyPermission;
                 break;
+
         }
 
         return isEnabled;
@@ -851,4 +837,11 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return logModel;
     }
 
+
+
+
+
 }
+
+
+

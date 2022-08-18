@@ -23,6 +23,7 @@ import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.R;
 import com.messaging.logistic.SuggestedFragmentActivity;
+import com.messaging.logistic.UILApplication;
 
 import org.json.JSONObject;
 
@@ -48,6 +49,13 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
             if (parent != null)
                 parent.removeView(rootView);
         }
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            getActivity().setTheme(R.style.DarkTheme);
+        } else {
+            getActivity().setTheme(R.style.LightTheme);
+        }
+
         try {
             rootView = inflater.inflate(R.layout.noti_history_fragment, container, false);
             rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -55,7 +63,9 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
             e.printStackTrace();
         }
 
+
         initView(rootView);
+
 
         return rootView;
 

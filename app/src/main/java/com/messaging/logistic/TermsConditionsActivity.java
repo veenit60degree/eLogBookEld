@@ -33,6 +33,12 @@ public class TermsConditionsActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            setTheme(R.style.DarkTheme);
+        } else {
+            setTheme(R.style.LightTheme);
+        }
+
         setContentView(R.layout.activity_terms_conditions);
 
         termsCondWebView    = (WebView)findViewById(R.id.termsCondWebView);

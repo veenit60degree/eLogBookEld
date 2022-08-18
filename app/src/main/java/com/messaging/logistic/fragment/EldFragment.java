@@ -313,6 +313,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     boolean IsNorthCanada = false;
 
     public static boolean IsTruckChange = false;
+    public static boolean IsTruckChangeCallService = false;
     public static boolean IsPrePost = false;
     public static boolean IsStartReading = false;
     public static boolean IsMsgClick = false;
@@ -965,6 +966,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         ServiceReceiverUpdate();
 
         Constants.IS_ACTIVE_ELD = true;
+        Globally.IS_CERTIFY_CALLED = false;
+
         SaveRequestCount    = 0;
         isViolation         = SharedPref.IsViolation(getActivity());
         SelectedDate        = Globally.GetCurrentDeviceDate();
@@ -979,6 +982,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         if(UnidentifiedActivity.isUnIdentifiedRecordClaimed){
             GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
+           // GetDriverStatusPermission(DRIVER_ID, DeviceId, VehicleId);
         }
 
       checkDriverTimeZone(isConnected, IsOnCreateView);
@@ -2021,7 +2025,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             SavedLogApi = APIs.SAVE_DRIVER_STATUS;
         }
 
-        saveDriverLogPost.PostDriverLogData(DriverJsonArray, SavedLogApi, socketTimeout, false, false, DriverType, MainDriverLog);
+        saveDriverLogPost.PostDriverLogData(DriverJsonArray, SavedLogApi, socketTimeout, false,
+                false, DriverType, MainDriverLog);
 
     }
 
@@ -4116,7 +4121,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             "" + isHaulExcptn,"",
                             LocationType, MalfunctionDefinition, IsNorthCanada, false,
                             SharedPref.getObdOdometer(getActivity()), CoDriverIdInSaveStatus, CoDriverNameInSaveStatus,
-                            TruckNumber, TrailorNumber, hMethods, dbHelper);
+                            TruckNumber, TrailorNumber, SharedPref.getObdEngineHours(getActivity()),
+                            SharedPref.getObdOdometer(getActivity()), hMethods, dbHelper);
 
 
                     String CurrentDate = Globally.GetCurrentDateTime();
@@ -4244,7 +4250,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         String.valueOf(isCycleChange),
                         "0",
                         CoDriverIdInSaveStatus, CoDriverNameInSaveStatus,"false",
-                        Constants.getLocationSource(getActivity())
+                        Constants.getLocationSource(getActivity()),
+                        SharedPref.getObdEngineHours(getActivity()),
+                        SharedPref.getObdOdometer(getActivity())
 
                 );
 
@@ -4336,7 +4344,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         Global, isHaulExcptn, false, "" + isAdverseExcptn,"",
                         LocationType, MalfunctionDefinition, IsNorthCanada, isCycleChange,
                         SharedPref.getObdOdometer(getActivity()), CoDriverIdInSaveStatus, CoDriverNameInSaveStatus,
-                        TruckNumber, TrailorNumber, hMethods, dbHelper);
+                        TruckNumber, TrailorNumber, SharedPref.getObdEngineHours(getActivity()),
+                        SharedPref.getObdOdometer(getActivity()), hMethods, dbHelper);
 
                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
                 hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray);
@@ -4355,7 +4364,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         SharedPref.GetCurrentTruckPlateNo(getActivity()), "mannual_save", isYardBtnClick,
                         Global, isHaulExcptn, false,"" + isAdverseExcptn,"",
                         LocationType, MalfunctionDefinition, IsNorthCanada, isCycleChange, CoDriverIdInSaveStatus, CoDriverNameInSaveStatus,
-                        SharedPref.getObdOdometer(getActivity()), TruckNumber, TrailorNumber, hMethods, dbHelper);
+                        SharedPref.getObdOdometer(getActivity()), TruckNumber, TrailorNumber,
+                        SharedPref.getObdEngineHours(getActivity()),
+                        SharedPref.getObdOdometer(getActivity()), hMethods, dbHelper);
 
                 /* ---------------- DB Helper operations (Insert/Update) --------------- */
                 hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, driverLogArray);
@@ -6248,7 +6259,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
          params.put(ConstantsKeys.DeviceId, DeviceId);
-         params.put(ConstantsKeys.VIN, TrailerNumber);        // ( please note: here VIN is used as TrailorNumber in parameters. )
+         params.put(ConstantsKeys.VIN, TrailerNumber);  // ( please note: here VIN is used as TrailorNumber in parameters. )
 
         SaveTrailerNumber.executeRequest(Request.Method.POST, APIs.UPDATE_TRAILER_NUMBER, params, SaveTrailer,
                 Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
@@ -7443,11 +7454,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                     SharedPref.SetObdPreference(ObdPreference, getActivity());
 
-
-                                    if(ObdPreference != savedObdPref){
-                                        startService();     // call onStartCommand in service to connect with current OBD pref
+                                    if(!IsTruckChange) {
+                                        if (ObdPreference != savedObdPref && !SharedPref.GetNewLoginStatus(getActivity())) {
+                                            IsTruckChangeCallService = true;
+                                            startService();     // call onStartCommand in service to connect with current OBD pref
+                                        }
                                     }
-
 
                                 }else{
                                     SharedPref.SetObdPreference(SharedPref.getObdPreference(getActivity()), getActivity());
@@ -7461,6 +7473,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                         SharedPref.SaveObdStatus(Constants.BLE_DISCONNECTED, Global.getCurrentDate(),
                                                 Globally.GetCurrentUTCTimeFormat(), getActivity());
                                     }
+                                    IsTruckChangeCallService = true;
                                     startService();
                                     setObdStatus(false);
                                 }

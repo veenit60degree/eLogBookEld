@@ -316,8 +316,8 @@ public class AdverseRemarksDialog extends Dialog {
                                         endOdo = Constants.milesToMeter(endOdo);
                                     }
                                 }
-                                startOdo = Constants.ConvertToBeforeDecimal(startOdo);
-                                endOdo = Constants.ConvertToBeforeDecimal(endOdo);
+                                startOdo = Constants.getBeforeDecimalValues(startOdo);
+                                endOdo = Constants.getBeforeDecimalValues(endOdo);
                                 readyListener.JobBtnReady(remarks, IsClaim, IsCompanyAssign,startOdo,endOdo,startLoc,endLoc,startLocationEditText.getText().toString(),StartSelectedState,StartSelectedCountry,endLocationEditText.getText().toString(),EndSelectedState,EndSelectedCountry,startOdometer,endOdometer,startLocation,endLocation);
                             } else {
                                 if(isAdverse) {

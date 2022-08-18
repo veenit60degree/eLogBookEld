@@ -948,8 +948,12 @@ public class MalfunctionDiagnosticMethod {
                                     DetectionDataEventCode.equals(Constants.DataTransferMalfunction)){
                         UpdateStatus(IsClearEvent, DetectionDataEventCode, EventDateTime, EventEndDateTime, driverZoneDate, constants, context);
                     }else {
-                        if (DriverId.equals(EventDriverId) || EventDriverId.equals("0")) {
+                        if(DriverId.equals("0")){
                             UpdateStatus(IsClearEvent, DetectionDataEventCode, EventDateTime, EventEndDateTime, driverZoneDate, constants, context);
+                        }else {
+                            if (DriverId.equals(EventDriverId) || EventDriverId.equals("0")) {
+                                UpdateStatus(IsClearEvent, DetectionDataEventCode, EventDateTime, EventEndDateTime, driverZoneDate, constants, context);
+                            }
                         }
                     }
 
@@ -1872,8 +1876,9 @@ public class MalfunctionDiagnosticMethod {
                         DateTime selectedDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.EventDateTime), false);
                         DateTime currentUtcDate = Globally.GetCurrentUTCDateTime();
                         long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardHours();
+                       // int dayDiff = Constants.getDayDiff(currentUtcDate.toString(), selectedDateTime.toString());
 
-                        if(hourDiff >= 24){
+                        if( hourDiff >= 24){
                             String DetectionDataEventCode = eventObj.getString(ConstantsKeys.DetectionDataEventCode);
                             boolean isCleared = false;
                             if(eventObj.has(ConstantsKeys.IsClearEvent)){
@@ -1983,61 +1988,6 @@ public class MalfunctionDiagnosticMethod {
     }
 
 
-    public void saveVehicleMotionChangeTime(int speed, int CompanyId, DBHelper dbHelper){
-
-        try{
-            boolean isUpdate = false;
-            JSONArray eventArray = getUnidentifiedLogoutArray(CompanyId, dbHelper);
-            JSONObject eventObj = null;
-            if(eventArray.length() > 0) {
-                eventObj = (JSONObject) eventArray.get(eventArray.length() - 1);
-
-                if (speed <= 0) {
-
-                    DateTime EndDateTime = Globally.GetCurrentUTCDateTime();
-                    DateTime StartDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.StartDateTime), false);
-                    long minDiff = Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
-
-                    eventObj.put(ConstantsKeys.EndDateTime, EndDateTime.toString());
-                    eventObj.put(ConstantsKeys.TotalMinutes, minDiff);
-                    eventObj.put(ConstantsKeys.IsVehicleInMotion, false);
-
-                    isUpdate = true;
-
-                }else{
-                    eventObj = new JSONObject();
-                    eventObj.put(ConstantsKeys.StartDateTime, Globally.GetCurrentUTCDateTime());
-                    eventObj.put(ConstantsKeys.EndDateTime, Globally.GetCurrentUTCDateTime());
-                    eventObj.put(ConstantsKeys.TotalMinutes, 0);
-                    eventObj.put(ConstantsKeys.IsVehicleInMotion, true);
-                }
-            }else{
-                if(speed >= 8) {
-                    eventObj = new JSONObject();
-                    eventObj.put(ConstantsKeys.StartDateTime, Globally.GetCurrentUTCDateTime());
-                    eventObj.put(ConstantsKeys.EndDateTime, Globally.GetCurrentUTCDateTime());
-                    eventObj.put(ConstantsKeys.TotalMinutes, 0);
-                    eventObj.put(ConstantsKeys.IsVehicleInMotion, true);
-                }
-            }
-
-            if(eventObj != null){
-                if(isUpdate){
-                    eventArray.put(eventArray.length()-1, eventObj);
-                }else{
-                    eventArray.put(eventObj);
-                }
-
-                UnidentifiedLogoutRecordHelper(CompanyId, dbHelper, eventArray);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
-    }
-
-
     public void saveVehicleMotionStatus(String StartOdometer, String startEngineHours, int CompanyId, String TruckID,
                                         String VIN, int vehicleSpeed, DBHelper dbHelper, Constants constants,
                                         DriverPermissionMethod driverPermissionMethod, Utils obdUtil, Context context){
@@ -2051,22 +2001,24 @@ public class MalfunctionDiagnosticMethod {
 
                 double eventDuration = 0;
 
+                String Truck = Constants.checkStringInJsonObj(eventObj, ConstantsKeys.TruckNumber);
 
-                DateTime StartDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.StartDateTime), false);
-                long minDiff = Constants.getDateTimeDuration(StartDateTime, Globally.GetCurrentUTCDateTime()).getStandardMinutes();   //Constants.getMinDiff(StartDateTime, Globally.GetCurrentJodaDateTime());
-                if(minDiff < Constants.TotalMinInADay){
+                if(TruckID.equals(Truck)) {
+                    DateTime StartDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.StartDateTime), false);
+                    long minDiff = Constants.getDateTimeDuration(StartDateTime, Globally.GetCurrentUTCDateTime()).getStandardMinutes();   //Constants.getMinDiff(StartDateTime, Globally.GetCurrentJodaDateTime());
+                    if (minDiff < Constants.TotalMinInADay) {
+                        int itemTotalMinutes = eventObj.getInt(ConstantsKeys.TotalMinutes);
+                        if (i == eventsArray.length() - 1 && vehicleSpeed >= 8 && itemTotalMinutes == 0) {
+                            DateTime EndDateTime = Globally.GetCurrentUTCDateTime();
+                            eventDuration = Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
+                        } else {
+                            eventDuration = itemTotalMinutes;
+                        }
 
-                    if(i == eventsArray.length()-1 && vehicleSpeed >= 8){
-                        DateTime EndDateTime = Globally.GetCurrentUTCDateTime();
-                        eventDuration = Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
-                    }else{
-                        eventDuration = eventObj.getInt(ConstantsKeys.TotalMinutes);
+                        TotalMinutes = TotalMinutes + eventDuration;
+
                     }
-
-                    TotalMinutes = TotalMinutes + eventDuration;
-
                 }
-
 
             }
 
@@ -2111,5 +2063,141 @@ public class MalfunctionDiagnosticMethod {
         }
 
     }
+
+
+    public void saveVehicleMotionChangeTime(String currentUtcDate, int speed, String TruckNumber, int CompanyId, DBHelper dbHelper){
+
+        try{
+            boolean isUpdate = false;
+            JSONArray eventArray = getUnidentifiedLogoutArray(CompanyId, dbHelper);
+            JSONObject eventObj = null;
+            if(eventArray.length() > 0) {
+                eventObj = (JSONObject) eventArray.get(eventArray.length() - 1);
+
+                if (speed <= 0) {
+
+                    DateTime EndDateTime = Globally.GetCurrentUTCDateTime();
+                    DateTime StartDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.StartDateTime), false);
+                    long minDiff = Constants.getDateTimeDuration(StartDateTime, EndDateTime).getStandardMinutes();
+
+                    eventObj.put(ConstantsKeys.EndDateTime, EndDateTime.toString());
+                    eventObj.put(ConstantsKeys.TotalMinutes, minDiff);
+                    eventObj.put(ConstantsKeys.IsVehicleInMotion, false);
+
+                    isUpdate = true;
+
+                }else{
+                    eventObj = new JSONObject();
+                    eventObj.put(ConstantsKeys.StartDateTime, currentUtcDate);
+                    eventObj.put(ConstantsKeys.EndDateTime, currentUtcDate);
+                    eventObj.put(ConstantsKeys.TotalMinutes, 0);
+                    eventObj.put(ConstantsKeys.IsVehicleInMotion, true);
+                }
+            }else{
+                if(speed >= 8) {
+                    eventObj = new JSONObject();
+                    eventObj.put(ConstantsKeys.StartDateTime, currentUtcDate);
+                    eventObj.put(ConstantsKeys.EndDateTime, currentUtcDate);
+                    eventObj.put(ConstantsKeys.TotalMinutes, 0);
+                    eventObj.put(ConstantsKeys.IsVehicleInMotion, true);
+                }
+            }
+
+            eventObj.put(ConstantsKeys.TruckNumber, TruckNumber);
+
+            if(eventObj != null){
+                if(isUpdate){
+                    eventArray.put(eventArray.length()-1, eventObj);
+                }else{
+                    eventArray.put(eventObj);
+                }
+
+                // save last 24 hours events only
+                eventArray = getLast24HrRecordsOnly(eventArray);
+
+                UnidentifiedLogoutRecordHelper(CompanyId, dbHelper, eventArray);
+
+                Log.d("MotionEventArray", ">>>MotionEventArray: " +eventArray);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    public void removeEventAfterClaim(DateTime date, int CompanyId, String DutyStatus, DBHelper dbHelper){
+        try {
+            JSONArray eventArray = getUnidentifiedLogoutArray(CompanyId, dbHelper);
+            String dateStr = date.toString();
+            if(dateStr.length() >= 19) {
+                dateStr = dateStr.substring(11, 19);
+            }
+
+            for(int i = 0; i < eventArray.length() ; i++){
+                JSONObject obj = (JSONObject) eventArray.get(i);
+                String StartDateTime = obj.getString(ConstantsKeys.StartDateTime);
+                DateTime eventDate = Globally.getDateTimeObj(StartDateTime, false);
+
+                if(StartDateTime.length() >= 19) {
+                    StartDateTime = StartDateTime.substring(11, 19);
+                }
+
+
+                if(eventDate.equals(date) || (dateStr.equals(StartDateTime)&& DutyStatus.equals("DR")) ){
+                    Log.d("RemoveMotionEvent", ">>>RemoveMotionEventArray: " +eventArray);
+                    eventArray.remove(i);
+                    UnidentifiedLogoutRecordHelper(CompanyId, dbHelper, eventArray);
+                    break;
+                }
+
+            }
+
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public boolean isUnidenDriving(int CompanyId, DBHelper dbHelper){
+        try{
+            JSONArray array = getUnidentifiedLogoutArray(CompanyId, dbHelper);
+            if(array.length() > 0){
+                JSONObject obj = (JSONObject) array.get(array.length()-1);
+                return obj.getBoolean(ConstantsKeys.IsVehicleInMotion);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private JSONArray getLast24HrRecordsOnly(JSONArray eventArray){
+
+        JSONArray updatedTimeArray = new JSONArray();
+        try{
+            DateTime currentTime = Globally.GetCurrentJodaDateTime();
+            for (int i = 0; i < eventArray.length() ; i++) {
+
+                JSONObject eventObj = (JSONObject) eventArray.get(i);
+                DateTime selectedDateTime = Globally.getDateTimeObj(eventObj.getString(ConstantsKeys.StartDateTime), false);
+                long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentTime).getStandardHours();
+                if (hourDiff <= 24) {
+                    updatedTimeArray.put(eventObj);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return updatedTimeArray;
+    }
+
+
 
 }

@@ -2,6 +2,7 @@ package com.constants;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
@@ -65,6 +66,7 @@ import com.models.RecapSignModel;
 import com.models.SlideMenuModel;
 import com.models.UnAssignedVehicleModel;
 import com.models.UnIdentifiedRecordModel;
+import com.models.UnidentifiedEventModel;
 import com.opencsv.CSVReader;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.CoNotificationPref;
@@ -327,6 +329,7 @@ public class Constants {
     public static int DRIVING  = 3;
     public static int ON_DUTY  = 4;
     public static int PERSONAL = 1;
+    public static int INTERMEDIATE  = 2;
 
     final int EngineUp              = 1;
     final int EngineDown            = 3;
@@ -592,6 +595,9 @@ public class Constants {
         locationObj.put(ConstantsKeys.IsSkipRecord, ListModel.getIsSkipRecord());
         locationObj.put(ConstantsKeys.LocationSource, ListModel.getLocationSource());
 
+        locationObj.put(ConstantsKeys.EngineHours, ListModel.getEngineHour());
+        locationObj.put(ConstantsKeys.Odometer, ListModel.getOdometer());
+
         jsonArray.put(locationObj);
     }
 
@@ -631,6 +637,8 @@ public class Constants {
         String IsSkipRecord = checkStringBoolInJsonObj(obj, ConstantsKeys.IsSkipRecord);
         String UnAssignedVehicleMilesId = checkIntInJsonObj(obj, ConstantsKeys.UnAssignedVehicleMilesId);
 
+        String EngHour = checkStringInJsonObj(obj, ConstantsKeys.EngineHours);
+        String odometer = checkStringInJsonObj(obj, ConstantsKeys.Odometer);
 
         locationObj.put(ConstantsKeys.ProjectId, obj.getString(ConstantsKeys.ProjectId));
         locationObj.put(ConstantsKeys.DriverId, obj.getString(ConstantsKeys.DriverId));
@@ -682,6 +690,8 @@ public class Constants {
         locationObj.put(ConstantsKeys.CoDriverName, CoDriverName);
         locationObj.put(ConstantsKeys.IsSkipRecord, IsSkipRecord);
 
+        locationObj.put(ConstantsKeys.EngineHours, EngHour);
+        locationObj.put(ConstantsKeys.Odometer, odometer);
 
         return locationObj;
     }
@@ -1952,8 +1962,8 @@ public class Constants {
                                         Globally Global, boolean isHaulException, boolean isHaulExceptionUpdate,
                                         String isAdverseException, String adverseExceptionRemark, String LocationType,
                                         String malAddInfo, boolean IsNorthCanada, boolean IsCycleChanged, String Odometer,
-                                        String CoDriverId, String CoDriverName, String Truck, String Trailer,
-                                        HelperMethods hMethods, DBHelper dbHelper) {
+                                        String CoDriverId, String CoDriverName, String Truck, String Trailer, String EngHour,
+                                        String odometer, HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
         long DriverLogId = 0;
@@ -1978,6 +1988,7 @@ public class Constants {
                 e.printStackTrace();
             }
         }
+
 
         try {
             DateTime currentDateTime = Global.getDateTimeObj(StartDeviceCurrentTime, false);
@@ -2061,7 +2072,10 @@ public class Constants {
                 Odometer,
                 CoDriverId,
                 CoDriverName,
-                "0"
+                "0",
+                EngHour,
+                odometer
+
 
         );
 
@@ -2483,8 +2497,9 @@ public class Constants {
     public JSONObject getUnIdentifiedLogJSONObj(String UnAssignedVehicleMilesId, String CompanyId, String VinNumber, String TruckTV,
                                                 String LastDutyStatus, String StatusStartTime, String StatusEndTime, String lat, String lon,
                                                 String endLat, String endLon, String StartEngineSeconds, String EndEngineSeconds,
-                                                String StartOdometer, String EndOdometer, boolean Intermediate, boolean IntermediateUpdate,
-                                                String IntermediateLogId, boolean IsUploadedUnIdenRecord, String LocationType){
+                                                String StartOdometer, String EndOdometer, boolean Intermediate,
+                                                boolean IntermediateUpdate, String IntermediateLogId,
+                                                boolean IsUploadedUnIdenRecord, String LocationType, String Origin){
         JSONObject jsonObject = new JSONObject();
         try{
             jsonObject.put(ConstantsKeys.UnAssignedVehicleMilesId,UnAssignedVehicleMilesId);
@@ -2507,6 +2522,7 @@ public class Constants {
             jsonObject.put(ConstantsKeys.IntermediateLogId, IntermediateLogId);
             jsonObject.put(ConstantsKeys.IsUploadedUnIdenRecord, IsUploadedUnIdenRecord);
             jsonObject.put(ConstantsKeys.LocationType, LocationType);
+            jsonObject.put(ConstantsKeys.Origin, Origin);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -2562,6 +2578,24 @@ public class Constants {
         return strValue;
     }
 
+
+    public static String getBeforeDecimalValues(String value) {
+
+        try{
+           if(value.contains(".")){
+               String[] array = value.split("\\.");
+               if(array.length > 0){
+                   value = array[0];
+               }
+           }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return value;
+    }
+
+
     public static String get2DecimalEngHour(Context context){
         String engHour = SharedPref.getObdEngineHours(context);
         try {
@@ -2603,21 +2637,6 @@ public class Constants {
         }
 
     }
-
-    public static String ConvertToBeforeDecimal(String value) {
-        try{
-            String[] array = value.split("\\.");
-            if(array.length> 0){
-                value = array[0];
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            return ""+value;
-        }
-
-        return value;
-    }
-
 
     public boolean isExponentialValue(String str) {
         String CHAR1 = ".";             //   check for the presence of at least one letter
@@ -2721,6 +2740,7 @@ public class Constants {
     }
 
 
+    @SuppressLint("MissingPermission")
     public static String getIMEIDeviceId(String userName, Context context) {
 
         String deviceId = "";
@@ -3453,7 +3473,9 @@ public class Constants {
                                             String DriverId, String DriverName,
                                             String reason, String DriverStatusId,
                                              List<UnIdentifiedRecordModel>  unIdentifiedRecordList,
-                                             ArrayList<String> recordSelectedList){
+                                             ArrayList<String> recordSelectedList,
+                                            MalfunctionDiagnosticMethod malfunctionDiagnosticMethod,
+                                            int offsetFromUTC, DBHelper dbHelper, Context context){
         JSONArray array = new JSONArray();
         try {
             for (int i = 0; i < unIdentifiedRecordList.size(); i++) {
@@ -3467,6 +3489,15 @@ public class Constants {
 
                     if(unIdentifiedRecordList.get(i).getStartLocationKm().length() == 0){
                         Constants.IsUnidentifiedLocMissing = true;
+                    }
+
+                    // remove that events from unidentified vehicle motion list, that was created in logout service.
+                    if(DriverId.length() > 0) {
+                        String DutyStatus = unIdentifiedRecordList.get(i).getDutyStatus();
+                        DateTime dateTime = Globally.getDateTimeObj(unIdentifiedRecordList.get(i).getStartDateTime(), false);
+                        dateTime = dateTime.minusHours(offsetFromUTC);
+                        int CompanyId = Integer.valueOf(DriverConst.GetDriverDetails(DriverConst.CompanyId, context));
+                        malfunctionDiagnosticMethod.removeEventAfterClaim(dateTime, CompanyId, DutyStatus, dbHelper);
                     }
                 }
             }
@@ -3482,7 +3513,9 @@ public class Constants {
 
     public static JSONArray getRejectRecordsInArray(String DriverId, String reason,
                                               List<UnIdentifiedRecordModel>  unIdentifiedRecordList,
-                                              ArrayList<String> recordSelectedList){
+                                              ArrayList<String> recordSelectedList,
+                                                    MalfunctionDiagnosticMethod malfunctionDiagnosticMethod,
+                                                    int offsetFromUTC, DBHelper dbHelper, Context context){
         JSONArray array = new JSONArray();
         try {
             for (int i = 0; i < unIdentifiedRecordList.size(); i++) {
@@ -3490,6 +3523,18 @@ public class Constants {
                     if(!unIdentifiedRecordList.get(i).isCompanyAssigned()) {
                         JSONObject obj = Constants.getRejectedRecordInputs(DriverId, unIdentifiedRecordList.get(i).getUnAssignedVehicleMilesId(), reason);
                         array.put(obj);
+
+
+                        // remove that events from unidentified vehicle motion list, that was created in logout service.
+                        if(DriverId.length() > 0) {
+                            String DutyStatus = unIdentifiedRecordList.get(i).getDutyStatus();
+                            DateTime dateTime = Globally.getDateTimeObj(unIdentifiedRecordList.get(i).getStartDateTime(), false);
+                            dateTime = dateTime.minusHours(offsetFromUTC);
+                            int CompanyId = Integer.valueOf(DriverConst.GetDriverDetails(DriverConst.CompanyId, context));
+                            malfunctionDiagnosticMethod.removeEventAfterClaim(dateTime, CompanyId, DutyStatus, dbHelper);
+                        }
+
+
                     }
                 }
             }
@@ -3816,7 +3861,7 @@ public class Constants {
 
 
 
-    public List<CanadaDutyStatusModel> parseCanadaLogoutLoginList(JSONArray logArray){
+   /* public List<CanadaDutyStatusModel> parseCanadaLogoutLoginList(JSONArray logArray){
 
         List<CanadaDutyStatusModel> dotLogList = new ArrayList<>();
 
@@ -3841,7 +3886,39 @@ public class Constants {
 
         return dotLogList;
     }
+*/
+    public List<CanadaDutyStatusModel> parseCanadaLogoutLoginList(JSONArray logArray){
 
+        List<CanadaDutyStatusModel> dotLogList = new ArrayList<>();
+
+        try {
+            JSONArray afterSplitdateWiseArray = new JSONArray();
+            for (int i = 0; i < logArray.length(); i++) {
+                JSONObject obj = (JSONObject) logArray.get(i);
+                JSONArray dateWiseArray = new JSONArray(obj.getString("loginAndLogoutDateObjectList"));
+                for(int j  =0  ; j < dateWiseArray.length() ; j++){
+                    JSONObject object = (JSONObject) dateWiseArray.get(j);
+                    if(!object.getBoolean("IsUnidentified")){
+                        afterSplitdateWiseArray.put(object);
+                    }
+                }
+                parseData(afterSplitdateWiseArray, dotLogList, false);
+            }
+
+
+            if(dotLogList.size() > 0){
+                CanadaDutyStatusModel model = dotLogList.get(dotLogList.size()-1);
+                model.setHeaderViewCount(logArray.length());
+                dotLogList.set(dotLogList.size()-1, model);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        return dotLogList;
+    }
 
     public List<CanadaDutyStatusModel> parseCanadaDotInList(JSONArray logArray, boolean isSorting){
 
@@ -4013,7 +4090,8 @@ public class Constants {
                     CheckDateFormat(obj.getString(ConstantsKeys.EditDateTime)),
                     CheckDateFormat(obj.getString(ConstantsKeys.CertifyLogDate)),
                     IsNewDate,
-                    0
+                    0,
+                    obj.getBoolean(ConstantsKeys.IsUnidentified)
 
             );
 
@@ -4528,6 +4606,7 @@ public class Constants {
 
 
                 } else {
+
                     if (source.equals(ApiData) || source.equals(OfflineData)) {
                         obj.put(obdDetail, obdOdometerInMeter);
                         obj.put(LastRecordTime, timeStamp);
@@ -4535,20 +4614,24 @@ public class Constants {
                         obj.put(CurrentLogDate, Globally.GetCurrentDateTime());
                     }
 
-                    if(speedCalculated.length() > 0 && !speedCalculated.equals("-1")) {
-                        obj.put(calculatedSpeed, speedCalculated);
+                    if(!vin.contains("BLE - ConnectionError")) {
+                        if (speedCalculated.length() > 0 && !speedCalculated.equals("-1")) {
+                            obj.put(calculatedSpeed, speedCalculated);
+                        }
+                        obj.put(obdSpeed, speed);
                     }
 
-                    obj.put(obdSpeed, speed);
                     obj.put(obdVINNumber, vin);
+
                 }
 
-                obj.put(obdEngineHours, EngineHours);
-                obj.put(obdIgnitionStatus, ignition);
-                obj.put(obdRPM, rpm);
-              //  obj.put(apiReturnedSpeed, apiReturnedSpeed);
-                obj.put(ConstantsKeys.Latitude, Globally.LATITUDE);
-                obj.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+                if(!vin.contains("BLE - ConnectionError")) {
+                    obj.put(obdEngineHours, EngineHours);
+                    obj.put(obdIgnitionStatus, ignition);
+                    obj.put(obdRPM, rpm);
+                    obj.put(ConstantsKeys.Latitude, Globally.LATITUDE);
+                    obj.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+                }
 
                 Globally.OBD_DataArray.put(obj);
                 obdUtil.writeToLogFile(obj.toString());
@@ -4749,7 +4832,7 @@ public class Constants {
         SharedPref.saveEngSyncMalfunctionStatus(false, context);
         SharedPref.savePowerMalfunctionOccurStatus(false, false, "", context);
         SharedPref.saveLocMalfunctionOccurStatus(false, "", "", context);
-
+        SharedPref.saveMissingDiaStatus(false, context);
     }
 
 
@@ -4897,6 +4980,21 @@ public class Constants {
                 }
                 break;
 
+            case 9:
+                if (EventCode == DRIVING || EventCode == INTERMEDIATE)
+                {
+                    event = "DR";
+                }
+                else if (EventCode == ON_DUTY)
+                {
+                    event = "ON";
+                }
+                else if (EventCode == OFF_DUTY)
+                {
+                    event = "OFF";
+                }
+
+                break;
 
             default:
                 event = "" +EventType;
@@ -5029,21 +5127,165 @@ public class Constants {
     }
 
 
+    public ArrayList<UnidentifiedEventModel> getUnidentifiedEventList(String date, int DaysDiff, JSONArray eventArray){
+        // JSONArray unidentifiedEventArray = new JSONArray();
+        ArrayList<UnidentifiedEventModel> unidentifiedEventList = new ArrayList<>();
+
+        boolean isCurrentDay = true;
+        if(DaysDiff != 0){
+            isCurrentDay = false;
+        }
+
+        try{
+            for(int i = 0 ; i < eventArray.length() ; i ++){
+                JSONObject obj = (JSONObject)eventArray.get(i);
+                int EventType = obj.getInt("EventType");
+
+                if (i == 0) {
+
+                    if(EventType != 9) {
+
+                        if (eventArray.length() > 1) {
+                            JSONObject nextObj = (JSONObject) eventArray.get(i + 1);
+                            unidentifiedEventList.add(getUnidentifiedModel(date, nextObj.getString(ConstantsKeys.DateTimeWithMins),
+                                    9, 1));
+
+                        } else {
+                            String endDateTime = date;
+                            if (!isCurrentDay) {
+                                if (date.length() > 16 && date.substring(11, 16).equals("00:00")) {
+                                    endDateTime = date.substring(0, 11) + "23:59:59";
+                                }
+                            } else {
+                                endDateTime = Globally.GetCurrentDateTime();
+                            }
+                            unidentifiedEventList.add(getUnidentifiedModel(date, endDateTime,9, 1));
+                        }
+
+                    }else{
+                        unidentifiedEventList.add(getUnidentifiedModel(
+                                obj.getString(ConstantsKeys.DateTimeWithMins),
+                                obj.getString(ConstantsKeys.EndDateTime),
+                                obj.getInt(ConstantsKeys.EventType),
+                                obj.getInt(ConstantsKeys.EventCode)) );
+
+                    }
+
+                }else{
+
+                    if(date.equals(obj.getString(ConstantsKeys.DateTimeWithMins))){
+                        int pos = unidentifiedEventList.size()-1;
+                        String endDateTime = Globally.GetCurrentDateTime();
+
+                        if(!isCurrentDay){
+                            if (date.length() > 16 && date.substring(11, 16).equals("00:00")) {
+                                endDateTime = date.substring(0, 11) + "23:59:59";
+                            }
+                        }
+
+                        UnidentifiedEventModel model = getUnidentifiedModel(
+                                unidentifiedEventList.get(pos).getStartTime(),
+                                endDateTime,
+                                unidentifiedEventList.get(pos).getEventType(),
+                                unidentifiedEventList.get(pos).getEventCode());
+
+                        unidentifiedEventList.set(unidentifiedEventList.size()-1, model);
+                        break;
+                    }else {
+                        if (i == eventArray.length() - 1) {
+
+                            if (isCurrentDay) {
+
+                                unidentifiedEventList.add(getUnidentifiedModel(
+                                        obj.getString(ConstantsKeys.DateTimeWithMins),
+                                        obj.getString(ConstantsKeys.EndDateTime),
+                                        obj.getInt(ConstantsKeys.EventType),
+                                        obj.getInt(ConstantsKeys.EventCode)));
+
+
+                                // add 1 more obj at last to cover up to current time
+                                unidentifiedEventList.add(getUnidentifiedModel(
+                                        obj.getString(ConstantsKeys.EndDateTime),
+                                        Globally.GetCurrentDateTime(), 9, 1));
+
+
+                            } else {
+                                String endDateTime = date;
+                                if (date.length() > 16 && date.substring(11, 16).equals("00:00")) {
+                                    endDateTime = date.substring(0, 11) + "23:59:59";
+                                }
+
+
+                                if (obj.getString(ConstantsKeys.EndDateTime).equals(endDateTime)) {
+                                    unidentifiedEventList.add(getUnidentifiedModel(
+                                            obj.getString(ConstantsKeys.DateTimeWithMins),
+                                            endDateTime,
+                                            obj.getInt(ConstantsKeys.EventType),
+                                            obj.getInt(ConstantsKeys.EventCode)));
+
+
+                                } else {
+                                    unidentifiedEventList.add(getUnidentifiedModel(
+                                            obj.getString(ConstantsKeys.DateTimeWithMins),
+                                            obj.getString(ConstantsKeys.EndDateTime),
+                                            obj.getInt(ConstantsKeys.EventType),
+                                            obj.getInt(ConstantsKeys.EventCode)));
+
+
+                                    // add 1 more obj at last to fill graph upto 24 hour
+                                    unidentifiedEventList.add(getUnidentifiedModel(
+                                            obj.getString(ConstantsKeys.EndDateTime),
+                                            endDateTime, 9, 1));
+
+
+                                }
+
+                            }
+                        } else {
+                            JSONObject nextObj = (JSONObject) eventArray.get(i + 1);
+
+                            unidentifiedEventList.add(getUnidentifiedModel(
+                                    obj.getString(ConstantsKeys.DateTimeWithMins),
+                                    obj.getString(ConstantsKeys.EndDateTime),
+                                    obj.getInt(ConstantsKeys.EventType),
+                                    obj.getInt(ConstantsKeys.EventCode)));
+
+
+                            String nextStartTime = nextObj.getString(ConstantsKeys.DateTimeWithMins);
+                            String currObjEndTime = obj.getString(ConstantsKeys.EndDateTime);
+                            if (!nextStartTime.equals(currObjEndTime)) {
+
+                                // add 1 more obj to fill blank space in graph
+                                unidentifiedEventList.add(getUnidentifiedModel(
+                                        currObjEndTime,
+                                        nextStartTime,
+                                        9,
+                                        1));
+
+
+                            }
+
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return unidentifiedEventList;
+    }
+
+
+    private UnidentifiedEventModel getUnidentifiedModel(String startTime, String endTime,
+                                                        int EventType, int EventCode){
+        return new UnidentifiedEventModel(startTime, endTime, EventType, EventCode);
+    }
+
+
     // calculate speed from wired truck odometers data (in meters) with time difference (in sec)
     public double calculateSpeedFromWiredTabOdometer(String savedTime, String currentDate, String previousHighPrecisionOdometer,
                                                      String currentHighPrecisionOdometer, Context context){
-
-       /* double pre = 1090031400;
-        double curr = 1090031465;
-        String previousHighPrecision = Double.toString(pre);
-        String curreHighPre = Double.toString(curr);
-        double pre1=  Double.parseDouble(previousHighPrecision);
-        double curr1 =  Double.parseDouble(curreHighPre);
-
-        double speedInKm = -1;
-        double odometerDistance = curr1 - pre1; //Double.parseDouble(currentHighPrecisionOdometer) - Double.parseDouble(previousHighPrecisionOdometer);
-*/
-
 
         double speedInKm = -1;
         double odometerDistance = Double.parseDouble(currentHighPrecisionOdometer) - Double.parseDouble(previousHighPrecisionOdometer);

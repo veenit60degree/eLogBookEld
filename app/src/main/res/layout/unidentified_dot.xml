@@ -1,94 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/bgColor"
-
-
     >
-
-
-    <include
-        android:id="@+id/canadaDotActionBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/actionbar_eld"
-        />
-
-
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/canDotScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none"
-        android:layout_below="@+id/canadaDotActionBar"
-        android:background="@color/dot_titles_bg"
-        >
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/margin_10"
-        android:paddingRight="@dimen/margin_10"
-        android:background="?attr/dot_titles_bg"
-
-        >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_60"
-            android:background="?attr/bgColor"
-            android:layout_marginTop="@dimen/margin_10"
-
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/color_eld_theme"
-                android:textSize="@dimen/text_size_22"
-                android:text="@string/ELDViewLogCanada"
-                android:paddingLeft="@dimen/margin_15"
-                android:background="?attr/bgColor"
-                android:textStyle="bold"
-                android:layout_centerVertical="true"
-
-
-                />
-
-
-            <lib.kingja.switchbutton.SwitchMultiButton
-                android:id="@+id/canDotSwitchBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:backgroundTint="?attr/bgColor"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_8"
-                android:paddingRight="@dimen/margin_10"
-                android:paddingBottom="@dimen/margin_short_8"
-                app:selectedColor="@color/colorPrimary"
-                app:selectedTab="1"
-                app:strokeRadius="@dimen/margin_short_5"
-                app:strokeWidth="@dimen/margin_short_1"
-                app:switchTabs="@array/switch_tabs"
-
-                app:textSize="@dimen/text_size_14" />
-
-
-
-
-        </RelativeLayout>
-
-
-
-
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -157,7 +72,7 @@
         >
 
         <TextView
-            android:id="@+id/dateRodsTV"
+            android:id="@+id/unIdnfddateRodsTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_14"
@@ -168,7 +83,7 @@
 
 
         <TextView
-            android:id="@+id/dayStartTimeTV"
+            android:id="@+id/unIdnfddayStartTimeTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_14"
@@ -179,7 +94,7 @@
 
 
         <TextView
-            android:id="@+id/timeZoneCTV"
+            android:id="@+id/unIdnfdtimeZoneCTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_14"
@@ -262,7 +177,7 @@
         >
 
         <TextView
-            android:id="@+id/currLocCTV"
+            android:id="@+id/unIdnfdcurrLocCTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_14"
@@ -272,7 +187,7 @@
             />
 
         <TextView
-            android:id="@+id/commentCTV"
+            android:id="@+id/unIdnfdcommentCTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_14"
@@ -283,7 +198,7 @@
 
 
         <TextView
-            android:id="@+id/dateTimeCTV"
+            android:id="@+id/unIdnfddateTimeCTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_14"
@@ -367,7 +282,7 @@
 
 
         <TextView
-            android:id="@+id/driverNameCTV"
+            android:id="@+id/unIdnfddriverNameCTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_14"
@@ -378,7 +293,7 @@
 
 
         <TextView
-            android:id="@+id/driverIdCTV"
+            android:id="@+id/unIdnfddriverIdCTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_14"
@@ -389,7 +304,7 @@
 
 
         <TextView
-            android:id="@+id/exemptDriverCTV"
+            android:id="@+id/unIdnfdexemptDriverCTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_14"
@@ -406,7 +321,7 @@
 
 
 
- <LinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -415,51 +330,51 @@
 
 
 
-     >
+        >
 
 
-     <TextView
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:layout_weight="1"
-         android:paddingRight="@dimen/margin_short_6"
-         android:text="@string/DriverLicenceNo_jur"
-         android:textColor="?attr/color_eld_theme"
-         android:textSize="@dimen/text_size_15"
-         android:textStyle="bold"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="@dimen/margin_short_6"
+            android:text="@string/DriverLicenceNo_jur"
+            android:textColor="?attr/color_eld_theme"
+            android:textSize="@dimen/text_size_15"
+            android:textStyle="bold"
 
-         />
+            />
 
-     <TextView
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:textSize="@dimen/text_size_15"
-         android:textColor="?attr/color_eld_theme"
-         android:text="@string/CoDriverName"
-         android:textStyle="bold"
-         android:layout_weight="1"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="?attr/color_eld_theme"
+            android:text="@string/CoDriverName"
+            android:textStyle="bold"
+            android:layout_weight="1"
 
-         />
-
-
-     <TextView
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:textSize="@dimen/text_size_15"
-         android:textColor="?attr/color_eld_theme"
-         android:text="@string/CoDriverID"
-         android:textStyle="bold"
-         android:layout_weight="1"
-
-         />
+            />
 
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="?attr/color_eld_theme"
+            android:text="@string/CoDriverID"
+            android:textStyle="bold"
+            android:layout_weight="1"
 
- </LinearLayout>
+            />
 
 
 
-            <LinearLayout
+    </LinearLayout>
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -468,41 +383,115 @@
 
 
 
-           >
+        >
 
+
+        <TextView
+            android:id="@+id/unIdnfddriLicNoCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="?attr/color_eld_theme"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/unIdnfdcoDriverNameCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="?attr/color_eld_theme"
+            android:layout_weight="1"
+
+            />
+
+
+        <TextView
+            android:id="@+id/unIdnfdcoDriverIdCTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="?attr/color_eld_theme"
+            android:layout_weight="1"
+
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/unIdnfdcanDotViewMorelay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+
+        >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/dot_list_bg_color"
+            android:padding="@dimen/margin_short_6"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="?attr/color_eld_theme"
+                android:text="@string/PowerUnitNumber"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="?attr/color_eld_theme"
+                android:text="@string/VINPowerUnit"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
 
                 <TextView
-                    android:id="@+id/driLicNoCTV"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_14"
+                    android:textSize="@dimen/text_size_15"
                     android:textColor="?attr/color_eld_theme"
-                    android:layout_weight="1"
+                    android:text="@string/TotalVehDistance"
+                    android:textStyle="bold"
+
 
                     />
 
 
                 <TextView
-                    android:id="@+id/coDriverNameCTV"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_14"
+                    android:textSize="@dimen/text_size_10"
                     android:textColor="?attr/color_eld_theme"
-                    android:layout_weight="1"
+                    android:text="@string/startEnd"
+                    android:layout_marginLeft="@dimen/margin_short_3"
+
 
                     />
-
-
-                <TextView
-                    android:id="@+id/coDriverIdCTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_14"
-                    android:textColor="?attr/color_eld_theme"
-                    android:layout_weight="1"
-
-                    />
-
 
             </LinearLayout>
 
@@ -510,242 +499,164 @@
 
 
 
-        <LinearLayout
-            android:id="@+id/canDotViewMorelay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-
-            >
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="?attr/dot_list_bg_color"
-        android:padding="@dimen/margin_short_6"
-        >
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_15"
-            android:textColor="?attr/color_eld_theme"
-            android:text="@string/PowerUnitNumber"
-            android:textStyle="bold"
-            android:layout_weight="1"
-
-            />
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_15"
-            android:textColor="?attr/color_eld_theme"
-            android:text="@string/VINPowerUnit"
-            android:textStyle="bold"
-            android:layout_weight="1"
-
-            />
+        </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_weight="1"
+            android:background="?attr/bgColor"
+            android:padding="@dimen/margin_short_6"
+
+
             >
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/unIdnfdtruckTractorIdTV"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_15"
+                android:textSize="@dimen/text_size_14"
                 android:textColor="?attr/color_eld_theme"
-                android:text="@string/TotalVehDistance"
-                android:textStyle="bold"
-
+                android:layout_weight="1"
 
                 />
 
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/unIdnfdtruckTractorVinTV"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_10"
+                android:textSize="@dimen/text_size_14"
                 android:textColor="?attr/color_eld_theme"
-                android:text="@string/startEnd"
-                android:layout_marginLeft="@dimen/margin_short_3"
-
+                android:layout_weight="1"
 
                 />
+
+
+            <TextView
+                android:id="@+id/unIdnfdtotalDisCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="?attr/color_eld_theme"
+                android:layout_weight="1"
+
+                />
+
+
+
+
 
         </LinearLayout>
 
 
 
 
-
-
-
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="?attr/bgColor"
-        android:padding="@dimen/margin_short_6"
-
-
-        >
-
-        <TextView
-            android:id="@+id/truckTractorIdTV"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_14"
-            android:textColor="?attr/color_eld_theme"
-            android:layout_weight="1"
-
-            />
+            android:orientation="horizontal"
+            android:background="?attr/dot_list_bg_color"
+            android:padding="@dimen/margin_short_6"
 
 
-        <TextView
-            android:id="@+id/truckTractorVinTV"
+
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="?attr/color_eld_theme"
+                android:text="@string/DistanceToday"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="?attr/color_eld_theme"
+                android:text="@string/CurrentTotalDistance"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="?attr/color_eld_theme"
+                android:text="@string/CurrentTotalEngineHr"
+                android:textStyle="bold"
+                android:layout_weight="1"
+
+                />
+
+
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_14"
-            android:textColor="?attr/color_eld_theme"
-            android:layout_weight="1"
-
-            />
+            android:orientation="horizontal"
+            android:background="?attr/bgColor"
+            android:padding="@dimen/margin_short_6"
 
 
-        <TextView
-            android:id="@+id/totalDisCTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_14"
-            android:textColor="?attr/color_eld_theme"
-            android:layout_weight="1"
-
-            />
+            >
 
 
+            <TextView
+                android:id="@+id/unIdnfddistanceTodayCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="?attr/color_eld_theme"
+                android:layout_weight="1"
+
+                />
 
 
+            <TextView
+                android:id="@+id/unIdnfdcurrTotalDisTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="?attr/color_eld_theme"
+                android:layout_weight="1"
 
-    </LinearLayout>
-
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="?attr/dot_list_bg_color"
-        android:padding="@dimen/margin_short_6"
+                />
 
 
+            <TextView
+                android:id="@+id/unIdnfdcurrTotalEngTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="?attr/color_eld_theme"
+                android:layout_weight="1"
 
-        >
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_15"
-            android:textColor="?attr/color_eld_theme"
-            android:text="@string/DistanceToday"
-            android:textStyle="bold"
-            android:layout_weight="1"
-
-            />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_15"
-            android:textColor="?attr/color_eld_theme"
-            android:text="@string/CurrentTotalDistance"
-            android:textStyle="bold"
-            android:layout_weight="1"
-
-            />
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_15"
-            android:textColor="?attr/color_eld_theme"
-            android:text="@string/CurrentTotalEngineHr"
-            android:textStyle="bold"
-            android:layout_weight="1"
-
-            />
+                />
 
 
 
 
 
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="?attr/bgColor"
-        android:padding="@dimen/margin_short_6"
-
-
-        >
-
-
-        <TextView
-            android:id="@+id/distanceTodayCTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_14"
-            android:textColor="?attr/color_eld_theme"
-            android:layout_weight="1"
-
-            />
-
-
-        <TextView
-            android:id="@+id/currTotalDisTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_14"
-            android:textColor="?attr/color_eld_theme"
-            android:layout_weight="1"
-
-            />
-
-
-        <TextView
-            android:id="@+id/currTotalEngTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_14"
-            android:textColor="?attr/color_eld_theme"
-            android:layout_weight="1"
-
-            />
-
-
-
-
-
-    </LinearLayout>
+        </LinearLayout>
 
 
 
@@ -794,16 +705,16 @@
                 android:layout_weight="1"
                 >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_15"
-                android:textColor="?attr/color_eld_theme"
-                android:text="@string/HomeTer"
-                android:textStyle="bold"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_15"
+                    android:textColor="?attr/color_eld_theme"
+                    android:text="@string/HomeTer"
+                    android:textStyle="bold"
 
 
-                />
+                    />
 
 
                 <TextView
@@ -838,7 +749,7 @@
             >
 
             <TextView
-                android:id="@+id/trailerIdCTV"
+                android:id="@+id/unIdnfdtrailerIdCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -849,7 +760,7 @@
 
 
             <TextView
-                android:id="@+id/carrierNameCTV"
+                android:id="@+id/unIdnfdcarrierNameCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -861,7 +772,7 @@
 
 
             <TextView
-                android:id="@+id/carrierHomeTerCTV"
+                android:id="@+id/unIdnfdcarrierHomeTerCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -994,7 +905,7 @@
             >
 
             <TextView
-                android:id="@+id/carrierPrinPlaceCTV"
+                android:id="@+id/unIdnfdcarrierPrinPlaceCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1005,7 +916,7 @@
 
 
             <TextView
-                android:id="@+id/currOperZoneCTV"
+                android:id="@+id/unIdnfdcurrOperZoneCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/margin_short_2"
@@ -1016,7 +927,7 @@
                 />
 
             <TextView
-                android:id="@+id/curreCycleCTV"
+                android:id="@+id/unIdnfdcurreCycleCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1034,166 +945,166 @@
 
 
 
-           <LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="?attr/dot_list_bg_color"
-               android:padding="@dimen/margin_short_6"
+            android:padding="@dimen/margin_short_6"
 
 
             >
 
 
-               <LinearLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:orientation="horizontal"
-                   android:layout_weight="1"
-                   >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
 
-                   <TextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:textSize="@dimen/text_size_15"
-                       android:textColor="?attr/color_eld_theme"
-                       android:text="@string/total_hrs"
-                       android:textStyle="bold"
-
-
-                       />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_15"
+                    android:textColor="?attr/color_eld_theme"
+                    android:text="@string/total_hrs"
+                    android:textStyle="bold"
 
 
-                   <TextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:textSize="@dimen/text_size_10"
-                       android:textColor="?attr/color_eld_theme"
-                       android:text="@string/total_hrs_in_work"
-                       android:layout_marginLeft="@dimen/margin_short_3"
+                    />
 
 
-                       />
-
-               </LinearLayout>
-
-
-
-
-               <LinearLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:orientation="horizontal"
-                   android:layout_weight="1"
-                   >
-
-                   <TextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:textSize="@dimen/text_size_15"
-                       android:textColor="?attr/color_eld_theme"
-                       android:text="@string/total_hrs"
-                       android:textStyle="bold"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_10"
+                    android:textColor="?attr/color_eld_theme"
+                    android:text="@string/total_hrs_in_work"
+                    android:layout_marginLeft="@dimen/margin_short_3"
 
 
-                       />
+                    />
 
-
-                   <TextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:textSize="@dimen/text_size_10"
-                       android:textColor="?attr/color_eld_theme"
-                       android:text="@string/in_cycle"
-                       android:layout_marginLeft="@dimen/margin_short_3"
-
-
-                       />
-
-               </LinearLayout>
-               <LinearLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:orientation="horizontal"
-                   android:layout_weight="1"
-                   >
-
-                   <TextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:textSize="@dimen/text_size_15"
-                       android:textColor="?attr/color_eld_theme"
-                       android:text="@string/remaining_hrs"
-                       android:textStyle="bold"
-
-
-                       />
-
-
-                   <TextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:textSize="@dimen/text_size_10"
-                       android:textColor="?attr/color_eld_theme"
-                       android:text="@string/in_cycle"
-                       android:layout_marginLeft="@dimen/margin_short_3"
-
-
-                       />
-
-               </LinearLayout>
-
-
-           </LinearLayout>
+            </LinearLayout>
 
 
 
-      <LinearLayout
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_15"
+                    android:textColor="?attr/color_eld_theme"
+                    android:text="@string/total_hrs"
+                    android:textStyle="bold"
+
+
+                    />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_10"
+                    android:textColor="?attr/color_eld_theme"
+                    android:text="@string/in_cycle"
+                    android:layout_marginLeft="@dimen/margin_short_3"
+
+
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_15"
+                    android:textColor="?attr/color_eld_theme"
+                    android:text="@string/remaining_hrs"
+                    android:textStyle="bold"
+
+
+                    />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_10"
+                    android:textColor="?attr/color_eld_theme"
+                    android:text="@string/in_cycle"
+                    android:layout_marginLeft="@dimen/margin_short_3"
+
+
+                    />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="?attr/bgColor"
-          android:padding="@dimen/margin_short_6"
+            android:padding="@dimen/margin_short_6"
 
             >
 
 
 
-          <TextView
-              android:id="@+id/totalHrsCTV"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textSize="@dimen/text_size_14"
-              android:textColor="?attr/color_eld_theme"
-              android:layout_weight="1"
+            <TextView
+                android:id="@+id/unIdnfdtotalHrsCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="?attr/color_eld_theme"
+                android:layout_weight="1"
 
-              />
-
-
-          <TextView
-              android:id="@+id/totalhrsCycleCTV"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textSize="@dimen/text_size_14"
-              android:textColor="?attr/color_eld_theme"
-              android:layout_weight="1"
-
-              />
+                />
 
 
-          <TextView
-              android:id="@+id/remainingHourCTV"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textSize="@dimen/text_size_14"
-              android:textColor="?attr/color_eld_theme"
-              android:layout_weight="1"
+            <TextView
+                android:id="@+id/unIdnfdtotalhrsCycleCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="?attr/color_eld_theme"
+                android:layout_weight="1"
 
-              />
+                />
+
+
+            <TextView
+                android:id="@+id/unIdnfdremainingHourCTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="?attr/color_eld_theme"
+                android:layout_weight="1"
+
+                />
 
 
 
-      </LinearLayout>
+        </LinearLayout>
 
 
 
@@ -1262,7 +1173,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_15"
                 android:textColor="?attr/color_eld_theme"
-                android:text="@string/UnIdentifiedDrivingRecords"
+                android:text="@string/UnidentifiedDriverRecords"
                 android:textStyle="bold"
                 android:layout_weight="1"
 
@@ -1283,7 +1194,7 @@
             >
 
             <TextView
-                android:id="@+id/offDutyDeffCTV"
+                android:id="@+id/unIdnfdoffDutyDeffCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1294,7 +1205,7 @@
 
 
             <TextView
-                android:id="@+id/datDiagCTV"
+                android:id="@+id/unIdnfddatDiagCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1305,7 +1216,7 @@
 
 
             <TextView
-                android:id="@+id/unIdenDriRecCTV"
+                android:id="@+id/UnunIdenDriRecCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1390,7 +1301,7 @@
             >
 
             <TextView
-                android:id="@+id/malfStatusCTV"
+                android:id="@+id/unIdnfdmalfStatusCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1401,7 +1312,7 @@
 
 
             <TextView
-                android:id="@+id/eldIdCTV"
+                android:id="@+id/unIdnfdeldIdCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1412,7 +1323,7 @@
 
 
             <TextView
-                android:id="@+id/eldProviderCTV"
+                android:id="@+id/unIdnfdeldProviderCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1481,7 +1392,7 @@
             >
 
             <TextView
-                android:id="@+id/eldCerCTV"
+                android:id="@+id/unIdnfdeldCerCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1492,7 +1403,7 @@
 
 
             <TextView
-                android:id="@+id/eldAuthCTV"
+                android:id="@+id/unIdnfdeldAuthCTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_14"
@@ -1513,414 +1424,248 @@
 
 
 
-        </LinearLayout>
+    </LinearLayout>
 
+
+
+    <TextView
+        android:id="@+id/unIdnfdviewMoreTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/hos_location"
+        android:textSize="@dimen/text_size_16"
+        android:layout_gravity="right"
+        android:padding="@dimen/margin_10"
+        android:text="@string/view_more"
+        android:textStyle="bold"
+
+        />
+
+    <RelativeLayout
+        android:id="@+id/unIdnfdcanGraphLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/view_height_190"
+        android:minWidth="@dimen/view_height_500"
+        android:minHeight="@dimen/view_height_140"
+        android:layout_marginTop="@dimen/margin_short_4"
+        android:layout_marginBottom="@dimen/margin_short_5"
+
+        >
+
+        <WebView
+            android:id="@+id/unIdnfdcanDotGraphWebView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_190"
+            android:fillViewport="true"
+            android:minWidth="@dimen/view_height_500"
+            android:minHeight="@dimen/view_height_140"
+
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/bgColor"
+        android:padding="@dimen/margin_short_6"
+        android:paddingLeft="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_10"
+        >
 
 
         <TextView
-            android:id="@+id/viewMoreTV"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/hos_location"
+            android:paddingTop="@dimen/margin_short_3"
+            android:paddingBottom="@dimen/margin_10"
+            android:paddingLeft="@dimen/margin_10"
+            android:text="@string/duty_status_change_desc"
+            android:textColor="?attr/blue_button"
             android:textSize="@dimen/text_size_16"
-            android:layout_gravity="right"
-            android:padding="@dimen/margin_10"
-            android:text="@string/view_more"
             android:textStyle="bold"
 
             />
 
-
-        <RelativeLayout
-            android:id="@+id/canGraphLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_190"
-            android:minWidth="@dimen/view_height_500"
-            android:minHeight="@dimen/view_height_140"
-            android:layout_marginTop="@dimen/margin_short_4"
-            android:layout_marginBottom="@dimen/margin_short_5"
-
-            >
-
-            <WebView
-                android:id="@+id/canDotGraphWebView"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/view_height_190"
-                android:fillViewport="true"
-                android:minWidth="@dimen/view_height_500"
-                android:minHeight="@dimen/view_height_140"
-
-                />
-
-        </RelativeLayout>
-
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?attr/bgColor"
-            android:padding="@dimen/margin_short_6"
-            android:paddingLeft="@dimen/margin_10"
-            android:layout_marginTop="@dimen/margin_10"
-            >
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/margin_short_3"
-                android:paddingBottom="@dimen/margin_10"
-                android:paddingLeft="@dimen/margin_10"
-                android:text="@string/duty_status_change_desc"
-                android:textColor="?attr/blue_button"
-                android:textSize="@dimen/text_size_16"
-                android:textStyle="bold"
-
-                />
-
-            <include
-                layout="@layout/item_duty_status_change_dot"
-                />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/dutyChangeDotListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-
-
-                />
-
-
-        </LinearLayout>
-
-
-
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?attr/bgColor"
-            android:padding="@dimen/margin_short_6"
-            android:layout_marginTop="@dimen/margin_10"
-
-            >
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_16"
-                android:textColor="?attr/blue_button"
-                android:text="@string/login_logout_desc"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_3"
-                android:paddingBottom="@dimen/margin_10"
-                android:textStyle="bold"
-
-                />
-
-            <include
-                layout="@layout/item_login_logout_dot"
-                />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/loginLogDotListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-
-
-                />
-
-
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?attr/bgColor"
-            android:padding="@dimen/margin_short_6"
-            android:layout_marginTop="@dimen/margin_10"
-
-            >
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_16"
-                android:textColor="?attr/blue_button"
-                android:text="@string/change_cycle_duty_def"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_3"
-                android:paddingBottom="@dimen/margin_10"
-                android:textStyle="bold"
-
-                />
-
-            <include
-                layout="@layout/item_cycle_op_zone_dot"
-                />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/addHrsDotListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-
-
-                />
-
-
-        </LinearLayout>
-
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?attr/bgColor"
-            android:padding="@dimen/margin_short_6"
-            android:layout_marginTop="@dimen/margin_10"
-
-            >
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_16"
-                android:textColor="?attr/blue_button"
-                android:text="@string/comments_remarks_desc"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_3"
-                android:paddingBottom="@dimen/margin_10"
-                android:textStyle="bold"
-
-                />
-
-            <include
-                layout="@layout/item_remarks_ano_dot"
-                />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/remAnotnDotListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-
-
-                />
-
-
-        </LinearLayout>
-
-
-
-
-
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?attr/bgColor"
-            android:padding="@dimen/margin_short_6"
-            android:layout_marginTop="@dimen/margin_10"
-
-            >
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_16"
-                android:textColor="?attr/blue_button"
-                android:text="@string/EnginePower_desc"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_3"
-                android:paddingBottom="@dimen/margin_10"
-                android:textStyle="bold"
-
-                />
-
-            <include
-                layout="@layout/item_engine_power_dot"
-                />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/enginePwrDotListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-
-                />
-
-
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?attr/bgColor"
-            android:padding="@dimen/margin_short_6"
-            android:layout_marginTop="@dimen/margin_10"
-            android:visibility="gone"
-
-            >
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_16"
-                android:textColor="?attr/blue_button"
-                android:text="@string/UnidentifiedDriverRecords"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_3"
-                android:paddingBottom="@dimen/margin_10"
-                android:textStyle="bold"
-
-                />
-
-            <include
-                layout="@layout/item_unidentified_veh_dot"
-                />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/unIdnfdVehDotListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-                android:paddingBottom="@dimen/margin_20"
-                />
-
-
-        </LinearLayout>
-
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_60"
-            android:background="?attr/bgColor"
-            android:layout_marginTop="@dimen/margin_25"
-
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="?attr/bgColor"
-                android:text="@string/UnidentifiedViewLog"
-                android:textColor="?attr/color_eld_theme"
-                android:textSize="@dimen/text_size_22"
-                android:paddingLeft="@dimen/margin_15"
-                android:textStyle="bold" />
-
-
-        </RelativeLayout>
-
         <include
-            android:id="@+id/canadaDotActionBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/unidentified_dot"
+            layout="@layout/item_duty_status_change_dot"
             />
 
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/unIdnfddutyChangeDotListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+
+
+            />
 
 
     </LinearLayout>
 
-
-    </androidx.core.widget.NestedScrollView>
-
-
-
-    <RelativeLayout
-        android:id="@+id/scrollUpBtn"
-        android:layout_width="@dimen/view_height_38"
-        android:layout_height="@dimen/view_height_38"
-        android:background="@drawable/blue_scale_btn_selector"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/margin_10"
-        android:layout_above="@+id/scrollDownBtn"
-        android:layout_marginBottom="@dimen/margin_10"
-
-
-        >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/arrow_top"
-            android:layout_centerInParent="true"
-            android:padding="@dimen/margin_short_9"
-            android:tint="@color/whiteee"
-            />
-
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/scrollDownBtn"
-        android:layout_width="@dimen/view_height_38"
-        android:layout_height="@dimen/view_height_38"
-        android:background="@drawable/blue_scale_btn_selector"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/margin_10"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/view_height_30"
-
-        >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/arrow_bottom"
-            android:layout_centerInParent="true"
-            android:padding="@dimen/margin_short_9"
-            android:tint="@color/whiteee"
-            />
-
-
-    </RelativeLayout>
-
-
-    <ProgressBar
-        android:id="@+id/canDotProgressBar"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
+        android:orientation="vertical"
+        android:background="?attr/bgColor"
+        android:padding="@dimen/margin_short_6"
+        android:layout_marginTop="@dimen/margin_10"
+
+        >
 
 
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_16"
+            android:textColor="?attr/blue_button"
+            android:text="@string/unidentified_login_logout_desc"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingTop="@dimen/margin_short_3"
+            android:paddingBottom="@dimen/margin_10"
+            android:textStyle="bold"
+
+            />
+
+        <include
+            layout="@layout/item_login_logout_dot"
+            />
 
 
-</RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/unIdnfdloginLogDotListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+
+
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/bgColor"
+        android:padding="@dimen/margin_short_6"
+        android:layout_marginTop="@dimen/margin_10"
+
+        >
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_16"
+            android:textColor="?attr/blue_button"
+            android:text="@string/comments_remarks_desc"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingTop="@dimen/margin_short_3"
+            android:paddingBottom="@dimen/margin_10"
+            android:textStyle="bold"
+
+            />
+
+        <include
+            layout="@layout/item_remarks_ano_dot"
+            />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/unIdnfdremAnotnDotListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+
+
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/bgColor"
+        android:padding="@dimen/margin_short_6"
+        android:layout_marginTop="@dimen/margin_10"
+
+        >
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_16"
+            android:textColor="?attr/blue_button"
+            android:text="@string/EnginePower_desc"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingTop="@dimen/margin_short_3"
+            android:paddingBottom="@dimen/margin_10"
+            android:textStyle="bold"
+
+            />
+
+        <include
+            layout="@layout/item_engine_power_dot"
+            />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/unIdnfdenginePwrDotListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+
+            />
+
+
+    </LinearLayout>
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        android:background="?attr/bgColor"-->
+<!--        android:padding="@dimen/margin_short_6"-->
+<!--        android:layout_marginTop="@dimen/margin_10"-->
+
+
+<!--        >-->
+
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textSize="@dimen/text_size_16"-->
+<!--            android:textColor="?attr/blue_button"-->
+<!--            android:text="@string/UnidentifiedDriverRecords"-->
+<!--            android:paddingLeft="@dimen/margin_10"-->
+<!--            android:paddingTop="@dimen/margin_short_3"-->
+<!--            android:paddingBottom="@dimen/margin_10"-->
+<!--            android:textStyle="bold"-->
+
+<!--            />-->
+
+<!--        <include-->
+<!--            layout="@layout/item_unidentified_veh_dot"-->
+<!--            />-->
+
+
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/UnunIdnfdVehDotListView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:scrollbars="none"-->
+<!--            android:paddingBottom="@dimen/margin_20"-->
+<!--            />-->
+
+
+<!--    </LinearLayout>-->
+
+</LinearLayout>

@@ -58,6 +58,9 @@ public class EldDataModelNew {
     String IsSkipRecord;
     int LocationSource;
 
+    String EngineHour;
+    String Odometer;
+
 
     public EldDataModelNew(String projectId, String driverId, String driverStatusId, String isYard,
                            String isPersonal, String deviceID, String remarks, String utcDateTime,
@@ -69,7 +72,8 @@ public class EldDataModelNew {
                            String isNorthCanada, String DrivingStartTime, String IsAobrd,
                            String CurrentCycleId, String isDeferral, String UnassignedVehicleMilesId,
                            String isNewRecord, String isCycleChanged, String unAssignedVehicleMilesId,
-                           String coDriverId, String coDriverName, String isSkipRecord, int locationSource
+                           String coDriverId, String coDriverName, String isSkipRecord, int locationSource, String engineHour,
+                           String odometer
     ) {
 
         ProjectId           = projectId;
@@ -116,6 +120,8 @@ public class EldDataModelNew {
         CoDriverName = coDriverName;
         IsSkipRecord = isSkipRecord;
         LocationSource = locationSource;
+        EngineHour = engineHour;
+        Odometer = odometer;
 
     }
 
@@ -306,4 +312,11 @@ public class EldDataModelNew {
         return LocationSource;
     }
 
+    public String getEngineHour() {
+        return EngineHour;
+    }
+
+    public String getOdometer() {
+        return Odometer;
+    }
 }

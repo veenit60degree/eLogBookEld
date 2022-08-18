@@ -38,6 +38,7 @@ public class ConstantsKeys {
     public static String IsViolation        = "IsViolation";
     public static String IsInternet         = "IsInternet";
     public static String IsVehicleInMotion  = "IsVehicleInMotion";
+    public static String EngineHourMilesReportListUnidentified  = "EngineHourMilesReportListUnidentified";
 
 
     public static String ViolationReason        = "ViolationReason";

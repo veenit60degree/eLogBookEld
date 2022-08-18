@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.adapter.logistic.EditItemTouchHelperCallback;
 import com.adapter.logistic.EditLogRecyclerViewAdapter;
 import com.adapter.logistic.OnStartDragListener;
 import com.android.volley.Request;
@@ -41,6 +40,7 @@ import com.drag.slide.listview.Utils;
 import com.driver.details.DriverConst;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
@@ -67,11 +67,12 @@ import models.DriverDetail;
 import models.DriverLog;
 import models.RulesResponseObject;
 
-public class EditLogFragment extends Fragment implements View.OnClickListener, OnStartDragListener{
+public class EditLogFragment extends Fragment implements View.OnClickListener, EditLogRecyclerViewAdapter.AdapterCallback{
 
 
     View rootView;
     RecyclerView driverLogRecyclerView;
+    RecyclerView.Adapter mWrappedAdapter;
     ItemTouchHelper mItemTouchHelper;
     boolean isUndo = false;
 
@@ -245,7 +246,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
             }
 
             setRecyclerAdapter();
-            enableSwipeToDeleteAndUndo();
+           // enableSwipeToDeleteAndUndo();
 
 
             offlineJobArray         = GetDriversSavedData(DriverType);
@@ -318,15 +319,6 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
 
 
-
-
-
-    @Override
-    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
-        mItemTouchHelper.startDrag(viewHolder);
-    }
-
-
     private boolean IsUnAssignedMileRecord(){
         boolean IsUnAssignedMileRecord = false;
         try{
@@ -347,6 +339,28 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     private void setRecyclerAdapter(){
 
         try {
+
+            driverLogRecyclerView.setHasFixedSize(true);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            RecyclerViewDragDropManager dragMgr = new RecyclerViewDragDropManager();
+
+
+            editLogRecyclerAdapter = new EditLogRecyclerViewAdapter(getActivity(), driverLogRecyclerView, oDriverLogDetail, selectedDateFormat, offsetFromUTC,
+                    logPermissionObj, driverPermissionMethod, hMethods, IsCurrentDate, IsUnAssignedMileRecord, EditLogFragment.this);
+
+            mWrappedAdapter = dragMgr.createWrappedAdapter(editLogRecyclerAdapter);
+            driverLogRecyclerView.setLayoutManager(mLayoutManager);
+            driverLogRecyclerView.setAdapter(mWrappedAdapter);
+
+//            driverLogRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(requireContext(), R.drawable.list_divider_h), true));
+            dragMgr.attachRecyclerView(driverLogRecyclerView);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+   /*     try {
             driverLogRecyclerView.setHasFixedSize(true);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
             driverLogRecyclerView.setLayoutManager(mLayoutManager);
@@ -364,7 +378,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
+
     }
 
 
@@ -397,46 +412,36 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
     }
 
 
-    private void enableSwipeToDeleteAndUndo() {
-        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getActivity()) {
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+    private void enableSwipeToDeleteAndUndo(final int position) {
 
-                isUndo = false;
-                final int position = viewHolder.getAdapterPosition();
-                final DriverLogModel item = editLogRecyclerAdapter.getData().get(position);
+        isUndo = false;
+        final DriverLogModel item = editLogRecyclerAdapter.getData().get(position);
 
-                int jobStatus = item.getDriverStatusId();
-                editLogRecyclerAdapter.removeItem(position);
+        int jobStatus = item.getDriverStatusId();
+        editLogRecyclerAdapter.removeItem(position);
 
-                if(isEnabled(jobStatus)) {
+        if(isEnabled(jobStatus)) {
 
-                    Snackbar snackbar = Snackbar.make(driverLogRecyclerView, getResources().getString(R.string.action_deleted), Snackbar.LENGTH_LONG);
-                    snackbar.setAction("UNDO", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            isUndo = true;
-                            editLogRecyclerAdapter.restoreItem(item, position);
-                            driverLogRecyclerView.scrollToPosition(position);
-
-                        }
-                    });
-
-                    snackbar.setActionTextColor(Color.YELLOW);
-                    snackbar.show();
-                }else{
+            Snackbar snackbar = Snackbar.make(driverLogRecyclerView, getResources().getString(R.string.action_deleted), Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                     isUndo = true;
                     editLogRecyclerAdapter.restoreItem(item, position);
                     driverLogRecyclerView.scrollToPosition(position);
-                    global.EldScreenToast(eldMenuBtn, "You don't have permission to delete this log.", getResources().getColor(R.color.colorVoilation));
-                }
-            }
-        };
 
-      //  editLogRecyclerAdapter.notifyDataSetChanged();
-       // Log.d("array_length", "array length: " + editLogRecyclerAdapter.getData().size());
-        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
-        itemTouchhelper.attachToRecyclerView(driverLogRecyclerView);
+                }
+            });
+
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }else{
+            isUndo = true;
+            editLogRecyclerAdapter.restoreItem(item, position);
+            driverLogRecyclerView.scrollToPosition(position);
+            global.EldScreenToast(eldMenuBtn, "You don't have permission to delete this log.", getResources().getColor(R.color.colorVoilation));
+        }
+
     }
 
 
@@ -835,6 +840,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
 
     }
 
+    @Override
+    public void onItemClicked(int position) {
+        enableSwipeToDeleteAndUndo(position);
+    }
+
 
     /*================== Signature Listener ====================*/
     public class EditLogPreviewListener implements EditLogPreviewDialog.EditLogPreviewListener {
@@ -1162,6 +1172,16 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     UnAssignedVehicleMilesId = obj.getString(ConstantsKeys.UnAssignedVehicleMilesId);
                 }
 
+                String EngHour = "";
+                if (obj.has(ConstantsKeys.EngineHours) && !obj.getString(ConstantsKeys.EngineHours).equals("null")) {
+                    EngHour = obj.getString(ConstantsKeys.EngineHours);
+                }
+
+                String odometer = "";
+                if (obj.has(ConstantsKeys.Odometer) && !obj.getString(ConstantsKeys.Odometer).equals("null")) {
+                    odometer = obj.getString(ConstantsKeys.Odometer);
+                }
+
 
                 EldDataModelNew logModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1210,7 +1230,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         UnAssignedVehicleMilesId,
                         obj.getString(ConstantsKeys.CoDriverId),
                         obj.getString(ConstantsKeys.CoDriverName),
-                        "false", LocationSource
+                        "false", LocationSource, EngHour, odometer
 
                 );
 
@@ -1352,6 +1372,16 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                     LocationSource = obj.getInt(ConstantsKeys.LocationSource);
                 }
 
+                String EngHour = "";
+                if (obj.has(ConstantsKeys.EngineHours) && !obj.getString(ConstantsKeys.EngineHours).equals("null")) {
+                    EngHour = obj.getString(ConstantsKeys.EngineHours);
+                }
+
+                String odometer = "";
+                if (obj.has(ConstantsKeys.Odometer) && !obj.getString(ConstantsKeys.Odometer).equals("null")) {
+                    odometer = obj.getString(ConstantsKeys.Odometer);
+                }
+
                 EldDataModelNew eldModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
                         obj.getString(ConstantsKeys.DriverId),
@@ -1399,7 +1429,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, O
                         CoDriverId,
                         CoDriverName,
                         "false",
-                        LocationSource
+                        LocationSource,
+                        EngHour,
+                        odometer
                         );
 
                     if(eldModel != null) {

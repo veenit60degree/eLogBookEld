@@ -27,6 +27,8 @@ import com.constants.SaveDriverLogPost;
 import com.custom.dialogs.AdverseRemarksDialog;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.MalfunctionDiagnosticMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
@@ -58,6 +60,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     final int ClaimRecordFlag                   = 101;
     final int RejectRecordFlag                  = 102;
     final int RejectCompanyAssignedRecordFlag   = 103;
+    int offsetFromUTC = 0, CompanyId = 0;
 
     String CurrentCycleId = "", StartLocationKM = "";
     String DriverId = "", DriverStatusId = "", AssignedRecordsId = "", unAssignedVehicleMilesId = "",  DriverName = "",VIN = "";
@@ -66,11 +69,13 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     Constants constant;
     String StartOdometer = "", EndOdometer = "", StartDateTime = "", EndDateTime = "",
             StartLocation = "", EndLocation = "", EndLocationKM = "",
-            TotalMiles = "", TotalKm = "";
+            TotalMiles = "", TotalKm = "", DutyStatus = "";
     StatePrefManager statePrefManager;
 
     List<String> StateArrayList;
     List<DriverLocationModel> StateList;
+    MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
+    DBHelper dbHelper;
 
 
     @Override
@@ -141,6 +146,11 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading ...");
         statePrefManager = new StatePrefManager();
+        malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
+        dbHelper = new DBHelper(getActivity());
+
+        offsetFromUTC = Integer.valueOf(DriverConst.GetDriverSettings(DriverConst.OffsetHours, getActivity()));
+        CompanyId = Integer.valueOf(DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()));
 
         getData();
         AddStatesInList();
@@ -205,6 +215,8 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
             TotalMiles = getBundle.getString(ConstantsKeys.TotalMiles);
             TotalKm = getBundle.getString(ConstantsKeys.TotalKM);
+            DutyStatus = getBundle.getString(ConstantsKeys.DutyStatus);
+
             getBundle.clear();
         }
         String startTime = getTime(StartDateTime);
@@ -303,7 +315,9 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                             endOdometer = EndOdometer.equals("");
                             startLocation = StartLocation.equals("");
                             endLocation = EndLocation.equals("");
-                            remarksDialog = new AdverseRemarksDialog(getActivity(), false, true, isCompanyAssigned,startOdometer,endOdometer,startLocation,endLocation,StateList,StateArrayList, new RemarksListener());
+                            remarksDialog = new AdverseRemarksDialog(getActivity(), false, true,
+                                    isCompanyAssigned,startOdometer,endOdometer,startLocation,endLocation,
+                                    StateList,StateArrayList, new RemarksListener());
                             remarksDialog.show();
                         }else{
                             Globally.EldScreenToast(TabAct.sliderLay, getResources().getString(R.string.select_status_first),
@@ -376,11 +390,21 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
                         JSONArray claimArray = new JSONArray();
                         JSONObject claimData = Constants.getClaimRecordInputsAsJson(DriverId,VIN, DriverStatusId,
-                                unAssignedVehicleMilesId, AssignedRecordsId, reason, DriverName,startOdo,endOdo,startLoc,endLoc,StartCity,StartState,StartCountry,EndCity,EndState,EndCountry,startOdometer,endOdometer,startLocation,endLocation);
+                                unAssignedVehicleMilesId, AssignedRecordsId, reason, DriverName,startOdo,endOdo,
+                                startLoc,endLoc,StartCity,StartState,StartCountry,EndCity,EndState,EndCountry,
+                                startOdometer,endOdometer,startLocation,endLocation);
                         claimArray.put(claimData);
 
+
+                        // remove event in unidentified motion events list
+                        DateTime dateTime = Globally.getDateTimeObj(StartDateTime, false);
+                        dateTime = dateTime.minusHours(offsetFromUTC);
+                        malfunctionDiagnosticMethod.removeEventAfterClaim(dateTime, CompanyId, DutyStatus, dbHelper);
+
+
                         progressDialog.show();
-                        claimRejectRecordPost.PostDriverLogData(claimArray, APIs.CLAIM_UNIDENTIFIED_RECORD, Constants.SocketTimeout20Sec, true, false, 0, ClaimRecordFlag);
+                        claimRejectRecordPost.PostDriverLogData(claimArray, APIs.CLAIM_UNIDENTIFIED_RECORD,
+                                Constants.SocketTimeout20Sec, true, false, 0, ClaimRecordFlag);
 
                     }else{
 
@@ -397,6 +421,12 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
                             JSONArray rejectedArray = new JSONArray();
                             JSONObject obj = Constants.getRejectedRecordInputs(DriverId, unAssignedVehicleMilesId, reason);
                             rejectedArray.put(obj);
+
+                            // remove event in unidentified motion events list
+                            DateTime dateTime = Globally.getDateTimeObj(StartDateTime, false);
+                            dateTime = dateTime.minusHours(offsetFromUTC);
+                            malfunctionDiagnosticMethod.removeEventAfterClaim(dateTime, CompanyId, DutyStatus, dbHelper);
+
 
                             progressDialog.show();
                             claimRejectRecordPost.PostDriverLogData(rejectedArray, APIs.REJECT_UNIDENTIFIED_RECORD, Constants.SocketTimeout20Sec, true,

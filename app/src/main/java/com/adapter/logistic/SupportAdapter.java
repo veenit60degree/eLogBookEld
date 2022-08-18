@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.constants.Constants;
+import com.local.db.ConstantsKeys;
+import com.messaging.logistic.Globally;
 import com.models.SupportModel;
 import com.messaging.logistic.R;
+
+import org.joda.time.DateTime;
 
 import java.net.URLEncoder;
 import java.util.List;
@@ -150,7 +155,7 @@ public class SupportAdapter extends BaseAdapter {
                     mContext.startActivity(intentEmail);
                 }else{
                     Constants.copyTextToClipboard(mContext, value);
-                    Toast.makeText(mContext, "Email copied.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, "Email copied.", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -170,11 +175,14 @@ public class SupportAdapter extends BaseAdapter {
                     if (i.resolveActivity(packageManager) != null) {
                         mContext.startActivity(i);
                     }else{
-                        Toast.makeText(mContext, "WhatsApp is not found on your device.", Toast.LENGTH_LONG).show();
+                        Constants.copyTextToClipboard(mContext, value);
+                        Toast.makeText(mContext, "WhatsApp number copied.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(mContext, "WhatsApp is not found on your device.", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e){
                     e.printStackTrace();
                 }
+
 
                 break;
 

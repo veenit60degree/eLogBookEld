@@ -128,6 +128,7 @@ public class InitilizeEldView {
                              boolean isSignPending, boolean isFragmentAdd, FragmentManager fragManager, String driverLogArray){
 
         Constants.IS_ACTIVE_ELD = false;
+        Globally.IS_CERTIFY_CALLED = true;
 
         try {
             CertifyViewLogFragment detailFragment = new CertifyViewLogFragment();

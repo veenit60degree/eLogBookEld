@@ -191,8 +191,8 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
                         unIdentifiedList.get(position).getTotalMiles(),
                         unIdentifiedList.get(position).getTotalKm(),
                         unIdentifiedList.get(position).getStartLocationKm(),
-                        unIdentifiedList.get(position).getEndLocationKm()
-
+                        unIdentifiedList.get(position).getEndLocationKm(),
+                        unIdentifiedList.get(position).getDutyStatus()
                 );
             }
         });
@@ -223,7 +223,7 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
             String StartDateTime, String EndDateTime,
             String StartLocation, String EndLocation,
             String TotalMiles, String TotalKM,
-            String StartLocationkm, String EndLocationKm
+            String StartLocationkm, String EndLocationKm, String DutyStatus
     ){
         UnidentifiedRecordDetailFragment detailFragment = new UnidentifiedRecordDetailFragment();
         Bundle bundle = new Bundle();
@@ -245,6 +245,7 @@ public class UnIdentifiedListingAdapter extends BaseAdapter {
         bundle.putString(ConstantsKeys.TotalKM, TotalKM);
         bundle.putString(ConstantsKeys.StartLocationKM, StartLocationkm);
         bundle.putString(ConstantsKeys.EndLocationKM, EndLocationKm);
+        bundle.putString(ConstantsKeys.DutyStatus, DutyStatus);
 
         detailFragment.setArguments(bundle);
 

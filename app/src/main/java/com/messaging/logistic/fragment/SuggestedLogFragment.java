@@ -190,6 +190,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         return rootView;
     }
 
+
     void initView(View rootView) {
 
 

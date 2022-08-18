@@ -652,7 +652,10 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
             case R.id.dateActionBarTV:
-                ShowDateDialog();
+              //  ShowDateDialog();
+
+                MoveFragment(SelectedDatee);
+
                 break;
 
 
@@ -1189,7 +1192,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     }
 
-    void ShowDateDialog(){
+/*    void ShowDateDialog(){
         try {
             if (dateDialog != null && dateDialog.isShowing())
                 dateDialog.dismiss();
@@ -1201,7 +1204,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         } catch (final Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     void ClearFields(){
 
@@ -1281,7 +1284,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     }
 
 
-    private class DateListener implements DatePickerDialog.DatePickerListener{
+  /*  private class DateListener implements DatePickerDialog.DatePickerListener{
         @Override
         public void JobBtnReady(String SelectedDate, String dayOfTheWeek, String MonthFullName, String MonthShortName, int dayOfMonth) {
 
@@ -1297,7 +1300,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             MoveFragment(SelectedDate);
         }
     }
-
+*/
 
     private class VehicleListener implements VehicleDialog.VehicleListener {
         @Override

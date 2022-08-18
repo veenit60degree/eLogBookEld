@@ -119,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/margin_short_5"
-                android:layout_marginRight="@dimen/margin_short_5"
+                android:layout_marginRight="@dimen/view_height_40"
                 android:text="@string/Duration"
                 android:textColor="?attr/color_eld_bg"
                 android:gravity="center_horizontal"

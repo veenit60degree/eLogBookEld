@@ -372,9 +372,6 @@ public class TrailorDialog extends Dialog {
             boolean isAllowed = true;
             String alertMsg  = "";
             String Trailer = TrailorNoEditText.getText().toString().trim();
-            /*if(noTrailerView.getVisibility() == View.VISIBLE && radioEnterTrailer.isChecked() && Trailer.length() == 0){
-                isAllowed = false;
-            }*/
 
               if(noTrailerView.getVisibility() == View.VISIBLE){
                   if(Trailer.length() == 0 && !radioNoTrailer.isChecked() && !radioEnterTrailer.isChecked()){
@@ -462,7 +459,7 @@ public class TrailorDialog extends Dialog {
 
                             } else if (updatedReason.equals(getContext().getResources().getString(R.string.loading)) && SharedPref.IsDrivingShippingAllowed(getContext())) {
 
-                                if(Trailer.length() == 0 || Trailer.equals("No Trailer") || Trailer.equals("")){
+                                if(Trailer.length() == 0 || Trailer.equals("No Trailer")){
                                     Global.EldScreenToast(btnLoadingJob, "Enter trailer number", getContext().getResources().getColor(R.color.colorVoilation));
                                 }else{
                                     JSONArray shipment18DaysJsonArray = shipmentMethod.getShipment18DaysArray(Integer.valueOf(SharedPref.getDriverId(getContext())), dbHelper);
@@ -509,9 +506,9 @@ public class TrailorDialog extends Dialog {
                                     Trailer = Constants.NoTrailer;
                                 }
 
-                                if ((type.equals("trailor_driving") && Trailer.length() == 0) ||
-                                        ((updatedReason.equals(getContext().getResources().getString(R.string.loading)) || (updatedReason.equals(getContext().getResources().getString(R.string.Unloading)))
-                                                && (Trailer.equals("No Trailer") || Trailer.equals(""))) ) ) {
+                                if ( (type.equals("trailor_driving") && Trailer.length() == 0) ||
+                                        ( (updatedReason.equals("Loading") || updatedReason.equals("Unloading"))
+                                                && (Trailer.equals("No Trailer") || Trailer.length() == 0 ) )  ) {
                                     Global.EldScreenToast(btnLoadingJob, "Enter trailer number", getContext().getResources().getColor(R.color.colorVoilation));
                                 } else {
                                     readyListener.JobBtnReady(

@@ -2,16 +2,13 @@ package com.constants;
 
 public class EldInfo {
 
-    /* -------- Upload ELD APK to ALS server Live --------- */
-    // https://alsrealtime.com/Home/AndroidAPK
+    /* -------- Upload ELD App on ALS server --------- */
+    // https://alsrealtime.com/Home/AndroidAPK         // Live
+    // http://dev.alsrealtime.com/Home/AndroidAPK      // Dev
 
-    /* -------- Upload ELD APK to ALS server Dev --------- */
-    //http://dev.alsrealtime.com/Home/AndroidAPK
-
-    /* ---------- (Manual Driver) Android APK upload link ----------- */
-    // https://eld.alsrealtime.com/Home/ManualAndroidOBDAPK
-    // http://develd.alsrealtime.com/Home/ManualAndroidOBDAPK
-
+    /* ---------- Upload ELD App on ALS server (Manual) ----------- */
+    // https://eld.alsrealtime.com/Home/ManualAndroidOBDAPK      // Live
+    // http://develd.alsrealtime.com/Home/ManualAndroidOBDAPK    // Dev
 
 
 

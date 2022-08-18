@@ -470,32 +470,33 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
                                             boolean isApplicable = false;
 
-                                            if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD || connectionType == constants.BLE_OBD ) {
+                                           // if (connectionType == constants.WIRED_OBD || connectionType == constants.WIFI_OBD || connectionType == constants.BLE_OBD ) {
                                                 if (OBDVehicleSpeed <= OnDutySpeedLimit) {
                                                     isApplicable = true;
                                                 }
-                                            }
+                                           // }
 
                                             if (isApplicable) {
 
                                                 if (!IsAOBRD || (IsAOBRD && IsAOBRDAutoDrive)) {
-                                                    if (BackgroundLocationService.IsAutoChange) {
-                                                        // message = "Vehicle is running below the threshold speed limit. Now your status is going to be changed to On Duty.";
-                                                        message = "Duty status switched to On Duty not Driving due to vehicle is not moving.";
-                                                    } else {
-                                                        message = "Please change your status from Driving to other duty status due to vehicle is not moving.";
-                                                    }
-
-                                                    CHANGED_STATUS = ON_DUTY;
-
-                                                    boolean isEldToast;
-                                                    if (IsAOBRD) {
-                                                        isEldToast = false;
-                                                    } else {
-                                                        isEldToast = true;
-                                                    }
 
                                                     if (ContinueSpeedCounter >= OnDutyInterval) {
+
+                                                        if (BackgroundLocationService.IsAutoChange) {
+                                                            // message = "Vehicle is running below the threshold speed limit. Now your status is going to be changed to On Duty.";
+                                                            message = "Duty status switched to On Duty not Driving due to vehicle is not moving.";
+                                                        } else {
+                                                            message = "Please change your status from Driving to other duty status due to vehicle is not moving.";
+                                                        }
+
+                                                        CHANGED_STATUS = ON_DUTY;
+
+                                                        boolean isEldToast;
+                                                        if (IsAOBRD) {
+                                                            isEldToast = false;
+                                                        } else {
+                                                            isEldToast = true;
+                                                        }
 
                                                         /*constants.saveObdData(constants.getObdSource(context),
                                                                 "ChangeToOnDuty - Rpm: " + SharedPref.getRPM(context),
@@ -515,6 +516,18 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 }
 
                                             } else {
+                                                if(ContinueSpeedCounter > 0){
+                                                    constants.saveObdData(constants.getObdSource(context),
+                                                            "Reset OnDuty Counter - Speed: " +VehicleSpeed,
+                                                            "", SharedPref.getObdOdometer(context),
+                                                            "", "",
+                                                            "", SharedPref.getRPM(context),
+                                                            ""+VehicleSpeed,
+                                                            "", "", Global.GetCurrentDateTime(), "",
+                                                            ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
+                                                }
+
                                                 ContinueSpeedCounter = 0;
                                                 ClearCount();
                                             }
@@ -523,6 +536,16 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 ContinueSpeedCounter++;
                                             } else {
                                                 ContinueSpeedCounter = 0;
+
+                                                constants.saveObdData(constants.getObdSource(context),
+                                                        "Reset OnDuty Counter - Speed: " +VehicleSpeed,
+                                                        "", SharedPref.getObdOdometer(context),
+                                                        "", "",
+                                                        "", SharedPref.getRPM(context),
+                                                        ""+VehicleSpeed,
+                                                        "", "", Global.GetCurrentDateTime(), "",
+                                                        ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
                                             }
 
                                             ClearCount();
@@ -1038,7 +1061,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                 "" + isAdverseExcptn,
                                 "", LocationType, "", isNorthCanada, false,
                                 SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, TruckNo,
-                                SharedPref.getTrailorNumber(context), hMethods, dbHelper);
+                                SharedPref.getTrailorNumber(context), SharedPref.getObdEngineHours(context),
+                                SharedPref.getObdOdometer(context), hMethods, dbHelper);
 
                         String CurrentDate = Global.GetCurrentDateTime();
                         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
@@ -1376,7 +1400,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         CoDriverId,
                         CoDriverName,
                         ""+IsSkipRecord,
-                        Constants.getLocationSource(context)
+                        Constants.getLocationSource(context),
+                        SharedPref.getObdEngineHours(context),
+                        SharedPref.getObdOdometer(context)
 
 
                 );
@@ -1522,7 +1548,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 SharedPref.getObdOdometer(context),
                 CoDriverId,
                 CoDriverName,
-                "0"
+                "0",
+                SharedPref.getObdEngineHours(context),
+                SharedPref.getObdOdometer(context)
 
         );
 
@@ -1576,7 +1604,9 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         SharedPref.getObdOdometer(context),
                         CoDriverId,
                         CoDriverName,
-                        "0"
+                        "0",
+                        SharedPref.getObdEngineHours(context),
+                        SharedPref.getObdOdometer(context)
 
                 );
 

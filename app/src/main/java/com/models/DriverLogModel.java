@@ -54,6 +54,9 @@ public class DriverLogModel {
     private String CoDriverId;
     private String CoDrivername;
     private String UnAssignedVehicleMilesId ;
+    private String EngineHours;
+    private String Odometer;
+
 
     public DriverLogModel() {
     }
@@ -104,6 +107,8 @@ public class DriverLogModel {
         this.CoDriverId = logModel.getCoDriverId();
         this.CoDrivername = logModel.getCoDriverName();
         this.UnAssignedVehicleMilesId = logModel.getUnAssignedVehicleMilesId();
+        this.EngineHours = logModel.getEngineHours();
+        this.Odometer = logModel.getOdometer();
 
     }
 
@@ -492,6 +497,19 @@ public class DriverLogModel {
         UnAssignedVehicleMilesId = unAssignedVehicleMilesId;
     }
 
+    public void setEngineHours(String engineHours) {
+        EngineHours = engineHours;
+    }
 
+    public void setOdometer(String odometer) {
+        Odometer = odometer;
+    }
 
+    public String getEngineHours() {
+        return EngineHours;
+    }
+
+    public String getOdometer() {
+        return Odometer;
+    }
 }

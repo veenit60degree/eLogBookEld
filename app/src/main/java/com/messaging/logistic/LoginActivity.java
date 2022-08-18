@@ -94,7 +94,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	String status = "", message = "", deviceType = "";
 	Anim animation;
 	boolean IsLoginSuccess = false, IsTablet = false, IsBleConnected = false, WiredConnected = false;
-	String Sim1 = "", Sim2 = "", DeviceSimInfo = "";
+	String Sim1 = "", Sim2 = "", DeviceSimInfo = "", TruckID = "", CompanyId = "";
 	int ObdPreference = 0;
 	Constants constants;
 	Globally global;
@@ -123,6 +123,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		global					= new Globally();
 		IsTablet 				= global.isTablet(this);
 		constants				= new Constants();
+		TruckID             = SharedPref.getTruckNumber(getApplicationContext());   //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext());
+		CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
 
 
 		try{
@@ -162,9 +164,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		loginCoDriverLayout 	= (RelativeLayout) findViewById(R.id.loginCoDriverLayout);
 		//mTelephonyManager 	= (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
-
-		connectionStatusAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
-		connectionStatusAnimation.setDuration(1500);
 
 		backImgView.setVisibility(View.GONE);
 		progressBarLogin.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FFFFFF"), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -218,11 +217,17 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		ObdPreference = SharedPref.getObdPreference(getApplicationContext());
 		if(ObdPreference == Constants.OBD_PREF_BLE){
 			loginBleStatusBtn.setImageResource(R.drawable.ble_ic);
+			if(CompanyId.length() == 0) {
+				loginBleStatusBtn.setVisibility(View.GONE);
+			}
+
 		}else if (ObdPreference == Constants.OBD_PREF_WIRED){
 			loginBleStatusBtn.setImageResource(R.drawable.obd_inactive);
 		}
 
 
+		connectionStatusAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+		connectionStatusAnimation.setDuration(1500);
 
 		connectionStatusAnimation.setAnimationListener(new Animation.AnimationListener() {
 			@Override
@@ -235,13 +240,19 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					if(getApplicationContext() != null) {
 
 						if(ObdPreference == Constants.OBD_PREF_BLE) {
-							if (IsBleConnected) {
-								connectionStatusAnimation.cancel();
-								loginBleStatusBtn.setAlpha(1f);
-								loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
 
-							} else {
-								loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+							if(TruckID.length() > 0 && CompanyId.length() > 0) {
+								if (IsBleConnected) {
+									connectionStatusAnimation.cancel();
+									loginBleStatusBtn.setAlpha(1f);
+									loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.colorPrimary));
+
+								} else {
+									loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+								}
+							}else{
+								connectionStatusAnimation.cancel();
+								loginBleStatusBtn.setVisibility(View.GONE);
 							}
 						}else if(ObdPreference == Constants.OBD_PREF_WIRED){
 							if (WiredConnected) {
@@ -321,9 +332,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		ObdPreference = SharedPref.getObdPreference(getApplicationContext());
 
 		if(ObdPreference == Constants.OBD_PREF_BLE){
-			loginBleStatusBtn.setVisibility(View.VISIBLE);
 
-			if(!IsBleConnected){
+			if(!IsBleConnected && CompanyId.length() > 0){
+				loginBleStatusBtn.setVisibility(View.VISIBLE);
 				loginBleStatusBtn.startAnimation(connectionStatusAnimation);
 			}
 
@@ -382,9 +393,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 							WiredConnected = false;
 						}
 
-						loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
-						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
-
+						if(CompanyId.length() > 0) {
+							loginBleStatusBtn.setColorFilter(getResources().getColor(R.color.black_transparent));
+							loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+						}
 					}
 
 				}
@@ -474,7 +486,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			return true;
 		}
 
-	}*/
+	}
 
 
 	public boolean requestPermissionPhone() {
@@ -502,6 +514,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 	}
 
+*/
 
 
 	private boolean requestLocationPermission() {
@@ -510,7 +523,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		if (Build.VERSION.SDK_INT >= 23) {
 			if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
 					== PackageManager.PERMISSION_GRANTED) {
-				requestPermissionPhone();
+				//requestPermissionPhone();
+
+				login();
 
 				return true;
 			} else {
@@ -560,12 +575,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 
 			case 2:
-				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				/*if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
 					requestPermissionPhone();
-				}else{
+				}else{*/
 					login();
-				}
+				//}
 				break;
 
 		/*	case 3:
@@ -642,6 +657,16 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 
 	void login() {
+
+		/*DateTime selectedDateTime = Globally.getDateTimeObj("2022-08-07T06:38:04", false);
+		DateTime currentUtcDate = Globally.GetCurrentUTCDateTime();
+		long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardHours();
+		int dayDiff = Constants.getDayDiff(selectedDateTime.toString(), currentUtcDate.toString());
+
+		Log.d("hourDiff","hourDiff:" +hourDiff);
+		Log.d("dayDiff","dayDiff:" +dayDiff);
+*/
+
 
 		StrSingleUserame = userNameText.getText().toString().trim();
 		StrSinglePass = passwordText.getText().toString();
@@ -722,7 +747,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			Constants.IsHomePageOnCreate = true;
 			HelperMethods hMethods  = new HelperMethods();
 			DBHelper dbHelper 		= new DBHelper(LoginActivity.this);
-			String  CompanyId       = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
 
 			SharedPref.setVINNumber( "", getApplicationContext());
 			SharedPref.SetCycleOfflineDetails("[]", getApplicationContext());
@@ -888,11 +912,11 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 										try {
 											global.DisConnectBleDevice(LoginActivity.this);
-											String CompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
+											/*String CompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
 											if (CompanyId.length() > 0) {
 												malfunctionDiagnosticMethod.UnidentifiedLogoutRecordHelper(Integer.valueOf(CompanyId),
 														new DBHelper(getApplicationContext()), new JSONArray());
-											}
+											}*/
 										} catch (Exception e) {
 											e.printStackTrace();
 										}
@@ -1002,7 +1026,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 						params.put(ConstantsKeys.SIM1, DeviceSimInfo);
 						//params.put("SIM2, "");
 
-						Log.d("DateLogin", ">>>MobileDeviceCurrentDateTime: " +date);
+						//Log.d("DateLogin", ">>>MobileDeviceCurrentDateTime: " +date);
 
 						return params;
 					}
@@ -1219,81 +1243,80 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 	private void getMyPhoneNumber() {
 
+		String BrandName = Build.BRAND;
+		String Model = Build.MODEL;
+		String Version = Build.VERSION.RELEASE;
+
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
 			// TODO: Consider calling
 			//    ActivityCompat#requestPermissions
-			// here to request the missing permissions, and then overriding
-			//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-			//                                          int[] grantResults)
-			// to handle the case where the user grants the permission. See the documentation
-			// for ActivityCompat#requestPermissions for more details.
-			return;
-		}
 
-		try {
-			DualSimManager info = new DualSimManager(LoginActivity.this);
-			String Sim1SerialNumber = "", Sim2SerialNumber = "";
-			String BrandName = Build.BRAND;
-			String Model = Build.MODEL;
-			String Version = Build.VERSION.RELEASE;
-			String operatorSIM = info.getNETWORK_OPERATOR_NAME(1);
-			String MobileNo = "";
+			DeviceSimInfo = constants.DeviceSimInfo("", "", BrandName, Model, Version, "");
+
+			return;
+		}else {
 
 			try {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-					SubscriptionManager subscriptionManager = SubscriptionManager.from(getApplicationContext());
-					@SuppressLint("MissingPermission") List<SubscriptionInfo> subsInfoList = subscriptionManager.getActiveSubscriptionInfoList();
+				DualSimManager info = new DualSimManager(LoginActivity.this);
+				String Sim1SerialNumber = "", Sim2SerialNumber = "";
+				String operatorSIM = info.getNETWORK_OPERATOR_NAME(1);
+				String MobileNo = "";
 
-					if (subsInfoList != null) {
-						int count = 0;
-						for (SubscriptionInfo subscriptionInfo : subsInfoList) {
+				try {
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+						SubscriptionManager subscriptionManager = SubscriptionManager.from(getApplicationContext());
+						@SuppressLint("MissingPermission") List<SubscriptionInfo> subsInfoList = subscriptionManager.getActiveSubscriptionInfoList();
 
-							if (count == 0) {
-								count = 1;
-								Sim1 = subscriptionInfo.getNumber();
-								Sim1SerialNumber = subscriptionInfo.getIccId();
+						if (subsInfoList != null) {
+							int count = 0;
+							for (SubscriptionInfo subscriptionInfo : subsInfoList) {
 
-								if(Sim1SerialNumber.length() == 0){
-									Sim1SerialNumber = Constants.getSerialNumber(LoginActivity.this);
+								if (count == 0) {
+									count = 1;
+									Sim1 = subscriptionInfo.getNumber();
+									Sim1SerialNumber = subscriptionInfo.getIccId();
+
+									if (Sim1SerialNumber.length() == 0) {
+										Sim1SerialNumber = Constants.getSerialNumber(LoginActivity.this);
+									}
+								} else {
+									Sim2 = subscriptionInfo.getNumber();
+									Sim2SerialNumber = subscriptionInfo.getIccId();
 								}
-							} else {
-								Sim2 = subscriptionInfo.getNumber();
-								Sim2SerialNumber = subscriptionInfo.getIccId();
 							}
 						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+
+
+				global.registrationId = checkNullStatus(global.registrationId);
+				ImeiNumber = checkNullStatus(ImeiNumber);
+				StrOSType = checkNullStatus(StrOSType);
+				Sim1 = checkNullStatus(Sim1);
+				Sim2 = checkNullStatus(Sim2);
+				operatorSIM = checkNullStatus(operatorSIM);
+				Sim1SerialNumber = checkNullStatus(Sim1SerialNumber);
+				//MobileNo				= checkNullStatus(MobileNo);
+
+
+				if (Sim1.length() > 0) {
+					MobileNo = Sim1;
+				} else {
+					if (Sim2.length() > 0) {
+						MobileNo = Sim2;
+						operatorSIM = info.getNETWORK_OPERATOR_NAME(1);
+						Sim1SerialNumber = Sim2SerialNumber;
+					}
+				}
+
+				DeviceSimInfo = constants.DeviceSimInfo(MobileNo, Sim1SerialNumber, BrandName, Model, Version, operatorSIM);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
-
-			global.registrationId 	= checkNullStatus(global.registrationId);
-			ImeiNumber 				= checkNullStatus(ImeiNumber);
-			StrOSType 				= checkNullStatus(StrOSType);
-			Sim1 					= checkNullStatus(Sim1);
-			Sim2 					= checkNullStatus(Sim2);
-			operatorSIM				= checkNullStatus(operatorSIM);
-			Sim1SerialNumber		= checkNullStatus(Sim1SerialNumber);
-			//MobileNo				= checkNullStatus(MobileNo);
-
-
-			if(Sim1.length() > 0){
-				MobileNo = Sim1;
-			}else{
-				if(Sim2.length() > 0) {
-					MobileNo = Sim2;
-					operatorSIM = info.getNETWORK_OPERATOR_NAME(1);
-					Sim1SerialNumber = Sim2SerialNumber;
-				}
-			}
-
-			DeviceSimInfo = constants.DeviceSimInfo(MobileNo, Sim1SerialNumber, BrandName, Model, Version, operatorSIM);
-
-		}catch (Exception e){
-			e.printStackTrace();
 		}
-
 	}
 
 
@@ -1303,18 +1326,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		switch (v.getId()) {
 
 			case R.id.loginBleStatusBtn:
-
-			/*	DateTime selectedDateTime = Globally.GetCurrentUTCDateTime().minusHours(25);
-				DateTime currentUtcDate = Globally.GetCurrentUTCDateTime();
-				long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardHours();
-				Log.d("HourDiff", "hourDiff: " +hourDiff);
-*/
-/*
-				String abc = "{\"note_text\":\"tertsetresrs sdfds fsd fsdfs f\"}";
-				//abc = abc.replaceAll("\"", "");
-				abc = abc.replaceAll("\\\\", "");
-				Log.d("finalString: ", abc);
-*/
 
 				if(ObdPreference == Constants.OBD_PREF_BLE) {
 					if(!IsBleConnected) {

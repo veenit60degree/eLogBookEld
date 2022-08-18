@@ -119,7 +119,8 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                 timeMalTxtVw.setText( "--");
             }
 
-            if(childData.getDetectionDataEventCode().equals(Constants.PowerComplianceDiagnostic)){
+            String EventType = childData.getDetectionDataEventCode();
+            if(EventType.equals(Constants.PowerComplianceDiagnostic) ){
                 String StartEngineHour = childData.getHexaSequenceNo();  // passing start engine hour value in this parameter
 
                 if(StartEngineHour.length() > 0 && !StartEngineHour.equals("--")) {
@@ -137,7 +138,14 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             }
 
             String DriverId = childData.getMasterDetectionDataEventId();
-            String EngineHour = childData.getEngineHours();
+            String EngineHour;
+            if(EventType.equals(Constants.UnIdentifiedDrivingDiagnostic)){
+                EngineHour = childData.getHexaSequenceNo();
+            }else{
+                EngineHour = childData.getEngineHours();
+            }
+
+
             if(EngineHour.length() > 0 && !EngineHour.equals("--")) {
                 EngineHour = Constants.Convert2DecimalPlacesString(EngineHour);
             }
@@ -148,31 +156,6 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
             }else{
                 unIdenMalTxtVw.setVisibility(View.INVISIBLE);
             }
-
-
-            /*if(childData.getHexaSequenceNo().length() > 0){
-                seqIdMalTxtVw.setText(childData.getHexaSequenceNo());
-            }else{
-                seqIdMalTxtVw.setText(childData.getSequenceNo());
-            }
-          if(constants.isMalfunction(childData.getDetectionDataEventCode())){
-              missingEventStatus.setVisibility(View.GONE);
-         }else {
-
-          }*/
-
-           /* if (childData.getId().equals("--")) {
-                missingEventStatus.setText(childData.getId());
-            } else {
-                //TotalMinutes value is passing in getId()
-                if(childData.getDetectionDataEventCode().equals(Constants.PowerComplianceDiagnostic) ||
-                        childData.getDetectionDataEventCode().equals(Constants.PowerComplianceMalfunction) ){
-                    missingEventStatus.setText(childData.getId() + " min");
-                }else{
-                    missingEventStatus.setText(childData.getId() + " min");
-                }
-
-            }*/
 
             missingEventStatus.setVisibility(View.VISIBLE);
             if(childData.getDetectionDataEventCode().equals(Constants.MissingDataDiagnostic)){
@@ -189,9 +172,6 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                     if (distance.equals("0") || distance.length() == 0) {
                         vehMilesMalTxtVw.setText("--");
                     } else {
-                        // double miles = Double.parseDouble(distance);
-                        // String milesInKm = constants.Convert2DecimalPlacesDouble(constants.milesToKm(miles));
-
                         setVehicleView(vehMilesMalTxtVw, distance);
                     }
                 } else {

@@ -112,13 +112,14 @@
                 android:layout_width="@dimen/view_height_200"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:padding="5dp"
+                android:padding="@dimen/margin_short_5"
+
                 android:text="@string/Duration"
                 android:textColor="?attr/color_eld_bg"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_22"
                 android:textStyle="bold"
-                android:layout_marginRight="@dimen/margin_short_5"
+                android:layout_marginRight="@dimen/view_height_45"
 
                 />
 
