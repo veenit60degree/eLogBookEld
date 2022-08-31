@@ -411,10 +411,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     public void YardMovePersonalStatusAlert(boolean isYardMove, boolean isPersonal) {
 
         try {
-                if (continueStatusDialog != null && continueStatusDialog.isShowing()) {
-                   // Log.d("dialog", "dialog is showing");
-                } else {
-
+                if (continueStatusDialog != null && !continueStatusDialog.isShowing()) {
                     String TruckIgnitionStatus = SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, TabAct.this);
                     continueStatusDialog = new ContinueStatusDialog(TabAct.this, isYardMove, isPersonal, false, TruckIgnitionStatus, new ContinueListener());
                     continueStatusDialog.show();

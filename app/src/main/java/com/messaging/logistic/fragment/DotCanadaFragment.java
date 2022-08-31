@@ -179,6 +179,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     int MaxDays;
     final int GetAddFromLatLng      = 160;
     boolean isUnidentified = false;
+    int CURRENT_JOB_STATUS  = 0;
 
    /* public static int DutyStatusHeaderCount  = 1;
     public static int LoginLogoutHeaderCount = 1;
@@ -503,6 +504,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                     MonthShortName = getBundle.getString("month_short_name");
                     CurrentCycleId = getBundle.getString("cycle");
                     SelectedDayOfMonth = getBundle.getInt("day_of_month");
+                    CURRENT_JOB_STATUS = getBundle.getInt("current_status");
                     //CountryCycle =DriverConst.GetCurrentCycleName(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
                     //  getBundle.clear();
                 }
@@ -765,7 +767,12 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             if(position == 0){
                 MoveFragment(LogDate);
             }else if(position == 1){
-                shareDriverLogDialog();
+                if(CURRENT_JOB_STATUS == Constants.DRIVING){
+                    Globally.EldScreenToast(rootView, getString(R.string.chnge_dr_to_othr),
+                            getResources().getColor(R.color.colorVoilation));
+                }else {
+                    shareDriverLogDialog();
+                }
 
             }else if(position == 2){
                 generateRodsDialog = new GenerateRodsDialog(getActivity(), countryList, new GenerateRodsListner(),

@@ -1514,11 +1514,17 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                 if (isActionEventAllowedWithSpeed) {
                     if (constants.IsSendLog(DriverId, driverPermissionMethod, dbHelper)) {
 
-                        if (hMethods.isActionAllowedWhileMoving(getActivity(), global, DriverId, dbHelper)) {
+                        if (hMethods.isActionAllowedWhileMoving(getActivity(), global, DriverId, dbHelper)&&
+                                DRIVER_JOB_STATUS != DRIVING) {
                             shareDriverLogDialog();
                         } else {
-                            global.EldScreenToast(sendLogHosBtn, getString(R.string.stop_vehicle_alert),
-                                    getResources().getColor(R.color.colorVoilation));
+                            if(DRIVER_JOB_STATUS == DRIVING){
+                                Globally.EldScreenToast(sendLogHosBtn, getString(R.string.chnge_dr_to_othr),
+                                        getResources().getColor(R.color.colorVoilation));
+                            }else {
+                                global.EldScreenToast(sendLogHosBtn, getString(R.string.stop_vehicle_alert),
+                                        getResources().getColor(R.color.colorVoilation));
+                            }
                         }
 
                     } else {

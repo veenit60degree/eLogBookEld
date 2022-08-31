@@ -805,6 +805,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.SetIgnitionOffCalled(false, getApplicationContext());
 			SharedPref.setAgricultureExemption(false, getApplicationContext());
 			SharedPref.saveCoDriverSwitchingStatus(false, getApplicationContext());
+			SharedPref.setObdStatusAfterLogin(false, getApplicationContext());
 
 			SharedPref.saveLocDiagnosticStatus(SharedPref.isLocDiagnosticOccur(getApplicationContext()), Globally.GetCurrentDateTime(),
 					Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
@@ -825,15 +826,14 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		}
 	}
 
-
 	void clearUnIdentifiedRecordBeforeLogin(){
-		String LastDutyStatus = SharedPref.getUnIdenLastDutyStatus(getApplicationContext());
-
-		if(LastDutyStatus.equals("DR") || LastDutyStatus.equals("OD")){
-			SharedPref.SetPingStatus(ConstantsKeys.ClearUnIdentifiedData, LoginActivity.this);
-			startService();
-		}
+		//String LastDutyStatus = SharedPref.getUnIdenLastDutyStatus(getApplicationContext());
+		//if(LastDutyStatus.equals("DR") || LastDutyStatus.equals("OD")){
+		SharedPref.SetPingStatus(ConstantsKeys.ClearUnIdentifiedData, LoginActivity.this);
+		startService();
+		//}
 	}
+
 
 	void LoginUser(final String DeviceId, final String username, final String pass, final String CoDriverUsername,
 				   final String CoDriverPassword, final String TeamDriverType, final String OSType,

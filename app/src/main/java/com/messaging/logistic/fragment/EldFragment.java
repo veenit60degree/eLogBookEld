@@ -1430,6 +1430,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         bundle.putString("month_full_name", dayFullName);
         bundle.putString("month_short_name", dayShortName);
         bundle.putString("cycle", cycle);
+        bundle.putInt("current_status", DRIVER_JOB_STATUS);
 
         dotFragment.setArguments(bundle);
 
@@ -4061,7 +4062,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         currentUtcTimeDiffFormat = Globally.GetCurrentUTCTimeFormat();
         DateTime currentDateTime = Globally.getDateTimeObj(CurrentDeviceDate, false);    // Current Date Time
         DateTime currentUTCDateTime = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
-
+        SharedPref.SetAfterLoginConfStatus(true, getContext());
 
         try {
 

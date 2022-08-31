@@ -750,6 +750,6 @@ public class ConstantsKeys {
     public static String StartEndOdometerKM             = "StartEndOdometerKM";
     public static String OdometerDifference             = "OdometerDifference";
     public static String OdometerDifferenceKM           = "OdometerDifferenceKM";
-
+    public static String ConnectedAfterLogin            = "ConnectedAfterLogin";
 
 }

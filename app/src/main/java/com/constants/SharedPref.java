@@ -3594,4 +3594,22 @@ public class SharedPref {
 
     }
 
+    // Save Obd Status After Login  -------------------
+    public static void setObdStatusAfterLogin( boolean isUnidentifiedDia,Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(ConstantsKeys.ConnectedAfterLogin, isUnidentifiedDia);
+        editor.commit();
+    }
+
+    // Get Obd Status After Login -------------------
+    public static boolean isObdWasConnectedAfterLogin( Context context) {
+        if(context != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            return preferences.getBoolean(ConstantsKeys.ConnectedAfterLogin, false);
+        }else {
+            return false;
+        }
+    }
+
 }

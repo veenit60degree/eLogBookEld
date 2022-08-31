@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.util.Log;
 import android.view.InflateException;
@@ -66,6 +67,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     int RestartObdFlag = 103;
     int GpsFlag = 104;
     int newCmd1 = 1001;
+    private Context mContext;
 
     String simNumber = "";
     String responseTxt = "<b> ############## OBD Response ############## </b> <br><br><br> ";
@@ -74,6 +76,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     String closeFont = "</font>";
     Button button2;
     EditText field1;
+    boolean CheckConnection = false;
 
    // BleDevice bleDevice = null;
     BackgroundLocationService bleService;
@@ -207,16 +210,31 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
     void scanBtnClick(){
        int bleStatus = SharedPref.getObdStatus(getActivity());
+
         if(bleStatus != Constants.BLE_CONNECTED){
             //stopBleObdData();
             // ToastUtil.show(getActivity(), getString(R.string.device_already_connected));
-
             loaderProgress.setVisibility(View.VISIBLE);
             bleObdTxtView.setText(getString(R.string.start_scan));
-
+            CheckConnection = false;
 
         } /*else {
+
+
 */
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(CheckConnection == false) {
+                    if(mContext != null) {
+                        loaderProgress.setVisibility(View.GONE);
+                        bleObdTxtView.setText(getString(R.string.connect_ble_obd));
+                        globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.ht_connect_error), getResources().getColor(R.color.colorVoilation));
+                    }
+                }
+            }
+        }, 10000);
 
             SharedPref.SetPingStatus("start", getActivity());
             SharedPref.saveBleScanCount(0, getActivity());
@@ -235,6 +253,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         public void onReceive(Context context, Intent intent) {
 
             loaderProgress.setVisibility(View.GONE);
+            CheckConnection = true;
             String data = intent.getStringExtra("decoded_data");
 
             try {
@@ -688,6 +707,18 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mContext = null;
     }
 
 
