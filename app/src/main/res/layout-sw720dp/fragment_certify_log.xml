@@ -1805,6 +1805,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/margin_20"
+            android:visibility="gone"
+
             >
 
         <TextView

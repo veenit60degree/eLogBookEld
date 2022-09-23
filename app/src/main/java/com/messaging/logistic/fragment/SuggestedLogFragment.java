@@ -33,7 +33,9 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.CertifyConfirmationDialog;
+import com.custom.dialogs.PtiSignDialog;
 import com.custom.dialogs.SignDialog;
+import com.custom.dialogs.SignRecordDialog;
 import com.driver.details.DriverConst;
 import com.google.android.material.tabs.TabLayout;
 import com.local.db.CertifyLogMethod;
@@ -131,11 +133,12 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     ProgressDialog progressDialog;
     SignDialog signDialog;
     AlertDialog alertDialog;
+    PtiSignDialog ptiSignDialog;
 
     boolean isCurrentDate = false;
     boolean isCertifySignExist = false;
     boolean IsContinueWithSign = false;
-    String LogSignImageInByte = "";
+    String LogSignImageInByte = "", SignCopyDate = "";
     int DriverType;
 
     public static String LogDate = "";
@@ -386,7 +389,8 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             case R.id.confirmCertifyBtn:
                // if(constants.isActionAllowed(getActivity())) {
                 if(hMethods.isActionAllowedWhileMoving(getActivity(), new Globally(), DriverId, dbHelper)){
-                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false , "", new CertificationListener());
+                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false , false,
+                            "", new CertificationListener());
                     certifyConfirmationDialog.show();
                 }else{
                     Globally.EldScreenToast(confirmCertifyBtn, getString(R.string.stop_vehicle_alert),
@@ -422,17 +426,33 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     private class CertificationListener implements CertifyConfirmationDialog.CertifyConfirmationListener{
 
         @Override
-        public void CertifyBtnReady(boolean isSwapConfirmation) {
+        public void CertifyBtnReady(boolean isSwapConfirmation, boolean isReCertify) {
 
             if(globally.isConnected(getActivity())){
 
                 if(isCurrentDate) {
                     ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord,  CoDriverId, CertifyRecordFlag);
                 }else{
-                    if(isCertifySignExist){
-                        ContinueWithoutSignDialog();
+                    if(isReCertify){
+                        SignCopyDate =  constants.getLastSignDate(recapViewMethod, DriverId, dbHelper);
+                        LogSignImageInByte = constants.getLastSignature(recapViewMethod, DriverId, dbHelper);
+                        SaveDriverSignArray(true);
                     }else {
-                        openSignDialog();
+
+                        if (isCertifySignExist) {
+                            //ContinueWithoutSignDialog();
+                            if (ptiSignDialog != null && ptiSignDialog.isShowing()) {
+                                ptiSignDialog.dismiss();
+                            }
+                            String lastSignature = constants.getLastSignature(recapViewMethod, DriverId, dbHelper);
+                            SignCopyDate = constants.getLastSignDate(recapViewMethod, DriverId, dbHelper);
+                            ptiSignDialog = new PtiSignDialog(getContext(), "Certify", lastSignature,
+                                    null, new PtiConfirmationListener());
+                            ptiSignDialog.show();
+
+                        } else {
+                            openSignDialog();
+                        }
                     }
                 }
 
@@ -450,8 +470,32 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
 
 
+    private class PtiConfirmationListener implements PtiSignDialog.PtiConfirmationListener{
 
-    public void ContinueWithoutSignDialog(){
+        @Override
+        public void PtiBtnReady(String ByteSign, String SignDate) {
+            if(SignDate.length() > 0) {
+                SignCopyDate = SignDate;
+            }else{
+                if(SignCopyDate.length() == 0){
+                    SignCopyDate = LogDate;
+                }
+            }
+
+            LogSignImageInByte = ByteSign;
+            IsContinueWithSign = true;
+            ClaimSuggestedRecords(DriverId, DeviceId, AcceptedSuggestedRecord,  CoDriverId, CertifyRecordFlag);
+        }
+
+        @Override
+        public void CancelBtnReady() {
+            IsContinueWithSign = false;
+            openSignDialog();
+        }
+    }
+
+
+  /*  public void ContinueWithoutSignDialog(){
         try {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
             alertDialogBuilder.setTitle("Certify log alert !!");
@@ -495,7 +539,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             e.printStackTrace();
         }
     }
-
+*/
 
     void openSignDialog(){
 
@@ -520,6 +564,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
             try {
                 if (signDialog != null) {
                     if (IsSigned) {
+                        SignCopyDate = LogDate;
                         imagePath = constants.GetSignatureBitmap(inkView, suggestInvisibleView, getActivity());
                         signDialog.dismiss();
 
@@ -552,6 +597,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
 
     void signPreviouslyWithAPi(boolean IsContinueWithSign){
         String lastSignature = constants.getLastSignature(recapViewMethod, DriverId, dbHelper);
+        SignCopyDate    = constants.getLastSignDate(recapViewMethod, DriverId, dbHelper);
         saveByteSignLocally(lastSignature, IsContinueWithSign);
         LogSignImageInByte = lastSignature;
 

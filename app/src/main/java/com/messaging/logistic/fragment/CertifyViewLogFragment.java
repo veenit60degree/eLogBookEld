@@ -62,12 +62,14 @@ import com.constants.SaveDriverLogPost;
 import com.constants.ScrollViewExt;
 import com.constants.ScrollViewListener;
 import com.constants.SharedPref;
+import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.constants.WebAppInterface;
 import com.custom.dialogs.CertifyConfirmationDialog;
 import com.custom.dialogs.DatePickerDialog;
 import com.custom.dialogs.LoginDialog;
 import com.custom.dialogs.MissingLocationDialog;
+import com.custom.dialogs.PtiSignDialog;
 import com.custom.dialogs.SignDialog;
 import com.custom.dialogs.SignRecordDialog;
 import com.driver.details.DriverConst;
@@ -126,6 +128,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     View rootView;
     List<EldDriverLogModel> DriverLogList;
     DriverLogInfoAdapter LogInfoAdapter;
+    Utils obdUtil;
 
     ListView certifyLogListView, recapHistoryListView, odometerListView, shippingDetailListView;
     List<RecapModel> recapList;
@@ -164,7 +167,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     String MainDriverName = "",CoDriverName = "N/A", DeviceId = "", CurrentCycleId = "", VehicleId = "";
     public static String SelectedCoDriverId = "", SelectedCoDriverName = "";
     String Distance, HomeTerminal, PlateNumber = "", TruckNo, TrailerNo, VIN_NUMBER = "", OfficeAddress = "", Carrier = "", Remarks = "";
-    String TeamDriverType = "1", imagePath = "", LogSignImage = "", LogSignImageInByte = "", EngineMileage = "", OffLineLogSignImage = "", OfflineByteImg = "";
+    String TeamDriverType = "1", imagePath = "", LogSignImage = "", LogSignImageInByte = "", EngineMileage = "",
+            OffLineLogSignImage = "", OfflineByteImg = "", SignCopyDate = "";
     String TotalOnDutyHours         = "00:00";
     String TotalDrivingHours        = "00:00";
     String LeftCycleHours           = "00:00";
@@ -247,10 +251,16 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     SignDialog signDialog;
     DatePickerDialog dateDialog;
     AlertDialog alertDialog;
+    PtiSignDialog ptiSignDialog;
+    LoginDialog loginDialog;
+    SignRecordDialog signRecordDialog;
+    CertifyConfirmationDialog certifyConfirmationDialog;
+    MissingLocationDialog missingLocationDialog;
+
 
     private DisplayImageOptions options;
     VolleyRequest GetLogRequest, GetOdometerRequest, GetShipmentRequest, GetShippingRequest,
-            GetLog18DaysRequest, GetRecapView18DaysData, GetReCertifyRequest;
+            GetLog18DaysRequest, GetRecapView18DaysData, GetReCertifyRequest, SwapDrivingRequest;
     Map<String, String> params;
     WebView graphWebView;
     ProgressBar progressBarDriverLog;
@@ -279,10 +289,6 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     SharedPref sharedPref;
     String LeftWeekOnDutyHoursInt = "00:00", LeftDayOnDutyHoursInt = "00:00",
             LeftDayDrivingHoursInt = "00:00", TotalCycleUsedHour = "00:00";
-    LoginDialog loginDialog;
-    SignRecordDialog signRecordDialog;
-    CertifyConfirmationDialog certifyConfirmationDialog;
-    MissingLocationDialog missingLocationDialog;
 
     String MainDriverPass = "", CoDriverPass = "";  // CoDriverNameTxt = "";
     int  eldWarningColor;
@@ -416,6 +422,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         GetShipmentRequest      = new VolleyRequest(getActivity());
         GetShippingRequest      = new VolleyRequest(getActivity());
         GetRecapView18DaysData  = new VolleyRequest(getActivity());
+        SwapDrivingRequest      = new VolleyRequest(getActivity());
         GetLog18DaysRequest     = new VolleyRequest(getActivity());
         GetReCertifyRequest     = new VolleyRequest(getActivity());
 
@@ -446,6 +453,14 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         GetSavePreferences();
         crossVerifyRecapData();
 
+        try{
+            //  ------------- OBD Log write initilization----------
+            obdUtil = new Utils(getActivity());
+            obdUtil.createLogFile();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         try {
 
@@ -1255,10 +1270,15 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     private class CertificationListener implements CertifyConfirmationDialog.CertifyConfirmationListener{
 
         @Override
-        public void CertifyBtnReady(boolean isSwapConfirmation) {
+        public void CertifyBtnReady(boolean isSwapConfirmation, boolean isReCertify) {
 
             if(isSwapConfirmation){
                 SwapDriving( DRIVER_ID, SelectedCoDriverId, Globally.ConvertDateFormat(LogDate), getDriverStatusLogId() );
+            }else if(isReCertify){
+                SignCopyDate =  constants.getLastSignDate(recapViewMethod, DRIVER_ID, dbHelper);
+                LogSignImageInByte = constants.getLastSignature(recapViewMethod, DRIVER_ID, dbHelper);
+                IsContinueWithSign = true;
+                SaveDriverSignArray();
             }else {
                 certifyListenerCall();
             }
@@ -1280,7 +1300,17 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 if (f.exists() && (signBtnTxt.equals(getString(R.string.save_and_certify)) || signBtnTxt.equals(getString(R.string.save_and_recertify))) ) {
                     SaveDriverSignArray();
                 } else {
-                    ContinueWithoutSignDialog();
+
+                    if (ptiSignDialog != null && ptiSignDialog.isShowing()) {
+                        ptiSignDialog.dismiss();
+                    }
+                    String lastSignature = constants.getLastSignature(recapViewMethod, DRIVER_ID, dbHelper);
+                    SignCopyDate    = constants.getLastSignDate(recapViewMethod, DRIVER_ID, dbHelper);
+                    ptiSignDialog = new PtiSignDialog(getActivity(), "Certify", lastSignature,
+                            null, new PtiConfirmationListener());
+                    ptiSignDialog.show();
+
+                    //ContinueWithoutSignDialog();
                 }
 
             } else {
@@ -1313,7 +1343,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 // if(constants.isActionAllowed(getActivity())) {
                 if(hMethods.isActionAllowedWhileMoving(getActivity(), global, DRIVER_ID, dbHelper)){
                     isSaveCertifyClicked = true;
-                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false, "", new CertificationListener());
+                    boolean isReCertifyRequired = constants.isReCertifyRequired(getActivity(), null, selectedDateTime.toString());
+
+                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false, isReCertifyRequired,
+                            "", new CertificationListener());
                     certifyConfirmationDialog.show();
                 }else{
                      Globally.EldScreenToast(saveSignatureBtn, getString(R.string.stop_vehicle_alert),
@@ -1363,7 +1396,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 if (Globally.isConnected(getActivity())) {
                     if(CertifyViewLogFragment.SwapDrivingArray.size() > 0) {
 
-                        certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), true,
+                        certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), true, false,
                                 "Do you want to swap DRIVING with " +SelectedCoDriverName + " ?",
                                 new CertificationListener());
                         certifyConfirmationDialog.show();
@@ -1467,7 +1500,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         if (signList.size() > 0) {
             signRecordDialog = new SignRecordDialog(getActivity(), DriverType, isCertifySignExist, recap18DaysArray, signList, new SignRecapListener(),
-                                                        constants,  recapViewMethod,  certifyLogMethod, dbHelper );
+                                                        constants,  recapViewMethod,  certifyLogMethod, dbHelper, obdUtil );
             signRecordDialog.show();
         } else {
             if(isToastShowing)
@@ -2504,7 +2537,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         signImageView.setBackground(null);
                         signImageView.setImageResource(R.drawable.transparent);
                         imagePath = constants.GetSignatureBitmap(inkView, signImageView, getActivity());
-
+                        SignCopyDate = LogDate;
                         if (isReCertifyRequired) {
                             saveSignatureBtn.setText(getString(R.string.save_and_recertify));
                         } else{
@@ -2623,7 +2656,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         }
 
                     } else {
-                        SignatureMainLay.setVisibility(View.VISIBLE);
+                       // SignatureMainLay.setVisibility(View.VISIBLE);
                         signLogTitle2.setVisibility(View.GONE);
                         if (isReCertifyRequired) {
                             saveSignatureBtn.setText(getString(R.string.save_and_recertify));
@@ -2657,7 +2690,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                 saveSignatureBtn.setText(getString(R.string.certify));
                             }
                         } else {
-                            SignatureMainLay.setVisibility(View.VISIBLE);
+                           // SignatureMainLay.setVisibility(View.VISIBLE);
                             signLogTitle2.setVisibility(View.GONE);
                             if (isReCertifyRequired) {
                                 saveSignatureBtn.setText(getString(R.string.save_and_recertify));
@@ -2795,7 +2828,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     void GET_DRIVER_DETAILS(final String ProjectId, final String DriverId, final String date) {
 
         if(nextPrevBtnClicked) {
-            progressDialog.show();
+           // progressDialog.show();
         }
         nextPrevBtnClicked = false;
 
@@ -2851,7 +2884,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         params.put(ConstantsKeys.DriverLogDate, DriverLogDate);
         params.put(ConstantsKeys.DriverLogIds, DriverLogIds );
 
-        GetRecapView18DaysData.executeRequest(Request.Method.POST, APIs.SWAP_DRIVING , params, SwapDriving,
+        SwapDrivingRequest.executeRequest(Request.Method.POST, APIs.SWAP_DRIVING , params, SwapDriving,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
     }
 
@@ -2879,11 +2912,19 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     private void saveByteSignLocally(String SignImageInBytes){
         // Add signed parameters with values into the json object and put into the json Array.
         JSONObject CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DRIVER_ID, DeviceId, global.PROJECT_ID, LogDate,
-                SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, sharedPref.getLocationEventType(getActivity())  );
+                SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId,
+                sharedPref.getLocationEventType(getActivity()), SignCopyDate  );
         CertifyLogArray.put(CertifyLogObj);
 
         // Insert/Update Certify Log table
         certifyLogMethod.CertifyLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, CertifyLogArray );
+
+        constants.saveObdData("Certify",
+                "CertifyLogArray: " + CertifyLogArray.toString(),
+                "", "","", "","", "",
+                "","", "", "", "",
+                DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
+
 
         // Update recap array with byte image
         recap18DaysArray = recapViewMethod.UpdateSelectedDateRecapArray(recap18DaysArray, LogDate, SignImageInBytes);
@@ -2901,6 +2942,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             if (IsContinueWithSign) {
 
                 String lastSignature = constants.getLastSignature(recapViewMethod, DRIVER_ID, dbHelper);
+                SignCopyDate         = constants.getLastSignDate(recapViewMethod, DRIVER_ID, dbHelper);
                 saveByteSignLocally(lastSignature);
                 loadByteImage(lastSignature);
                 LogSignImageInByte = lastSignature;
@@ -3938,6 +3980,32 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             String EndDate = Globally.GetCurrentDeviceDate(); // current Date
 
             GetRecapView18DaysData(DRIVER_ID, DeviceId, StartDate, EndDate);
+        }
+    }
+
+
+
+
+    private class PtiConfirmationListener implements PtiSignDialog.PtiConfirmationListener{
+
+        @Override
+        public void PtiBtnReady(String ByteSign, String SignDate) {
+            if(SignDate.length() > 0) {
+                SignCopyDate = SignDate;
+            }else{
+                if(SignCopyDate.length() == 0){
+                    SignCopyDate = LogDate;
+                }
+            }
+            LogSignImageInByte = ByteSign;
+            IsContinueWithSign = true;
+            SaveDriverSignArray();
+        }
+
+        @Override
+        public void CancelBtnReady() {
+            IsContinueWithSign = false;
+            openSignDialog();
         }
     }
 

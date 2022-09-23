@@ -1062,7 +1062,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                 "", LocationType, "", isNorthCanada, false,
                                 SharedPref.getObdOdometer(context), CoDriverId, CoDriverName, TruckNo,
                                 SharedPref.getTrailorNumber(context), SharedPref.getObdEngineHours(context),
-                                SharedPref.getObdOdometer(context), hMethods, dbHelper);
+                                SharedPref.getObdOdometer(context), Constants.Auto, hMethods, dbHelper);
 
                         String CurrentDate = Global.GetCurrentDateTime();
                         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
@@ -1090,7 +1090,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 driverLogArray.put(sameStatusJson);
 
                 SaveDriverJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType, String.valueOf(RulesObj.isViolation()),
-                        RulesObj.getViolationReason(), ChangedDriverStatus, isAutomatic, false, false);
+                        RulesObj.getViolationReason(), ChangedDriverStatus, isAutomatic, false, false, Constants.Auto);
 
                 // callback method called to update Eld home screen
                 serviceCallback.onServiceResponse(RulesObj, RemainingTimeObj, IsAppForground, true, "", context.getResources().getString(R.string.screen_reset));
@@ -1169,12 +1169,12 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                                 if(minDiff > 30) {
                                                       SaveDriverJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType,
                                                                 String.valueOf(isViolation), violationReason, 0,
-                                                              true, false, true);
+                                                              true, false, true, Constants.Auto);
                                                 }else {
                                                       // update Last status with violation reason
                                                       SaveDriverJob(sameStatusJson, driverLogArray, hMethods, dbHelper, DriverType,
                                                                 String.valueOf(isViolation), violationReason, 0, true,
-                                                              true, true);
+                                                              true, true, Constants.Auto);
                                                 }
 
                                             //    JSONArray notificationArray = notificationMethod.getSavedNotificationArray(Integer.valueOf(DriverId), dbHelper);
@@ -1287,7 +1287,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
     /*===== Save Driver Jobs with Shared Preference to Array List======= */
     private void SaveDriverJob(JSONObject jobJsonObj, JSONArray driverLogArray, HelperMethods hMethods, DBHelper dbHelper,
                                 int DriverType, String isViolationStr, String ViolationReason, int DriverStatusInt,
-                                boolean isAutoChanged, boolean isUpdate, boolean IsSkipRecord) {
+                                boolean isAutoChanged, boolean isUpdate, boolean IsSkipRecord, String DriverVehicleTypeId) {
 
 
         MainDriverPref    = new MainDriverEldPref();
@@ -1402,7 +1402,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         ""+IsSkipRecord,
                         Constants.getLocationSource(context),
                         SharedPref.getObdEngineHours(context),
-                        SharedPref.getObdOdometer(context)
+                        SharedPref.getObdOdometer(context),
+                        DriverVehicleTypeId
 
 
                 );
@@ -1550,7 +1551,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                 CoDriverName,
                 "0",
                 SharedPref.getObdEngineHours(context),
-                SharedPref.getObdOdometer(context)
+                SharedPref.getObdOdometer(context),
+                DriverVehicleTypeId
 
         );
 
@@ -1606,7 +1608,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         CoDriverName,
                         "0",
                         SharedPref.getObdEngineHours(context),
-                        SharedPref.getObdOdometer(context)
+                        SharedPref.getObdOdometer(context),
+                        DriverVehicleTypeId
 
                 );
 

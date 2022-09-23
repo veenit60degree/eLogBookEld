@@ -198,5 +198,40 @@ public class BleUtil {
     }
 
 
+    public static String decodedData(HTBleData data, String address){
+
+        String decodedData = "";
+        String accDateTime = data.getACC_ON_Date();
+
+        decodedData =   address + "@@" +                    // 0
+                        data.getSequenceID() + "@@" +       // 1
+                        data.getEventType() + "@@" +        // 2
+                        data.getEventCode()+ "@@" +         // 3
+                        data.getRTCDate() + "@@" +          // 4
+                        data.getRTCTime() + "@@" +          // 5
+                        accDateTime + "@@" +                // 6
+                        data.getRTCDate() + data.getRTCTime() + "@@" +  // 7
+                        data.getEventData() + "@@" +        // 8
+                        data.getVehicleSpeed() + "@@" +     // 9
+                        data.getEngineSpeed() + "@@" +      // 10
+                        data.getOdoMeter() + "@@" +         // 11
+                        data.getEngineHours() + "@@" +      // 12
+                        data.getVIN_Number() + "@@" +       // 13
+                        data.getLatitude() + "@@" +         // 14
+                        data.getLongitude() + "@@" +        // 15
+                        data.getDistanceSinceLast() + "@@" +// 16
+                        data.getSource_id();                // 17
+
+        return decodedData;
+    }
+
+    public static String[] decodedDataArray(String data){
+
+        String[] decodedArray = null;
+        if(data.length() > 0){
+            decodedArray = data.split("@@");
+        }
+        return decodedArray;
+    }
 
 }

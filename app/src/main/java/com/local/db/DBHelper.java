@@ -52,6 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_DOWNLOADEDLOGS_USA_RECORDS     = "tbl_downloadedlogs_usa_record";
     public static final String TABLE_DOWNLOADEDLOGS_CANADA_RECORDS  = "tbl_downloadedlogs_canada_record";
     public static final String TABLE_BLE_GPS_APPLAUNCH_LOGS         = "tbl_ble_gps_app_launch_logs";
+    public static final String TABLE_VEH_POWER_EVENT_LOGS           = "tbl_veh_pwr_event_logs";
 
 
 
@@ -92,6 +93,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String DOWNLOADLOGS_USA_RECORD_LIST       = "oDriver_downloadlogs_usa_record_list";
     public static final String DOWNLOADLOGS_CANADA_RECORD_LIST    = "oDriver_downloadlogs_canada_record_list";
     public static final String BLE_GPS_APPLAUNCH_LOG_LIST         = "oDriver_ble_gps_app_launch_log_list";
+    public static final String VEH_POWER_EVENT_LOG_LIST           = "oDriver_veh_pwr_event_log_list";
 
 
 
@@ -231,6 +233,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 PROJECT_ID_KEY + " INTEGER, " +  BLE_GPS_APPLAUNCH_LOG_LIST + " TEXT )"
         );
 
+        db.execSQL( "CREATE TABLE " + TABLE_VEH_POWER_EVENT_LOGS + "(" +
+                PROJECT_ID_KEY + " INTEGER, " +  VEH_POWER_EVENT_LOG_LIST + " TEXT )"
+        );
+
+
+
     }
 
 
@@ -268,6 +276,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOWNLOADEDLOGS_USA_RECORDS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOWNLOADEDLOGS_CANADA_RECORDS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BLE_GPS_APPLAUNCH_LOGS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_VEH_POWER_EVENT_LOGS);
 
         onCreate(db);
     }
@@ -577,8 +586,13 @@ public class DBHelper extends SQLiteOpenHelper {
         );
     }
 
-
-
+    /* -- Create vehicle power event log table if not exist.*/
+    public void CreateVehPwrEventLogTable(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("CREATE TABLE " + TABLE_VEH_POWER_EVENT_LOGS + "(" +
+                PROJECT_ID_KEY + " INTEGER, " + VEH_POWER_EVENT_LOG_LIST + " TEXT )"
+        );
+    }
 
 
 
@@ -1046,6 +1060,19 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Insert vehicle power event Log -------------------- */
+    public boolean InsertVehiclePowerEventLog(int ProjectId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PROJECT_ID_KEY, ProjectId);
+        contentValues.put(VEH_POWER_EVENT_LOG_LIST, String.valueOf(jsonArray));
+
+        db.insert(TABLE_VEH_POWER_EVENT_LOGS, null, contentValues);
+        return true;
+    }
+
 
 
 
@@ -1501,6 +1528,21 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+    /* ---------------------- Update vehicle power event Log -------------------- */
+    public boolean UpdateVehiclePowerEventLog(int ProjectId, JSONArray jsonArray) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PROJECT_ID_KEY, ProjectId);
+        contentValues.put(VEH_POWER_EVENT_LOG_LIST, String.valueOf(jsonArray));
+
+        db.update(TABLE_VEH_POWER_EVENT_LOGS, contentValues, PROJECT_ID_KEY + " = ? ", new String[] { Integer.toString(ProjectId) } );
+        return true;
+    }
+
+
+
 
 
 
@@ -1790,6 +1832,16 @@ public class DBHelper extends SQLiteOpenHelper {
                 PROJECT_ID_KEY + "=?", new String[]{Integer.toString(ProjectId)});
         return res;
     }
+
+
+    /* ---------------------- Get vehicle power event logs-------------------- */
+    public Cursor getVehiclePowerEventLog(int ProjectId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_VEH_POWER_EVENT_LOGS + " WHERE " +
+                PROJECT_ID_KEY + "=?", new String[]{Integer.toString(ProjectId)});
+        return res;
+    }
+
 
 
 
@@ -2122,6 +2174,16 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /* ------ Delete power event logTable ------ */
+    public void DeleteVehiclePowerEventTable() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_VEH_POWER_EVENT_LOGS);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -2258,6 +2320,11 @@ public class DBHelper extends SQLiteOpenHelper {
         if(!isTableExists(TABLE_BLE_GPS_APPLAUNCH_LOGS)) {
             CreateBleGpsAppLaunchLogTable();
         }
+
+        if(!isTableExists(TABLE_VEH_POWER_EVENT_LOGS)) {
+            CreateVehPwrEventLogTable();
+        }
+
 
 
     }

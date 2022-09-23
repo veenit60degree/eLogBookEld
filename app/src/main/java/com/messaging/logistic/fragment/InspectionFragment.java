@@ -1,7 +1,9 @@
 package com.messaging.logistic.fragment;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -55,6 +57,7 @@ import com.constants.Slidingmenufunctions;
 import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.DatePickerDialog;
+import com.custom.dialogs.PtiSignDialog;
 import com.custom.dialogs.SignDialog;
 import com.custom.dialogs.TrailorDialog;
 import com.custom.dialogs.VehicleDialog;
@@ -96,6 +99,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     View rootView;
     boolean isChecked, IsClicked, IsAOBRD = false, IsAOBRDAutomatic = false, isOnCreate = true, isLocationChange;
+    boolean IsSignCopy = false;
     CheckBox checkboxTrailer, checkboxTruck;
     GridView truckGridView, trailerGridView;
     GridAdapter truckAdapter, trailerAdapter;
@@ -125,6 +129,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     Button changeLocBtn, saveInspectionBtn;
     ImageView signSuprvsrIV, signDriverIV;
     ProgressBar inspectionProgressBar;
+    AlertDialog alertDialog;
     String btnSelectedType = "", SignImageSelected = "", SupervisorSignImage = "", DriverSignImage = "", Odometer = "", OdometerDistanceType = "";
     String  DRIVER_ID = "", VIN_NUMBER = "", DeviceId = "";
     String DriverName = "",CompanyId = "", InspectionDateTime = "", Location = "", PreTripInsp = "false", PostTripInsp = "false",
@@ -133,7 +138,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     String City = "", State = "", Country = "", CurrentCycleId = "", CurrentJobStatus = "";
     String DriverId = "", CoDriverId = "", tempTruck = "", tempTrailer = "", CreatedDate = "";
     String ByteDriverSign = "", ByteSupervisorSign = "", SelectedDatee = "";
-    String TruckNumber = "", TrailerNumber= "";
+    String TruckNumber = "", TrailerNumber= "", SignCopyDate = "";
     SignDialog signDialog;
     ScrollView inspectionScrollView;
     TextView inspectionTypeTV;
@@ -162,6 +167,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     CsvReader csvReader;
     Utils obdUtil;
     DriverPermissionMethod driverPermissionMethod;
+    PtiSignDialog ptiSignDialog;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -752,13 +759,27 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 break;
 
             case R.id.DriverSignLay:
-                // if(DriverSignImage.trim().length() == 0 ) {
-                SignImageSelected = "driver";
+
+                /*SignImageSelected = "driver";
                 if (signDialog != null && signDialog.isShowing())
                     signDialog.dismiss();
                 signDialog = new SignDialog(getActivity(), new SignListener());
                 signDialog.show();
-                // }
+                */
+
+                inspection18DaysArray = inspectionMethod.getSavedInspectionArray(Integer.valueOf(DRIVER_ID), dbHelper);
+                boolean isPtiSignExist = constants.isPTI_SignExist(inspection18DaysArray);
+
+                if(isPtiSignExist) {
+                    if (ptiSignDialog != null && ptiSignDialog.isShowing()) {
+                        ptiSignDialog.dismiss();
+                    }
+                    ptiSignDialog = new PtiSignDialog(getActivity(), "pti", "", inspection18DaysArray, new PtiConfirmationListener());
+                    ptiSignDialog.show();
+                }else{
+                    openSignDialog();
+                }
+
                 break;
 
             case R.id.saveInspectionBtn:
@@ -815,14 +836,28 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
     void CallSaveInspectionAPI(){
-        if(DriverSignImage.length() > 0 ) {
+
+        SignCopyDate = "";
+        if(IsSignCopy) {
+            ArrayList<String> SignWithDate = constants.getPtiLastSignature(inspection18DaysArray);
+            if(SignWithDate.size() > 1) {
+                ByteDriverSign  = SignWithDate.get(0);
+                SignCopyDate    = SignWithDate.get(1);
+            }
+        }
+
+        if(DriverSignImage.length() > 0 || ByteDriverSign.length() > 0) {
             getViewData();
-            SaveInspectionOfflineWithAPI();
-            //  new SaveDriverInspection().execute();
+            SaveInspectionOfflineWithAPI(IsSignCopy);
         }else{
             inspectionScrollView.fullScroll(ScrollView.FOCUS_DOWN);
             Globally.EldScreenToast(saveInspectionBtn, "Please add driver signature.", getResources().getColor(R.color.colorVoilation));
         }
+
+
+
+
+
     }
 
     void CheckInspectionValidation(){
@@ -1139,6 +1174,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
     /*================== Get Signature Bitmap ====================*/
     void GetSignatureBitmap(View targetView, ImageView canvasView){
+        canvasView.setImageResource(R.drawable.transparent);
         Bitmap b = Bitmap.createBitmap(targetView.getWidth(),
                 targetView.getHeight(),
                 Bitmap.Config.ARGB_8888);
@@ -1255,9 +1291,10 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         superviserSignLay.setVisibility(View.GONE);
         DriverSignImage     = "";
         SupervisorSignImage = "";
-        ByteDriverSign = "";
+        ByteDriverSign = ""; SignCopyDate = "";
         ByteSupervisorSign = "";
 
+        IsSignCopy = false;
         PreTripInsp = "false";
         PostTripInsp = "false";
         AboveDefectsCorrected = "false";
@@ -1276,7 +1313,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         signDriverIV.setBackgroundDrawable(null);
         signSuprvsrIV.setBackgroundDrawable(null);
-
+        signDriverIV.setImageResource(R.drawable.transparent);
+        signSuprvsrIV.setImageResource(R.drawable.transparent);
 
         ScrollUpView();
 
@@ -1332,15 +1370,25 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         public void SignOkBtn(InkView inkView, boolean IsSigned) {
 
             if(IsSigned) {
+                SignCopyDate = Globally.GetCurrentDateTime();
                 if( SignImageSelected.equals("driver") ){
-                    GetSignatureBitmap(inkView, signDriverIV);
+                    signDriverIV.setImageResource(R.drawable.transparent);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            GetSignatureBitmap(inkView, signDriverIV);
+                        }
+                    }, 100);
+
                 }else {
                     GetSignatureBitmap(inkView, signSuprvsrIV);
                 }
             }else{
                 if( SignImageSelected.equals("driver") ){
+                    signDriverIV.setImageResource(R.drawable.transparent);
                     signDriverIV.setBackgroundDrawable(null);
                     DriverSignImage = "";
+                    ByteDriverSign = ""; SignCopyDate = "";
                 }else {
                     signSuprvsrIV.setBackgroundDrawable(null);
                     SupervisorSignImage = "";
@@ -1351,6 +1399,40 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             signDialog.dismiss();
         }
+    }
+
+
+
+    private class PtiConfirmationListener implements PtiSignDialog.PtiConfirmationListener{
+
+        @Override
+        public void PtiBtnReady(String ByteSign, String SignDate) {
+            IsSignCopy = true;
+            ByteDriverSign = ByteSign;
+            SignCopyDate   = SignDate;
+            if(SignCopyDate.contains("T")){
+                SignCopyDate = Globally.ConvertDateFormatMMddyyyyHHmm(SignCopyDate);
+            }
+            signDriverIV.setImageResource(R.drawable.transparent);
+            signDriverIV.setBackgroundDrawable(null);
+            constants.LoadByteImage(signDriverIV, ByteDriverSign);
+        }
+
+        @Override
+        public void CancelBtnReady() {
+            IsSignCopy = false;
+            openSignDialog();
+        }
+    }
+
+
+
+    private void openSignDialog(){
+        SignImageSelected = "driver";
+        if (signDialog != null && signDialog.isShowing())
+            signDialog.dismiss();
+        signDialog = new SignDialog(getActivity(), new SignListener());
+        signDialog.show();
     }
 
 
@@ -1500,23 +1582,31 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
     //*================== Save Driver Inspection ===================*//*
-    private void SaveInspectionOfflineWithAPI(){
+    private void SaveInspectionOfflineWithAPI(boolean IsSignCopy){
 
         // disable temperory button click to avoid multiple clicks on button at the same time
         saveInspectionBtn.setEnabled(false);
+        CreatedDate         = Globally.GetCurrentDeviceDateTime();
 
         pDialog.show();
 
         // Convert image file into bytes
-        ByteDriverSign = "";
-        ByteSupervisorSign = "";
 
-        File file = new File(DriverSignImage);
-        if (file.exists()) {
-            Log.i("", "---Add File: " + file.toString());
-            ByteDriverSign = Globally.ConvertImageToByteAsString(DriverSignImage);
+        if(!IsSignCopy){
+            SignCopyDate = CreatedDate;
+            ByteDriverSign = "";
+            File file = new File(DriverSignImage);
+            if (file.exists()) {
+                Log.i("", "---Add File: " + file);
+                ByteDriverSign = Globally.ConvertImageToByteAsString(DriverSignImage);
+            }
+        }else{
+            if(SignCopyDate.contains("T")){
+                SignCopyDate = Globally.ConvertDateFormatMMddyyyyHHmm(SignCopyDate);
+            }
         }
 
+        ByteSupervisorSign = "";
         File f = new File(SupervisorSignImage);
         if (f.exists()) {
             Log.i("", "---Add File: " + f.toString());
@@ -1531,16 +1621,19 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             }
         }
 
-        CreatedDate         = Globally.GetCurrentDeviceDateTime();
+
         isLocationChange = false;
-        JSONObject inspectionData = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
+
+ //ByteDriverSign
+        // Add inspection JSON obj in 18 Days Array
+
+        JSONObject inspection18DaysObj = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
                 TruckNumber, TrailerNumber, CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected, AboveDefectsNotCorrected,
                 Remarks, Globally.LATITUDE, Globally.LONGITUDE, DriverTimeZone, SupervisorMechanicsName, TruckIssueType, TraiorIssueType, InspectionTypeId,
-                ByteDriverSign, ByteSupervisorSign, Odometer);
+                ByteDriverSign, ByteSupervisorSign, Odometer, false, SignCopyDate);
 
-        // Add inspection JSON obj in 18 Days Array
         JSONArray reverseArray = shipmentHelperMethod.ReverseArray(inspection18DaysArray);
-        JSONObject inspectionFor18DaysObj = inspectionMethod.Add18DaysObj(inspectionData, TruckList, TruckIdList, TrailerList, TrailerIdList);
+        JSONObject inspectionFor18DaysObj = inspectionMethod.Add18DaysObj(inspection18DaysObj, TruckList, TruckIdList, TrailerList, TrailerIdList);
         reverseArray.put(inspectionFor18DaysObj);
 
         // again reverse Array to show last item at top
@@ -1548,7 +1641,14 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         inspection18DaysArray = shipmentHelperMethod.ReverseArray(reverseArray);
         inspectionMethod.DriverInspectionHelper(Integer.valueOf(DRIVER_ID), dbHelper, inspection18DaysArray);
 
+
         // Add inspection JSON obj in Offline Array
+
+        JSONObject inspectionData = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
+                TruckNumber, TrailerNumber, CreatedDate, Location, PreTripInsp, PostTripInsp, AboveDefectsCorrected, AboveDefectsNotCorrected,
+                Remarks, Globally.LATITUDE, Globally.LONGITUDE, DriverTimeZone, SupervisorMechanicsName, TruckIssueType, TraiorIssueType, InspectionTypeId,
+                ByteDriverSign, ByteSupervisorSign, Odometer, IsSignCopy, SignCopyDate);
+
         JSONArray unPostedArray = inspectionMethod.getOfflineInspectionsArray(Integer.valueOf(DRIVER_ID), dbHelper);
         unPostedArray.put(inspectionData);
         inspectionMethod.DriverOfflineInspectionsHelper(Integer.valueOf(DRIVER_ID), dbHelper, unPostedArray);

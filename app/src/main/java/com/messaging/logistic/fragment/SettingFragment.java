@@ -1818,7 +1818,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 hMethods.SaveDriversJob(DriverId, DeviceId, AdverseExceptionRemarks, getString(R.string.enable_adverse_exception),
                         LocationType, "", false, isNorthCanada, DriverType, constants,
                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
-                        syncingMethod, global, hMethods, dbHelper, getActivity(), false , CoDriverId, CoDriverName, false) ;
+                        syncingMethod, global, hMethods, dbHelper, getActivity(), false ,
+                        CoDriverId, CoDriverName, false, Constants.Auto) ;
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -2469,7 +2470,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     LocationType, "", false, isNorthCanada, DriverType, constants,
                                     MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                     syncingMethod, global, hMethods, dbHelper, getActivity(), false,
-                                    CoDriverId, CoDriverName, false);
+                                    CoDriverId, CoDriverName, false, Constants.Auto);
                             global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Enabled", getResources().getColor(R.color.colorPrimary));
 
 
@@ -2481,7 +2482,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     LocationType, "", false, isNorthCanada, DriverType, constants,
                                     MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                     syncingMethod, global, hMethods, dbHelper, getActivity(), false,
-                                    CoDriverId, CoDriverName, false );
+                                    CoDriverId, CoDriverName, false, Constants.Auto );
 
                             global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Disabled", getResources().getColor(R.color.colorPrimary));
 
@@ -2812,7 +2813,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                         LocationType, "", true, isNorthCanada, DriverType, constants,
                                         MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                         syncingMethod, global, hMethods, dbHelper, getActivity(), false,
-                                        CoDriverId, CoDriverName, false);
+                                        CoDriverId, CoDriverName, false, Constants.Auto);
 
                             } else {
                                 global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.halu_excp_not_eligible), getResources().getColor(R.color.colorVoilation));

@@ -64,6 +64,8 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
     //TabHost.TabSpec chat_spec;
+    public static boolean IsAppRestart = false;
+    public static boolean IsEcmAlertShown = false;
     public static RequestQueue requestQueue;
     public static RequestQueue alsConnRequestQueue;
     public static TabHost host;
@@ -143,6 +145,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         dismissAlertBtn = (Button)findViewById(R.id.dismissAlertBtn);
         dayNightBtn = (Button)findViewById(R.id.dayNightBtn);
         openUpdateDialogBtn = (Button)findViewById(R.id.openUpdateDialogBtn);
+
         noObdConnTV = (TextView)findViewById(R.id.noObdConnTV);
         sliderLay = (RelativeLayout)findViewById(R.id.sliderLay);
         sliderLay.setVisibility(View.GONE);
@@ -185,7 +188,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
                     }else{
                         if (intent.hasExtra(ConstantsKeys.IsEldEcmALert)) {
-                            if (intent.getBooleanExtra(ConstantsKeys.IsEldEcmALert, false) == true) {
+                            boolean IsEldEcmALert = intent.getBooleanExtra(ConstantsKeys.IsEldEcmALert, false);
+
+                            if (IsEldEcmALert) {
                                 global.InternetErrorDialog(TabAct.this, true, false);
                             }else{
                                 global.InternetErrorDialog(TabAct.this, false, false);
@@ -397,12 +402,13 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         }
 
 
+
+
         speedAlertBtn.setOnClickListener(this);
         dismissAlertBtn.setOnClickListener(this);
         sliderLay.setOnClickListener(this);
         dayNightBtn.setOnClickListener(this);
         openUpdateDialogBtn.setOnClickListener(this);
-
 
     }
 
@@ -411,12 +417,12 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     public void YardMovePersonalStatusAlert(boolean isYardMove, boolean isPersonal) {
 
         try {
-                if (continueStatusDialog != null && !continueStatusDialog.isShowing()) {
-                    String TruckIgnitionStatus = SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, TabAct.this);
-                    continueStatusDialog = new ContinueStatusDialog(TabAct.this, isYardMove, isPersonal, false, TruckIgnitionStatus, new ContinueListener());
-                    continueStatusDialog.show();
+            String TruckIgnitionStatus = SharedPref.GetTruckIgnitionStatusForContinue(constants.TruckIgnitionStatus, TabAct.this);
+            continueStatusDialog = new ContinueStatusDialog(TabAct.this, isYardMove, isPersonal, false, TruckIgnitionStatus, new ContinueListener());
 
-                }
+            if (continueStatusDialog != null && !continueStatusDialog.isShowing()) {
+                continueStatusDialog.show();
+            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -624,8 +630,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     }
 
 
-
-    @Override
+     @Override
     protected void onResume() {
         super.onResume();
 
@@ -647,6 +652,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         super.onPause();
         UILApplication.activityPaused();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        Log.d("TabAct", "------onPause");
 
     }
 
@@ -656,6 +662,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         UILApplication.activityPaused();
         Globally.IS_LOGOUT = false;
+        Log.d("TabAct", "------onStop");
 
         try{
             if(wl != null)
@@ -740,6 +747,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             case R.id.openUpdateDialogBtn:
                 getAppVersion();
                 break;
+
         }
     }
 

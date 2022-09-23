@@ -7,73 +7,63 @@
     >
 
 
-
     <RelativeLayout
         android:id="@+id/viewContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/white_default"
-        android:layout_marginRight="9dp"
         android:layout_marginLeft="5dp"
-        android:paddingBottom="@dimen/view_height_30"
+        android:layout_marginRight="9dp"
+        android:background="@drawable/white_default"
         android:backgroundTint="?attr/layout_color_dot"
-        >
+        android:paddingBottom="@dimen/view_height_30">
 
 
         <TextView
             android:id="@+id/changeTitleView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/view_height_35_g"
             android:gravity="center"
             android:text="Confirmation"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/view_height_38"
-            android:layout_marginTop="@dimen/view_height_35_g"
             android:textColor="?attr/colorPrimary"
-            android:textStyle="bold"
-            />
-
-
+            android:textSize="@dimen/view_height_38"
+            android:textStyle="bold" />
 
 
         <LinearLayout
             android:id="@+id/descLay"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_below="@+id/changeTitleView"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/margin_25"
+            android:layout_toLeftOf="@+id/listSignImgBtn"
             android:gravity="center"
-            >
-
+            android:orientation="vertical">
 
 
             <TextView
                 android:id="@+id/titleDescView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/changeTitleView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="@dimen/margin_25"
+                android:layout_marginTop="@dimen/view_height_30"
+                android:layout_marginRight="@dimen/margin_25"
                 android:gravity="left"
                 android:text="Do you really want to confirm the Load Delivery?"
-                android:layout_centerHorizontal="true"
-                android:textSize="@dimen/text_size_23"
-                android:layout_marginLeft="@dimen/margin_25"
-                android:layout_marginRight="@dimen/margin_25"
-                android:layout_marginTop="@dimen/view_height_30"
                 android:textColor="?attr/app_color_primary"
-                android:layout_below="@+id/changeTitleView"
-                />
-
-
-
+                android:textSize="@dimen/text_size_23" />
 
 
             <LinearLayout
                 android:id="@+id/cycleRuleLay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="@dimen/margin_20"
+                android:orientation="horizontal"
                 android:visibility="gone"
 
                 >
@@ -81,22 +71,21 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_weight="1"
-                    >
+                    android:orientation="vertical">
 
 
                     <TextView
                         android:id="@+id/oldCycleRuleTxtVw"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/hos_limitation_old"
-                        android:textSize="@dimen/text_size_21"
+                        android:layout_gravity="center_horizontal"
                         android:layout_marginLeft="@dimen/margin_10"
                         android:layout_marginRight="@dimen/margin_10"
+                        android:text="@string/hos_limitation_old"
                         android:textColor="?attr/app_color_primary"
+                        android:textSize="@dimen/text_size_21"
                         android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
 
                         />
                     <!--USA Cycle: 25:20\nCANADA Cycle: 25:20-->
@@ -105,13 +94,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:gravity="left"
-                        android:text="@string/hos_limitation"
-                        android:textSize="@dimen/text_size_19"
                         android:layout_marginLeft="@dimen/margin_10"
                         android:layout_marginRight="@dimen/margin_10"
                         android:layout_marginBottom="@dimen/margin_12"
+                        android:gravity="left"
+                        android:text="@string/hos_limitation"
                         android:textColor="?attr/colorPrimary"
+                        android:textSize="@dimen/text_size_19"
 
                         />
 
@@ -120,42 +109,39 @@
                 <View
                     android:layout_width="@dimen/margin_short_1"
                     android:layout_height="match_parent"
-                    android:background="@color/edit_gray_border"
-                    />
+                    android:background="@color/edit_gray_border" />
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_weight="1"
-                    >
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/changedCycleRuleTxtVw"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/hos_limitation"
-                        android:textSize="@dimen/text_size_21"
+                        android:layout_gravity="center_horizontal"
                         android:layout_marginLeft="@dimen/margin_10"
                         android:layout_marginRight="@dimen/margin_15"
+                        android:text="@string/hos_limitation"
                         android:textColor="?attr/app_color_primary"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        />
+                        android:textSize="@dimen/text_size_21"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/changedCycleRuleDescVw"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:gravity="left"
-                        android:text="@string/hos_limitation"
-                        android:textSize="@dimen/text_size_19"
                         android:layout_marginLeft="@dimen/margin_10"
                         android:layout_marginRight="@dimen/margin_15"
                         android:layout_marginBottom="@dimen/margin_12"
+                        android:gravity="left"
+                        android:text="@string/hos_limitation"
                         android:textColor="?attr/colorPrimary"
+                        android:textSize="@dimen/text_size_19"
 
                         />
 
@@ -164,27 +150,31 @@
             </LinearLayout>
 
 
-
-
-
-
-
         </LinearLayout>
 
 
+        <ImageView
+            android:id="@+id/listSignImgBtn"
+            android:layout_width="@dimen/view_height_170"
+            android:layout_height="@dimen/view_height_120"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/margin_15"
+            android:layout_marginTop="@dimen/view_height_60"
+            android:layout_marginRight="@dimen/margin_20"
+            android:visibility="gone"
+
+            />
 
 
         <LinearLayout
             android:id="@+id/btnLinLay"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/view_height_52"
-            android:layout_marginTop="20dp"
             android:layout_below="@+id/descLay"
-            android:orientation="horizontal"
-            android:layout_marginRight="18dp"
             android:layout_alignParentRight="true"
-            >
-
+            android:layout_marginTop="@dimen/view_height_30"
+            android:layout_marginRight="@dimen/margin_20"
+            android:orientation="horizontal">
 
 
             <!-- android:background="@drawable/edtittext_border"-->
@@ -192,37 +182,33 @@
                 android:id="@+id/cancelPopupButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="@string/cancel"
                 android:layout_margin="1dp"
-                android:textColor="@color/text_forgot"
-                android:textAllCaps="false"
-                android:textSize="@dimen/text_size_23"
-                android:background="@drawable/transparent"
                 android:layout_marginRight="@dimen/margin_15"
+                android:background="@drawable/transparent"
+                android:text="@string/cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/text_forgot"
+                android:textSize="@dimen/text_size_23"
 
                 />
-
 
 
             <Button
                 android:id="@+id/confirmPopupButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="@string/Confirm"
-                android:textStyle="bold"
                 android:layout_margin="1dp"
-                android:textColor="?attr/colorPrimary"
-                android:textAllCaps="false"
-                android:textSize="@dimen/text_size_23"
                 android:background="@drawable/transparent"
+                android:text="@string/Confirm"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="@dimen/text_size_23"
+                android:textStyle="bold"
 
                 />
 
 
-
-
         </LinearLayout>
-
 
 
     </RelativeLayout>

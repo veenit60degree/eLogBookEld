@@ -74,10 +74,9 @@ public class APIs {
 
 
     /*-------- ELD API ----------*/
-//     public static String SAVE_DRIVER_STATUS     			= "http://develd.alsrealtime.com/api/DriverStatus/UpdateDriverStatus";
+    // public static String SAVE_DRIVER_STATUS     			= "http://develd.alsrealtime.com/api/DriverStatus/UpdateDriverStatus";
     public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
     public static String SAVE_DRIVER_EDIT_LOG_NEW  			= DOMAIN_URL_ELD + "SaveDriverEditELDStatusNew";
-    //  public static String GET_DRIVER_STATUS      			= DOMAIN_URL_ELD + "GetDriverStatusAndLocation";   //GetDriverLogDetail
     public static String GET_ONDUTY_REMARKS					= DOMAIN_URL_ELD + "GetOnDutyRemarks";
     public static String GET_NOTIFICATION_LOG      			= DOMAIN_URL_ELD + "GetNotificationLog";
     public static String GET_OBD_ASSIGNED_VEHICLES      	= DOMAIN_URL_ELD + "GetOBDAssignedVehicles";
@@ -87,6 +86,10 @@ public class APIs {
     public static String GET_INSPECTION_DETAIL   			= DOMAIN_URL_ELD + "GetInspectionDetail";
     public static String SAVE_INSPECTION      				= DOMAIN_URL_ELD + "SaveInspection";
     public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOffline";
+    //public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOfflineNewAPI";
+    public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOffline";
+   // public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOfflineNewAPI";
+
     public static String GET_SAVED_INSPECTION      			= DOMAIN_URL_ELD + "GetSavedInspection";
     public static String GET_ODOMETER      					= DOMAIN_URL_ELD + "GetOdometer";
     public static String GET_Add_FROM_LAT_LNG				= DOMAIN_URL_ELD + "GetAddressFromLatLong";
@@ -110,7 +113,6 @@ public class APIs {
     public static String CONNECTION_UTC_DATE  	            = DOMAIN_URL_ELD + "ConnectionUTCDate";
     public static String DRIVER_VIOLATION_PERMISSION 	  	= DOMAIN_URL_ELD + "DriverViolationTestPermission";
     public static String GET_OFFLINE_INSPECTION_LIST  	    = DOMAIN_URL_ELD + "GetOfflineInspectionList";
-    public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOffline";
     public static String SAVE_NOTIFICATION  	            = DOMAIN_URL_ELD + "SaveNotification";
     public static String CLEAR_NOTIFICATION_LOG	            = DOMAIN_URL_ELD + "ClearNotificationLog";
 
@@ -128,6 +130,8 @@ public class APIs {
     public static String GET_DRIVER_SETTINGS                = DOMAIN_URL_ELD + "GetDriverSettings";
     public static String GET_DRIVER_DEVICE_ID               = DOMAIN_URL_ELD + "GetDriverDeviceId";
     public static String UPDATE_DRIVER_ELD_SETTING_NOTIFICATIONS               = DOMAIN_URL_ELD + "UpdateDriverELDSettingNotifications";
+    public static String SAVE_ENGINE_ON_OFF_EVENTS          = DOMAIN_URL_ELD + "SaveEngineOnOffEvents";
+
 
     public static String ADD_DEVICE_GPS_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceGpsSettings";
     public static String ADD_DEVICE_BLE_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceBluetoothSettings";

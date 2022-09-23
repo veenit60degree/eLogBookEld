@@ -24,6 +24,7 @@
             android:textColor="@color/color_eld_bg"
             android:button="@drawable/unidentified_checkbox_drawable"
             android:paddingLeft="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_13"
             android:layout_centerVertical="true"
 
             />
@@ -32,13 +33,11 @@
             android:id="@+id/dateSignTxtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/date"
-            android:paddingLeft="@dimen/margin_21"
-            android:textSize="@dimen/text_size_21"
-            android:textColor="?attr/textColor"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/margin_10"
-            />
+           android:layout_toRightOf="@+id/signRecordCheckBox"
+            android:text="@string/date"
+            android:textColor="?attr/textColor"
+            android:textSize="@dimen/text_size_21" />
 
 
         <TextView

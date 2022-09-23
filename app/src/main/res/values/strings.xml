@@ -151,6 +151,7 @@
     <string name="yard_move_desc">Yard Move descriptions</string>
     <string name="desc">Descriptions</string>
     <string name="enter_remarks">Enter Remarks</string>
+    <string name="Inspection_sign">Inspection Signature !!</string>
 
     <string name="ble_disconnected_by_user">BLE Disconnected by user</string>
     <string name="ble_not_supported">BLE not supported on this device</string>
@@ -291,7 +292,7 @@
     <string name="loc_miss_event">Location Missing Event</string>
     <string name="loc_missing">Location Missing</string>
     <string name="add_loc_desc">Please add location for this event in Certify screen.</string>
-    <string name="book_not_applicable_govt">This log is not applicable for Govt. Inspections</string>
+    <string name="book_not_applicable_govt">This View Log is not applicable for Roadside Inspections, Kindly Use DOT View.</string>
 
     <string name="eng_sync_dia_event">Engine sync diagnostic event</string>
    <!-- <string name="eng_sync_dia_occured_desc">Engine sync diagnostic event occurred due to wire disconnected from ECM.</string>-->
@@ -570,6 +571,7 @@
     <string name="storage_per_revoked">Storage permission is revoked</string>
     <string name="loc_per_revoked">Location permission is revoked</string>
     <string name="phone_per_revoked">Phone permission is revoked</string>
+    <string name="loc_per_denied">Location permission denied</string>
 
     <string name="DOT">DOT</string>
     <string name="inspection_date">Inspection Date : </string>
@@ -593,6 +595,7 @@
     <string name="update_odometer">Update Odometer Reading </string>
     <string name="recent_odometer">Recent Readings :  </string>
     <string name="update">Update</string>
+    <string name="restart_app">Restart App</string>
     <string name="update_obd_info">Update OBD Details</string>
     <string name="update_loc">Update Location</string>
     <string name="enter_manual_loc">Enter Manual Location</string>
@@ -662,6 +665,7 @@
     <string name="ignore">Ignore</string>
     <string name="ignore_and_save">Ignore &amp; Save</string>
     <string name="ignore_location">Ignore Location</string>
+    <string name="location_per">Location Permission</string>
     <string name="ShippingDocNo">BL/Trip No. </string>
     <string name="ShipperNo">Shipper Number: </string>
     <string name="ShippingDoc">Shipping Doc</string>
@@ -1032,6 +1036,8 @@
     <string name="Distance_miles">Distance (Miles) </string>
     <string name="Distance_km">Distance (KM) </string>
     <string name="connect_ble_obd">Connect Bluetooth OBD</string>
+    <string name="ble_permsn_disabled">Location permission is disabled. Please turn ON it from app permissions settings to connect OBD.</string>
+
     <string name="odometer_details">Odometer Details</string>
     <string name="gps_details">Gps Details</string>
     <string name="sim_info">Sim Info</string>
@@ -1051,6 +1057,7 @@
     <string name="dia_event">Diagnostic event</string>
     <string name="missing_dia_event">Missing Diagnostic event</string>
     <string name="ble_disabled">Bluetooth disabled</string>
+    <string name="ble_disabled_">(Bluetooth disabled)</string>
     <string name="ble_enabled_desc">Please turn on your bluetooth from device settings.</string>
 
     <string name="malfunction_events">Malfunction Event</string>
@@ -1172,6 +1179,7 @@
 
     <string name="Scanning">Scanning</string>
     <string name="ht_curr_device">Current Device：%1$s</string>
+    <string name="ht_connecting">Device Connecting</string>
     <string name="ht_disconnected">Device Disconnected</string>
     <string name="ht_connected">Device Connected</string>
     <string name="ht_connect_timeout">Connection Timeou</string>

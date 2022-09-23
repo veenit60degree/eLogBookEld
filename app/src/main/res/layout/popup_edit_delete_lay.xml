@@ -37,12 +37,13 @@
 
         <LinearLayout
             android:id="@+id/descLay"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_below="@+id/changeTitleView"
             android:layout_centerHorizontal="true"
             android:gravity="center"
+            android:layout_toLeftOf="@+id/listSignImgBtn"
             >
 
 
@@ -163,8 +164,20 @@
         </LinearLayout>
 
 
+        <ImageView
+            android:id="@+id/listSignImgBtn"
+            android:layout_width="@dimen/view_height_120"
+            android:layout_height="@dimen/view_height_80"
+            android:layout_marginRight="@dimen/margin_10"
+            android:layout_marginTop="@dimen/view_height_40"
+            android:layout_alignParentRight="true"
+            android:visibility="gone"
 
-           <LinearLayout
+           />
+
+
+
+        <LinearLayout
             android:id="@+id/btnLinLay"
             android:layout_width="wrap_content"
             android:layout_height="42dp"

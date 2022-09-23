@@ -146,10 +146,14 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.Transparent"
             android:windowSoftInputMode="stateHidden|adjustResize"
-            >
+            />
 
+        <activity android:name=".LocPermissionActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.Transparent"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            />
 
-        </activity>
 
 
         <activity android:name=".UpdateAppActivity"
@@ -320,6 +324,9 @@
             android:name="com.background.service.LocationListenerService"
             android:exported="true" />
 
+
+        <service android:name="com.background.service.BleDataService"
+            android:exported="true" />
 
 
     </application>

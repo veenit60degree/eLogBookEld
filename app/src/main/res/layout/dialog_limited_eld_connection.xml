@@ -35,13 +35,27 @@
                 android:id="@+id/ecmAlertTitleTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Limited_ELD_Connection"
-                android:textSize="@dimen/text_size_18"
-                android:textStyle="bold"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginTop="@dimen/margin_short_5"
                 android:layout_marginBottom="@dimen/margin_12"
-                />
+                android:text="@string/Limited_ELD_Connection"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="@dimen/text_size_18"
+                android:textStyle="bold" />
+
+
+
+            <TextView
+                android:id="@+id/bleStatusTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_short_8"
+                android:layout_marginBottom="@dimen/margin_12"
+                android:layout_marginLeft="@dimen/margin_short_9"
+                android:text="@string/ble_disabled_"
+                android:textColor="@color/warning"
+                android:textSize="@dimen/text_size_15"
+                android:visibility="gone"
+                android:layout_toRightOf="@+id/ecmAlertTitleTV" />
 
 
             <ImageView

@@ -14,7 +14,7 @@ public class LocationMethod {
     }
 
 
-    /*-------------------- GET SYNC LOG SAVED Array -------------------- */
+    /*-------------------- GET SAVED LOCATION Array -------------------- */
     public JSONArray getSavedLocationArray(int DriverId, DBHelper dbHelper){
 
         JSONArray logArray = new JSONArray();
@@ -38,7 +38,7 @@ public class LocationMethod {
 
     }
 
-    /*-------------------- Recap/ViewLog 18 Days DB Helper -------------------- */
+    /*-------------------- Insert/Update Driver location in DB Helper -------------------- */
     public void DriverLocationHelper( int driverId, DBHelper dbHelper, JSONArray LocArray){
 
         Cursor rs = dbHelper.getDriverLocDetails(driverId);

@@ -134,8 +134,7 @@ public class InspectionMethod {
                                           String SupervisorMechanicsName, String TruckIssueType ,
                                           String TraiorIssueType, String InspectionTypeId ,
                                           String ByteDriverSign, String ByteSupervisorSign,
-                                          String OdometerInMeters
-
+                                          String OdometerInMeters, boolean IsSignCopy, String SignedCopyDate
                                           ){
 
         JSONObject inspectionJson = new JSONObject();
@@ -170,7 +169,14 @@ public class InspectionMethod {
             inspectionJson.put(ConstantsKeys.TruckIssueType,                TruckIssueType  );
             inspectionJson.put(ConstantsKeys.TraiorIssueType,               TraiorIssueType  );
             inspectionJson.put(ConstantsKeys.InspectionTypeId,              InspectionTypeId  );
-            inspectionJson.put(ConstantsKeys.ByteDriverSign,                ByteDriverSign  );
+
+            if(!IsSignCopy) {
+                inspectionJson.put(ConstantsKeys.ByteDriverSign, ByteDriverSign);
+            }
+
+            inspectionJson.put(ConstantsKeys.IsSignCopy, IsSignCopy);
+            inspectionJson.put(ConstantsKeys.SignedCopyDate, SignedCopyDate);
+
             inspectionJson.put(ConstantsKeys.ByteSupervisorSign ,           ByteSupervisorSign   );
             inspectionJson.put(ConstantsKeys.OdometerInMeters ,             OdometerInMeters   );
 

@@ -27,10 +27,12 @@ import com.constants.Constants;
 import com.constants.DriverLogResponse;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
+import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
 import com.local.db.CertifyLogMethod;
 import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
 import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
@@ -72,10 +74,13 @@ public class SignRecordDialog extends Dialog {
     JSONArray recap18DaysArray = new JSONArray();
     ArrayList<String> selectedDateList = new ArrayList<>();
 
-    String DriverId, DeviceId, imagePath = "", LogSignImageInByte = "", CompanyId;
+    String DriverId, DeviceId, imagePath = "", LogSignImageInByte = "", SignCopyDate = "", CompanyId;
     boolean isCertifySignExist;
     AlertDialog alertDialog;
     SignDialog signDialog;
+    PtiSignDialog ptiSignDialog;
+
+    DriverPermissionMethod driverPermissionMethod;
     RecapViewMethod recapViewMethod;
     CertifyLogMethod certifyLogMethod;
     SaveDriverLogPost saveCertifyLogPost;
@@ -85,14 +90,14 @@ public class SignRecordDialog extends Dialog {
     ProgressDialog progressDialog;
     VolleyRequest notReadyRequest;
     CertifyConfirmationDialog certifyConfirmationDialog;
-
+    Utils obdUtil;
 
     public SignRecordDialog(Context context, int DriverType, boolean isCertifySignExist, JSONArray recap18DaysArray, List<RecapSignModel> recapList,
                             DateSelectListener readyListener,
-                                    Constants constants,
-                                    RecapViewMethod recapViewMethod,
-                                    CertifyLogMethod certifyLogMethod,
-                                    DBHelper dbHelper) {
+                            Constants constants,
+                            RecapViewMethod recapViewMethod,
+                            CertifyLogMethod certifyLogMethod,
+                            DBHelper dbHelper, Utils utils) {
         super(context);
         this.context = context;
         this.DriverType = DriverType;
@@ -105,7 +110,9 @@ public class SignRecordDialog extends Dialog {
         this.recapViewMethod =  recapViewMethod;
         this.certifyLogMethod =  certifyLogMethod;
         this.dbHelper =  dbHelper;
+        obdUtil = utils;
 
+        driverPermissionMethod      = new DriverPermissionMethod();
         saveCertifyLogPost          = new SaveDriverLogPost(context, saveCertifyResponse);
 
         notReadyRequest = new VolleyRequest(context);
@@ -196,11 +203,13 @@ public class SignRecordDialog extends Dialog {
             @Override
             public void onClick(View view) {
 
-                selectedDateList = getSelectedItemDate();
+                selectedDateList = getSelectedItemDate();   //09/19/2022
 
                 if(selectedDateList.size() > 0){
+                    boolean isReCertify = isRecertify(selectedDateList);
 
-                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false, "", new CertificationListener() );
+                    certifyConfirmationDialog = new CertifyConfirmationDialog(getContext(), false, isReCertify,
+                                                "", new CertificationListener() );
                     certifyConfirmationDialog.show();
 
                 }else{
@@ -212,16 +221,46 @@ public class SignRecordDialog extends Dialog {
     }
 
 
+    private boolean isRecertify(ArrayList<String> selectedDateList){
+        boolean isReCertify = false;
+        for(int i = 0 ; i< selectedDateList.size() ; i++) {
+            String selectedDate = Globally.ConvertDateFormat(selectedDateList.get(i));
+            isReCertify = constants.isReCertifyRequired(getContext(), null, selectedDate);
+
+            if(isReCertify){
+                break;
+            }
+
+        }
+
+        return isReCertify;
+
+    }
 
     private class CertificationListener implements CertifyConfirmationDialog.CertifyConfirmationListener{
 
         @Override
-        public void CertifyBtnReady(boolean isSwapConfirmation) {
-            CertifyLogArray     = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(DriverId), dbHelper);
-            if(isCertifySignExist){
-                ContinueWithoutSignDialog();
+        public void CertifyBtnReady(boolean isSwapConfirmation, boolean isReCertify) {
+
+            if(isReCertify){
+                SignCopyDate =  constants.getLastSignDate(recapViewMethod, DriverId, dbHelper);
+                LogSignImageInByte = constants.getLastSignature(recapViewMethod, DriverId, dbHelper);
+                SaveDriverSignArray(true);
             }else {
-                openSignDialog();
+                CertifyLogArray = certifyLogMethod.getSavedCertifyLogArray(Integer.valueOf(DriverId), dbHelper);
+                if (isCertifySignExist) {
+                    // ContinueWithoutSignDialog();
+                    if (ptiSignDialog != null && ptiSignDialog.isShowing()) {
+                        ptiSignDialog.dismiss();
+                    }
+                    String lastSignature = constants.getLastSignature(recapViewMethod, DriverId, dbHelper);
+                    SignCopyDate = constants.getLastSignDate(recapViewMethod, DriverId, dbHelper);
+                    ptiSignDialog = new PtiSignDialog(getContext(), "Certify", lastSignature,
+                            null, new PtiConfirmationListener());
+                    ptiSignDialog.show();
+                } else {
+                    openSignDialog();
+                }
             }
         }
 
@@ -232,8 +271,27 @@ public class SignRecordDialog extends Dialog {
     }
 
 
+    private class PtiConfirmationListener implements PtiSignDialog.PtiConfirmationListener{
 
-    public void ContinueWithoutSignDialog(){
+        @Override
+        public void PtiBtnReady(String ByteSign, String SignDate) {
+            if(SignDate.length() > 0) {
+                SignCopyDate = SignDate;
+            }
+
+            LogSignImageInByte = ByteSign;
+            SaveDriverSignArray(true);
+        }
+
+        @Override
+        public void CancelBtnReady() {
+            openSignDialog();
+        }
+    }
+
+
+
+   /* public void ContinueWithoutSignDialog(){
         try {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context,R.style.AlertDialogStyle);
             alertDialogBuilder.setTitle("Certify log alert !!");
@@ -274,7 +332,7 @@ public class SignRecordDialog extends Dialog {
             e.printStackTrace();
         }
     }
-
+*/
 
     void openSignDialog(){
         if(context != null  ) {
@@ -298,7 +356,6 @@ public class SignRecordDialog extends Dialog {
                     if (IsSigned) {
                         imagePath = constants.GetSignatureBitmap(inkView, invisbleSignImgView, context);
                         signDialog.dismiss();
-
                         SaveDriverSignArray(false);
 
                     } else {
@@ -323,7 +380,7 @@ public class SignRecordDialog extends Dialog {
 
             String lastSignature = constants.getLastSignature(recapViewMethod, DriverId, dbHelper);
             //boolean isReCertifyRequired = constants.isReCertifyRequired(context, dataObj, "");
-            saveByteSignLocally(lastSignature, true);
+            saveByteSignLocally(lastSignature, true, false);
             LogSignImageInByte = lastSignature;
 
             if(globally.isConnected(context) ){
@@ -346,7 +403,7 @@ public class SignRecordDialog extends Dialog {
 
                 // Convert image file into bytes
                 LogSignImageInByte = globally.ConvertImageToByteAsString(imagePath);
-                saveByteSignLocally(LogSignImageInByte, false);
+                saveByteSignLocally(LogSignImageInByte, false, true);
 
                 if(globally.isConnected(context) ){
                     progressDialog.show();
@@ -369,20 +426,32 @@ public class SignRecordDialog extends Dialog {
     }
 
 
-    private void saveByteSignLocally(String SignImageInBytes, boolean IsContinueWithSign){
+    private void saveByteSignLocally(String SignImageInBytes, boolean IsContinueWithSign, boolean isNewFile){
         // Add signed parameters with values into the json object and put into the json Array.
-
+        String signCopyDatee = "";
         for(int i = 0 ; i < selectedDateList.size() ; i++){
             JSONObject CertifyLogObj;
             String dateStr = selectedDateList.get(i);
+
+            if(IsContinueWithSign){
+                signCopyDatee = SignCopyDate;
+                if(SignCopyDate.length() == 0){
+                    signCopyDatee = dateStr;
+                }
+            }else{
+                if(signCopyDatee.length() == 0) {
+                    signCopyDatee = dateStr;
+                }
+            }
+
             boolean isReCertifyRequired = constants.isReCertifyRequired(getContext(), null, globally.ConvertDateFormat(dateStr));
             String locationType = SharedPref.getLocationEventType(context);
             if(i == 0) {
                 CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, globally.PROJECT_ID, dateStr,
-                        SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, locationType);
+                        SignImageInBytes, IsContinueWithSign, isReCertifyRequired, CompanyId, locationType, signCopyDatee);
             }else{
                 CertifyLogObj = certifyLogMethod.AddCertifyLogArray(DriverId, DeviceId, globally.PROJECT_ID, dateStr,
-                        SignImageInBytes, true, isReCertifyRequired, CompanyId, locationType);
+                        SignImageInBytes, true, isReCertifyRequired, CompanyId, locationType, signCopyDatee);
             }
             CertifyLogArray.put(CertifyLogObj);
 
@@ -391,10 +460,18 @@ public class SignRecordDialog extends Dialog {
 
             // Update recap array with byte image
             recap18DaysArray = recapViewMethod.UpdateSelectedDateRecapArray(recap18DaysArray, selectedDateList.get(i), SignImageInBytes);
+
+            constants.saveObdData("Certify",
+                    "CertifyLogArray: " + CertifyLogArray.toString(),
+                    "", "","", "","", "",
+                    "","", "", "", "",
+                    DriverId, dbHelper, driverPermissionMethod, obdUtil);
+
+
         }
 
         recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DriverId), dbHelper, recap18DaysArray);
-
+        SignCopyDate = "";
     }
 
 

@@ -30,6 +30,7 @@ import androidx.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;
 
+import com.constants.Constants;
 import com.google.android.gms.security.ProviderInstaller;
 import com.htstart.htsdk.HTBleSdk;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -45,6 +46,7 @@ public class UILApplication extends Application {
 	private static final String ONESIGNAL_APP_ID = "0067d652-6fd4-4bb8-b951-f7b60573b2bb";
 	boolean IsNewVersion = false;
 	private static boolean activityVisible = true;
+
 	private boolean isNightModeEnabled = false;
 	public static final String NIGHT_MODE = "NIGHT_MODE";
 
@@ -226,6 +228,9 @@ public class UILApplication extends Application {
 
 
 	public static boolean isActivityVisible() {
+		if(Constants.IS_ACTIVE_ELD){
+			activityVisible = true;
+		}
 		return activityVisible;
 	}
 

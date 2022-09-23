@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,6 +26,8 @@ import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.RecapViewMethod;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 
@@ -34,24 +37,27 @@ import java.util.Map;
 public class CertifyConfirmationDialog extends Dialog {
 
     public interface CertifyConfirmationListener {
-        public void CertifyBtnReady(boolean isSwapConfirmation);
+        public void CertifyBtnReady(boolean isSwapConfirmation, boolean isReCertifyRequired);
         public void CancelBtnReady();
 
     }
 
-    String DeviceId, DriverId, CompanyId, message;
-    boolean isSwapConfirmation;
+    String DeviceId, DriverId, CompanyId, message, signature;
+    boolean isSwapConfirmation, isReCertifyRequired;
     CertifyConfirmationListener certifyListener;
     Constants constants;
     Globally globally;
     ProgressDialog progressDialog;
     VolleyRequest notReadyRequest;
+    RecapViewMethod recapViewMethod;
+    DBHelper dbHelper;
 
 
-
-    public CertifyConfirmationDialog(@NonNull Context context, boolean isSwap, String msg, CertifyConfirmationListener certifyListener) {
+    public CertifyConfirmationDialog(@NonNull Context context, boolean isSwap, boolean isReCertify,
+                                      String msg, CertifyConfirmationListener certifyListener) {
         super(context);
         isSwapConfirmation = isSwap;
+        isReCertifyRequired = isReCertify;
         message = msg;
         this.certifyListener = certifyListener;
         constants = new Constants();
@@ -65,6 +71,8 @@ public class CertifyConfirmationDialog extends Dialog {
         DriverId           = SharedPref.getDriverId(context);
         CompanyId          = DriverConst.GetDriverDetails(DriverConst.CompanyId, context);
 
+        recapViewMethod = new RecapViewMethod();
+        dbHelper        = new DBHelper(getContext());
 
     }
 
@@ -87,6 +95,7 @@ public class CertifyConfirmationDialog extends Dialog {
         titleDescView=(TextView)findViewById(R.id.titleDescView);
         final Button confirmPopupButton = (Button)findViewById(R.id.confirmPopupButton);
         Button cancelPopupButton = (Button)findViewById(R.id.cancelPopupButton);
+        ImageView listSignImgBtn = (ImageView)findViewById(R.id.listSignImgBtn);
 
         changeTitleView.setText(getContext().getResources().getString(R.string.Confirmation_suggested));
 
@@ -98,7 +107,15 @@ public class CertifyConfirmationDialog extends Dialog {
             titleDescView.setText(getContext().getResources().getString(R.string.I_certify_that_suggested) + "\n\n" + getContext().getResources().getString(R.string.will_finalize_log));
             confirmPopupButton.setText(getContext().getResources().getString(R.string.agree_submit));
             cancelPopupButton.setText(getContext().getResources().getString(R.string.not_ready));
+
+            if(isReCertifyRequired){
+                signature = constants.getLastSignature(recapViewMethod, DriverId, dbHelper);
+                listSignImgBtn.setVisibility(View.VISIBLE);
+                constants.LoadByteImage(listSignImgBtn, signature);
+            }
+
         }
+
         titleDescView.setTextColor(getContext().getResources().getColor(R.color.gray_text1));
         cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.black_unidenfied));
 
@@ -118,7 +135,7 @@ public class CertifyConfirmationDialog extends Dialog {
         @Override
         public void onClick(View v) {
 
-            certifyListener.CertifyBtnReady(isSwapConfirmation);
+            certifyListener.CertifyBtnReady(isSwapConfirmation, isReCertifyRequired);
             dismiss();
 
         }

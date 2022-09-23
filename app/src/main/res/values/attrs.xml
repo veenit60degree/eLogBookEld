@@ -69,6 +69,7 @@
         <attr name="hos_shift" format="color"/>
         <attr name="obd_diagnose_color" format="color"/>
         <attr name="active_status_bg" format="color"/>
+        <attr name="warning" format="color"/>
         <attr name="eld_gray_bg" format="color"/>
         <attr name="eld_icon_color" format="color"/>
         <attr name="gray_default" format="color"/>

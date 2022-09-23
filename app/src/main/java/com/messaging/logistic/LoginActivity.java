@@ -49,6 +49,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.background.service.AfterLogoutService;
 import com.background.service.BackgroundLocationService;
+import com.background.service.BleDataService;
 import com.constants.APIs;
 import com.constants.Anim;
 import com.constants.Constants;
@@ -368,8 +369,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			try{
 
 				boolean IsEventUpdate = intent.getBooleanExtra(ConstantsKeys.IsEventUpdate, false);
+				boolean Status = intent.getBooleanExtra(ConstantsKeys.Status, false);
+				String IsEldEcmAlert = intent.getStringExtra(ConstantsKeys.IsEldEcmALert);
+				boolean EcmAlertStatus = IsEldEcmAlert.equals("Yes") || IsEldEcmAlert.equals("No");
+
 				if(IsEventUpdate){
-					if(intent.getBooleanExtra(ConstantsKeys.Status, false)){
+					if(Status){
 
 						if(ObdPreference == Constants.OBD_PREF_BLE ){
 							IsBleConnected = true;
@@ -386,7 +391,14 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 
 
+					}else if(EcmAlertStatus){
+						if(IsEldEcmAlert.equals("Yes")) {
+							global.InternetErrorDialog(LoginActivity.this, true, false);
+						}else{
+							global.InternetErrorDialog(LoginActivity.this, false, false);
+						}
 					}else{
+
 						if(ObdPreference == Constants.OBD_PREF_BLE) {
 							IsBleConnected = false;
 						}else if(ObdPreference == Constants.OBD_PREF_WIRED){
@@ -421,7 +433,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 					== PackageManager.PERMISSION_GRANTED) {
 				Log.v("TAG", "Permission is granted");
-				requestLocationPermission();
+				requestLocationPermission(false);
 
 				return true;
 			} else {
@@ -517,7 +529,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 */
 
 
-	private boolean requestLocationPermission() {
+	private boolean requestLocationPermission(boolean IsbleService) {
 
 
 		if (Build.VERSION.SDK_INT >= 23) {
@@ -525,20 +537,46 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					== PackageManager.PERMISSION_GRANTED) {
 				//requestPermissionPhone();
 
-				login();
+				if(IsbleService){
+					if (constants.CheckGpsStatusToCheckMalfunction(this)) {
+						BleDataService.IsScanClick = true;
+						SharedPref.SetPingStatus("ble_start", getApplicationContext());
+						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+						startService();
+					} else {
+						global.EldScreenToast(mainLoginLayout, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
+					}
+				}else{
+					login();
+				}
 
 				return true;
 			} else {
 				Log.v("TAG", "Permission is revoked");
-				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 2);
+				if(IsbleService){
+					ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 6);
+					Toast.makeText(this, getString(R.string.loc_per_denied), Toast.LENGTH_LONG).show();
+				}else {
+					ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 2);
+					Toast.makeText(this, getString(R.string.loc_per_revoked), Toast.LENGTH_SHORT).show();
+				}
 				//requestPermissionPhone();
-				Toast.makeText(this, getString(R.string.loc_per_revoked), Toast.LENGTH_SHORT).show();
-
 				return false;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
 			Log.v("TAG", "Permission is granted");
-			login();
+			if(IsbleService){
+				if (constants.CheckGpsStatusToCheckMalfunction(this)) {
+					BleDataService.IsScanClick = true;
+					SharedPref.SetPingStatus("ble_start", getApplicationContext());
+					loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+					startService();
+				} else {
+					global.EldScreenToast(mainLoginLayout, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
+				}
+			}else {
+				login();
+			}
 			return true;
 		}
 	}
@@ -555,7 +593,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
 					//resume tasks needing this permission
-					requestLocationPermission();
+					requestLocationPermission(false);
 				}
 				break;
 
@@ -603,6 +641,19 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					SharedPref.setImEiNumber(ImeiNumber, LoginActivity.this);
 				}
 				break;
+
+			case 6:
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					if (constants.CheckGpsStatusToCheckMalfunction(this)) {
+						BleDataService.IsScanClick = true;
+						SharedPref.SetPingStatus("ble_start", getApplicationContext());
+						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
+						startService();
+					} else {
+						global.EldScreenToast(mainLoginLayout, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
+					}
+				}
+				break;
 		}
 
 	}
@@ -631,7 +682,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		/*========= Start Logout Service to check truck is moving in logout=============*/
 		try {
 			Intent serviceIntent = new Intent(LoginActivity.this, AfterLogoutService.class);
-			if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				startForegroundService(serviceIntent);
 			}
 			startService(serviceIntent);
@@ -754,7 +805,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setLastUsageDataSavedTime("", getApplicationContext());
 			SharedPref.SetTruckStartLoginStatus(true, getApplicationContext());
 			SharedPref.SetAfterLoginConfStatus(false, getApplicationContext());
-			SharedPref.SaveObdStatus(Constants.NO_CONNECTION,  "", "", getApplicationContext());
+			//SharedPref.SaveObdStatus(Constants.NO_CONNECTION,  "", "", getApplicationContext());
 			SharedPref.setRefreshDataTime("", getApplicationContext());
 			SharedPref.setDayStartOdometer("-1", "-1", "", getApplicationContext());
 			SharedPref.setCertifyAlertViewTime("", getApplicationContext());
@@ -1329,9 +1380,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 				if(ObdPreference == Constants.OBD_PREF_BLE) {
 					if(!IsBleConnected) {
-						SharedPref.SetPingStatus("ble_start", getApplicationContext());
-						loginBleStatusBtn.startAnimation(connectionStatusAnimation);
-						startService();
+						requestLocationPermission(true);
+						global.EldScreenToast(mainLoginLayout, getString(R.string.obd_ble_disconnected), getResources().getColor(R.color.color_storage500));
 					}else{
 						global.EldScreenToast(mainLoginLayout, getString(R.string.obd_ble), getResources().getColor(R.color.colorPrimary));
 					}

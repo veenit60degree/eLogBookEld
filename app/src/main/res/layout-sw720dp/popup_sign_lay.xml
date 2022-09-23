@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainPopLay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    >
+
+
+
+    <RelativeLayout
+        android:id="@+id/viewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/white_default"
+        android:layout_marginRight="9dp"
+        android:layout_marginLeft="5dp"
+        android:paddingBottom="@dimen/margin_25"
+        android:backgroundTint="?attr/layout_color_dot"
+
+        >
+
+        <RelativeLayout
+            android:id="@+id/viewSignContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_default"
+            android:layout_marginRight="9dp"
+            android:layout_marginLeft="5dp"
+            android:backgroundTint="?attr/layout_color_dot"
+
+            >
+            <TextView
+                android:id="@+id/changeTitleView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="Certify log alert !!"
+                android:textSize="@dimen/view_height_38"
+                android:paddingLeft="@dimen/margin_15"
+                android:layout_marginTop="@dimen/view_height_35"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                />
+
+            <LinearLayout
+                android:id="@+id/descLay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@+id/changeTitleView"
+                android:gravity="left"
+                >
+
+
+                <TextView
+                    android:id="@+id/titleDescView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Do you really want to confirm the Load Delivery?"
+                    android:textSize="@dimen/text_size_23"
+                    android:gravity="left"
+                    android:layout_marginLeft="@dimen/margin_25"
+                    android:layout_marginRight="@dimen/margin_25"
+                    android:layout_marginTop="@dimen/margin_20"
+                    android:layout_marginBottom="@dimen/margin_20"
+                    android:textColor="?attr/app_color_primary"
+                    />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/showPreviousSign"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_height_150"
+            android:layout_toEndOf="@+id/viewSignContainer"
+            android:paddingRight="@dimen/margin_25"
+          />
+
+        <LinearLayout
+            android:id="@+id/btnLinLay"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/view_height_52"
+            android:layout_marginTop="@dimen/margin_15"
+            android:layout_below="@+id/viewSignContainer"
+            android:orientation="horizontal"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:layout_alignParentRight="true"
+            >
+
+
+
+            <!-- android:background="@drawable/edtittext_border"-->
+            <Button
+                android:id="@+id/cancelPopupButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/no"
+                android:layout_margin="1dp"
+                android:textColor="@color/text_forgot"
+                android:textAllCaps="false"
+                android:textSize="@dimen/text_size_16"
+                android:background="@drawable/transparent"
+                android:layout_marginRight="@dimen/margin_short_7"
+
+                />
+
+
+
+            <Button
+                android:id="@+id/confirmPopupButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/yes"
+                android:textStyle="bold"
+                android:layout_margin="1dp"
+                android:textColor="?attr/colorPrimary"
+                android:textAllCaps="false"
+                android:textSize="@dimen/text_size_20"
+                android:background="@drawable/transparent"
+
+                />
+
+
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

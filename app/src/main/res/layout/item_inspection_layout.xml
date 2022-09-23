@@ -903,8 +903,7 @@
                     android:layout_height="@dimen/view_height_55"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="@dimen/margin_25"
-                    android:scaleType="centerCrop"
-                    />
+                    android:scaleType="centerCrop" />
 
 
             </RelativeLayout>

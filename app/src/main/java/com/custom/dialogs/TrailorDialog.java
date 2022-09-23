@@ -201,7 +201,9 @@ public class TrailorDialog extends Dialog {
                  noTrailerView.setVisibility(View.GONE);
 
                  SpinnerTitleTV.setVisibility(View.VISIBLE);
-
+                if(isEditRemarks) {
+                    Trailor = "Remarks";
+                }
                  if(!SharedPref.IsYardMoveAllowed(getContext())){
                      for(int i = remarkList.size()-1 ; i >=0 ; i-- ){
                          if(remarkList.get(i).equals(getContext().getResources().getString(R.string.YardMove))){

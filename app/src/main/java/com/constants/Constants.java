@@ -25,6 +25,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.StatFs;
 import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
@@ -46,6 +47,7 @@ import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
+import com.local.db.InspectionMethod;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.local.db.OdometerHelperMethod;
 import com.local.db.RecapViewMethod;
@@ -119,6 +121,7 @@ public class Constants {
     public static final int LogEventTypeBle  = 1;
     public static final int LogEventTypeGps  = 2;
 
+
     // BluetoothConnectionType
     public static final int UNKNOWN = 0;
     public static final int RESETTING = 1;
@@ -130,6 +133,9 @@ public class Constants {
     public static final int OBD_DISCONNECT = 7;
 
     public static int CurrentDriverJob   = 1;
+
+    public static final String Auto = "1";
+    public static final String Driver = "2";
 
     // Mal/Dia defination
     public static String ConstLocationMissing           = "LM";
@@ -355,6 +361,9 @@ public class Constants {
 
     public static int EditRemarks        = 101;
     public static int EditLocation       = 102;
+    public static int SocketTimeout300ms  = 300;   // 300 milli second
+    public static int SocketTimeout500ms  = 500;   // 500 milli second
+    public static int SocketTimeout800ms  = 800;   // 500 milli second
     public static int SocketTimeout1Sec  = 1000;   // 1 second
     public static int SocketTimeout2Sec  = 2000;   // 2 second
     public static int SocketTimeout3Sec  = 3000;   // 3 seconds
@@ -597,6 +606,7 @@ public class Constants {
 
         locationObj.put(ConstantsKeys.EngineHours, ListModel.getEngineHour());
         locationObj.put(ConstantsKeys.Odometer, ListModel.getOdometer());
+        locationObj.put(ConstantsKeys.DriverVehicleTypeId, ListModel.getDriverVehicleTypeId());
 
         jsonArray.put(locationObj);
     }
@@ -1963,7 +1973,7 @@ public class Constants {
                                         String isAdverseException, String adverseExceptionRemark, String LocationType,
                                         String malAddInfo, boolean IsNorthCanada, boolean IsCycleChanged, String Odometer,
                                         String CoDriverId, String CoDriverName, String Truck, String Trailer, String EngHour,
-                                        String odometer, HelperMethods hMethods, DBHelper dbHelper) {
+                                        String odometer, String DriverVehicleTypeId, HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
         long DriverLogId = 0;
@@ -2074,7 +2084,8 @@ public class Constants {
                 CoDriverName,
                 "0",
                 EngHour,
-                odometer
+                odometer,
+                DriverVehicleTypeId
 
 
         );
@@ -2410,10 +2421,12 @@ public class Constants {
                                 String date = Globally.ConvertDateFormatyyyy_MM_dd(objRecap.getString(ConstantsKeys.Date));
                                 DateTime recapSelectedDate = Globally.getDateTimeObj(date, false);
                                 if (selectedDateTime.equals(recapSelectedDate)) {
-                                    if(objRecap.getString(ConstantsKeys.LogSignImage).length() > 0 ||
-                                            objRecap.getString(ConstantsKeys.LogSignImageInByte).length() > 0){
+                                    String byteImage = objRecap.getString(ConstantsKeys.LogSignImageInByte);
+                                    if(objRecap.getString(ConstantsKeys.LogSignImage).length() > 0 || byteImage.length() > 0){
                                         objRecap.put(ConstantsKeys.LogSignImage, "");
                                         objRecap.put(ConstantsKeys.LogSignImageInByte, "");
+                                        objRecap.put(ConstantsKeys.CertifyOldImage, byteImage);
+
                                         recap18DaysArray.put(j,objRecap);
                                         isChangeForUpdate = true;
                                     }
@@ -2454,7 +2467,7 @@ public class Constants {
             try {
                 JSONObject obj = (JSONObject) recap18DaysArray.get(i);
 
-                String image = obj.getString("LogSignImageInByte");
+                String image = obj.getString(ConstantsKeys.LogSignImageInByte);
                 if (image.length() > 20) {
                     isCertifySign = true;
                     break;
@@ -2478,10 +2491,16 @@ public class Constants {
             try {
                 JSONObject obj = (JSONObject) recap18DaysArray.get(i);
 
-                String image = obj.getString("LogSignImageInByte");
+                String image = obj.getString(ConstantsKeys.LogSignImageInByte);
                 if (image.length() > 20) {
                     LogSignImage = image;
                     break;
+                }else if(obj.has(ConstantsKeys.CertifyOldImage)){
+                    image = obj.getString(ConstantsKeys.CertifyOldImage);
+                    if(image.length() > 20){
+                        LogSignImage = image;
+                        break;
+                    }
                 }
 
             } catch (JSONException e) {
@@ -2490,6 +2509,160 @@ public class Constants {
         }
 
         return LogSignImage;
+    }
+
+
+    public String getLastSignDate(RecapViewMethod recapViewMethod, String DRIVER_ID, DBHelper dbHelper) {
+
+        JSONArray recap18DaysArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper);
+        String LogSignDate = "";
+
+        for (int i = recap18DaysArray.length() - 1; i >= 0; i--) {
+            try {
+                JSONObject obj = (JSONObject) recap18DaysArray.get(i);
+
+                String image = obj.getString(ConstantsKeys.LogSignImageInByte);
+                if (image.length() > 20) {
+                    LogSignDate = obj.getString(ConstantsKeys.Date);
+                    break;
+                }else if(obj.has(ConstantsKeys.CertifyOldImage)){
+                    image = obj.getString(ConstantsKeys.CertifyOldImage);
+                    if(image.length() > 20){
+                        LogSignDate = obj.getString(ConstantsKeys.Date);
+                        break;
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return LogSignDate;
+    }
+
+
+    public boolean isPTI_SignExist(JSONArray inspection18DaysArray) {
+
+        boolean isPtiSign = false;
+
+
+        for (int i = 0; i < inspection18DaysArray.length(); i++) {
+            try {
+                JSONObject obj = (JSONObject) inspection18DaysArray.get(i);
+                JSONObject ptiObj = new JSONObject(obj.getString(ConstantsKeys.Inspection));
+
+                String image = "";
+                if(ptiObj.has(ConstantsKeys.ByteDriverSign)) {
+                    image = ptiObj.getString(ConstantsKeys.ByteDriverSign);
+                }else if(ptiObj.has(ConstantsKeys.DriverSignature)){
+                    String[] ImageArray = ptiObj.getString(ConstantsKeys.DriverSignature).split("@@@");
+                    if(ImageArray.length > 1){
+                        image = ImageArray[1];
+                    }
+                }
+
+                if (image.length() > 20) {
+                    isPtiSign = true;
+                    break;
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return isPtiSign;
+    }
+
+
+    public ArrayList<String> getPtiLastSignature(JSONArray inspection18DaysArray) {
+
+        ArrayList<String> LogSignImageWithDate = new ArrayList<>();
+
+        for (int i = inspection18DaysArray.length() - 1; i >= 0; i--) {
+            try {
+                JSONObject obj = (JSONObject) inspection18DaysArray.get(i);
+                JSONObject ptiObj = new JSONObject(obj.getString(ConstantsKeys.Inspection));
+
+                String image = "";
+                if(ptiObj.has(ConstantsKeys.ByteDriverSign)) {
+                    image = ptiObj.getString(ConstantsKeys.ByteDriverSign);
+                }else if(ptiObj.has(ConstantsKeys.DriverSignature)) {
+                    String[] ImageArray = ptiObj.getString(ConstantsKeys.DriverSignature).split("@@@");
+                    if(ImageArray.length > 1){
+                        image = ImageArray[1];
+                    }
+                }
+
+               // String image = ptiObj.getString(ConstantsKeys.ByteDriverSign);
+                if (image.length() > 20) {
+                    LogSignImageWithDate.add(image);
+                    String InspectionDateTime = ptiObj.getString(ConstantsKeys.InspectionDateTime); //Globally.ConvertDateFormatMMddyyyy(
+                    LogSignImageWithDate.add(InspectionDateTime);
+                    break;
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return LogSignImageWithDate;
+    }
+
+
+
+
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) {}
+    }
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
+
+
+
+
+    public void LoadByteImage(ImageView imgView, String LogSignImageInByte){
+        final int width = imgView.getWidth();
+        final int height = imgView.getHeight();
+
+        try {
+            if (LogSignImageInByte.length() > 0) {
+                final Bitmap bitmap = Globally.ConvertStringBytesToBitmap(LogSignImageInByte);
+
+                if(width > 0 && height > 0) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            imgView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, width, height, false));
+                        }
+                    }, 250);
+                }else{
+                    imgView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 400, 180, false));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -5718,7 +5891,7 @@ public class Constants {
             }
         }
 
-        return isObdConnected;
+        return true;
     }
 
 

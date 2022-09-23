@@ -400,9 +400,9 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
             if (Globally.isConnected(getActivity())) {
                 GetSavedInspection(DRIVER_ID, DeviceId, SelectedDate);
             }
-        }else{
-
         }
+
+
     }
 
 

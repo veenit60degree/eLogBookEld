@@ -9,6 +9,8 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,6 +49,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.ble.util.BleUtil;
 import com.ble.util.ConstantEvent;
 import com.ble.util.EventBusInfo;
 import com.constants.APIs;
@@ -76,6 +79,7 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -289,6 +293,11 @@ public class Globally {
 
 				final ImageView closeDialogImg = (ImageView) ecmErrorAlert.findViewById(R.id.closeDialogImg);
 
+				if(!isBleEnabled(context) && SharedPref.getObdPreference(context) == Constants.OBD_PREF_BLE){
+					TextView bleStatusTV = (TextView) ecmErrorAlert.findViewById(R.id.bleStatusTV);
+					bleStatusTV.setVisibility(View.VISIBLE);
+				}
+
 				if(isEventChanged){
 					ecmErrorAlert.setCancelable(false);
 					closeDialogImg.setVisibility(View.GONE);
@@ -366,6 +375,20 @@ public class Globally {
 	}
 
 
+
+	public boolean isBleEnabled(Context context){
+		boolean isBleEnabled = false;
+		try{
+			BluetoothManager manager = BleUtil.getManager(context);
+			if (manager != null) {
+				BluetoothAdapter mBTAdapter = manager.getAdapter();
+				isBleEnabled = mBTAdapter.isEnabled();
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return isBleEnabled;
+	}
 
 
 	/*========================= Show Toast message =====================*/
@@ -525,7 +548,7 @@ public class Globally {
 			TextView mainTextView = (TextView) (view).findViewById(R.id.snackbar_text);
 			mainTextView.setTextColor(Color.WHITE);
 
-			mSnackBar.setAction("READ", new View.OnClickListener() {
+			mSnackBar.setAction("Silent", new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					String violationMsg = message.replaceAll(";", "<br />");

@@ -1,5 +1,6 @@
 package com.models;
 
+import com.constants.Constants;
 import com.local.db.ConstantsKeys;
 
 import org.joda.time.DateTime;
@@ -56,6 +57,7 @@ public class DriverLogModel {
     private String UnAssignedVehicleMilesId ;
     private String EngineHours;
     private String Odometer;
+    private String DriverVehicleTypeId;
 
 
     public DriverLogModel() {
@@ -109,6 +111,7 @@ public class DriverLogModel {
         this.UnAssignedVehicleMilesId = logModel.getUnAssignedVehicleMilesId();
         this.EngineHours = logModel.getEngineHours();
         this.Odometer = logModel.getOdometer();
+        this.DriverVehicleTypeId = logModel.getDriverVehicleTypeId();
 
     }
 
@@ -512,4 +515,15 @@ public class DriverLogModel {
     public String getOdometer() {
         return Odometer;
     }
+
+    public void setDriverVehicleTypeId(String driverVehicleTypeId) {
+        DriverVehicleTypeId = driverVehicleTypeId;
+    }
+
+
+    public String getDriverVehicleTypeId() {
+        return DriverVehicleTypeId;
+    }
+
+
 }

@@ -329,7 +329,7 @@ public class Utils
 
            // Log.d("log size", "log size: " + fileSize);
 
-            if(fileSize > 4 && Globally.isConnected(context)){
+            if(fileSize > 2 && Globally.isConnected(context)){
                 SyncWiredObdLog syncDataUpload = new SyncWiredObdLog(context, DriverId, DriverName, wiredObdLog );
                 syncDataUpload.execute();
 
@@ -402,10 +402,8 @@ public class Utils
             // Log.d("log size", "log size: " + fileSize);
 
             if(fileSize >= 5 && Globally.isConnected(context) ){
-                if(Globally.isConnected(context)) {
-                    SyncAppUsageLog syncAppUsageLog = new SyncAppUsageLog(context, DriverId, appUsageLog);
-                    syncAppUsageLog.execute();
-                }
+                 SyncAppUsageLog syncAppUsageLog = new SyncAppUsageLog(context, DriverId, appUsageLog);
+                 syncAppUsageLog.execute();
             }
         }
     }

@@ -508,6 +508,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
                         DriverLogModel addNewModel = hMethods.GetDriverLogModel(obj, startDateTime, startUtcDateTime, endDateTime, endUtcDateTime,
                                 IsOffDutyPermission, IsSleeperPermission, IsDrivingPermission , IsOnDutyPermission, IsNewLogAdded);
+                        addNewModel.setDriverVehicleTypeId(Constants.Driver);
                         oDriverLogDetail.add(addNewModel);
 
                     }else{
@@ -517,6 +518,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
                         DriverLogModel addNewModel = hMethods.GetDriverLogModel(obj, startDateTime, startUtcDateTime, currentDateTime, currentUTCTime,
                                 IsOffDutyPermission, IsSleeperPermission, IsDrivingPermission , IsOnDutyPermission, IsNewLogAdded);
+                        addNewModel.setDriverVehicleTypeId(Constants.Driver);
                         oDriverLogDetail.add(addNewModel);
                     }
 
@@ -1182,6 +1184,10 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                     odometer = obj.getString(ConstantsKeys.Odometer);
                 }
 
+                String DriverVehicleTypeId = Constants.Driver;
+                if (obj.has(ConstantsKeys.DriverVehicleTypeId) && !obj.getString(ConstantsKeys.DriverVehicleTypeId).equals("null")) {
+                    DriverVehicleTypeId = obj.getString(ConstantsKeys.DriverVehicleTypeId);
+                }
 
                 EldDataModelNew logModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
@@ -1230,7 +1236,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         UnAssignedVehicleMilesId,
                         obj.getString(ConstantsKeys.CoDriverId),
                         obj.getString(ConstantsKeys.CoDriverName),
-                        "false", LocationSource, EngHour, odometer
+                        "false", LocationSource, EngHour,
+                        odometer, DriverVehicleTypeId
 
                 );
 
@@ -1382,6 +1389,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                     odometer = obj.getString(ConstantsKeys.Odometer);
                 }
 
+                String DriverVehicleTypeId = Constants.Driver;
+                if (obj.has(ConstantsKeys.DriverVehicleTypeId) && !obj.getString(ConstantsKeys.DriverVehicleTypeId).equals("null")) {
+                    DriverVehicleTypeId = obj.getString(ConstantsKeys.DriverVehicleTypeId);
+                }
+
                 EldDataModelNew eldModel = new EldDataModelNew(
                         obj.getString(ConstantsKeys.ProjectId),
                         obj.getString(ConstantsKeys.DriverId),
@@ -1431,7 +1443,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         "false",
                         LocationSource,
                         EngHour,
-                        odometer
+                        odometer,
+                        DriverVehicleTypeId
                         );
 
                     if(eldModel != null) {

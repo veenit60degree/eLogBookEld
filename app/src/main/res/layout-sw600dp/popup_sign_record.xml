@@ -15,16 +15,16 @@
         >
 
 
-
         <CheckBox
             android:id="@+id/signRecordCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_18"
-            android:textColor="@color/color_eld_bg"
+            android:layout_centerVertical="true"
             android:button="@drawable/unidentified_checkbox_drawable"
             android:paddingLeft="@dimen/margin_short_3"
-            android:layout_centerVertical="true"
+            android:paddingRight="@dimen/margin_11"
+            android:textColor="@color/color_eld_bg"
+            android:textSize="@dimen/text_size_18"
 
             />
 
@@ -33,7 +33,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/date"
-            android:paddingLeft="@dimen/margin_short_9"
             android:textSize="@dimen/text_size_18"
             android:textColor="?attr/textColor"
             android:layout_centerVertical="true"

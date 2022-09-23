@@ -95,9 +95,11 @@ public class RecapViewMethod {
             for(int i = 0 ; i < recapViewArray.length() ; i++){
                 JSONObject recapSelectedJson = (JSONObject)recapViewArray.get(i);
                 if(date.equals(recapSelectedJson.getString(ConstantsKeys.Date))){
+                    String byteImage = recapSelectedJson.getString(ConstantsKeys.LogSignImageInByte);
                  //   return recapSelectedJson;
                     recapSelectedJson.put(ConstantsKeys.LogSignImage, "");
                     recapSelectedJson.put(ConstantsKeys.LogSignImageInByte, "");
+                    recapSelectedJson.put(ConstantsKeys.CertifyOldImage, byteImage);
 
                     return recapViewArray.put(i, recapSelectedJson);
                   //  break;

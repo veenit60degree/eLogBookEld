@@ -119,6 +119,7 @@ public class ConstantsKeys {
     public static String SignImage              = "SignImage";
     public static String StringImage            = "StringImage";
     public static String IsSignCopy             = "IsSignCopy";
+    public static String SignedCopyDate         = "SignedCopyDate";
     public static String IsCertifyMandatory     = "IsCertifyMandatory";
     public static String IsNotificationAllowed  = "IsAutoDutyNotificationAllowed";
 
@@ -160,7 +161,7 @@ public class ConstantsKeys {
     public static String IsEmptyLoad            = "IsEmptyLoad";
     public static String ShipperDocDateStr      = "ShipperDocDateStr";
     public static String IsUnAssignedMileRecord = "IsUnAssignedMileRecord";
-
+    public static String Address                = "Address";
 
     // --------------------- Odometer params -------------------------
     public static String VIN                    = "VIN";
@@ -189,6 +190,7 @@ public class ConstantsKeys {
     public static String StartOdometerMiles     = "StartOdometerMiles";
     public static String DayOdometerInKm        = "DayOdometerInKm";
     public static String DayOdometerInMiles     = "DayOdometerInMiles";
+    public static String DriverVehicleTypeId    = "DriverVehicleTypeId";
 
 
     // --------------------- Inspection params -------------------------
@@ -311,6 +313,9 @@ public class ConstantsKeys {
     public static String IsCertifyReminder              = "IsCertifyReminder";
     public static String DownloadProgress               = "download_progress";
     public static String MissingDiagnostic              = "MissingDiagnostic";
+    public static String BleDataService                 = "BleDataService";
+    public static String IsConnected                    = "IsConnected";
+
 
     public static String IsLocDiagnostic                = "IsLocDiagnostic";
     public static String LocDiaOccurTime                = "LocDiaOccurTime";
@@ -426,6 +431,7 @@ public class ConstantsKeys {
     public static String OdometerInMeters               = "OdometerInMeters";
     public static String LogSignImage                   = "LogSignImage";
     public static String LogSignImageInByte             = "LogSignImageInByte";
+    public static String CertifyOldImage             = "CertifyOldImage";
     public static String CoDriverName                   = "CoDriverName";
     public static String CoDriverKey                    = "CoDriverKey";
     public static String IsSkipRecord                   = "IsSkipRecord";   // true used for same status like DRIVING/ONDUTY when violation occurred
@@ -669,6 +675,8 @@ public class ConstantsKeys {
     public static String CMVVIN                         = "CMVVIN";
 
     public static String OdometerInKm                   = "OdometerInKm";
+    public static String OdometerInMiles                = "OdometerInMiles";
+    public static String OdometerInMeter                = "OdometerInMeter";
     public static String strEventType                   = "strEventType";
     public static String Origin                         = "Origin";
     public static String StartTime                      = "StartTime";
@@ -676,6 +684,9 @@ public class ConstantsKeys {
     public static String OBDDeviceDataId                = "OBDDeviceDataId";
     public static String CurrentObdDeviceDataId         = "CurrentObdDeviceDataId";
     public static String IsYard                         = "IsYard";
+    public static String PowerEvent                     = "PowerEvent";
+    public static String TimeStampUTC                   = "TimeStampUTC";
+    public static String OffsetUTC                      = "OffsetUTC";
 
 
     public static String SequenceNumber                 = "SequenceNumber";

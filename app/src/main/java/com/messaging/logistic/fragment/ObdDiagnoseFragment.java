@@ -1,11 +1,17 @@
 package com.messaging.logistic.fragment;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,22 +29,32 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.background.service.BackgroundLocationService;
+import com.background.service.BleDataService;
 import com.ble.utils.ToastUtil;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.TcpClient;
+import com.constants.Utils;
 import com.messaging.logistic.Globally;
+import com.messaging.logistic.LocPermissionActivity;
+import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
+import com.messaging.logistic.SplashActivity;
+import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
 import com.wifi.settings.WiFiConfig;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.Vector;
 
 import dal.tables.OBDDeviceData;
@@ -48,7 +64,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
     View rootView;
     TextView bleObdTxtView, odometerTxtView, gpsTxtView, simInfoTxtView, resetObdTxtView, obdDataTxtView;
-    TextView EldTitleTV, responseRawTxtView, updateObdInfo, bleNameTxtView;
+    TextView EldTitleTV, responseRawTxtView, bleNameTxtView, restartApp;
     RelativeLayout rightMenuBtn;
     RelativeLayout eldMenuLay;
     ImageView eldMenuBtn;
@@ -77,6 +93,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     Button button2;
     EditText field1;
     boolean CheckConnection = false;
+    public static boolean LocationPermissionCallBack = false;
 
    // BleDevice bleDevice = null;
     BackgroundLocationService bleService;
@@ -137,7 +154,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         obdDataTxtView  = (TextView) v.findViewById(R.id.obdDataTxtView);
         EldTitleTV      = (TextView) v.findViewById(R.id.EldTitleTV);
         responseRawTxtView = (TextView) v.findViewById(R.id.responseRawTxtView);
-        updateObdInfo   = (TextView)v.findViewById(R.id.dateActionBarTV);
+        restartApp      = (TextView)v.findViewById(R.id.dateActionBarTV);
 
         obdProgressBar  = (ProgressBar)v.findViewById(R.id.obdProgressBar);
         rightMenuBtn    = (RelativeLayout) v.findViewById(R.id.rightMenuBtn);
@@ -154,7 +171,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
         button2.setVisibility(View.GONE);
         field1.setVisibility(View.GONE);
-        updateObdInfo.setVisibility(View.GONE);
+        restartApp.setVisibility(View.VISIBLE);
 
         obdDataTxtView.setOnClickListener(this);
         bleObdTxtView.setOnClickListener(this);
@@ -164,7 +181,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         resetObdTxtView.setOnClickListener(this);
         eldMenuLay.setOnClickListener(this);
         button2.setOnClickListener(this);
-        updateObdInfo.setOnClickListener(this);
+        restartApp.setOnClickListener(this);
 
         if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
             EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (WIFI)");
@@ -181,7 +198,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
             obdDataTxtView.setText(getString(R.string.no_obd_settings));
         }
 
-        updateObdInfo.setText(getString(R.string.update_obd_info));
+        restartApp.setText(getString(R.string.restart_app));
 
 
 
@@ -198,13 +215,6 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         });*/
 
 
-        updateObdInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
     }
 
 
@@ -212,16 +222,14 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
        int bleStatus = SharedPref.getObdStatus(getActivity());
 
         if(bleStatus != Constants.BLE_CONNECTED){
-            //stopBleObdData();
-            // ToastUtil.show(getActivity(), getString(R.string.device_already_connected));
+            BleDataService.IsScanClick = true;
             loaderProgress.setVisibility(View.VISIBLE);
             bleObdTxtView.setText(getString(R.string.start_scan));
+            obdDataTxtView.setText("");
             CheckConnection = false;
 
-        } /*else {
+        }
 
-
-*/
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -290,7 +298,15 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 }else{
                     //<b>Device Name:</b> SMBLE-000066<br/><b>MAC Address:</b> C4:64:E3:54:EF:03<br/><br/><b>Sequence Id:</b> 01B5<br/><b>Event Type:</b> 0<br/><b>Event Code:</b> 1<br/><b>Date:</b> 072821<br/><b>Time:</b> 112943<br/><b>Latest ACC ON time:</b> 072821112943<br/><b>Event Data:</b> OnTime<br/><b>Vehicle Speed:</b> 0<br/><b>Engine RPM:</b> 0<br/><b>Odometer:</b> 0<br/><b>Engine Hours:</b> 0<br/><b>VIN Number:</b> <br/><b>Latitude:</b> 30.70728<br/><b>Longitude:</b> 76.68493<br/><b>Distance since Last located:</b> 0<br/><b>Driver ID:</b> <br/><b>Version:</b>1<br/>
                     if(!data.contains("MAC Address")) {
+
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                obdDataTxtView.setText(getString(R.string.ble_permsn_disabled));
+                            }
+                        }
                         bleObdTxtView.setText(getString(R.string.connect_ble_obd));
+
                     }else{
                         bleObdTxtView.setText(getString(R.string.connected) + " (Ble OBD)");
                     }
@@ -303,7 +319,11 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-       // SharedPref.SetOBDScreenStatus(true, getActivity());
+
+        if(LocationPermissionCallBack){
+            LocationPermissionCallBack = false;
+            Toast.makeText(getActivity(), getString(R.string.loc_per_denied), Toast.LENGTH_LONG).show();
+        }
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver( progressReceiver, new IntentFilter("ble_changed_data"));
     }
 
@@ -320,10 +340,70 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
     }
 
+
+
+    private boolean requestLocationPermission() {
+
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+
+                if (constants.CheckGpsStatusToCheckMalfunction(getActivity())) {
+                    scanBtnClick();
+                } else {
+                    globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
+                }
+
+                return true;
+            } else {
+                Log.v("TAG", "Permission is revoked");
+
+                Intent i = new Intent(getActivity(), LocPermissionActivity.class);
+                startActivity(i);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("TAG", "Permission is granted");
+            if (constants.CheckGpsStatusToCheckMalfunction(getActivity())) {
+               scanBtnClick();
+            } else {
+               globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
+            }
+            return true;
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+
+        if(requestCode == 2) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                // permission was granted.
+                scanBtnClick();
+            } else {
+                // tell the user the action is cancelled
+                Log.d("LocationPer", "Permission denied");
+            }
+
+        }
+
+    }
+
+
     @Override
     public void onClick(View v) {
 
         switch (v.getId()){
+
+            case R.id.dateActionBarTV:
+                stopBleObdData();
+                break;
 
             case R.id.bleObdTxtView:
                /* String message = "*TS01,868323029228761,000115170721,CAN:1500FEEC33414B4A474C4452364A534A4E373536392A0B00F004018C8CEF1F00F48C0B00FEC100BCFE0C00BCFE0C0B00FEE50EEF0400FFFFFFFF0B00FEF1C3E00604000000300B00FEF6FF085E3BFFFFFFFF0B00FEEE7E53C62EFFFF43FF0B00FEEFA5FFFF39FFFFFFFA0B00FEFCFF86FFFFFFFFFFFF0B00FEF25D0016020B06FFFF0B00FEE0C3118500C31185000B00FEBFD70786747969FFFF0B00FEE852146107FFFFA04E0B00FEE99B010B009B010B00#";
@@ -337,12 +417,10 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                     e.printStackTrace();
                 }*/
 
+
+
                 if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_BLE) {
-                    if (constants.CheckGpsStatusToCheckMalfunction(getActivity())) {
-                        scanBtnClick();
-                    } else {
-                        globally.EldScreenToast(rightMenuBtn, getResources().getString(R.string.gps_alert), getResources().getColor(R.color.colorVoilation));
-                    }
+                    requestLocationPermission();
                 }
 
                 break;
@@ -468,11 +546,6 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 getParentFragmentManager().popBackStack();
                 break;
 
-
-            case R.id.dateActionBarTV:
-
-                break;
-
         }
     }
 
@@ -525,8 +598,8 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
         try {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle("Restart BLE OBD !!");
-            alertDialogBuilder.setMessage("Do you really want to restart BLE OBD device?");
+            alertDialogBuilder.setTitle("Restart App !!");
+            alertDialogBuilder.setMessage("Do you really want to restart application ?");
 
             alertDialogBuilder.setPositiveButton("Yes",
                     new DialogInterface.OnClickListener() {
@@ -536,12 +609,22 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                             bleObdTxtView.setText(getString(R.string.disconnected) + " (Ble OBD)");
                             obdDataTxtView.setText("");
                             SharedPref.SetPingStatus("stop", getActivity());
+                            TabAct.IsAppRestart = true;
 
                             Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 getActivity().startForegroundService(serviceIntent);
                             }
                             getActivity().startService(serviceIntent);
+
+
+                            // restart activity
+                            Intent i = getActivity().getPackageManager()
+                                    .getLaunchIntentForPackage( getActivity().getPackageName() );
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(i);
+                            getActivity().finish();
+
 
                         }
                     });
@@ -564,6 +647,26 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     }
 
 
+
+
+
+
+    private void clearAppData() {
+        try {
+            // clearing app data
+            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+                ((ActivityManager)getActivity().getSystemService(getActivity().ACTIVITY_SERVICE)).clearApplicationUserData(); // note: it has a return value!
+            } else {
+                String packageName = getActivity().getPackageName();
+                Runtime runtime = Runtime.getRuntime();
+                runtime.exec("pm clear "+packageName);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     TcpClient.OnMessageReceived obdResponseHandler = new TcpClient.OnMessageReceived() {
         @Override

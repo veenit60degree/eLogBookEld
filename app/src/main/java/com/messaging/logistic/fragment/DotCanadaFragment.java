@@ -1141,6 +1141,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
                 if (endDateTime.equals("null")) {
                     endDateTime = global.GetCurrentDateTime();
+                }else{
+                    if(driverLogJsonArray.length() == 1 && LogDate.equals(CurrentDate)){
+                        endDateTime = global.GetCurrentDateTime();
+                    }
                 }
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(global.DateFormat);  //:SSSZ

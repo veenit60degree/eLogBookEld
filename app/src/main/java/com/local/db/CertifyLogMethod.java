@@ -63,7 +63,8 @@ public class CertifyLogMethod {
     public JSONObject AddCertifyLogArray(String DriverId, String DeviceId,
                                          String ProjectId, String LogDate,
                                          String SignImage, boolean IsContinueWithSign,
-                                         boolean isReCertifyRequired, String CompanyId, String LocationType ) {
+                                         boolean isReCertifyRequired, String CompanyId,
+                                         String LocationType, String SignedCopyDate ) {
 
         JSONObject jsonObj = new JSONObject();
 
@@ -74,11 +75,13 @@ public class CertifyLogMethod {
             jsonObj.put(ConstantsKeys.ProjectId,    ProjectId);
             jsonObj.put(ConstantsKeys.LogDate,      LogDate);
 
-            if(IsContinueWithSign == false) {
+            if(!IsContinueWithSign) {
                 jsonObj.put(ConstantsKeys.StringImage, SignImage);
             }
 
             jsonObj.put(ConstantsKeys.IsSignCopy,   IsContinueWithSign);
+            jsonObj.put(ConstantsKeys.SignedCopyDate,   SignedCopyDate);
+
             jsonObj.put(ConstantsKeys.IsRecertifyRequied , isReCertifyRequired);
             jsonObj.put(ConstantsKeys.CompanyId , CompanyId);
             jsonObj.put(ConstantsKeys.LocationType, LocationType);
