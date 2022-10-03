@@ -246,8 +246,8 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
     void VisibleHideNextPrevView(String click){
         String selectedDateStr = global.ConvertDateFormat(InspectionDateTime);
         String currentDateStr = global.ConvertDateFormat(CurrentDate);
-        DateTime selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
-        DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
+        DateTime selectedDateTime = global.getDateTimeObj(selectedDateStr, false );
+        DateTime currentDateTime = global.getDateTimeObj(currentDateStr, false);
 
         if(click.equals("next")){
             selectedDateTime = selectedDateTime.plusDays(1);

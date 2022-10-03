@@ -256,7 +256,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
 
     String getTime(String date){
-        DateTime dateTime = new DateTime(Globally.getDateTimeObj(date, false));
+        DateTime dateTime = Globally.getDateTimeObj(date, false);
         int monthOfYear = dateTime.getMonthOfYear();
         return dateTime.getDayOfMonth() + " " + Globally.MONTHS[monthOfYear - 1] + " " + Globally.Convert12HourFormatTime(date);
 

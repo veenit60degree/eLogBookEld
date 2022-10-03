@@ -36,6 +36,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.background.service.BackgroundLocationService;
+import com.background.service.BleDataService;
 import com.constants.CheckIsUpdateReady;
 import com.constants.CommonUtils;
 import com.constants.Constants;
@@ -45,8 +46,10 @@ import com.constants.Slidingmenufunctions;
 import com.constants.UrlResponce;
 import com.constants.Utils;
 import com.custom.dialogs.AppUpdateDialog;
+import com.custom.dialogs.BleAvailableDevicesDialog;
 import com.custom.dialogs.ContinueStatusDialog;
 import com.custom.dialogs.EldNotificationDialog;
+import com.custom.dialogs.SignDialog;
 import com.driver.details.DriverConst;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -56,6 +59,7 @@ import com.local.db.HelperMethods;
 import com.messaging.logistic.fragment.EldFragment;
 import com.models.SlideMenuModel;
 import com.models.VehicleModel;
+import com.simplify.ink.InkView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +69,10 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
     //TabHost.TabSpec chat_spec;
     public static boolean IsAppRestart = false;
+    public static boolean SelectDevice = false;
     public static boolean IsEcmAlertShown = false;
+    public static String SelectDeviceName = "";
+
     public static RequestQueue requestQueue;
     public static RequestQueue alsConnRequestQueue;
     public static TabHost host;
@@ -96,29 +103,21 @@ public class TabAct extends TabActivity implements View.OnClickListener {
     Animation fadeInAnim, fadeOutAnim;
     AppUpdateDialog appUpdateDialog;
     EldNotificationDialog eldNotificationDialog;
+
    // Utils util;
     String existingAppVersionStr = "";
 
     AlertDialog alertDialog;
     AlertDialog statusAlertDialog;
     ContinueStatusDialog continueStatusDialog;
+    BleAvailableDevicesDialog bleAvailableDevicesDialog;
+    List<String> availableDevicesList = new ArrayList<>();
 
-   /* @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // Thread.setDefaultUncaughtExceptionHandler(onRuntimeError);
-
-        // Obtain the FirebaseAnalytics instance.
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-//        UILApplication.getInstance().setTheme();
 
         if(UILApplication.getInstance().isNightModeEnabled()){
             getApplication().setTheme(R.style.DarkTheme);
@@ -161,18 +160,9 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         TabDeclaration();
 
-      /*  try {
-            //  ------------- Log write initilization----------
-            util = new Utils(getApplicationContext());
-            util.createAppUsageLogFile();
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
-
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                 // Log.d("received", "received from service");
 
                 if (intent.hasExtra(ConstantsKeys.PersonalUse75Km)) {
                     if (intent.getBooleanExtra(ConstantsKeys.PersonalUse75Km, false) == true) {
@@ -300,11 +290,52 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
 
                                 }
+                            }else if(intent.hasExtra(ConstantsKeys.BleDevices)){
+
+                                try {
+                                    availableDevicesList = new ArrayList<>();
+
+                                    String availableDevices = intent.getStringExtra(ConstantsKeys.BleDevices);
+
+                                    if(availableDevices != null) {
+                                        String[] deviceArray = availableDevices.split("@@@");
+
+                                        if (!availableDevices.equals("")) {
+                                            for (int i = 0; i < deviceArray.length; i++) {
+                                                availableDevicesList.add(deviceArray[i]);
+                                            }
+                                        }
+                                        if (availableDevicesList.size() > 0) {
+                                            if (bleAvailableDevicesDialog != null && bleAvailableDevicesDialog.isShowing()) {
+                                                // send broadcast
+                                                sendDeviceCast(availableDevices);
+                                            } else {
+                                                bleAvailableDevicesDialog = new BleAvailableDevicesDialog(TabAct.this,
+                                                        availableDevicesList, new BleDevicesListener());
+                                                bleAvailableDevicesDialog.show();
+                                            }
+                                        } else {
+                                            if (bleAvailableDevicesDialog != null && bleAvailableDevicesDialog.isShowing()) {
+                                                bleAvailableDevicesDialog.dismiss();
+                                            }
+                                        }
+                                    }else {
+                                        if (bleAvailableDevicesDialog != null && bleAvailableDevicesDialog.isShowing()) {
+                                            bleAvailableDevicesDialog.dismiss();
+                                            Toast.makeText(TabAct.this, getString(R.string.ble_turned_off), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
                             }
 
                         }
 
                     }
+
+
                 }
             }
         };
@@ -411,6 +442,44 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         openUpdateDialogBtn.setOnClickListener(this);
 
     }
+
+
+
+
+
+
+
+    private void sendDeviceCast(String BleDevices){
+        try{
+            Intent intent = new Intent(ConstantsKeys.BleDataNotifier);
+            intent.putExtra(ConstantsKeys.BleDataAfterNotify, BleDevices);
+            LocalBroadcastManager.getInstance(TabAct.this).sendBroadcast(intent);
+
+        }catch (Exception e){}
+    }
+
+
+
+    /*================== Ble Multiple device handler Listener ====================*/
+    private class BleDevicesListener implements BleAvailableDevicesDialog.BleDevicesListener {
+
+        @Override
+        public void SelectedDeviceBtn(String selectedDevice) {
+            SharedPref.SetPingStatus("device", TabAct.this);
+            SelectDeviceName = selectedDevice;
+            TabAct.SelectDevice = true;
+
+            Intent serviceIntent = new Intent(TabAct.this, BackgroundLocationService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            }
+            startService(serviceIntent);
+
+        }
+    }
+
+
+
 
 
 

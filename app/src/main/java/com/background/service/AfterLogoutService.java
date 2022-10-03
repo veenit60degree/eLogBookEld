@@ -96,10 +96,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private static final long TIME_INTERVAL_WIFI  = 10 * 1000;   // 10 sec
     private static final long TIME_INTERVAL_WIRED = 3 * 1000;   // 3 sec
 
-    public static boolean isReceiverInitLogout      = false;
     boolean isStopService       = false;
     double lastVehSpeed         = -1;
 
+    int SpeedCounter            = 60;      // initially it is 60 so that ELD rule is called instantly
     int ThreshHoldSpeed         = 8;
     int intermediateRecordTime  = 60;    // intermediate record time is 60 min
     int OnDutyRecordTime        = 5;    // OnDuty record time is 6 min when earlier event was DR and now vehicle has been stopped for 6 min
@@ -147,14 +147,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     NotificationManagerSmart mNotificationManager;
     boolean isWiredCallBackCalled = false;
 
-    boolean isBleConnected = false;
-
-    // Bluetooth obd adapter decleration
-    boolean mIsScanning = false;
-    int bleScanCount = 0;
-    private BluetoothAdapter mBTAdapter;
-    private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
-    // private LinkedList<HTBleData> mHtblData = new LinkedList<>();
     Intent locServiceIntent;
 
 
@@ -220,9 +212,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                         if(IsConnected){
                             String[] decodedDataArray = BleUtil.decodedDataArray(data);
                             if(decodedDataArray.length > 10){
-
-                                isBleConnected = true;
-                                isReceiverInitLogout = true;
 
                                 String savedOnReceiveTime = SharedPref.getBleOnReceiveTime(getApplicationContext());
                                 if (savedOnReceiveTime.length() > 10) {
@@ -340,8 +329,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                             }
                         }else{
 
-                            isBleConnected = false;
-
                             sendBroadcast(false, "");
                             SharedPref.setLoginAllowedStatus(true, getApplicationContext());
 
@@ -377,17 +364,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             //  ------------- OBD Log write initilization----------
             obdUtil = new Utils(getApplicationContext());
             obdUtil.createAppUsageLogFile();
-
-            /*JSONArray eventArray = new JSONArray("[{\"StartDateTime\":\"2022-08-18T06:43:38\",\n" +
-                    "\"EndDateTime\":\"2022-08-18T06:48:49.000Z\",\n" +
-                    "\"TotalMinutes\":5,\n" +
-                    "\"IsVehicleInMotion\":true,\n" +
-                    "\"TruckNumber\":\"ELD-22\"}]");
-            CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
-            dbHelper = new DBHelper(getApplicationContext());
-            malfunctionDiagnosticMethod.UnidentifiedLogoutRecordHelper(Integer.valueOf(CompanyId), dbHelper, eventArray);
-*/
-
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -409,10 +385,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             if (SharedPref.getUserName(getApplicationContext()).equals("") &&
                     SharedPref.getPassword(getApplicationContext()).equals("")) {
 
-                /*if(!BackgroundLocationService.isReceiverInit){
-                    isReceiverInitLogout = true;
-                    registerReceiver(broadcastReceiver, makeFilter());
-                }*/
                 startBleService();
             }
 
@@ -427,16 +399,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         SharedPref.setContinueSpeedZeroTime(Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
         SharedPref.saveBleScanCount(0, getApplicationContext());
         mTimer.schedule(timerTask, TIME_INTERVAL_WIFI, TIME_INTERVAL_WIFI);
-
-
-       /* bleHandler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message message) {
-                try {
-                    StartScanHtBle();   //Device connection after scanning is turned on
-                }catch (Exception e){ }
-            }
-        };*/
 
     }
 
@@ -569,6 +531,10 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                         }
 
                                     }
+                                }else{
+                                    TruckID             = SharedPref.getTruckNumber(getApplicationContext());
+                                    CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
+
                                 }
 
                                 // check Unidentified event occurrence
@@ -980,12 +946,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 // int ObdStatus = SharedPref.getObdStatus(getApplicationContext());
                 if (TruckID.length() > 0 && CompanyId.length() > 0) {
                     if (pingStatus.equals("ble_start")) {
-                        //if (!isConnected || ObdStatus != Constants.BLE_CONNECTED ) { //!mIsScanning &&
 
-                       /* if(mBTAdapter == null){
-                            initHtBle();
-                        }*/
-                        if (mBTAdapter!= null && !mBTAdapter.isEnabled()) {
+                        if (!global.isBleEnabled(getApplicationContext())) {
                             startBleService();
 
                             Globally.PlayNotificationSound(getApplicationContext());
@@ -994,8 +956,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                                     getString(R.string.ble_enabled_desc) , 2097);
                         }else {
                             boolean isConnected = HTBleSdk.Companion.getInstance().isConnected();
-                            if (!isBleConnected || !isConnected) { // if device not `connected
-                                //checkPermissionsBeforeScanBle();
+                            if (!BleDataService.isBleConnected || !isConnected) { // if device not `connected
                                 startBleService();
                             }
                         }
@@ -1082,33 +1043,24 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                         if (SharedPref.getUserName(getApplicationContext()).equals("") &&
                                 SharedPref.getPassword(getApplicationContext()).equals("")) {
-                            if(!BackgroundLocationService.isReceiverInit) {
-                                if (!isReceiverInitLogout) {
-                                    isReceiverInitLogout = true;
-                                   // registerReceiver(broadcastReceiver, makeFilter());
-                                } else {
-                                    if (!isBleConnected || !HTBleSdk.Companion.getInstance().isConnected()) { // if device not `connected
-                                       // checkPermissionsBeforeScanBle();
-                                        startBleService();
 
-                                        if (!isBleConnected) {
-                                            sendBroadcast(false, "");
+                            if (!BleDataService.isBleConnected || !HTBleSdk.Companion.getInstance().isConnected()) { // if device not `connected
 
+                                if (SpeedCounter == 0 || SpeedCounter == 30) {
+                                    startBleService();
+                                }
 
-                                            // call handler callback method to check malfunction/diagnostic when disconnected
-                                            // StartStopServer(constants.WiredOBD);
+                                if (!BleDataService.isBleConnected) {
+                                    sendBroadcast(false, "");
 
-                                            truckRPM = SharedPref.getRPM(getApplicationContext());
-                                            ignitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
-                                            EngineSeconds = "0";
-                                            currentHighPrecisionOdometer = "0";
+                                    truckRPM = SharedPref.getRPM(getApplicationContext());
+                                    ignitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
+                                    EngineSeconds = "0";
+                                    currentHighPrecisionOdometer = "0";
 
-                                            // call rule method to check malfunction/diagnostic when disconnected
-                                            checkObdDataWithRule(-1);
+                                    // call rule method to check malfunction/diagnostic when disconnected
+                                    checkObdDataWithRule(-1);
 
-                                        }
-
-                                    }
                                 }
                             }
 
@@ -1162,6 +1114,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                         }
 
                         uploadVehPowerEvents();
+                        SaveAndUpdateUnidentifiedRecordsApi(null);
 
                     }
 
@@ -1193,6 +1146,12 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 e.printStackTrace();
             }
 
+            if (SpeedCounter >= 60) {
+                SpeedCounter = 0;
+            }else{
+                SpeedCounter += 10;
+            }
+
         }
     };
 
@@ -1210,11 +1169,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private void postEventsToServer(){
         JSONArray array = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
 
-//        String api = APIs.MALFUNCTION_DIAGNOSTIC_EVENT;
-//
-//        if(malfunctionDiagnosticMethod.IsOccurEventAlreadyUploaded(array)){
-//            api = APIs.CLEAR_MALFNCN_DIAGSTC_EVENT_BY_DATE;
-//        }
         Log.d("array","array: " +array);
 
         if (global.isConnected(getApplicationContext()) && array.length() > 0 && isDataAlreadyPosting == false) {
@@ -1231,12 +1185,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     void GetMalDiaEventsDurationList(){
 
         if(!isMalEventApiInProgress){
-
+            VinNumber = getVin();
             isMalEventApiInProgress = true;
             String startEventDate = Globally.GetCurrentJodaDateTime().minusDays(5).toString();
 
             params = new HashMap<String, String>();
             params.put(ConstantsKeys.UnitNo, TruckID);
+            params.put(ConstantsKeys.VIN, VinNumber);
             params.put(ConstantsKeys.EventDateTime, startEventDate);
 
             GetMalfunctionEvents.executeRequest(Request.Method.POST, APIs.GET_MALFUNCTION_LIST_BY_TRUCK , params, GetMalDiaEventDuration,
@@ -1510,9 +1465,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 if (TruckID.length() > 0 && CompanyId.length() > 0) {
                     LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 
-//                    unregisterAndDisconnectBle();
                 }
-                isReceiverInitLogout = false;
             }else {
                 //  ------------- Wired OBD ----------
                 if(isBound){
@@ -1907,8 +1860,15 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     private void SaveAndUpdateUnidentifiedRecordsApi(JSONArray unPostedLogArray) {
         // remove duplicate records if Exist
-        unPostedLogArray = removeDuplicateRecordIfCreated(unPostedLogArray);
 
+
+        if(unPostedLogArray != null){
+            unPostedLogArray = removeDuplicateRecordIfCreated(unPostedLogArray);
+        }else{
+            //JSONArray SavedUnidentifiedLogArray = hMethods.getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
+            unPostedLogArray             = hMethods.getUnpostedLogArray(Integer.parseInt(CompanyId), dbHelper);
+
+        }
         if(unPostedLogArray.length() > 0 && !UnidentifiedApiInProgress) {
             UnidentifiedApiInProgress = true;
             SaveUpdateUnidentifiedApi.PostDriverLogData(unPostedLogArray, APIs.ADD_UNIDENTIFIED_RECORD, Constants.SocketTimeout20Sec,
@@ -2915,55 +2875,5 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             e.printStackTrace();
         }
     }
-
-
-
-/*
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try {
-                if (intent.hasExtra(BluetoothAdapter.EXTRA_STATE)) {
-                    String action = intent.getAction();
-                    if (BluetoothAdapter.ACTION_STATE_CHANGED != null && BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
-                        switch (intent.getAction()) {
-                            case BluetoothAdapter.ACTION_STATE_CHANGED:
-                                int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-                                switch (blueState) {
-                                    case BluetoothAdapter.STATE_TURNING_ON://bluetooth is on
-                                        break;
-                                    case BluetoothAdapter.STATE_ON://bluetooth is on
-                                        //It is detected that the bluetooth switch is turned on to reconnect
-                                        if (!TextUtils.isEmpty(HTBleSdk.Companion.getInstance().getAddress())) {
-                                            Log.e("TAG", "Bluetooth switch on");
-                                            initBleListener();
-                                        }
-                                        break;
-                                    case BluetoothAdapter.STATE_TURNING_OFF://bluetooth is turning off
-
-                                        break;
-                                    case BluetoothAdapter.STATE_OFF://bluetooth is off
-                                        break;
-                                }
-
-                        }
-                    }
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-    };
-*/
-
-
-    private IntentFilter makeFilter() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        return filter;
-    }
-
 
 }

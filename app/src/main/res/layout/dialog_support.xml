@@ -16,43 +16,21 @@
         android:paddingBottom="@dimen/margin_12"
         >
 
-        <RelativeLayout
-            android:id="@+id/supportTopLay"
+
+        <TextView
+            android:id="@+id/headertextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/internet_alert_default"
+            android:gravity="left"
+            android:paddingLeft="@dimen/margin_20"
+            android:paddingTop="@dimen/margin_13"
+            android:paddingBottom="@dimen/margin_13"
 
-            >
-
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_11"
-                android:gravity="center"
-                android:padding="@dimen/margin_short_5"
-                android:background="@color/color_eld_theme"
-                android:layout_marginTop="@dimen/margin_10"
-                />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_Support"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_18"
-                android:gravity="center"
-                android:padding="@dimen/margin_short_5"
-                android:background="@drawable/green_default"
-                />
-
-        </RelativeLayout>
-
-
+            android:text="@string/action_Support"
+            android:textColor="@color/color_eld_theme"
+            android:textSize="@dimen/text_size_17"
+            android:textStyle="bold" />
 
 
         <ListView
@@ -60,25 +38,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:dividerHeight="@dimen/margin_short_1"
-            android:divider="@color/black_hover"
-            android:paddingBottom="@dimen/view_height_55"
-            android:layout_below="@+id/supportTopLay"
+            android:divider="@color/gray_text_color"
+            android:layout_below="@+id/headertextView"
             />
 
-        <Button
-            android:id="@+id/supportDismissBtn"
+
+        <TextView
+            android:id="@+id/bleDismissBtn"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/view_height_36"
+            android:layout_height="wrap_content"
             android:text="@string/Close"
-            android:textColor="@color/white"
-            android:layout_alignParentBottom="true"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+          android:layout_below="@+id/supportListView"
             android:textSize="@dimen/text_size_17"
             android:layout_marginTop="@dimen/margin_16"
-            android:layout_centerHorizontal="true"
-            android:textAllCaps="false"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/margin_15"
             android:paddingRight="@dimen/margin_20"
             android:paddingLeft="@dimen/margin_20"
-            android:background="@drawable/support_black_selector"
+            android:paddingBottom="@dimen/margin_short_5"
+            android:paddingTop="@dimen/margin_short_5"
+            android:background="@drawable/media_white_drawable"
             />
 
 

@@ -214,6 +214,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     String DefaultLine      = " <g class=\"event \">\n";
     String ViolationLine    = " <g class=\"event line-red\">\n";
+    String certifyApiStartDate = "";
 
     String htmlAppendedText = "";
     String colorVoilation = "#C92627";
@@ -246,6 +247,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     boolean isSaveCertifyClicked    = false;
     boolean isLocationMissing       = false;
     boolean isDrivingAllowForSwap   = false;
+    boolean is18DaysApiCalled       = false;
 
     int startHour = 0,startMin = 0, endHour = 0, endMin = 0;
     SignDialog signDialog;
@@ -545,6 +547,12 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 }
             }
        // }
+
+        DateTime currentDateTime = Globally.GetCurrentJodaDateTime();
+        DateTime startDateTime = global.GetStartDate(currentDateTime, 15);
+        certifyApiStartDate = global.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
+
+
 
         getPermissionWithView();
 
@@ -910,7 +918,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         if(Globally.isConnected(getActivity()) ){
 
-            DateTime currentDateTime    = new DateTime(Globally.GetCurrentDateTime());
+            DateTime currentDateTime    = Globally.GetCurrentJodaDateTime();
             DateTime startDateTime      = Globally.GetStartDate(currentDateTime, 14);
             String StartDate            = Globally.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
             String EndDate              = Globally.GetCurrentDeviceDate(); // current Date
@@ -939,7 +947,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                 if(recapViewMethod.GetSelectedRecapData(recap18DaysArray, EndDate) == null && !BackgroundLocationService.IsRecapApiACalled){
                     StartDate = recapViewMethod.GetLastItemDate(recap18DaysArray);
 
-                    startDateTime   = new DateTime(Globally.ConvertDateFormat(StartDate));
+                    startDateTime   = Globally.getDateTimeObj(Globally.ConvertDateFormat(StartDate), false);
                     startDateTime   = Globally.GetStartDatePlus(startDateTime, 1);
                     StartDate       = Globally.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime) );
 
@@ -1072,6 +1080,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
             if (!LogDate.equals(CurrentDate)) {
                 UpdateRecapOffLineData();
+                saveSignatureBtn.setText(getString(R.string.Recertify));
                 global.DriverSwitchAlert(getActivity(), "Recertify Alert !!", "You need to ReCertify after editing log.", "Ok");
             }
 
@@ -1229,8 +1238,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
             String selectedDateStr = global.ConvertDateFormat(LogDate);
             String currentDateStr = global.ConvertDateFormat(CurrentDate);
-            DateTime selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
-            DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
+            DateTime selectedDateTime = global.getDateTimeObj(selectedDateStr, false) ;
+            DateTime currentDateTime = global.getDateTimeObj(currentDateStr, false) ;
 
             int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
             DOTBtnVisibility(DaysDiff, MaxDays);
@@ -1243,10 +1252,10 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     void CheckSelectedDateTime(){
         try {
-            currentDateTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
+            currentDateTime =Globally.GetCurrentJodaDateTime();
             String cDate = String.valueOf(currentDateTime);
             cDate = cDate.split("T")[0] + "T00:00:00";
-            currentDateTime = new DateTime(Globally.getDateTimeObj(cDate, false));
+            currentDateTime = Globally.getDateTimeObj(cDate, false);
 
             if (LogDate.equals(CurrentDate)) {
                 selectedDateTime = currentDateTime;
@@ -1604,8 +1613,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         String selectedDateStr = global.ConvertDateFormat(LogDate);
         String currentDateStr = global.ConvertDateFormat(CurrentDate);
-        selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
-        DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
+        selectedDateTime = global.getDateTimeObj(selectedDateStr, false);
+        DateTime currentDateTime = global.getDateTimeObj(currentDateStr, false);
 
         if(isNext){
             selectedDateTime = selectedDateTime.plusDays(1);
@@ -1941,7 +1950,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         if(isCurrentDate){
 
-            currentDateTime     = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);    // Current Date Time
+            currentDateTime     = Globally.GetCurrentJodaDateTime();    // Current Date Time
             currentUTCTime      = Globally.getDateTimeObj(Globally.GetCurrentUTCTimeFormat(), true);
             oDriverLogDetail    = hMethods.getSavedLogList(Integer.valueOf(DRIVER_ID), currentDateTime, currentUTCTime, dbHelper);
         }else{
@@ -2001,6 +2010,34 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     }
 
+
+    private void checkAndUpdateLogId(JSONArray selectedArray){
+        try {
+            if (!is18DaysApiCalled) {
+                if (IsCurrentDate) {
+                    int IsLogIdMissing = hMethods.IsLogIdMissing(selectedArray);
+                    if (IsLogIdMissing == 0) {
+
+                        DateTime selectedDateTime = Globally.getDateTimeObj(global.ConvertDateFormat(Globally.GetCurrentDeviceDate()), false);
+                        JSONArray logArrayBeforeSelectedDate = hMethods.GetArrayBeforeSelectedDate(driverLogArray, selectedDateTime);
+
+                        for (int i = 0; i < selectedArray.length(); i++) {
+                            JSONObject itemObj = (JSONObject) selectedArray.get(i);
+                            logArrayBeforeSelectedDate.put(itemObj);
+                        }
+
+                        // ------------ Update log array in local DB ---------
+                        hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, logArrayBeforeSelectedDate);
+
+                    }
+                } else {
+
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
     void ParseLogData(JSONObject dataObj, boolean isOffline){
@@ -2766,6 +2803,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     //*================== Get Driver Log last 18 days ===================*//*
     void GetDriverLog18Days(final String DriverId, final String DeviceId, final String UtcDate){
 
+        is18DaysApiCalled = true;
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
         params.put(ConstantsKeys.DeviceId, DeviceId);
@@ -3381,13 +3419,11 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                 GetShipmentDetails(DRIVER_ID, DeviceId, LogDate);
                                 GetOdometerReading(DRIVER_ID, DeviceId, VIN_NUMBER, LogDate, CompanyId );
 
-
-
                                 try {
                                     isViolation = false;
                                     imagePath = "";
                                     if(!obj.isNull("Data")) {
-                                        dataObj = new JSONObject(obj.getString("Data"));
+                                       // dataObj = new JSONObject(obj.getString("Data"));
 
                                         JSONArray unPostedLogArray = constants.GetDriversSavedArray(getActivity(),
                                                     MainDriverPref, CoDriverPref);
@@ -3408,6 +3444,9 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                                                     offsetFromUTC, shipmentHelper, getActivity());
 
                                             ParseLogData(dataObj, false);     // Parse Log Data
+
+                                            checkAndUpdateLogId(selectedArray);
+
                                         }
 
                                         if(isLocationMissing){
@@ -3759,7 +3798,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             if(progressDialog.isShowing()){
                 progressDialog.dismiss();
             }
-            Log.d("error", ">>error: " +error);
+            Log.d("error", ">>error: " +error + " - flag: " +flag);
         }
     };
 
@@ -3974,8 +4013,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
     void CallRecapApi(){
         if(Globally.isConnected(getActivity()) && IsRecapApiCalled == false) {
-            DateTime currentDateTime = new DateTime(Globally.GetCurrentDateTime());
-            DateTime startDateTime = Globally.GetStartDate(currentDateTime, 7);
+            DateTime currentDateTime = Globally.GetCurrentJodaDateTime();
+            DateTime startDateTime = Globally.GetStartDate(currentDateTime, 15);
             String StartDate = Globally.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
             String EndDate = Globally.GetCurrentDeviceDate(); // current Date
 

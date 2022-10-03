@@ -29,12 +29,16 @@ import com.ble.util.ConstantEvent;
 import com.ble.util.EventBusInfo;
 import com.constants.Constants;
 import com.constants.SharedPref;
+import com.constants.Utils;
 import com.htstart.htsdk.HTBleSdk;
 import com.htstart.htsdk.bluetooth.HTBleData;
 import com.htstart.htsdk.bluetooth.HTBleDevice;
 import com.htstart.htsdk.minterface.HTBleScanListener;
 import com.htstart.htsdk.minterface.IReceiveListener;
 import com.local.db.ConstantsKeys;
+import com.local.db.DBHelper;
+import com.local.db.DriverPermissionMethod;
+import com.messaging.logistic.Globally;
 import com.messaging.logistic.R;
 import com.messaging.logistic.TabAct;
 
@@ -52,7 +56,7 @@ public class BleDataService extends Service {
     boolean mIsScanning = false;
     public static boolean IsScanClick = false;
     public static boolean isBleConnected = false;
-    int bleScanCount = 0;
+    int bleScanCount = 0, sameDevicePairingAttempts = 0;
     private BluetoothAdapter mBTAdapter;
     private ArrayList<HTBleDevice> mHTBleDevices = new ArrayList<>();
 
@@ -62,6 +66,10 @@ public class BleDataService extends Service {
     private Handler bleHandler = new Handler();
     Constants constants;
     String TAG_OBD = "BleService";
+    Utils obdUtil;
+    DBHelper dbHelper;
+    DriverPermissionMethod driverPermissionMethod;
+    String DriverId = "";
 
     /**
      * Please note that Bluetooth will also detect whether there is a connected device during initialization. If so, it will automatically connect to the Bluetooth device after the initial completion. If automatic connection after initialization is not required, please actively disconnect isAllConnected() or disconnect when the program exits ()
@@ -76,6 +84,17 @@ public class BleDataService extends Service {
         Log.i("Service", "---------onCreate BleService");
 
         constants = new Constants();
+        driverPermissionMethod = new DriverPermissionMethod();
+        dbHelper = new DBHelper(getApplicationContext());
+        DriverId        = SharedPref.getDriverId(getApplicationContext());
+
+        try{
+            //  ------------- OBD Log write initilization----------
+            obdUtil = new Utils(getApplicationContext());
+            obdUtil.createLogFile();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         bleHandler = new Handler(Looper.getMainLooper()) {
             @Override
@@ -84,12 +103,34 @@ public class BleDataService extends Service {
                     String macAddress = HTBleSdk.Companion.getInstance().getAddress();
                     if(macAddress != null && macAddress.length() > 5){
 
-                        if (mHTBleDevices.size() > 0){
-                            //Log.e(TAG_OBD, "ble reBleConnect");
-                           // HTBleDevice htBleDevice= mHTBleDevices.get(0);
+                        if (mHTBleDevices.size() > 0 && sameDevicePairingAttempts < 4){
+                            sameDevicePairingAttempts ++;
+                             //Log.e(TAG_OBD, "ble reBleConnect");
                             mIsScanning = false;
                             HTBleSdk.Companion.getInstance().reBleConnect();
+
+                            constants.saveBleLog("reBleConnect",
+                                    Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                                    driverPermissionMethod, obdUtil);
+
                         }else{
+
+                            if( mIsScanning){
+                                mIsScanning = false;
+                                HTBleSdk.Companion.getInstance().stopHTBleScan();
+                            }
+
+                            // clear cache before scan again
+                            if (HTBleSdk.Companion.getInstance().isAllConnected()) {
+                                //Log.e(TAG_OBD, "Ble Clear Cache before scannnn");
+                                HTBleSdk.Companion.getInstance().disAllConnect();
+
+                                constants.saveBleLog("disAllConnect before StartScanHtBle",
+                                        Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                                        driverPermissionMethod, obdUtil);
+
+                            }
+
                             StartScanHtBle();   //Device connection after scanning is turned on
                         }
 
@@ -97,6 +138,11 @@ public class BleDataService extends Service {
                         if (HTBleSdk.Companion.getInstance().isAllConnected()) {
                             //Log.e(TAG_OBD, "Ble Clear Cache before scan");
                             HTBleSdk.Companion.getInstance().disAllConnect();
+
+                            constants.saveBleLog("disAllConnect before StartScanHtBle--",
+                                    Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                                    driverPermissionMethod, obdUtil);
+
                         }
                         StartScanHtBle();   //Device connection after scanning is turned on
                     }
@@ -119,16 +165,29 @@ public class BleDataService extends Service {
 
         try {
             if (TabAct.IsAppRestart) {
+                Globally.BLE_NAME =  "";
                 TabAct.IsAppRestart = false;
-                mHTBleDevices.clear();
-                if (HTBleSdk.Companion.getInstance().isAllConnected()) {
-                    //Log.e(TAG_OBD, "Ble Clear ble Cache on app restart");
+                try {
+                    mHTBleDevices.clear();
                     HTBleSdk.Companion.getInstance().disAllConnect();
-                }
+                }catch (Exception e){}
 
                 stopSelf();
 
-            } else {
+            } else if(TabAct.SelectDevice){
+
+                TabAct.SelectDevice = false;
+                boolean isHtBleConnected = isConnected && HTBleSdk.Companion.getInstance().isConnected();
+                if(!isHtBleConnected) {
+                    for (int i = 0; i < mHTBleDevices.size(); i++) {
+                        if (mHTBleDevices.get(i).getName().equals(TabAct.SelectDeviceName)) {
+                            connectHtBle(mHTBleDevices.get(i));
+                            sendBroadCast(getString(R.string.ht_connecting), "");
+                            break;
+                        }
+                    }
+                }
+            }else {
                 boolean isHtBleConnected = isConnected && HTBleSdk.Companion.getInstance().isConnected();
                 if (!isHtBleConnected) {
                     checkPermissionsBeforeScanBle();
@@ -176,13 +235,13 @@ public class BleDataService extends Service {
                 if (HTBleSdk.Companion.getInstance().isConnected()) { //device connected
                     //Log.e(TAG_OBD, "Ble The Bluetooth connection is successful, and the subsequent command operation will be performed after a delay of 3 seconds.");
                     //Log.e(TAG_OBD, "Ble initBleListener 00" );
-                    initBleListener();//Register data listener callback
+                    initBleListener("checkPermissionBeforeScan isConnected");//Register data listener callback
                     return;
                 }
                 if (!TextUtils.isEmpty(HTBleSdk.Companion.getInstance().getAddress())) {//Determine whether there is an existing connected bluetooth device in the cache, no need to scan the connection again, the sdk will automatically connect
                     //Log.e(TAG_OBD, "Ble Bluetooth is in the process of connecting. After the connection is successful, it needs to delay for 3 seconds before performing subsequent command operations.");
                     //Log.e(TAG_OBD, "Ble initBleListener 11" );
-                    initBleListener();//Register data listener callback
+                    initBleListener("checkPermissionBeforeScan getAddress");//Register data listener callback
 
                     return;
                 }
@@ -244,7 +303,7 @@ public class BleDataService extends Service {
 
     }
 
-    private boolean isBleEnabled() {
+    public boolean isBleEnabled() {
         boolean isBleEnabled = false;
         try {
             BluetoothManager manager = BleUtil.getManager(getApplicationContext());
@@ -262,19 +321,20 @@ public class BleDataService extends Service {
     /**
      * Register bluetooth device data callback
      */
-    void initBleListener() {
+    void initBleListener(String type) {
+
+        constants.saveBleLog("initBleListener - " +type,
+                Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                driverPermissionMethod, obdUtil);
 
         HTBleSdk.Companion.getInstance().registerCallBack(new IReceiveListener() {
             @Override
             public void onConnected(@Nullable String s) {
-                //Log.e("TAG", "Ble onConnected==" + s);
-                //  //Log.e("getAddress-onConnected", "getAddress: " +s);
+                Log.e("TAG", "Ble onConnected==" + s);
+                //  Log.e("getAddress-onConnected", "getAddress: " +s);
                 EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_CONNECTED, s));
-                // set request interval 3 sec
-                /**
-                 * There is no need to delay each command for 3 seconds. It is only necessary to issue the command after the overall delay of 3 seconds after the Bluetooth connection is successful, because after the Bluetooth connection is successful, the SDK needs to establish a channel with the device and initialize related protocols. It takes a certain time.
-                 */
-                //  new Handler().postDelayed(() -> HTBleSdk.Companion.getInstance().setIntervalEvent(3),3000);
+
+                sameDevicePairingAttempts = 0;
 
                 isConnected = true;
                 if(IsScanClick) {
@@ -283,34 +343,44 @@ public class BleDataService extends Service {
                 }
                 sendEcmBroadcast(true, "Connected");
 
+                constants.saveBleLog("onConnected", Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                        driverPermissionMethod, obdUtil);
+
             }
 
             @Override
             public void onConnectTimeout(@Nullable String s) {
-                //Log.e("TAG", "onConnectTimeout==" + s);
+                Log.e("TAG", "onConnectTimeout==" + s);
                 EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_TIMEOUT, s));
-                ////Log.e("getAddress-Timeout", "getAddress: " +s);
+                //Log.e("getAddress-Timeout", "getAddress: " +s);
 
                 sendEcmBroadcast(false, "onConnectTimeout");
                 isConnected = false;
                 isBleConnected = false;
 
+                constants.saveBleLog("onConnectTimeout", Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                        driverPermissionMethod, obdUtil);
+
             }
 
             @Override
             public void onConnectionError(@NonNull String s, int i, int i1) {
-                //Log.e("TAG", "onConnectionError==" + s);
+                Log.e("TAG", "onConnectionError==" + s);
                 EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_CONNECT_ERROR, s));
                 sendBroadCast(getString(R.string.ht_connect_error), "");
                 sendEcmBroadcast(false, "onConnectionError");
                 isConnected = false;
                 isBleConnected = false;
 
+                constants.saveBleLog("onConnectionError", Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                        driverPermissionMethod, obdUtil);
+
+
             }
 
             @Override
             public void onDisconnected(@Nullable String address) {
-                //Log.e("TAG", "onDisconnected==" + address);
+                Log.e("TAG", "onDisconnected==" + address);
 
                 try {
                     isConnected = false;
@@ -328,14 +398,17 @@ public class BleDataService extends Service {
                     e.printStackTrace();
                 }
 
+                constants.saveBleLog("onDisconnected", Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                        driverPermissionMethod, obdUtil);
+
 
 
             }
 
             @Override
             public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
-                //Log.e("TAG", "onReceive==" + htBleData);
-                //  //Log.e("htBleData", "htBleData: " + htBleData);
+                Log.e("TAG", "onReceive==" + htBleData);
+                //  Log.e("htBleData", "htBleData: " + htBleData);
 
                 //  EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
                 if (htBleData.getEventType() == 0 && htBleData.getEventCode() == 1) {
@@ -356,9 +429,9 @@ public class BleDataService extends Service {
 
             @Override
             public void onResponse(@NotNull String address, @NotNull String uuid, @NotNull String sequenceID, @NotNull int status) {
-//                //Log.e("TAG", "onResponse" + status + "==" + address);
+//                Log.e("TAG", "onResponse" + status + "==" + address);
                 bleScanCount = 0;
-                ////Log.e("getAddress-onResponse", "getAddress: " +address);
+                //Log.e("getAddress-onResponse", "getAddress: " +address);
                 EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_RESPONSE, address, uuid, status));
                 sendBroadCast(getString(R.string.ht_ble_response1), "");
             }
@@ -397,18 +470,36 @@ public class BleDataService extends Service {
                         bleScanCount++;
                         mIsScanning = true;
                         sendBroadCast(getString(R.string.Scanning), "");
+
+                        constants.saveBleLog("HTBleScanListener - startHTBleScan",
+                                Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                                driverPermissionMethod, obdUtil);
+
+
                     }
 
                     @Override
                     public void onScanning(@org.jetbrains.annotations.Nullable HTBleDevice htBleDevice) {
-                        //Log.e(TAG_OBD, "Ble onScanning");
+                        //Log.e(TAG_OBD, "Ble onScanning Name: " +htBleDevice.getName());
 
-                        if (mHTBleDevices.contains(htBleDevice))
+                       /* if (mHTBleDevices.contains(htBleDevice))
                             return;
-
                         mIsScanning = false;
                         mHTBleDevices.add(htBleDevice);
                         connectHtBle(htBleDevice);
+*/
+                        boolean iAlreadyAvailable = false;
+                        for(int i = 0; i < mHTBleDevices.size() ; i++){
+                            if(mHTBleDevices.get(i).getName().trim().equals(htBleDevice.getName().trim())){
+                                iAlreadyAvailable = true;
+                                break;
+                            }
+                        }
+                        if(!iAlreadyAvailable){
+                            mHTBleDevices.add(htBleDevice);
+                        }
+
+
                     }
 
                     @Override
@@ -416,6 +507,11 @@ public class BleDataService extends Service {
                         //Log.e(TAG_OBD, "Ble onScanFailed");
                         mIsScanning = false;
                         sendBroadCast(getString(R.string.ht_scan_error), "");
+
+                        constants.saveBleLog("HTBleScanListener - onScanFailed - ",
+                                Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                                driverPermissionMethod, obdUtil);
+
                     }
 
                     @Override
@@ -423,12 +519,64 @@ public class BleDataService extends Service {
                         //Log.e(TAG_OBD, "Ble onScanStop");
                         mIsScanning = false;
                         SharedPref.saveBleScanCount(bleScanCount, getApplicationContext());
+                        String deviceInfo = "";
 
                         if (HTBleSdk.Companion.getInstance().isConnected()) {   //HTModeSP.INSTANCE.getDeviceMac()
                             sendBroadCast(getString(R.string.ht_scan_completed), "");
+
+                            deviceInfo = "Connected";
+
                         } else {
-                            sendBroadCast(getString(R.string.ht_scan_completed_not_found), "");
+
+                            boolean isLogout =  SharedPref.getUserName(getApplicationContext()).equals("") &&
+                                    SharedPref.getPassword(getApplicationContext()).equals("");
+
+                            if(mHTBleDevices.size() == 1){
+                                connectHtBle(mHTBleDevices.get(0));
+
+                                if(isLogout){
+                                    sendDeviceCastAtLogin("");
+                                }else {
+                                    sendDeviceCast("");
+                                }
+
+                                deviceInfo = "Single device: " + mHTBleDevices.get(0).getName();
+                            }else if(mHTBleDevices.size() > 1){
+
+                                String availableDevices = "";
+                                for(int i = 0 ; i < mHTBleDevices.size() ; i++){
+                                    if(i == 0){
+                                        availableDevices = mHTBleDevices.get(i).getName() ;
+                                    }else{
+                                        availableDevices += "@@@"+ mHTBleDevices.get(i).getName();
+                                    }
+                                }
+
+                                if (isLogout) {
+                                    // Logout service call
+                                    sendDeviceCastAtLogin(availableDevices);
+
+                                    deviceInfo = "Multiple devices at logout: " + availableDevices;
+                                }else{
+                                    // Login service (BackgroundLocationService)
+                                    sendDeviceCast(availableDevices);
+                                    deviceInfo = "Multiple devices at Login: " + availableDevices;
+
+                                }
+                            }else {
+                                sendBroadCast(getString(R.string.ht_scan_completed_not_found), "");
+
+                                deviceInfo = "Device not found";
+
+                            }
+
                         }
+
+                        constants.saveBleLog("HTBleScanListener - onScanStop - Scan Complete, " + deviceInfo ,
+                                Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                                driverPermissionMethod, obdUtil);
+
+
                     }
                 });
             }else{
@@ -452,12 +600,12 @@ public class BleDataService extends Service {
         if (HTBleSdk.Companion.getInstance().isAllConnected()) {
             //Log.e(TAG_OBD, "Ble initBleListener 33" );
             sendBroadCast(getString(R.string.ht_connect_error_other), "");
-            initBleListener();//Register data listener callback
+            initBleListener("Device connecttion failed");//Register data listener callback
         } else {
             //Log.e(TAG_OBD, "Ble initBleListener 44" );
             sendBroadCast(getString(R.string.ht_connected), "");
             HTBleSdk.Companion.getInstance().connect(htBleDevice);
-            initBleListener();//Register data listener callback
+            initBleListener("Device connected");//Register data listener callback
         }
     }
 
@@ -472,6 +620,37 @@ public class BleDataService extends Service {
             e.printStackTrace();
         }
     }
+
+    private void sendDeviceCast(String BleDevices){
+        try{
+            Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+            intent.putExtra(ConstantsKeys.SuggestedEdit, false);
+            intent.putExtra(ConstantsKeys.IsCycleRequest, false);
+            intent.putExtra(ConstantsKeys.IsELDNotification, false);
+            intent.putExtra(ConstantsKeys.DriverELDNotificationList, false);
+            intent.putExtra(ConstantsKeys.BleDevices, BleDevices);
+
+
+
+            LocalBroadcastManager.getInstance(BleDataService.this).sendBroadcast(intent);
+
+        }catch (Exception e){}
+    }
+
+
+    private void sendDeviceCastAtLogin(String BleDevices){
+        try{
+            Intent intent = new Intent(ConstantsKeys.IsEventUpdate);
+            intent.putExtra(ConstantsKeys.IsEventUpdate, false);
+            intent.putExtra(ConstantsKeys.Status, false);
+            intent.putExtra(ConstantsKeys.IsEldEcmALert, "false");
+            intent.putExtra(ConstantsKeys.BleDevices, BleDevices);
+
+            LocalBroadcastManager.getInstance(BleDataService.this).sendBroadcast(intent);
+
+        }catch (Exception e){}
+    }
+
 
 
     @Nullable
@@ -525,12 +704,18 @@ public class BleDataService extends Service {
                                     case BluetoothAdapter.STATE_ON://bluetooth is on
                                         //It is detected that the bluetooth switch is turned on to reconnect
                                         if (!TextUtils.isEmpty(HTBleSdk.Companion.getInstance().getAddress())) {
-                                            //Log.e("TAG", "Ble switch on");
+                                            Log.e("TAG", "Ble switch on");
                                             //Log.e(TAG_OBD, "Ble initBleListener 22" );
-                                            initBleListener();
+                                            initBleListener("Ble STATE_ON");
                                         }
                                         break;
                                     case BluetoothAdapter.STATE_TURNING_OFF://bluetooth is turning off
+
+                                        constants.saveBleLog("Ble STATE_TURNING_OFF",
+                                                Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                                                driverPermissionMethod, obdUtil);
+
+                                        sendDeviceCast(null);
 
                                         break;
 
@@ -564,7 +749,6 @@ public class BleDataService extends Service {
             HTBleSdk.Companion.getInstance().disAllConnect();
         }
         HTBleSdk.Companion.getInstance().unRegisterCallBack();//Remove data callback listener
-
         mHTBleDevices.clear();
 
         super.onDestroy();

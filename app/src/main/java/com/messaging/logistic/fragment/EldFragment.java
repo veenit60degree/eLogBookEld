@@ -4134,7 +4134,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     int rulesVersion = SharedPref.GetRulesVersion(getActivity());
 
                     List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
-                    DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
+                    DriverDetail oDriverDetail1 = hMethods.getDriverList(Globally.getDateTimeObj(CurrentDate, false),
+                            Globally.getDateTimeObj(currentUtcTimeDiffFormat, false),
                             Integer.valueOf(DRIVER_ID), offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
                             DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn,isAdverseExcptn, IsNorthCanada, rulesVersion,
                             oDriverLog, getActivity());
@@ -4406,10 +4407,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 String desc = "";
                 if(RPM.equals("0")){
                     desc = " due to Vehicle ignition is off.";
-                    saveMissingDiagnostic(getString(R.string.veh_ignition_off_at), currentUtcTimeDiffFormat);
+                    saveMissingDiagnostic(getString(R.string.veh_ignition_off_at), currentUtcTimeDiffFormat, Integer.valueOf(driverStatus));
                 }else {
                     desc = " due to OBD not connected with E-Log Book";
-                    saveMissingDiagnostic(getString(R.string.obd_data_is_missing), currentUtcTimeDiffFormat);
+                    saveMissingDiagnostic(getString(R.string.obd_data_is_missing), currentUtcTimeDiffFormat, Integer.valueOf(driverStatus));
                 }
 
                 Globally.PlayNotificationSound(getActivity());
@@ -5340,7 +5341,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             saveInAobrdMalfnModeStatus(JobType);
 
                             // save missing diagnostic
-                            saveMissingDiagnostic(getString(R.string.ignore_to_save_loc), currentUtcTimeDiffFormat);
+                            saveMissingDiagnostic(getString(R.string.ignore_to_save_loc), currentUtcTimeDiffFormat, DRIVER_JOB_STATUS);
 
                             Globally.PlayNotificationSound(getActivity());
                             Globally.ShowLocalNotification(getActivity(),
@@ -5414,9 +5415,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
 
-    private void saveMissingDiagnostic(String remarks, String currentDateTime){
+    private void saveMissingDiagnostic(String remarks, String currentDateTime, int jobStatus){
         try {
-            String type = Globally.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal), ""+DRIVER_JOB_STATUS);
+            String type = Globally.JobStatus(jobStatus, Boolean.parseBoolean(isPersonal), ""+jobStatus);
 
             // save malfunction occur event to server with few inputs
             JSONObject newOccuredEventObj = malfunctionDiagnosticMethod.GetMalDiaEventJson(
@@ -6223,7 +6224,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     void GetReCertifyRecords(){
 
         if(SharedPref.IsReCertification(getActivity())) {
-            DateTime currentDateTime = new DateTime(Globally.GetCurrentDateTime());
+            DateTime currentDateTime = Globally.GetCurrentJodaDateTime();
             DateTime fromDateTime = currentDateTime.minusDays(14);
             String fromDateStr = Globally.ConvertDateFormatMMddyyyy(fromDateTime.toString());
             String toDate = Globally.ConvertDateFormatMMddyyyy(currentDateTime.toString());
@@ -6544,7 +6545,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     void GetRecapView18DaysData(final String DriverId, final String DeviceId , int GetRecapViewFlag){
         BackgroundLocationService.IsRecapApiACalled = true;
 
-        DateTime currentDateTime      = new DateTime(Globally.GetCurrentDateTime());
+        DateTime currentDateTime      = Globally.GetCurrentJodaDateTime();
         DateTime startDateTime        = Globally.GetStartDate(currentDateTime, 15);
         String   StartDate            = Globally.ConvertDateFormatMMddyyyy(String.valueOf(startDateTime));
         String   EndDate              = Globally.GetCurrentDeviceDate();  // current Date
@@ -6609,9 +6610,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     try {
                        // String responseee = "{\"Status\":true,\"Message\":\"Record Successfully Saved\",\"Data\":null}";
                         obj = new JSONObject(response);
-                        String Message = obj.getString("Message");
+                        String Message = obj.getString(ConstantsKeys.Message);
 
-                        if (!isFirst && obj.getString("Status").equals("true")) {
+                        if (!isFirst && obj.getString(ConstantsKeys.Status).equals("true")) {
                             BackgroundLocationService.IsAutoChange = false;
 
                             if(IsRefreshedClick){
@@ -6628,7 +6629,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     ClearLogAfterSuccess(isLoad, IsRecap);
 
                                     SaveCoDriverData(isLoad, IsRecap);
-                                    
+
+                                    // update DriverLogId of current saved status
+                                    if(!IsEditedData){
+                                        String DriverLogId = obj.getString(ConstantsKeys.DriverLogId);
+                                        hMethods.UpdateLastLogOfDriver(ConstantsKeys.DriverLogId, DriverLogId,
+                                                DRIVER_ID, dbHelper);
+                                    }
                                 } else {
                                      /*Check Reason: some times data was uploading in background and user entered new status in between.
                                      In api response we are clearing the entries and in between entry was skipped before upload to server.
@@ -6643,6 +6650,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                             if (LastStatus == SecLastStatus) {
                                                 ClearLogAfterSuccess(isLoad, IsRecap);
+
+                                                // update DriverLogId of current saved status
+                                                if(!IsEditedData){
+                                                    // here our concern is to call 18 days log array, then we are making it true
+                                                    isPending18DaysRequest = true;
+                                                }
 
                                             } else {
                                                 if (SaveRequestCount < 2 || IsDuplicateStatusAllowed ) {
@@ -7766,6 +7779,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             if(Message.length() > 0) {
                                 if (flag == UpdateObdVeh && SharedPref.GetNewLoginStatus(getActivity())) {
                                     Globally.EldScreenToast(loginDialogView, Message, getResources().getColor(R.color.colorVoilation));
+
                                 } else {
                                     if (!Message.contains("failure")) {
                                         Globally.EldScreenToast(OnDutyBtn, Message, getResources().getColor(R.color.colorVoilation));

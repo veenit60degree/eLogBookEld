@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/view_height_46"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/margin_15"
+    android:paddingRight="@dimen/margin_15"
+    android:gravity="center_vertical"
+    >
+
+    <ImageView
+        android:id="@+id/bleImgView"
+        android:layout_width="@dimen/margin_28"
+        android:layout_height="@dimen/margin_28"
+        android:tint="@color/gray_text2"
+        android:src="@drawable/ble"
+        />
+
+
+    <TextView
+        android:id="@+id/bleDeviceTxtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:textSize="@dimen/text_size_18"
+        android:textColor="@color/gray_text2"
+        android:singleLine="true"
+        android:text="SMBLE-"
+
+        />
+
+
+</LinearLayout>

@@ -26,7 +26,23 @@
         android:layout_below="@+id/polyImg"
         android:layout_marginRight="@dimen/margin_17"
         android:backgroundTint="?attr/layout_color_dot"
+        android:orientation="vertical"
         >
+
+
+        <TextView
+            android:id="@+id/selectDevicesTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_device"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_size_25"
+            android:paddingBottom="@dimen/view_height_30"
+            android:paddingLeft="@dimen/margin_22"
+            android:visibility="gone"
+            />
+
 
 
         <ListView

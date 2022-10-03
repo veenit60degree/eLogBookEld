@@ -521,8 +521,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
         String selectedDate = LogDate;
         String selectedDateStr = global.ConvertDateFormat(LogDate);
         String currentDateStr = global.ConvertDateFormat(CurrentDate);
-        DateTime selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
-        DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
+        DateTime selectedDateTime = global.getDateTimeObj(selectedDateStr, false);
+        DateTime currentDateTime = global.getDateTimeObj(currentDateStr, false);
 
 
         if (global.isConnected(getActivity())) {
@@ -732,8 +732,8 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
                 String selectedDateStr = global.ConvertDateFormat(LogDate);
                 String currentDateStr = global.ConvertDateFormat(CurrentDate);
-                DateTime selectedDateTime = new DateTime(global.getDateTimeObj(selectedDateStr, false) );
-                DateTime currentDateTime = new DateTime(global.getDateTimeObj(currentDateStr, false) );
+                DateTime selectedDateTime = global.getDateTimeObj(selectedDateStr, false);
+                DateTime currentDateTime = global.getDateTimeObj(currentDateStr, false);
                 int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
                 Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
 

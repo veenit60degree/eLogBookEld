@@ -219,6 +219,7 @@ public class ConstantsKeys {
     public static String GPSSpeed                       = "GPSSpeed";
     public static String obdSpeed                       = "obdSpeed";
     public static String isGpsEnabled                   = "isGpsEnabled";
+    public static String BleDevices                     = "BleDevices";
 
     public static String UnitNo                         = "UnitNo";
     public static String DeviceNumber                   = "DeviceNumber";
@@ -314,6 +315,8 @@ public class ConstantsKeys {
     public static String DownloadProgress               = "download_progress";
     public static String MissingDiagnostic              = "MissingDiagnostic";
     public static String BleDataService                 = "BleDataService";
+    public static String BleDataAfterNotify             = "BleDataAfterNotify";
+    public static String BleDataNotifier             = "BleDataNotifier";
     public static String IsConnected                    = "IsConnected";
 
 

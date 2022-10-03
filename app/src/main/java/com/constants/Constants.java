@@ -1143,19 +1143,8 @@ public class Constants {
 
 
             DateTime originDate, destDate;
-            originDate = new DateTime(Globally.getDateTimeObj(originDateStr, false));
-            destDate = new DateTime(Globally.getDateTimeObj(destDateStr, false));
-
-
-               /*     try {
-                        originDate = new DateTime(Globally.ConvertDeviceDateTimeFormat(originDateStr));
-                        destDate = new DateTime(Globally.ConvertDeviceDateTimeFormat(destDateStr ));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        originDate = new DateTime(Globally.getDateTimeObj(originDateStr, false));
-                        destDate = new DateTime(Globally.getDateTimeObj(destDateStr, false));
-                    }
-*/
+            originDate = Globally.getDateTimeObj(originDateStr, false);
+            destDate = Globally.getDateTimeObj(destDateStr, false);
 
             long diffInMillis = destDate.getMillis() - originDate.getMillis();
             double secondDiff = TimeUnit.MILLISECONDS.toSeconds(diffInMillis);
@@ -1976,7 +1965,7 @@ public class Constants {
                                         String odometer, String DriverVehicleTypeId, HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
-        long DriverLogId = 0;
+       // long DriverLogId = 0;
         double LastJobTotalMin = 0;
         String lastDateTimeStr = "";
         String StartDeviceCurrentTime = Global.GetCurrentDateTime();
@@ -1992,7 +1981,7 @@ public class Constants {
 
         if (driverArray.length() > 0 && lastItemJson != null && lastItemJson.length() > 0) {
             try {
-                DriverLogId = lastItemJson.getLong(ConstantsKeys.DriverLogId);
+               // DriverLogId = lastItemJson.getLong(ConstantsKeys.DriverLogId);
                 lastDateTimeStr = lastItemJson.getString(ConstantsKeys.startDateTime);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -2037,9 +2026,9 @@ public class Constants {
             IsCycleChanged = true;
         }*/
 
-        DriverLogId = DriverLogId + 1;
+       // DriverLogId = DriverLogId + 1;
         JSONObject newJsonData = hMethods.AddJobInArray(
-                DriverLogId,
+                0,
                 Long.parseLong(DRIVER_ID),
                 Integer.valueOf(DriverStatusId),
 
@@ -4730,6 +4719,7 @@ public class Constants {
         }
     }
 
+
     public void saveObdData(String source, String vin, String eventData, String HighPrecisionOdometer,
                             String obdOdometerInMeter, String correctedData, String ignition, String rpm,
                             String speed, String speedCalculated, String EngineHours, String timeStamp,
@@ -4743,67 +4733,72 @@ public class Constants {
             JSONObject obj = new JSONObject();
             try {
 
-                obj.put(obdSource, source);
-                if(eventData.length() > 0) {
-                    obj.put(obdOdometer, eventData);
-                }
-                obj.put(obdHighPrecisionOdo, HighPrecisionOdometer);
+                if(source.contains("Ble-")){
+                    obj.put(EventData, source);
 
-                if (source.equals(Constants.WifiOBD)) {
-
-                    obj.put(WheelBasedVehicleSpeed, speed);
-
-                    if (correctedData.trim().length() > 0) {
-                        obj.put(CorrectedData, correctedData);
+                }else {
+                    obj.put(obdSource, source);
+                    if (eventData.length() > 0) {
+                        obj.put(obdOdometer, eventData);
                     }
+                    obj.put(obdHighPrecisionOdo, HighPrecisionOdometer);
 
-                    try {
-                        String[] array = obdOdometerInMeter.split(",  ");
-                        if (array.length > 0) {
-                            obj.put(PreviousLogDate, previousDate);
-                            obj.put(CurrentLogDate, Globally.GetCurrentDateTime());
+                    if (source.equals(Constants.WifiOBD)) {
 
-                            obj.put(DecodedData, array[0]);
+                        obj.put(WheelBasedVehicleSpeed, speed);
 
-                            if(array.length > 1 && !array[1].equals("-1")) {
-                                obj.put(obdCalculatedSpeed, array[1]);
+                        if (correctedData.trim().length() > 0) {
+                            obj.put(CorrectedData, correctedData);
+                        }
+
+                        try {
+                            String[] array = obdOdometerInMeter.split(",  ");
+                            if (array.length > 0) {
+                                obj.put(PreviousLogDate, previousDate);
+                                obj.put(CurrentLogDate, Globally.GetCurrentDateTime());
+
+                                obj.put(DecodedData, array[0]);
+
+                                if (array.length > 1 && !array[1].equals("-1")) {
+                                    obj.put(obdCalculatedSpeed, array[1]);
+                                }
+                            } else {
+                                obj.put(CurrentLogDate, Globally.GetCurrentDateTime());
+                                obj.put(DecodedData, obdOdometerInMeter);
                             }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                    } else {
+
+                        if (source.equals(ApiData) || source.equals(OfflineData)) {
+                            obj.put(obdDetail, obdOdometerInMeter);
+                            obj.put(LastRecordTime, timeStamp);
                         } else {
                             obj.put(CurrentLogDate, Globally.GetCurrentDateTime());
-                            obj.put(DecodedData, obdOdometerInMeter);
                         }
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
-
-                    if (source.equals(ApiData) || source.equals(OfflineData)) {
-                        obj.put(obdDetail, obdOdometerInMeter);
-                        obj.put(LastRecordTime, timeStamp);
-                    } else {
-                        obj.put(CurrentLogDate, Globally.GetCurrentDateTime());
-                    }
-
-                    if(!vin.contains("BLE - ConnectionError")) {
-                        if (speedCalculated.length() > 0 && !speedCalculated.equals("-1")) {
-                            obj.put(calculatedSpeed, speedCalculated);
+                        if (!vin.contains("BLE - ConnectionError")) {
+                            if (speedCalculated.length() > 0 && !speedCalculated.equals("-1")) {
+                                obj.put(calculatedSpeed, speedCalculated);
+                            }
+                            obj.put(obdSpeed, speed);
                         }
-                        obj.put(obdSpeed, speed);
+
+                        obj.put(obdVINNumber, vin);
+
                     }
 
-                    obj.put(obdVINNumber, vin);
-
-                }
-
-                if(!vin.contains("BLE - ConnectionError")) {
-                    obj.put(obdEngineHours, EngineHours);
-                    obj.put(obdIgnitionStatus, ignition);
-                    obj.put(obdRPM, rpm);
-                    obj.put(ConstantsKeys.Latitude, Globally.LATITUDE);
-                    obj.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+                    if (!vin.contains("BLE - ConnectionError")) {
+                        obj.put(obdEngineHours, EngineHours);
+                        obj.put(obdIgnitionStatus, ignition);
+                        obj.put(obdRPM, rpm);
+                        obj.put(ConstantsKeys.Latitude, Globally.LATITUDE);
+                        obj.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
+                    }
                 }
 
                 Globally.OBD_DataArray.put(obj);
@@ -4813,6 +4808,34 @@ public class Constants {
                 e.printStackTrace();
             }
         }
+
+
+    }
+
+
+
+
+    public void saveBleLog(String data, String timeStamp, Context context, DBHelper dbHelper,
+                            DriverPermissionMethod driverPermissionMethod, Utils obdUtil){
+
+        /*String DriverId        = SharedPref.getDriverId(context);
+        boolean isDeviceLogEnabled = driverPermissionMethod.isDeviceLogEnabled(DriverId, dbHelper);
+
+        if(isDeviceLogEnabled || DriverId.equals("0")) {
+
+            JSONObject obj = new JSONObject();
+            try {
+
+                obj.put(EventData, data);
+                obj.put(FileWriteTime, timeStamp);
+
+                Globally.OBD_DataArray.put(obj);
+                obdUtil.writeToLogFile(obj.toString());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }*/
 
 
     }

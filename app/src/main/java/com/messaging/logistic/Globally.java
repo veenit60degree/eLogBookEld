@@ -2554,7 +2554,7 @@ public class Globally {
 			ClearSqliteDB(c);
 			Constants.ClearNotifications(c);
 
-			DisConnectBleDevice(c);
+		//	DisConnectBleDevice(c);
 
 			MalfunctionDiagnosticMethod malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
 			malfunctionDiagnosticMethod.updateTimeOnLocationReceived(new DBHelper(c));

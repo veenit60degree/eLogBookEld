@@ -14,7 +14,7 @@
         android:textColor="@color/black"
         android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
         android:textStyle="bold"
-
+        android:visibility="gone"
         />
 
 
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_size_23"
         android:paddingTop="@dimen/margin_17"
-        android:paddingBottom="@dimen/margin_18"
+        android:paddingBottom="@dimen/margin_17"
         android:textColor="@color/black"
         android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
 

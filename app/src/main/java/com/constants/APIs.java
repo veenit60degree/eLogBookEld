@@ -27,8 +27,8 @@ public class APIs {
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION  ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_DEV ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_DEV  ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
     public static String LOGIN_DEMO 						= DOMAIN_URL_ALS + "LoginDemo";
@@ -85,10 +85,12 @@ public class APIs {
     public static String SAVE_LOG_SIGN      				= DOMAIN_URL_ELD + "SaveLogSign";
     public static String GET_INSPECTION_DETAIL   			= DOMAIN_URL_ELD + "GetInspectionDetail";
     public static String SAVE_INSPECTION      				= DOMAIN_URL_ELD + "SaveInspection";
-    public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOffline";
-    //public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOfflineNewAPI";
-    public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOffline";
+
+  //  public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOfflineNewAPI";
    // public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOfflineNewAPI";
+
+    public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOffline";
+     public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOffline";
 
     public static String GET_SAVED_INSPECTION      			= DOMAIN_URL_ELD + "GetSavedInspection";
     public static String GET_ODOMETER      					= DOMAIN_URL_ELD + "GetOdometer";

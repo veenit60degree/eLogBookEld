@@ -56,6 +56,8 @@ import com.constants.Constants;
 import com.constants.DualSimManager;
 import com.constants.SharedPref;
 import com.constants.Utils;
+import com.custom.dialogs.BleAvailableDevicesDialog;
+import com.custom.dialogs.ContinueStatusDialog;
 import com.driver.details.DriverConst;
 import com.driver.details.ParseLoginDetails;
 import com.google.android.gms.common.ConnectionResult;
@@ -73,6 +75,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -105,6 +108,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 	Animation connectionStatusAnimation;
 	MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
 	boolean isApiCalled = false;
+
+	BleAvailableDevicesDialog bleAvailableDevicesDialog;
+	List<String> availableDevicesList = new ArrayList<>();
+
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -371,7 +378,10 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				boolean IsEventUpdate = intent.getBooleanExtra(ConstantsKeys.IsEventUpdate, false);
 				boolean Status = intent.getBooleanExtra(ConstantsKeys.Status, false);
 				String IsEldEcmAlert = intent.getStringExtra(ConstantsKeys.IsEldEcmALert);
-				boolean EcmAlertStatus = IsEldEcmAlert.equals("Yes") || IsEldEcmAlert.equals("No");
+				boolean EcmAlertStatus = false;
+				if(IsEldEcmAlert != null && IsEldEcmAlert.length() > 0) {
+					EcmAlertStatus = IsEldEcmAlert.equals("Yes") || IsEldEcmAlert.equals("No");
+				}
 
 				if(IsEventUpdate){
 					if(Status){
@@ -411,6 +421,46 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 						}
 					}
 
+				}else{
+					if(intent.hasExtra(ConstantsKeys.BleDevices)){
+						try {
+							availableDevicesList = new ArrayList<>();
+
+							String availableDevices = intent.getStringExtra(ConstantsKeys.BleDevices);
+
+							if(availableDevices != null) {
+								String[] deviceArray = availableDevices.split("@@@");
+
+								if (!availableDevices.equals("")) {
+									for (int i = 0; i < deviceArray.length; i++) {
+										availableDevicesList.add(deviceArray[i]);
+									}
+								}
+								if (availableDevicesList.size() > 0) {
+									if (bleAvailableDevicesDialog != null && bleAvailableDevicesDialog.isShowing()) {
+										// send broadcast
+										sendDeviceCast(availableDevices);
+									} else {
+										bleAvailableDevicesDialog = new BleAvailableDevicesDialog(LoginActivity.this,
+												availableDevicesList, new BleDevicesListener());
+										bleAvailableDevicesDialog.show();
+									}
+								} else {
+									if (bleAvailableDevicesDialog != null && bleAvailableDevicesDialog.isShowing()) {
+										bleAvailableDevicesDialog.dismiss();
+									}
+								}
+							}else {
+								if (bleAvailableDevicesDialog != null && bleAvailableDevicesDialog.isShowing()) {
+									bleAvailableDevicesDialog.dismiss();
+									Toast.makeText(LoginActivity.this, getString(R.string.ble_turned_off), Toast.LENGTH_SHORT).show();
+								}
+							}
+
+						}catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}catch (Exception e){
 				e.printStackTrace();
@@ -419,6 +469,33 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		}
 	};
 
+
+	private void sendDeviceCast(String BleDevices){
+		try{
+			Intent intent = new Intent(ConstantsKeys.BleDataNotifier);
+			intent.putExtra(ConstantsKeys.BleDataAfterNotify, BleDevices);
+			LocalBroadcastManager.getInstance(LoginActivity.this).sendBroadcast(intent);
+
+		}catch (Exception e){}
+	}
+
+	/*================== Ble Multiple device handler Listener ====================*/
+	private class BleDevicesListener implements BleAvailableDevicesDialog.BleDevicesListener {
+
+		@Override
+		public void SelectedDeviceBtn(String selectedDevice) {
+			SharedPref.SetPingStatus("device", LoginActivity.this);
+			TabAct.SelectDeviceName = selectedDevice;
+			TabAct.SelectDevice = true;
+
+			Intent serviceIntent = new Intent(LoginActivity.this, AfterLogoutService.class);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				startForegroundService(serviceIntent);
+			}
+			startService(serviceIntent);
+
+		}
+	}
 
 
 	public static boolean isImmersiveAvailable() {
@@ -475,58 +552,6 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 
 	}
-
-
-
-/*	public boolean requestPermissionForCamera() {
-
-		if (Build.VERSION.SDK_INT >= 23) {
-			if (checkSelfPermission(Manifest.permission.CAMERA)
-					== PackageManager.PERMISSION_GRANTED) {
-				Log.v("TAG", "Permission is granted");
-				requestPermissionPhone();
-
-				return true;
-			} else {
-				Log.v("TAG", "Permission is revoked");
-				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 3);
-				return false;
-			}
-		} else { //permission is automatically granted on sdk<23 upon installation
-			Log.v("TAG", "Permission is granted");
-			login();
-			return true;
-		}
-
-	}
-
-
-	public boolean requestPermissionPhone() {
-
-		if (Build.VERSION.SDK_INT >= 23) {
-			if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-				Log.v("TAG", "Permission is granted");
-				login();
-
-				return true;
-			} else {
-				Log.v("TAG", "Permission is revoked");
-				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 5);
-
-				//login();
-				Toast.makeText(this, getString(R.string.phone_per_revoked), Toast.LENGTH_SHORT).show();
-
-				return false;
-			}
-		} else { //permission is automatically granted on sdk<23 upon installation
-			Log.v("TAG", "Permission is granted");
-			login();
-			return true;
-		}
-
-	}
-
-*/
 
 
 	private boolean requestLocationPermission(boolean IsbleService) {
@@ -606,27 +631,14 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 					}catch (Exception e){
 						e.printStackTrace();
 					}
-				}else{
-					//isStorageGrantedForUtil();
 				}
+
 				break;
 
 
 			case 2:
-				/*if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
-					requestPermissionPhone();
-				}else{*/
-					login();
-				//}
+				login();
 				break;
-
-		/*	case 3:
-				Log.v("TAG", "Permission Granted: ");
-				requestPermissionPhone();
-
-				break;
-*/
 
 			case 5:
 				Log.v("TAG", "Permission Granted: ");
@@ -962,7 +974,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 									if (status.equalsIgnoreCase("true")) {
 
 										try {
-											global.DisConnectBleDevice(LoginActivity.this);
+											//global.DisConnectBleDevice(LoginActivity.this);
 											/*String CompanyId = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
 											if (CompanyId.length() > 0) {
 												malfunctionDiagnosticMethod.UnidentifiedLogoutRecordHelper(Integer.valueOf(CompanyId),

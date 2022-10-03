@@ -452,8 +452,8 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
     void VisibleHideNextPrevView(String click){
         String selectedDateStr = globally.ConvertDateFormat(EventDateTime);
         String currentDateStr = globally.ConvertDateFormat(globally.GetCurrentDeviceDate());
-        DateTime selectedDateTime = new DateTime(globally.getDateTimeObj(selectedDateStr, false) );
-        DateTime currentDateTime = new DateTime(globally.getDateTimeObj(currentDateStr, false) );
+        DateTime selectedDateTime = globally.getDateTimeObj(selectedDateStr, false);
+        DateTime currentDateTime = globally.getDateTimeObj(currentDateStr, false);
 
         if(click.equals("next")){
             selectedDateTime = selectedDateTime.plusDays(1);

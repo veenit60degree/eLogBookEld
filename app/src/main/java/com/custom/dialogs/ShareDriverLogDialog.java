@@ -348,7 +348,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     void setMinMaxDateOnView(int MaxDays, boolean isOnCreate){
         String currentDate = globally.GetCurrentDeviceDate();
         String currentDateStr = globally.ConvertDateFormat(currentDate);
-        DateTime selectedDateTime = new DateTime(globally.getDateTimeObj(currentDateStr, false) );
+        DateTime selectedDateTime = globally.getDateTimeObj(currentDateStr, false);
         selectedDateTime = selectedDateTime.minusDays(MaxDays);
         String fromDate = globally.ConvertDateFormatMMddyyyy(selectedDateTime.toString());
 

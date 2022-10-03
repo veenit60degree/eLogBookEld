@@ -704,7 +704,7 @@ public class HelperMethods {
         try {
             String endDateStr = lastObj.getString(ConstantsKeys.endDateTime).substring(0, 10) + "T23:59:59";
 
-            DateTime lastEndTime = new DateTime(endDateStr);
+            DateTime lastEndTime = Globally.getDateTimeObj(endDateStr, false);
             DateTime lastStartTime = Globally.getDateTimeObj(lastObj.getString(ConstantsKeys.startDateTime), false);
             int LastJobTotalMin = lastEndTime.getMinuteOfDay() - lastStartTime.getMinuteOfDay();
             if(LastJobTotalMin < 0) {
@@ -771,7 +771,7 @@ public class HelperMethods {
         try {
             String endDateStr = lastObj.getString(ConstantsKeys.endDateTime).substring(0, 10) + "T23:59:59";
 
-            DateTime lastEndTime = new DateTime(endDateStr);
+            DateTime lastEndTime = Globally.getDateTimeObj(endDateStr, false);
             DateTime lastStartTime = Globally.getDateTimeObj(lastObj.getString(ConstantsKeys.startDateTime), false);
             int LastJobTotalMin = lastEndTime.getMinuteOfDay() - lastStartTime.getMinuteOfDay();
             if(LastJobTotalMin < 0) {
@@ -786,10 +786,6 @@ public class HelperMethods {
 
 
             String startDateStr = currentDateTime.toString().substring(0, 10) + "T00:00:00";
-      /*      if(new DateTime(startDateStr).equals(new DateTime(endDateStr).plusSeconds(1))){
-                Log.d("dateeee", "sameeeeeeeee: " );
-            }*/
-
             JSONObject newObj = SplitJsonFromArrayHomeScreen(logArray, startDateStr, Globally.GetUTCFromDate(startDateStr, offsetFromUTC));
 
             logArray.put(newObj);
@@ -1004,6 +1000,31 @@ public class HelperMethods {
                     DriverVehicleTypeId = logObj.getString(ConstantsKeys.DriverVehicleTypeId);
                 }
                 driverLogJson.put(ConstantsKeys.DriverVehicleTypeId, DriverVehicleTypeId);
+
+
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return driverLogJson;
+    }
+
+
+
+    //  Update Last log event
+    public JSONObject UpdateLastLogOfDriver(String key, String value, String DRIVER_ID, DBHelper dbHelper){
+        JSONObject driverLogJson = new JSONObject();
+        try {
+            JSONArray logArray = getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
+            if(logArray.length() > 0){
+                JSONObject logObj = (JSONObject) logArray.get(logArray.length()-1);
+                logObj.put(key, value);
+                logArray.put(logArray.length()-1, logObj);
+
+                // ------------ Update log array in local DB ---------
+                DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, logArray);
 
 
 
@@ -1830,7 +1851,35 @@ public class HelperMethods {
         return sameStatusJson;
     }
 
-    public boolean isNeededOffDutyStatus(JSONArray driverLogArray){
+
+    //  check DriverLogId is missing in array. If DriverLogId = 0 means offline record and Id is missing
+    public int IsLogIdMissing(JSONArray logArray) {
+        int IsLogIdMissing = -1;    // By default -1. 0 means current day, 1 means yesterday
+        try {
+           for(int i = 0 ; i < logArray.length() ; i++) {
+               JSONObject logObj = (JSONObject) logArray.get(logArray.length() - 1);
+               int DriverLogId = logObj.getInt(ConstantsKeys.DriverLogId);
+
+               if(DriverLogId == 0){
+                   String startDate = logObj.getString(ConstantsKeys.startDateTime);
+                   int DaysDiff = Constants.getDayDiff(startDate, Globally.GetCurrentDateTime());
+                    if(DaysDiff == 0){
+                        IsLogIdMissing = 0;
+                    }else{
+                        IsLogIdMissing = 1;
+                    }
+                   break;
+               }
+           }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return IsLogIdMissing;
+    }
+
+
+                public boolean isNeededOffDutyStatus(JSONArray driverLogArray){
 
         boolean isNeededOffDutyStatus = false;
         try{
@@ -2424,6 +2473,24 @@ public class HelperMethods {
     }
 
 
+    public JSONArray twoDaysLogArray(JSONArray driverLogJsonArray, DateTime getYesterdayDate){
+        JSONArray twoDaysArray = new JSONArray();
+        try {
+            for (int i = 0; i < driverLogJsonArray.length(); i++) {
+                JSONObject logObj = (JSONObject) driverLogJsonArray.get(i);
+                DateTime startDateTime = Globally.getDateTimeObj(logObj.getString("StartDateTime"), false);
+
+                if(startDateTime.isAfter(getYesterdayDate) || startDateTime == getYesterdayDate){
+                    twoDaysArray.put(logObj);
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return twoDaysArray;
+    }
 
     // Get Selected Date Array
     public JSONArray GetSingleDateArray (JSONArray driverLogJsonArray, DateTime selectedDate,  DateTime currentDate, DateTime UtcCurrentDate,
@@ -2472,19 +2539,7 @@ public class HelperMethods {
                             String UTCEndDate = Globally.GetUTCFromDate(lastItemEndDateStr, offsetFromUTC);
                             DateTime lastItemEndDate = Globally.getDateTimeObj(lastItemEndDateStr, false); //Globally.getDateTimeObj(logObj.getString(ConstantsKeys.startDateTime), false);
 
-                            // totalMin = new DateTime(lastItemEndDate).getMinuteOfDay() - lastItemStartDate.getMinuteOfDay();
                             int totalMin = (int) Constants.getDateTimeDuration(lastItemStartDate, lastItemEndDate).getStandardMinutes();
-
-                          /*  try{
-
-                                if(duration == 0){
-                                    DateTime lastItemStartDate = Globally.getDateTimeObj(logObj.getString(ConstantsKeys.startDateTime), false);
-                                    DateTime lastItemEndDate = Globally.getDateTimeObj(logObj.getString(ConstantsKeys.endDateTime), false);
-                                    duration = (int) Constants.getDateTimeDuration(lastItemStartDate, lastItemEndDate).getStandardMinutes();
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }*/
 
                             if(totalMin < 0) {
                                 totalMin = Constants.getMinDiff(lastItemStartDate, lastItemEndDate);
@@ -2506,8 +2561,8 @@ public class HelperMethods {
                         cDate = cDate.split("T")[0]+"T00:00:00";
                         String cSelecteddate = String.valueOf(selectedDate);
 
-                        DateTime lastCurrentDate = new DateTime(Globally.getDateTimeObj(cDate, false));
-                        DateTime selectedDateTime = new DateTime(Globally.getDateTimeObj(cSelecteddate, false));
+                        DateTime lastCurrentDate = Globally.getDateTimeObj(cDate, false);
+                        DateTime selectedDateTime = Globally.getDateTimeObj(cSelecteddate, false);
 
                         if(DayDiff(lastCurrentDate, selectedDateTime) == 0){
                             DateTime endDateTime = Globally.getDateTimeObj(Globally.GetCurrentDateTime(), false);
@@ -2859,11 +2914,6 @@ public class HelperMethods {
     public JSONArray GetSplitLog(JSONArray driverLogJsonArray, DateTime splitDateTime){
 
         JSONArray array = new JSONArray();
-
-        // String cDate = String.valueOf(selectedDate);
-        // cDate = cDate.split("T")[0]+"T00:00:00";
-        // selectedDate = new DateTime(Globally.getDateTimeObj(cDate, false));
-
         for(int i = 0 ; i < driverLogJsonArray.length() ; i++){
             JSONObject logObj = null;
             try {
@@ -2886,7 +2936,7 @@ public class HelperMethods {
 
     void CheckNullStatus(JSONObject json, JSONObject returnJSON, String key){
         try {
-            if(!json.getString(key).equals("null"))
+            if(json.has(key) && !json.getString(key).equals("null"))
                 returnJSON.put(key, json.getString(key));
             else
                 returnJSON.put(key, "");
@@ -3722,14 +3772,14 @@ public class HelperMethods {
 
     public boolean CanChangeStatus(int JobStatus, JSONArray logArray, Globally Global, boolean IsPersonal){
         boolean CanChange = true;
-        DateTime currentDateTime = new DateTime(Global.getCurrentDate());
+        DateTime currentDateTime = Globally.GetCurrentJodaDateTime();
         int MinDiff = 0, PrevJobStatus = 0;
         boolean wasPersonal = false;
         try {
 
             for(int i = logArray.length()-1 ; i >= 0 ; i-- ){
                 JSONObject obj = (JSONObject)logArray.get(i);
-                DateTime previousDateTime = new DateTime(obj.getString(ConstantsKeys.startDateTime));
+                DateTime previousDateTime = Globally.getDateTimeObj(obj.getString(ConstantsKeys.startDateTime), false);
 
                 PrevJobStatus   = obj.getInt(ConstantsKeys.DriverStatusId);
                 wasPersonal     = obj.getBoolean(ConstantsKeys.Personal);
@@ -3830,7 +3880,7 @@ public class HelperMethods {
                 }else{
                     String endDate = end.minusDays(1).toString();
                     endDate = endDate.substring(0, 11) + "23:59:59";
-                    DateTime dateTime = new DateTime(Globally.getDateTimeObj(endDate, false));
+                    DateTime dateTime = Globally.getDateTimeObj(endDate, false);
                     DateTime endUtcDate =  Globally.getDateTimeObj(Globally.GetUTCFromDate(dateTime.toString(), offsetFromUTC), false);
 
                     driverLogModel.setEndDateTime(dateTime);
@@ -4208,7 +4258,7 @@ public class HelperMethods {
             try {
                 JSONObject obj = (JSONObject)jsonArray.get(i);
                 String dateStr = Globally.ConvertDeviceDateTimeFormat(obj.getString(ConstantsKeys.UTCDateTime));
-                DateTime dateTime = new DateTime(Globally.getDateTimeObj(dateStr, false) );
+                DateTime dateTime = Globally.getDateTimeObj(dateStr, false);
                 if(dateTime.isBefore(selectedDate)){
                     array.put(obj);
                 }
@@ -4312,8 +4362,8 @@ public class HelperMethods {
 
                 if(lastJobStartTimeStr.length() > 10 && secLastJobStartTimeStr.length() > 10) {
                     if (lastJobStartTimeStr.substring(0, 10).equals(secLastJobStartTimeStr.substring(0, 10))) {
-                        DateTime lastJobStartTime = new DateTime(Globally.getDateTimeObj(lastJobStartTimeStr, false));
-                        DateTime secLastJobStartTime = new DateTime(Globally.getDateTimeObj(secLastJobStartTimeStr, false));
+                        DateTime lastJobStartTime = Globally.getDateTimeObj(lastJobStartTimeStr, false);
+                        DateTime secLastJobStartTime = Globally.getDateTimeObj(secLastJobStartTimeStr, false);
 
                         minDiff = lastJobStartTime.getMinuteOfDay() - secLastJobStartTime.getMinuteOfDay();
 
@@ -4439,7 +4489,7 @@ public class HelperMethods {
                 int offsetFromUTC = (int) Global.GetTimeZoneOffSet();
 
                 List<DriverLog> oDriverLog = GetLogAsList(logArray);
-                DriverDetail oDriverDetail1 = getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
+                DriverDetail oDriverDetail1 = getDriverList(Globally.getDateTimeObj(CurrentDate, false), Globally.getDateTimeObj(currentUtcTimeDiffFormat, false),
                         Integer.valueOf(DRIVER_ID), offsetFromUTC, Integer.valueOf(CurrentCycleId), Global.isSingleDriver(context),
                         DRIVER_JOB_STATUS, false, isHaulExcptn,
                         isAdverseExcptn, IsNorthCanada, rulesVersion, oDriverLog, context);

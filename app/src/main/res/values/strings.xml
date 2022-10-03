@@ -993,6 +993,7 @@
     <string name="new_version">A new version (</string>
     <string name="update_app_desc">) of this app is available for download. Please update it from </string>
     <string name="UpdateAvailable">Update Available</string>
+    <string name="select_device">Select Device </string>
     <string name="play_store">Play Store.</string>
     <string name="app_settings">App Settings.</string>
     <string name="suggested_logs">Suggested Logs</string>
@@ -1058,6 +1059,7 @@
     <string name="missing_dia_event">Missing Diagnostic event</string>
     <string name="ble_disabled">Bluetooth disabled</string>
     <string name="ble_disabled_">(Bluetooth disabled)</string>
+    <string name="ble_turned_off">Bluetooth trurned off</string>
     <string name="ble_enabled_desc">Please turn on your bluetooth from device settings.</string>
 
     <string name="malfunction_events">Malfunction Event</string>
@@ -1174,9 +1176,7 @@
     <string name="local_map_key">AIzaSyB79_gF15_gqvW3KzTetS1l7ayKEUy5mGY</string>
     <string name="place_api_key">AIzaSyDLtErLR9UyyIQcf3H58zCS8YWv8W7kzFI</string>
 
-
-
-
+    <string name="available_obd_dev">Available OBD Devices</string>
     <string name="Scanning">Scanning</string>
     <string name="ht_curr_device">Current Device：%1$s</string>
     <string name="ht_connecting">Device Connecting</string>

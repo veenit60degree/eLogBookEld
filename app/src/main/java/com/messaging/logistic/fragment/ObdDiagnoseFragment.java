@@ -43,6 +43,7 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.TcpClient;
 import com.constants.Utils;
+import com.htstart.htsdk.HTBleSdk;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LocPermissionActivity;
 import com.messaging.logistic.LoginActivity;
@@ -182,11 +183,18 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
         eldMenuLay.setOnClickListener(this);
         button2.setOnClickListener(this);
         restartApp.setOnClickListener(this);
+        bleNameTxtView.setOnClickListener(this);
 
         if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_WIFI) {
             EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (WIFI)");
             bleObdTxtView.setVisibility(View.GONE);
         }else if(SharedPref.getObdPreference(getActivity()) == Constants.OBD_PREF_BLE){
+
+            int bleStatus = SharedPref.getObdStatus(getActivity());
+            if(bleStatus != Constants.BLE_CONNECTED) {
+                SharedPref.SaveBleOBDMacAddress("", getActivity());
+            }
+
             EldTitleTV.setText(getResources().getString(R.string.obd_diagnose) + " (Bluetooth)");
             bleNameTxtView.setText(Globally.BLE_NAME);
             wifiObdLay.setVisibility(View.GONE);
@@ -222,6 +230,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
        int bleStatus = SharedPref.getObdStatus(getActivity());
 
         if(bleStatus != Constants.BLE_CONNECTED){
+            SharedPref.SaveBleOBDMacAddress("", getActivity());
             BleDataService.IsScanClick = true;
             loaderProgress.setVisibility(View.VISIBLE);
             bleObdTxtView.setText(getString(R.string.start_scan));
@@ -298,7 +307,6 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 }else{
                     //<b>Device Name:</b> SMBLE-000066<br/><b>MAC Address:</b> C4:64:E3:54:EF:03<br/><br/><b>Sequence Id:</b> 01B5<br/><b>Event Type:</b> 0<br/><b>Event Code:</b> 1<br/><b>Date:</b> 072821<br/><b>Time:</b> 112943<br/><b>Latest ACC ON time:</b> 072821112943<br/><b>Event Data:</b> OnTime<br/><b>Vehicle Speed:</b> 0<br/><b>Engine RPM:</b> 0<br/><b>Odometer:</b> 0<br/><b>Engine Hours:</b> 0<br/><b>VIN Number:</b> <br/><b>Latitude:</b> 30.70728<br/><b>Longitude:</b> 76.68493<br/><b>Distance since Last located:</b> 0<br/><b>Driver ID:</b> <br/><b>Version:</b>1<br/>
                     if(!data.contains("MAC Address")) {
-
                         if (Build.VERSION.SDK_INT >= 23) {
                             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                                     != PackageManager.PERMISSION_GRANTED) {
@@ -400,6 +408,16 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     public void onClick(View v) {
 
         switch (v.getId()){
+
+            case R.id.bleNameTxtView:
+               /* int bleStatus = SharedPref.getObdStatus(getActivity());
+                boolean isAllDisconnected = HTBleSdk.Companion.getInstance().isAllConnected();
+                if (bleStatus != Constants.BLE_CONNECTED && isAllDisconnected) {
+                    Log.e("OBD Diagnose", "Ble Clear Cache onDestroy");
+                    HTBleSdk.Companion.getInstance().disAllConnect();
+                }*/
+
+                break;
 
             case R.id.dateActionBarTV:
                 stopBleObdData();

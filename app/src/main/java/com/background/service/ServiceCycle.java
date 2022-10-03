@@ -518,7 +518,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             } else {
                                                 if(ContinueSpeedCounter > 0){
                                                     constants.saveObdData(constants.getObdSource(context),
-                                                            "Reset OnDuty Counter - Speed: " +VehicleSpeed,
+                                                            "Reset OnDuty Counter0 - Speed: " +VehicleSpeed,
                                                             "", SharedPref.getObdOdometer(context),
                                                             "", "",
                                                             "", SharedPref.getRPM(context),
@@ -535,16 +535,19 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                                             if (VehicleSpeed <= OnDutySpeedLimit) {
                                                 ContinueSpeedCounter++;
                                             } else {
-                                                ContinueSpeedCounter = 0;
 
-                                                constants.saveObdData(constants.getObdSource(context),
-                                                        "Reset OnDuty Counter - Speed: " +VehicleSpeed,
-                                                        "", SharedPref.getObdOdometer(context),
-                                                        "", "",
-                                                        "", SharedPref.getRPM(context),
-                                                        ""+VehicleSpeed,
-                                                        "", "", Global.GetCurrentDateTime(), "",
-                                                        ""+DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                                if(ContinueSpeedCounter > 0) {
+                                                    constants.saveObdData(constants.getObdSource(context),
+                                                            "Reset OnDuty Counter1 - Speed: " + VehicleSpeed,
+                                                            "", SharedPref.getObdOdometer(context),
+                                                            "", "",
+                                                            "", SharedPref.getRPM(context),
+                                                            "" + VehicleSpeed,
+                                                            "", "", Global.GetCurrentDateTime(), "",
+                                                            "" + DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                                }
+
+                                                ContinueSpeedCounter = 0;
 
                                             }
 
@@ -1069,7 +1072,8 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         int rulesVersion = SharedPref.GetRulesVersion(context);
 
                         List<DriverLog> oDriverLog = hMethods.GetLogAsList(logArray);
-                        DriverDetail oDriverDetail1 = hMethods.getDriverList(new DateTime(CurrentDate), new DateTime(currentUtcTimeDiffFormat),
+                        DriverDetail oDriverDetail1 = hMethods.getDriverList(Globally.getDateTimeObj(CurrentDate, false),
+                                Globally.getDateTimeObj(currentUtcTimeDiffFormat, false),
                                 DriverId, offsetFromUTC, Integer.valueOf(CurrentCycleId), isSingleDriver,
                                 DRIVER_JOB_STATUS, isOldRecord, isHaulExcptn, isAdverseExcptn, isNorthCanada,
                                 rulesVersion, oDriverLog, context);
