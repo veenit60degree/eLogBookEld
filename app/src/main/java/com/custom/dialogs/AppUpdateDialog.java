@@ -28,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
@@ -175,13 +176,13 @@ public class AppUpdateDialog extends Dialog {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("Response", ">>>response: " + response);
+                        Logger.LogDebug("Response", ">>>response: " + response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("error", "error: " + error);
+                        Logger.LogDebug("error", "error: " + error);
                     }
                 }
         ) {

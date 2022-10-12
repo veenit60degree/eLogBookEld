@@ -37,6 +37,7 @@ import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SaveLogJsonObj;
 import com.constants.SharedPref;
@@ -348,7 +349,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         try{
             JSONArray malDiaArray = malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper);
 
-            Log.d("malDiaArray", "malDiaArray: " + malDiaArray);
+            Logger.LogDebug("malDiaArray", "malDiaArray: " + malDiaArray);
 
                 if (isDiagnostic && !isMalfunction) {
                     if(malDiaArray.length() > 0) {
@@ -912,7 +913,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         @Override
         public void getError(VolleyError error, int flag) {
 
-            Log.d("error", ">>error: " + error);
+            Logger.LogDebug("error", ">>error: " + error);
             if(progressDialog != null && progressDialog.isShowing())
                 progressDialog.dismiss();
 
@@ -970,7 +971,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: ");
+            Logger.LogDebug("errorrr ", ">>>error dialog: ");
 
             if(progressDialog != null && progressDialog.isShowing())
                 progressDialog.dismiss();
@@ -1011,7 +1012,7 @@ public class MalfncnDiagnstcViewPager extends Fragment implements View.OnClickLi
         }
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: " );
+            Logger.LogDebug("errorrr ", ">>>error dialog: " );
         }
     };
 

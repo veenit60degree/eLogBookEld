@@ -54,6 +54,7 @@ import com.constants.APIs;
 import com.constants.Anim;
 import com.constants.Constants;
 import com.constants.DualSimManager;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.Utils;
 import com.custom.dialogs.BleAvailableDevicesDialog;
@@ -509,12 +510,13 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		if (Build.VERSION.SDK_INT >= 23) {
 			if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 					== PackageManager.PERMISSION_GRANTED) {
-				Log.v("TAG", "Permission is granted");
+				Logger.LogVerbose("TAG", "Permission is granted");
+
 				requestLocationPermission(false);
 
 				return true;
 			} else {
-				Log.v("TAG", "Permission is revoked");
+				Logger.LogVerbose("TAG", "Permission is revoked");
 				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 				Toast.makeText(this, getString(R.string.storage_per_revoked), Toast.LENGTH_SHORT).show();
 				//requestLocationPermission();
@@ -522,7 +524,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				return false;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
-			Log.v("TAG", "Permission is granted");
+			Logger.LogVerbose("TAG", "Permission is granted");
 			login();
 			return true;
 		}
@@ -537,12 +539,12 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 					return true;
 				} else {
-					Log.v("TAG", "Permission is revoked");
+					Logger.LogVerbose("TAG", "Permission is revoked");
 					ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
 					return false;
 				}
 			} else { //permission is automatically granted on sdk<23 upon installation
-				Log.v("TAG", "Permission is granted");
+				Logger.LogVerbose("TAG", "Permission is granted");
 				return true;
 			}
 		}catch (Exception e){
@@ -577,7 +579,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 				return true;
 			} else {
-				Log.v("TAG", "Permission is revoked");
+				Logger.LogVerbose("TAG", "Permission is revoked");
 				if(IsbleService){
 					ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 6);
 					Toast.makeText(this, getString(R.string.loc_per_denied), Toast.LENGTH_LONG).show();
@@ -589,7 +591,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				return false;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
-			Log.v("TAG", "Permission is granted");
+			Logger.LogVerbose("TAG", "Permission is granted");
 			if(IsbleService){
 				if (constants.CheckGpsStatusToCheckMalfunction(this)) {
 					BleDataService.IsScanClick = true;
@@ -616,7 +618,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			case 1:
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
+					Logger.LogVerbose("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
 					//resume tasks needing this permission
 					requestLocationPermission(false);
 				}
@@ -624,7 +626,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 
 			case 111:
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
+					Logger.LogVerbose("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
 					try{
 						obdUtil = new Utils(LoginActivity.this);
 						obdUtil.createLogFile();
@@ -641,7 +643,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 				break;
 
 			case 5:
-				Log.v("TAG", "Permission Granted: ");
+				Logger.LogVerbose("TAG", "Permission Granted: ");
 				login();
 
 				break;
@@ -726,8 +728,8 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		long hourDiff = Constants.getDateTimeDuration(selectedDateTime, currentUtcDate).getStandardHours();
 		int dayDiff = Constants.getDayDiff(selectedDateTime.toString(), currentUtcDate.toString());
 
-		Log.d("hourDiff","hourDiff:" +hourDiff);
-		Log.d("dayDiff","dayDiff:" +dayDiff);
+		Logger.LogDebug("hourDiff","hourDiff:" +hourDiff);
+		Logger.LogDebug("dayDiff","dayDiff:" +dayDiff);
 */
 
 
@@ -869,6 +871,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 			SharedPref.setAgricultureExemption(false, getApplicationContext());
 			SharedPref.saveCoDriverSwitchingStatus(false, getApplicationContext());
 			SharedPref.setObdStatusAfterLogin(false, getApplicationContext());
+			SharedPref.SetEditedLogStatus(false, getApplicationContext());
 
 			SharedPref.saveLocDiagnosticStatus(SharedPref.isLocDiagnosticOccur(getApplicationContext()), Globally.GetCurrentDateTime(),
 					Globally.GetCurrentUTCTimeFormat(), getApplicationContext());
@@ -950,7 +953,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 						new Response.Listener<String>() {
 							@Override
 							public void onResponse(String response) {
-								Log.d("Response", ">>>response: " + response);
+								Logger.LogDebug("Response", ">>>response: " + response);
 
 								isApiCalled = false;
 								SharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
@@ -1038,7 +1041,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 									}
 									loginBtn.setEnabled(true);
 
-									Log.d("error", "error: " + error);
+									Logger.LogDebug("error", "error: " + error);
 									String message = error.toString();    ////  com.android.volley.TimeoutError
 									if (message.contains("TimeoutError")) {
 										message = "Connection timeout. Please try again.";
@@ -1089,7 +1092,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 						params.put(ConstantsKeys.SIM1, DeviceSimInfo);
 						//params.put("SIM2, "");
 
-						//Log.d("DateLogin", ">>>MobileDeviceCurrentDateTime: " +date);
+						//Logger.LogDebug("DateLogin", ">>>MobileDeviceCurrentDateTime: " +date);
 
 						return params;
 					}
@@ -1151,7 +1154,7 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		protected String doInBackground(String... strings) {
 
 			try {
-				//Log.d("strings", "strings: " + strings);
+				//Logger.LogDebug("strings", "strings: " + strings);
 
 				dataJson = new JSONArray(loginResponseData);
 

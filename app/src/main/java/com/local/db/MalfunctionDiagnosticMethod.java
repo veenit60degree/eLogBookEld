@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.Utils;
 import com.driver.details.DriverConst;
@@ -2171,7 +2172,7 @@ public class MalfunctionDiagnosticMethod {
 
                 UnidentifiedLogoutRecordHelper(CompanyId, dbHelper, eventArray);
 
-                Log.d("MotionEventArray", ">>>MotionEventArray: " +eventArray);
+                Logger.LogDebug("MotionEventArray", ">>>MotionEventArray: " +eventArray);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -2200,7 +2201,7 @@ public class MalfunctionDiagnosticMethod {
 
 
                 if(eventDate.equals(date) || (dateStr.equals(StartDateTime)&& DutyStatus.equals("DR")) ){
-                    Log.d("RemoveMotionEvent", ">>>RemoveMotionEventArray: " +eventArray);
+                    Logger.LogDebug("RemoveMotionEvent", ">>>RemoveMotionEventArray: " +eventArray);
                     eventArray.remove(i);
                     UnidentifiedLogoutRecordHelper(CompanyId, dbHelper, eventArray);
                     break;

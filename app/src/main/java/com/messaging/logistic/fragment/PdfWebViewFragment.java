@@ -123,7 +123,7 @@ public class PdfWebViewFragment extends Fragment { //implements OnPageChangeList
     public void printBookmarksTree(List<PdfDocument.Bookmark> tree, String sep) {
         for (PdfDocument.Bookmark b : tree) {
 
-            Log.e(TAG, String.format("%s %s, p %d", sep, b.getTitle(), b.getPageIdx()));
+            Logger.LogError(TAG, String.format("%s %s, p %d", sep, b.getTitle(), b.getPageIdx()));
 
             if (b.hasChildren()) {
                 printBookmarksTree(b.getChildren(), sep + "-");
@@ -135,14 +135,14 @@ public class PdfWebViewFragment extends Fragment { //implements OnPageChangeList
     @Override
     public void loadComplete(int nbPages) {
         PdfDocument.Meta meta = pdfView.getDocumentMeta();
-        Log.e(TAG, "title = " + meta.getTitle());
-        Log.e(TAG, "author = " + meta.getAuthor());
-        Log.e(TAG, "subject = " + meta.getSubject());
-        Log.e(TAG, "keywords = " + meta.getKeywords());
-        Log.e(TAG, "creator = " + meta.getCreator());
-        Log.e(TAG, "producer = " + meta.getProducer());
-        Log.e(TAG, "creationDate = " + meta.getCreationDate());
-        Log.e(TAG, "modDate = " + meta.getModDate());
+        Logger.LogError(TAG, "title = " + meta.getTitle());
+        Logger.LogError(TAG, "author = " + meta.getAuthor());
+        Logger.LogError(TAG, "subject = " + meta.getSubject());
+        Logger.LogError(TAG, "keywords = " + meta.getKeywords());
+        Logger.LogError(TAG, "creator = " + meta.getCreator());
+        Logger.LogError(TAG, "producer = " + meta.getProducer());
+        Logger.LogError(TAG, "creationDate = " + meta.getCreationDate());
+        Logger.LogError(TAG, "modDate = " + meta.getModDate());
 
         printBookmarksTree(pdfView.getTableOfContents(), "-");
     }
@@ -155,7 +155,7 @@ public class PdfWebViewFragment extends Fragment { //implements OnPageChangeList
 
     @Override
     public void onPageError(int page, Throwable t) {
-        Log.e(TAG, "Cannot load page " + page);
+        Logger.LogError(TAG, "Cannot load page " + page);
         constants.DeleteFile(filePath);
         Globally.EldScreenToast(pdfView, getResources().getString(R.string.document_corrupted), getContext().getResources().getColor(R.color.colorVoilation));
     }
@@ -163,7 +163,7 @@ public class PdfWebViewFragment extends Fragment { //implements OnPageChangeList
 
     @Override
     public void onError(Throwable t) {
-        Log.e(TAG, "onError Cannot load page " +t);
+        Logger.LogError(TAG, "onError Cannot load page " +t);
         constants.DeleteFile(filePath);
         Globally.EldScreenToast(pdfView, getResources().getString(R.string.document_corrupted), getContext().getResources().getColor(R.color.colorVoilation));
 

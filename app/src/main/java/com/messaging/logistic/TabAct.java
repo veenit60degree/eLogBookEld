@@ -41,6 +41,7 @@ import com.constants.CheckIsUpdateReady;
 import com.constants.CommonUtils;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.Slidingmenufunctions;
 import com.constants.UrlResponce;
@@ -195,7 +196,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                                 try {
                                     if (continueStatusDialog != null && continueStatusDialog.isShowing()) {
                                         continueStatusDialog.dismiss();
-                                       // Log.d("dialogTab", "dialog dismissed");
+                                       // Logger.LogDebug("dialogTab", "dialog dismissed");
                                     }
 
                                 }catch (Exception e){
@@ -255,7 +256,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
                             if (intent.hasExtra(ConstantsKeys.IsEngineRestarted)) {
 
                                 if(intent.getBooleanExtra(ConstantsKeys.IsEngineRestarted, false)){
-                                   // Log.d("IsEngineRestarted", "IsEngineRestarted" );
+                                   // Logger.LogDebug("IsEngineRestarted", "IsEngineRestarted" );
                                     boolean IsYardMove = intent.getBooleanExtra(ConstantsKeys.IsYard, false);
                                     boolean IsPersonal = intent.getBooleanExtra(ConstantsKeys.IsPersonal, false);
 
@@ -264,7 +265,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
                             }else if(intent.hasExtra(ConstantsKeys.IsActiveHosScreen)){
                                 if(intent.getBooleanExtra(ConstantsKeys.IsActiveHosScreen, false)){
-                                    Log.d("Tab", "Current Tab: "+ TabAct.host.getCurrentTab());
+                                    Logger.LogDebug("Tab", "Current Tab: "+ TabAct.host.getCurrentTab());
 
                                     Constants.IS_HOS_AUTO_CALLED = true;
                                     if(TabAct.host.getCurrentTab() == 0) {
@@ -427,7 +428,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         Intent i = getIntent();
         if(i.hasExtra("EXIT")){
             if(i.getBooleanExtra("EXIT", false)){
-                // Log.d("true", "---true: " );
+                // Logger.LogDebug("true", "---true: " );
                 finish();
             }
         }
@@ -721,7 +722,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
         super.onPause();
         UILApplication.activityPaused();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-        Log.d("TabAct", "------onPause");
+        Logger.LogDebug("TabAct", "------onPause");
 
     }
 
@@ -731,7 +732,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         UILApplication.activityPaused();
         Globally.IS_LOGOUT = false;
-        Log.d("TabAct", "------onStop");
+        Logger.LogDebug("TabAct", "------onStop");
 
         try{
             if(wl != null)
@@ -900,7 +901,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
             new CheckIsUpdateReady("https://play.google.com/store/apps/details?id=" + getPackageName() + "&hl=en", new UrlResponce() {
                 @Override
                 public void onReceived(String responseVersion) {
-                    Log.d("responseStr", "responseStr: " + responseVersion);
+                    Logger.LogDebug("responseStr", "responseStr: " + responseVersion);
 
                     if (isUpdateAvailable(responseVersion) && getApplicationContext() != null ) {
                         String playStorePackage = "com.android.vending";

@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
 import com.google.android.material.textfield.TextInputLayout;
@@ -550,7 +551,7 @@ public class TrailorDialog extends Dialog {
         public void onClick(View v) {
             trailorNoInputType.setVisibility(View.VISIBLE);
             //TrailorNoEditText.getText().toString().trim();
-            Log.d("Trailer", "Trailor: " + Trailor);
+            Logger.LogDebug("Trailer", "Trailor: " + Trailor);
         }
     }
 
@@ -561,7 +562,7 @@ public class TrailorDialog extends Dialog {
             HideKeyboard();
             trailorNoInputType.setVisibility(View.GONE);
            // Trailor = getContext().getString(R.string.no_trailer);
-            Log.d("Trailer", "Trailor: " + Trailor);
+            Logger.LogDebug("Trailer", "Trailor: " + Trailor);
         }
     }
 

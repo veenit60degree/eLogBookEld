@@ -35,6 +35,7 @@ import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.Slidingmenufunctions;
@@ -239,22 +240,16 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
             AgricultureInspList = constant.CtPatAgricultureList();
         }
 
-        new Handler().postDelayed(new Runnable() {
+     /*   new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 ctPatScrollView.fullScroll(ScrollView.FOCUS_UP);
             }
-        }, 500);
+        }, 500);*/
 
 
         agricultureAdapter = new CtPatAdapter(getActivity(), true, true, AgricultureInspList, AgricultureList, AgricultureIdList);
         ctPatAgricultureGridVw.setAdapter(agricultureAdapter);
-
-        // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
-//        if(UILApplication.getInstance().isNightModeEnabled()){
-//            scrollChildMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
-//        }
-
 
         ctPatInspectionBtn.setOnClickListener(this);
         conductedSecIV.setOnClickListener(this);
@@ -280,7 +275,6 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         VIN_NUMBER          = SharedPref.getVINNumber(getActivity());
         DriverName          = slideMenu.usernameTV.getText().toString();
         CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
-        //CurrentCycleId      = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
         CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getActivity()), getActivity());
 
 
@@ -297,11 +291,6 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         ctPatInspectionBtn.setEnabled(true);
         inspection18DaysArray = ctPatInspectionMethod.getCtPat18DaysInspectionArray(Integer.valueOf(DRIVER_ID), dbHelper);
 
-  /*      JSONArray unPostedCtPatArray = ctPatInspectionMethod.getCtPatUnPostedInspArray(Integer.valueOf(DRIVER_ID), dbHelper);
-        if(Globally.isConnected(getActivity()) && unPostedCtPatArray.length() > 0 ){
-            saveInspectionPost.PostDriverLogData(unPostedCtPatArray, APIs.SAVE_INSPECTION_OFFLINE, Constants.SocketTimeout20Sec, true, false, 1, 102);
-        }
-*/
         JSONArray ctPatInsp18DaysArray = ctPatInspectionMethod.getCtPat18DaysInspectionArray(Integer.valueOf(DRIVER_ID), dbHelper);
         if(ctPatInsp18DaysArray.length() == 0) {
             String SelectedDate = Globally.GetCurrentDeviceDate();
@@ -328,7 +317,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.arrivalContNoEditTxt:
-               // Log.d("onTouch", "editText on Touch");
+               // Logger.LogDebug("onTouch", "editText on Touch");
                 arrivalContNoEditTxt.setEnabled(true);
                 arrivalContNoEditTxt.requestFocus();
                 arrivalContNoEditTxt.setFocusableInTouchMode(true);
@@ -437,7 +426,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                 TruckIssueType = GetItemsId(TruckList, TruckIdList);
                 TraiorIssueType = GetItemsId(TrailerList, TrailerIdList);
                 AgricultureIssueType = GetItemsId(AgricultureList,AgricultureIdList);
-                Log.e("AgricultureIssueType",AgricultureIssueType);
+                Logger.LogError("AgricultureIssueType",AgricultureIssueType);
 
                 if(!AgricultureIssueType.contains("101")){
                     agricutureReasonLay.setVisibility(View.VISIBLE);
@@ -576,7 +565,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         if(path.length() > 0) {
             File selectedFile = new File(path);
             if (selectedFile.exists()) {
-                Log.i("", "---File: " + selectedFile.toString());
+                Logger.LogInfo("", "---File: " + selectedFile.toString());
                 getByteImage = Globally.ConvertImageToByteAsString(path);
 
                 // delete file after Convert To Bytes
@@ -592,22 +581,22 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         File file4 = new File(ImgPathPhysicalVerify);
 
         if (file.exists()) {
-            Log.i("", "---File1: " + file.toString());
+            Logger.LogInfo("", "---File1: " + file.toString());
             ByteInspectionConductorSign = Globally.ConvertImageToByteAsString(ImgPathSecurityConducted);
         }
 
         if (file2.exists()) {
-            Log.i("", "---File2: " + file2.toString());
+            Logger.LogInfo("", "---File2: " + file2.toString());
             ByteFollowUpConductorSign = Globally.ConvertImageToByteAsString(ImgPathFollowUpConducted);
         }
 
         if (file3.exists()) {
-            Log.i("", "---File3: " + file3.toString());
+            Logger.LogInfo("", "---File3: " + file3.toString());
             ByteSealFixerSign = Globally.ConvertImageToByteAsString(ImgPathAffixedSeal);
         }
 
         if (file4.exists()) {
-            Log.i("", "---File4: " + file4.toString());
+            Logger.LogInfo("", "---File4: " + file4.toString());
             ByteSealVerifierSign = Globally.ConvertImageToByteAsString(ImgPathPhysicalVerify);
         }*/
 
@@ -653,7 +642,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         }catch (Exception e){
             e.printStackTrace();
         }
-      //  Log.d("data", "---data: " + data);
+      //  Logger.LogDebug("data", "---data: " + data);
         return data;
 
     }
@@ -729,7 +718,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
             public void run() {
                 ctPatScrollView.fullScroll(ScrollView.FOCUS_UP);
             }
-        }, 500);
+        }, 200);
     }
 
 
@@ -905,7 +894,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         @Override
         public void getResponse(String response, int flag) {
 
-            Log.d("response", "Driver response: " + response);
+            Logger.LogDebug("response", "Driver response: " + response);
             String status = "";
             JSONObject obj = null;
             try {
@@ -998,7 +987,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
-            Log.d("InspectionLog", "---Response CT-PAT Inspection: " + response);
+            Logger.LogDebug("InspectionLog", "---Response CT-PAT Inspection: " + response);
             pDialog.dismiss();
             Globally.hideSoftKeyboard(getActivity());
             constant.IsCtPatUploading = false;
@@ -1045,7 +1034,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: ");
+            Logger.LogDebug("errorrr ", ">>>error dialog: ");
             Globally.hideSoftKeyboard(getActivity());
             pDialog.dismiss();
             ClearFields();

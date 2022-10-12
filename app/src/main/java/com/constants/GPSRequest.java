@@ -58,10 +58,10 @@ public class GPSRequest implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
                     switch (statusCode) {
                         case LocationSettingsStatusCodes.SUCCESS:
-                           // Log.d("LocationSettingsStatus", "Success");
+                           // Logger.LogDebug("LocationSettingsStatus", "Success");
                             break;
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                           // Log.d("LocationSettingsStatus","GPS is not on");
+                           // Logger.LogDebug("LocationSettingsStatus","GPS is not on");
                             try {
                                 status.startResolutionForResult(fActivity, 1000);
 
@@ -71,7 +71,7 @@ public class GPSRequest implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            Log.d("LocationSettingsStatus","Setting change not allowed");
+                            Logger.LogDebug("LocationSettingsStatus","Setting change not allowed");
 
                             break;
                     }
@@ -82,18 +82,18 @@ public class GPSRequest implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     @Override
     public void onConnected( Bundle bundle) {
-        Log.d("onConnected", "onConnected");
+        Logger.LogDebug("onConnected", "onConnected");
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d("onConnectionSuspended", "Suspended");
+        Logger.LogDebug("onConnectionSuspended", "Suspended");
 
     }
 
     @Override
     public void onConnectionFailed( ConnectionResult connectionResult) {
-        Log.d("onConnectionFailed","Failed");
+        Logger.LogDebug("onConnectionFailed","Failed");
     }
 
 

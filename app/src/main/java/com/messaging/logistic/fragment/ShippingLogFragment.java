@@ -18,6 +18,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.DatePickerDialog;
@@ -338,7 +339,7 @@ public class ShippingLogFragment extends Fragment implements View.OnClickListene
         @Override
         public void getError(VolleyError error, int flag) {
 
-            Log.d("error", ">>error: " + error);
+            Logger.LogDebug("error", ">>error: " + error);
 
         }
     };

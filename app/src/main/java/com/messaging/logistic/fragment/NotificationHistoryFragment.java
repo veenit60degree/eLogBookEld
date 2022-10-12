@@ -33,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.SwipeToDeleteCallback;
@@ -324,7 +325,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("error", "error: " +error);
+            Logger.LogDebug("error", "error: " +error);
             notiProgressBar.setVisibility(View.GONE);
             if(!isSwipe) {
                 try {
@@ -442,7 +443,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
                     e.printStackTrace();
                 }
 
-                //  Log.d("finalJsonArray", "finalJsonArray: " + finalJsonArray);
+                //  Logger.LogDebug("finalJsonArray", "finalJsonArray: " + finalJsonArray);
 
 
                 if (finalJsonArray.length() > 0) {
@@ -861,7 +862,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
 
             JSONObject obj = null;  //, dataObj = null;
             String status = "", Message = "";
-            Log.d("response", "response: " + response);
+            Logger.LogDebug("response", "response: " + response);
 
             try {
                 obj = new JSONObject(response);
@@ -949,7 +950,7 @@ public class NotificationHistoryFragment extends Fragment implements View.OnClic
             switch (flag){
 
                 default:
-                    Log.d("Driver", "error" + error.toString());
+                    Logger.LogDebug("Driver", "error" + error.toString());
                     break;
             }
         }

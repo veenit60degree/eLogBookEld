@@ -31,6 +31,7 @@ import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.Slidingmenufunctions;
@@ -426,7 +427,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
 
             @Override
             public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-                Log.d("errorrr ", ">>>error dialog: ");
+                Logger.LogDebug("errorrr ", ">>>error dialog: ");
 
                 if(progressDialog != null && progressDialog.isShowing())
                     progressDialog.dismiss();
@@ -593,7 +594,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
         @Override
         public void getError(VolleyError error, int flag) {
 
-            Log.d("error", ">>error: " + error);
+            Logger.LogDebug("error", ">>error: " + error);
             switch (flag) {
 
                 case GetUnidentifiedRecordFlag:

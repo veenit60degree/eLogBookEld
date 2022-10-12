@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
@@ -178,7 +179,7 @@ public class EldNotificationDialog extends Dialog  {
 
          @Override
          public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-             Log.d("onDuty error", "onDuty error: " + error.toString());
+             Logger.LogDebug("onDuty error", "onDuty error: " + error.toString());
              Globally.EldScreenToast(notificationOkBtn, error.toString(), getContext().getResources().getColor(R.color.red_eld));
          }
      };
@@ -218,7 +219,7 @@ public class EldNotificationDialog extends Dialog  {
 
             JSONObject obj = null;
             String status = "", Message = "";
-            Log.d("response", "response: " + response);
+            Logger.LogDebug("response", "response: " + response);
 
             try {
                 obj = new JSONObject(response);

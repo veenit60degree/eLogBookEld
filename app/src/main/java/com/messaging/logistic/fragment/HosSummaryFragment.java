@@ -38,6 +38,7 @@ import com.constants.ConstantsEnum;
 import com.constants.CsvReader;
 import com.constants.InitilizeEldView;
 import com.constants.LoadingSpinImgView;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.constants.VolleyRequestWithoutRetry;
@@ -1148,7 +1149,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 //                    DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);
 //                    DateTime endShiftDateTime = currentDateTime.plusMinutes(LeftShiftHoursInt);
 //                    String endDate = global.convertUSTtoMM_dd_yyyy_hh_mm(endShiftDateTime.toString());
-//                    Log.d("date", "converted Date: " + endDate);
+//                    Logger.LogDebug("date", "converted Date: " + endDate);
 //                    shiftInfoTV.setText(Html.fromHtml("&nbsp; &nbsp; <b>Shift Ends At </b> <br/>" + endDate));
                 } else {
 //                    shiftInfoTV.setText(shiftViolationReson.toLowerCase());
@@ -1169,12 +1170,11 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
 
         if (!IsAOBRD || IsAOBRDAutomatic) {
-            Constants.isEldHome = false;
-            Globally.serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
+            Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                getActivity().startForegroundService(Globally.serviceIntent);
+                getActivity().startForegroundService(serviceIntent);
             }
-            getActivity().startService(Globally.serviceIntent);
+            getActivity().startService(serviceIntent);
         }
 
         try {
@@ -1235,7 +1235,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         try {
 
             DRIVER_JOB_STATUS = Integer.parseInt(SharedPref.getDriverStatusId(getActivity()));
-            Log.d("DriverJob","CurrentDriverJob: " +DRIVER_JOB_STATUS);
+            Logger.LogDebug("DriverJob","CurrentDriverJob: " +DRIVER_JOB_STATUS);
             calculateLocalOdometersDistance();
 
             if (isUpdateUI) {
@@ -1588,7 +1588,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                         availableHourBtnTV.setEnabled(true);
                     }
                 }, Constants.SocketTimeout1Sec);
-                Log.d("DrivingRemainingMinutes", "DrivingRemainingMinutes: " + RemainingTimeObj.getDrivingRemainingMinutes());
+                //Logger.LogDebug("DrivingRemainingMinutes", "DrivingRemainingMinutes: " + RemainingTimeObj.getDrivingRemainingMinutes());
                 break;
 
 
@@ -1630,7 +1630,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
         cDate = cDate.split("T")[0]+"T00:00:00";
         DateTime currentStartUtcDate = new DateTime(cDate);
         String utcDateStr = String.valueOf(new DateTime(Globally.getDateTimeObj(currentStartUtcDate.toString(), false)) );
-        Log.d("cDate","cDate11: " +  utcDateStr);
+        Logger.LogDebug("cDate","cDate11: " +  utcDateStr);
 
 
 
@@ -1709,7 +1709,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
                                 break;
 
                             case GetMiles:
-                                Log.d("getMiles", "response: " + response);
+                                Logger.LogDebug("getMiles", "response: " + response);
 
 
                                 try {
@@ -1758,7 +1758,7 @@ public class HosSummaryFragment extends Fragment implements View.OnClickListener
 
         @Override
         public void getError(VolleyError error, int flag) {
-            Log.d("getMiles", "error: " + error);
+            Logger.LogDebug("getMiles", "error: " + error);
             try {
                 if (getActivity() != null) {
                     if (flag == GetMiles) {

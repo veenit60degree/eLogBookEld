@@ -45,7 +45,7 @@ public class CsvReader {
             e.printStackTrace();
         }
 
-     //   Log.d("list", "list: "+ list.size());
+     //   Logger.LogDebug("list", "list: "+ list.size());
         return list;
 
     }
@@ -378,8 +378,8 @@ public class CsvReader {
  /*   void getLocDegree(Location location){
         String strLongitude = location.convert(location.getLongitude(), location.FORMAT_SECONDS);
         String strLatitude = location.convert(location.getLatitude(), location.FORMAT_SECONDS);
-        Log.d("Location", "---strLongitude: " + strLongitude );
-        Log.d("Location", "---strLatitude: " + strLatitude );
+        Logger.LogDebug("Location", "---strLongitude: " + strLongitude );
+        Logger.LogDebug("Location", "---strLatitude: " + strLatitude );
         getFormattedLocationInDegree(location.getLatitude(), location.getLongitude());
     }
 
@@ -402,7 +402,7 @@ public class CsvReader {
             String degFormat = Math.abs(latDegrees) + "°" + latMinutes + "'" + latSeconds
                     + "\"" + latDegree +" "+ Math.abs(longDegrees) + "°" + longMinutes
                     + "'" + longSeconds + "\"" + lonDegrees;
-            Log.d("LocationDegreeF", "---degFormat: " + degFormat );
+            Logger.LogDebug("LocationDegreeF", "---degFormat: " + degFormat );
 
             return degFormat ;
         } catch (Exception e) {

@@ -29,6 +29,7 @@ import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.custom.dialogs.DriverLocationDialog;
@@ -829,7 +830,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         @SuppressLint("NewApi")
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: " );
+            Logger.LogDebug("errorrr ", ">>>error dialog: " );
             Global.EldScreenToast(CertifyViewLogFragment.saveSignatureBtn, "Data updated successfully." , context.getResources().getColor(R.color.colorPrimary));
             progressDialog.dismiss();
 

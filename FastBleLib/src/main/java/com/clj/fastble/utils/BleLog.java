@@ -10,12 +10,12 @@ public final class BleLog {
 
     public static void d(String msg) {
         if (isPrint && msg != null)
-            Log.d(defaultTag, msg);
+            Logger.LogDebug(defaultTag, msg);
     }
 
     public static void i(String msg) {
         if (isPrint && msg != null)
-            Log.i(defaultTag, msg);
+            Logger.LogInfo(defaultTag, msg);
     }
 
     public static void w(String msg) {
@@ -25,7 +25,7 @@ public final class BleLog {
 
     public static void e(String msg) {
         if (isPrint && msg != null)
-            Log.e(defaultTag, msg);
+            Logger.LogError(defaultTag, msg);
     }
 
 }

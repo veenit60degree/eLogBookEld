@@ -225,23 +225,23 @@ public class BleGpsAppLaunchMethod {
                 boolean isAppLocationPermissionGranted = (bgLocation == PackageManager.PERMISSION_GRANTED) &&
                         (coarseLocation == PackageManager.PERMISSION_GRANTED);
 
-                boolean preciseLocationAllowed = (fineLocation == PackageManager.PERMISSION_GRANTED)
+                /*boolean preciseLocationAllowed = (fineLocation == PackageManager.PERMISSION_GRANTED)
                         && (coarseLocation == PackageManager.PERMISSION_GRANTED);
 
                 if (preciseLocationAllowed) {
-                    Log.e(Tag, "Precise location is enabled in Android 12");
+                    Logger.LogError(Tag, "Precise location is enabled in Android 12");
                 } else {
-                    Log.e(Tag, "Precise location is disabled in Android 12");
-                }
+                    Logger.LogError(Tag, "Precise location is disabled in Android 12");
+                }*/
 
                 if (isAppLocationPermissionGranted) {
-                    Log.e(Tag, "Location is allowed all the time");
+                    //Logger.LogError(Tag, "Location is allowed all the time");
                     CurrentLocationStatus = AuthorizedAlways;
                 } else if (coarseLocation == PackageManager.PERMISSION_GRANTED) {
-                    Log.e(Tag, "Location is allowed while using the app");
+                    //Logger.LogError(Tag, "Location is allowed while using the app");
                     CurrentLocationStatus = AuthorizedWhenInUse;
                 } else {
-                    Log.e(Tag, "Location is not allowed.");
+                    //Logger.LogError(Tag, "Location is not allowed.");
                     CurrentLocationStatus = Denied;
                 }
 
@@ -253,13 +253,13 @@ public class BleGpsAppLaunchMethod {
                         (coarseLocation == PackageManager.PERMISSION_GRANTED);
 
                 if (isAppLocationPermissionGranted) {
-                    Log.e(Tag, "Location is allowed all the time");
+                    //Logger.LogError(Tag, "Location is allowed all the time");
                     CurrentLocationStatus = AuthorizedAlways;
                 } else if (coarseLocation == PackageManager.PERMISSION_GRANTED) {
-                    Log.e(Tag, "Location is allowed while using the app");
+                    //Logger.LogError(Tag, "Location is allowed while using the app");
                     CurrentLocationStatus = AuthorizedWhenInUse;
                 } else {
-                    Log.e(Tag, "Location is not allowed.");
+                   // Logger.LogError(Tag, "Location is not allowed.");
                     CurrentLocationStatus = Denied;
                 }
 
@@ -269,10 +269,10 @@ public class BleGpsAppLaunchMethod {
                         (coarseLocation == PackageManager.PERMISSION_GRANTED);
 
                 if (isAppLocationPermissionGranted) {
-                   // Log.e(Tag, "Location permission is granted");
+                   // Logger.LogError(Tag, "Location permission is granted");
                     CurrentLocationStatus = AuthorizedAlways;
                 } else {
-                    Log.e(Tag, "Location permission is not granted");
+                    //Logger.LogError(Tag, "Location permission is not granted");
                     CurrentLocationStatus = Denied;
                 }
             }

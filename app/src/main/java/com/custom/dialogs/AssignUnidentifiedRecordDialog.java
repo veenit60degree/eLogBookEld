@@ -20,6 +20,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.google.android.material.textfield.TextInputLayout;
 import com.local.db.ConstantsKeys;
@@ -122,7 +123,7 @@ public class AssignUnidentifiedRecordDialog extends Dialog {
             @Override
             public void onResponse(String response) {
 
-                Log.d("response", "AcceptDeclineRecord response: " + response);
+                Logger.LogDebug("response", ">>>AcceptDeclineRecord response: " + response);
                 String status = "" ;
                 JSONObject obj;
 
@@ -146,7 +147,7 @@ public class AssignUnidentifiedRecordDialog extends Dialog {
                 new Response.ErrorListener()  {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("onduty error", "onDuty error: " + error.toString());
+                        Logger.LogDebug("onduty error", "onDuty error: " + error.toString());
                         Globally.EldScreenToast(btnAccept, error.toString(), getContext().getResources().getColor(R.color.color_eld_theme));
                         dismiss();
                     }

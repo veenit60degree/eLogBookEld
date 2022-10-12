@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.VolleyRequest;
 import com.google.android.material.textfield.TextInputLayout;
 import com.messaging.logistic.Globally;
@@ -176,7 +177,7 @@ public class DriverAddressDialog extends Dialog implements AdapterView.OnItemCli
         public void getResponse(String response, int flag) {
 
 
-            Log.d("response", " logout response: " + response);
+            Logger.LogDebug("response", " logout response: " + response);
             String status = "";
 
             formattedAddress = new ArrayList();
@@ -203,13 +204,13 @@ public class DriverAddressDialog extends Dialog implements AdapterView.OnItemCli
                     String addressObject = addressArray.getString("address");
                     JSONObject formattedAddresss = new JSONObject(addressObject);
                     String getAddresss = formattedAddresss.getString("formattedAddress");
-                    Log.d("",getAddresss);
+                    Logger.LogDebug("",getAddresss);
                     formattedAddress.add(getAddresss);
 
                 }
                 adapter = new ArrayAdapter<String>(getContext(), android.R.layout.select_dialog_item, formattedAddress);
                 CityNameEditText.setAdapter(adapter);
-                Log.d("", String.valueOf(formattedAddress));
+                Logger.LogDebug("", String.valueOf(formattedAddress));
 
 
 
@@ -224,7 +225,7 @@ public class DriverAddressDialog extends Dialog implements AdapterView.OnItemCli
 
         @Override
         public void getError(VolleyError error, int flag) {
-            Log.d("onDuty error", "onDuty error: " + error.toString());
+            Logger.LogDebug("onDuty error", "onDuty error: " + error.toString());
         }
     };
 

@@ -41,13 +41,12 @@ public class SaveDriverLogPost
             SaveLogRequest      = Volley.newRequestQueue(context);
         }
 
-
         StringRequest postRequest = new StringRequest(Request.Method.POST, api,
                 new Response.Listener<String>()
                 {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("Response ", ">>>Response: " + response);
+                        Logger.LogDebug("Response ", ">>>Response: " + response);
                         postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag, driverLogData.length());
                     }
                 },
@@ -55,7 +54,7 @@ public class SaveDriverLogPost
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("error", ">>errorrrrr: " + error);
+                        Logger.LogDebug("error", ">>errorrrrr: " + error);
 
                         postResponse.onResponseError(error.toString(), isLoad, IsRecap, DriverType, flag);
                     }
@@ -69,8 +68,8 @@ public class SaveDriverLogPost
             @Override
             public byte[] getBody() throws AuthFailureError {
                 try {
-                    Log.d("api", ">>>certify Data api: " + api);
-                    Log.d("certify", ">>>certify Data: " + driverLogData.toString());
+                    Logger.LogDebug("api", ">>>certify Data api: " + api);
+                    Logger.LogDebug("certify", ">>>certify Data: " + driverLogData.toString());
                     return driverLogData.toString().getBytes("utf-8");
                 } catch (UnsupportedEncodingException uee) {
                     VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",

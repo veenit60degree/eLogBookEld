@@ -31,6 +31,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.text.DecimalFormat;
+import java.util.logging.Logger;
 
 /**
  * An circle view, similar to Android's ProgressBar.
@@ -899,7 +900,7 @@ public class CircleProgressView extends View {
                 // delay for 600 milli seconds
                 Thread.sleep(50);
             } catch (Throwable t) {
-                Log.d(TAG, "Throwable Error caused by Thread.Sleep()");
+                Logger.LogDebug(TAG, "Throwable Error caused by Thread.Sleep()");
             }*/
             triggerOnProgressChanged(_value);
         }catch (Exception e){
@@ -961,7 +962,7 @@ public class CircleProgressView extends View {
                 // delay for 600 milli seconds
                 Thread.sleep(50);
             } catch (Throwable t) {
-                Log.d(TAG, "Throwable Error caused by Thread.Sleep()");
+                Logger.LogDebug(TAG, "Throwable Error caused by Thread.Sleep()");
             }*/
 
             triggerOnProgressChanged(_valueTo);
@@ -1150,6 +1151,7 @@ public class CircleProgressView extends View {
 
             } catch (Exception exception) {
                 Log.w(TAG, exception.getMessage());
+
             }
         }
 

@@ -54,6 +54,7 @@ import com.ble.util.ConstantEvent;
 import com.ble.util.EventBusInfo;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.Utils;
 import com.driver.details.DriverConst;
@@ -148,7 +149,7 @@ public class Globally {
 			ConnectivityManager.TYPE_ETHERNET };
 
 
-	public static Intent serviceIntent;
+	public static Intent globalServiceIntent;
 	public static DownloadManager downloadManager;
 
 
@@ -676,7 +677,7 @@ public class Globally {
 		if(utcDateTime != null)
 		{
 			utcDateTime = utcDateTime.plusMinutes(1);
-			//Log.d("utcDateTime", "utcDateTime" + utcDateTime);
+			//Logger.LogDebug("utcDateTime", "utcDateTime" + utcDateTime);
 			// Save time with shared pref
 			SharedPref.setCurrentUTCTime( utcDateTime.toString() , context);
 
@@ -860,7 +861,7 @@ public class Globally {
 		try{
 			int mnth = Integer.valueOf(time.substring(5, 7));
 			monthNameStr = MONTHS[mnth - 1] + " " + time.substring(8, 10) + ", " + timeAmPm;
-			//Log.d("MONTHS", "MONTHS: " +monthNameStr);
+			//Logger.LogDebug("MONTHS", "MONTHS: " +monthNameStr);
 
 		}catch (Exception e){
 			e.printStackTrace();
@@ -992,7 +993,7 @@ public class Globally {
 			str = outputFormat.format(date);
 		} catch (ParseException e) {
 			isFormatChanged = true;
-			Log.d("DateParseException", "DateParseException");
+			Logger.LogDebug("DateParseException", "DateParseException");
 			//e.printStackTrace();
 		}
 
@@ -1488,7 +1489,7 @@ public class Globally {
 			SharedPref.setDriverId( "", context);
 			SharedPref.setPassword( "", context);
 			SharedPref.setUserName( "", context);
-			context.stopService(serviceIntent);
+			context.stopService(globalServiceIntent);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -1510,7 +1511,7 @@ public class Globally {
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.d("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Carpoolie" + " directory");
+				Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Carpoolie" + " directory");
 				return null;
 			}
 		}
@@ -1539,14 +1540,14 @@ public class Globally {
 		ArrayList<String> docList = new ArrayList<String>();
 
 		String path = context.getExternalFilesDir(null).toString()+"/Logistic/GenerateRods";
-		Log.d("Files", "Path: " + path);
+		Logger.LogDebug("Files", "Path: " + path);
 		File directory = new File(path);
 		File[] files = directory.listFiles();
 		if(files != null) {
-			Log.d("Files", "Size: "+ files.length);
+			Logger.LogDebug("Files", "Size: "+ files.length);
 			for (int i = 0; i < files.length; i++) {
 				docList.add(files[i].getName());
-				Log.d("Files", "FileName:" + files[i].getName());
+				Logger.LogDebug("Files", "FileName:" + files[i].getName());
 			}
 		}
 		return  docList;
@@ -1558,7 +1559,7 @@ public class Globally {
 		// Create the storage directory if it does not exist
 		if (!apkStorageDir.exists()) {
 			if (!apkStorageDir.mkdirs()) {
-				Log.d("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
@@ -1572,7 +1573,7 @@ public class Globally {
 		// Create the storage directory if it does not exist
 		if (!apkStorageDir.exists()) {
 			if (!apkStorageDir.mkdirs()) {
-				Log.d("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
@@ -1598,7 +1599,7 @@ public class Globally {
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.d("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
@@ -1619,7 +1620,7 @@ public class Globally {
 		// Create the storage directory if it does not exist
 		if (!apkStorageDir.exists()) {
 			if (!apkStorageDir.mkdirs()) {
-				Log.d("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
@@ -1632,14 +1633,14 @@ public class Globally {
 		ArrayList<String> docList = new ArrayList<String>();
 
 		String path = context.getExternalFilesDir(null).toString()+"/Logistic/AlsDoc";
-		Log.d("Files", "Path: " + path);
+		Logger.LogDebug("Files", "Path: " + path);
 		File directory = new File(path);
 		File[] files = directory.listFiles();
 		if(files != null) {
-			Log.d("Files", "Size: "+ files.length);
+			Logger.LogDebug("Files", "Size: "+ files.length);
 			for (int i = 0; i < files.length; i++) {
 				docList.add(files[i].getName());
-				Log.d("Files", "FileName:" + files[i].getName());
+				Logger.LogDebug("Files", "FileName:" + files[i].getName());
 			}
 		}
 		return  docList;
@@ -1652,7 +1653,7 @@ public class Globally {
 		// Create the storage directory if it does not exist
 		if (!apkStorageDir.exists()) {
 			if (!apkStorageDir.mkdirs()) {
-				Log.d("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
@@ -1705,13 +1706,13 @@ public class Globally {
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.d("Text_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				Logger.LogDebug("Text_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
 
 		File mediaFile = new File(mediaStorageDir.getPath() + File.separator + fileName + "." + extension);
-		//Log.d("fileeee", "fileeeee: " + mediaFile);
+		//Logger.LogDebug("fileeee", "fileeeee: " + mediaFile);
 
 		return mediaFile;
 	}
@@ -1723,13 +1724,13 @@ public class Globally {
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.d("Text_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+				Logger.LogDebug("Text_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
 				return null;
 			}
 		}
 
 		File mediaFile = new File(mediaStorageDir.getPath() + File.separator + fileName + "." + extension);
-		//Log.d("fileeee", "fileeeee: " + mediaFile);
+		//Logger.LogDebug("fileeee", "fileeeee: " + mediaFile);
 
 		return mediaFile;
 	}
@@ -1797,10 +1798,10 @@ public class Globally {
 			fos = new FileOutputStream(imageFile);
 			bm.compress(Bitmap.CompressFormat.PNG, quality,fos);
 			fos.close();
-			//Log.d("FileSaved", "Saved File: " + imageFile + " saved");
+			//Logger.LogDebug("FileSaved", "Saved File: " + imageFile + " saved");
 			return imageFile.toString();
 		}catch (IOException e) {
-			Log.e("app",e.getMessage());
+			Logger.LogError("app",e.getMessage());
 			if (fos != null) {
 				try {
 					fos.close();
@@ -2080,8 +2081,8 @@ public class Globally {
 		double speed = odometerDistance/timeInSec;
 		double finalSpeed = speed * 18 / 5;
 
-		Log.d("speed", "speed: " + finalSpeed );
-		Log.d("speed", "speed in int: " + (int)finalSpeed );
+		Logger.LogDebug("speed", "speed: " + finalSpeed );
+		Logger.LogDebug("speed", "speed in int: " + (int)finalSpeed );
 
 	}
 
@@ -2093,8 +2094,8 @@ public class Globally {
 		double finalSpeed = speed * 18 / 5;
 		DecimalFormat df2 = new DecimalFormat("#.##");
 
-		Log.d("speed", "speed: " + finalSpeed );
-		Log.d("speed", "speed 2 places: " + df2.format(finalSpeed) );
+		Logger.LogDebug("speed", "speed: " + finalSpeed );
+		Logger.LogDebug("speed", "speed 2 places: " + df2.format(finalSpeed) );
 
 	}
 */
@@ -2343,9 +2344,9 @@ public class Globally {
 
 			if (resultCode != ConnectionResult.SUCCESS) {
 				if (googleApiAvailability.isUserResolvableError(resultCode)) {
-					Log.d("GooglePlayServices", "UserResolvableError");
+					Logger.LogDebug("GooglePlayServices", "UserResolvableError");
 				} else {
-					Log.d("GooglePlayServices", "This device is not supported.");
+					Logger.LogDebug("GooglePlayServices", "This device is not supported.");
 				}
 				return false;
 			}
@@ -2370,7 +2371,7 @@ public class Globally {
 	//	mNotificationManager.clearNotifications(context);
 		int id = RemainingTimeObj.getNotificationType();
 
-	//	Log.d("id", "---id: " + id);
+	//	Logger.LogDebug("id", "---id: " + id);
 		switch (id){
 
 			case Constants.EldAlert:

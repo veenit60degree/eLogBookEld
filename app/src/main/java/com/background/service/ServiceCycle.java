@@ -9,6 +9,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.constants.Constants;
 import com.constants.CsvReader;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.Utils;
 import com.driver.details.DriverConst;
@@ -169,7 +170,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         if(!isCoDriverSwitching) {
             boolean isDrivingAllowed = hMethods.isDrivingAllowedWithCoDriver(context, Global, "" + DriverId, false, dbHelper);
             if (isDrivingAllowed == false && VehicleSpeed >= 8) {
-                //  Log.d("isDrivingAllowed", "Driving not Allowed"  );
+                //  Logger.LogDebug("isDrivingAllowed", "Driving not Allowed"  );
                 SharedPref.setDrivingAllowedStatus(false, Global.GetCurrentDateTime(), context);
             } else {
                 SharedPref.setDrivingAllowedStatus(true, "", context);
@@ -1301,7 +1302,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         String currentUTCTime = Global.GetCurrentUTCTime();
         String CurrentDeviceDate = Global.GetCurrentDateTime();
         String currentUtcTimeDiffFormat = Global.GetCurrentUTCTimeFormat();
-        String DriverStatusId = "", isPersonal = "", isYardMove = "", trailorNumber = "", isAutomatic = "", LocationType = "";
+        String DriverStatusId = "1", isPersonal = "", isYardMove = "", trailorNumber = "", isAutomatic = "", LocationType = "";
 
         if(SharedPref.isLocMalfunctionOccur(context) || SharedPref.isLocDiagnosticOccur(context)){   //constants.isLocMalfunctionEvent(context, DriverType)
             LocationType = SharedPref.getLocationEventType( context);
@@ -1367,6 +1368,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
                         Global.PROJECT_ID,
                         String.valueOf(DriverId),
                         DriverStatusId,
+                        "0",
 
                         isYardMove,
                         isPersonal,
@@ -1441,7 +1443,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         try {
 
             /* Put data as JSON to List */
-            constants.SaveEldJsonToList( locationModel, DriverJsonArray );
+            constants.SaveEldJsonToList( locationModel, DriverJsonArray, context );
 
             // Saved json in synced array which is using in setting page to sync data mannually.
             JSONObject newObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 1);
@@ -1512,7 +1514,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         }
 
 
-        DriverLogId = DriverLogId+1;
+        DriverLogId = 0;
         String plateNo = SharedPref.GetCurrentTruckPlateNo(context);
 
         JSONObject newJsonData = hMethods.AddJobInArray(
@@ -1646,7 +1648,7 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
         constants.IsAlreadyViolation = false;
         sendBroadCast(true, false, false);
 
-       // Log.d("Saved Status", "--- service DriverStatusId: "+DriverStatusId);
+       // Logger.LogDebug("Saved Status", "--- service DriverStatusId: "+DriverStatusId);
 
     }
 
@@ -1695,14 +1697,14 @@ public class ServiceCycle implements TextToSpeech.OnInitListener {
 
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported");
+                Logger.LogError("TTS", "This Language is not supported");
             } else {
 
                 SpeakOutMsg(message);
             }
 
         } else {
-            Log.e("TTS", "Initilization Failed!");
+            Logger.LogError("TTS", "Initilization Failed!");
         }
     }
 

@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.RequestResponse;
 import com.constants.SharedPref;
 import com.constants.ShippingPost;
@@ -750,7 +751,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
                     case GetOdometerss:
                         try {
                             saveReadingBtn.setEnabled(true);
-                            //  Log.d("response", "response Get: " + response);
+                            //  Logger.LogDebug("response", "response Get: " + response);
                             dataJson = new JSONObject(obj.getString("Data"));
                             ParseGetOdometerJson(dataJson);
 
@@ -801,7 +802,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
             }
             odoProgressBar.setVisibility(View.GONE);
             saveReadingBtn.setEnabled(true);
-            Log.d("Driver", "error" + error.toString());
+            Logger.LogDebug("Driver", "error" + error.toString());
         }
     };
 
@@ -815,7 +816,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
             switch (flag) {
 
                 case SaveOdometerOffline:
-                    Log.d("response", "response Save: " + response);
+                    Logger.LogDebug("response", "response Save: " + response);
                     SharedPref.SetOdoSavingStatus(false, getActivity());
 
                     // Remove saved data from array after post
@@ -832,7 +833,7 @@ public class OdometerFragment extends Fragment implements View.OnClickListener{
 
         @Override
         public void onResponseError(String error, int flag) {
-            Log.d("shipmentJsonArray ", ">>>Error");
+            Logger.LogDebug("shipmentJsonArray ", ">>>Error");
             SharedPref.SetOdoSavingStatus(false, getActivity());
             odoProgressBar.setVisibility(View.GONE);
             PerformOperationsAfterSave(IsOdometerSaved, false);

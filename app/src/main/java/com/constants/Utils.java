@@ -221,7 +221,7 @@ public class Utils
             // Create the storage directory if it does not exist
             if (!apkStorageDir.exists()) {
                 if (!apkStorageDir.mkdirs()) {
-                    Log.d("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
+                    Logger.LogDebug("IMAGE_DIRECTORY_NAME", "Oops! Failed create " + "Logistic" + " directory");
                     return null;
                 }
             }
@@ -254,7 +254,7 @@ public class Utils
             } catch (IOException e) {
                 e.printStackTrace();
             }
-           //  Log.d("wiredObdLog", "wiredObdLog: " + text);
+           //  Logger.LogDebug("wiredObdLog", "wiredObdLog: " + text);
         }
 
         return text;
@@ -324,10 +324,10 @@ public class Utils
             } catch (IOException e) {
                 e.printStackTrace();
             }
-           // Log.d("wiredObdLog", "wiredObdLog: " + text);
+           // Logger.LogDebug("wiredObdLog", "wiredObdLog: " + text);
             fileSize = text.toString().split("\n\n").length;
 
-           // Log.d("log size", "log size: " + fileSize);
+           // Logger.LogDebug("log size", "log size: " + fileSize);
 
             if(fileSize > 2 && Globally.isConnected(context)){
                 SyncWiredObdLog syncDataUpload = new SyncWiredObdLog(context, DriverId, DriverName, wiredObdLog );
@@ -359,10 +359,10 @@ public class Utils
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            // Log.d("wiredObdLog", "wiredObdLog: " + text);
+            // Logger.LogDebug("wiredObdLog", "wiredObdLog: " + text);
             fileSize = text.toString().split("\n\n").length;
 
-            // Log.d("log size", "log size: " + fileSize);
+            // Logger.LogDebug("log size", "log size: " + fileSize);
 
             if(fileSize > count && Globally.isConnected(context)){
                 SyncWiredObdLog syncDataUpload = new SyncWiredObdLog(context, DriverId, DriverName, wiredObdLog );
@@ -396,10 +396,10 @@ public class Utils
             } catch (IOException e) {
                 e.printStackTrace();
             }
-           //  Log.d(ConstantsKeys.APP_USAGE_LOG, ConstantsKeys.APP_USAGE_LOG + ": " + text);
+           //  Logger.LogDebug(ConstantsKeys.APP_USAGE_LOG, ConstantsKeys.APP_USAGE_LOG + ": " + text);
             fileSize = text.toString().split("\n\n").length;
 
-            // Log.d("log size", "log size: " + fileSize);
+            // Logger.LogDebug("log size", "log size: " + fileSize);
 
             if(fileSize >= 5 && Globally.isConnected(context) ){
                  SyncAppUsageLog syncAppUsageLog = new SyncAppUsageLog(context, DriverId, appUsageLog);
@@ -431,7 +431,7 @@ public class Utils
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //  Log.d(ConstantsKeys.APP_USAGE_LOG, ConstantsKeys.APP_USAGE_LOG + ": " + text);
+            //  Logger.LogDebug(ConstantsKeys.APP_USAGE_LOG, ConstantsKeys.APP_USAGE_LOG + ": " + text);
             fileSize = text.toString().split("\n\n").length;
 
             if(fileSize > 50000){

@@ -33,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DownloadPdf;
+import com.constants.Logger;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
@@ -340,7 +341,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
         switch (v.getId()){
 
             case R.id.eldMenuLay:
-                Log.d("count", "stack_count: " + getParentFragmentManager().getBackStackEntryCount());
+                Logger.LogDebug("count", "stack_count: " + getParentFragmentManager().getBackStackEntryCount());
                 eldMenuLay.setEnabled(false);
                 if(getParentFragmentManager().getBackStackEntryCount() > 1) {
                     getParentFragmentManager().popBackStack();
@@ -423,7 +424,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
                 switch (flag) {
                     case getDocDetails:
                         try {
-                            Log.d("response", "response: " + response);
+                            Logger.LogDebug("response", "response: " + response);
 
                             helpDocList = new ArrayList<>();
 
@@ -478,7 +479,7 @@ public class DocumentFragment extends Fragment implements View.OnClickListener{
             switch (flag){
 
                 default:
-                    Log.d("Driver", "error" + error.toString());
+                    Logger.LogDebug("Driver", "error" + error.toString());
 
                     if(getActivity() != null && !getActivity().isFinishing()) {
                         Toast.makeText(getActivity(), Globally.DisplayErrorMessage(error.toString()), Toast.LENGTH_LONG).show();

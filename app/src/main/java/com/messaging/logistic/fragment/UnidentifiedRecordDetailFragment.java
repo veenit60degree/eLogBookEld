@@ -23,6 +23,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.custom.dialogs.AdverseRemarksDialog;
 import com.driver.details.DriverConst;
@@ -524,7 +525,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: ");
+            Logger.LogDebug("errorrr ", ">>>error dialog: ");
 
             if(progressDialog != null && progressDialog.isShowing())
                 progressDialog.dismiss();

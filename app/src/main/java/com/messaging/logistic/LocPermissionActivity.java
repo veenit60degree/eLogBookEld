@@ -73,7 +73,7 @@ public class LocPermissionActivity extends FragmentActivity {
 
         if(requestCode == 2) {
             if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
+               // Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
                 ObdDiagnoseFragment.LocationPermissionCallBack = true;
             }
 

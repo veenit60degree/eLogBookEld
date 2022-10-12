@@ -27,6 +27,7 @@ import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DownloadPdf;
+import com.constants.Logger;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
@@ -451,7 +452,7 @@ public class DownloadLogsAdapter extends BaseAdapter {
 
         @Override
         public void getError(VolleyError error, int flag) {
-            Log.d("error", ">>error: " + error);
+            Logger.LogDebug("error", ">>error: " + error);
 
         }
     };

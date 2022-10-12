@@ -86,7 +86,7 @@ public class BleAvailableDevicesDialog extends Dialog {
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                // Log.d("received", "received from service");
+                // Logger.LogDebug("received", "received from service");
 
                 if (intent.hasExtra(ConstantsKeys.BleDataAfterNotify)) {
                     String device = intent.getStringExtra(ConstantsKeys.BleDataAfterNotify);

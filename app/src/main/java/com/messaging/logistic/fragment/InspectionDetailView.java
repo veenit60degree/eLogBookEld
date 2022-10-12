@@ -31,6 +31,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.DriverLocationDialog;
@@ -88,7 +89,6 @@ public class InspectionDetailView  extends Fragment {
     StatePrefManager statePrefManager;
     List<String> StateArrayList;
     List<DriverLocationModel> StateList;
-
 
 
     @Override
@@ -173,6 +173,7 @@ public class InspectionDetailView  extends Fragment {
         odometerEditTxt.setVisibility(View.GONE);
         currentOdometerTV.setVisibility(View.VISIBLE);
         odometerTitleTv.setText(getString(R.string.OdometerTitle));
+        Constants.isLocationUpdated = false;
 
         Bundle getBundle  = this.getArguments();
         int position  = getBundle.getInt("position");
@@ -198,10 +199,14 @@ public class InspectionDetailView  extends Fragment {
             if(inspectionObj.has(ConstantsKeys.InspectionId)){
                 InspectionId = inspectionObj.getString(ConstantsKeys.InspectionId);
             }
+            Logger.LogDebug("selectedObj", "Driver selectedObj: " + responseObj);
 
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        Logger.LogDebug("image", "Driver image: " + InspectionsHistoryFragment.savedInspectionList.get(position).getDriverSignature());
+        Logger.LogDebug("imageBye", "Driver imageByte: " + InspectionsHistoryFragment.savedInspectionList.get(position).getDriverImageBytes());
 
         SavedInspectionModel savedInspectionModel = InspectionsHistoryFragment.savedInspectionList.get(position);
         if(savedInspectionModel.getInspectionTypeId() == Constants.Trailer){
@@ -386,6 +391,11 @@ public class InspectionDetailView  extends Fragment {
 
                 Constants.IsInspectionDetailViewBack = true;
                 getParentFragmentManager().popBackStack();
+
+                if(inspectionType.equals("pti") && Constants.isLocationUpdated){
+                    InspectionsHistoryFragment.refreshPtiBtnInvisible.performClick();
+                }
+
             }
         });
 
@@ -653,7 +663,7 @@ public class InspectionDetailView  extends Fragment {
         @Override
         public void getResponse(String response, int flag) {
 
-            Log.d("response", "response: " + response);
+            Logger.LogDebug("response", "response: " + response);
             inspectionProgressBar.setVisibility(View.GONE);
 
 
@@ -665,6 +675,7 @@ public class InspectionDetailView  extends Fragment {
 
                 if (obj.getString("Status").equals("true")) {
                     if(Message.equals("Sucess")) {
+                        Constants.isLocationUpdated = true;
                         Globally.EldScreenToast(changeLocBtn, "Location updated successfully", getResources().getColor(R.color.colorPrimary));
 
                         // Update inspections array locally
@@ -693,7 +704,7 @@ public class InspectionDetailView  extends Fragment {
     VolleyRequest.VolleyErrorCall ErrorCallBack = new VolleyRequest.VolleyErrorCall(){
         @Override
         public void getError(VolleyError error, int flag) {
-            Log.d("error", "error: " + error);
+            Logger.LogDebug("error", "error: " + error);
             inspectionProgressBar.setVisibility(View.GONE);
 
             Globally.EldScreenToast(changeLocBtn, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));

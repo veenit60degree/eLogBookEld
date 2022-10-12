@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -128,8 +129,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             }
 
 
-            if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
-                    !SharedPref.getPassword(getApplicationContext()).equals("")) {
+            if (SharedPref.IsDriverLogin(getApplicationContext())) {
                 stopForeground(true);
                 stopSelf();
 
@@ -160,7 +160,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        //  Log.d("onConnected", "onConnected");
+        //  Logger.LogDebug("onConnected", "onConnected");
         try {
             requestLocationUpdates();
         }catch (Exception e){
@@ -170,12 +170,12 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d("onConnectionSuspended", "onConnectionSuspended");
+        Logger.LogDebug("onConnectionSuspended", "onConnectionSuspended");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d("onConnectionFailed", "onConnectionFailed");
+        Logger.LogDebug("onConnectionFailed", "onConnectionFailed");
     }
 
     @Override
@@ -196,8 +196,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
         }
 
 
-        if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
-                !SharedPref.getPassword(getApplicationContext()).equals("")) {
+        if (SharedPref.IsDriverLogin(getApplicationContext())) {
             stopForeground(true);
             stopSelf();
 

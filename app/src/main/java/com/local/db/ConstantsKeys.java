@@ -78,6 +78,7 @@ public class ConstantsKeys {
     public static String EndState           = "EndState";
     public static String EndCountry         = "EndCountry";
 
+    public static String AppVersionCode     = "AppVersionCode";
     public static String rulesVersion       = "rulesVersion";
     public static String ChkDateTime        = "ChkDateTime";
 

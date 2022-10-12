@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.constants.Constants;
 import com.constants.DrawableUtils;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.ViewUtils;
 import com.custom.dialogs.TimerDialog;
@@ -280,7 +281,7 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
             CheckTimeInLogEditing(startDateTime, endDateTime, ((ViewHolderItem) viewHolder).endTimeLayout, false, currenDateTime, false);
 
             String time = startDateTime.toString().substring(11, 16);
-            Log.d("time: ", "time: " + time);
+            Logger.LogDebug("time: ", "time: " + time);
 
             if(time.equals("00:00")){
                 EditLogFragment.IsWrongDateEditLog = false;

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adapter.logistic.WIredObdAdapter;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.local.db.ShipmentHelperMethod;
 import com.messaging.logistic.Globally;
@@ -139,7 +140,7 @@ public class ObdConfigFragment  extends Fragment implements View.OnClickListener
     private class MyTimerTask extends TimerTask {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void run() {
-            Log.e("Log", "----TimerTask Running");
+            Logger.LogError("Log", "----TimerTask Running");
 
             try {
                 getActivity().runOnUiThread(new Runnable() {

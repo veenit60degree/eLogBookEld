@@ -40,13 +40,13 @@ public class VolleyRequest {
         StringRequest postRequest = new StringRequest(method, JsonURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                 Log.d("RES", " Response - " + flag + " : " + response);
+                 Logger.LogDebug("RES", ">>> Response - " + flag + " : " + response);
                 callback.getResponse(response, flag );
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("error", " error - " +flag + ": " + error);
+                Logger.LogError("error", " error - " +flag + ": " + error);
                 ErrorCallback.getError(error, flag );
             }
         }) {
@@ -58,7 +58,7 @@ public class VolleyRequest {
 */
             @Override
             protected Map<String, String> getParams() {
-              //  Log.e("params", " params: " + params);
+              //  Logger.LogError("params", " params: " + params);
                 return params;
             }
 

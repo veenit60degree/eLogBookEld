@@ -180,7 +180,7 @@ public class VehicleDialog extends Dialog {
     private OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
         @Override
         public void onItemSelected(View view, int position, long id) {
-           // Log.d("onItemSelected", "onItemSelected: " + position);
+           // Logger.LogDebug("onItemSelected", "onItemSelected: " + position);
             SelectedPosition = position;
            // saveBtnJob.setBackgroundResource(R.drawable.green_selector);
             Object object = updateVehSearchableSpinner.getSelectedItem();
@@ -198,7 +198,7 @@ public class VehicleDialog extends Dialog {
 
         @Override
         public void onNothingSelected() {
-           // Log.d("onNothingSelected", "onNothingSelected" );
+           // Logger.LogDebug("onNothingSelected", "onNothingSelected" );
            // saveBtnJob.setBackgroundResource(R.drawable.gray_selector);
         }
     };

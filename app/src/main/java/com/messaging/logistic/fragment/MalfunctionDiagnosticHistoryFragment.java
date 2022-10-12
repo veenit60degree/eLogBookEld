@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.adapter.logistic.MalfunctionAdapter;
 import com.adapter.logistic.MalfunctionHistoryAdapter;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.custom.dialogs.DatePickerDialog;
 import com.driver.details.DriverConst;
@@ -152,7 +153,7 @@ public class MalfunctionDiagnosticHistoryFragment extends Fragment implements Vi
             selectedDate = globally.ConvertDateFormatyyyy_MM_dd(selectedDate);
             JSONArray malDiaArray = malfunctionDiagnosticMethod.getEventsDateWise(selectedDate, globally, dbHelper);  //getMalDiaDurationArray(dbHelper);
 
-            Log.d("malDiaArray", "malDiaArray: " + malDiaArray);
+            Logger.LogDebug("malDiaArray", "malDiaArray: " + malDiaArray);
 
             try{
                 diagnosticHeaderList        = new ArrayList<>();

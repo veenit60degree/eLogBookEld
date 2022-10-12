@@ -291,7 +291,7 @@ public class UILApplication extends Application {
 				try {
 					info = manager.getPackageInfo("com.messaging.logistic", 0);
 					AppVersion = info.versionName;
-					Log.d("versionCode", "---versionName: " + AppVersion);
+					Logger.LogDebug("versionCode", "---versionName: " + AppVersion);
 				} catch (PackageManager.NameNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -304,7 +304,7 @@ public class UILApplication extends Application {
 					int AppVersionInt       = Integer.valueOf(AppVersionArray[i]);
 
 					if(OnlineVersionInt > AppVersionInt){
-						Log.d("update", "----- New Version Available ");
+						Logger.LogDebug("update", "----- New Version Available ");
 						IsNewVersion = true;
 					}
 				}
@@ -320,7 +320,7 @@ public class UILApplication extends Application {
 				}, 1500);
 
 			}
-			//	Log.d("update", "-----playstore version " + onlineVersion);
+			//	Logger.LogDebug("update", "-----playstore version " + onlineVersion);
 		}
 	}
 */

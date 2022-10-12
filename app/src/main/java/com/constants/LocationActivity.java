@@ -57,7 +57,7 @@ public class LocationActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Log.d(TAG, "onCreate ...............................");
+        //Logger.LogDebug(TAG, "onCreate ...............................");
         //show error dialog if GoolglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             finish();
@@ -85,16 +85,16 @@ public class LocationActivity extends Activity implements
     @Override
     public void onStart() {
         super.onStart();
-      //  Log.d(TAG, "onStart fired ..............");
+      //  Logger.LogDebug(TAG, "onStart fired ..............");
         mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        //Log.d(TAG, "onStop fired ..............");
+        //Logger.LogDebug(TAG, "onStop fired ..............");
         mGoogleApiClient.disconnect();
-       // Log.d(TAG, "isConnected ...............: " + mGoogleApiClient.isConnected());
+       // Logger.LogDebug(TAG, "isConnected ...............: " + mGoogleApiClient.isConnected());
     }
 
     private boolean isGooglePlayServicesAvailable() {
@@ -109,7 +109,7 @@ public class LocationActivity extends Activity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-       // Log.d(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
+       // Logger.LogDebug(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
         startLocationUpdates();
     }
 
@@ -120,7 +120,7 @@ public class LocationActivity extends Activity implements
         }
         @SuppressLint("MissingPermission") PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
-        Log.d(TAG, "Location update started ..............: ");
+        Logger.LogDebug(TAG, "Location update started ..............: ");
     }
 
     @Override
@@ -130,20 +130,20 @@ public class LocationActivity extends Activity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Connection failed: " + connectionResult.toString());
+        Logger.LogDebug(TAG, "Connection failed: " + connectionResult.toString());
     }
 
     @Override
     public void onLocationChanged(Location location) {
-      //  Log.d(TAG, "Firing onLocationChanged..............................................");
+      //  Logger.LogDebug(TAG, "Firing onLocationChanged..............................................");
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         updateUI();
 
       /*  if(location.getAccuracy() < 100.0 && location.getSpeed() < 6.95){
-            Log.d(TAG, "Accuracy result less then 100.............");
+            Logger.LogDebug(TAG, "Accuracy result less then 100.............");
         } else{
-            Log.d(TAG, "Accuracy result greater then 100 .............");
+            Logger.LogDebug(TAG, "Accuracy result greater then 100 .............");
         }*/
 
     }
@@ -151,7 +151,7 @@ public class LocationActivity extends Activity implements
 
 
     private void updateUI() {
-        //Log.d(TAG, "UI update initiated .............");
+        //Logger.LogDebug(TAG, "UI update initiated .............");
         if (null != mCurrentLocation) {
             String lat = String.valueOf(mCurrentLocation.getLatitude());
             String lng = String.valueOf(mCurrentLocation.getLongitude());
@@ -169,7 +169,7 @@ public class LocationActivity extends Activity implements
             Toast.makeText(LocationActivity.this, "Location Updated" , Toast.LENGTH_LONG).show();
 
         } else {
-            Log.d(TAG, "location is null ...............");
+            Logger.LogDebug(TAG, "location is null ...............");
         }
     }
 
@@ -182,7 +182,7 @@ public class LocationActivity extends Activity implements
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
-       // Log.d(TAG, "Location update stopped .......................");
+       // Logger.LogDebug(TAG, "Location update stopped .......................");
     }
 
     @Override
@@ -190,7 +190,7 @@ public class LocationActivity extends Activity implements
         super.onResume();
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
-           // Log.d(TAG, "Location update resumed .....................");
+           // Logger.LogDebug(TAG, "Location update resumed .....................");
         }
     }
 }

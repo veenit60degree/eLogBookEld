@@ -27,6 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.custom.dialogs.PermissionInfoDialog;
 import com.google.android.gms.common.ConnectionResult;
@@ -115,7 +116,7 @@ public class SplashActivity extends Activity implements
         global = new Globally();
         handler = new Handler();
 
-        Log.d("IsAppRestart", "IsAppRestart: " +TabAct.IsAppRestart);
+        Logger.LogDebug("IsAppRestart", "IsAppRestart: " +TabAct.IsAppRestart);
       //  SharedPref.SaveBleOBDMacAddress("C4:64:E3:54:EF:04", getApplicationContext());
 
 
@@ -128,7 +129,7 @@ public class SplashActivity extends Activity implements
         Constants.IsHomePageOnCreate = true;
 
       //  String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
-        //Log.d("DeviceID", android_id);
+        //Logger.LogDebug("DeviceID", android_id);
         // check availability of play services
         if (!global.checkPlayServices(getApplicationContext())) {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -182,13 +183,13 @@ public class SplashActivity extends Activity implements
 
                 return true;
             } else {
-               // Log.v("TAG","Permission is revoked");
+               // Logger.LogVerbose("TAG","Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, LOCATION_REQUEST);
 
                 return false;
             }
         }else { //permission is automatically granted on sdk<23 upon installation
-           // Log.v("TAG","Permission is granted");
+           // Logger.LogVerbose("TAG","Permission is granted");
             statusCheck();
             return true;
         }
@@ -273,18 +274,18 @@ public class SplashActivity extends Activity implements
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v("TAG","Permission is granted");
+                Logger.LogVerbose("TAG","Permission is granted");
                 statusCheck();
 
                 return true;
             } else {
-                Log.v("TAG","Permission is revoked");
+                Logger.LogVerbose("TAG","Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_REQUEST);
                 return false;
             }
         }
         else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("TAG","Permission is granted");
+            Logger.LogVerbose("TAG","Permission is granted");
             statusCheck();
             return true;
         }
@@ -308,7 +309,7 @@ public class SplashActivity extends Activity implements
 
 
     protected synchronized void buildGoogleApiClient() {
-       // Log.i(TAG, "Building GoogleApiClient");
+       // Logger.LogInfo(TAG, "Building GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -347,11 +348,11 @@ public class SplashActivity extends Activity implements
                 askGpsTurnOn();
 
             } else {
-              //  Log.v("TAG","Permission is revoked");
+              //  Logger.LogVerbose("TAG","Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 4);
             }
         }else { //permission is automatically granted on sdk<23 upon installation
-          //  Log.v("TAG","Permission is granted");
+          //  Logger.LogVerbose("TAG","Permission is granted");
             askGpsTurnOn();
         }
 
@@ -429,7 +430,7 @@ public class SplashActivity extends Activity implements
         final Status status = locationSettingsResult.getStatus();
         switch (status.getStatusCode()) {
             case LocationSettingsStatusCodes.SUCCESS:
-               // Log.i(TAG, "All location settings are satisfied.");
+               // Logger.LogInfo(TAG, "All location settings are satisfied.");
                 // startLocationUpdates();
 
                 CheckUserCredientials();
@@ -438,7 +439,7 @@ public class SplashActivity extends Activity implements
 
 
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to" +
+                Logger.LogInfo(TAG, "Location settings are not satisfied. Show the user a dialog to" +
                         "upgrade location settings ");
 
               //  CheckUserCredientials();
@@ -447,20 +448,20 @@ public class SplashActivity extends Activity implements
                     // Show the dialog by calling startResolutionForResult(), and check the result  in onActivityResult().
                     status.startResolutionForResult(SplashActivity.this, REQUEST_CHECK_SETTINGS);
                 } catch (IntentSender.SendIntentException e) {
-                    Log.i(TAG, "PendingIntent unable to execute request.");
+                    Logger.LogInfo(TAG, "PendingIntent unable to execute request.");
                 }
 
                 break;
 
             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog " +
+                Logger.LogInfo(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog " +
                         "not created.");
                 CheckUserCredientials();
 
                 break;
 
                 default:
-                    Log.i(TAG, "default ");
+                    Logger.LogInfo(TAG, "default ");
                     CheckUserCredientials();
 
                     break;
@@ -475,7 +476,7 @@ public class SplashActivity extends Activity implements
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        Log.i(TAG, "User agreed to make required location settings changes.");
+                        Logger.LogInfo(TAG, "User agreed to make required location settings changes.");
                         //startLocationUpdates();
 
                         CheckUserCredientials();
@@ -483,7 +484,7 @@ public class SplashActivity extends Activity implements
                         break;
 
                     case Activity.RESULT_CANCELED:
-                        Log.i(TAG, "User chose not to make required location settings changes.");
+                        Logger.LogInfo(TAG, "User chose not to make required location settings changes.");
                         CheckUserCredientials();
                         break;
                 }
@@ -511,8 +512,7 @@ public class SplashActivity extends Activity implements
 
 
     void checkUserStatus(){
-        if (!SharedPref.getUserName(SplashActivity.this).equals("") &&
-                !SharedPref.getPassword(SplashActivity.this).equals("")) {
+        if (SharedPref.IsDriverLogin(getApplicationContext())) {
             // =============== Check storage permission =====================
             if (Build.VERSION.SDK_INT < 23) {
                 statusCheck();
@@ -535,7 +535,7 @@ public class SplashActivity extends Activity implements
         if(SharedPref.getPermissionInfoViewStatus(this) == false){
             try {
                 if (permissionInfoDialog != null && permissionInfoDialog.isShowing()) {
-                   Log.d("permissionInfoDialog", "already showing");
+                   Logger.LogDebug("permissionInfoDialog", "already showing");
                 }else{
                     permissionInfoDialog = new PermissionInfoDialog(SplashActivity.this, new TermsAgreeListener() );
                     permissionInfoDialog.show();
@@ -573,10 +573,7 @@ public class SplashActivity extends Activity implements
 
     void MoveToNextScreen(String screen){
 
-       // constants.checkBleConnection();
-
         /*========= Call main Service to start obd server service =============*/
-        Constants.isEldHome = false;
         Intent intent;
 
         if(screen.equals("home")) {
@@ -605,7 +602,7 @@ public class SplashActivity extends Activity implements
             switch (requestCode) {
                 case STORAGE_REQUEST:
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
+                        Logger.LogVerbose("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
                         //resume tasks needing this permission
                         statusCheck();
 
@@ -665,7 +662,7 @@ public class SplashActivity extends Activity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("location", "location " + location);
+        Logger.LogDebug("location", "location " + location);
         Globally.LATITUDE = "" +location.getLatitude();
         Globally.LONGITUDE = "" +location.getLongitude();
         Globally.LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.LONGITUDE);

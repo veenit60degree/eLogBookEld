@@ -10,7 +10,6 @@ import com.constants.Constants;
 public class LocationServiceReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Constants.isEldHome = false;
         context.startService(new Intent(context, BackgroundLocationService.class));
     }
 }

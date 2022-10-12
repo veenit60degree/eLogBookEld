@@ -74,7 +74,7 @@ public class DownloadAppService extends Service {
         }
         SharedPref.setAsyncCancelStatus(true, getApplicationContext());
 
-        Log.d("AsyncTask", "onDestroy");
+        Logger.LogDebug("AsyncTask", "onDestroy");
        // Toast.makeText(this, "Download Completed.", Toast.LENGTH_SHORT).show();
     }
 
@@ -102,7 +102,7 @@ public class DownloadAppService extends Service {
         @Override
         protected String doInBackground(String... urls) {
 
-            Log.d(TAG, "doInBackground: " + urls[0]);
+            Logger.LogDebug(TAG, "doInBackground: " + urls[0]);
 
             int count;
             try {
@@ -132,7 +132,7 @@ public class DownloadAppService extends Service {
                     // publishing the progress....
                     // After this onProgressUpdate will be called
                     publishProgress("" + (int) ((total * 100) / lengthOfFile));
-                    Log.d(TAG, "Progress: " + (int) ((total * 100) / lengthOfFile));
+                    Logger.LogDebug(TAG, "Progress: " + (int) ((total * 100) / lengthOfFile));
 
                     // writing data to file
                     output.write(data, 0, count);
@@ -156,7 +156,7 @@ public class DownloadAppService extends Service {
                 return folder + fileName;
 
             } catch (Exception e) {
-                Log.e("Error: ", e.getMessage());
+                Logger.LogError("Error: ", e.getMessage());
             }
 
 
@@ -186,7 +186,7 @@ public class DownloadAppService extends Service {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.d(TAG, "onPostExecute");
+            Logger.LogDebug(TAG, "onPostExecute");
             stopSelf();
 
             if (result.equals("Downloading failed.")) {

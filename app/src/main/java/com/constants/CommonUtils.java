@@ -24,7 +24,7 @@ public class CommonUtils {
 		int width = 500;	//((screenWidth / 3) + 130);
 		DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
 		int densityDpi = (int)(metrics.density * 160f);
-		Log.d("densityDpi","densityDpi: " +densityDpi);
+		Logger.LogDebug("densityDpi","densityDpi: " +densityDpi);
 
 		int SingleDriverMenuWidth;
 		int DualDriverMenuWidth;

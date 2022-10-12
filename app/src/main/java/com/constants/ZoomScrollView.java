@@ -115,7 +115,7 @@ public class ZoomScrollView extends ScrollView {
                     }else if(allScroll > maxZoom){
                         allScroll = maxZoom;
                     }
-                    Log.i("allScroll","allScroll:"+allScroll);
+                    Logger.LogInfo("allScroll","allScroll:"+allScroll);
                     LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) zoomView.getLayoutParams();
                     lp.height = (int) (height + allScroll/2);
                     zoomView.setLayoutParams(lp);
@@ -146,7 +146,7 @@ public class ZoomScrollView extends ScrollView {
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if(allScroll != -1){
-            Log.i("ScrollView","onTouchEvent");
+            Logger.LogInfo("ScrollView","onTouchEvent");
             return false;
         }
         return super.onTouchEvent(ev);

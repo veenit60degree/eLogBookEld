@@ -25,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.constants.APIs;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.Globally;
@@ -98,22 +99,22 @@ public class UpdateDriverService  extends Service implements LocationListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
             context = this;
-            Log.i("tag", "on start");
+            Logger.LogInfo("tag", "on start");
             mylocation = getLocation(context);
 
             //mlocListener = new MyLocationListener();
 
             Double msg = mylocation.getLatitude();
-            Log.i("my long", msg.toString());
+            Logger.LogInfo("my long", msg.toString());
 
             Double dest_lat = intent.getDoubleExtra("lat", 0.0);
             Double dest_lon = intent.getDoubleExtra("lon", 0.0);
-            //   Log.i("get lat", dest_lat.toString());
-            //   Log.i("get lon", dest_lon.toString());
+            //   Logger.LogInfo("get lat", dest_lat.toString());
+            //   Logger.LogInfo("get lon", dest_lon.toString());
 
             this.dest_location.setLatitude(dest_lat);
             this.dest_location.setLongitude(dest_lon);
-            Log.i("get lon", dest_lon.toString());
+            Logger.LogInfo("get lon", dest_lon.toString());
 
 
 
@@ -132,7 +133,7 @@ public class UpdateDriverService  extends Service implements LocationListener {
 
         @Override
         public void run() {
-            Log.e("Log", "Running");
+            Logger.LogError("Log", "Running");
         }
     };
 
@@ -157,9 +158,9 @@ public class UpdateDriverService  extends Service implements LocationListener {
 
 
         mylocation = getLocation(context);
-        Log.i("Tag", "location changed");
+        Logger.LogInfo("Tag", "location changed");
         distance = mylocation.distanceTo(dest_location);
-        Log.i("Tag", "" + distance);
+        Logger.LogInfo("Tag", "" + distance);
         if (flag == 0) {
 
 
@@ -170,7 +171,7 @@ public class UpdateDriverService  extends Service implements LocationListener {
             } catch (Exception e) {
                 e.printStackTrace();
                 listSize = 0;
-                Log.d("jsonStr", ">>>called Exception: " );
+                Logger.LogDebug("jsonStr", ">>>called Exception: " );
             }
 
             try {
@@ -271,7 +272,7 @@ public class UpdateDriverService  extends Service implements LocationListener {
 
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // no network provider is enabled
-                Log.i("No gps and No Network ",
+                Logger.LogInfo("No gps and No Network ",
                         "No gps and No Network is enabled enable either one of them");
                 if(getApplicationContext() != null) {
                     Toast.makeText(this, "Enable either Network or GPS",
@@ -290,7 +291,7 @@ public class UpdateDriverService  extends Service implements LocationListener {
                             LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    Log.d("Network", "Network");
+                    Logger.LogDebug("Network", "Network");
                     if (locationManager != null) {
                         location = locationManager
                                 .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -298,8 +299,8 @@ public class UpdateDriverService  extends Service implements LocationListener {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
 
-                            //  Log.d("Network Latitude", ">>Network Latitude: " + latitude);
-                            //   Log.d("Network longitude", ">>Network longitude: " + longitude);
+                            //  Logger.LogDebug("Network Latitude", ">>Network Latitude: " + latitude);
+                            //   Logger.LogDebug("Network longitude", ">>Network longitude: " + longitude);
 
                         }
                     }
@@ -310,7 +311,7 @@ public class UpdateDriverService  extends Service implements LocationListener {
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
+                        Logger.LogDebug("GPS Enabled", "GPS Enabled");
                         if (locationManager != null) {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -318,8 +319,8 @@ public class UpdateDriverService  extends Service implements LocationListener {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
 
-                                //   Log.d("GPS Latitude", ">>GPS Latitude: " + latitude);
-                                //   Log.d("GPS longitude", ">>GPS longitude: " + longitude);
+                                //   Logger.LogDebug("GPS Latitude", ">>GPS Latitude: " + latitude);
+                                //   Logger.LogDebug("GPS longitude", ">>GPS longitude: " + longitude);
 
                             }
                         }
@@ -419,7 +420,7 @@ public class UpdateDriverService  extends Service implements LocationListener {
                     public void onResponse(String response) {
 
                         // response
-                        Log.d("Response ", response);
+                        Logger.LogDebug(">>>Response ", response);
                         isUpdating = false;
                         String status = "";
 
@@ -445,7 +446,7 @@ public class UpdateDriverService  extends Service implements LocationListener {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // response
-                        Log.d("error", "error " +error);
+                        Logger.LogDebug("error", "error " +error);
                         isUpdating = false;
 
                     }

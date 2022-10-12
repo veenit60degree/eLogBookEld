@@ -52,6 +52,7 @@ import com.constants.APIs;
 import com.constants.ConstantHtml;
 import com.constants.Constants;
 import com.constants.DoubleClickListener;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.SwitchTrackTextDrawable;
 import com.constants.Utils;
@@ -403,7 +404,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             DateTime selectedDateTime = global.getDateTimeObj(selectedDateStr, false) ;
             DateTime currentDateTime = global.getDateTimeObj(currentDateStr, false) ;
             int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
-            Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
+            Logger.LogDebug("DaysDiff", "DaysDiff: " + DaysDiff);
 
             DOTBtnVisibility(DaysDiff, MaxDays);
 
@@ -703,7 +704,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
             }
 
             DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
-            Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
+            Logger.LogDebug("DaysDiff", "DaysDiff: " + DaysDiff);
 
             if ( DaysDiff >= 0 && DaysDiff <= MaxDays) {
 
@@ -840,7 +841,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
                 DateTime selectedDateTime = global.getDateTimeObj(selectedDateStr, false);
                 DateTime currentDateTime = global.getDateTimeObj(currentDateStr, false);
                 DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
-                Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
+                Logger.LogDebug("DaysDiff", "DaysDiff: " + DaysDiff);
 
                 DOTBtnVisibility(DaysDiff, MaxDays);
                 GetDriverDotDetails(DriverId, LogDate);
@@ -1865,7 +1866,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         public void getError(VolleyError error, int flag) {
             if(getActivity() != null && !getActivity().isFinishing()) {
                 try {
-                    Log.d("error", ">>error: " + error);
+                    Logger.LogDebug("error", ">>error: " + error);
                     canDotProgressBar.setVisibility(View.GONE);
                     global.EldScreenToast(scrollUpBtn, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
                     htmlAppendedText = "";
@@ -1896,7 +1897,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     private Thread.UncaughtExceptionHandler onRuntimeError= new Thread.UncaughtExceptionHandler() {
         public void uncaughtException(Thread thread, Throwable ex) {
             //Try starting the Activity again
-            Log.d("uncaughtException", "uncaughtException: " +ex.toString());
+            Logger.LogDebug("uncaughtException", "uncaughtException: " +ex.toString());
             SharedPref.SetDOTStatus( false, getActivity());
             getActivity().finish();
             System.exit(2);

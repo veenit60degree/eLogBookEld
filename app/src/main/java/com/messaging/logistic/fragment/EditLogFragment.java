@@ -22,15 +22,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adapter.logistic.EditLogRecyclerViewAdapter;
-import com.adapter.logistic.OnStartDragListener;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
-import com.constants.SwipeToDeleteCallback;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.EditLogPreviewDialog;
 import com.custom.dialogs.EditLogRemarksDialog;
@@ -112,6 +111,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
     boolean IsSingleDriver = true, IsCurrentDate = false, IsNewLogAdded = false;
     final boolean IsOldRecord = true;
     String violationMsg = "";
+    String VersionCode = "";
+
+
     List<DriverLog> oDriverLogList = new ArrayList<DriverLog>();
     DriverDetail oDriverDetail;
     RulesResponseObject RulesObj;
@@ -177,6 +179,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
         }
         
         CompanyId     = DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity());
+        VersionCode  = global.GetAppVersion(getActivity(), "VersionCode");
 
         EldTitleTV.setText("Edit Log");
         eldMenuBtn.setImageResource(R.drawable.back_btn);
@@ -468,7 +471,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
                 try {
                     JSONObject obj = new JSONObject();
-                    logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail);
+                    logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
 
                     if(logArray.length() > 0) {
                         obj = (JSONObject) logArray.get(logArray.length() - 1);
@@ -506,9 +509,11 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         }
 
 
-                        DriverLogModel addNewModel = hMethods.GetDriverLogModel(obj, startDateTime, startUtcDateTime, endDateTime, endUtcDateTime,
-                                IsOffDutyPermission, IsSleeperPermission, IsDrivingPermission , IsOnDutyPermission, IsNewLogAdded);
+                        DriverLogModel addNewModel = hMethods.GetDriverLogModel(obj, startDateTime, startUtcDateTime,
+                                endDateTime, endUtcDateTime, IsOffDutyPermission, IsSleeperPermission,
+                                IsDrivingPermission , IsOnDutyPermission, IsNewLogAdded, VersionCode);
                         addNewModel.setDriverVehicleTypeId(Constants.Driver);
+                        addNewModel.setDriverLogId(0);
                         oDriverLogDetail.add(addNewModel);
 
                     }else{
@@ -516,13 +521,15 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         startDateTime = global.getDateTimeObj(startDateFormat, false);
                         startUtcDateTime = global.getDateTimeObj(startDateTime.plusHours(Math.abs(offsetFromUTC)).toString(), false);
 
-                        DriverLogModel addNewModel = hMethods.GetDriverLogModel(obj, startDateTime, startUtcDateTime, currentDateTime, currentUTCTime,
-                                IsOffDutyPermission, IsSleeperPermission, IsDrivingPermission , IsOnDutyPermission, IsNewLogAdded);
+                        DriverLogModel addNewModel = hMethods.GetDriverLogModel(obj, startDateTime, startUtcDateTime,
+                                currentDateTime, currentUTCTime, IsOffDutyPermission, IsSleeperPermission,
+                                IsDrivingPermission , IsOnDutyPermission, IsNewLogAdded, VersionCode);
                         addNewModel.setDriverVehicleTypeId(Constants.Driver);
+                        addNewModel.setDriverLogId(0);
                         oDriverLogDetail.add(addNewModel);
                     }
 
-                    logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail);
+                    logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
 
 
                     setRecyclerAdapter();
@@ -542,7 +549,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                 violationMsg = "Incorrect Time. Please check your log time on RED highlighted area.";
 
                 JSONArray tempTotalArray    = hMethods.GetSameArray(logArrayBeforeSelectedDate);
-                JSONArray tempLogArray      = hMethods.ConvertListToJsonArray(oDriverLogDetail);
+                JSONArray tempLogArray      = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
                 finalEditingArray           = hMethods.GetSameArray(logArrayBeforeSelectedDate);
 
                 oDriverLogDetail = new ArrayList<DriverLogModel>();
@@ -665,7 +672,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                 }
 
 
-                logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail);
+                logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
 
               //  if(IsWrongDateEditLog == false) {
                     //LoadAdapterOnListView();
@@ -813,7 +820,9 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                 global.getDateTimeObj(utcStartTime, false),
                 global.getDateTimeObj(endTime, false),
                 global.getDateTimeObj(utcEndTime, false),
-                IsOffDutyPermission, IsSleeperPermission, IsDrivingPermission, IsOnDutyPermission, IsNewLogAdded);
+                IsOffDutyPermission, IsSleeperPermission, IsDrivingPermission,
+                IsOnDutyPermission, IsNewLogAdded, VersionCode);
+       // logModel1.setDriverLogId(0);
 
         if(IsFirstPart){
             logModel1.setViolation(false);
@@ -918,7 +927,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             tempDriverLogDetail = oDriverLogDetail;
 
     // Add current Day log with previous day
-            logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail);
+            logArray = hMethods.ConvertListToJsonArray(oDriverLogDetail, getActivity());
             finalEditedLogArray = GetEditDataAsJson(logArray, lastDaySavedLocation, reason);
 
             Globally.EldScreenToast(saveBtn, "Saved data successfully.", getResources().getColor(R.color.colorPrimary));
@@ -975,21 +984,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
     }
 
 
-    // Save Driver Cycle according to driver last location address
-/*    private void SaveDriverCycle(JSONArray finalEditedLogArray){
 
-        try {
-            if(finalEditedLogArray.length() > 0){
-                JSONObject lastItemJson = hMethods.GetLastJsonFromArray(finalEditedLogArray);
-                String country = lastItemJson.getString(ConstantsKeys.Country).trim();
-
-                global.SaveCurrentCycle(country, "edit_log", getActivity());
-
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }*/
 
 
    private List<EldDataModelNew> getEditLogList(JSONArray logArray){
@@ -1112,6 +1107,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         obj.getString(ConstantsKeys.ProjectId),
                         obj.getString(ConstantsKeys.DriverId),
                         obj.getString(ConstantsKeys.DriverStatusId),
+                        obj.getString(ConstantsKeys.DriverLogId),
 
                         obj.getString(ConstantsKeys.IsYardMove),
                         obj.getString(ConstantsKeys.IsPersonal),
@@ -1314,9 +1310,12 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                 }
 
                 EldDataModelNew eldModel = new EldDataModelNew(
+
                         obj.getString(ConstantsKeys.ProjectId),
                         obj.getString(ConstantsKeys.DriverId),
                         obj.getString(ConstantsKeys.DriverStatusId),
+                        obj.getString(ConstantsKeys.DriverLogId),
+
                         obj.getString(ConstantsKeys.YardMove),
                         obj.getString(ConstantsKeys.Personal),
                         DeviceID,
@@ -1367,7 +1366,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                         );
 
                     if(eldModel != null) {
-                        constants.SaveEldJsonToList(eldModel, DriverJsonArray);  /* Put data as JSON to List */
+                        constants.SaveEldJsonToList(eldModel, DriverJsonArray, getActivity());  /* Put data as JSON to List */
                     }
 
 
@@ -1379,7 +1378,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
             }
         }
 
-      //  Log.d("DriverJsonArray", "DriverJsonArray: " + DriverJsonArray);
+      //  Logger.LogDebug("DriverJsonArray", "DriverJsonArray: " + DriverJsonArray);
         return DriverJsonArray;
 
     }
@@ -1423,7 +1422,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
         @SuppressLint("NewApi")
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: " );
+            Logger.LogDebug("errorrr ", ">>>error dialog: " );
 
             try {
                 if (getActivity() != null) {
@@ -1529,7 +1528,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                     EldDataModelNew listModel = tempList.get(i);
 
                     if (listModel != null) {
-                        constants.SaveEldJsonToList(listModel, driverJsonArray);  /* Put data as JSON to List */
+                        constants.SaveEldJsonToList(listModel, driverJsonArray, getActivity());  /* Put data as JSON to List */
                     }
                 }
             }
@@ -1539,7 +1538,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
         return driverJsonArray;
 
-        // Log.d("Arraay", "Arraay: " + DriverJsonArray.toString());
+        // Logger.LogDebug("Arraay", "Arraay: " + DriverJsonArray.toString());
     }
 
 
@@ -1585,7 +1584,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
 
     void updateLocalLog(){
         try {
-            //  Log.d("finalEditedLogArray", "finalEditedLogArray: " + finalEditedLogArray);
+            //  Logger.LogDebug("finalEditedLogArray", "finalEditedLogArray: " + finalEditedLogArray);
             JSONArray editableLogArray = hMethods.GetSameArray(logArrayBeforeSelectedDate);
 
             // Add prev edited log in array
@@ -1603,6 +1602,8 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
                     editableLogArray.put(jsonObj1);
                 }
             }
+
+           // Constants.isLogEdited = true;
             // ------------ Update log array in local DB ---------
             hMethods.DriverLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, editableLogArray);
 
@@ -1615,7 +1616,7 @@ public class EditLogFragment extends Fragment implements View.OnClickListener, E
     void UpdateLocalLogWithBackStack(final boolean isBackStack){
 
         updateLocalLog();
-        EldFragment.isUpdateDriverLog = true;
+        EldFragment.isUpdateDriverLog = isBackStack;
 
         try {
             new Handler().postDelayed(new Runnable() {

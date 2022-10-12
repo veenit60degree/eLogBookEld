@@ -55,8 +55,7 @@ public class TermsConditionsActivity extends FragmentActivity {
         rightMenuBtn.setVisibility(View.GONE);
         termsCondProgressBar.setVisibility(View.GONE);
 
-        if (SharedPref.getUserName(this).equals("") &&
-                SharedPref.getPassword(this).equals("")) {
+        if (!SharedPref.IsDriverLogin(getApplicationContext())) {
             eldMenuBtn.setImageResource(R.drawable.back_white);
             isLoggedIn = false;
 

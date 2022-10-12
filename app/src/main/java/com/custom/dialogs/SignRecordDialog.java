@@ -25,6 +25,7 @@ import com.adapter.logistic.RecapRecordSignAdapter;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.Utils;
@@ -461,12 +462,12 @@ public class SignRecordDialog extends Dialog {
             // Update recap array with byte image
             recap18DaysArray = recapViewMethod.UpdateSelectedDateRecapArray(recap18DaysArray, selectedDateList.get(i), SignImageInBytes);
 
-            constants.saveObdData("Certify",
+         /*   constants.saveObdData("Certify",
                     "CertifyLogArray: " + CertifyLogArray.toString(),
                     "", "","", "","", "",
                     "","", "", "", "",
                     DriverId, dbHelper, driverPermissionMethod, obdUtil);
-
+*/
 
         }
 
@@ -476,7 +477,7 @@ public class SignRecordDialog extends Dialog {
 
 
     private void setListSelectionRecord(boolean isSelected){
-      //  Log.d("recordSelectedList", "recordSelectedList: " + recordSelectedList);
+      //  Logger.LogDebug("recordSelectedList", "recordSelectedList: " + recordSelectedList);
 
         if(recordSelectedList.size() > 0) {
             boolean isItemChecked = false;
@@ -529,7 +530,7 @@ public class SignRecordDialog extends Dialog {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
-            Log.d("signatureLog", "---Response: " + response);
+            Logger.LogDebug("signatureLog", "---Response: " + response);
             dismissDialog();
 
             try {
@@ -569,7 +570,7 @@ public class SignRecordDialog extends Dialog {
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: ");
+            Logger.LogDebug("errorrr ", ">>>error dialog: ");
 
             if(context != null) {
                 try {

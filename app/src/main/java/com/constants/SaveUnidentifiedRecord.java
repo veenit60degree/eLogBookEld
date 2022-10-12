@@ -46,7 +46,7 @@ public class SaveUnidentifiedRecord
                 {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("Response ", ">>>Response: " + response);
+                        Logger.LogDebug("Response ", ">>>Response: " + response);
                        // SharedPref.SetEditedLogStatus(false, context);
                         postResponse.getResponse(response,flag);
 
@@ -56,7 +56,7 @@ public class SaveUnidentifiedRecord
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("error", ">>errorrrrr: " + error);
+                        Logger.LogDebug("error", ">>errorrrrr: " + error);
                         try {
                             ErrorCallBack.getError(error, flag);
                         }catch (Exception e){
@@ -73,8 +73,8 @@ public class SaveUnidentifiedRecord
             @Override
             public byte[] getBody() throws AuthFailureError {
                 try {
-                    Log.d("api", ">>>certify uniden Data api: " + api);
-                     Log.d("certify", ">>>>>certify uniden Data: " + driverLogData.toString());
+                    Logger.LogDebug("api", ">>certify uniden Data api: " + api);
+                     Logger.LogDebug("certify", ">>certify uniden Data: " + driverLogData.toString());
                     return driverLogData.toString().getBytes("utf-8");
                 } catch (UnsupportedEncodingException uee) {
                     VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",

@@ -58,6 +58,7 @@ import com.constants.ConstantHtml;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.ScrollViewExt;
 import com.constants.ScrollViewListener;
@@ -944,7 +945,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             if(recap18DaysArray == null || recap18DaysArray.length() == 0) {
                 GetRecapView18DaysData(DRIVER_ID, DeviceId, StartDate, EndDate );
             }else{
-                if(recapViewMethod.GetSelectedRecapData(recap18DaysArray, EndDate) == null && !BackgroundLocationService.IsRecapApiACalled){
+                if(recapViewMethod.GetSelectedRecapData(recap18DaysArray, EndDate) == null && !BackgroundLocationService.IsRecapApiCalled){
                     StartDate = recapViewMethod.GetLastItemDate(recap18DaysArray);
 
                     startDateTime   = Globally.getDateTimeObj(Globally.ConvertDateFormat(StartDate), false);
@@ -1059,6 +1060,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             } else {
                 SavedLogApi = APIs.SAVE_DRIVER_STATUS;
             }
+
+            EldFragment.IsSaveOperationInProgress = true;
 
             saveCertifyLogPost.PostDriverLogData(DriverJsonArray, SavedLogApi, socketTimeout, false, false,
                     DriverType, SaveEditedLog);
@@ -1295,7 +1298,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         @Override
         public void CancelBtnReady() {
-           // Log.d("cancel", "cancel listener called");
+           // Logger.LogDebug("cancel", "cancel listener called");
         }
     }
 
@@ -1436,7 +1439,13 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                     getParentFragmentManager().popBackStack();
                 }*/
                 eldMenuLay.setEnabled(false);
+
+                if(EldFragment.isUpdateDriverLog) {
+                    EldFragment.refreshLogBtn.performClick();
+                }
                 getParentFragmentManager().popBackStack();
+
+
                 break;
 
             case R.id.certifyDateTV:
@@ -2803,16 +2812,17 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
     //*================== Get Driver Log last 18 days ===================*//*
     void GetDriverLog18Days(final String DriverId, final String DeviceId, final String UtcDate){
 
-        is18DaysApiCalled = true;
-        params = new HashMap<String, String>();
-        params.put(ConstantsKeys.DriverId, DriverId);
-        params.put(ConstantsKeys.DeviceId, DeviceId);
-        params.put(ConstantsKeys.ProjectId, "1");
-        params.put(ConstantsKeys.UTCDateTime, UtcDate);
+        if (!EldFragment.IsSaveOperationInProgress) {
+            is18DaysApiCalled = true;
+            params = new HashMap<String, String>();
+            params.put(ConstantsKeys.DriverId, DriverId);
+            params.put(ConstantsKeys.DeviceId, DeviceId);
+            params.put(ConstantsKeys.ProjectId, "1");
+            params.put(ConstantsKeys.UTCDateTime, UtcDate);
 
-        GetLog18DaysRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS, params, GetDriverLog18Days,
-                Constants.SocketTimeout30Sec, ResponseCallBack, ErrorCallBack);
-
+            GetLog18DaysRequest.executeRequest(Request.Method.POST, APIs.GET_DRIVER_LOG_18_DAYS, params, GetDriverLog18Days,
+                    Constants.SocketTimeout30Sec, ResponseCallBack, ErrorCallBack);
+        }
     }
 
     //*================== Get Shipmen Reading ===================*//*
@@ -2957,12 +2967,12 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         // Insert/Update Certify Log table
         certifyLogMethod.CertifyLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, CertifyLogArray );
 
-        constants.saveObdData("Certify",
+       /* constants.saveObdData("Certify",
                 "CertifyLogArray: " + CertifyLogArray.toString(),
                 "", "","", "","", "",
                 "","", "", "", "",
                 DRIVER_ID, dbHelper, driverPermissionMethod, obdUtil);
-
+*/
 
         // Update recap array with byte image
         recap18DaysArray = recapViewMethod.UpdateSelectedDateRecapArray(recap18DaysArray, LogDate, SignImageInBytes);
@@ -3264,7 +3274,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
-            Log.d("signatureLog", "---Response: " + response);
+            Logger.LogDebug("signatureLog", "---Response: " + response);
             progressBarDriverLog.setVisibility(View.GONE);
             if(progressDialog.isShowing()){
                 progressDialog.dismiss();
@@ -3288,6 +3298,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
                         else
                             CoDriverPref.ClearLocFromList(getActivity());
 
+                        GetDriverLog18Days(DRIVER_ID, DeviceId, Globally.GetCurrentUTCDate());
                     }
 
                 }else{
@@ -3339,7 +3350,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: ");
+            Logger.LogDebug("errorrr ", ">>>error dialog: ");
 
             if(getActivity() != null && !getActivity().isFinishing()) {
                 try {
@@ -3483,7 +3494,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
 
                             case GetOdometer:
                                 try{
-                                    //  Log.d("response", "response Get odometer: " + response);
+                                    //  Logger.LogDebug("response", "response Get odometer: " + response);
                                     JSONArray odometerJsonArray = new JSONArray();
 
                                     if(dataObj.has("ListTruckOdometer")) {
@@ -3798,7 +3809,7 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
             if(progressDialog.isShowing()){
                 progressDialog.dismiss();
             }
-            Log.d("error", ">>error: " +error + " - flag: " +flag);
+            Logger.LogDebug("error", ">>error: " +error + " - flag: " +flag);
         }
     };
 

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -24,6 +25,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.DatePickerDialog;
@@ -54,7 +56,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
     View rootView;
     ArrayList<String> TruckList, TrailerList,AgricultureList;
-    // public static int inspectionLayHeight = 0;
+    public static Button refreshPtiBtnInvisible;
     TextView dateActionBarTV, EldTitleTV, inspectionDateTv, noDataInspectTV;
     TextView trailerTextVw;
     RelativeLayout eldMenuLay, rightMenuBtn;
@@ -124,6 +126,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         trailerTextVw           = (TextView)view.findViewById(R.id.trailerTextVw);
         noDataInspectTV         = (TextView)view.findViewById(R.id.noDataInspectTV);
 
+        refreshPtiBtnInvisible  = (Button)view.findViewById(R.id.refreshPtiBtnInvisible);
 
         inspectionScrollView    = (ScrollView)view.findViewById(R.id.inspectionScrollView);
         inspectionListView      = (ListView)  view.findViewById(R.id.inspectionListView);
@@ -201,6 +204,8 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         previousDateBtn.setOnClickListener(this);
         nextDateBtn.setOnClickListener(this);
         EldTitleTV.setOnClickListener(this);
+        refreshPtiBtnInvisible.setOnClickListener(this);
+
     }
 
 
@@ -215,6 +220,12 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+
+            case R.id.refreshPtiBtnInvisible:
+                Constants.isLocationUpdated = false;
+                GetLocalInspectionArray();
+                break;
+
 
             case R.id.dateActionBarTV:
                 ShowDateDialog();
@@ -313,7 +324,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         fragmentTran.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out, android.R.anim.fade_in,android.R.anim.fade_out);
 
         if (inspectionType.equals("pti")) {
-            fragmentTran.replace(R.id.job_fragment, savedInspectionFragment);
+            fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
         }else if(inspectionType.equals("pti_dot")){
             fragmentTran.add(R.id.job_fragment, savedInspectionFragment);
         }else{
@@ -669,6 +680,8 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
 
         }
 
+        Logger.LogDebug("selectedDateArray", "Driver selectedDateArray: " + selectedDateArray);
+
         ParseInspectionArray(itemObj, true);
     }
 
@@ -678,7 +691,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         @Override
         public void getResponse(String response, int flag) {
 
-            Log.d("response", "Driver response: " + response);
+            Logger.LogDebug("response", "Driver response: " + response);
             String status = "";
             inspectionProgressBar.setVisibility(View.GONE);
 
@@ -759,7 +772,7 @@ public class InspectionsHistoryFragment extends Fragment implements View.OnClick
         public void getError(VolleyError error, int flag) {
 
             if(getActivity() != null && !getActivity().isFinishing()) {
-                Log.d("Driver", "error" + error.toString());
+                Logger.LogDebug("Driver", "error" + error.toString());
 
                 resetData();
                 inspectionProgressBar.setVisibility(View.GONE);

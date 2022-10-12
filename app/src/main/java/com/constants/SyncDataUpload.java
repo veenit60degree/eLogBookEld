@@ -99,7 +99,7 @@ public class SyncDataUpload extends AsyncTask<String, String, String>{
     @Override
     protected void onPostExecute(String result) {
 
-        Log.e("String Response", ">>>Sync Data Response:  " + result);
+        Logger.LogError("String Response", ">>>Sync Data Response:  " + result);
 
          postResponse.onAsyncResponse(result, DriverId);
 

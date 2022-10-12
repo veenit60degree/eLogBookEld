@@ -23,6 +23,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.messaging.logistic.Globally;
@@ -261,7 +262,7 @@ public class VehicleDialogLoginOld extends Dialog {
         public void getResponse(String response, int flag) {
 
             progressD.dismiss();
-            Log.d("response", " logout response: " + response);
+            Logger.LogDebug("response", " logout response: " + response);
             String status = "";
 
             try {
@@ -291,7 +292,7 @@ public class VehicleDialogLoginOld extends Dialog {
 
         @Override
         public void getError(VolleyError error, int flag) {
-            Log.d("onDuty error", "onDuty error: " + error.toString());
+            Logger.LogDebug("onDuty error", "onDuty error: " + error.toString());
             progressD.dismiss();
             Globally.EldScreenToast(logoutTruckPopupTV, Globally.DisplayErrorMessage(error.toString()), getContext().getResources().getColor(R.color.red_eld));
 

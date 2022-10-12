@@ -43,7 +43,7 @@ public class CheckIsUpdateReady extends AsyncTask<Void, String, String> {
                 }
             }
         } catch (IOException e) {
-            Log.d("CheckIsUpdateReady", "UnknownHostException");
+            Logger.LogDebug("CheckIsUpdateReady", "UnknownHostException");
             //e.printStackTrace();
         }
         return newVersion;
@@ -56,7 +56,7 @@ public class CheckIsUpdateReady extends AsyncTask<Void, String, String> {
             mUrlResponce.onReceived(onlineVersion);
         }
 
-        Log.d("update", " playstore App version " + onlineVersion);
+        Logger.LogDebug("update", " playstore App version " + onlineVersion);
 
     }
 }

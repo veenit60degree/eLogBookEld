@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/itemLoadTV"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_size_23"
         android:paddingTop="@dimen/margin_17"
@@ -20,7 +20,7 @@
 
     <TextView
         android:id="@+id/consigneeNameTxtView"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_size_23"
         android:paddingTop="@dimen/margin_short_6"
@@ -33,7 +33,7 @@
 
     <TextView
         android:id="@+id/itemDetailTV"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_size_23"
         android:paddingTop="@dimen/margin_17"

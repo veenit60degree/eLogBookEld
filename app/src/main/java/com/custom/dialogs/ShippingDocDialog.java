@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.RequestResponse;
 import com.constants.SharedPref;
 import com.constants.ShippingPost;
@@ -577,7 +578,7 @@ public class ShippingDocDialog extends Dialog {
 
         @Override
         public void onResponseError(String error, int flag) {
-            Log.d("errorrr ", ">>>error dialog: " );
+            Logger.LogDebug("errorrr ", ">>>error dialog: " );
             if(progressDialog != null){
                 progressDialog.dismiss();
             }
@@ -722,7 +723,7 @@ public class ShippingDocDialog extends Dialog {
         @Override
         public void getError(VolleyError error, int flag) {
 
-            Log.d("error", ">>error: " + error);
+            Logger.LogDebug("error", ">>error: " + error);
 
             switch (flag) {
                 case GetShippingNo:

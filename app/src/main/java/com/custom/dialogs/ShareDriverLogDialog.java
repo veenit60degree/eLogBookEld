@@ -52,6 +52,7 @@ import com.constants.APIs;
 import com.constants.AlertDialogEld;
 import com.constants.Constants;
 import com.constants.CsvReader;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
@@ -704,7 +705,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
     AlertDialogEld.NegativeButtonCallBack negativeCallBack = new AlertDialogEld.NegativeButtonCallBack() {
         @Override
         public void getNegativeClick(int flag) {
-            Log.d("negativeCallBack", "negativeCallBack: " + flag);
+            Logger.LogDebug("negativeCallBack", "negativeCallBack: " + flag);
             inspCmntEditTxt.requestFocus();
         }
     };
@@ -765,7 +766,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
         @Override
         public void getResponse(String response, int flag) {
 
-            Log.d("response", "Driver response: " + response);
+            Logger.LogDebug("response", "Driver response: " + response);
 
             try {
 
@@ -806,7 +807,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
 
         @Override
         public void getError(VolleyError error, int flag) {
-           Log.d("error", "error");
+           Logger.LogDebug("error", "error");
             getOfflineAddress();
         }
     };
@@ -863,7 +864,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("Response ", "---Response: " + response);
+                        Logger.LogDebug("Response ", ">>>Response: " + response);
 
                         pDialog.dismiss();
                         shareDriverLogBtn.setEnabled(true);
@@ -902,7 +903,7 @@ public class ShareDriverLogDialog extends Dialog implements View.OnClickListener
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("error ", "---error: " + error);
+                        Logger.LogDebug("error ", "---error: " + error);
                         shareDriverLogBtn.setEnabled(true);
 
                         globally.EldToastWithDuration4Sec(shareDriverLogBtn, "Error", getContext().getResources().getColor(R.color.colorVoilation));

@@ -58,7 +58,7 @@ public class DriverLogModel {
     private String EngineHours;
     private String Odometer;
     private String DriverVehicleTypeId;
-
+    private String AppVersionCode;
 
     public DriverLogModel() {
     }
@@ -112,6 +112,7 @@ public class DriverLogModel {
         this.EngineHours = logModel.getEngineHours();
         this.Odometer = logModel.getOdometer();
         this.DriverVehicleTypeId = logModel.getDriverVehicleTypeId();
+        this.AppVersionCode = logModel.getAppVersionCode();
 
     }
 
@@ -525,5 +526,13 @@ public class DriverLogModel {
         return DriverVehicleTypeId;
     }
 
+    public void setAppVersionCode(String appVersionCode) {
+        AppVersionCode = appVersionCode;
+    }
+
+
+    public String getAppVersionCode() {
+        return AppVersionCode;
+    }
 
 }

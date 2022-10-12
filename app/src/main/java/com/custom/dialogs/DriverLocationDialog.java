@@ -280,7 +280,7 @@ public class DriverLocationDialog extends Dialog {
         public void onClick(View v) {
 
             String updatedCityName = CityNameEditText.getText().toString().trim();
-            // Log.d("State", "State: " + locationList.get(Position));
+            // Logger.LogDebug("State", "State: " + locationList.get(Position));
 
             if(Position == -1){
                 Position = 0;

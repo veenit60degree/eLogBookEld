@@ -3612,4 +3612,20 @@ public class SharedPref {
         }
     }
 
+
+    public static boolean IsDriverLogin(Context context){
+
+        if(context != null) {
+            if (!SharedPref.getUserName(context).equals("") &&
+                    !SharedPref.getPassword(context).equals("")) {
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+
 }

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.RecycleViewClickListener;
 import com.constants.RecyclerViewItemClickListener;
 import com.driver.details.DriverConst;
@@ -143,7 +144,7 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
             @Override
             public void onClick(View view) {
 
-                Log.d("onClick", "onClick" );
+                Logger.LogDebug("onClick", "onClick" );
                 if(isItemSelected) {
                     if(selectedPosArray.contains(position)){
                         view.setBackgroundResource(R.drawable.gray_eld_default);
@@ -168,7 +169,7 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
                         isItemSelected = false;
                         NotificationHistoryFragment.deleteNotificationBtn.setVisibility(View.GONE);
                     }
-                    Log.d("selectedPosArray", "selectedPosArray array: " + selectedPosArray);
+                    Logger.LogDebug("selectedPosArray", "selectedPosArray array: " + selectedPosArray);
 
                 }
             }
@@ -178,7 +179,7 @@ public class NotificationHistoryRecylerAdapter extends RecyclerView.Adapter<Noti
             @SuppressLint("RestrictedApi")
             @Override
             public boolean onLongClick(View view) {
-                Log.d("onLongClick", "onLongClick" );
+                Logger.LogDebug("onLongClick", "onLongClick" );
                 if(!isItemSelected) {
                     if(!itemModel.getType().equals("Requested")) {
                         view.setBackgroundResource(R.drawable.gray_eld_hover);

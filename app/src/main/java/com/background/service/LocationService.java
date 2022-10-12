@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.messaging.logistic.Globally;
 
@@ -58,9 +59,8 @@ public class LocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
-                !SharedPref.getPassword(getApplicationContext()).equals("")) {
-            Log.e("Log", "--stop");
+        if (SharedPref.IsDriverLogin(getApplicationContext())) {
+            Logger.LogError("Log", "--stop");
             stopForeground(true);
             stopSelf();
 
@@ -134,7 +134,7 @@ public class LocationService extends Service {
     public void onDestroy() {
         // handler.removeCallbacks(sendUpdatesToUI);
         super.onDestroy();
-        Log.v("STOP_SERVICE", "DONE");
+        Logger.LogVerbose("STOP_SERVICE", "DONE");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -155,16 +155,15 @@ public class LocationService extends Service {
 
         public void onLocationChanged(final Location loc)
         {
-            Log.i("onLocationChanged", "Location: " + loc.getLatitude());
+            Logger.LogInfo("onLocationChanged", "Location: " + loc.getLatitude());
 
             if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
                 Globally.LATITUDE = "" + loc.getLatitude();
                 Globally.LONGITUDE = "" + loc.getLongitude();
             }
 
-            if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
-                    !SharedPref.getPassword(getApplicationContext()).equals("")) {
-                Log.e("Log", "--stop");
+            if (SharedPref.IsDriverLogin(getApplicationContext())) {
+                Logger.LogError("Log", "--stop");
                 stopForeground(true);
                 stopSelf();
 
@@ -176,12 +175,12 @@ public class LocationService extends Service {
             Globally.LATITUDE = "" ;
             Globally.LONGITUDE = "" ;
 
-            Log.d("onProviderDisabled", "Gps Disabled" );
+            Logger.LogDebug("onProviderDisabled", "Gps Disabled" );
         }
 
 
         public void onProviderEnabled(String provider)  {
-            Log.d("onProviderEnabled", "Gps Enabled" );
+            Logger.LogDebug("onProviderEnabled", "Gps Enabled" );
         }
 
 

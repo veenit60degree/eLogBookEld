@@ -7,7 +7,9 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.constants.Constants;
 import com.messaging.logistic.fragment.InspectionFragment;
+import com.messaging.logistic.fragment.InspectionsHistoryFragment;
 
 public class PrePostTripInspActivity extends FragmentActivity{
 
@@ -42,6 +44,10 @@ public class PrePostTripInspActivity extends FragmentActivity{
             TabAct.smenu.toggle();
         }else {
             if ( fragManager.getBackStackEntryCount() > 1) {
+                if(Constants.isLocationUpdated && InspectionsHistoryFragment.refreshPtiBtnInvisible != null){
+                    InspectionsHistoryFragment.refreshPtiBtnInvisible.performClick();
+                }
+
                 getSupportFragmentManager().popBackStack();
             }else {
                 TabAct.host.setCurrentTab(0);

@@ -51,6 +51,7 @@ import com.constants.Constants;
 import com.constants.ConstantsEnum;
 import com.constants.CsvReader;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.Slidingmenufunctions;
@@ -146,7 +147,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
     List<DriverLocationModel> StateList;
     StatePrefManager statePrefManager;
     RequestQueue queue;
-    DatePickerDialog dateDialog;
+   // DatePickerDialog dateDialog;
     TrailorDialog dialog;
     VehicleDialog vehicleDialog;
     List<VehicleModel>  vehicleList = new ArrayList<VehicleModel>();
@@ -288,13 +289,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         locInspectionTV.setThreshold(3);
         SelectedDatee = Globally.GetCurrentDeviceDate();
-        // if (UILApplication.getInstance().getInstance().PhoneLightMode() == Configuration.UI_MODE_NIGHT_YES) {
-//        if(UILApplication.getInstance().isNightModeEnabled()){
-//            EldThemeColor = "#ffffff";
-//            insptnMainLay.setBackgroundColor(getResources().getColor(R.color.gray_background) );
-//            // superviserSignLay.setBackgroundColor(Color.parseColor("#E2E2E2") );
-//
-//        }
 
         AddStatesInList();
         // Spinner click listener
@@ -306,7 +300,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                     State = StateList.get(position).getStateCode();
                     Country = StateList.get(position).getCountry();
                 }
-
             }
 
             @Override
@@ -322,13 +315,13 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
             ParseInspectionIssues(TruckArray, TrailerArray);
 
-            new Handler().postDelayed(new Runnable() {
+           /* new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
                 }
             }, 500);
-
+*/
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -390,9 +383,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         CreatedDate         = Globally.GetCurrentDeviceDateTime();
         IsAOBRD             = SharedPref.IsAOBRD(getActivity());
 
-        DriverId            =  DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity());
-        CoDriverId          =  DriverConst.GetCoDriverDetails(DriverConst.CoDriverID, getActivity());
-
         DriverName          = slideMenu.usernameTV.getText().toString();
 
         TruckNumber         = SharedPref.getTruckNumber(getActivity());
@@ -405,11 +395,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         CheckTrailerStatus();
         setOdometerWithView();
 
-      //  String odo = constants.kmToMeter1("867621.03");
-      //  String odo1 = constants.kmToMeter1("475924.135");
-
         if(IsAOBRD && !IsAOBRDAutomatic){
-           // Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
             locInspTitleTV.setText("Enter City");
             AobrdLocLay.setVisibility(View.VISIBLE);
             locInspectionTV.setVisibility(View.GONE);
@@ -454,13 +440,6 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         }
 
         inspectionDateTv.setText(CreatedDate.substring(0, 11));
-
-       /* if(IsAOBRD ) {
-            Slidingmenufunctions.homeTxtView.setText("AOBRD - HOS");
-        }else{
-            Slidingmenufunctions.homeTxtView.setText("ELD - HOS");
-        }*/
-
 
         if (!isOnCreate && Globally.isConnected(getActivity())) {
             if(TruckInspList.size() == 0 || TrailerInspList.size() == 0)
@@ -589,7 +568,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         }catch (Exception e){
             e.printStackTrace();
         }
-       // Log.d("data", "---data: " + data);
+       // Logger.LogDebug("data", "---data: " + data);
         return data;
 
     }
@@ -681,7 +660,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
                     trailerAdapter = new GridAdapter(getActivity(), isChecked, IsClicked, TrailerInspList, TrailerList, TrailerIdList);
                     trailerGridView.setAdapter(trailerAdapter);
-                    trailerAdapter.notifyDataSetChanged();
+                   // trailerAdapter.notifyDataSetChanged();
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -708,7 +687,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
                     truckAdapter = new GridAdapter(getActivity(), isChecked, IsClicked, TruckInspList, TruckList, TruckIdList);
                     truckGridView.setAdapter(truckAdapter);
-                    truckAdapter.notifyDataSetChanged();
+                    //truckAdapter.notifyDataSetChanged();
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -786,7 +765,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
                 boolean isCurrentStatusMismatch = false;
                  CurrentJobStatus = SharedPref.getDriverStatusId(getActivity());
-                Log.d("CurrentJobStatus","CurrentJobStatus: "+CurrentJobStatus);
+                Logger.LogDebug("CurrentJobStatus","CurrentJobStatus: "+CurrentJobStatus);
 
                 try {
                     JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
@@ -1095,7 +1074,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                     OdometerDistanceType = DistanceTypeList.get(position);
-                    Log.d("OdometerDistanceType ",OdometerDistanceType);
+                    Logger.LogDebug("OdometerDistanceType ",OdometerDistanceType);
 
                 }
 
@@ -1540,7 +1519,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             public void run() {
                 inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
             }
-        }, 350);
+        }, 100);
     }
 
 
@@ -1573,7 +1552,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
                     trailerGridView.setLayoutParams(mParam);
                 }catch (Exception e){}
 
-                inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
+                //inspectionScrollView.fullScroll(ScrollView.FOCUS_UP);
             }
         }, 300);
 
@@ -1597,7 +1576,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
             ByteDriverSign = "";
             File file = new File(DriverSignImage);
             if (file.exists()) {
-                Log.i("", "---Add File: " + file);
+                Logger.LogInfo("", "---Add File: " + file);
                 ByteDriverSign = Globally.ConvertImageToByteAsString(DriverSignImage);
             }
         }else{
@@ -1609,7 +1588,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         ByteSupervisorSign = "";
         File f = new File(SupervisorSignImage);
         if (f.exists()) {
-            Log.i("", "---Add File: " + f.toString());
+            Logger.LogInfo("", "---Add File: " + f.toString());
             ByteSupervisorSign = Globally.ConvertImageToByteAsString(SupervisorSignImage);
         }
 
@@ -1706,7 +1685,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         @Override
         public void getResponse(String response, int flag) {
 
-            Log.d("response", "Driver response: " + response);
+            Logger.LogDebug("response", "Driver response: " + response);
             String status = "";
             JSONObject obj = null;
             try {
@@ -1951,7 +1930,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
-            Log.d("InspectionLog", "---Response Inspection: " + response);
+            Logger.LogDebug("InspectionLog", "---Response Inspection: " + response);
             pDialog.dismiss();
             Globally.hideSoftKeyboard(getActivity());
             locInspectionTV.setEnabled(false);
@@ -2002,7 +1981,7 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: ");
+            Logger.LogDebug("errorrr ", ">>>error dialog: ");
             Globally.hideSoftKeyboard(getActivity());
             if(pDialog != null && pDialog.isShowing())
                 pDialog.dismiss();

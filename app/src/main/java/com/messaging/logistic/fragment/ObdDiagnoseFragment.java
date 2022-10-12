@@ -40,6 +40,7 @@ import com.background.service.BackgroundLocationService;
 import com.background.service.BleDataService;
 import com.ble.utils.ToastUtil;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.TcpClient;
 import com.constants.Utils;
@@ -365,14 +366,14 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
 
                 return true;
             } else {
-                Log.v("TAG", "Permission is revoked");
+                Logger.LogVerbose("TAG", "Permission is revoked");
 
                 Intent i = new Intent(getActivity(), LocPermissionActivity.class);
                 startActivity(i);
                 return false;
             }
         } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("TAG", "Permission is granted");
+            Logger.LogVerbose("TAG", "Permission is granted");
             if (constants.CheckGpsStatusToCheckMalfunction(getActivity())) {
                scanBtnClick();
             } else {
@@ -396,7 +397,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                 scanBtnClick();
             } else {
                 // tell the user the action is cancelled
-                Log.d("LocationPer", "Permission denied");
+                Logger.LogDebug("LocationPer", "Permission denied");
             }
 
         }
@@ -413,7 +414,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                /* int bleStatus = SharedPref.getObdStatus(getActivity());
                 boolean isAllDisconnected = HTBleSdk.Companion.getInstance().isAllConnected();
                 if (bleStatus != Constants.BLE_CONNECTED && isAllDisconnected) {
-                    Log.e("OBD Diagnose", "Ble Clear Cache onDestroy");
+                    Logger.LogError("OBD Diagnose", "Ble Clear Cache onDestroy");
                     HTBleSdk.Companion.getInstance().disAllConnect();
                 }*/
 
@@ -689,7 +690,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
     TcpClient.OnMessageReceived obdResponseHandler = new TcpClient.OnMessageReceived() {
         @Override
         public void messageReceived(String message) {
-            Log.d("response", "OBD Respone: " +message);
+            Logger.LogDebug("response", "OBD Respone: " +message);
 
 
             try{
@@ -743,7 +744,7 @@ public class ObdDiagnoseFragment extends Fragment  implements View.OnClickListen
                                     String obdGPS = "<b>Latitude:</b> " + latitude + "<br />" +
                                             "<b>Longitude:</b> " + longitude + "<br />" +
                                             "<b>Speed:</b> " + speed;
-                                    Log.d("obdGPS", "obdGPS: " + obdGPS);
+                                    Logger.LogDebug("obdGPS", "obdGPS: " + obdGPS);
                                     obdDataTxtView.setText(Html.fromHtml(responseTxt + htmlBlueFont +obdGPS + closeFont));
 
 

@@ -39,7 +39,7 @@ public class VolleyRequestWithoutRetry {
             StringRequest postRequest = new StringRequest(method, JsonURL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("RES", " Response" + flag + ": " + response);
+                    Logger.LogDebug("RES", " >>>Response" + flag + ": " + response);
                     if(context != null) {
                         callback.getResponse(response, flag);
                     }
@@ -47,7 +47,7 @@ public class VolleyRequestWithoutRetry {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e("error", " error: " + error);
+                    Logger.LogError("error", " error: " + error);
                     if(context != null) {
                         ErrorCallback.getError(error, flag);
                     }
@@ -61,7 +61,7 @@ public class VolleyRequestWithoutRetry {
      */
                 @Override
                 protected Map<String, String> getParams() {
-                    //  Log.e("params", " params: " + params);
+                    //  Logger.LogError("params", " params: " + params);
                     return params;
                 }
 

@@ -6,6 +6,7 @@ public class EldDataModelNew {
     String ProjectId;
     String DriverId;
     String DriverStatusId;
+    String DriverLogId;
 
     String IsYardMove;
     String IsPersonal;
@@ -63,7 +64,7 @@ public class EldDataModelNew {
     String DriverVehicleTypeId;
 
 
-    public EldDataModelNew(String projectId, String driverId, String driverStatusId, String isYard,
+    public EldDataModelNew(String projectId, String driverId, String driverStatusId,  String driverLogId, String isYard,
                            String isPersonal, String deviceID, String remarks, String utcDateTime,
                            String truckNumber, String trailorNumber, String companyId, String driverName, String city,
                            String state, String country, String isViolation, String violationReason,
@@ -80,6 +81,7 @@ public class EldDataModelNew {
         ProjectId           = projectId;
         DriverId            = driverId;
         DriverStatusId      = driverStatusId;
+        DriverLogId         = driverLogId;
         this.IsYardMove     = isYard;
         this.IsPersonal     = isPersonal;
         DeviceID            = deviceID;
@@ -137,6 +139,12 @@ public class EldDataModelNew {
     public String getDriverStatusId() {
         return DriverStatusId;
     }
+
+    public String getDriverLogId() {
+        return DriverLogId;
+    }
+
+
 
     public String getIsYard() {
         return IsYardMove;

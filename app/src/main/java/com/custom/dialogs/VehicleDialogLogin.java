@@ -29,6 +29,7 @@ import com.androidtrip.plugins.searchablespinner.interfaces.IStatusListener;
 import com.androidtrip.plugins.searchablespinner.interfaces.OnItemSelectedListener;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
@@ -157,13 +158,13 @@ public class VehicleDialogLogin  extends Dialog {
                 searchableSpinner.setStatusListener(new IStatusListener() {
                     @Override
                     public void spinnerIsOpening() {
-                       // Log.d("spinnerIsOpening", "spinnerIsOpening" );
+                       // Logger.LogDebug("spinnerIsOpening", "spinnerIsOpening" );
 
                     }
 
                     @Override
                     public void spinnerIsClosing() {
-                        //Log.d("spinnerIsClosing", "spinnerIsClosing" );
+                        //Logger.LogDebug("spinnerIsClosing", "spinnerIsClosing" );
                     }
                 });
 
@@ -217,7 +218,7 @@ public class VehicleDialogLogin  extends Dialog {
     private OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
         @Override
         public void onItemSelected(View view, int position, long id) {
-          // Log.d("onItemSelected", "onItemSelected: " + position);
+          // Logger.LogDebug("onItemSelected", "onItemSelected: " + position);
             SelectedPosition = position;
 
             Object object = searchableSpinner.getSelectedItem();
@@ -238,7 +239,7 @@ public class VehicleDialogLogin  extends Dialog {
 
         @Override
         public void onNothingSelected() {
-           // Log.d("onNothingSelected", "onNothingSelected" );
+           // Logger.LogDebug("onNothingSelected", "onNothingSelected" );
             saveBtnJob.setBackgroundResource(R.drawable.gray_selector);
         }
     };
@@ -320,7 +321,7 @@ public class VehicleDialogLogin  extends Dialog {
         params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
 
-        Log.d("DateLogout", "MobileDeviceCurrentDateTime: " +date);
+        Logger.LogDebug("DateLogout", "MobileDeviceCurrentDateTime: " +date);
 
         LogoutRequest.executeRequest(Request.Method.POST, APIs.DRIVER_LOGOUT , params, 1,
                 Constants.SocketTimeout20Sec, ResponseCallBack, ErrorCallBack);
@@ -333,7 +334,7 @@ public class VehicleDialogLogin  extends Dialog {
         public void getResponse(String response, int flag) {
 
             progressD.dismiss();
-            Log.d("response", " logout response: " + response);
+            Logger.LogDebug("response", " logout response: " + response);
             String status = "";
 
             try {
@@ -363,7 +364,7 @@ public class VehicleDialogLogin  extends Dialog {
 
         @Override
         public void getError(VolleyError error, int flag) {
-            Log.d("onDuty error", "onDuty error: " + error.toString());
+            Logger.LogDebug("onDuty error", "onDuty error: " + error.toString());
             progressD.dismiss();
 
             global.EldScreenToast(logoutTruckPopupTV, Globally.DisplayErrorMessage(error.toString()), getContext().getResources().getColor(R.color.red_eld));

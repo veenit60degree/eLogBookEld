@@ -30,6 +30,7 @@ import com.constants.APIs;
 import com.constants.AlertDialogEld;
 import com.constants.ConstantHtml;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.custom.dialogs.CertifyConfirmationDialog;
@@ -464,7 +465,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         @Override
         public void CancelBtnReady() {
             getActivity().finish();
-          // Log.d("cancel", "cancel listener called");
+          // Logger.LogDebug("cancel", "cancel listener called");
         }
     }
 
@@ -972,7 +973,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
         @Override
         public void getResponse(String response, int flag) {
 
-            Log.d("response", "edit response: " + response);
+            Logger.LogDebug("response", "edit response: " + response);
             JSONObject obj = null;
             String status = "";
             Message = "";
@@ -1124,7 +1125,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
     AlertDialogEld.NegativeButtonCallBack negativeCallBack = new AlertDialogEld.NegativeButtonCallBack() {
         @Override
         public void getNegativeClick(int flag) {
-            Log.d("negativeCallBack", "negativeCallBack: " + flag);
+            Logger.LogDebug("negativeCallBack", "negativeCallBack: " + flag);
         }
     };
 

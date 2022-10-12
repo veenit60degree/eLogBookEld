@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.adapter.logistic.OtherReviewLogAdapter;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
@@ -124,7 +125,7 @@ public class SuggestedLogListFragment extends Fragment implements View.OnClickLi
         suggestedLogListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Log.d("itemClick", "itemClick: " + position);
+                Logger.LogDebug("itemClick", "itemClick: " + position);
 
                 String suggestedData = "";
                 String date = SuggestedFragmentActivity.otherLogList.get(position).getDate();

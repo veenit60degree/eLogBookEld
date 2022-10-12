@@ -329,7 +329,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	private void certifyLogAlert(){
 
 			if (certifyLogAlert != null && certifyLogAlert.isShowing()) {
-				Log.d("dialog", "dialog is showing");
+				Logger.LogDebug("dialog", "dialog is showing");
 			} else {
 
 				closeDialogs();
@@ -563,6 +563,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 
 	private void callLogoutApi(){
+		Logger.LogDebug("callLogoutApi", "callLogoutApi");
 		try {
 			if (context != null) {
 				if (global.isWifiOrMobileDataEnabled(context)) {
@@ -574,8 +575,6 @@ public class Slidingmenufunctions implements OnClickListener {
 					// create logout time missing data diagnostic
 					if((RPM.equals("0") || !constants.isObdConnectedWithELD(context) ) &&
 							IsAllowMissingDataDiagnostic && !constants.isExemptDriver(context)) {
-
-						//   boolean isMissingEventAlreadyWithStatus = malfunctionDiagnosticMethod.isMissingEventAlreadyWithOtherJobs(type, dbHelper);
 
 						saveMissingDiagnostic(context.getString(R.string.obd_data_is_missing), RPM, "Logout Event");
 
@@ -737,7 +736,7 @@ public class Slidingmenufunctions implements OnClickListener {
 					EldDataModelNew listModel = tempList.get(i);
 
 					if (listModel != null) {
-						constants.SaveEldJsonToList(listModel, DriverJsonArray);  /* Put data as JSON to List */
+						constants.SaveEldJsonToList(listModel, DriverJsonArray, context);  /* Put data as JSON to List */
 					}
 				}
 			}
@@ -787,7 +786,7 @@ public class Slidingmenufunctions implements OnClickListener {
 
 		@Override
 		public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-			Log.d("errorrr ", ">>>error dialog: ");
+			Logger.LogDebug("errorrr ", ">>>error dialog: ");
 			if(dialog != null && dialog.isShowing()) {
 				dialog.dismiss();
 			}
@@ -1014,7 +1013,7 @@ public class Slidingmenufunctions implements OnClickListener {
 					}
 				}
 
-					Log.d("response", " logout response: " + response);
+					Logger.LogDebug("response", " >>>logout response: " + response);
 				String status = "", message = "";
 
 				try {
@@ -1041,7 +1040,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				new Response.ErrorListener()  {
 					@Override
 					public void onErrorResponse(VolleyError error) {
-						Log.d("response error", "error: " + error.toString());
+						Logger.LogDebug("response error", "error: " + error.toString());
 
 						try {
 							if (context != null) {
@@ -1082,7 +1081,7 @@ public class Slidingmenufunctions implements OnClickListener {
 				params.put(ConstantsKeys.Latitude,  Globally.LATITUDE);
 				params.put(ConstantsKeys.Longitude, Globally.LONGITUDE);
 
-				Log.d("DateLogout", "MobileDeviceCurrentDateTime: " +date);
+				Logger.LogDebug("DateLogout", "MobileDeviceCurrentDateTime: " +date);
 				return params;
 			}
 		};

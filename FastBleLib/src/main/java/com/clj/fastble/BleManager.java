@@ -603,7 +603,7 @@ public class BleManager {
                 localMethod.invoke(gatt);
             }
         } catch(Exception localException) {
-            Log.e("ExceptionBt", "" + "Exception refreshing BT cache: %s"+ localException.toString());
+            Logger.LogError("ExceptionBt", "" + "Exception refreshing BT cache: %s"+ localException.toString());
             // localException.printStackTrace();
         }
     }
@@ -618,7 +618,7 @@ public class BleManager {
             }
         }
         catch (Exception localException) {
-            Log.e("ExceptionBle", "An exception occurred while refreshing device");
+            Logger.LogError("ExceptionBle", "An exception occurred while refreshing device");
         }
         return false;
     }

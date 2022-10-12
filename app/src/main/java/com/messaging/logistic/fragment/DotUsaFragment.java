@@ -36,6 +36,7 @@ import com.background.service.BackgroundLocationService;
 import com.constants.APIs;
 import com.constants.ConstantHtml;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.ScrollViewExt;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
@@ -533,7 +534,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
             }
 
             int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
-            Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
+            Logger.LogDebug("DaysDiff", "DaysDiff: " + DaysDiff);
 
             if ( DaysDiff >= 0 && DaysDiff <= MaxDays) {
 
@@ -735,7 +736,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 DateTime selectedDateTime = global.getDateTimeObj(selectedDateStr, false);
                 DateTime currentDateTime = global.getDateTimeObj(currentDateStr, false);
                 int DaysDiff = hMethods.DayDiff(currentDateTime, selectedDateTime);
-                Log.d("DaysDiff", "DaysDiff: " + DaysDiff);
+                Logger.LogDebug("DaysDiff", "DaysDiff: " + DaysDiff);
 
                 DOTBtnVisibility(DaysDiff, MaxDays);
                 GetDriverDotDetails(DRIVER_ID, LogDate);
@@ -997,7 +998,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void getError(VolleyError error, int flag) {
-            Log.d("error", ">>error: " + error);
+            Logger.LogDebug("error", ">>error: " + error);
 
             if(getActivity() != null && !getActivity().isFinishing()) {
                 try {
@@ -1081,7 +1082,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
                 }
 
           //  }
-            Log.d("inspectionLayHeight","inspectionLayHeight: "+inspectionLayHeight);
+            Logger.LogDebug("inspectionLayHeight","inspectionLayHeight: "+inspectionLayHeight);
             final int Height      = (inspectionLayHeight + 1 ) * dotLogList.size();
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -1236,7 +1237,7 @@ public class DotUsaFragment extends Fragment implements View.OnClickListener {
     private Thread.UncaughtExceptionHandler onRuntimeError= new Thread.UncaughtExceptionHandler() {
         public void uncaughtException(Thread thread, Throwable ex) {
             //Try starting the Activity again
-            Log.d("uncaughtException", "uncaughtException: " +ex.toString());
+            Logger.LogDebug("uncaughtException", "uncaughtException: " +ex.toString());
             SharedPref.SetDOTStatus( false, getActivity());
             getActivity().finish();
             System.exit(2);

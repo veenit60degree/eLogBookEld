@@ -163,8 +163,10 @@ public class Constants {
     public static boolean IsAlreadyViolation = false;
     public static boolean IsHomePageOnCreate;
     public static boolean IsInspectionDetailViewBack = false;
-    public static String SelectedDatePti        = "";
+    public static boolean isLocationUpdated = false;
+   // public static boolean isLogEdited = false;
 
+    public static String SelectedDatePti        = "";
     public static String LogDate = "";
     public static String DayName = "";
     public static String MonthFullName = "";
@@ -312,7 +314,6 @@ public class Constants {
     public static boolean IsCtPatUploading = false;
     public static boolean IsAlsServerResponding = true;
     public static boolean isClaim   = false;
-    public static boolean isEldHome   = false;
     public static boolean isCallMalDiaEvent   = false;
     public static boolean isClearMissingCompEvent   = false;
     public static boolean isPcYmAlertButtonClicked   = false;
@@ -547,13 +548,14 @@ public class Constants {
 
 
 
-    public void SaveEldJsonToList(EldDataModelNew ListModel, JSONArray jsonArray) throws JSONException {
+    public void SaveEldJsonToList(EldDataModelNew ListModel, JSONArray jsonArray, Context context) throws JSONException {
 
         JSONObject locationObj = new JSONObject();
 
         locationObj.put(ConstantsKeys.ProjectId, ListModel.getProjectId());
         locationObj.put(ConstantsKeys.DriverId, ListModel.getDriverId());
         locationObj.put(ConstantsKeys.DriverStatusId, ListModel.getDriverStatusId());
+        locationObj.put(ConstantsKeys.DriverLogId, ListModel.getDriverLogId());
 
         locationObj.put(ConstantsKeys.IsYardMove, ListModel.getIsYard());
         locationObj.put(ConstantsKeys.IsPersonal, ListModel.getIsPersonal());
@@ -607,6 +609,10 @@ public class Constants {
         locationObj.put(ConstantsKeys.EngineHours, ListModel.getEngineHour());
         locationObj.put(ConstantsKeys.Odometer, ListModel.getOdometer());
         locationObj.put(ConstantsKeys.DriverVehicleTypeId, ListModel.getDriverVehicleTypeId());
+
+        if(SharedPref.IsEditedData(context)){
+            locationObj.put(ConstantsKeys.AppVersionCode, Globally.GetAppVersion(context, "VersionCode"));
+        }
 
         jsonArray.put(locationObj);
     }
@@ -1003,7 +1009,7 @@ public class Constants {
                     correctData = correctData + "#";
                 }
 
-                Log.d("correctData", "correctData: " + correctData);
+                Logger.LogDebug("correctData", "correctData: " + correctData);
 
             }
         }
@@ -1138,8 +1144,8 @@ public class Constants {
             destLat = Double.parseDouble(destLatStr);
             destLon = Double.parseDouble(destLonStr);
 
-            //  Log.d("origin", "origin lat: " + originLat + ", " +originLon);
-            //   Log.d("dest", "dest Lat: " + destLat + ", " + destLon);
+            //  Logger.LogDebug("origin", "origin lat: " + originLat + ", " +originLon);
+            //   Logger.LogDebug("dest", "dest Lat: " + destLat + ", " + destLon);
 
 
             DateTime originDate, destDate;
@@ -1161,7 +1167,7 @@ public class Constants {
             distance = CalculateDistance(originLat, originLon, destLat, destLon, unit, JobStatus);   // unit = k or m (kilometer/meter)
             speed = distance / time;
         }
-        Log.d("speed", "speed: " + speed);
+        Logger.LogDebug("speed", "speed: " + speed);
 
         return speed;
     }
@@ -1279,7 +1285,8 @@ public class Constants {
                     if (listModel != null) {
                         SaveEldJsonToList(          /* Put data as JSON to List */
                                 listModel,
-                                DriverJsonArray
+                                DriverJsonArray,
+                                context
                         );
                     }
 
@@ -1325,7 +1332,8 @@ public class Constants {
                     if (listModel != null) {
                         SaveEldJsonToList(          /* Put data as JSON to List */
                                 listModel,
-                                DriverJsonArray
+                                DriverJsonArray,
+                                context
                         );
                     }
 
@@ -1505,10 +1513,12 @@ public class Constants {
 
     public static String meterToKmWith0DecPlaces(String odometer){
         try {
-            double meter = Double.parseDouble(odometer);
-            meter = meter * 0.001;
-            odometer =  Convert0DecimalPlacesDouble(meter);
-            // odometer = ""+ meter ;
+            if(odometer.length() > 0 && !odometer.equals("null")) {
+                double meter = Double.parseDouble(odometer);
+                meter = meter * 0.001;
+                odometer = Convert0DecimalPlacesDouble(meter);
+                // odometer = ""+ meter ;
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1517,8 +1527,10 @@ public class Constants {
 
     public static String meterToKmWithObd(String odometer){
         try {
-            double meter = Double.parseDouble(odometer);
-            odometer =  String.valueOf(meter * 0.001);
+            if(odometer.length() > 0 && !odometer.equals("null")) {
+                double meter = Double.parseDouble(odometer);
+                odometer = String.valueOf(meter * 0.001);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1865,7 +1877,7 @@ public class Constants {
 
                 StringBuilder obdData = obdUtils.getObdLogData(context);
                 String[] fileArray = obdData.toString().split("\n\n");
-                Log.d("obdLog", "fileArray: " + fileArray);
+                Logger.LogDebug("obdLog", "fileArray: " + fileArray);
 
                 if(fileArray.length > 0) {
                     JSONObject data = new JSONObject(fileArray[fileArray.length - 1]);
@@ -1965,7 +1977,7 @@ public class Constants {
                                         String odometer, String DriverVehicleTypeId, HelperMethods hMethods, DBHelper dbHelper) {
 
         JSONArray driverArray = new JSONArray();
-       // long DriverLogId = 0;
+        long DriverLogId = 0;
         double LastJobTotalMin = 0;
         String lastDateTimeStr = "";
         String StartDeviceCurrentTime = Global.GetCurrentDateTime();
@@ -2028,7 +2040,7 @@ public class Constants {
 
        // DriverLogId = DriverLogId + 1;
         JSONObject newJsonData = hMethods.AddJobInArray(
-                0,
+                DriverLogId,
                 Long.parseLong(DRIVER_ID),
                 Integer.valueOf(DriverStatusId),
 
@@ -2569,7 +2581,7 @@ public class Constants {
 
         ArrayList<String> LogSignImageWithDate = new ArrayList<>();
 
-        for (int i = inspection18DaysArray.length() - 1; i >= 0; i--) {
+        for (int i = 0; i < inspection18DaysArray.length(); i++) {
             try {
                 JSONObject obj = (JSONObject) inspection18DaysArray.get(i);
                 JSONObject ptiObj = new JSONObject(obj.getString(ConstantsKeys.Inspection));
@@ -2849,7 +2861,7 @@ public class Constants {
 
             }
 
-            Log.d("CPU_INFO", output);
+            Logger.LogDebug("CPU_INFO", output);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -3737,11 +3749,11 @@ public class Constants {
         boolean isValid = false;
         try {
             int num = Integer.parseInt(text);
-            // Log.i("",num+" is a number");
+            // Logger.LogInfo("",num+" is a number");
             isValid = true;
         } catch (NumberFormatException e) {
             // e.printStackTrace();
-            Log.e("NumberFormatException", "NumberFormatException: " +text );
+            Logger.LogError("NumberFormatException", "NumberFormatException: " +text );
             isValid = false;
         }catch (Exception e){
             e.printStackTrace();
@@ -3753,16 +3765,18 @@ public class Constants {
 
     public boolean isValidFloat(String text){
         boolean isValid = false;
-        try {
-            float num = Float.parseFloat(text);
-            //Log.i("",num+" is a number");
-            isValid = true;
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            isValid = false;
-        }catch (Exception e){
-            e.printStackTrace();
-            isValid = false;
+        if(text.length() > 0 && !text.equals("null")) {
+            try {
+                float num = Float.parseFloat(text);
+                //Logger.LogInfo("",num+" is a number");
+                isValid = true;
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                isValid = false;
+            } catch (Exception e) {
+                e.printStackTrace();
+                isValid = false;
+            }
         }
         return isValid;
     }
@@ -4603,13 +4617,13 @@ public class Constants {
                             }
                         }
 
-                        constants.saveObdData("PowerDiaEvent Duration - Ignition- " + lastIgnitionStatus +
+                /*        constants.saveObdData("PowerDiaEvent Duration - Ignition- " + lastIgnitionStatus +
                                         ", CurrEngineHours: " +obdEngineHours + ", LastEngineHour: "+lastEngineHour +
                                         ", Duration: " + engineHrDiffInMin,  "",
                                 "", currentHighPrecisionOdometer,
                                 currentHighPrecisionOdometer, "", ignitionStatus, "", "",
                                 String.valueOf(-1), obdEngineHours, "", "",
-                                DriverId, dbHelper, driverPermissionMethod, obdUtil);
+                                DriverId, dbHelper, driverPermissionMethod, obdUtil);*/
 
                     }else{
                         // save updated values with truck ignition status
@@ -5828,7 +5842,8 @@ public class Constants {
                     if(listModel != null) {
                         SaveEldJsonToList(          /* Put data as JSON to List */
                                 listModel,
-                                DriverJsonArray
+                                DriverJsonArray,
+                                context
                         );
                     }
 
@@ -5839,7 +5854,7 @@ public class Constants {
         }
 
         return DriverJsonArray;
-        // Log.d("Arraay", "Arraay: " + DriverJsonArray.toString());
+        // Logger.LogDebug("Arraay", "Arraay: " + DriverJsonArray.toString());
     }
 
 

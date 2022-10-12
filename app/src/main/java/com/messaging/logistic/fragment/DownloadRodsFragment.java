@@ -35,6 +35,7 @@ import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.DownloadPdf;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
@@ -313,7 +314,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
 
         @Override
         public void getError(VolleyError error, int flag) {
-            Log.d("error", ">>error: " + error);
+            Logger.LogDebug("error", ">>error: " + error);
 
         }
     };
@@ -369,7 +370,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
         switch (v.getId()){
 
             case R.id.eldMenuLay:
-                Log.d("count", "stack_count: " + getParentFragmentManager().getBackStackEntryCount());
+                Logger.LogDebug("count", "stack_count: " + getParentFragmentManager().getBackStackEntryCount());
 
                     getParentFragmentManager().popBackStack();
                 break;
@@ -407,7 +408,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
             // Prevents the occasional unintentional call. I needed this.
             try {
                 long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                Log.d("TAG", "onReceive: " + intent);
+                Logger.LogDebug("TAG", "onReceive: " + intent);
                 DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(downloadId);
                 Cursor cur = Globally.downloadManager.query(query);
@@ -421,7 +422,7 @@ public class DownloadRodsFragment extends Fragment implements View.OnClickListen
                         }
                         File getFileDownloaded = new File(path);
                         File pathOriginal = new File(Globally.getAlsGenerateRodsPath(getActivity()).toString());
-                        Log.d("Files", "FileName:" + pathOriginal + "/" + getFileDownloaded.getName());
+                        Logger.LogDebug("Files", "FileName:" + pathOriginal + "/" + getFileDownloaded.getName());
                         getFileDownloaded.renameTo(new File(pathOriginal + "/" + getFileDownloaded.getName()));
 
                     } else if (DownloadManager.STATUS_FAILED == cur.getInt(columnIndex)) {

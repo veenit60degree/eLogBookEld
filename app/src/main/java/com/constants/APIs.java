@@ -74,8 +74,8 @@ public class APIs {
 
 
     /*-------- ELD API ----------*/
-    // public static String SAVE_DRIVER_STATUS     			= "http://develd.alsrealtime.com/api/DriverStatus/UpdateDriverStatus";
-    public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
+     public static String SAVE_DRIVER_STATUS     			= "http://develd.alsrealtime.com/api/DriverStatus/UpdateDriverStatus";
+   // public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
     public static String SAVE_DRIVER_EDIT_LOG_NEW  			= DOMAIN_URL_ELD + "SaveDriverEditELDStatusNew";
     public static String GET_ONDUTY_REMARKS					= DOMAIN_URL_ELD + "GetOnDutyRemarks";
     public static String GET_NOTIFICATION_LOG      			= DOMAIN_URL_ELD + "GetNotificationLog";
@@ -86,11 +86,11 @@ public class APIs {
     public static String GET_INSPECTION_DETAIL   			= DOMAIN_URL_ELD + "GetInspectionDetail";
     public static String SAVE_INSPECTION      				= DOMAIN_URL_ELD + "SaveInspection";
 
-  //  public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOfflineNewAPI";
-   // public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOfflineNewAPI";
+    public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOfflineNewAPI";
+    public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOfflineNewAPI";
 
-    public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOffline";
-     public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOffline";
+  //  public static String SAVE_INSPECTION_OFFLINE			= DOMAIN_URL_ELD + "SaveInspectionOffline";
+   //  public static String CERTIFY_LOG_OFFLINE  	            = DOMAIN_URL_ELD + "CertifyLogOffline";
 
     public static String GET_SAVED_INSPECTION      			= DOMAIN_URL_ELD + "GetSavedInspection";
     public static String GET_ODOMETER      					= DOMAIN_URL_ELD + "GetOdometer";

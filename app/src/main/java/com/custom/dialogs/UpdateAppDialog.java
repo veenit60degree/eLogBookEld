@@ -67,8 +67,7 @@ public class UpdateAppDialog extends Dialog {
             dismiss();
 
             Intent intent;
-            if (!SharedPref.getUserName( getContext()).equals("") &&
-                    !SharedPref.getPassword(getContext()).equals("")) {
+            if (SharedPref.IsDriverLogin(getContext())) {
                 intent = new Intent(getContext(), TabAct.class);
             } else {
                 intent = new Intent(getContext(), LoginActivity.class);

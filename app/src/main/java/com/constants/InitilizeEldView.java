@@ -155,11 +155,11 @@ public class InitilizeEldView {
             FragmentTransaction fragmentTran = fragManager.beginTransaction();
             fragmentTran.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                     android.R.anim.fade_in, android.R.anim.fade_out);
-            if(isFragmentAdd){
+           // if(isFragmentAdd){
                 fragmentTran.add(R.id.job_fragment, detailFragment);
-            }else {
+           /* }else {
                 fragmentTran.replace(R.id.job_fragment, detailFragment);
-            }
+            }*/
             fragmentTran.addToBackStack("eld_certify_log");
             fragmentTran.commitAllowingStateLoss();
 

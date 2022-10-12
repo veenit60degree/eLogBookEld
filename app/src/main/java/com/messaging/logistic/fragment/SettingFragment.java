@@ -64,6 +64,7 @@ import com.constants.CircularProgressBar;
 import com.constants.Constants;
 import com.constants.DownloadAppService;
 import com.constants.LoadingSpinImgView;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.SyncDataUpload;
 import com.constants.VolleyRequest;
@@ -1289,18 +1290,18 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
             if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v("TAG","Permission is granted");
+                Logger.LogVerbose("TAG","Permission is granted");
                 SyncData();
 
                 return true;
             } else {
-                Log.v("TAG","Permission is revoked");
+                Logger.LogVerbose("TAG","Permission is revoked");
                 ActivityCompat.requestPermissions(((Activity)getContext()), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         }
         else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("TAG","Permission is granted");
+            Logger.LogVerbose("TAG","Permission is granted");
             SyncData();
             return true;
         }
@@ -1318,7 +1319,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
             case 1:
                 if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-                    Log.v("TAG","Permission: "+permissions[0]+ "was "+grantResults[0]);
+                  //  Logger.LogVerbose("TAG","Permission: "+permissions[0]+ "was "+grantResults[0]);
                     //resume tasks needing this permission
 
                     SyncData();
@@ -1595,7 +1596,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         catch (Settings.SettingNotFoundException e)
         {
             //Throw an error case it couldn't be retrieved
-            Log.e("Error", "Cannot access system brightness");
+            Logger.LogError("Error", "Cannot access system brightness");
             e.printStackTrace();
         }
 
@@ -1673,7 +1674,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    Log.e("Volume:", "ponStopTrackingTouch ");
+                    Logger.LogError("Volume:", "ponStopTrackingTouch ");
                     // seekBar.setProgress(volume[0]);
                 }
 
@@ -1688,12 +1689,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
 //                            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.ADJUST_SAME);
                     if(volume[0] < progress) {
-                        Log.e("Volume:", "progress raise: " + progress);
+                        Logger.LogError("Volume:", "progress raise: " + progress);
                         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                                 AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
 
                     }else{
-                        Log.e("Volume:", "progress lower: " + progress);
+                        Logger.LogError("Volume:", "progress lower: " + progress);
                         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                                 AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND);
                     }
@@ -1713,7 +1714,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
             if(volume[0] != audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)){
                 //volume changed put logic here
-                Log.e("Volume","dfsdf");
+                Logger.LogError("Volume","dfsdf");
             }
 
         } catch (Exception e) {
@@ -1868,7 +1869,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     CheckConnectivity.ConnectivityInterface ConnectivityInterface = new CheckConnectivity.ConnectivityInterface() {
         @Override
         public void IsConnected(boolean result, int flag) {
-            Log.d("networkUtil", "result: " +result );
+            Logger.LogDebug("networkUtil", "result: " +result );
 
             if (result) {
                 if(flag == CheckInternetConnection) {
@@ -2349,7 +2350,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 switch (flag) {
                     case GetAppUpdate:
                         try {
-                            Log.d("response", "response: " + response);
+                            Logger.LogDebug("response", "response: " + response);
 
 
                             if(progressDialog != null)
@@ -2543,7 +2544,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         global.EldScreenToast(SyncDataBtn, Globally.DisplayErrorMessage(error.toString()), getResources().getColor(R.color.colorVoilation));
                     }
 
-                    Log.d("Driver", "error" + error.toString());
+                    Logger.LogDebug("Driver", "error" + error.toString());
                     break;
             }
         }
@@ -2557,7 +2558,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 progressDialog.dismiss();
             }
 
-            Log.e("String Response", ">>>Sync Response:  " + response);
+            Logger.LogError("String Response", ">>>Sync Response:  " + response);
             settingSpinImgVw.stopAnimation();
 
             try {
@@ -2783,7 +2784,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
     public void haulExceptionAlert() {
         if(enableExceptionAlert != null && enableExceptionAlert.isShowing()){
-            Log.d("dialog", "dialog is showing" );
+            Logger.LogDebug("dialog", "dialog is showing" );
         }else {
             closeDialogs();
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(),R.style.AlertDialogStyle);
@@ -2995,7 +2996,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         @Override
         public void SaveLocReady(String Address) {
 
-            Log.d("Address: " , Address);
+            Logger.LogDebug("Address: " , Address);
             agricultureAddress = Address;
 
             if(Address.length() < 5){

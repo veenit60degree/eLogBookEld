@@ -41,14 +41,14 @@ public class WiFiConfig {
     ArrayList<String> SSIS_LIST = new ArrayList<String>();
 
     public void onReceive(Context c, final Intent intent, final int flag, final WiFiCallback callback) {
-        //Log.d(TAG, "onReceive() called with: intent = [" + intent + "]");
+        //Logger.LogDebug(TAG, "onReceive() called with: intent = [" + intent + "]");
 
         wifiManager = (WifiManager) c.getSystemService(Context.WIFI_SERVICE);
         int wifiState = wifiManager.getWifiState();
 
         SupplicantState = wifiManager.getConnectionInfo().getSupplicantState().toString();
 
-      //  Log.d("SupplicantState", "--SupplicantState: " + SupplicantState);
+      //  Logger.LogDebug("SupplicantState", "--SupplicantState: " + SupplicantState);
         String ssidName = wifiManager.getConnectionInfo().getSSID().toString();
         ssidName = ssidName.replaceAll("\"", "");
 
@@ -74,7 +74,7 @@ public class WiFiConfig {
                 if(ssidName.contains(AlsWiFiSSID)) {
                     String getSupplicantState = wifiManager.getConnectionInfo().getSupplicantState().toString();
                     String SsidName = wifiManager.getConnectionInfo().getSSID().toString();
-                    // Log.d(TAG, "getSupplicantState: " + getSupplicantState + "  --SsidName : " + SsidName);
+                    // Logger.LogDebug(TAG, "getSupplicantState: " + getSupplicantState + "  --SsidName : " + SsidName);
                     callback.getResponse(getSupplicantState, SsidName);
                 }else{
                     new Handler().postDelayed(new Runnable() {
@@ -128,7 +128,7 @@ public class WiFiConfig {
                 wifiManager.setWifiEnabled(true);
             }
 
-           // Log.d("SSID_PASS", "--networkSSID: " + networkSSID + "    networkPassword: " + networkPassword);
+           // Logger.LogDebug("SSID_PASS", "--networkSSID: " + networkSSID + "    networkPassword: " + networkPassword);
 
             WifiConfiguration conf = new WifiConfiguration();
             conf.SSID = String.format("\"%s\"", networkSSID);
@@ -180,7 +180,7 @@ public class WiFiConfig {
             e.printStackTrace();
         }
 
-       // Log.d("IsWifiConnected", "SSID name:: " + ssidName);
+       // Logger.LogDebug("IsWifiConnected", "SSID name:: " + ssidName);
 
         if(IsConnected){                            //wifiMgr.isWifiEnabled()
             if (ssidName.contains(AlsWiFiSSID)){

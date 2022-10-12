@@ -64,13 +64,13 @@
 
         <RelativeLayout
             android:id="@+id/r2"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true" >
 
             <TabWidget
                 android:id="@android:id/tabs"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
 
                 android:baselineAligned="false"

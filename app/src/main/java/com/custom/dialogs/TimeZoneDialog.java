@@ -23,6 +23,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.constants.VolleyRequestWithoutRetry;
@@ -213,7 +214,7 @@ public class TimeZoneDialog extends Dialog {
         @Override
         public void getResponse(String response, int flag) {
 
-            Log.d("response", " logout response: " + response);
+            Logger.LogDebug("response", " logout response: " + response);
 
             try {
                 if(getContext() != null) {
@@ -277,7 +278,7 @@ public class TimeZoneDialog extends Dialog {
 
         @Override
         public void getError(VolleyError error, int flag) {
-           // Log.d("onDuty error", "onDuty error: " + error.toString());
+           // Logger.LogDebug("onDuty error", "onDuty error: " + error.toString());
 
             try {
                 if(isCurrentTimeBigger)

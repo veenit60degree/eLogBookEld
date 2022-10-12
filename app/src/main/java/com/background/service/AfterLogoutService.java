@@ -35,6 +35,7 @@ import com.constants.APIs;
 import com.constants.CheckConnectivity;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SaveUnidentifiedRecord;
 import com.constants.SharedPref;
@@ -196,16 +197,15 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive (Context context, Intent intent){
-                // Log.d("received", "received from service");
+                // Logger.LogDebug("received", "received from service");
                // boolean BleDataService = intent.getBooleanExtra(ConstantsKeys.BleDataService, false);
                 boolean IsConnected = intent.getBooleanExtra(ConstantsKeys.IsConnected, false);
                 String data         = intent.getStringExtra(ConstantsKeys.Data);
-               // Log.d("Ble Data", "Data: " + data);
+               // Logger.LogDebug("Ble Data", "Data: " + data);
 // 0048 @@ 0 @@ 1 @@ 090622 @@ 060443 @@ 090622053820 @@ 090622060443 @@ OnTime @@ 0 @@ 0 @@ 642264000 @@ 0.00 @@ @@ X @@ X @@ 0
                // if (BleDataService) {
 
-                if (SharedPref.getUserName(getApplicationContext()).equals("") &&
-                        SharedPref.getPassword(getApplicationContext()).equals("")) {
+                if (!SharedPref.IsDriverLogin(getApplicationContext())) {
 
                     try{
 
@@ -221,7 +221,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                         String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
                                         if (savedMacAddress.length() == 0 || savedMacAddress.equals(decodedDataArray[0])) {
-                                            //  Log.e("TAG", "onReceiveTime==" + htBleData);
+                                            //  Logger.LogError("TAG", "onReceiveTime==" + htBleData);
                                             SharedPref.SaveBleOBDMacAddress(decodedDataArray[0], getApplicationContext());
 
                                             if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
@@ -295,7 +295,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
                                             String lastIgnitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
-                                            //Log.d("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
+                                            //Logger.LogDebug("lastIgnitionStatus", "lastIgnitionStatus00: " +lastIgnitionStatus );
                                             // this check is used when ble obd is disconnected
                                             if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
                                                 if (!SharedPref.getRPM(getApplicationContext()).equals("0") && lastIgnitionStatus.equals("true")) {
@@ -372,7 +372,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         //  ------------- Wired OBD ----------
         this.connection = new RemoteServiceConnection();
         this.replyTo = new Messenger(new IncomingHandler());
-        BindConnection();
 
         ObdPreference = SharedPref.getObdPreference(getApplicationContext());
         SharedPref.setNotiShowTime("", getApplicationContext());
@@ -382,14 +381,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         if(ObdPreference == Constants.OBD_PREF_BLE) {
 
-            if (SharedPref.getUserName(getApplicationContext()).equals("") &&
-                    SharedPref.getPassword(getApplicationContext()).equals("")) {
-
+            if (!SharedPref.IsDriverLogin(getApplicationContext())) {
                 startBleService();
             }
 
 
         }else if(ObdPreference == Constants.OBD_PREF_WIRED) {
+            BindConnection();
             checkWiredObdConnection();
         }
 
@@ -478,8 +476,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         try {
 
-            if (SharedPref.getUserName(getApplicationContext()).equals("") &&
-                    SharedPref.getPassword(getApplicationContext()).equals("")) {
+            if (!SharedPref.IsDriverLogin(getApplicationContext())) {
 
                 checkEngHrOdo();
 
@@ -645,7 +642,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
             ShellUtils.CommandResult obdShell = ShellUtils.execCommand("cat /sys/class/power_supply/usb/type", false);
-            Log.d("OBD", "obd --> cat type --> " + obdShell.successMsg);
+            Logger.LogDebug("OBD", "obd --> cat type --> " + obdShell.successMsg);
             if (obdShell.result == 0) {
                 if (obdShell.successMsg.contains("USB_DCP")) {  //USB_DCP
 
@@ -881,7 +878,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     }
 
     private void CallWired(long time){
-        if (SharedPref.getUserName(getApplicationContext()).equals("") && SharedPref.getPassword(getApplicationContext()).equals("")) {
+        if (!SharedPref.IsDriverLogin(getApplicationContext())) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -895,7 +892,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     private void checkWifiOBDConnection(){
 
-        if (SharedPref.getUserName(getApplicationContext()).equals("") &&  SharedPref.getPassword(getApplicationContext()).equals("")) {
+        if (!SharedPref.IsDriverLogin(getApplicationContext())) {
 
             boolean isAlsNetworkConnected = wifiConfig.IsAlsNetworkConnected(getApplicationContext());  // get ALS Wifi ssid availability
             boolean isWiredObdConnected = false;
@@ -919,8 +916,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.i("service", "---------onStartCommand Service");
-
+        Logger.LogInfo("service", "---------onStartCommand Service");
+        
         offsetFromUTC = (int) global.GetTimeZoneOffSet();
         ObdPreference = SharedPref.getObdPreference(getApplicationContext());
         String pingStatus = SharedPref.isPing(getApplicationContext());
@@ -964,6 +961,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     }
                 }
             } else if (ObdPreference == Constants.OBD_PREF_WIRED) {
+                BindConnection();
                 StartStopServer(constants.WiredOBD);
             } else {
                 checkWifiOBDConnection();
@@ -1023,12 +1021,12 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
         @Override
         public void run() {
-            // Log.e(TAG, "-----Running Logout timerTask");
+            // Logger.LogError(TAG, "-----Running Logout timerTask");
 
             try {
-                if (!SharedPref.getUserName(getApplicationContext()).equals("") &&
-                        !SharedPref.getPassword(getApplicationContext()).equals("")) {
-                    Log.e("Log", "--stop");
+                if (!SharedPref.IsDriverLogin(getApplicationContext())) {
+                    Logger.LogError("Log", "--stop");
+                    
                     StopService();
 
                 } else {
@@ -1041,8 +1039,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     // communicate with wired OBD server app with Message
                     if (ObdPreference == Constants.OBD_PREF_BLE) {
 
-                        if (SharedPref.getUserName(getApplicationContext()).equals("") &&
-                                SharedPref.getPassword(getApplicationContext()).equals("")) {
+                        if (!SharedPref.IsDriverLogin(getApplicationContext())) {
 
                             if (!BleDataService.isBleConnected || !HTBleSdk.Companion.getInstance().isConnected()) { // if device not `connected
 
@@ -1066,7 +1063,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                         }
 
-                        // Log.e(TAG, "-----Running timer htble 1");
+                        // Logger.LogError(TAG, "-----Running timer htble 1");
                     } else if (ObdPreference == Constants.OBD_PREF_WIRED) {
 
                         checkWiredObdConnection();
@@ -1157,7 +1154,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
     private void uploadVehPowerEvents(){
-        JSONArray eventArray = vehiclePowerEventMethod.getVehPowerEventArray(dbHelper);
+       JSONArray eventArray = vehiclePowerEventMethod.getVehPowerEventArray(dbHelper);
         if(eventArray.length() > 0 && Globally.isConnected(getApplicationContext())) {
             saveDriverLogPost.PostDriverLogData(eventArray, APIs.SAVE_ENGINE_ON_OFF_EVENTS, Constants.SocketTimeout20Sec,
                     false, false, 0, SaveVehPwrEventLog);
@@ -1169,7 +1166,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private void postEventsToServer(){
         JSONArray array = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
 
-        Log.d("array","array: " +array);
+        Logger.LogDebug("array","array: " +array);
 
         if (global.isConnected(getApplicationContext()) && array.length() > 0 && isDataAlreadyPosting == false) {
             isDataAlreadyPosting = true;
@@ -1208,11 +1205,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported");
+                Logger.LogError("TTS", "This Language is not supported");
             }
 
         } else {
-            Log.e("TTS", "Initilization Failed!");
+            Logger.LogError("TTS", "Initilization Failed!");
         }
 
     }
@@ -1224,10 +1221,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     //Bind to the remote service
     private void BindConnection(){
         try{
-            Intent intent = new Intent();
-            intent.setClassName(ServerPackage, ServerService);
-            this.bindService(intent, this.connection, Context.BIND_AUTO_CREATE);
-
+            if(!isBound){
+                Intent intent = new Intent();
+                intent.setClassName(ServerPackage, ServerService);
+                this.bindService(intent, this.connection, Context.BIND_AUTO_CREATE);
+            }
         }catch (Exception e){  }
 
     }
@@ -1247,7 +1245,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG,"---onBind");
+        Logger.LogDebug(TAG,"---onBind");
         return null;
     }
 
@@ -1270,7 +1268,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 public void run() {
                     //Setup the message for invocation
                     try{
-                        Log.d(TAG_OBD, "Invocation Failed!!");
+                        Logger.LogDebug(TAG_OBD, "Invocation Failed!!");
 
                         //Set the ReplyTo Messenger for processing the invocation response
                         Message msg1 = new Handler().obtainMessage();
@@ -1285,14 +1283,14 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     }catch(Exception rme){
                         //Show an Error Message
                         rme.printStackTrace();
-                        Log.d(TAG_OBD, "Invocation Failed!!");
+                        Logger.LogDebug(TAG_OBD, "Invocation Failed!!");
                     }
                 }
             });
 
         }else{
             try{
-                Log.d(TAG_OBD, "Service is Not Bound!!");
+                Logger.LogDebug(TAG_OBD, "Service is Not Bound!!");
                 this.connection = new RemoteServiceConnection();
                 BindConnection();
             }catch (Exception e){
@@ -1326,7 +1324,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     TcpClient.OnMessageReceived obdResponseHandler = new TcpClient.OnMessageReceived() {
         @Override
         public void messageReceived(String message) {
-            Log.d("response", "OBD Response: " +message);
+            Logger.LogDebug("response", "OBD Response: " +message);
 
             try {
                 String correctData = "";
@@ -1458,7 +1456,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             intent.putExtra("location", "torestore");
             sendBroadcast(intent);
         }else{
-            Log.d(TAG, "Service stopped" );
+            Logger.LogDebug(TAG, "Service stopped" );
 
             if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                 //  ------------- BLE OBD ----------
@@ -1884,7 +1882,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 JSONObject obj = (JSONObject) array.get(i);
                 String startDateTime = obj.getString(ConstantsKeys.UTCStartDateTime);
                 if(startDateTime.equals(lastEventStartTime)){
-                    Log.d("RemoveEvent", ">>> Remove duplicate event: " +obj);
+                    Logger.LogDebug("RemoveEvent", ">>> Remove duplicate event: " +obj);
                     array.remove(i-1);
 
                 }
@@ -1920,7 +1918,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 JSONObject obj = new JSONObject(response);
                 String status = obj.getString(ConstantsKeys.Status);
 
-                if (SharedPref.getUserName(getApplicationContext()).equals("") && SharedPref.getPassword(getApplicationContext()).equals("")) {
+                if (!SharedPref.IsDriverLogin(getApplicationContext())) {
                     if (status.equalsIgnoreCase("true")) {
 
                         if(flag == GetMalDiaEventDuration){
@@ -2018,7 +2016,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                 malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable("0", global, constants, dbHelper, getApplicationContext());
 
-                                //   Log.d("----durationArray", ">>>>durationArray: "+ durationArray);
+                                //   Logger.LogDebug("----durationArray", ">>>>durationArray: "+ durationArray);
 
 
                             }catch (Exception e){
@@ -2028,7 +2026,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
                         }else {
-                            Log.d("----EventCreated", "Event Flag: "+ SaveUnidentifiedEvent);
+                            Logger.LogDebug("----EventCreated", "Event Flag: "+ SaveUnidentifiedEvent);
 
                             UnidentifiedApiInProgress = false;
                             JSONObject resultJson = obj.getJSONObject(ConstantsKeys.Data);
@@ -2067,7 +2065,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         public void getError(VolleyError error, int flag) {
 
             if(error != null) {
-                Log.d("error", "error-" + flag + " : " + error);
+                Logger.LogDebug("error", "error-" + flag + " : " + error);
 
                 if (flag == SaveUnidentifiedEvent) {
                     UnidentifiedApiInProgress = false;
@@ -2093,7 +2091,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 if (status.equals("true")) {
 
                     if(flag == SaveMalDiagnstcEvent) {
-                        Log.d("SaveMalDiagnstcEvent", "SaveMalDiagnstcEvent saved successfully");
+                        Logger.LogDebug("SaveMalDiagnstcEvent", "SaveMalDiagnstcEvent saved successfully");
                         isMalfncDataAlreadyPosting = false;
                         powerEventInputArray = new JSONArray();
 
@@ -2146,7 +2144,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: " );
+            Logger.LogDebug("errorrr ", ">>>error dialog: " );
             isDataAlreadyPosting = false;
         }
 
@@ -2228,7 +2226,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
                                 savePowerDiagnosticRecordInTable(currentDate, true);
 
-                                Log.d("Power event", ">>>>>Power event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
+                                Logger.LogDebug("Power event", ">>>>>Power event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
 
 
                                 // update mal/dia status for enable disable according to log
@@ -2270,7 +2268,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 // clear Power Diagnostic event after 1 min automatically when ECM is connected.
                 if (secDiff > 60 && callTimeSecDiff > 18) {
                     SharedPref.setPowerClearEventCallTime(global.getCurrentDate(), getApplicationContext());
-                    Log.d("Clear event", ">>>>>Clear event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
+                    Logger.LogDebug("Clear event", ">>>>>Clear event occurred " + malfunctionDiagnosticMethod.getMalDiaDurationArray(dbHelper));
 
                     powerEventInputArray = new JSONArray();
                     ClearEventUpdate( Constants.PowerComplianceDiagnostic,
@@ -2675,7 +2673,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 //                                        int minDiff = constants.getMinDifference(SharedPref.getObdLastStatusTime(getApplicationContext()),
 //                                                global.GetCurrentDateTime());
 //                                        double totalEngSyncMissingMin = last24HrEngSyncEventTime;
-                                        Log.d("last24HrEng", String.valueOf(last24HrEngSyncEventTime));
+                                        Logger.LogDebug("last24HrEng", String.valueOf(last24HrEngSyncEventTime));
                                         if (last24HrEngSyncEventTime >= Constants.PowerEngSyncMalOccTime) {
 
                                             SharedPref.saveEngSyncMalfunctionStatus(true, getApplicationContext());

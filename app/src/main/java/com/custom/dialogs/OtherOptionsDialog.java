@@ -22,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
@@ -147,7 +148,7 @@ public class OtherOptionsDialog extends Dialog {
         otherFeatureListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-               // Log.d("itemClick", "itemClick: " + position);
+               // Logger.LogDebug("itemClick", "itemClick: " + position);
 
                 switch (otherOptionList.get(position).getStatus()) {
 
@@ -274,7 +275,7 @@ public class OtherOptionsDialog extends Dialog {
         @Override
         public void getResponse(String response, int flag) {
 
-            Log.d("response", "edit response: " + response);
+            Logger.LogDebug("response", "edit response: " + response);
             try {
                 if (progressDialog != null && progressDialog.isShowing())
                     progressDialog.dismiss();

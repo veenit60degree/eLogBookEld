@@ -77,7 +77,7 @@ public class SyncAppUsageLog extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String result) {
 
-        Log.e("String Response", ">>>Sync app usage Response:  " + result);
+        Logger.LogError("String Response", ">>>Sync app usage Response:  " + result);
 
         //  postResponse.onAsyncResponse(result);
 

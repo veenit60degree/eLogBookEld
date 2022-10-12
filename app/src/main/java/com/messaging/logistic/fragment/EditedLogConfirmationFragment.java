@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.adapter.logistic.EditedLogAdapter;
+import com.constants.Logger;
 import com.constants.SharedPref;
 import com.local.db.ConstantsKeys;
 import com.messaging.logistic.R;
@@ -122,7 +123,7 @@ public class EditedLogConfirmationFragment extends Fragment {
                     int DriverLogListHeight      = itemLayoutHeight + ((itemLayoutHeight + DividerHeigh ) * listSize) + 50;
                     editLogListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DriverLogListHeight ));
 
-                    Log.d("ViewHeight", "DriverLogListHeight: " + DriverLogListHeight);
+                    Logger.LogDebug("ViewHeight", "DriverLogListHeight: " + DriverLogListHeight);
                 }catch (Exception e){}
 
             }

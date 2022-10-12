@@ -1556,7 +1556,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_DRIVER_LOG + " WHERE " +
                 DRIVER_ID_KEY + "=?", new String[]{Integer.toString(DriverId)});
 
-//        Log.d("@@@DriverId","HelperDriverId: " +DriverId );
+//        Logger.LogDebug("@@@DriverId","HelperDriverId: " +DriverId );
         return res;
     }
 

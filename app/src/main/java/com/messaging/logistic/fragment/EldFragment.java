@@ -54,6 +54,7 @@ import com.constants.DriverLogResponse;
 import com.constants.GPSRequest;
 import com.constants.InitilizeEldView;
 import com.constants.LoadingSpinImgView;
+import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.Slidingmenufunctions;
@@ -169,7 +170,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     boolean IsRefreshedClick = false, IsAOBRDAutomatic = false, IsAOBRD = false, isNewDateStart = true, isYardBtnClick = false, isFragmentAdd = false;
     boolean isFirst = true, isViolation = false, isCertifyLog = false, isDrivingCalled = false, IsDOT = false;
     boolean IsAddressUpdate = false, isTimeDefault = true, is18DaysLogApiCalled = false, isSaveTrailerPending = false, IsLogApiRefreshed = false;
-    boolean is75KmExceededLogWritten = false;
+    boolean is75KmExceededLogWritten = false, isPermissionApiInProgress = false;
     public static boolean IsOdometerReading = false, IsSaveOperationInProgress = false, IsPopupDismissed = false;
     Animation emptyTrailerNoAnim, OdometerFaceView, exceptionFaceView, connectionStatusAnimation, editLogAnimation;
     String strCurrentDate = "", DRIVER_ID = "0", DeviceId = "", LoginTruckChange = "true";
@@ -666,7 +667,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         Constants.IsHomePageOnCreate = false;
 
         /*========= Start Service =============*/
-        Constants.isEldHome = false;
         startService();
 
 
@@ -927,10 +927,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
 
-        /*int minDiff = Constants.getMinDiff("2022-03-14T11:51:45", "2022-03-16T06:12:45");
-        int MINNN =  Constants.getMinDiff(Globally.getDateTimeObj("2022-03-14T11:51:45", false),
-                Globally.getDateTimeObj("2022-03-16T06:12:45", false));
-*/
         if(constants == null) {
             try {
                 initView(rootView);
@@ -943,7 +939,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         try {
             if (!constants.CheckGpsStatus(getActivity()))
-                gpsRequest.EnableGPSAutoMatically();
+                    gpsRequest.EnableGPSAutoMatically();
 
             if (getActivity() != null) {
                 if (SharedPref.IsOdometerFromOBD(getActivity())) {
@@ -1011,30 +1007,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         loadOnCreateView(isConnected);
 
-        if(isUpdateDriverLog){
-            isUpdateDriverLog = false;
-            CalculateTimeInOffLine(false, false, false);
-
-            GetDriversSavedData(false, DriverType);
-             if (Globally.isConnected(getActivity())) {
-                 if (DriverJsonArray.length() > 0 && !IsSaveOperationInProgress) {
-                     IsPrePost = false;
-                     if (SaveRequestCount < 2) {
-                         SAVE_DRIVER_STATUS();
-                     }
-                 }
-             }
-        }else{
-            if(drivingTimeTxtVw.getText().toString().equals(getString(R.string.time_default)) && isTimeDefault){    // call method again (only once) to refresh view with updaed time
-                isTimeDefault = false;
-                CalculateTimeInOffLine(false, false, false);
-            }
-        }
-     //
-
         if(!isSingleDriver) {
-           // String job =  SharedPref.getDriverStatusId(getActivity());
-           // DRIVER_JOB_STATUS = hMethods.getLastStatus(Integer.valueOf(DRIVER_ID), dbHelper);
             oldStatusView = DRIVER_JOB_STATUS;
             DriverStatusId = ""+DRIVER_JOB_STATUS;
         }
@@ -1511,13 +1484,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
             if (!isUpdateDriverLog) {
                 GetDriversSavedData(false, DriverType);
-               /* try {
-                    driverLogArray = new JSONArray();
-                    driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    driverLogArray = new JSONArray();
-                }*/
 
                 CalculateTimeInOffLine(false, true, false);
 
@@ -1544,7 +1510,13 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 }
             }
         } else {
-            onResumeDataSet(isConnected);
+            if(!SharedPref.GetNewLoginStatus(getActivity())) {
+                onResumeDataSet(isConnected);
+            }else{
+                if (TabAct.vehicleList.size() == 0) {
+                    GetOBDAssignedVehicles(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId, DriverCompanyId, VIN_NUMBER);
+                }
+            }
         }
 
     }
@@ -1559,7 +1531,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         GetOBDAssignedVehicles(DriverConst.GetDriverDetails(DriverConst.DriverID, getActivity()), DeviceId, DriverCompanyId, VIN_NUMBER);
                     }
                 }
-
             }
 
             DateTime lastDataSavedDate;
@@ -1632,7 +1603,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     private class MyTimerTask extends TimerTask {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void run() {
-           // Log.e("Log", "----TimerTask EldFragment");
+           // Logger.LogError("Log", "----TimerTask EldFragment");
             strCurrentDate = Global.getCurrentDate();
             SelectedDate = Globally.GetCurrentDeviceDate();
 
@@ -1655,7 +1626,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         }
 
                         GetDriversSavedData(false, DriverType);
-                        // if(Globally.CompareSavedWithCurrentDate(getActivity())) {
+
+                        if (driverLogArray.length() > 0) {
+                            driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
+                        }
+
                         if (Globally.isConnected(getActivity())) {
                             if (DriverJsonArray.length() > 0 && !IsSaveOperationInProgress) {
                                 IsPrePost = false;
@@ -2215,7 +2190,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         DriverStatusId = currentJobType;
         DRIVER_JOB_STATUS = Integer.valueOf(currentJobType);
         Constants.IsAlreadyViolation = false;
-        //  Log.d("---jobTypeSaved", "---jobTypeSaved: "+ currentJobType);
+        //  Logger.LogDebug("---jobTypeSaved", "---jobTypeSaved: "+ currentJobType);
     }
 
 
@@ -2621,7 +2596,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             SAVE_DRIVER_STATUS();
                         }
                     } else {
-                        // Globally.EldScreenToast(OnDutyBtn, getString(R.string.already_uploading), getResources().getColor(R.color.color_eld_theme));
                         refreshDataEvent(isConnected);
                     }
                 }else{
@@ -2770,14 +2744,28 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     } else {
                         IsRefreshedClick = false;
 
-                        if (TeamDriverType.equals(DriverConst.TeamDriver)) {
-                           // GetDriverLog18Days(MainDriverId, GetDriverLog18Days);
-                           // GetDriverLog18Days(CoDriverId, GetCoDriverLog18Days);
+                        if(isUpdateDriverLog){
+                            isUpdateDriverLog = false;
 
-                            dataRequest18Days(MainDriverId, GetDriverLog18Days);
-                            dataRequest18Days(CoDriverId, GetCoDriverLog18Days);
-                        } else {
-                            dataRequest18Days(DRIVER_ID, GetDriverLog18Days);
+                            GetDriversSavedData(false, DriverType);
+                            CalculateTimeInOffLine(false, true, false);
+
+                            try {
+                                if (Globally.isConnected(getActivity())) {
+                                    if (DriverJsonArray.length() > 0 && !IsSaveOperationInProgress) {
+                                        SAVE_DRIVER_STATUS();
+                                    }
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else {
+                            if (TeamDriverType.equals(DriverConst.TeamDriver)) {
+                                dataRequest18Days(MainDriverId, GetDriverLog18Days);
+                                dataRequest18Days(CoDriverId, GetCoDriverLog18Days);
+                            } else {
+                                dataRequest18Days(DRIVER_ID, GetDriverLog18Days);
+                            }
                         }
 
                     }
@@ -3373,7 +3361,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     AlertDialogEld.NegativeButtonCallBack negativeCallBack = new AlertDialogEld.NegativeButtonCallBack() {
         @Override
         public void getNegativeClick(int flag) {
-            Log.d("negativeCallBack", "negativeCallBack: " + flag);
+            Logger.LogDebug("negativeCallBack", "negativeCallBack: " + flag);
         }
     };
 
@@ -3448,17 +3436,19 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     private void restartLocationService(){
         if (Globally.LATITUDE.equals("0.0") || Globally.LATITUDE.equals("") ){
-            Constants.isEldHome = false;
             startService();
         }
     }
 
     private void startService(){
-       Intent serviceIntent = new Intent(getActivity(), BackgroundLocationService.class);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getActivity().startForegroundService(serviceIntent);
+        if(Globally.globalServiceIntent == null) {
+            Globally.globalServiceIntent = new Intent(getActivity(), BackgroundLocationService.class);
         }
-        getActivity().startService(serviceIntent);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getActivity().startForegroundService(Globally.globalServiceIntent);
+        }
+        getActivity().startService(Globally.globalServiceIntent);
 
     }
 
@@ -3906,7 +3896,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     if(getActivity() != null && !getActivity().isFinishing()) {
                                         if (continueStatusDialog != null && continueStatusDialog.isShowing()) {
                                             continueStatusDialog.dismiss();
-                                           // Log.d("dialog", "dialog dismissed");
+                                           // Logger.LogDebug("dialog", "dialog dismissed");
                                         }
                                     }
                                 }catch (Exception e){
@@ -3980,7 +3970,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     EldDataModelNew listModel = tempList.get(i);
 
                     if (listModel != null) {
-                        constants.SaveEldJsonToList(listModel, DriverJsonArray);  /* Put data as JSON to List */
+                        constants.SaveEldJsonToList(listModel, DriverJsonArray, getActivity());  /* Put data as JSON to List */
 
                         DRIVER_JOB_STATUS = Integer.valueOf(listModel.getDriverStatusId());
                         if (IsCheckPersonal) {
@@ -3997,43 +3987,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     }
 
 
- /*   private void GetDriverLogData() {
 
-        switch (DRIVER_JOB_STATUS) {
-            case OFF_DUTY:
-                HighlightedViewHide();
-                break;
+    void VehicleBtnClick(final int position) {
 
-            case SLEEPER:
-                HighlightedViewHide();
-                break;
-
-            case DRIVING:
-                HighlightedViewVisible();
-                break;
-
-            case ON_DUTY:
-                HighlightedViewVisible();
-                break;
-        }
-
-    }
-
-
-    void HighlightedViewVisible() {
-        remainingLay.setVisibility(View.VISIBLE);
-    }
-
-
-    void HighlightedViewHide() {
-        remainingLay.setVisibility(View.GONE);
-    }*/
-
-
-    void VehicleBtnClick(String Title, final int position) {
-
-        TruckListPosition = position ;  //- 1
-
+        TruckListPosition = position ;
         if (SharedPref.getDriverType(getContext()).equals(DriverConst.TeamDriver)) {
             SaveVehicleNumber(TruckListPosition, MainDriverId, CoDriverId, DriverCompanyId, LoginTruckChange, true);
         } else {
@@ -4221,6 +4178,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         Globally.PROJECT_ID,
                         DRIVER_ID,
                         DriverStatusId,
+                        "0",
 
                         String.valueOf(isYardBtnClick),
                         isPersonal,
@@ -4285,7 +4243,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 }
 
 
-                constants.SaveEldJsonToList(locationModel, DriverJsonArray);   /* Put data as JSON to List */
+                constants.SaveEldJsonToList(locationModel, DriverJsonArray, getActivity());   /* Put data as JSON to List */
 
                 // Saved json in synced array which is using in setting page to sync data mannually.
                 JSONObject newObj = constants.GetJsonFromList(DriverJsonArray, DriverJsonArray.length() - 1);
@@ -4304,7 +4262,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     savedSyncedArray = notificationMethod.ReverseArray(reverseArray);
                 }
 
-              //  Log.d("savedSyncedArray", "savedSyncedArray: " +savedSyncedArray);
+              //  Logger.LogDebug("savedSyncedArray", "savedSyncedArray: " +savedSyncedArray);
 
                 savedSyncedArray.put(newObj);
                 syncingMethod.SyncingLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, savedSyncedArray);
@@ -5127,7 +5085,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     private class VehicleLoginListener implements VehicleDialogLogin.VehicleLoginListener {
         @Override
         public void ChangeVehicleReady(String Title, int position, View view, boolean isOldDialog) {
-            VehicleListenerLoginEvent(Title, position, view, isOldDialog);
+            VehicleListenerLoginEvent(Title, position, view);
 
         }
 
@@ -5150,7 +5108,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     private class OldVehicleLoginListener implements VehicleDialogLoginOld.VehicleLoginListener {
         @Override
         public void ChangeVehicleReady(String Title, int position, View view, boolean isOldDialog) {
-            VehicleListenerLoginEvent( Title, position, view, isOldDialog);
+            VehicleListenerLoginEvent( Title, position, view);
 
         }
 
@@ -5165,12 +5123,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 e.printStackTrace();
             }
 
-            //  ShowRecapDialog();
         }
     }
 
 
-    void VehicleListenerLoginEvent(String Title, int position, View view, boolean isOldDialog){
+    void VehicleListenerLoginEvent(String Title, int position, View view){
         try{
             if(getActivity() != null && !getActivity().isFinishing()){
                 if (!Title.equals(ConstantsEnum.StrTruckAttachedTxt)) {
@@ -5178,7 +5135,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         LoginTruckChange = "true";
                         progressDialog.show();
                         loginDialogView = view;
-                        VehicleBtnClick(Title, position);
+                        VehicleBtnClick(position);
                     } else {
                         Globally.EldScreenToast(view, Globally.CHECK_INTERNET_MSG, getResources().getColor(R.color.colorVoilation));
                     }
@@ -5197,7 +5154,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         if (!Title.equals(ConstantsEnum.StrTruckAttachedTxt)) {
             if (Globally.isConnected(getActivity())) {
                 LoginTruckChange = "false";
-                VehicleBtnClick(Title, position);
+                VehicleBtnClick(position);
 
                 try {
                     if(isOldDialog){
@@ -5648,7 +5605,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
                         }else{
                             if(isEldRuleAlreadyCalled == false) {
-                               // Log.d("isEldRuleAlreadyCalled", "------------CalculateTimeInOffLine called " );
+                               // Logger.LogDebug("isEldRuleAlreadyCalled", "------------CalculateTimeInOffLine called " );
                                 isEldRuleAlreadyCalled = true;
                                 CalculateTimeInOffLine(false, true, false);
                             }
@@ -5685,11 +5642,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         String currentJob = SharedPref.getDriverStatusId(getActivity());
 
                         // if log array last status is not equal to current status. Then need to refresh 18 days log API
-                        if(!currentJob.equals(""+DRIVER_JOB_STATUS) && !IsLogApiRefreshed){
-                            IsLogApiRefreshed = true;
-                            GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
+                        if(currentJob.length() > 0) {
+                            if (!currentJob.equals("" + DRIVER_JOB_STATUS) && !IsLogApiRefreshed) {
+                                IsLogApiRefreshed = true;
+                                GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
+                            }
                         }
-
                         if (SharedPref.GetNewLoginStatus(getActivity())) {
                             callEldRuleMethod(currentDayArray, currentDateTime, currentUTCTime, onResume);
                         }else{
@@ -6395,7 +6353,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     void GetDriverLog18Days(final String DriverId, int GetDriverLog18Days) {
 
         if(!SharedPref.isCoDriverSwitching(getActivity())) {
-            if (IsSaveOperationInProgress == false) {
+            if (!IsSaveOperationInProgress ) {
                 if (!isSingleDriver) {
                     is18DaysLogApiCalled = false;
                 }
@@ -6466,24 +6424,26 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     //*================== Get Driver Status Permissions ===================*//*
     void GetDriverStatusPermission(final String DriverId, final String DeviceId, final String VehicleId ){
 
-        String Country = "";
-        //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getActivity());
-        if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
-            Country = "CANADA";
-        } else {
-            Country = "USA";
-        }
-        params = new HashMap<String, String>();
-        params.put(ConstantsKeys.DriverId, DriverId);
-        params.put(ConstantsKeys.DeviceId, DeviceId );
-        params.put(ConstantsKeys.VehicleId, VehicleId );
-        params.put(ConstantsKeys.VIN, SharedPref.getVINNumber(getActivity()) );
-        params.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()) );
-        params.put(ConstantsKeys.Country, Country );
-        params.put(ConstantsKeys.TruckEquipment, TruckNumber);
+        if(!isPermissionApiInProgress) {
+            String Country = "USA";
+            if (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2)) {
+                Country = "CANADA";
+            }
 
-        GetPermissions.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS_PERMISSION, params, GetDriverPermission,
-                Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
+            isPermissionApiInProgress = true;
+            params = new HashMap<String, String>();
+            params.put(ConstantsKeys.DriverId, DriverId);
+            params.put(ConstantsKeys.DeviceId, DeviceId);
+            params.put(ConstantsKeys.VehicleId, VehicleId);
+            params.put(ConstantsKeys.VIN, SharedPref.getVINNumber(getActivity()));
+            params.put(ConstantsKeys.CompanyId, DriverConst.GetDriverDetails(DriverConst.CompanyId, getActivity()));
+            params.put(ConstantsKeys.Country, Country);
+            params.put(ConstantsKeys.TruckEquipment, TruckNumber);
+
+            GetPermissions.executeRequest(Request.Method.POST, APIs.GET_DRIVER_STATUS_PERMISSION, params, GetDriverPermission,
+                    Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
+
+        }
 
     }
 
@@ -6543,7 +6503,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
     //*================== Get Driver's 18 Days Recap View Log Data ===================*//*
     void GetRecapView18DaysData(final String DriverId, final String DeviceId , int GetRecapViewFlag){
-        BackgroundLocationService.IsRecapApiACalled = true;
+        BackgroundLocationService.IsRecapApiCalled = true;
 
         DateTime currentDateTime      = Globally.GetCurrentJodaDateTime();
         DateTime startDateTime        = Globally.GetStartDate(currentDateTime, 15);
@@ -6597,7 +6557,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 case MainDriverLog:
 
-                    Log.d("Response ", "---Response Save: " + response);
+                    Logger.LogDebug("Response ", "---Response Save: " + response);
                     IsSaveOperationInProgress = false;
                     progressD.dismiss();
                     EnableJobViews();
@@ -6635,7 +6595,9 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                         String DriverLogId = obj.getString(ConstantsKeys.DriverLogId);
                                         hMethods.UpdateLastLogOfDriver(ConstantsKeys.DriverLogId, DriverLogId,
                                                 DRIVER_ID, dbHelper);
-                                    }
+                                    }/*else{
+                                        dataRequest18Days(DRIVER_ID, GetDriverLog18Days);
+                                    }*/
                                 } else {
                                      /*Check Reason: some times data was uploading in background and user entered new status in between.
                                      In api response we are clearing the entries and in between entry was skipped before upload to server.
@@ -6652,10 +6614,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                                 ClearLogAfterSuccess(isLoad, IsRecap);
 
                                                 // update DriverLogId of current saved status
-                                                if(!IsEditedData){
-                                                    // here our concern is to call 18 days log array, then we are making it true
-                                                    isPending18DaysRequest = true;
-                                                }
+                                                // here our concern is to call 18 days log array, then we are making it true
+                                                isPending18DaysRequest = true;
 
                                             } else {
                                                 if (SaveRequestCount < 2 || IsDuplicateStatusAllowed ) {
@@ -6770,7 +6730,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: ");
+            Logger.LogDebug("errorrr ", ">>>error dialog: ");
 
             if(IsRefreshedClick){
 
@@ -6849,6 +6809,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     case GetDriverLog18Days:
                         /* ---------------- DB Helper operations (Insert/Update) --------------- */
                         try {
+
                             UnidentifiedActivity.isUnIdentifiedRecordClaimed = false;
                             Constants.IS_ELD_ON_CREATE = false;
                             String savedDate = Globally.GetCurrentDateTime();
@@ -6895,7 +6856,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                 } else {
 
-
                                     DRIVER_JOB_STATUS = 1;
                                     isPersonal = "false";
                                     clearCalculationsView();
@@ -6903,10 +6863,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     initilizeEldView.ShowActiveJobView(DRIVER_JOB_STATUS, isPersonal, jobTypeTxtVw, perDayTxtVw, remainingLay,
                                             usedHourLay, jobTimeTxtVw, jobTimeRemngTxtVw);
                                     SetJobButtonView(DRIVER_JOB_STATUS, isViolation, isPersonal);
-
-                                  //  boolean IsFirstTimeLogin = SharedPref.IsFirstTimeLoginMain(getActivity());
-                                  //  addOffDutyOnDayStartForNewDriver(IsFirstTimeLogin);
-                                 //   CalculateTimeInOffLine(false, false, false);
 
                                     if (DRIVER_ID.equals(MainDriverId)) {
                                         SharedPref.SetFirstTimeLoginStatusMain(false, getActivity());
@@ -7136,7 +7092,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                     case GetRecapViewFlagMain:
                     case GetRecapViewFlagCo:
 
-                        BackgroundLocationService.IsRecapApiACalled = false;
+                        BackgroundLocationService.IsRecapApiCalled = false;
 
                         try {
                             if (!obj.isNull("Data")) {
@@ -7158,7 +7114,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         }
 
 
-                        //  Log.d("response", "Service response GetRecapViewData-" + flag + ": " + response);
+                        //  Logger.LogDebug("response", "Service response GetRecapViewData-" + flag + ": " + response);
                         break;
 
 
@@ -7211,7 +7167,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                         if (SharedPref.GetNewLoginStatus(getActivity())) {
 
-                            Constants.isEldHome = true;
                             SharedPref.SetNewLoginStatus(false, getActivity());
                             SharedPref.setLoginTimeUTC(Globally.GetCurrentUTCTimeFormat(), false, getActivity());
 
@@ -7268,8 +7223,17 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 Globally.DriverSwitchAlert(getActivity(), getString(R.string.exempt_reminder_desc), "", getString(R.string.ok));
                             }
 
-                            isCertifySignPending(false, false);
+                            driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DRIVER_ID), dbHelper);
+                            if(driverLogArray.length() == 0) {
+                                if (TeamDriverType.equals(DriverConst.TeamDriver)) {
+                                    GetDriverLog18Days(MainDriverId, GetDriverLog18Days);
+                                    GetDriverLog18Days(CoDriverId, GetCoDriverLog18Days);
+                                } else {
+                                    GetDriverLog18Days(DRIVER_ID, GetDriverLog18Days);
+                                }
+                            }
 
+                            isCertifySignPending(false, false);
                             getPuOdometerUsedDetail(DRIVER_ID);
 
                         } else {
@@ -7348,10 +7312,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                                 GetReCertifyRecords();
 
-                                // clear CT PAT info to update it again in service class. because if array size is 0 API will be called
-                               // ctPatInspectionMethod.DriverCtPatInsp18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, new JSONArray());
-                               // recapViewMethod.RecapView18DaysHelper(Integer.valueOf(DRIVER_ID), dbHelper, new JSONArray());
-
                                 Constants.isCallMalDiaEvent = true;
                                 SharedPref.SetPingStatus(ConstantsKeys.SaveOfflineData, getActivity());
                                 startService();
@@ -7365,25 +7325,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 boolean IsCertifyMandatory = false;
                                 if(dataJObject.has(ConstantsKeys.IsCertifyMandatory)) {
                                     IsCertifyMandatory = dataJObject.getBoolean(ConstantsKeys.IsCertifyMandatory);
-                                }
-                                Context context = getActivity();
-
-                                if(context != null) {
-                                    SharedPref.SetCertifyMandatoryStatus(IsCertifyMandatory, getActivity());
-
-                                    if(UILApplication.getInstance().isNightModeEnabled()){
-                                        if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
-                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.white));
-                                        } else {
-                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
-                                        }
-                                    } else {
-                                        if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
-                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
-                                        } else {
-                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
-                                        }
-                                    }
                                 }
 
                                 boolean IsCCMTACertified = Constants.CheckNullBoolean(dataJObject, ConstantsKeys.IsCCMTACertified);
@@ -7453,8 +7394,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 }
 
 
-
-
                                 SharedPref.saveOtherMalDiaStatus(
                                         dataJObject.getBoolean(ConstantsKeys.UnidentifiedDiag),
                                         dataJObject.getBoolean(ConstantsKeys.IsDuplicateStatusAllowed),
@@ -7489,7 +7428,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                     if(!IsTruckChange) {
                                         if (ObdPreference != savedObdPref && !SharedPref.GetNewLoginStatus(getActivity())) {
                                             IsTruckChangeCallService = true;
-                                            startService();     // call onStartCommand in service to connect with current OBD pref
+                                           // call onStartCommand in service to connect with current OBD pref
+                                            startService();
                                         }
                                     }
 
@@ -7524,10 +7464,10 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 SharedPref.SetELDNotification(IsELDNotification, getActivity());
                                 SharedPref.SetNorthCanadaStatus(IsNorthCanada, getActivity());
 
-                                SharedPref.SetDiagnosticAndMalfunctionSettingsMain(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, context);
-                                SharedPref.SetDiagnosticAndMalfunctionSettingsCo(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, context);
-                                SharedPref.SetCertifcnUnIdenfdSettings(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, context);
-                                SharedPref.SetCertifcnUnIdenfdSettingsCo(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, context);
+                                SharedPref.SetDiagnosticAndMalfunctionSettingsMain(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, getActivity());
+                                SharedPref.SetDiagnosticAndMalfunctionSettingsCo(IsAllowMalfunction, IsAllowDiagnostic, IsClearMalfunction, IsClearDiagnostic, getActivity());
+                                SharedPref.SetCertifcnUnIdenfdSettings(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, getActivity());
+                                SharedPref.SetCertifcnUnIdenfdSettingsCo(IsAllowLogReCertification, IsShowUnidentifiedRecords, IsPersonal, IsYardMove, getActivity());
                                 IsPersonalUseAllowed  = IsPersonal;
 
                                 if(DRIVER_ID.equals(MainDriverId)) {    // Update permissions for main driver
@@ -7548,8 +7488,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                             SharedPref.isSuggestedEditOccur(getActivity()), getActivity());
 
 
-                                }else{                                  // Update permissions for Co driver
-
+                                }else{
+                                    // Update permissions for Co driver
                                     SharedPref.SetExemptDriverStatusCo(isExemptDriver, getActivity());
                                     SharedPref.SetCycleRequestStatusCo(IsCycleRequest, getActivity());
                                     SharedPref.setDeferralForCo(IsDeferral, DeferralDate, ""+DeferralDay, getActivity());
@@ -7594,14 +7534,36 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 confirmDeferralRuleDays();
 
 
+                                Context context = getActivity();
+                                if(context != null) {
+                                    SharedPref.SetCertifyMandatoryStatus(IsCertifyMandatory, getActivity());
+
+                                    if(UILApplication.getInstance().isNightModeEnabled()){
+                                        if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
+                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.white));
+                                        } else {
+                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
+                                        }
+                                    } else {
+                                        if(constants.IsSendLog(DRIVER_ID, driverPermissionMethod, dbHelper)) {
+                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.color_eld_theme));
+                                        } else {
+                                            sendReportBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
+                                        }
+                                    }
+                                }
+
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
 
+                        isPermissionApiInProgress = false;
                         SharedPref.saveCoDriverSwitchingStatus(false, getActivity());
 
                         break;
+
+
 
                     case GetAddFromLatLng:
 
@@ -7745,7 +7707,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
 
                     case NotReady:
-                        Log.d("NotReady","NotReady: " + response);
+                        Logger.LogDebug("NotReady","NotReady: " + response);
                         break;
 
 
@@ -7806,15 +7768,12 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                            }
-
-                            if (flag == GetRecapViewFlagMain || flag == GetRecapViewFlagCo) {
-                                BackgroundLocationService.IsRecapApiACalled = false;
-                            }
-
-                            if (flag == GetObdAssignedVeh) {
+                            }else if (flag == GetRecapViewFlagMain || flag == GetRecapViewFlagCo) {
+                                BackgroundLocationService.IsRecapApiCalled = false;
+                            }else  if (flag == GetObdAssignedVeh) {
                                 Globally.DriverSwitchAlert(getActivity(), certifyTitle, "Not able to get vehicle details. Please contact support team.", okText);
-                                //Globally.EldScreenToast(OnDutyBtn, Message, getResources().getColor(R.color.colorVoilation));
+                            }else if(flag == GetDriverPermission){
+                                isPermissionApiInProgress = false;
                             }
 
                             try {
@@ -7851,6 +7810,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 case GetDriverPermission:
                 case GetDriverLog18Days:
                     is18DaysLogApiCalled = false;
+                    isPermissionApiInProgress = false;
                     if (IsRefreshedClick) {
                         loadingSpinEldIV.stopAnimation();
                         IsRefreshedClick = false;
@@ -7906,7 +7866,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 case GetRecapViewFlagMain:
                 case GetRecapViewFlagCo:
 
-                    BackgroundLocationService.IsRecapApiACalled = false;
+                    BackgroundLocationService.IsRecapApiCalled = false;
 
                     break;
 
@@ -7928,7 +7888,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     AsyncResponse asyncResponse = new AsyncResponse() {
         @Override
         public void onAsyncResponse(String response, String DriverId) {
-            Log.d("async response", "async response: " +response );
+            Logger.LogDebug("async response", "async response: " +response );
 
             try {
 
@@ -8190,7 +8150,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                 if(isAlertAllowed && SharedPref.IsDOT(getActivity()) == false) {
                     if (certifyLogAlert != null && certifyLogAlert.isShowing()) {
-                        Log.d("dialog", "dialog is showing");
+                        Logger.LogDebug("dialog", "dialog is showing");
                     } else {
 
                         closeDialogs();
@@ -8286,7 +8246,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
         try {
             if(getActivity() != null && !getActivity().isFinishing()) {
                 if (continueStatusDialog != null && continueStatusDialog.isShowing()) {
-                    Log.d("dialog", "dialog is showing");
+                    Logger.LogDebug("dialog", "dialog is showing");
                 } else {
                     SharedPref.SetTruckStartLoginStatus(true, getActivity());
                     String TruckIgnitionStatus = SharedPref.GetTruckIgnitionStatusForContinue(Constants.TruckIgnitionStatus, getActivity());

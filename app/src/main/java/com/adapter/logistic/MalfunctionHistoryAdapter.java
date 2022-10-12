@@ -20,6 +20,7 @@ import com.constants.APIs;
 import com.constants.AlertDialogEld;
 import com.constants.Constants;
 import com.constants.DriverLogResponse;
+import com.constants.Logger;
 import com.constants.SaveLogJsonObj;
 import com.constants.SharedPref;
 import com.custom.dialogs.MalfunctionDialog;
@@ -436,7 +437,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
         holder.clearEventBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // Log.d("ClickEvent", "Clear Btn click Event");
+               // Logger.LogDebug("ClickEvent", "Clear Btn click Event");
 
                // if(constants.isActionAllowed(_context)) {
                 HelperMethods helperMethods = new HelperMethods();
@@ -576,7 +577,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
         @Override
         public void onResponseError(String error, boolean isLoad, boolean IsRecap, int DriverType, int flag) {
-            Log.d("errorrr ", ">>>error dialog: ");
+            Logger.LogDebug("errorrr ", ">>>error dialog: ");
 
             if(progressDialog != null && progressDialog.isShowing())
                 progressDialog.dismiss();
@@ -599,7 +600,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
     AlertDialogEld.NegativeButtonCallBack negativeCallBack = new AlertDialogEld.NegativeButtonCallBack() {
         @Override
         public void getNegativeClick(int flag) {
-            Log.d("negativeCallBack", "negativeCallBack: " + flag);
+            Logger.LogDebug("negativeCallBack", "negativeCallBack: " + flag);
         }
     };
 

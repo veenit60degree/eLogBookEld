@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.constants.APIs;
 import com.constants.Constants;
+import com.constants.Logger;
 import com.constants.RequestResponse;
 import com.constants.SharedPref;
 import com.constants.ShippingPost;
@@ -368,7 +369,7 @@ public class ShippingAdapter extends BaseAdapter {
 
         @Override
         public void onResponseError(String error, int flag) {
-            Log.d("errorrr ", ">>>error dialog: " );
+            Logger.LogDebug("errorrr ", ">>>error dialog: " );
             if(progressDialog != null){
                 progressDialog.dismiss();
             }

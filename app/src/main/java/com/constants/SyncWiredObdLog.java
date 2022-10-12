@@ -78,7 +78,7 @@ public class SyncWiredObdLog extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String result) {
 
-        Log.e("String Response", ">>>Sync OBDLog Response:  " + result);
+        Logger.LogError("String Response", ">>>Sync OBDLog Response:  " + result);
 
         //  postResponse.onAsyncResponse(result);
 

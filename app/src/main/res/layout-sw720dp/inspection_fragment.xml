@@ -58,6 +58,15 @@
         />
 
 
+    <Button
+        android:id="@+id/refreshPtiBtnInvisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
+
+
+
     <ProgressBar
         android:id="@+id/inspectionProgressBar"
         style="?android:attr/progressBarStyle"

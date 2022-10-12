@@ -41,7 +41,7 @@ public class ShippingPost {
                 {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("Response ", ">>>Response: " + response);
+                        Logger.LogDebug("Response ", ">>>Response: " + response);
                         postResponse.onApiResponse(response, flag);
                     }
                 },
@@ -49,7 +49,7 @@ public class ShippingPost {
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("error", ">>errorrrrr: " + error);
+                        Logger.LogDebug("error", ">>errorrrrr: " + error);
                         postResponse.onResponseError(error.toString(), flag);
                     }
                 }
