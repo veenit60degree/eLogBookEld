@@ -144,7 +144,6 @@ import webapi.LocalCalls;
 public class EldFragment extends Fragment implements View.OnClickListener {
 
     View rootView, loginDialogView;
-
     RelativeLayout StatusMainView, refreshPageBtn;
     LinearLayout DriverLay, trailorLayout, truckLay, remainingLay, usedHourLay, shippingLay, odometerLay,  eldNewBottomLay, eldChildSubLay;
     ImageView editTrailorIV, editTruckIV, eldMenuBtn, eldMenuErrorImgVw, certifyLogErrorImgVw;
@@ -1557,30 +1556,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
             }
 
 
-            if (isConnected) {
-                if (TeamDriverType.equals(DriverConst.TeamDriver)) {
-                    if (shipmentMethod.getShipment18DaysArray(Integer.valueOf(MainDriverId), dbHelper).length() == 0)
-                        GetShipment18Days(MainDriverId, DeviceId, SelectedDate, GetShipment18Days);
-
-                    if (shipmentMethod.getShipment18DaysArray(Integer.valueOf(CoDriverId), dbHelper).length() == 0)
-                        GetShipment18Days(CoDriverId, DeviceId, SelectedDate, GetShipment18DaysCo);
-
-                    if (odometerhMethod.getSavedOdometer18DaysArray(Integer.valueOf(MainDriverId), dbHelper).length() == 0)
-                        GetOdometer18Days(MainDriverId, DeviceId, DriverCompanyId, SelectedDate);
-
-                    if (odometerhMethod.getSavedOdometer18DaysArray(Integer.valueOf(CoDriverId), dbHelper).length() == 0)
-                        GetOdometer18Days(CoDriverId, DeviceId, DriverCompanyId, SelectedDate);
-                } else {
-                    if (shipmentMethod.getShipment18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper).length() == 0)
-                        GetShipment18Days(DRIVER_ID, DeviceId, SelectedDate, GetShipment18Days);
-
-                    if (odometerhMethod.getSavedOdometer18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper).length() == 0)
-                        GetOdometer18Days(DRIVER_ID, DeviceId, DriverCompanyId, SelectedDate);
-                }
-                 if(SharedPref.IsOdometerFromOBD(getActivity())) {
-                     GetOdometerReading(DRIVER_ID, DeviceId, VIN_NUMBER, Globally.GetCurrentDeviceDate());
-                 }
-            }
+            getShippingAndOdometerApi(isConnected);
 
             if (isPersonal.equals("true")) {
                 SharedPref.OdometerSaved(false, getActivity());
@@ -1599,6 +1575,32 @@ public class EldFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    private void getShippingAndOdometerApi(boolean isConnected){
+        if (isConnected) {
+            if (TeamDriverType.equals(DriverConst.TeamDriver)) {
+                if (shipmentMethod.getShipment18DaysArray(Integer.valueOf(MainDriverId), dbHelper).length() == 0)
+                    GetShipment18Days(MainDriverId, DeviceId, SelectedDate, GetShipment18Days);
+
+                if (shipmentMethod.getShipment18DaysArray(Integer.valueOf(CoDriverId), dbHelper).length() == 0)
+                    GetShipment18Days(CoDriverId, DeviceId, SelectedDate, GetShipment18DaysCo);
+
+                if (odometerhMethod.getSavedOdometer18DaysArray(Integer.valueOf(MainDriverId), dbHelper).length() == 0)
+                    GetOdometer18Days(MainDriverId, DeviceId, DriverCompanyId, SelectedDate);
+
+                if (odometerhMethod.getSavedOdometer18DaysArray(Integer.valueOf(CoDriverId), dbHelper).length() == 0)
+                    GetOdometer18Days(CoDriverId, DeviceId, DriverCompanyId, SelectedDate);
+            } else {
+                if (shipmentMethod.getShipment18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper).length() == 0)
+                    GetShipment18Days(DRIVER_ID, DeviceId, SelectedDate, GetShipment18Days);
+
+                if (odometerhMethod.getSavedOdometer18DaysArray(Integer.valueOf(DRIVER_ID), dbHelper).length() == 0)
+                    GetOdometer18Days(DRIVER_ID, DeviceId, DriverCompanyId, SelectedDate);
+            }
+            if(SharedPref.IsOdometerFromOBD(getActivity())) {
+                GetOdometerReading(DRIVER_ID, DeviceId, VIN_NUMBER, Globally.GetCurrentDeviceDate());
+            }
+        }
+    }
 
     private class MyTimerTask extends TimerTask {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -3931,6 +3933,11 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                         if (intent.getBooleanExtra(ConstantsKeys.IsCertifyReminder, false) == true) {
                             isCertifySignPending(false, true);
                         }
+                    }else if(intent.hasExtra(ConstantsKeys.Is18DaysLogUpdate)){
+                        if (intent.getBooleanExtra(ConstantsKeys.Is18DaysLogUpdate, false) == true) {
+                            Logger.LogDebug("Is18DaysLogUpdate","Is18DaysLogUpdate called");
+                            CalculateTimeInOffLine(false, false, false);
+                        }
                     }
                     setMalfnDiagnEventInfo();
                 }
@@ -4375,8 +4382,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                 Globally.ShowLocalNotification(getActivity(),
                         getString(R.string.missing_dia_event),
                         getString(R.string.missing_event_occured_desc) + " in " +
-                                Globally.JobStatus(DRIVER_JOB_STATUS, Boolean.parseBoolean(isPersonal),
-                                        ""+DRIVER_JOB_STATUS) +  desc, 2091);
+                                Globally.JobStatus(Integer.valueOf(driverStatus), Boolean.parseBoolean(isPersonal),
+                                        driverStatus) +  desc, 2091);
 
                 SharedPref.setEldOccurences(SharedPref.isUnidentifiedOccur(getActivity()),
                         SharedPref.isMalfunctionOccur(getActivity()), true,
@@ -6630,6 +6637,7 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                                             ClearLogAfterSuccess(isLoad, IsRecap);
                                         }
                                     }else{
+                                        // remove previous posted log from list
                                          SAVE_DRIVER_STATUS();
                                     }
                                 }
@@ -6985,8 +6993,6 @@ public class EldFragment extends Fragment implements View.OnClickListener {
                             e.printStackTrace();
                         }
 
-
-
                         break;
 
                     case OdometerDetailInPu:
@@ -7235,6 +7241,8 @@ public class EldFragment extends Fragment implements View.OnClickListener {
 
                             isCertifySignPending(false, false);
                             getPuOdometerUsedDetail(DRIVER_ID);
+
+                            getShippingAndOdometerApi(true);
 
                         } else {
 

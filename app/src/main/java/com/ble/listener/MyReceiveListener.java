@@ -3,8 +3,11 @@ package com.ble.listener;
 
 import com.ble.util.ConstantEvent;
 import com.ble.util.EventBusInfo;
+import com.constants.Constants;
+import com.htstart.htsdk.HTBleSdk;
 import com.htstart.htsdk.bluetooth.HTBleData;
 import com.htstart.htsdk.minterface.IReceiveListener;
+import com.messaging.logistic.R;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +56,7 @@ public class MyReceiveListener implements IReceiveListener {
     @Override
     public void onDisconnected(@Nullable String address) {
         EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_GATT_DISCONNECTED, address));
+
     }
 
     /**
@@ -64,11 +68,23 @@ public class MyReceiveListener implements IReceiveListener {
      */
     @Override
     public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
-        if (htBleData.getEventType() == 0 && htBleData.getEventCode() == 1) {
+      /*  if (htBleData.getEventType() == 0 && htBleData.getEventCode() == 1) {
+            EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
+        } else {
+            EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_QUERY_DATA_AVAILABLE, address, uuid, htBleData));
+        }*/
+
+        int eventType = htBleData.getEventType();
+        int eventCode = htBleData.getEventCode();
+        if (eventType == 0 && eventCode == 1) {
+            EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
+        } else if (eventType == 4 && (eventCode == 2 || eventCode == 1)) {
             EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
         } else {
             EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_QUERY_DATA_AVAILABLE, address, uuid, htBleData));
         }
+
+
     }
 
     /**
@@ -80,5 +96,6 @@ public class MyReceiveListener implements IReceiveListener {
     @Override
     public void onResponse(@NotNull String address, @NotNull String uuid, @NotNull String sequenceID, @NotNull int status) {
         EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_RESPONSE, address, uuid, status));
+
     }
 }

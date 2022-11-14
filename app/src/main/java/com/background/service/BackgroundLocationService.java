@@ -2,13 +2,8 @@ package com.background.service;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,9 +23,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.speech.tts.TextToSpeech;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,17 +32,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.ble.listener.MyReceiveListener;
+import com.ble.util.BleUtil;
 import com.ble.util.ConstantEvent;
 import com.ble.util.EventBusInfo;
-import com.ble.util.BleUtil;
-import com.ble.utils.ToastUtil;
 import com.constants.APIs;
 import com.constants.AsyncResponse;
 import com.constants.CheckConnectivity;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
-import com.constants.DownloadAppService;
 import com.constants.DriverLogResponse;
 import com.constants.Logger;
 import com.constants.RequestResponse;
@@ -72,10 +61,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.htstart.htsdk.HTBleSdk;
 import com.htstart.htsdk.bluetooth.HTBleData;
-import com.htstart.htsdk.bluetooth.HTBleDevice;
-import com.htstart.htsdk.bluetooth.HTModeSP;
-import com.htstart.htsdk.minterface.HTBleScanListener;
-import com.htstart.htsdk.minterface.IReceiveListener;
 import com.local.db.BleGpsAppLaunchMethod;
 import com.local.db.CTPatInspectionMethod;
 import com.local.db.CertifyLogMethod;
@@ -116,20 +101,14 @@ import com.squareup.okhttp.Response;
 import com.wifi.settings.WiFiConfig;
 
 import org.greenrobot.eventbus.EventBus;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
-import org.joda.time.Seconds;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -138,7 +117,6 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import dal.tables.OBDDeviceData;
-import kotlin.jvm.JvmDefaultWithoutCompatibility;
 import models.RulesResponseObject;
 import obdDecoder.Decoder;
 
@@ -1310,7 +1288,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
 
                                             // write BLE logs when connected
-                                            writeBleDisconnectionLog(true);
+                                            writeBleConnectDisconnectLog(true);
 
                                             SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(),
                                                     global.GetCurrentUTCTimeFormat(), getApplicationContext());
@@ -1375,7 +1353,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
 
-                            writeBleDisconnectionLog(false);
+                            writeBleConnectDisconnectLog(false);
 
                             if (SharedPref.getVINNumber(getApplicationContext()).length() > 5) {
                                 Globally.PlayNotificationSound(getApplicationContext());
@@ -1500,7 +1478,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
     // Bluetooth OBD connect/disconnect log with time
-    private void writeBleDisconnectionLog(boolean isBleConnected){
+    private void writeBleConnectDisconnectLog(boolean isBleConnected){
         int LastLocationStatus = SharedPref.GetLocationStatus(getApplicationContext());
 
         if(isBleConnected){
@@ -2958,7 +2936,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             // GpsVehicleSpeed = 21;
 
             // saving location with time info to calculate location malfunction event
-            if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
+            if(!SharedPref.IsLocReceivedFromObd(getApplicationContext())) {
                 Globally.LATITUDE = Globally.GPS_LATITUDE;
                 Globally.LONGITUDE = Globally.GPS_LONGITUDE;
 
@@ -3289,7 +3267,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         Globally.GPS_LATITUDE = "";
                         Globally.GPS_LONGITUDE = "";
 
-                        if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+                        if (SharedPref.getObdPreference(getApplicationContext()) != Constants.OBD_PREF_BLE) {
                             Globally.LATITUDE = "";
                             Globally.LONGITUDE = "";
                         }
@@ -4227,7 +4205,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         // GpsVehicleSpeed = 21;
 
         // saving location with time info to calculate location malfunction event
-        if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
+        if(!SharedPref.IsLocReceivedFromObd(getApplicationContext())) {
             Globally.LATITUDE = Globally.GPS_LATITUDE;
             Globally.LONGITUDE = Globally.GPS_LONGITUDE;
 
@@ -4810,30 +4788,40 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         try {
             if (SharedPref.GetNewLoginStatus(getApplicationContext())) {
 
-                JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
-                if(driverLogArray.length() == 0 && !Is18DaysLogApiCalled) {
-                    DataRequest18Days(DriverId, GetDriverLog18Days);
-                    if (isTeamDriver) {
-                        DataRequest18Days(CoDriverId, GetCoDriverLog18Days);
-                    }
-                    Is18DaysLogApiCalled = true;
-                }
+                // some times 18 days log were not updated when driver logged in after few days. So need to call updateOfflineStatus api first and then call 18 days log of 500 ms delay.
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                JSONArray ctPatInsp18DaysArray = ctPatInspectionMethod.getCtPat18DaysInspectionArray(Integer.valueOf(DriverId), dbHelper);
-                if (ctPatInsp18DaysArray.length() == 0 && !Is18DaysLogApiCalled) {
-                    String SelectedDate = global.GetCurrentDeviceDate();
-                    if(!IsCtPatApiCalled) {
-                        IsCtPatApiCalled = true;
-                        if (isTeamDriver) {
-                            GetCtPatInspection18Days(DriverId, DeviceId, SelectedDate, GetCtPat18DaysMainDriverLog);
-                            GetCtPatInspection18Days(CoDriverId, DeviceId, SelectedDate, GetCtPat18DaysCoDriverLog);
-                        } else {
-                            GetCtPatInspection18Days(DriverId, DeviceId, SelectedDate, GetCtPat18DaysMainDriverLog);
+                        JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+                        if(driverLogArray.length() == 0 && !Is18DaysLogApiCalled) {
+                            DataRequest18Days(DriverId, GetDriverLog18Days);
+                            if (isTeamDriver) {
+                                DataRequest18Days(CoDriverId, GetCoDriverLog18Days);
+                            }
+                            Is18DaysLogApiCalled = true;
                         }
+
+                        JSONArray ctPatInsp18DaysArray = ctPatInspectionMethod.getCtPat18DaysInspectionArray(Integer.valueOf(DriverId), dbHelper);
+                        if (ctPatInsp18DaysArray.length() == 0 && !Is18DaysLogApiCalled) {
+                            String SelectedDate = global.GetCurrentDeviceDate();
+                            if(!IsCtPatApiCalled) {
+                                IsCtPatApiCalled = true;
+                                if (isTeamDriver) {
+                                    GetCtPatInspection18Days(DriverId, DeviceId, SelectedDate, GetCtPat18DaysMainDriverLog);
+                                    GetCtPatInspection18Days(CoDriverId, DeviceId, SelectedDate, GetCtPat18DaysCoDriverLog);
+                                } else {
+                                    GetCtPatInspection18Days(DriverId, DeviceId, SelectedDate, GetCtPat18DaysMainDriverLog);
+                                }
+                            }
+                        }
+
                     }
-                }
+                }, 500);
+
 
             }
+
 
             JSONArray recapArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DriverId), dbHelper);
             JSONObject hasCurrentDatObj = recapViewMethod.GetSelectedRecapData(recapArray, Globally.GetCurrentDeviceDate()) ;
@@ -4847,6 +4835,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
                 }
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -5347,6 +5336,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             JSONObject lastItemJson = hMethods.GetLastJsonFromArray(resultArray);
                                             String DRIVER_JOB_STATUS = lastItemJson.getString(ConstantsKeys.DriverStatusId);
                                             SharedPref.setDriverStatusId(DRIVER_JOB_STATUS, getApplicationContext());
+
+                                            Intent intent = new Intent(ConstantsKeys.IsIgnitionOn);
+                                            intent.putExtra(ConstantsKeys.Is18DaysLogUpdate, true);
+                                            LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
                                         }
 
                                     }else{
@@ -5505,22 +5498,22 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     String UtcCurrentDate = dataObj.getString(ConstantsKeys.UTCDateTime);
                                     DateTime utcCurrentDateTime = global.getDateTimeObj(UtcCurrentDate, false);
 
-                                    boolean IsAutoDrive = dataObj.getBoolean(ConstantsKeys.IsAutoOnDutyDriveEnabled);
-                                    boolean IsOBDPingAllowed = dataObj.getBoolean(ConstantsKeys.IsOBDPingAllowed);
-                                    boolean IsDrivingShippingAllowed = dataObj.getBoolean(ConstantsKeys.IsDrivingShippingAllowed);
+                                  //  boolean IsAutoDrive = dataObj.getBoolean(ConstantsKeys.IsAutoOnDutyDriveEnabled);
+                                  //  boolean IsOBDPingAllowed = dataObj.getBoolean(ConstantsKeys.IsOBDPingAllowed);
+                                  //  boolean IsDrivingShippingAllowed = dataObj.getBoolean(ConstantsKeys.IsDrivingShippingAllowed);
                                     boolean IsTimestampEnabled = dataObj.getBoolean(ConstantsKeys.IsTimestampEnabled);
-                                    boolean IsAutoSync = dataObj.getBoolean(ConstantsKeys.IsAutoSync);
+                                  //  boolean IsAutoSync = dataObj.getBoolean(ConstantsKeys.IsAutoSync);
                                     boolean IsAgriException = constants.CheckNullBoolean(dataObj, ConstantsKeys.IsAgriException);
 
                                     try {
                                         // Save Truck information for manual/auto mode
-                                        SharedPref.SetDrivingShippingAllowed(IsDrivingShippingAllowed, getApplicationContext());
+                                      //  SharedPref.SetDrivingShippingAllowed(IsDrivingShippingAllowed, getApplicationContext());
                                         SharedPref.saveTimeStampView(IsTimestampEnabled, getApplicationContext());
                                         SharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
-                                        SharedPref.SetOBDPingAllowedStatus(IsOBDPingAllowed, getApplicationContext());
-                                        SharedPref.SetAutoDriveStatus(IsAutoDrive, getApplicationContext());
+                                      //  SharedPref.SetOBDPingAllowedStatus(IsOBDPingAllowed, getApplicationContext());
+                                     //   SharedPref.SetAutoDriveStatus(IsAutoDrive, getApplicationContext());
                                         SharedPref.setAgricultureExemption(IsAgriException, getApplicationContext());
-                                        SharedPref.setAutoSyncStatus(IsAutoSync, getApplicationContext());
+                                      //  SharedPref.setAutoSyncStatus(IsAutoSync, getApplicationContext());
 
                                         // check PU status exceeding status if 75km exceeded showing popup
                                         checkPUExceedStatus(dataObj, -1);

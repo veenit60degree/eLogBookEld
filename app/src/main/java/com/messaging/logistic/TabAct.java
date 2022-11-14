@@ -128,6 +128,7 @@ public class TabAct extends TabActivity implements View.OnClickListener {
 
         setContentView(R.layout.chat_friend_list);
 
+
         dbHelper            = new DBHelper(this);
         hMethods            = new HelperMethods();
         constants           = new Constants();

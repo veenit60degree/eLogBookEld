@@ -121,31 +121,12 @@ public class BleDataService extends Service {
                                 HTBleSdk.Companion.getInstance().stopHTBleScan();
                             }
 
-                            // clear cache before scan again
-                            if (HTBleSdk.Companion.getInstance().isAllConnected()) {
-                                //Logger.LogError(TAG_OBD, "Ble Clear Cache before scannnn");
-                                HTBleSdk.Companion.getInstance().disAllConnect();
+                            disconnectBeforeScan();
 
-                                constants.saveBleLog("disAllConnect before StartScanHtBle",
-                                        Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
-                                        driverPermissionMethod, obdUtil);
-
-                            }
-
-                            StartScanHtBle();   //Device connection after scanning is turned on
                         }
 
                     }else {
-                        if (HTBleSdk.Companion.getInstance().isAllConnected()) {
-                            //Logger.LogError(TAG_OBD, "Ble Clear Cache before scan");
-                            HTBleSdk.Companion.getInstance().disAllConnect();
-
-                            constants.saveBleLog("disAllConnect before StartScanHtBle--",
-                                    Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
-                                    driverPermissionMethod, obdUtil);
-
-                        }
-                        StartScanHtBle();   //Device connection after scanning is turned on
+                        disconnectBeforeScan();
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -157,6 +138,31 @@ public class BleDataService extends Service {
         registerReceiver(broadcastReceiver, makeFilter());
 
     }
+
+
+    private void disconnectBeforeScan(){
+        try{
+            if (HTBleSdk.Companion.getInstance().isAllConnected()) {
+                //Logger.LogError(TAG_OBD, "Ble Clear Cache before scan");
+                HTBleSdk.Companion.getInstance().disAllConnect();
+
+                constants.saveBleLog("disAllConnect before StartScanHtBle--",
+                        Globally.GetCurrentDateTime(), getApplicationContext(), dbHelper,
+                        driverPermissionMethod, obdUtil);
+
+            }else {
+                // Ble Clear Cache before scan
+                HTBleSdk.Companion.getInstance().disAllConnect();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        StartScanHtBle();   //Device connection after scanning is turned on
+
+    }
+
 
     /**
      * 启动服务不正确，先后启动了两次服务，onStartCommand被连续回调了两次
@@ -393,8 +399,10 @@ public class BleDataService extends Service {
 
                     sendBroadCast(getString(R.string.ht_disconnected), "");
                     sendEcmBroadcast(false, "Disconnected");
-
                     Thread.sleep(Constants.SocketTimeout800ms);
+
+
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -410,12 +418,22 @@ public class BleDataService extends Service {
             public void onReceive(@NotNull String address, @NotNull String uuid, @NotNull HTBleData htBleData) {
                   Logger.LogError("htBleData", "htBleData: " + htBleData);
 
-                //  EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
-                if (htBleData.getEventType() == 0 && htBleData.getEventCode() == 1) {
+                int eventType = htBleData.getEventType();
+                int eventCode = htBleData.getEventCode();
+                if (eventType == 0 && eventCode == 1) {
+                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
+                } else if (eventType == 4 && (eventCode == 2 || eventCode == 1)) {
                     EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
                 } else {
                     EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_QUERY_DATA_AVAILABLE, address, uuid, htBleData));
                 }
+
+
+            /*    if (htBleData.getEventType() == 0 && htBleData.getEventCode() == 1) {
+                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_DATA_AVAILABLE, address, uuid, htBleData));
+                } else {
+                    EventBus.getDefault().post(new EventBusInfo(ConstantEvent.ACTION_QUERY_DATA_AVAILABLE, address, uuid, htBleData));
+                }*/
 
                 if (htBleData.getEventData() != "OnTime") {
                     isConnected = true;
@@ -441,13 +459,13 @@ public class BleDataService extends Service {
 
     private void sendBroadCastDecodedData(String data, String rawMsg){
         try {
-            //   if(SharedPref.isOBDScreen(getApplicationContext())) {
-            Intent intent = new Intent("ble_changed_data");
-            intent.putExtra("decoded_data", data);
-            intent.putExtra("raw_message", rawMsg);
+            if(SharedPref.IsDriverLogin(getApplicationContext())) {
+                Intent intent = new Intent("ble_changed_data");
+                intent.putExtra("decoded_data", data);
+                intent.putExtra("raw_message", rawMsg);
 
-            LocalBroadcastManager.getInstance(BleDataService.this).sendBroadcast(intent);
-            //  }
+                LocalBroadcastManager.getInstance(BleDataService.this).sendBroadcast(intent);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -610,10 +628,12 @@ public class BleDataService extends Service {
 
     private void sendBroadCast(String data, String rawMsg) {
         try {
-            Intent intent = new Intent("ble_changed_data");
-            intent.putExtra("decoded_data", data);
-            intent.putExtra("raw_message", rawMsg);
-            LocalBroadcastManager.getInstance(BleDataService.this).sendBroadcast(intent);
+            if (SharedPref.IsDriverLogin(getApplicationContext())) {
+                Intent intent = new Intent("ble_changed_data");
+                intent.putExtra("decoded_data", data);
+                intent.putExtra("raw_message", rawMsg);
+                LocalBroadcastManager.getInstance(BleDataService.this).sendBroadcast(intent);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

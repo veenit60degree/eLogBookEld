@@ -116,10 +116,6 @@ public class SplashActivity extends Activity implements
         global = new Globally();
         handler = new Handler();
 
-        Logger.LogDebug("IsAppRestart", "IsAppRestart: " +TabAct.IsAppRestart);
-      //  SharedPref.SaveBleOBDMacAddress("C4:64:E3:54:EF:04", getApplicationContext());
-
-
             // Building the GoogleApi client
             buildGoogleApiClient();
             createLocationRequest();

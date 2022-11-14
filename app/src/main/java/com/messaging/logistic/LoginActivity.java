@@ -129,9 +129,9 @@ public class LoginActivity extends FragmentActivity implements OnClickListener, 
 		//WiFiConf = new WiFiConfig();
 		//wifiList = WiFiConf.GetSavedSSIDList();
 		//	pos 	 = WiFiConf.getWifiListPosition(this);
-		global					= new Globally();
-		IsTablet 				= global.isTablet(this);
-		constants				= new Constants();
+		global				= new Globally();
+		IsTablet 			= global.isTablet(this);
+		constants			= new Constants();
 		TruckID             = SharedPref.getTruckNumber(getApplicationContext());   //DriverConst.GetDriverTripDetails(DriverConst.Truck, getApplicationContext());
 		CompanyId           = DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext());
 

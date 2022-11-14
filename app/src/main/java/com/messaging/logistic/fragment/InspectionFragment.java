@@ -1603,7 +1603,8 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
         isLocationChange = false;
 
- //ByteDriverSign
+        checkOdometer();
+
         // Add inspection JSON obj in 18 Days Array
 
         JSONObject inspection18DaysObj = inspectionMethod.AddNewInspectionObj(DRIVER_ID, DeviceId, Globally.PROJECT_ID, DriverName, CompanyId, EldFragment.VehicleId, "", VIN_NUMBER,
@@ -1656,6 +1657,18 @@ public class InspectionFragment extends Fragment implements View.OnClickListener
 
 
 
+    private void checkOdometer(){
+        try{
+            if(Odometer.contains(".")){
+                String[] odoArray = Odometer.split("\\.");
+                if(odoArray.length > 1 && !odoArray[1].equals("0")) {
+                    Odometer = Constants.kmToMeter1(Odometer);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private void CheckTrailerStatus(){
         try{

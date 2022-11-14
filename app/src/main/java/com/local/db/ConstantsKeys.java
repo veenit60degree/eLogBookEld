@@ -313,6 +313,7 @@ public class ConstantsKeys {
     public static String UnidentifiedFromOBD            = "UnidentifiedFromOBD";
     public static String IsAgriException                = "IsAgriException";
     public static String IsCertifyReminder              = "IsCertifyReminder";
+    public static String Is18DaysLogUpdate              = "Is18DaysLogUpdate";
     public static String DownloadProgress               = "download_progress";
     public static String MissingDiagnostic              = "MissingDiagnostic";
     public static String BleDataService                 = "BleDataService";

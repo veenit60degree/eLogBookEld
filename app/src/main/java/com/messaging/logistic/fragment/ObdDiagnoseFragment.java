@@ -1,11 +1,8 @@
 package com.messaging.logistic.fragment;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
-import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,32 +27,25 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.background.service.BackgroundLocationService;
 import com.background.service.BleDataService;
-import com.ble.utils.ToastUtil;
 import com.constants.Constants;
 import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.TcpClient;
-import com.constants.Utils;
-import com.htstart.htsdk.HTBleSdk;
 import com.messaging.logistic.Globally;
 import com.messaging.logistic.LocPermissionActivity;
-import com.messaging.logistic.LoginActivity;
 import com.messaging.logistic.R;
-import com.messaging.logistic.SplashActivity;
 import com.messaging.logistic.TabAct;
 import com.messaging.logistic.UILApplication;
 import com.wifi.settings.WiFiConfig;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.Vector;
 
 import dal.tables.OBDDeviceData;

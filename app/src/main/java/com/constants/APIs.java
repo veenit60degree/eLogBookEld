@@ -23,12 +23,12 @@ public class APIs {
     static String ELD_DOMAIN_INDIAN      = "http://192.168.0.10:8251/api/ELDAPI/";             //http://182.73.78.171:8287
 
     static String ELD_SETTING_DOMAIN_PRODUCTION = "https://eld.alsrealtime.com/api/DriverSettingsApi/";
-    static String ELD_SETTING_DOMAIN_DEV        =  "http://develd.alsrealtime.com/api/DriverSettingsApi/";
+    static String ELD_SETTING_DOMAIN_DEV        = "http://develd.alsrealtime.com/api/DriverSettingsApi/";
 
 
     /*========================= API URLs =========================*/
-    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_DEV ;     	// ALS DOMAIN
-    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_DEV  ;  	// ELD DOMAIN
+    public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
+    public static String DOMAIN_URL_ELD           			= ELD_DOMAIN_PRODUCTION  ;  	// ELD DOMAIN
 
     public static String DOT_LOG_URL                        = DOMAIN_URL_ALS + "/DriverLog/MobileELDView?driverId=";
     public static String LOGIN_DEMO 						= DOMAIN_URL_ALS + "LoginDemo";
@@ -74,8 +74,8 @@ public class APIs {
 
 
     /*-------- ELD API ----------*/
-     public static String SAVE_DRIVER_STATUS     			= "http://develd.alsrealtime.com/api/DriverStatus/UpdateDriverStatus";
-   // public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
+   // public static String SAVE_DRIVER_STATUS     			= "http://develd.alsrealtime.com/api/DriverStatus/UpdateDriverStatus";
+    public static String SAVE_DRIVER_STATUS     			= DOMAIN_URL_ELD + "SaveELDDriverStatus";
     public static String SAVE_DRIVER_EDIT_LOG_NEW  			= DOMAIN_URL_ELD + "SaveDriverEditELDStatusNew";
     public static String GET_ONDUTY_REMARKS					= DOMAIN_URL_ELD + "GetOnDutyRemarks";
     public static String GET_NOTIFICATION_LOG      			= DOMAIN_URL_ELD + "GetNotificationLog";

@@ -22,7 +22,9 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Handler;
 import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.multidex.BuildConfig;
 import androidx.preference.PreferenceManager;
@@ -30,6 +32,8 @@ import androidx.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;
 
+import com.ble.ble.BleCallBack;
+import com.ble.listener.MyReceiveListener;
 import com.constants.Constants;
 import com.google.android.gms.security.ProviderInstaller;
 import com.htstart.htsdk.HTBleSdk;
@@ -42,9 +46,6 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 public class UILApplication extends Application {
 
-
-	private static final String ONESIGNAL_APP_ID = "0067d652-6fd4-4bb8-b951-f7b60573b2bb";
-	boolean IsNewVersion = false;
 	private static boolean activityVisible = true;
 
 	private boolean isNightModeEnabled = false;
@@ -74,15 +75,14 @@ public class UILApplication extends Application {
 
 
 
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	@SuppressWarnings("unused")
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
+		HTBleSdk.Companion.getInstance().initHTBleSDK(this); // , getPackageName()
+	//	HTBleSdk.Companion.getInstance().setDebugLogcatEvent(false);
 
-		HTBleSdk.Companion.getInstance().initHTBleSDK(this, "com.messaging.logistic");
-		HTBleSdk.Companion.getInstance().setDebugLogcatEvent(false);
+		HTBleSdk.Companion.getInstance().registerCallBack(new MyReceiveListener());
 
 		if (Globally.Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
@@ -106,17 +106,8 @@ public class UILApplication extends Application {
 		SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		this.isNightModeEnabled = mPrefs.getBoolean(NIGHT_MODE, false);
 
-		// Enable verbose OneSignal logging to debug issues if needed.
-	/*	OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
+		HTBleSdk.Companion.getInstance().initHTBleSDK(this);
 
-		// OneSignal Initialization
-		OneSignal.initWithContext(this);
-		OneSignal.setAppId(ONESIGNAL_APP_ID);
-*/
-		//NetworkUtil util = new NetworkUtil();
-	//	util.isConnected();
-
-	//	new GetVersionCode().execute();
 	}
 
 

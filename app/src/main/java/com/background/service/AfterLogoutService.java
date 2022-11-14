@@ -102,7 +102,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     int SpeedCounter            = 60;      // initially it is 60 so that ELD rule is called instantly
     int ThreshHoldSpeed         = 8;
-    int intermediateRecordTime  = 60;    // intermediate record time is 60 min
+    int intermediateRecordTime  = 5;    // intermediate record time is 60 min
     int OnDutyRecordTime        = 5;    // OnDuty record time is 6 min when earlier event was DR and now vehicle has been stopped for 6 min
     int apiCallCount            = 0;
     int offsetFromUTC           = 0;
@@ -197,7 +197,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive (Context context, Intent intent){
-                // Logger.LogDebug("received", "received from service");
+                 Logger.LogDebug("received", "received from service");
                // boolean BleDataService = intent.getBooleanExtra(ConstantsKeys.BleDataService, false);
                 boolean IsConnected = intent.getBooleanExtra(ConstantsKeys.IsConnected, false);
                 String data         = intent.getStringExtra(ConstantsKeys.Data);
@@ -351,6 +351,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+                }else{
+                    Logger.LogDebug("Driver LoggedIn", "Login");
                 }
 
             }
@@ -1024,8 +1026,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             // Logger.LogError(TAG, "-----Running Logout timerTask");
 
             try {
-                if (!SharedPref.IsDriverLogin(getApplicationContext())) {
-                    Logger.LogError("Log", "--stop");
+                if (SharedPref.IsDriverLogin(getApplicationContext())) {
+                    Logger.LogError("Log", "--stop, Driver logged in");
                     
                     StopService();
 
@@ -1462,7 +1464,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 //  ------------- BLE OBD ----------
                 if (TruckID.length() > 0 && CompanyId.length() > 0) {
                     LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-
                 }
             }else {
                 //  ------------- Wired OBD ----------
