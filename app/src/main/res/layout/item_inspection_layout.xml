@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/selectInsType"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:layout_marginTop="@dimen/margin_12"
             android:layout_gravity="center_horizontal"
             android:textSize="@dimen/text_size_21"
@@ -80,7 +80,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_24"
                 android:text="@string/ALS_ELD"
                 android:textStyle="bold"
@@ -175,7 +175,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:text="@string/loc_of_inspection"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -218,7 +218,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/SelectState"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:layout_marginTop="@dimen/margin_10"
                     android:textSize="@dimen/text_size_16"
                     android:layout_marginLeft="@dimen/margin_10"
@@ -271,7 +271,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:text="@string/CurrentOdometer"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold"
 
@@ -366,7 +366,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/power_unit"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_size_16"
                         android:paddingTop="@dimen/margin_10"
@@ -402,7 +402,7 @@
                             android:src="@drawable/pencil"
                             android:layout_marginLeft="@dimen/margin_short_4"
                             android:layout_marginTop="@dimen/margin_short_2"
-                            android:tint="?attr/color_eld_theme"
+                            android:tint="?attr/txt_eld_color"
                             />
 
                     </LinearLayout>
@@ -433,7 +433,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/trailer_s"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_size_16"
                         android:paddingTop="@dimen/margin_10"
@@ -467,7 +467,7 @@
                             android:src="@drawable/pencil"
                             android:layout_marginLeft="@dimen/margin_short_4"
                             android:layout_marginTop="@dimen/margin_short_2"
-                            android:tint="?attr/color_eld_theme"
+                            android:tint="?attr/txt_eld_color"
                             />
 
                     </LinearLayout>
@@ -537,20 +537,20 @@
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/truck_tractor"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/margin_15"
-                android:paddingLeft="@dimen/view_height_55"
-                android:paddingRight="@dimen/view_height_55"
+                android:layout_marginStart="@dimen/margin_15"
+                android:layout_marginTop="@dimen/margin_15"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:layout_marginBottom="@dimen/margin_15"
                 android:background="?attr/color_eld_theme"
-                android:textColor="?attr/text_black"
+                android:paddingLeft="@dimen/view_height_55"
                 android:paddingTop="@dimen/margin_short_7"
+                android:paddingRight="@dimen/view_height_55"
                 android:paddingBottom="@dimen/margin_short_7"
+                android:text="@string/truck_tractor"
+                android:textColor="@color/white"
                 android:textSize="@dimen/text_size_18"
-                android:textStyle="bold"
-                android:layout_marginTop="@dimen/margin_10"
-                android:layout_marginBottom="@dimen/margin_10"
-                />
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -569,10 +569,12 @@
                 android:id="@+id/truckGridView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_10"
                 android:numColumns="2"
-                android:layout_margin="@dimen/margin_10"
-                tools:listitem="@layout/item_inspection"
-                />
+                tools:listitem="@layout/item_inspection" />
 
 
 
@@ -625,25 +627,25 @@
             </LinearLayout>
 
 
-
             <TextView
+                android:id="@+id/textView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Trailerr"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/margin_15"
-                android:paddingLeft="@dimen/view_height_55"
-                android:paddingRight="@dimen/view_height_55"
+                android:layout_marginStart="@dimen/margin_15"
+                android:layout_marginTop="@dimen/margin_15"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:layout_marginBottom="@dimen/margin_15"
                 android:background="?attr/color_eld_theme"
-                android:textColor="?attr/text_black"
-                android:paddingTop="@dimen/margin_short_7"
-                android:paddingBottom="@dimen/margin_short_7"
-                android:textSize="@dimen/text_size_18"
-                android:textStyle="bold"
+                android:textColor="@color/white"
                 android:maxLength="7"
-                android:layout_marginTop="@dimen/margin_10"
-                android:layout_marginBottom="@dimen/margin_10"
-                android:id="@+id/textView5" />
+                android:paddingLeft="@dimen/view_height_55"
+                android:paddingTop="@dimen/margin_short_7"
+                android:paddingRight="@dimen/view_height_55"
+                android:paddingBottom="@dimen/margin_short_7"
+                android:text="@string/Trailerr"
+                android:textSize="@dimen/text_size_18"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -662,10 +664,12 @@
                 android:id="@+id/trailerGridView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:layout_marginStart="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_10"
                 android:numColumns="2"
-                android:layout_margin="@dimen/margin_10"
-                tools:listitem="@layout/item_inspection"
-                />
+                tools:listitem="@layout/item_inspection" />
 
 
 
@@ -679,7 +683,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/NoDefects"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:layout_gravity="center_horizontal"
             android:textSize="@dimen/text_size_24"
             android:layout_marginTop="@dimen/margin_15"
@@ -749,7 +753,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Remarks"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_16"
                     />
@@ -798,7 +802,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/SupervisorMechanicsName"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_16"
                     />
@@ -839,7 +843,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Date"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_16"
                     />
@@ -870,7 +874,7 @@
                 android:id="@+id/DriverSignLay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:background="?attr/layout_color_dot"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/margin_20"
                 android:layout_marginRight="@dimen/margin_10"
@@ -918,6 +922,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/margin_20"
                 android:layout_marginLeft="@dimen/margin_10"
+                android:background="?attr/layout_color_dot"
                 android:visibility="gone"
 
                 >
@@ -964,7 +969,7 @@
             android:id="@+id/saveInspectionBtn"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/view_height_39"
-            android:background="@drawable/green_eld_drawable"
+            android:background="@drawable/green_selector"
             android:text="@string/save"
             android:textSize="@dimen/text_size_15"
             android:textStyle="bold"

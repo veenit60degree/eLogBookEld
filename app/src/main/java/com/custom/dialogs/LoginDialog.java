@@ -18,8 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.driver.details.DriverConst;
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
 
 public class LoginDialog extends Dialog {
 
@@ -123,8 +123,9 @@ public class LoginDialog extends Dialog {
         driverDescTV.setVisibility(View.VISIBLE);
         coDriverConfirmPassText.requestFocus();
         driverTitleTV.setText("Confirm Login");
-        loginCoDriverLay.setBackgroundResource(R.drawable.white_full_border);
         coDriverCancelBtn.setVisibility(View.VISIBLE);
+
+        loginCoDriverLay.setBackgroundResource(R.drawable.white_full_border);
 
         if(ScreenType.equals(getContext().getResources().getString(R.string.DOT))){
             driverTitleTV.setText(getContext().getResources().getString(R.string.confirm_password_title));

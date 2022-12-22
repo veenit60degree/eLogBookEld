@@ -11,7 +11,6 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,9 +40,9 @@ import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
 import com.local.db.UpdateLogRecordMethod;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.CertifyViewLogFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.fragment.CertifyViewLogFragment;
 import com.models.DriverLocationModel;
 
 import org.joda.time.DateTime;
@@ -51,7 +50,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DriverLogInfoAdapter extends BaseAdapter {
@@ -266,7 +264,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                     selectedRemarks = LogItem.getRemarks();
                     IsPersonalRecord = LogItem.isPersonal();
 
-                    OpenRemarksDialog(remarks, position, JobStatus, LogItem.isPersonal());  // isPersonal is used for yard move here
+                    OpenRemarksDialog(remarks, position, JobStatus, false);  // LogItem.isPersonal() is used here
                 }
             });
 
@@ -431,7 +429,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         }
     }
 
-    void OpenRemarksDialog(String remarks,  int ItemPosition, int jobStatus, boolean isYardMove) {
+    void OpenRemarksDialog(String remarks,  int ItemPosition, int jobStatus, boolean isPersonal) {
 
         try {
             if (StateArrayList.size() > 0) {
@@ -439,9 +437,9 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 if (remarksDialog != null && remarksDialog.isShowing()) {
                     remarksDialog.dismiss();
                 }
-
-                remarksDialog = new TrailorDialog(context, Constants.Remarks, isYardMove, remarks, ItemPosition, true,
-                        Global.onDutyRemarks, jobStatus, dbHelper, new RemarksListener());
+                List<String> onDutyRemarkList = SharedPref.getOnDutyRemarks(new JSONArray(), context);
+                remarksDialog = new TrailorDialog(context, Constants.Remarks, isPersonal, remarks, ItemPosition, true,
+                        onDutyRemarkList, jobStatus, dbHelper, new RemarksListener());
                 remarksDialog.show();
             }
         } catch (final IllegalArgumentException e) {
@@ -795,7 +793,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
     DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, JSONArray inputData) {
 
             // SaveDriverLog
             progressDialog.dismiss();

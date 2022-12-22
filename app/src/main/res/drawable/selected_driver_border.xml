@@ -2,7 +2,7 @@
 
     <solid android:color="@color/blue_bg_slide_menu" />
 
-    <stroke android:width="@dimen/margin_short_1" android:color="@color/blue_button_hover"/>
+    <stroke android:width="@dimen/margin_short_1" android:color="?attr/blue_button_hover"/>
 
     <corners
         android:bottomRightRadius="@dimen/margin_short_5"

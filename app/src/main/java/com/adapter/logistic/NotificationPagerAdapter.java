@@ -8,10 +8,9 @@ import android.widget.TextView;
 
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 import com.models.NotificationNewsModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationPagerAdapter extends PagerAdapter {

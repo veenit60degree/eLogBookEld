@@ -53,9 +53,10 @@
                 android:id="@+id/supportTypeIV"
                 android:layout_width="@dimen/view_height_35"
                 android:layout_height="@dimen/view_height_35"
-                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/margin_15"
+                android:tint="?attr/txt_eld_color"
 
                 />
 

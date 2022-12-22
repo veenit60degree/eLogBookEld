@@ -6,7 +6,7 @@
     android:background="@drawable/white_full_border"
     android:layout_marginLeft="@dimen/margin_10"
     android:layout_marginRight="@dimen/margin_10"
-    android:backgroundTint="?attr/layout_color_dot"
+       android:backgroundTint="?attr/trailer_dialog_background"
     >
     <!--@dimen/view_height_400-->
 
@@ -34,7 +34,7 @@
                 android:textSize="@dimen/text_size_19"
                 android:gravity="center"
                 android:padding="@dimen/margin_10"
-                android:background="@color/color_eld_theme"
+                android:background="?attr/color_eld_theme"
                 android:layout_marginTop="@dimen/margin_29"
                 />
 
@@ -42,14 +42,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/signature"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_26"
+                android:background="@drawable/green_default"
                 android:gravity="center"
                 android:padding="@dimen/margin_20"
-                android:background="@drawable/green_default"
-                />
+                android:text="@string/signature"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_26"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -71,19 +70,19 @@
 
     <RelativeLayout
         android:id="@+id/clearSignBtn"
-        android:layout_width="@dimen/view_height_90"
-        android:layout_height="@dimen/view_height_90"
+        android:layout_width="@dimen/view_height_80"
+        android:layout_height="@dimen/view_height_80"
         android:layout_alignParentRight="true"
-        android:padding="@dimen/margin_18"
+        android:padding="@dimen/margin_13"
+        android:layout_margin="@dimen/margin_10"
         android:background="@drawable/media_white_drawable"
         >
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@android:drawable/ic_menu_delete"
             android:layout_centerInParent="true"
-            />
+            android:src="@android:drawable/ic_menu_delete" />
 
     </RelativeLayout>
 
@@ -111,8 +110,7 @@
                 android:gravity="center"
                 android:paddingLeft="@dimen/view_height_70"
                 android:paddingRight="@dimen/view_height_70"
-                android:background="@drawable/red_btn_selector"
-
+                android:background="@drawable/gray_selector"
                 android:textAllCaps="false"
                 />
 
@@ -128,7 +126,7 @@
                 android:gravity="center"
                 android:paddingLeft="@dimen/view_height_90"
                 android:paddingRight="@dimen/view_height_90"
-                android:background="@drawable/gray_selector"
+                android:background="@drawable/green_selector"
                 android:layout_marginLeft="@dimen/margin_29"
                 android:textAllCaps="false"
                 />

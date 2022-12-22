@@ -112,6 +112,29 @@
             </RelativeLayout>
 
 
+            <RelativeLayout
+                android:id="@+id/restartBleMenuBtn"
+                android:layout_width="@dimen/view_height_40"
+                android:layout_height="@dimen/view_height_44"
+                android:layout_marginLeft="@dimen/margin_short_2"
+                android:layout_toRightOf="@+id/logoutMenuBtn"
+                android:background="@drawable/green_with_corner_drawable"
+                android:backgroundTint="?attr/actionbar_color"
+                android:gravity="center_horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:padding="@dimen/margin_short_8"
+                    android:src="@drawable/ble_app_restart"
+                    android:tint="@color/white" />
+
+
+            </RelativeLayout>
+
+
             <TextView
                 android:id="@+id/menuTextView"
                 android:layout_width="wrap_content"
@@ -207,12 +230,14 @@
             android:text="@string/dot"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/colorWhite"
+            android:theme="@style/Custom.Widget.SwitchCompatDark"
             android:visibility="gone"
             app:thumbTextPadding="@dimen/margin_short_5"
 
 
             />
-
+        <!--  android:theme="@style/Custom.Widget.SwitchCompatDark"
+-->
 
         <RelativeLayout
             android:id="@+id/dayNightLay"

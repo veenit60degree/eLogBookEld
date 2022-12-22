@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 
 public class RemainingTimeDialog extends Dialog {

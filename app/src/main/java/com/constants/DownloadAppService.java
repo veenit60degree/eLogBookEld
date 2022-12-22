@@ -3,16 +3,13 @@ package com.constants;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -21,8 +18,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class DownloadAppService extends Service {
 
@@ -90,10 +85,11 @@ public class DownloadAppService extends Service {
             super.onPreExecute();
 
             try{
-                folder      = Globally.getAlsApkPath(getApplicationContext()).toString();
+                folder      = Globally.getAlsApkPath().toString();
                 fileName    = "/ALS_"+ VersionCode + "_" + VersionName + ".apk";
                 Globally.DeleteDirectory(folder);
             }catch (Exception e){
+                Globally.DeleteDirectory(folder);
                 e.printStackTrace();
             }
 
@@ -115,10 +111,6 @@ public class DownloadAppService extends Service {
 
                 // input stream to read file - with 8k buffer
                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
-
-                //Extract file name from URL
-              //  fileName = urls[0].substring(urls[0].lastIndexOf('/') + 1, urls[0].length());
-
 
                 // Output stream to write file
                 OutputStream output = new FileOutputStream(folder + fileName);

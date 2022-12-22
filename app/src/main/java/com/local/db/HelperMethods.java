@@ -1,10 +1,10 @@
 package com.local.db;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
-import android.util.Log;
 
 import com.background.service.BackgroundLocationService;
 import com.constants.Constants;
@@ -12,8 +12,8 @@ import com.constants.Logger;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
 import com.models.EldDriverLogModel;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.fragment.EldFragment;
 import com.models.DriverLogModel;
 import com.models.EldDataModelNew;
 import com.shared.pref.CoDriverEldPref;
@@ -22,7 +22,6 @@ import com.shared.pref.EldSingleDriverLogPref;
 import com.shared.pref.MainDriverEldPref;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.LocalTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +63,7 @@ public class HelperMethods {
 
             if(rs != null && rs.getCount() > 0) {
                 rs.moveToFirst();
-                String logList = rs.getString(rs.getColumnIndex(DBHelper.DRIVER_LOG_LIST));
+                @SuppressLint("Range") String logList = rs.getString(rs.getColumnIndex(DBHelper.DRIVER_LOG_LIST));
                 logArray = new JSONArray(logList);
             }
             if (!rs.isClosed()) {
@@ -2508,7 +2507,7 @@ public class HelperMethods {
         try {
             for(int i = 0 ; i < driverLogJsonArray.length() ; i++){
                 JSONObject logObj = (JSONObject) driverLogJsonArray.get(i);
-                DateTime startDateTime      = Globally.getDateTimeObj(logObj.getString("StartDateTime"), false);
+                DateTime startDateTime      = Globally.getDateTimeObj(logObj.getString(ConstantsKeys.StartDateTime), false);
                 CurrentCycleId = 1;
                 IsViolation = false;
                 boolean IsNorthCanada = false;
@@ -4199,11 +4198,11 @@ public class HelperMethods {
                 driverLogModel.setPersonal(json.getBoolean(ConstantsKeys.Personal));
             }
 
-            if(status == ON_DUTY){
+          //  if(status == ON_DUTY){
                 driverLogModel.setRemarks(json.getString(ConstantsKeys.Remarks));
-            }else {
+           /* }else {
                 driverLogModel.setRemarks("");
-            }
+            }*/
             driverLogModel.setCurrentCyleId(CurrentCycleId);
             driverLogModel.setViolation(false); //json.getBoolean(ConstantsKeys.IsViolation)
 
@@ -4388,14 +4387,13 @@ public class HelperMethods {
 
     /*===== Save Driver Jobs with Shared Preference to 18 days Array List and in unposted array those will be posted to server======= */
     public void SaveDriversJob(String DRIVER_ID, String DeviceId, String AdverseExceptionRemarks,
-                               String decesionSource, String LocationType, String malAddInfo, boolean isShortHaulUpdate, boolean IsNorthCanada,
-                               int DriverType, Constants constants,
+                               String decesionSource, String LocationType, String malAddInfo, boolean isShortHaulUpdate,
+                               boolean IsNorthCanada, int DriverType, Constants constants,
                                MainDriverEldPref MainDriverPref, CoDriverEldPref CoDriverPref,
                                EldSingleDriverLogPref eldSharedPref, EldCoDriverLogPref coEldSharedPref,
-                               SyncingMethod syncingMethod,
-                               Globally Global, HelperMethods hMethods, DBHelper dbHelper, Context context,
-                               boolean IsCycleChanged, String CoDriverId, String CoDriverName, boolean IsSkipRecord,
-                               String DriverVehicleTypeId) {
+                               SyncingMethod syncingMethod, Globally Global, HelperMethods hMethods,
+                               DBHelper dbHelper, Context context, boolean IsCycleChanged, String CoDriverId,
+                               String CoDriverName, boolean IsSkipRecord, String DriverVehicleTypeId) {
 
         boolean isViolation = false, IsYardMove = false;
         String address = "", wasViolation = "false", ViolationReason = "", isPersonal = "false";
@@ -4480,7 +4478,7 @@ public class HelperMethods {
                 JSONArray logArray = constants.AddNewStatusInList("", ""+DRIVER_JOB_STATUS, "", "no_address",
                         DRIVER_ID, City, State, Country, AddressLine, AddressKm,
                         CurrentCycleId, Remarks, isPersonal, isViolation,
-                        "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
+                        "false", String.valueOf(Globally.VEHICLE_SPEED ),
                         "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                         SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                         Global, isHaulExcptn, isShortHaulUpdate,
@@ -4545,7 +4543,7 @@ public class HelperMethods {
                     Globally.LATITUDE,
                     Globally.LONGITUDE,
                     "false", // IsStatusAutomatic is false when mannual job has been done
-                    String.valueOf(BackgroundLocationService.obdVehicleSpeed),
+                    String.valueOf(Globally.VEHICLE_SPEED ),
                     "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                     SharedPref.GetCurrentTruckPlateNo(context),
                     String.valueOf(isHaulExcptn),
@@ -4604,6 +4602,11 @@ public class HelperMethods {
             JSONArray savedSyncedArray = syncingMethod.getSavedSyncingArray(Integer.valueOf(DRIVER_ID), dbHelper);
             savedSyncedArray.put(newObj);
             syncingMethod.SyncingLogHelper(Integer.valueOf(DRIVER_ID), dbHelper, savedSyncedArray);
+
+            /*JSONArray savedV2SyncedArray = syncingMethod.getVersion2SyncingArray(Integer.valueOf(DRIVER_ID), dbHelper);
+            savedV2SyncedArray.put(newObj);
+            syncingMethod.SyncingLogVersion2Helper(Integer.valueOf(DRIVER_ID), dbHelper, savedV2SyncedArray);
+*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -4614,7 +4617,7 @@ public class HelperMethods {
             JSONArray driverLogArray = constants.AddNewStatusInList(DriverName, String.valueOf(DRIVER_JOB_STATUS), ViolationReason, address,
                     DRIVER_ID, City, State, Country, AddressLine, AddressKm,
                     CurrentCycleId, Remarks, isPersonal, isViolation,
-                    "false", String.valueOf(BackgroundLocationService.obdVehicleSpeed),
+                    "false", String.valueOf(Globally.VEHICLE_SPEED),
                     "" + constants.GetGpsStatusIn0And1Form(context),   // earlier value was GPSVehicleSpeed now it is deprecated. now GPS status is sending in this parameter
                     SharedPref.GetCurrentTruckPlateNo(context), decesionSource, IsYardMove,
                     Global, isHaulExcptn, isShortHaulUpdate,

@@ -8,17 +8,17 @@
    >
             <shape>
                 <corners android:radius="@dimen/margin_short_3" />
-                <solid android:color="@color/shadow" />
+                <solid android:color="?attr/shadow" />
             </shape>
         </item>
         <item android:bottom="@dimen/margin_short_3" >
             <shape>
                 <gradient android:angle="270"
-                    android:endColor="@color/active_status_bg"
-                    android:startColor="@color/active_status_bg" />
+                    android:endColor="?attr/blue_light_dark"
+                    android:startColor="?attr/blue_light_dark" />
                 <stroke
                     android:width="@dimen/margin_short_1"
-                    android:color="@color/active_status_bg" />
+                    android:color="?attr/blue_light_dark" />
 
                 <corners android:radius="@dimen/margin_short_4" />
                 <padding

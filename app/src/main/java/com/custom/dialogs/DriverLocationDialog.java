@@ -4,17 +4,10 @@ package com.custom.dialogs;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputFilter;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -32,9 +25,9 @@ import com.constants.Constants;
 import com.constants.ConstantsEnum;
 import com.constants.SharedPref;
 import com.google.android.material.textfield.TextInputLayout;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.fragment.EldFragment;
 
 import java.util.List;
 
@@ -115,7 +108,7 @@ public class DriverLocationDialog extends Dialog {
         if(JobType == Constants.EditRemarks){
             cityInputLayout.setHint("Enter Remarks");
             TitleTV.setText("Remarks");
-            CityNameEditText.setHint("Remarks");
+           // CityNameEditText.setHint("Remarks");
             CityNameEditText.setText(City);
 
             if(City.length() > 0 && City.length() < 50) {
@@ -124,7 +117,7 @@ public class DriverLocationDialog extends Dialog {
 
         }else {
             cityInputLayout.setHint("Enter City");
-            CityNameEditText.setHint("City");
+            CityNameEditText.setHint("");
             SpinnerTitleTV.setText("Select State");
             SpinnerTitleTV.setVisibility(View.VISIBLE);
 

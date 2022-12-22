@@ -3,18 +3,10 @@ package com.constants;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-import com.messaging.logistic.R;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 

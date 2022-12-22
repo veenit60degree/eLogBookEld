@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import com.models.OdometerModel;
 
 import java.util.List;

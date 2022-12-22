@@ -2,10 +2,8 @@ package com.adapter.logistic;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,7 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,13 +72,19 @@ public class TabLayoutAdapter extends FragmentStatePagerAdapter {
 
 
     public View getSelectedTabView(int position) {
+
+        int selectedColor = R.color.blue_button;
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            selectedColor = R.color.white;
+        }
+
         View view = LayoutInflater.from(context).inflate(R.layout.item_tab, null);
         TextView tabTextView = view.findViewById(R.id.tabTextView);
         tabTextView.setText(mFragmentTitleList.get(position));
-        tabTextView.setTextColor(ContextCompat.getColor(context, R.color.blue_button));
+        tabTextView.setTextColor(ContextCompat.getColor(context, selectedColor));
         ImageView tabImageView = view.findViewById(R.id.tabImageView);
         tabImageView.setImageResource(mFragmentIconList.get(position));
-        tabImageView.setColorFilter(ContextCompat.getColor(context, R.color.blue_button), PorterDuff.Mode.SRC_ATOP);
+        tabImageView.setColorFilter(ContextCompat.getColor(context, selectedColor), PorterDuff.Mode.SRC_ATOP);
         view.setLayoutParams(new LinearLayout.LayoutParams(getWidth(context), LinearLayout.LayoutParams.WRAP_CONTENT));
 
         return view;

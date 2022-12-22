@@ -7,17 +7,17 @@
                 >
                 <shape>
                     <corners android:radius="@dimen/margin_short_3" />
-                    <solid android:color="@color/shadow" />
+                    <solid android:color="?attr/shadow" />
                 </shape>
             </item>
             <item android:bottom="@dimen/margin_short_3" >
                 <shape>
                     <gradient android:angle="270"
-                        android:endColor="@color/blue_button"
-                        android:startColor="@color/blue_button" />
+                        android:endColor="?attr/blue_light_dark_hover"
+                        android:startColor="?attr/blue_light_dark_hover" />
                     <stroke
                         android:width="@dimen/margin_short_1"
-                        android:color="@color/blue_button" />
+                        android:color="?attr/blue_light_dark_hover" />
 
                     <corners android:radius="@dimen/margin_short_4" />
                     <padding

@@ -4,12 +4,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -35,11 +33,10 @@ import com.local.db.CertifyLogMethod;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.RecapViewMethod;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.CertifyViewLogFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.TabAct;
+import com.als.logistic.fragment.CertifyViewLogFragment;
 import com.models.RecapSignModel;
 import com.simplify.ink.InkView;
 
@@ -529,7 +526,7 @@ public class SignRecordDialog extends Dialog {
     DriverLogResponse saveCertifyResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, JSONArray inputData) {
             Logger.LogDebug("signatureLog", "---Response: " + response);
             dismissDialog();
 

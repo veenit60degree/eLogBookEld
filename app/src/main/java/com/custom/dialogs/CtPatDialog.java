@@ -2,10 +2,8 @@ package com.custom.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -16,8 +14,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
 import com.simplify.ink.InkView;
 
 public class CtPatDialog extends Dialog {

@@ -16,19 +16,19 @@
         android:layout_marginRight="9dp"
         android:layout_marginLeft="5dp"
         android:paddingBottom="@dimen/view_height_30"
-        android:backgroundTint="?attr/layout_color_dot"
+           android:backgroundTint="?attr/trailer_dialog_background"
 
         >
 
         <RelativeLayout
             android:id="@+id/viewSignContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/white_default"
             android:layout_marginRight="9dp"
             android:layout_marginLeft="5dp"
-            android:backgroundTint="?attr/layout_color_dot"
-
+               android:backgroundTint="?attr/trailer_dialog_background"
+            android:layout_toLeftOf="@+id/showPreviousSign"
             >
             <TextView
                 android:id="@+id/changeTitleView"
@@ -39,13 +39,13 @@
                 android:textSize="@dimen/text_size_32"
                 android:paddingLeft="@dimen/margin_15"
                 android:layout_marginTop="@dimen/view_height_30"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="?attr/txt_eld_color"
                 android:textStyle="bold"
                 />
 
             <LinearLayout
                 android:id="@+id/descLay"
-                android:layout_width="96dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/changeTitleView"
                 android:layout_marginTop="0dp"
@@ -58,10 +58,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:gravity="left"
                     android:layout_marginTop="@dimen/margin_15"
+                    android:layout_marginRight="15dp"
                     android:layout_marginBottom="@dimen/margin_15"
+                    android:gravity="left"
                     android:text="Do you really want to confirm the Load Delivery?"
                     android:textColor="?attr/app_color_primary"
                     android:textSize="@dimen/text_size_20" />
@@ -73,24 +73,26 @@
 
         <ImageView
             android:id="@+id/showPreviousSign"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_120"
-            android:layout_toEndOf="@+id/viewSignContainer"
+            android:layout_width="@dimen/view_height_190"
+            android:layout_height="@dimen/view_height_90"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/margin_25"
             android:paddingRight="@dimen/margin_25"
+
             />
 
         <LinearLayout
             android:id="@+id/btnLinLay"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/view_height_47"
-            android:layout_marginTop="@dimen/margin_15"
-            android:layout_below="@+id/viewSignContainer"
-            android:orientation="horizontal"
-            android:layout_marginLeft="18dp"
-            android:layout_marginRight="18dp"
+            android:layout_below="@+id/showPreviousSign"
             android:layout_alignParentRight="true"
-            >
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="@dimen/margin_15"
+            android:layout_marginRight="18dp"
+            android:orientation="horizontal"
 
+            >
 
 
             <!-- android:background="@drawable/edtittext_border"-->
@@ -103,28 +105,25 @@
                 android:background="@drawable/transparent"
                 android:text="@string/no"
                 android:textAllCaps="false"
-                android:textColor="@color/text_forgot"
                 android:textSize="@dimen/text_size_16"
+                android:textColor="?attr/blue_button_hover"
 
                 />
-
 
 
             <Button
                 android:id="@+id/confirmPopupButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="@string/yes"
-                android:textStyle="bold"
                 android:layout_margin="1dp"
-                android:textColor="?attr/colorPrimary"
-                android:textAllCaps="false"
-                android:textSize="@dimen/text_size_20"
                 android:background="@drawable/transparent"
+                android:text="@string/yes"
+                android:textAllCaps="false"
+                android:textColor="?attr/txt_eld_color"
+                android:textSize="@dimen/text_size_20"
+                android:textStyle="bold"
 
                 />
-
-
 
 
         </LinearLayout>

@@ -20,7 +20,7 @@
             android:layout_marginRight="@dimen/margin_short_1"
             android:layout_marginLeft="@dimen/margin_short_1"
             android:background="@drawable/white_top_rectangle"
-            android:backgroundTint="?attr/layout_color_dot"
+               android:backgroundTint="?attr/trailer_dialog_background"
             >
 
             <TextView
@@ -31,7 +31,7 @@
                 android:layout_marginBottom="@dimen/margin_15"
                 android:paddingLeft="@dimen/margin_15"
                 android:text="@string/Limited_ELD_Connection"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_24"
                 android:textStyle="bold" />
 
@@ -51,14 +51,14 @@
                 android:layout_toRightOf="@+id/ecmAlertTitleTV" />
 
 
-
             <ImageView
                 android:id="@+id/closeDialogImg"
                 android:layout_width="@dimen/view_height_60"
                 android:layout_height="@dimen/view_height_60"
-                android:src="@drawable/close_img_circle"
                 android:layout_alignParentRight="true"
                 android:padding="@dimen/margin_15"
+                android:src="@drawable/close_img_circle"
+
 
                 />
 
@@ -67,10 +67,10 @@
                 android:id="@+id/errorImgEcm"
                 android:layout_width="@dimen/view_height_42"
                 android:layout_height="@dimen/view_height_42"
-                android:src="@drawable/warning_img"
-                android:paddingTop="@dimen/margin_11"
                 android:layout_below="@+id/ecmAlertTitleTV"
                 android:layout_marginLeft="@dimen/margin_13"
+                android:paddingTop="@dimen/margin_11"
+                android:src="@drawable/warning_img"
 
                 />
 
@@ -95,7 +95,7 @@
                 android:text="@string/ok"
                 android:textSize="@dimen/text_size_21"
                 android:textStyle="bold"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="?attr/txt_eld_color"
                 android:layout_marginTop="@dimen/margin_short_4"
                 android:layout_below="@+id/limitedConnDescTxtView"
                 android:layout_alignParentRight="true"

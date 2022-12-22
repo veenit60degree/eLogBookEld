@@ -1,0 +1,19 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" >
+
+    <solid android:color="@color/transparent" />
+
+    <stroke android:width="@dimen/margin_short_1" android:color="@color/bluee_login"/>
+
+    <corners
+        android:bottomRightRadius="@dimen/margin_short_7"
+        android:bottomLeftRadius="@dimen/margin_short_7"
+        android:topLeftRadius="@dimen/margin_short_7"
+        android:topRightRadius="@dimen/margin_short_7"/>
+
+    <padding android:left="@dimen/margin_short_1"
+        android:top="@dimen/margin_short_1"
+        android:right="@dimen/margin_short_1"
+        android:bottom="@dimen/margin_short_1"
+        />
+
+</shape>

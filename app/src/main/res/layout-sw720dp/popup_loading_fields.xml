@@ -16,7 +16,7 @@
         android:orientation="vertical"
         android:background="@drawable/voilet_border"
         android:padding="@dimen/margin_25"
-        android:backgroundTint="?attr/layout_color_dot"
+           android:backgroundTint="?attr/trailer_dialog_background"
         >
 
 
@@ -27,7 +27,7 @@
             android:text="@string/driver_confirmation"
             android:gravity="center_horizontal"
             android:textSize="@dimen/text_size_28"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textStyle="bold"
             android:paddingBottom="@dimen/margin_15"
             android:paddingLeft="@dimen/view_height_100"
@@ -54,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/TRACTOR_pop"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_23"
                 android:textStyle="bold"
                 android:layout_marginRight="@dimen/margin_13"
@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/TRAILER_pop"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_23"
                 android:textStyle="bold"
                 android:layout_marginRight="@dimen/margin_10"
@@ -147,7 +147,7 @@
             android:layout_marginLeft="@dimen/margin_10"
             android:layout_marginRight="@dimen/view_height_50"
             android:textColor="@color/white"
-            android:background="@drawable/red_btn_selector"
+            android:background="@drawable/gray_selector"
             android:textAllCaps="false"
             android:layout_weight="1"
 

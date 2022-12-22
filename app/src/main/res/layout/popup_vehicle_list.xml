@@ -20,162 +20,141 @@
         android:layout_centerVertical="true"
         >
 
-    <LinearLayout
-        android:id="@+id/loginTruckLay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/voilet_border"
-        android:padding="@dimen/margin_15"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center_vertical"
-        android:backgroundTint="?attr/layout_color_dot"
-        >
-
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/TitleVehTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/select_truck_from_list"
-                android:gravity="center_horizontal"
-                android:textSize="@dimen/text_size_19"
-                android:textColor="?attr/textColor"
-                android:paddingBottom="@dimen/margin_short_8"
-                android:textStyle="bold"
-                android:layout_centerHorizontal="true"
-
-                />
-
-
-
-
-
-
-            <TextView
-                android:id="@+id/logoutVehTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/logout"
-                android:textSize="@dimen/text_size_17"
-                android:textColor="?attr/textColor"
-                android:layout_alignParentRight="true"
-                android:paddingRight="@dimen/margin_short_5"
-                android:paddingLeft="@dimen/margin_short_5"
-                android:paddingBottom="@dimen/margin_short_5"
-                android:paddingTop="@dimen/margin_20"
-                android:gravity="center_horizontal"
-
-
-                />
-
-
-
-        </RelativeLayout>
-
-
-
-
-        <TextView
-            android:id="@+id/updateVehTitleTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/select_truck_to_changee"
-            android:textSize="@dimen/text_size_17"
-            android:textColor="?attr/textColor"
-            android:layout_marginTop="@dimen/margin_18"
-            android:layout_marginLeft="@dimen/margin_10"
-            android:textStyle="bold"
-            android:visibility="invisible"
-
-            />
-
-        <com.androidtrip.plugins.searchablespinner.SearchableSpinner
-            android:id="@+id/searchableSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_short_7"
-            android:layout_marginBottom="@dimen/margin_10"
-            android:layout_marginLeft="@dimen/margin_15"
-            android:layout_marginRight="@dimen/margin_15"
-            android:paddingBottom="@dimen/margin_short_1"
-            android:paddingTop="@dimen/margin_short_1"
-            android:paddingLeft="@dimen/margin_13"
-            android:paddingRight="@dimen/margin_short_3"
-            android:gravity="center_horizontal"
-            app:BoarderColor="@android:color/white"
-            app:BordersSize="@dimen/margin_short_1"
-            app:RevealViewBackgroundColor="@color/white"
-            app:RevealEmptyText="@string/Select"
-            app:ShowBorders="true"
-            app:SearchViewBackgroundColor="@color/whiteee"
-            android:background="@drawable/edtittext_border"
-            app:SpinnerExpandHeight="@dimen/view_height_170"
-
-
-
-            />
-
-
-
-
-
         <LinearLayout
+            android:id="@+id/loginTruckLay"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_40"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/view_height_50"
-            android:paddingRight="@dimen/view_height_40"
-            android:paddingLeft="@dimen/view_height_40"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/voilet_border"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_15"
+            android:backgroundTint="?attr/trailer_dialog_background"
+
             >
+            <!--   android:backgroundTint="?attr/trailer_dialog_background"-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/TitleVehTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="@dimen/margin_short_8"
+                    android:text="@string/select_truck_from_list"
+                    android:textColor="?attr/textColor"
+                    android:textSize="@dimen/text_size_19"
+                    android:textStyle="bold"
+
+                    />
 
 
+                <TextView
+                    android:id="@+id/logoutVehTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="@dimen/margin_short_5"
+                    android:paddingTop="@dimen/margin_20"
+                    android:paddingRight="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:text="@string/logout"
+                    android:textColor="?attr/textColor"
+                    android:textSize="@dimen/text_size_17"
 
-            <Button
-                android:id="@+id/btnCancelChngeVehJob"
-                android:layout_width="@dimen/view_height_150"
-                android:layout_height="@dimen/view_height_35"
-                android:text="@string/cancel"
+
+                    />
+
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/updateVehTitleTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_18"
+                android:text="@string/select_truck_to_changee"
+                android:textColor="?attr/textColor"
                 android:textSize="@dimen/text_size_17"
+                android:textStyle="bold"
+                android:visibility="invisible"
+
+                />
+
+            <com.androidtrip.plugins.searchablespinner.SearchableSpinner
+                android:id="@+id/searchableSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_15"
-                android:layout_marginRight="@dimen/margin_20"
-                android:textColor="@color/whiteee"
-                android:background="@drawable/gray_selector"
-                android:textAllCaps="false"
-                android:layout_weight="1"
-                android:visibility="gone"
-                />
-
-
-            <Button
-                android:id="@+id/btnSaveVehList"
-                android:layout_width="@dimen/view_height_150"
-                android:layout_height="@dimen/view_height_35"
-                android:text="@string/save"
-                android:textSize="@dimen/text_size_17"
-                android:layout_marginLeft="@dimen/margin_20"
+                android:layout_marginTop="@dimen/margin_short_7"
                 android:layout_marginRight="@dimen/margin_15"
-                android:textColor="@color/whiteee"
-                android:background="@drawable/green_selector"
-                android:textAllCaps="false"
-                android:layout_weight="1"
+                android:layout_marginBottom="@dimen/margin_10"
+                android:background="@drawable/edtittext_border"
+                android:gravity="center_horizontal"
+                android:paddingLeft="@dimen/margin_13"
+                android:paddingTop="@dimen/margin_short_1"
+                android:paddingRight="@dimen/margin_short_3"
+                android:paddingBottom="@dimen/margin_short_1"
+                app:BoarderColor="@android:color/white"
+                app:BordersSize="@dimen/margin_short_1"
+                app:RevealEmptyText="@string/Select"
+                app:RevealViewBackgroundColor="@color/white"
+                app:SearchViewBackgroundColor="@color/whiteee"
+                app:ShowBorders="true"
+                app:SpinnerExpandHeight="@dimen/view_height_170"
+
 
                 />
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_40"
+                android:layout_marginTop="@dimen/view_height_50"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/view_height_40"
+                android:paddingRight="@dimen/view_height_40">
 
 
+                <Button
+                    android:id="@+id/btnCancelChngeVehJob"
+                    android:layout_width="@dimen/view_height_150"
+                    android:layout_height="@dimen/view_height_35"
+                    android:layout_marginLeft="@dimen/margin_15"
+                    android:layout_marginRight="@dimen/margin_20"
+                    android:layout_weight="1"
+                    android:background="@drawable/gray_selector"
+                    android:text="@string/cancel"
+                    android:textAllCaps="false"
+                    android:textColor="@color/whiteee"
+                    android:textSize="@dimen/text_size_17"
+                    android:visibility="gone" />
 
-        </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnSaveVehList"
+                    android:layout_width="@dimen/view_height_150"
+                    android:layout_height="@dimen/view_height_35"
+                    android:layout_marginLeft="@dimen/margin_20"
+                    android:layout_marginRight="@dimen/margin_15"
+                    android:layout_weight="1"
+                    android:background="@drawable/green_selector"
+                    android:text="@string/save"
+                    android:textAllCaps="false"
+                    android:textColor="@color/whiteee"
+                    android:textSize="@dimen/text_size_17"
+
+                    />
 
 
-
-
+            </LinearLayout>
 
 
         </LinearLayout>

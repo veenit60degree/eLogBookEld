@@ -11,7 +11,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -20,7 +19,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -29,33 +27,34 @@ import android.os.Handler;
 import android.os.StatFs;
 import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.telephony.TelephonyManager;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.background.service.BackgroundLocationService;
 import com.driver.details.DriverConst;
+import com.local.db.BleGpsAppLaunchMethod;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
-import com.local.db.InspectionMethod;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.local.db.OdometerHelperMethod;
 import com.local.db.RecapViewMethod;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.LoginActivity;
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.LoginActivity;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
+import com.als.logistic.fragment.EldFragment;
 import com.models.CanadaDutyStatusModel;
 import com.models.EldDataModelNew;
 import com.models.MalDiaEventModel;
@@ -69,7 +68,6 @@ import com.models.SlideMenuModel;
 import com.models.UnAssignedVehicleModel;
 import com.models.UnIdentifiedRecordModel;
 import com.models.UnidentifiedEventModel;
-import com.opencsv.CSVReader;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.CoNotificationPref;
 import com.shared.pref.MainDriverEldPref;
@@ -78,7 +76,6 @@ import com.shared.pref.NotificationPref;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Duration;
-import org.joda.time.Hours;
 import org.joda.time.Minutes;
 import org.joda.time.Seconds;
 import org.json.JSONArray;
@@ -86,9 +83,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -121,6 +116,11 @@ public class Constants {
     public static final int LogEventTypeBle  = 1;
     public static final int LogEventTypeGps  = 2;
 
+    public static final int EmptyTrailerAnim    = 1;
+    public static final int OdometerAnim        = 2;
+    public static final int ExceptionAnim       = 3;
+    public static final int ConnectionAnim      = 4;
+    public static final int EditLogAnim         = 5;
 
     // BluetoothConnectionType
     public static final int UNKNOWN = 0;
@@ -178,7 +178,7 @@ public class Constants {
     public static String AobrdWarning = "AOBRD Warning";
     public static String AobrdAutomatic = "AOBRD Auto";
     public static String NoTrailer = "No Trailer";
-    public static String packageName = "com.messaging.logistic";
+    public static String packageName = "com.als.logistic";
     public static String Personal = "Personal";
 
     // OBD parameters
@@ -4832,7 +4832,7 @@ public class Constants {
     public void saveBleLog(String data, String timeStamp, Context context, DBHelper dbHelper,
                             DriverPermissionMethod driverPermissionMethod, Utils obdUtil){
 
-        /*String DriverId        = SharedPref.getDriverId(context);
+        String DriverId        = SharedPref.getDriverId(context);
         boolean isDeviceLogEnabled = driverPermissionMethod.isDeviceLogEnabled(DriverId, dbHelper);
 
         if(isDeviceLogEnabled || DriverId.equals("0")) {
@@ -4849,13 +4849,21 @@ public class Constants {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }*/
+        }
 
 
     }
 
 
 
+
+    public Animation confirmAnimationInitilization(Animation anim, Context context){
+        //if(anim == null) {
+            anim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+            anim.setDuration(1500);
+       // }
+        return anim;
+    }
 
     public static Duration getDateTimeDuration(DateTime selectedDateTime, DateTime currentTime){
         Duration duration = new Duration(selectedDateTime, currentTime);
@@ -6011,6 +6019,25 @@ public class Constants {
     }
 
 
+    public void writeBleOnOffStatus(boolean isTurningOn, Globally global, BleGpsAppLaunchMethod bleGpsAppLaunchMethod,
+                                    DBHelper dbHelper, Context context){
+        if (SharedPref.getObdPreference(context) == Constants.OBD_PREF_BLE) {
+            // write logs for bluetooth on/off status
+            if(isTurningOn){
+                bleGpsAppLaunchMethod.SaveBleGpsAppLogInTable(Constants.LogEventTypeBle, Constants.POWERED_ON,
+                        global.getCurrentDateLocalUtc(), dbHelper);
+            }else{
+                bleGpsAppLaunchMethod.SaveBleGpsAppLogInTable(Constants.LogEventTypeBle, Constants.POWERED_OFF,
+                        global.getCurrentDateLocalUtc(), dbHelper);
+            }
+
+            // global.isBleEnabled(context)
+            SharedPref.SetGpsBlePermission(isTurningOn, SharedPref.WasGpsEnabled(context),
+                    SharedPref.GetLocationStatus(context), context);
+        }
+    }
+
+
     public void checkBleConnection(){
 
         try {
@@ -6167,5 +6194,19 @@ public class Constants {
         return isInfoMissing;
     }
 
+    // reset OBD values after truck change or OBD preference changes
+    public void resetObdValues(Context context){
+        try{
+            if(context != null){
+                SharedPref.saveHighPrecisionOdometer("0", "", context);
+                SharedPref.SetObdOdometer("0", context);
+                SharedPref.SetObdEngineHours("0", context);
+                SharedPref.SaveTruckInfoOnIgnitionChange("", "","", "","0", "0", context);
+                SharedPref.SaveBleOBDMacAddress("", context);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
+    }
 }

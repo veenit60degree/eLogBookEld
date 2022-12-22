@@ -16,23 +16,22 @@
         android:layout_marginRight="9dp"
         android:layout_marginLeft="5dp"
         android:paddingBottom="15dp"
-        android:backgroundTint="?attr/layout_color_dot"
+        android:backgroundTint="?attr/trailer_dialog_background"
       
 >
 
-        
-           <TextView 
+
+        <TextView
             android:id="@+id/changeTitleView"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="22dp"
             android:gravity="center"
             android:text="Confirmation"
-            android:layout_centerHorizontal="true"
+            android:textColor="?attr/txt_eld_color"
             android:textSize="23sp"
-            android:layout_marginTop="22dp"
-			android:textColor="?attr/colorPrimary"
-               android:textStyle="bold"
-            />
+            android:textStyle="bold" />
 
 
         <LinearLayout
@@ -58,7 +57,7 @@
             android:layout_marginRight="15dp"
             android:layout_marginTop="@dimen/margin_15"
             android:layout_marginBottom="10dp"
-            android:textColor="?attr/app_color_primary"
+            android:textColor="?attr/txt_eld_color"
 
             />
 
@@ -198,11 +197,11 @@
                   android:layout_height="match_parent"
                   android:text="@string/cancel"
                  android:layout_margin="1dp"
-                  android:textColor="@color/text_forgot"
                   android:textAllCaps="false"
                   android:textSize="18sp"
                   android:background="@drawable/transparent"
                   android:layout_marginRight="@dimen/margin_short_7"
+                  android:textColor="?attr/blue_button_hover"
 
                   />
 
@@ -215,7 +214,7 @@
                   android:text="@string/Confirm"
                   android:textStyle="bold"
                  android:layout_margin="1dp"
-                  android:textColor="?attr/colorPrimary"
+                  android:textColor="?attr/txt_eld_color"
                   android:textAllCaps="false"
                   android:textSize="18sp"
                   android:background="@drawable/transparent"

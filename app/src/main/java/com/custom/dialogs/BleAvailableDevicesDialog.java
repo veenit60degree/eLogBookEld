@@ -7,29 +7,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.constants.Constants;
-import com.constants.SharedPref;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.EldActivity;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.SuggestedFragmentActivity;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.fragment.CtPatFragment;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.R;
 
 import java.util.ArrayList;
 import java.util.List;

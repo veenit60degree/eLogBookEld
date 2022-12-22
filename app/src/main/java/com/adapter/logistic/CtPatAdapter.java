@@ -10,8 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
-import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.CtPatFragment;
+import com.als.logistic.R;
+import com.als.logistic.fragment.CtPatFragment;
 import com.models.PrePostModel;
 
 import java.util.ArrayList;

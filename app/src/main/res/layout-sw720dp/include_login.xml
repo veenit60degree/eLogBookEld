@@ -57,6 +57,8 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColorHint="?attr/text_hint_color"
+
                 >
 
             <com.constants.CustomEditText
@@ -116,6 +118,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="?attr/textColor"
+                android:textColorHint="?attr/text_hint_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >

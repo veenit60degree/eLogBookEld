@@ -6,9 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,8 +15,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.adapter.logistic.NotificationPagerAdapter;
 import com.constants.Constants;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import com.models.NotificationNewsModel;
 import com.models.VehicleModel;
 

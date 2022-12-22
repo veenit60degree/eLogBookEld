@@ -5,7 +5,7 @@
     android:background="@drawable/white_full_border"
     android:layout_marginLeft="@dimen/margin_10"
     android:layout_marginRight="@dimen/margin_10"
-    android:backgroundTint="?attr/layout_color_dot"
+       android:backgroundTint="?attr/trailer_dialog_background"
     >
 
 
@@ -28,7 +28,7 @@
             android:paddingBottom="@dimen/margin_13"
 
             android:text="@string/action_Support"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textSize="@dimen/text_size_17"
             android:textStyle="bold" />
 
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:text="@string/Close"
             android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/txt_eld_color"
           android:layout_below="@+id/supportListView"
             android:textSize="@dimen/text_size_17"
             android:layout_marginTop="@dimen/margin_16"

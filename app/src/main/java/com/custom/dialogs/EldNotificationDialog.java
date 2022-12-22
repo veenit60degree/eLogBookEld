@@ -1,19 +1,13 @@
 package com.custom.dialogs;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.viewpager.widget.ViewPager;
@@ -27,15 +21,11 @@ import com.constants.Logger;
 import com.constants.SaveDriverLogPost;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
-import com.constants.VolleyRequestWithoutRetry;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.LoginActivity;
-import com.messaging.logistic.R;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.fragment.EldFragment;
-import com.messaging.logistic.fragment.NotificationHistoryFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.TabAct;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -147,7 +137,7 @@ public class EldNotificationDialog extends Dialog  {
      DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
          @RequiresApi(api = Build.VERSION_CODES.KITKAT)
          @Override
-         public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
+         public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, JSONArray inputData) {
 
              try {
                  JSONObject obj = new JSONObject(response);

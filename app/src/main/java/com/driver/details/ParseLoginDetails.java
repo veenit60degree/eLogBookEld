@@ -1,14 +1,13 @@
 package com.driver.details;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.constants.SharedPref;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.SupportMethod;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 import com.models.CycleModel;
 import com.models.DriverLocationModel;
 import com.models.EldDriverLogModel;

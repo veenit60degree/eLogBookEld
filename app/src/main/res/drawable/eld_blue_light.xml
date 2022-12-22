@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item android:right="@dimen/margin_short_2"
+                android:left="@dimen/margin_short_2"
+                >
+                <shape>
+                    <corners android:radius="@dimen/margin_short_3" />
+                    <solid android:color="?attr/shadow" />
+                </shape>
+            </item>
+            <item android:bottom="@dimen/margin_short_3" >
+                <shape>
+                    <gradient android:angle="270"
+                        android:endColor="?attr/eld_blue_lightt"
+                        android:startColor="?attr/eld_blue_lightt" />
+                    <stroke
+                        android:width="@dimen/margin_short_1"
+                        android:color="?attr/eld_blue_lightt" />
+
+                    <corners android:radius="@dimen/margin_short_4" />
+                    <padding
+                        android:bottom="@dimen/margin_short_2"
+                        android:left="@dimen/margin_short_2"
+                        android:right="@dimen/margin_short_2"
+                        android:top="@dimen/margin_short_2" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

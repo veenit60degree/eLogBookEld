@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/view_height_60"
+    android:layout_height="@dimen/view_height_61"
     android:orientation="horizontal"
     android:background="@color/transparent"
 
@@ -245,9 +245,9 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/delete_edit_log"
                 android:layout_gravity="center"
-                android:tint="@color/black"
+                android:src="@drawable/delete_edit_log"
+                android:tint="?attr/textColor"
 
                 />
 
@@ -255,6 +255,12 @@
 
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_short_1"
+        android:background="@color/transparent"
+        />
 
 
 </LinearLayout>

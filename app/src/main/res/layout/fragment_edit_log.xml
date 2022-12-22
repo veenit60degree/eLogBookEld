@@ -138,7 +138,9 @@
             android:layout_marginTop="@dimen/view_height_40"
             android:paddingBottom="@dimen/view_height_60"
             android:scrollbars="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+
+            />
 
 
 

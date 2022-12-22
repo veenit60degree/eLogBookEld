@@ -4,16 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.constants.Constants;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
 import com.models.CanadaDutyStatusModel;
 import com.models.PrePostModel;
 
@@ -44,7 +43,7 @@ public class CanDotEnginePowerAdapter extends RecyclerView.Adapter<CanDotEngineP
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         if(UILApplication.getInstance().isNightModeEnabled()){
-            holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
+            holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.trailer_dialog_background));
         }else{
             holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
         }

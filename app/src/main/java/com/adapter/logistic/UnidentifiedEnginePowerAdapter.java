@@ -10,9 +10,9 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.constants.Constants;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
 import com.models.CanadaDutyStatusModel;
 
 import java.util.List;
@@ -42,7 +42,8 @@ public class UnidentifiedEnginePowerAdapter extends RecyclerView.Adapter<Unident
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         if(UILApplication.getInstance().isNightModeEnabled()){
-            holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
+            holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.trailer_dialog_background
+            ));
         }else{
             holder.enginePwrDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
         }

@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
 
             android:textSize="@dimen/text_size_22"
-            android:textColor="@color/black"
+                   android:textColor="?attr/textColor"
             
             
             />
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_short_6"
             android:textSize="@dimen/text_size_20"
-            android:textColor="@color/black"
+            android:textColor="?attr/textColor"
             
             />
         

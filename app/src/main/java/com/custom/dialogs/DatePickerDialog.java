@@ -1,13 +1,10 @@
 package com.custom.dialogs;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -20,14 +17,11 @@ import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.local.db.RecapViewMethod;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -75,11 +69,12 @@ public class DatePickerDialog extends Dialog {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(UILApplication.getInstance().isNightModeEnabled()){
-            getWindow().setBackgroundDrawable(new ColorDrawable(getContext().getResources().getColor(R.color.layout_color_dot)));
-        } else {
-            getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
-        }
+        /*if(UILApplication.getInstance().isNightModeEnabled()){
+            getWindow().setBackgroundDrawable(new ColorDrawable(getContext().getResources().getColor(R.color.transparent)));
+        }*/
+
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.popup_datepicker);
        // setCancelable(false);

@@ -761,6 +761,7 @@
     <string name="yard_move_validation">You already saved Yard Move status.</string>
     <string name="no_per_bright_settings">You do not have permission for brightness settings.</string>
     <string name="yard_move_not_allowed">You have no permission for Yard Move. Please contact your company.</string>
+    <string name="select_vehicle">Select vehicle first to take this action.</string>
     <string name="personal_not_allowed">You have no permission for Personal Use. Please contact your company.</string>
     <string name="share_not_allowed">You have no permission for Send Log. Please contact your company.</string>
     <string name="personal_use_limit_75">Your Personal Use limit (75 km) is exceeded for the day in Canada cycle.</string>
@@ -1037,6 +1038,7 @@
     <string name="Distance_miles">Distance (Miles) </string>
     <string name="Distance_km">Distance (KM) </string>
     <string name="connect_ble_obd">Connect Bluetooth OBD</string>
+    <string name="disconnect_ble_obd">Disconnect OBD</string>
     <string name="ble_permsn_disabled">Location permission is disabled. Please turn ON it from app permissions settings to connect OBD.</string>
 
     <string name="odometer_details">Odometer Details</string>
@@ -1180,6 +1182,8 @@
     <string name="Scanning">Scanning</string>
     <string name="ht_curr_device">Current Device：%1$s</string>
     <string name="ht_connecting">Device Connecting</string>
+    <string name="ht_device_not_found">Device not found</string>
+    <string name="connection_failed">Connection failed</string>
     <string name="ht_disconnected">Device Disconnected</string>
     <string name="ht_connected">Device Connected</string>
     <string name="ht_connect_timeout">Connection Timeou</string>

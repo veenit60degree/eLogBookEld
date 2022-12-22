@@ -10,10 +10,10 @@
         android:id="@+id/loginCoDriverLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/transparent"
         android:layout_marginLeft="@dimen/view_height_100"
         android:layout_marginRight="@dimen/view_height_100"
         android:paddingBottom="@dimen/margin_20"
+        android:background="@color/transparent"
 
         >
 
@@ -37,7 +37,7 @@
             android:layout_marginBottom="@dimen/margin_short_3"
             android:textSize="@dimen/text_size_23"
             android:textStyle="bold"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/txt_eld_color"
 
             />
 
@@ -83,6 +83,8 @@
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColorHint="?attr/text_hint_color"
+
                 >
 
             <com.constants.CustomEditText
@@ -149,6 +151,7 @@
                 android:id="@+id/passInputLay"
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="?attr/textColor"
+                android:textColorHint="?attr/text_hint_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >

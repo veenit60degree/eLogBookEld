@@ -12,7 +12,7 @@
     android:layout_marginLeft="@dimen/view_height_70"
     android:layout_gravity="center"
     tools:ignore="MissingDefaultResource"
-    android:backgroundTint="?attr/layout_color_dot"
+       android:backgroundTint="?attr/trailer_dialog_background"
     >
 
 
@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Generate_Rods"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/txt_eld_color"
             android:textStyle="bold"
             android:textSize="@dimen/text_size_27"
             android:gravity="center"
@@ -75,7 +75,7 @@
                         android:layout_width="@dimen/view_height_100"
                         android:layout_height="wrap_content"
                         android:text="@string/country"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:paddingLeft="@dimen/margin_short_5"
                         android:paddingRight="@dimen/margin_short_5"
                         android:paddingBottom="@dimen/margin_short_2"
@@ -151,7 +151,7 @@
                         android:layout_width="@dimen/view_height_100"
                         android:layout_height="wrap_content"
                         android:text="@string/rods_log_type"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:paddingLeft="@dimen/margin_short_5"
                         android:paddingRight="@dimen/margin_short_5"
                         android:paddingBottom="@dimen/margin_short_2"
@@ -172,7 +172,7 @@
                         android:textSize="@dimen/text_size_21"
                         android:layout_marginLeft="@dimen/margin_short_5"
                         android:layout_marginRight="@dimen/margin_short_5"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:paddingLeft="@dimen/margin_short_5"
                         android:checked="false"
 
@@ -189,7 +189,7 @@
                         android:layout_gravity="center_vertical"
                         android:text="@string/eld"
                         android:textSize="@dimen/text_size_21"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:layout_marginLeft="@dimen/margin_10"
                         android:paddingLeft="@dimen/margin_short_5"
 
@@ -231,7 +231,7 @@
                             android:layout_width="@dimen/view_height_100"
                             android:layout_height="wrap_content"
                             android:text="@string/from_date"
-                            android:textColor="?attr/color_eld_theme"
+                            android:textColor="?attr/txt_eld_color"
                             android:textSize="@dimen/text_size_20"
                             />
 
@@ -269,7 +269,7 @@
                             android:layout_width="@dimen/view_height_100"
                             android:layout_height="wrap_content"
                             android:text="@string/to_date"
-                            android:textColor="?attr/color_eld_theme"
+                            android:textColor="?attr/txt_eld_color"
                             android:textSize="@dimen/text_size_20"
 
                             />

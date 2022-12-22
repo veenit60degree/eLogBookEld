@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:text="hello"
             android:textSize="@dimen/text_size_18"
-            android:textColor="@color/black"
+            android:textColor="?attr/color_eld_theme"
             android:paddingLeft="@dimen/margin_12"
             android:paddingTop="@dimen/margin_12"
 
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Clear"
-            android:textColor="@color/black"
+            android:textColor="?attr/color_eld_theme"
             android:layout_alignParentRight="true"
             android:textStyle="bold"
             android:padding="@dimen/margin_12"

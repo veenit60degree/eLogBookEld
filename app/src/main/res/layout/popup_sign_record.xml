@@ -21,8 +21,9 @@
             android:layout_centerVertical="true"
             android:button="@drawable/unidentified_checkbox_drawable"
             android:paddingRight="@dimen/margin_short_9"
-            android:textColor="@color/color_eld_bg"
             android:textSize="@dimen/text_size_16"
+            android:textColor="?attr/color_eld_bg"
+            android:buttonTint="?attr/color_eld_bg"
 
             />
 
@@ -85,7 +86,7 @@
             android:paddingBottom="@dimen/margin_short_3"
             android:text="@string/certify"
             android:textAllCaps="true"
-            android:textColor="@color/colorVoilation"
+            android:textColor="?attr/share_icon_color"
             android:textSize="@dimen/text_size_13"
             android:textStyle="bold"
 

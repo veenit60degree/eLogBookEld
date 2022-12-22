@@ -4,9 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.constants.SharedPref;
-import com.driver.details.DriverConst;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.fragment.EldFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;

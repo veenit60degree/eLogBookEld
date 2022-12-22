@@ -25,13 +25,14 @@
     <color name="white_transparent">#80FFFFFF</color>
     <color name="white_transparent_field">#99FFFFFF</color>
     <color name="silver">#C0C0C0</color>
+    <color name="radio_selected">#444366</color>
 
     <color name="hos_summary_bg">#EFF2FC</color>
     <color name="hos_send_log">#1A8DFF</color>
     <color name="hos_break_time">#009DFF</color>
     <color name="hos_shift">#39A9C4</color>
     <color name="hos_current_status">#00BFA5</color>
-    <color name="hos_cycle">#7A2FFA</color>
+    <color name="hos_cycle">#7A2FFA</color>`
     <color name="color_storage1500">#97CE45</color>
     <color name="color_storage500">#E5953B</color>
     <color name="color_storage0">#CE4545</color>
@@ -79,6 +80,7 @@
     <color name="gray_updated_divider_color">#EAEBEB</color>
 
 
+    <color name="blue_hos">#006ECD</color>
     <color name="black_download">#333232</color>
     <color name="unselect_button">#4E4E4E</color>
     <color name="unselect">#43474E</color>
@@ -125,6 +127,7 @@
     <color name="white_foreground">#F1EFEF</color>
     <color name="layout_color_dot">#aeaeae</color>
     <color name="white_dark">#F6F2F2</color>
+    <color name="dark_cream_white">#F3F3F3</color>
 
     <color name="white_dark_hover">#E3D9D9</color>
 
@@ -246,8 +249,8 @@
 
     <color name="deferral_light_blue">#dee7ec</color>
     <color name="gray_hoverN">#6F6F6F</color>
-
-
-
+    <color name="hos_card_dark">#69687F</color>
+    <color name="dot_titles_bg2">#444366</color>
+    <color name="trailer_dialog_background">#69687F</color>
 
 </resources>

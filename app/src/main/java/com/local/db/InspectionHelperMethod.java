@@ -3,9 +3,6 @@ package com.local.db;
 
 import android.database.Cursor;
 
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.fragment.EldFragment;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -18,7 +18,7 @@
             android:paddingTop="@dimen/margin_20"
             android:paddingLeft="@dimen/view_height_80"
             android:paddingRight="@dimen/view_height_80"
-            android:backgroundTint="?attr/layout_color_dot"
+            android:backgroundTint="?attr/trailer_dialog_background"
             >
 
         <TextView
@@ -29,7 +29,7 @@
             android:text="@string/Engine_Restarted"
             android:textSize="@dimen/text_size_18"
             android:textStyle="bold"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/txt_eld_color"
 
             />
 
@@ -42,6 +42,7 @@
             android:gravity="center_horizontal"
             android:paddingLeft="@dimen/margin_20"
             android:paddingRight="@dimen/margin_20"
+            android:textColor="?attr/gray_text2"
 
             />
 
@@ -68,7 +69,7 @@
             android:text="@string/go_off_duty"
             android:textSize="@dimen/text_size_17"
             android:textAllCaps="false"
-            android:textColor="@color/bluee_login"
+            android:textColor="?attr/blue_light_dark"
             android:background="@drawable/login_driver_btn_selector"
 
             />

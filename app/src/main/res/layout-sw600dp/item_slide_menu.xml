@@ -12,6 +12,7 @@
         android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_15"
         android:paddingRight="@dimen/margin_12"
+        android:backgroundTint="?attr/transparent_sidemenu"
 
         >
 
@@ -28,7 +29,8 @@
                 android:layout_height="@dimen/margin_27"
                 android:src="@drawable/eld_malfunction"
                 android:layout_centerVertical="true"
-                android:tint="@color/slide_menu_default"
+                android:tint="?attr/slide_menu_icon"
+
                 />
 
 

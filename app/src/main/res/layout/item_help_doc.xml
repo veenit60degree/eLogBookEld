@@ -20,28 +20,26 @@
             android:id="@+id/helpDocTitleTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Commercial Invoice"
-            android:textColor="?attr/color_eld_theme"
-            android:textSize="@dimen/text_size_16"
-            android:layout_marginLeft="@dimen/margin_15"
-            android:layout_centerVertical="true"
-            android:singleLine="true"
             android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/margin_15"
+            android:singleLine="true"
+            android:text="Commercial Invoice"
+            android:textColor="?attr/txt_eld_color"
+            android:textSize="@dimen/text_size_16"
 
             />
-
-
 
 
         <ImageView
             android:id="@+id/helpDocImageView"
             android:layout_width="@dimen/margin_23"
             android:layout_height="@dimen/margin_23"
-            android:gravity="center"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/margin_25"
             android:layout_marginLeft="@dimen/margin_10"
+            android:layout_marginRight="@dimen/margin_25"
+            android:gravity="center"
             android:src="@drawable/help_pdf_doc"
             android:tint="?attr/helpDocImageView_icon_color"
 

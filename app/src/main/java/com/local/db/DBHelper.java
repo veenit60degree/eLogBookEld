@@ -7,9 +7,8 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_INSPECTION           = "tbl_inspection";
     public static final String TABLE_RECAP_DATA_18DAYS    = "tbl_recap_view_18days";
     public static final String TABLE_SYNC_DATA            = "tbl_sync_data";
+    public static final String TABLE_SYNC_DATA_VERSION2   = "tbl_sync_data_version2";
     public static final String TABLE_DRIVER_LOCATION      = "tbl_driver_location";
     public static final String TABLE_LAT_LON              = "tbl_lat_lon";
     public static final String TABLE_SUPPORT              = "tbl_support";
@@ -68,6 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String INSPECTION_LIST            = "oDriver_odometer_List";
     public static final String RECAP_DATA_18DAYS_LIST     = "oDriver_recap_18days_List";
     public static final String SYNC_DATA_LIST             = "oDriver_sync_data_List";
+    public static final String SYNC_DATA_VERSION2_LIST    = "oDriver_sync_data_version2_List";
     public static final String DRIVER_LOCATION_LIST       = "oDriver_driver_location_List";
     public static final String LAT_LON_LIST               = "oDriver_lat_lon_List";
     public static final String SUPPORT_LIST               = "oDriver_support_List";
@@ -132,6 +133,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL( "CREATE TABLE " + TABLE_SYNC_DATA + "(" +
                 DRIVER_ID_KEY + " INTEGER, " +  SYNC_DATA_LIST + " TEXT )"
+        );
+
+        db.execSQL( "CREATE TABLE " + TABLE_SYNC_DATA_VERSION2 + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  SYNC_DATA_VERSION2_LIST + " TEXT )"
         );
 
         db.execSQL( "CREATE TABLE " + TABLE_DRIVER_LOCATION + "(" +
@@ -252,6 +257,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INSPECTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECAP_DATA_18DAYS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SYNC_DATA);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SYNC_DATA_VERSION2);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DRIVER_LOCATION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LAT_LON);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUPPORT);
@@ -352,6 +358,15 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         db.execSQL( "CREATE TABLE " + TABLE_SYNC_DATA + "(" +
                 DRIVER_ID_KEY + " INTEGER, " +  SYNC_DATA_LIST + " TEXT )"
+        );
+
+    }
+
+    /* ---------------------- Create Syncing data version2. Purpose of this table is to check posted to server data status. if already posted then delete that entry from table -------------------- */
+    public void CreateSyncDataVersion2Table(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL( "CREATE TABLE " + TABLE_SYNC_DATA_VERSION2 + "(" +
+                DRIVER_ID_KEY + " INTEGER, " +  SYNC_DATA_VERSION2_LIST + " TEXT )"
         );
 
     }
@@ -710,6 +725,21 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_SYNC_DATA, null, contentValues);
         return true;
     }
+
+
+    /* ---------------------- Insert sync data version2 Details -------------------- */
+    public boolean InsertSyncDataVersion2(int DriverId, JSONArray list) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(SYNC_DATA_VERSION2_LIST, String.valueOf(list));
+
+        db.insert(TABLE_SYNC_DATA_VERSION2, null, contentValues);
+        return true;
+    }
+
 
 
     /* ---------------------- Insert Driver location Details -------------------- */
@@ -1173,7 +1203,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    /* ---------------------- Update Inspection 18 days Details -------------------- */
+    /* ---------------------- Update sync Details -------------------- */
     public boolean UpdateSyncDataDetails(int DriverId, JSONArray list) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1185,6 +1215,21 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update(TABLE_SYNC_DATA, contentValues, DRIVER_ID_KEY + " = ? ", new String[] { Integer.toString(DriverId) } );
         return true;
     }
+
+
+    /* ---------------------- Update Sync Details in version 2-------------------- */
+    public boolean UpdateSyncDataVersion2(int DriverId, JSONArray list) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DRIVER_ID_KEY, DriverId);
+        contentValues.put(SYNC_DATA_VERSION2_LIST, String.valueOf(list));
+
+        db.update(TABLE_SYNC_DATA_VERSION2, contentValues, DRIVER_ID_KEY + " = ? ", new String[] { Integer.toString(DriverId) } );
+        return true;
+    }
+
 
     /* ---------------------- Update Driver Location Details -------------------- */
     public boolean UpdateDriverLocDetails(int DriverId, JSONArray list) {
@@ -1608,13 +1653,22 @@ public class DBHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    /* ---------------------- Get Inspection Details -------------------- */
+    /* ---------------------- Get Sync log Details -------------------- */
     public Cursor getSyncDataDetails(int DriverId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_SYNC_DATA + " WHERE " +
                 DRIVER_ID_KEY + "=?", new String[]{Integer.toString(DriverId)});
         return res;
     }
+
+    /* ---------------------- Get Sync log version 2 Details -------------------- */
+    public Cursor getSyncDataVersion2Details(int DriverId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("SELECT * FROM " + TABLE_SYNC_DATA_VERSION2 + " WHERE " +
+                DRIVER_ID_KEY + "=?", new String[]{Integer.toString(DriverId)});
+        return res;
+    }
+
 
     /* ---------------------- Get Driver Location Details -------------------- */
     public Cursor getDriverLocDetails(int DriverId) {
@@ -1919,7 +1973,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    /* ---------------------- Delete Inspection Details -------------------- */
+    /* ---------------------- Delete Sync log Details -------------------- */
     public void DeleteSyncDataTable() {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1928,6 +1982,19 @@ public class DBHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
     }
+
+
+    /* ---------------------- Delete Sync log version 2 Details -------------------- */
+    public void DeleteSyncDataVersion2Table() {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("DELETE FROM "+ TABLE_SYNC_DATA_VERSION2);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
 
     /* ---------------------- Delete Driver Location Details -------------------- */
     public void DeleteDriverLocTable() {
@@ -2189,6 +2256,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
+
     // =====================================================================================================
 
     /* ---------------------- Create table if table does not exist -------------------- */
@@ -2220,6 +2288,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if(!isTableExists(TABLE_SYNC_DATA)) {
             CreateSyncDataTable();
+        }
+
+        if(!isTableExists(TABLE_SYNC_DATA_VERSION2)) {
+            CreateSyncDataVersion2Table();
         }
 
         if(!isTableExists(TABLE_DRIVER_LOCATION)) {

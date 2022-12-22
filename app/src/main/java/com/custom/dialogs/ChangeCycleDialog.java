@@ -16,8 +16,8 @@ import com.constants.Constants;
 import com.constants.SharedPref;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 
 public class ChangeCycleDialog extends Dialog {
 

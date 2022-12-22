@@ -15,6 +15,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -46,8 +47,20 @@ public class SaveLogJsonObj {
                 {
                     @Override
                     public void onResponse(String response) {
+                        JSONArray inputArray = new JSONArray();
+                        try {
+                            String data = geoData.toString();
+                            if(data.length() > 0){
+                                if(!data.substring(0, 1).equals("[")){
+                                    data = "[" + geoData + "]";
+                                }
+                            }
+                            inputArray = new JSONArray(data);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         Logger.LogDebug("Response ", ">>>Response: " + response);
-                        postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag, geoData.length());
+                        postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag, inputArray);
                     }
                 },
                 new Response.ErrorListener()

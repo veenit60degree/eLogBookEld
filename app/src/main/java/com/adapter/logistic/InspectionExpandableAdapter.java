@@ -1,7 +1,6 @@
 package com.adapter.logistic;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +19,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import com.models.SavedInspectionModel;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;

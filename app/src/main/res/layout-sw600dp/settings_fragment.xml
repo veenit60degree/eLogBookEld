@@ -368,7 +368,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:checked="false"
-                        app:theme="@style/Custom.Widget.SwitchCompat"
+                         android:theme="@style/Custom.Widget.SwitchCompatDark"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
 
@@ -399,24 +399,20 @@
                         android:textStyle="bold" />
 
 
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/haulExceptnSwitchButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:layout_toLeftOf="@+id/rightMenuBtn"
+                        android:checked="false"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/colorWhite"
+                         android:theme="@style/Custom.Widget.SwitchCompatDark"
 
 
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/haulExceptnSwitchButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorWhite"
-                    android:layout_centerInParent="true"
-                    android:checked="false"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    app:thumbTextPadding="@dimen/margin_short_5"
-                    android:layout_toLeftOf="@+id/rightMenuBtn"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    app:theme="@style/Custom.Widget.SwitchCompat"
-
-
-                    />
+                        app:thumbTextPadding="@dimen/margin_short_5" />
 
 
             </RelativeLayout>
@@ -465,10 +461,9 @@
                     android:checked="false"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     app:thumbTextPadding="@dimen/margin_short_5"
-                    android:layout_toLeftOf="@+id/rightMenuBtn"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    app:theme="@style/Custom.Widget.SwitchCompat"
+                    android:theme="@style/Custom.Widget.SwitchCompatDark"
 
 
                     />

@@ -23,8 +23,9 @@
             android:button="@drawable/unidentified_checkbox_drawable"
             android:paddingLeft="@dimen/margin_short_3"
             android:paddingRight="@dimen/margin_11"
-            android:textColor="@color/color_eld_bg"
             android:textSize="@dimen/text_size_18"
+            android:textColor="?attr/color_eld_bg"
+            android:buttonTint="?attr/color_eld_bg"
 
             />
 
@@ -83,19 +84,19 @@
             android:id="@+id/certifyStatusTxtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/certify"
-            android:textStyle="bold"
-            android:paddingTop="@dimen/margin_short_3"
-            android:paddingBottom="@dimen/margin_short_3"
-            android:paddingRight="@dimen/margin_20"
-            android:paddingLeft="@dimen/margin_20"
-            android:layout_marginRight="@dimen/margin_10"
-            android:textSize="@dimen/text_size_14"
-            android:textAllCaps="true"
-            android:background="@drawable/uncertify_border"
-            android:textColor="@color/colorVoilation"
-            android:layout_toLeftOf="@+id/signRecordRightImg"
             android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_10"
+            android:layout_toLeftOf="@+id/signRecordRightImg"
+            android:background="@drawable/uncertify_border"
+            android:paddingLeft="@dimen/margin_20"
+            android:paddingTop="@dimen/margin_short_3"
+            android:paddingRight="@dimen/margin_20"
+            android:paddingBottom="@dimen/margin_short_3"
+            android:text="@string/certify"
+            android:textAllCaps="true"
+            android:textColor="?attr/share_icon_color"
+            android:textSize="@dimen/text_size_14"
+            android:textStyle="bold"
 
             />
 

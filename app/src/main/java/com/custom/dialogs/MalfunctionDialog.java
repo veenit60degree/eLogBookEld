@@ -11,22 +11,14 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.constants.Constants;
-import com.constants.SharedPref;
-import com.constants.VolleyRequest;
 import com.google.android.material.textfield.TextInputLayout;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import com.models.MalfunctionModel;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MalfunctionDialog  extends Dialog {
 

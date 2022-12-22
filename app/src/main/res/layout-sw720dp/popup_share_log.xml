@@ -9,7 +9,7 @@
     android:layout_marginBottom="@dimen/margin_15"
     android:layout_marginRight="@dimen/view_height_130"
     android:layout_marginLeft="@dimen/view_height_130"
-    android:backgroundTint="?attr/layout_color_dot"
+       android:backgroundTint="?attr/trailer_dialog_background"
     >
 
 
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/send_driver_log"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/txt_eld_color"
             android:textStyle="bold"
             android:textSize="@dimen/view_height_33"
             android:gravity="center"
@@ -137,7 +137,7 @@
                         android:layout_width="@dimen/view_height_140"
                         android:layout_height="wrap_content"
                         android:text="@string/country"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:paddingLeft="@dimen/margin_short_5"
                         android:paddingRight="@dimen/margin_short_5"
                         android:paddingBottom="@dimen/margin_short_2"
@@ -211,7 +211,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/DataTransmissionThrough"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:paddingLeft="@dimen/margin_short_5"
                         android:paddingRight="@dimen/margin_short_5"
                         android:paddingBottom="@dimen/margin_short_2"
@@ -230,10 +230,11 @@
                         android:layout_gravity="center_vertical"
                         android:text="@string/WebService"
                         android:textSize="@dimen/text_size_22"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:layout_marginLeft="@dimen/margin_short_5"
                         android:paddingLeft="@dimen/margin_short_5"
                         android:checked="true"
+                        android:buttonTint="?attr/txt_eld_color"
 
                         />
 
@@ -247,9 +248,11 @@
                         android:layout_gravity="center_vertical"
                         android:text="@string/email"
                         android:textSize="@dimen/text_size_22"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:layout_marginLeft="@dimen/margin_15"
                         android:paddingLeft="@dimen/margin_short_5"
+                        android:buttonTint="?attr/txt_eld_color"
+
 
                         />
 
@@ -308,7 +311,7 @@
                         android:layout_width="@dimen/view_height_140"
                         android:layout_height="wrap_content"
                         android:text="@string/to"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_22"
                         />
 
@@ -350,7 +353,7 @@
                         android:layout_width="@dimen/view_height_140"
                         android:layout_height="wrap_content"
                         android:text="@string/LocationTitle"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_22"
                         android:layout_marginRight="@dimen/margin_short_5"
                         android:layout_marginTop="@dimen/margin_short_5"
@@ -412,7 +415,7 @@
                         android:layout_width="@dimen/view_height_140"
                         android:layout_height="wrap_content"
                         android:text="@string/EnterCity"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:layout_marginBottom="@dimen/margin_short_8"
                         android:textSize="@dimen/text_size_22"
                         android:layout_marginRight="@dimen/margin_short_5"
@@ -446,7 +449,7 @@
                         android:layout_width="@dimen/view_height_90"
                         android:layout_height="wrap_content"
                         android:text="@string/SelectState"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:layout_marginTop="@dimen/margin_10"
                         android:textSize="@dimen/text_size_22"
                         android:layout_marginLeft="@dimen/margin_10"
@@ -496,7 +499,7 @@
                             android:layout_width="@dimen/view_height_140"
                             android:layout_height="wrap_content"
                             android:text="@string/from_date"
-                            android:textColor="?attr/color_eld_theme"
+                            android:textColor="?attr/txt_eld_color"
                             android:textSize="@dimen/text_size_22"
                             />
 
@@ -531,7 +534,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/to_date"
-                            android:textColor="?attr/color_eld_theme"
+                            android:textColor="?attr/txt_eld_color"
                             android:textSize="@dimen/text_size_22"
 
                             />
@@ -576,7 +579,7 @@
                         android:layout_width="@dimen/view_height_140"
                         android:layout_height="wrap_content"
                         android:text="@string/Comments"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_22"
 
                         />

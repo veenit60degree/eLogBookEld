@@ -7,9 +7,8 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.constants.Constants;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
-import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -31,7 +31,7 @@
                 android:id="@+id/historyTitleTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_19"
                 android:textStyle="bold"
 
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/view_height_45"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_17"
 
                 />

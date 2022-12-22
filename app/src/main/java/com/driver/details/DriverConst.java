@@ -7,7 +7,7 @@ import androidx.preference.PreferenceManager;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 
 public class DriverConst {

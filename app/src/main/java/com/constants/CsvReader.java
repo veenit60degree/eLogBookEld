@@ -1,10 +1,8 @@
 package com.constants;
 
 import android.content.Context;
-import android.location.Location;
-import android.util.Log;
 
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 import com.opencsv.CSVReader;
 
 import java.io.IOException;
@@ -41,6 +39,9 @@ public class CsvReader {
                 }
 
             }
+
+            if(reader != null)
+                reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

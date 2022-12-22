@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -16,8 +15,8 @@ import android.widget.TextView;
 
 import com.constants.ConstantsEnum;
 import com.google.android.material.textfield.TextInputLayout;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 
 public class EditLogRemarksDialog  extends Dialog {
 

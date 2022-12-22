@@ -64,7 +64,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/power_unit"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_size_18"
                         android:paddingTop="@dimen/margin_10"
@@ -112,7 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/trailer_s"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_size_18"
                         android:paddingTop="@dimen/margin_10"
@@ -161,7 +161,7 @@
                 android:paddingLeft="@dimen/view_height_55"
                 android:paddingRight="@dimen/view_height_55"
                 android:background="?attr/color_eld_theme"
-                android:textColor="?attr/text_black"
+                android:textColor="@color/white"
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:textSize="@dimen/text_size_18"
@@ -216,7 +216,7 @@
                 android:paddingLeft="@dimen/view_height_55"
                 android:paddingRight="@dimen/view_height_55"
                 android:background="?attr/color_eld_theme"
-                android:textColor="?attr/text_black"
+                android:textColor="@color/white"
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:textSize="@dimen/text_size_18"
@@ -265,13 +265,12 @@
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/margin_10"
-                android:background="?attr/color_eld_theme"
+                android:textColor="@color/white"
                 android:paddingLeft="@dimen/view_height_55"
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingRight="@dimen/view_height_55"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:text="@string/Agriculture"
-                android:textColor="?attr/text_black"
                 android:textSize="@dimen/text_size_18"
                 android:textStyle="bold"
 
@@ -323,7 +322,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Agriculture_Reason"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_18"
                     android:layout_marginTop="@dimen/margin_short_5"
                     android:textStyle="bold" />
@@ -372,7 +371,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ContainerIden_Reason"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_18"
                     android:textStyle="bold" />
 
@@ -422,7 +421,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/DateAndTime"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_18"
                     />
@@ -462,7 +461,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sealNoAtArrival"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_18"
                     android:layout_toLeftOf="@+id/arrivalContNoEditTxt"
@@ -514,7 +513,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sealNoAtDeparture"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_18"
                     android:layout_toLeftOf="@+id/departureContNoEditTxt"
@@ -570,7 +569,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/who_conducted_security"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_18"
                     android:layout_alignParentLeft="true"
@@ -628,6 +627,8 @@
                             android:layout_marginTop="@dimen/margin_short_5"
                             android:layout_marginRight="@dimen/margin_20"
                             android:layout_alignParentRight="true"
+                            android:background="?attr/layout_color_dot"
+
                             >
 
 
@@ -655,8 +656,7 @@
                                 android:layout_height="@dimen/view_height_55"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginLeft="@dimen/margin_20"
-                                android:scaleType="centerCrop"
-                                />
+                                android:scaleType="centerCrop" />
 
 
                         </RelativeLayout>
@@ -696,7 +696,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/who_conducted_followup"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_18"
                     android:layout_alignParentLeft="true"
@@ -749,30 +749,30 @@
                             android:id="@+id/followSecLay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/margin_short_5"
                             android:layout_marginRight="@dimen/margin_20"
-                            android:layout_alignParentRight="true"
+                            android:background="?attr/layout_color_dot"
+
                             >
 
 
                             <View
                                 android:layout_width="@dimen/view_height_190"
                                 android:layout_height="@dimen/margin_short_1"
-                                android:background="?attr/textColor"
-                                android:layout_marginTop="@dimen/view_height_50"
                                 android:layout_marginLeft="@dimen/margin_20"
-                                />
+                                android:layout_marginTop="@dimen/view_height_50"
+                                android:background="?attr/textColor" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/view_height_75"
+                                android:layout_marginTop="@dimen/view_height_55"
                                 android:text="@string/signature"
                                 android:textColor="?attr/textColor"
-                                android:textSize="@dimen/text_size_18"
-                                android:layout_marginTop="@dimen/view_height_55"
-                                android:layout_marginLeft="@dimen/view_height_75"
-                                />
+                                android:textSize="@dimen/text_size_18" />
 
                             <ImageView
                                 android:id="@+id/followSecLayIV"
@@ -780,8 +780,7 @@
                                 android:layout_height="@dimen/view_height_55"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginLeft="@dimen/margin_20"
-                                android:scaleType="centerCrop"
-                                />
+                                android:scaleType="centerCrop" />
 
 
                         </RelativeLayout>
@@ -819,7 +818,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/who_affixed_seal"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_18"
                     android:layout_alignParentLeft="true"
@@ -878,6 +877,8 @@
                             android:layout_marginTop="@dimen/margin_short_5"
                             android:layout_marginRight="@dimen/margin_20"
                             android:layout_alignParentRight="true"
+                            android:background="?attr/layout_color_dot"
+
                             >
 
 
@@ -905,8 +906,7 @@
                                 android:layout_height="@dimen/view_height_55"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginLeft="@dimen/margin_20"
-                                android:scaleType="centerCrop"
-                                />
+                                android:scaleType="centerCrop" />
 
 
                         </RelativeLayout>
@@ -944,7 +944,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/who_verify_physical"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_18"
                     android:layout_alignParentLeft="true"
@@ -1000,6 +1000,8 @@
                             android:layout_marginTop="@dimen/margin_short_5"
                             android:layout_marginRight="@dimen/margin_20"
                             android:layout_alignParentRight="true"
+                            android:background="?attr/layout_color_dot"
+
                             >
 
 
@@ -1028,8 +1030,7 @@
                                 android:layout_height="@dimen/view_height_55"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginLeft="@dimen/margin_20"
-                                android:scaleType="centerCrop"
-                                />
+                                android:scaleType="centerCrop" />
 
 
                         </RelativeLayout>
@@ -1060,7 +1061,7 @@
                 android:id="@+id/ctPatInspectionBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/view_height_44"
-                android:background="@drawable/green_eld_drawable"
+                android:background="@drawable/green_selector"
                 android:text="@string/save"
                 android:textSize="@dimen/text_size_17"
                 android:textStyle="bold"

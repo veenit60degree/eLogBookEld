@@ -2,21 +2,16 @@ package com.local.db;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.constants.Constants;
 import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.Utils;
 import com.driver.details.DriverConst;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.Hours;
-import org.joda.time.Minutes;
-import org.joda.time.Seconds;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

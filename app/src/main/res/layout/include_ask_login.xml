@@ -28,6 +28,19 @@
         >
 
 
+        <!--   <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="@dimen/margin_25"
+         android:text="@string/welcome_als_realtime"
+         android:textColor="?attr/colorPrimary"
+         android:textSize="@dimen/text_size_18"
+         android:textStyle="bold"
+
+         />-->
+
+
         <ImageView
             android:id="@+id/askLoginIV"
             android:layout_width="@dimen/view_height_190"
@@ -77,9 +90,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/view_height_40"
                     android:text="@string/main_driver_title"
-                    android:textColor="@color/bluee_login_one"
+                    android:textColor="@color/whiteee"
                     android:textSize="@dimen/text_size_16"
-                    android:background="@drawable/login_driver_btn_selector"
+                    android:background="@drawable/green_selector"
                     android:textAllCaps="false"
                     android:layout_marginRight="@dimen/text_size_10"
                     android:layout_weight="1"

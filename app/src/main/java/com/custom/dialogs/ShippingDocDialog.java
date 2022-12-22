@@ -12,7 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.RequiresApi;
-import android.util.Log;
+
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.als.logistic.UILApplication;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
@@ -33,9 +34,9 @@ import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.ShipmentHelperMethod;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.LoginActivity;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.LoginActivity;
+import com.als.logistic.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -253,10 +254,10 @@ public class ShippingDocDialog extends Dialog {
 
                     if(tempShipperNumber.equals("")){
                         shipperNoEditText.requestFocus();
-                        global.EldScreenToast(shippingDocSaveBtn, "Enter B/L or Trip number.", Color.parseColor(ToastColor));
+                        global.EldScreenToast(shippingDocSaveBtn, "Enter B/L or Trip number.", UILApplication.getInstance().getThemeColor());
                     }else if(tempFromAddress.equals("")){
                         FromEditText.requestFocus();
-                        global.EldScreenToast(shippingDocSaveBtn, "Enter (From) address", Color.parseColor(ToastColor));
+                        global.EldScreenToast(shippingDocSaveBtn, "Enter (From) address", UILApplication.getInstance().getThemeColor());
                     }
 
                 }else{
@@ -283,7 +284,7 @@ public class ShippingDocDialog extends Dialog {
                                     CallApiToSaveShipping(false);
                                 } else {
                                     ToEditText.requestFocus();
-                                    global.EldScreenToast(shippingDocSaveBtn, "Enter (To) address", Color.parseColor(ToastColor));
+                                    global.EldScreenToast(shippingDocSaveBtn, "Enter (To) address", UILApplication.getInstance().getThemeColor());
                                 }
                             }else{
                                 CallApiToSaveShipping(false);
@@ -292,9 +293,9 @@ public class ShippingDocDialog extends Dialog {
                     } else {
 
                        // if (tempShipperNumber.length() == 0 && tempShipperName.length() == 0 && tempCommodity.length() == 0) {
-                            global.EldScreenToast(shippingDocSaveBtn, "Enter BL/Trip Number to save shipping information", Color.parseColor(ToastColor));   //or Shipper Name and Commodity
+                            global.EldScreenToast(shippingDocSaveBtn, "Enter BL/Trip Number to save shipping information", UILApplication.getInstance().getThemeColor());   //or Shipper Name and Commodity
                        /* } else if (tempShipperName.length() == 0 || tempCommodity.length() == 0) {
-                            global.EldScreenToast(shippingDocSaveBtn, "Enter Shipper Name and Commodity to save shipping information", Color.parseColor(ToastColor));
+                            global.EldScreenToast(shippingDocSaveBtn, "Enter Shipper Name and Commodity to save shipping information", UILApplication.getInstance().getThemeColor());
                         }*/
 
                     }
@@ -302,7 +303,7 @@ public class ShippingDocDialog extends Dialog {
 
             }else{
                 global.EldScreenToast(shippingDocSaveBtn,  getContext().getResources().getString(R.string.stop_vehicle_alert),
-                        Color.parseColor(ToastColor));
+                        UILApplication.getInstance().getThemeColor());
             }
         }
     }
@@ -728,9 +729,9 @@ public class ShippingDocDialog extends Dialog {
             switch (flag) {
                 case GetShippingNo:
                     if( error.toString().contains("NoConnection")){
-                        global.EldScreenToast(shippingDocSaveBtn, getContext().getResources().getString(R.string.connection_error), Color.parseColor(ToastColor));
+                        global.EldScreenToast(shippingDocSaveBtn, getContext().getResources().getString(R.string.connection_error), UILApplication.getInstance().getThemeColor());
                     }else {
-                        global.EldScreenToast(shippingDocSaveBtn, Globally.DisplayErrorMessage(error.toString()), Color.parseColor(ToastColor));
+                        global.EldScreenToast(shippingDocSaveBtn, Globally.DisplayErrorMessage(error.toString()), UILApplication.getInstance().getThemeColor());
                     }
                     break;
 

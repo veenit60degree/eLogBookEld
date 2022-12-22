@@ -221,6 +221,7 @@ public class ConstantsKeys {
     public static String obdSpeed                       = "obdSpeed";
     public static String isGpsEnabled                   = "isGpsEnabled";
     public static String BleDevices                     = "BleDevices";
+    public static String IsCheckSuggestedEdit           = "IsCheckSuggestedEdit";
 
     public static String UnitNo                         = "UnitNo";
     public static String DeviceNumber                   = "DeviceNumber";
@@ -313,13 +314,15 @@ public class ConstantsKeys {
     public static String UnidentifiedFromOBD            = "UnidentifiedFromOBD";
     public static String IsAgriException                = "IsAgriException";
     public static String IsCertifyReminder              = "IsCertifyReminder";
+    public static String Is18DaysLogUpdate              = "Is18DaysLogUpdate";
     public static String DownloadProgress               = "download_progress";
     public static String MissingDiagnostic              = "MissingDiagnostic";
     public static String BleDataService                 = "BleDataService";
     public static String BleDataAfterNotify             = "BleDataAfterNotify";
-    public static String BleDataNotifier             = "BleDataNotifier";
+    public static String BleDataNotifier                = "BleDataNotifier";
     public static String IsConnected                    = "IsConnected";
-
+    public static String IsAnimation                    = "IsAnimation";
+    public static String AnimationType                  = "AnimationType";
 
     public static String IsLocDiagnostic                = "IsLocDiagnostic";
     public static String LocDiaOccurTime                = "LocDiaOccurTime";
@@ -405,6 +408,12 @@ public class ConstantsKeys {
     public static String SEQUENCE_NO                    = "SEQUENCE_NO";
     public static String HEXA_SEQUENCE_NUMBER           = "HexaSequenceNumber";
     public static String Id                             = "Id";
+    public static String ApiCallStatus                  = "ApiCallStatus";
+    //public static String ApiName                        = "ApiName";
+    public static String ApiFlag                        = "ApiFlag";
+    public static String IsAlreadyCalled                = "IsAlreadyCalled";
+    public static String ApiCalledDate                  = "ApiCalledDate";
+    public static String OnDutyRemarks                  = "OnDutyRemarks";
 
     public static String ArrivalSealNumber              = "ArrivalSealNumber";
     public static String DepartureSealNumber            = "DepartureSealNumber";

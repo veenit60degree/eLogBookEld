@@ -97,7 +97,7 @@
                                android:layout_height="wrap_content"
                                android:layout_gravity="center_horizontal"
                                android:text="@string/hos_northsouthTV"
-                               android:textColor="?attr/textColor"
+                               android:textColor="?attr/txt_eld_color"
                                android:textSize="@dimen/text_size_17"
                                android:textStyle="bold"
 
@@ -131,7 +131,7 @@
                                    android:paddingTop="@dimen/margin_short_5"
                                    android:paddingRight="@dimen/margin_short_5"
                                    android:textAllCaps="false"
-                                   android:textColor="?attr/color_eld_theme"
+                                   android:textColor="?attr/txt_eld_color"
                                    android:textSize="@dimen/text_size_8"
 
                                    />
@@ -189,7 +189,7 @@
                         android:paddingLeft="@dimen/margin_10"
                         android:paddingTop="@dimen/margin_short_5"
                         android:paddingRight="@dimen/margin_10"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_8"
                         android:textStyle="normal"
                         android:visibility="visible" />
@@ -255,7 +255,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:text="@string/hos_driving_shift"
-                                    android:textColor="?attr/textColor"
+                                    android:textColor="?attr/txt_eld_color"
                                     android:textSize="@dimen/text_size_17"
                                     android:textStyle="bold" />
 
@@ -344,7 +344,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:text="@string/hos_OnDuty_shift"
-                                    android:textColor="?attr/textColor"
+                                    android:textColor="?attr/txt_eld_color"
                                     android:textSize="@dimen/text_size_17"
                                     android:textStyle="bold" />
 
@@ -431,7 +431,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:text="@string/hos_break"
-                                    android:textColor="?attr/textColor"
+                                    android:textColor="?attr/txt_eld_color"
                                     android:textSize="@dimen/text_size_17"
                                     android:textStyle="bold" />
 
@@ -531,7 +531,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:text="@string/hos_driving_shift"
-                                    android:textColor="?attr/textColor"
+                                    android:textColor="?attr/txt_eld_color"
                                     android:textSize="@dimen/text_size_17"
                                     android:textStyle="bold"
                                     android:visibility="gone"
@@ -551,7 +551,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/hos_cycle"
-                                        android:textColor="?attr/textColor"
+                                        android:textColor="?attr/txt_eld_color"
                                         android:textStyle="bold"
                                         android:textSize="@dimen/text_size_17"
                                         android:layout_gravity="center_horizontal"
@@ -652,7 +652,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/hos_OnDuty_shift"
-                                    android:textColor="?attr/textColor"
+                                    android:textColor="?attr/txt_eld_color"
                                     android:textStyle="bold"
                                     android:textSize="@dimen/text_size_17"
                                     android:layout_gravity="center_horizontal"
@@ -750,7 +750,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/hos_perDay_offduty"
-                                        android:textColor="?attr/textColor"
+                                        android:textColor="?attr/txt_eld_color"
                                         android:textStyle="bold"
                                         android:textSize="@dimen/text_size_17"
                                         android:layout_gravity="center_horizontal"
@@ -882,7 +882,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:text="@string/hos_shift"
-                            android:textColor="?attr/textColor"
+                            android:textColor="?attr/txt_eld_color"
                             android:textSize="@dimen/text_size_17"
                             android:textStyle="bold" />
 
@@ -985,7 +985,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:text="@string/hos_cycle"
-                                android:textColor="?attr/textColor"
+                                android:textColor="?attr/txt_eld_color"
                                 android:textSize="@dimen/text_size_17"
                                 android:textStyle="bold" />
 
@@ -1100,7 +1100,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/AccumPersonalDis"
                     android:textStyle="bold"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:paddingLeft="@dimen/margin_short_5"
                     android:textSize="@dimen/text_size_15"
 
@@ -1176,7 +1176,7 @@
                         android:paddingLeft="@dimen/margin_short_5"
                         android:paddingRight="@dimen/margin_short_4"
                         android:text="@string/distancee"
-                        android:textColor="?attr/textColor"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_15"
                         android:textStyle="bold"
 
@@ -1268,7 +1268,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/CurrentLocation"
-                        android:textColor="?attr/textColor"
+                        android:textColor="?attr/txt_eld_color"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_size_15"
                         android:paddingLeft="@dimen/margin_short_4"
@@ -1313,7 +1313,7 @@
             android:layout_height="match_parent"
             android:layout_weight=".9"
             card_view:cardCornerRadius="@dimen/margin_10"
-            app:cardBackgroundColor="@color/hos_send_log"
+            app:cardBackgroundColor="?attr/hos_send_log"
             app:cardElevation="@dimen/margin_short_2"
             app:cardUseCompatPadding="true"
 

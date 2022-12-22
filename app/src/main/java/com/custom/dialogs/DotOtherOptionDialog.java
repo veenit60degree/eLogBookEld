@@ -9,12 +9,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 import java.util.ArrayList;
 

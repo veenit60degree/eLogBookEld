@@ -1,23 +1,14 @@
 package com.background.service;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -28,29 +19,28 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.speech.tts.TextToSpeech;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.als.logistic.EldActivity;
+import com.als.logistic.Globally;
+import com.als.logistic.LoginActivity;
+import com.als.logistic.R;
+import com.als.logistic.TabAct;
+import com.als.logistic.UILApplication;
+import com.als.logistic.fragment.EldFragment;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.ble.listener.MyReceiveListener;
+import com.ble.util.BleUtil;
 import com.ble.util.ConstantEvent;
 import com.ble.util.EventBusInfo;
-import com.ble.util.BleUtil;
-import com.ble.utils.ToastUtil;
 import com.constants.APIs;
 import com.constants.AsyncResponse;
 import com.constants.CheckConnectivity;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
-import com.constants.DownloadAppService;
 import com.constants.DriverLogResponse;
 import com.constants.Logger;
 import com.constants.RequestResponse;
@@ -65,17 +55,8 @@ import com.constants.TcpClient;
 import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.htstart.htsdk.HTBleSdk;
 import com.htstart.htsdk.bluetooth.HTBleData;
-import com.htstart.htsdk.bluetooth.HTBleDevice;
-import com.htstart.htsdk.bluetooth.HTModeSP;
-import com.htstart.htsdk.minterface.HTBleScanListener;
-import com.htstart.htsdk.minterface.IReceiveListener;
 import com.local.db.BleGpsAppLaunchMethod;
 import com.local.db.CTPatInspectionMethod;
 import com.local.db.CertifyLogMethod;
@@ -95,13 +76,6 @@ import com.local.db.ShipmentHelperMethod;
 import com.local.db.SyncingMethod;
 import com.local.db.UpdateLogRecordMethod;
 import com.local.db.VehiclePowerEventMethod;
-import com.messaging.logistic.EldActivity;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.LoginActivity;
-import com.messaging.logistic.R;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.EldFragment;
 import com.notifications.NotificationManagerSmart;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.EldCoDriverLogPref;
@@ -116,20 +90,14 @@ import com.squareup.okhttp.Response;
 import com.wifi.settings.WiFiConfig;
 
 import org.greenrobot.eventbus.EventBus;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
-import org.joda.time.Seconds;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -138,19 +106,18 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import dal.tables.OBDDeviceData;
-import kotlin.jvm.JvmDefaultWithoutCompatibility;
 import models.RulesResponseObject;
 import obdDecoder.Decoder;
 
 // 27 jan 2021   --
-public class BackgroundLocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, TextToSpeech.OnInitListener, LocationListener {
+public class BackgroundLocationService extends Service implements TextToSpeech.OnInitListener {
 
     String TAG = "Service";
     String TAG_OBD = "OBD Service";
     String noObd = "obd not connected";
     String ClearEventType = "";
     String SelectedDriverId = "";
+    Intent locServiceIntent;
 
     String obdEngineHours = "0", currentHighPrecisionOdometer = "0", obdOdometer = "0", obdTripDistance = "0", ignitionStatus = "OFF",
             HighResolutionDistance = "0", truckRPM = "0";
@@ -172,7 +139,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     final int SaveCtPatInspCo               = 12;
     final int GetCtPat18DaysMainDriverLog   = 13;
     final int GetCtPat18DaysCoDriverLog     = 14;
-   // final int SaveDriverDeviceUsageLog      = 15;
     final int SaveMalDiagnstcEvent          = 16;
     final int SaveDeferralMain              = 17;
     final int SaveDeferralCo                = 18;
@@ -194,44 +160,30 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     final int Save2ndDriverOdoData          = 101;
     int offSetFromServer                    = 0;
     int offsetFromUTC                       = 0;
-    int VehicleSpeed                        = -1;
     int recapApiAttempts                    = 0;
     int updateOfflineApiRejectionCount      = 0;
     int updateOfflineNoResponseCount        = 0;
     int RePostDataCountMain                 = 0;
     int RePostDataCountCo                   = 0;
 
-    int SpeedCounter                        = 0;      // initially it is 60 so that ELD rule is called instantly
+    int SpeedCounter                        = 10;      // initially it is 10 so that ELD rule is called instantly
     int MaxSpeedCounter                     = 60;
     int HalfSpeedCounter                    = 30;
-    int sameLocationCount                   = 0;
     int ignitionOffCount                    = 0;
     int onReceiveTotalCountOnReq            = 0;
 
 
-    public static int obdVehicleSpeed       = -1;
-    public static int GpsVehicleSpeed       = -1;
-
-
-    //private FusedLocationProviderApi locationProvider = LocationServices.FusedLocationApi;
-    //private Location mLastLocation;
-    public static LocationRequest locationRequest;
-    public static GoogleApiClient mGoogleApiClient;
-
-    protected LocationManager locationManager;
+    int obdVehicleSpeed       = -1;
 
     int LocRefreshTime = 10;
     int CheckInternetConnection = 2;
-    private static final long MIN_TIME_BW_UPDATES = 2 * 1000;   //30 sec. 30000 - 1/2 minute -- [960000 milli sec -- (16 minutes)]
-    private static final long MIN_TIME_LOCATION_UPDATES = 1 * 1000;   // 1 sec
-    private static final long OBD_TIME_LOCATION_UPDATES = 10 * 1000;   // 10 sec
-    private static final long IDLE_TIME_LOCATION_UPDATES = 3600 * 1000;   // 1 hour
+    private final long M_TIMER_UPDATES = 10 * 1000;   // 10 sec
 
     VolleyRequest GetOdometerRequest, ctPatInsp18DaysRequest;   //, saveDriverDeviceUsageLog;
     VolleyRequest UpdateLocReqVolley, UpdateUserStatusVolley, GetLog18DaysRequest, GetRecapView18DaysData, SaveMalDiaEventRequest;
     VolleyRequest GetMalfunctionEvents, SaveAgricultureRequest, GetLogRequest;
     Map<String, String> params;
-    String DriverId = "", CoDriverId = "", CoDriverName = "", DeviceId = "", VIN_NUMBER = "", VehicleId = "", CompareLocVal = "";
+    String DriverId = "", CoDriverId = "", CoDriverName = "", DeviceId = "", VIN_NUMBER = "", VehicleId = "";
     String ObdRestarted = "OBD Restarted";
 
     int DriverType = 0, LastObdSpeed = -1;
@@ -242,12 +194,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     ShipmentHelperMethod shipmentHelper;
     OdometerHelperMethod odometerHelper;
     RecapViewMethod recapViewMethod;
-    OdometerHelperMethod odometerhMethod;
     InspectionMethod inspectionMethod;
     CTPatInspectionMethod ctPatInspectionMethod;
     LocationMethod LocMethod;
     LatLongHelper latLongHelper;
-    NotificationMethod notificationMethod;
     DriverPermissionMethod driverPermissionMethod;
     MalfunctionDiagnosticMethod malfunctionDiagnosticMethod;
     DeferralMethod deferralMethod;
@@ -264,23 +214,19 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     Constants constants;
     ShippingPost postRequest;
     ServiceCycle serviceCycle;
-    boolean IsLogApiACalled = false;
     public static boolean IsRecapApiCalled = false;
     boolean IsCtPatApiCalled = false;
     boolean Is18DaysLogApiCalled = false;
-    boolean isGpsUpdate      = false;
     boolean isMalfncDataAlreadyPosting = false;
     boolean isDeferralAlreadyPosting = false;
     boolean isDeferralAlreadyPostingCo = false;
     boolean IsMissingDiaInProgress = false;
     boolean MalDiaEventsApiInProcess = false;
-   // boolean isBleConnected = false;
     public static boolean isReceiverInit = false;
 
     boolean isWiredObdRespond = false;
     public static boolean IsAutoChange = false; //, IsAutoLogSaved = false;
 
-    double latitude, longitude;
     private Handler mHandler = new Handler();
     private Handler speedAlertHandler = new Handler();
     private Handler dismissAlertHandler = new Handler();
@@ -327,7 +273,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     String MobileUsage = "";
     String TotalUsage = "";
     String PreviousLatitude = "", PreviousLongitude = "", PreviousOdometer = "";
-    long processStartTime = -1;
     double tempOdo = 1180321279;  //1.090133595E9
     double tempEngHour = 22999.95;
 
@@ -348,11 +293,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         hMethods                = new HelperMethods();
         shipmentHelper          = new ShipmentHelperMethod();
         odometerHelper          = new OdometerHelperMethod();
-        odometerhMethod         = new OdometerHelperMethod();
         recapViewMethod         = new RecapViewMethod();
         LocMethod               = new LocationMethod();
         latLongHelper           = new LatLongHelper();
-        notificationMethod      = new NotificationMethod();
         syncingMethod           = new SyncingMethod();
         driverPermissionMethod  = new DriverPermissionMethod();
         malfunctionDiagnosticMethod = new MalfunctionDiagnosticMethod();
@@ -393,23 +336,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         tts                     = new TextToSpeech(getApplicationContext(), this);
 
         mTimer                  = new Timer();
-        mTimer.schedule(timerTask, OBD_TIME_LOCATION_UPDATES, OBD_TIME_LOCATION_UPDATES);
+        mTimer.schedule(timerTask, M_TIMER_UPDATES, M_TIMER_UPDATES);
 
         DeviceId                = SharedPref.GetSavedSystemToken(getApplicationContext());
         SharedPref.setServiceOnDestoryStatus(false, getApplicationContext());
         SharedPref.saveBleScanCount(0, getApplicationContext());
         isTeamDriverLogin = SharedPref.getDriverType(getApplicationContext()).equals(DriverConst.TeamDriver);
 
-        createLocationRequest(MIN_TIME_LOCATION_UPDATES);
 
-        // check availability of play services
-        if (global.checkPlayServices(getApplicationContext())) {
-            // Building the GoogleApi client
-            buildGoogleApiClient();
-        } else {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            requestLocationWithoutPlayServices();
-        }
+        startLocationService();
 
         DriverId         = SharedPref.getDriverId(getApplicationContext());
         SelectedDriverId = SharedPref.getDriverId(getApplicationContext());
@@ -418,8 +353,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         if (SharedPref.GetNewLoginStatus(getApplicationContext()) && SharedPref.IsDriverLogin(getApplicationContext())) {
             String VIN = SharedPref.getVINNumber(getApplicationContext());
             UpdateOfflineDriverLog(DriverId, CoDriverId, DeviceId, VIN,
-                    String.valueOf(GpsVehicleSpeed),
                     String.valueOf(obdVehicleSpeed), true);
+
+            constants.writeBleOnOffStatus(global.isBleEnabled(getApplicationContext()), global, bleGpsAppLaunchMethod,
+                    dbHelper, getApplicationContext());
+
         }
 
 
@@ -461,6 +399,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             @Override
             public void onReceive(Context context, Intent intent) {
                 // Logger.LogDebug("received", "received from service");
+
                 boolean IsConnected = intent.getBooleanExtra(ConstantsKeys.IsConnected, false);
                 String data = intent.getStringExtra(ConstantsKeys.Data);
                 String Address = intent.getStringExtra(ConstantsKeys.Address);
@@ -565,13 +504,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         // ---------------- temp data ---------------------
 
                         // temp odometer for simulator converting odometer from km to meter. because it is saving in km.
-                          currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
+                        //  currentHighPrecisionOdometer = Constants.kmToMeter(obdOdometer);
 
 
                         sendBroadCast(parseObdDatainHtml(vin, speed, -1), "");
 
-                        /*!SharedPref.getUserName(getApplicationContext()).equals("") &&
-                                !SharedPref.getPassword(getApplicationContext()).equals("")*/
                         if (SharedPref.IsDriverLogin(getApplicationContext())) {
 
                             // this check is used to avoid fake PC/YM continue alert. because obd some times return ignition status value off false. So we are checking it continuesly 3 times
@@ -622,10 +559,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                 }
 
-
                             }
-
-
 
                         }
 
@@ -635,11 +569,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE &&
                                 SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
 
-                            HTBleData htBleData = new HTBleData("", "", 0, 0, "","","","", "-1", truckRPM, "-1", "-1",
-                                    SharedPref.getVINNumber(getApplicationContext()), Globally.LATITUDE, Globally.LONGITUDE,
-                                    "", false, false, "","","","");
-
-                            obdCallBackObservable(-1, htBleData.getVIN_Number(), global.GetCurrentDateTime());
+                            obdCallBackObservable(-1, SharedPref.getVINNumber(getApplicationContext()),
+                                                    global.GetCurrentDateTime());
                         }
                     }
 
@@ -674,7 +605,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         SharedPref.setRPM(truckRPM, getApplicationContext());
         SharedPref.setIgnitionStatus(ignitionStatus, getApplicationContext());
 
-
+        Globally.VEHICLE_SPEED = speed;
 
 // ------------------------------------------------------------------------
 
@@ -695,8 +626,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         String currentLogDate = global.GetCurrentDateTime();
                         Globally.IS_OBD_IGNITION = true;
-                        continueStatusPromotForPcYm(ignitionStatus, last_obs_source_name, global.getCurrentDate(), OBD_LAST_STATUS);
-
+                        continueStatusPromtForPcYm(ignitionStatus, last_obs_source_name, global.getCurrentDate(), OBD_LAST_STATUS);
 
                         /* ======================== Malfunction & Diagnostic Events ========================= */
                         if(obdEngineHours.length() > 0 && !obdEngineHours.equals("0") && !obdEngineHours.equals("0.00")) {
@@ -714,8 +644,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                         double obdOdometerDouble = Double.parseDouble(currentHighPrecisionOdometer);
-                        String previousHighPrecisionOdometer = SharedPref.getHighPrecisionOdometer(getApplicationContext());
-
                         // save current odometer for HOS calculation
                         saveDayStartOdometer(currentHighPrecisionOdometer);
 
@@ -726,7 +654,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
                         }
 
-                        Globally.VEHICLE_SPEED = speed;
                         boolean isDrivingAllowed = true;
                         if (SharedPref.isDrivingAllowed(getApplicationContext()) == false && speed >= 8) {
                             final DateTime currentDateTime = global.getDateTimeObj(global.GetCurrentDateTime(), false);    // Current Date Time
@@ -743,74 +670,19 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             }
                         }
 
-                          /*  double savedOdometer;
-                            try {
-                                savedOdometer = Double.parseDouble(previousHighPrecisionOdometer);
-                            } catch (Exception e) {
-                                savedOdometer = obdOdometerDouble;
-                            }
-
-                            if (obdOdometerDouble >= savedOdometer) {    // needs for this check is to avoid the wrong auto change status because some times odometers are not coming
-*/
-                        double calculatedSpeedFromOdo = speed;
-
-                        try {
-                            if (OBD_LAST_STATUS == constants.WIRED_CONNECTED) {
-                                // calculating speed to comparing last saved odometer and current odometer (in meter) with time difference in seconds
-                                if (SharedPref.isOdoCalculationAllowed(getApplicationContext())) {
-                                    calculatedSpeedFromOdo = constants.calculateSpeedFromWiredTabOdometer(savedDate, currentLogDate,
-                                            previousHighPrecisionOdometer, currentHighPrecisionOdometer, getApplicationContext());
-                                }
-
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            calculatedSpeedFromOdo = speed;
-                        }
-
                         if (speed > 1) {
                             SharedPref.setVehilceMovingStatus(true, getApplicationContext());
-
-                            if(SharedPref.IsAppRestricted(getApplicationContext())) {
-                                if (global.isSingleDriver(getApplicationContext()) && !Constants.IS_ACTIVE_HOS) {
-                                    Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
-                                    intent.putExtra(ConstantsKeys.SuggestedEdit, false);
-                                    intent.putExtra(ConstantsKeys.IsCycleRequest, false);
-                                    intent.putExtra(ConstantsKeys.IsELDNotification, false);
-                                    intent.putExtra(ConstantsKeys.IsActiveHosScreen, true);
-
-                                    LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
-
-                                }else if(!global.isSingleDriver(getApplicationContext()) && !Constants.IS_ACTIVE_ELD){
-                                    if (!hMethods.isActionEventAllowedWithSpeed(getApplicationContext(), global, DriverId, dbHelper)) {
-
-                                        Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
-                                        intent.putExtra(ConstantsKeys.SuggestedEdit, false);
-                                        intent.putExtra(ConstantsKeys.IsCycleRequest, false);
-                                        intent.putExtra(ConstantsKeys.IsELDNotification, false);
-                                        intent.putExtra(ConstantsKeys.IsActiveHosScreen, false);
-                                        intent.putExtra(ConstantsKeys.IsActiveHomeScreen, true);
-
-                                        LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
-
-                                    }
-                                }
-
-                            }
+                            speedMovingBroadcast();
                         } else {
                             SharedPref.setVehilceMovingStatus(false, getApplicationContext());
                         }
 
                         if (isDrivingAllowed) {
                             timeDuration = Constants.SocketTimeout3Sec;
-                            callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, calculatedSpeedFromOdo);
+                            callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, -1);
                         }
 
-                        //   }
-
                         callWiredDataService(timeDuration);
-
-
 
                     } else {
 
@@ -832,8 +704,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         callRuleWithStatusWise(currentHighPrecisionOdometer, savedDate, vin, timeStamp, speed, 0);
 
-                        Globally.VEHICLE_SPEED = 0;
-
                         callWiredDataService(Constants.SocketTimeout8Sec);
 
                     }
@@ -841,10 +711,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 } catch (Exception e) {
                     e.printStackTrace();
                     Globally.IS_OBD_IGNITION = false;
-                    Globally.VEHICLE_SPEED = -1;
-
                     callWiredDataService(Constants.SocketTimeout3Sec);
-
                 }
 
             } else {
@@ -899,16 +766,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             }else{
                 mNotificationManager.dismissNotification(getApplicationContext(), 20811);
-              //  if(htBleData == null) {
-                    // dismiss alert dialog if already shown in tab Act
-                    try {
-                        Message message = dismissAlertHandler.obtainMessage();
-                        message.sendToTarget();
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
 
-               // }
+                // dismiss alert dialog if already shown in tab Act
+                try {
+                    Message message = dismissAlertHandler.obtainMessage();
+                    message.sendToTarget();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
 
         } else {
@@ -920,6 +786,34 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
+    private void speedMovingBroadcast(){
+        if(SharedPref.IsAppRestricted(getApplicationContext())) {
+            if (global.isSingleDriver(getApplicationContext()) && !Constants.IS_ACTIVE_HOS) {
+                Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                intent.putExtra(ConstantsKeys.SuggestedEdit, false);
+                intent.putExtra(ConstantsKeys.IsCycleRequest, false);
+                intent.putExtra(ConstantsKeys.IsELDNotification, false);
+                intent.putExtra(ConstantsKeys.IsActiveHosScreen, true);
+
+                LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+
+            }else if(!global.isSingleDriver(getApplicationContext()) && !Constants.IS_ACTIVE_ELD){
+                if (!hMethods.isActionEventAllowedWithSpeed(getApplicationContext(), global, DriverId, dbHelper)) {
+
+                    Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
+                    intent.putExtra(ConstantsKeys.SuggestedEdit, false);
+                    intent.putExtra(ConstantsKeys.IsCycleRequest, false);
+                    intent.putExtra(ConstantsKeys.IsELDNotification, false);
+                    intent.putExtra(ConstantsKeys.IsActiveHosScreen, false);
+                    intent.putExtra(ConstantsKeys.IsActiveHomeScreen, true);
+
+                    LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
+
+                }
+            }
+
+        }
+    }
 
     private void checkWiredObdConnection(){
         if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
@@ -1086,18 +980,17 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
     void callRuleWithStatusWise(String currentHighPrecisionOdometer, String savedDate, String vin, String timeStamp, int speed, double calculatedSpeedFromOdo){
-       //Logger.LogDebug("rule called", ">>> rule called");
 
         try{
             String currentLogDate = global.GetCurrentDateTime();
             String jobType = SharedPref.getDriverStatusId(getApplicationContext());
-            double intHighPrecisionOdometerInKm = (Double.parseDouble(currentHighPrecisionOdometer) * 0.001);
+           // double intHighPrecisionOdometerInKm = (Double.parseDouble(currentHighPrecisionOdometer) * 0.001);
             if (jobType.equals(global.DRIVING)) {
 
                 timeDuration = Constants.SocketTimeout10Sec;
                 if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0) {
-                    saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                            timeStamp, savedDate, "DRIVING", calculatedSpeedFromOdo);
+
+                    saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "DRIVING");
 
                 }
 
@@ -1106,34 +999,29 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 }
 
             } else if (jobType.equals(global.ON_DUTY)) {
-
                 // if speed is coming >8 then ELD rule is called after 8 sec to change the status to Driving as soon as.
-                if (speed >= 8 && calculatedSpeedFromOdo >= 8 && !truckRPM.equals("0")) {
+                if (speed >= 8 && !truckRPM.equals("0")) {
 
                     try {
-                        if (EldFragment.driverLogArray == null || EldFragment.driverLogArray.length() == 0) {
-                            EldFragment.driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
-                        }
+                        get18DaysLogArrayLocally();
+
                         boolean isYardMove = hMethods.isPCYM(EldFragment.driverLogArray);
                         if(isYardMove){
                             //String CurrentCycleId = DriverConst.GetDriverCurrentCycle(DriverConst.CurrentCycleId, getApplicationContext());
                             String CurrentCycleId      = DriverConst.GetCurrentCycleId(DriverConst.GetCurrentDriverType(getApplicationContext()), getApplicationContext());
                             if(speed >= 8 && (CurrentCycleId.equals(Globally.CANADA_CYCLE_1) || CurrentCycleId.equals(Globally.CANADA_CYCLE_2))) {   // In Yard move
                                 timeDuration = Constants.SocketTimeout6Sec;
-                                saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                        timeStamp, savedDate, "OnDutyYM Speed: " + speed, calculatedSpeedFromOdo);
+                                saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OnDutyYM Speed: " + speed);
                             }else{
                                 // call ELD rule after 1 minute to improve performance
                                 if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0) {
-                                    saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                            timeStamp, savedDate, "OnDutyYM Speed: " + speed, calculatedSpeedFromOdo);
+                                    saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OnDutyYM Speed: " + speed);
                                 }
                                 timeDuration = Constants.SocketTimeout5Sec;
                             }
                         }else{
                             timeDuration = Constants.SocketTimeout15Sec;
-                            saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                    timeStamp, savedDate, "OnDuty Speed: " + speed, calculatedSpeedFromOdo);
+                            saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OnDuty Speed: " + speed);
                         }
 
                     }catch (Exception e){
@@ -1154,8 +1042,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     //boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(getApplicationContext());
                     // call ELD rule after 1 minute to improve performance
                     if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0 ) {    //||  (isYmPcAlertShown && isYardMove())
-                        saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                timeStamp, savedDate, "OnDuty Speed: "+speed, calculatedSpeedFromOdo);
+                        saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OnDuty Speed: "+speed);
                     }
                 }
 
@@ -1165,7 +1052,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                // boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(getApplicationContext());
 
                 if (speed <= 0 && calculatedSpeedFromOdo <= 0 ) {
-                    //   Logger.LogDebug("ELD Rule", "data is correct for this status. No need to call ELD rule.");
                     if(speed == 0)
                         timeDuration = Constants.SocketTimeout3Sec;
 
@@ -1179,12 +1065,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         if(jobType.equals(global.SLEEPER)){
                             timeDuration = Constants.SocketTimeout15Sec;
-                            saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                    timeStamp, savedDate, "Sleeper-Speed: "+speed, calculatedSpeedFromOdo);
+                            saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "Sleeper-Speed: "+speed);
                         }else{
-                            if (EldFragment.driverLogArray == null || EldFragment.driverLogArray.length() == 0) {
-                                EldFragment.driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
-                            }
+                            get18DaysLogArrayLocally();
+
                             boolean isPersonal = hMethods.isPCYM(EldFragment.driverLogArray);
                             if(isPersonal){
                                 double AccumulativePersonalDistance = constants.getAccumulativePersonalDistance(DriverId, offsetFromUTC, Globally.GetCurrentJodaDateTime(),
@@ -1195,8 +1079,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     // check PU status exceeding status if 75km exceeded showing popup
                                     checkPUExceedStatus(null, AccumulativePersonalDistance);
 
-                                    saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                            timeStamp, savedDate, "PersonalUse-Speed: "+speed, calculatedSpeedFromOdo);
+                                    saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "PersonalUse-Speed: "+speed);
                                     timeDuration = Constants.SocketTimeout15Sec;
                                 }else{
                                     timeDuration = Constants.SocketTimeout5Sec;
@@ -1205,8 +1088,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                             }else{
                                 timeDuration = Constants.SocketTimeout15Sec;
-                                saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, vin, intHighPrecisionOdometerInKm,
-                                        timeStamp, savedDate, "OffDuty-Speed: "+speed, calculatedSpeedFromOdo);
+                                saveLogWithRuleCall(currentHighPrecisionOdometer, currentLogDate, speed, "OffDuty-Speed: "+speed);
                             }
 
                         }
@@ -1224,7 +1106,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-
+    private JSONArray get18DaysLogArrayLocally(){
+        if (EldFragment.driverLogArray == null || EldFragment.driverLogArray.length() == 0) {
+            EldFragment.driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+        }
+        return EldFragment.driverLogArray;
+    }
 
     void callWiredDataService(int timeDuration){
         try {
@@ -1310,7 +1197,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
 
                                             // write BLE logs when connected
-                                            writeBleDisconnectionLog(true);
+                                            writeBleConnectDisconnectLog(true);
 
                                             SharedPref.SaveObdStatus(Constants.BLE_CONNECTED, global.getCurrentDate(),
                                                     global.GetCurrentUTCTimeFormat(), getApplicationContext());
@@ -1375,7 +1262,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
 
-                            writeBleDisconnectionLog(false);
+                            writeBleConnectDisconnectLog(false);
 
                             if (SharedPref.getVINNumber(getApplicationContext()).length() > 5) {
                                 Globally.PlayNotificationSound(getApplicationContext());
@@ -1500,7 +1387,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
     // Bluetooth OBD connect/disconnect log with time
-    private void writeBleDisconnectionLog(boolean isBleConnected){
+    private void writeBleConnectDisconnectLog(boolean isBleConnected){
         int LastLocationStatus = SharedPref.GetLocationStatus(getApplicationContext());
 
         if(isBleConnected){
@@ -1537,84 +1424,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     }
 
-/*
-
-    public void StartScanHtBle(){
-        Logger.LogError("TAG", "start scanning");
-
-        try {
-            HTBleSdk.Companion.getInstance().startHTBleScan(new HTBleScanListener() {
-                @Override
-                public void onScanStart() {
-                    mHTBleDevices.clear();
-
-                    bleScanCount++;
-                    mIsScanning = true;
-                    sendBroadCast(getString(R.string.Scanning), "");
-                }
-
-                @Override
-                public void onScanning(@org.jetbrains.annotations.Nullable HTBleDevice htBleDevice) {
-                    if (mHTBleDevices.contains(htBleDevice))
-                        return;
-
-                    mIsScanning = false;
-                    mHTBleDevices.add(htBleDevice);
-                    connectHtBle(htBleDevice);
-                }
-
-                @Override
-                public void onScanFailed(int i) {
-                    mIsScanning = false;
-                    sendBroadCast(getString(R.string.ht_scan_error), "");
-                }
-
-                @Override
-                public void onScanStop() {
-                    mIsScanning = false;
-                    SharedPref.saveBleScanCount(bleScanCount, getApplicationContext());
-
-                    if (HTBleSdk.Companion.getInstance().isConnected()) {   //HTModeSP.INSTANCE.getDeviceMac()
-                        sendBroadCast(getString(R.string.ht_scan_completed), "");
-                    } else {
-                        sendBroadCast(getString(R.string.ht_scan_completed_not_found), "");
-                    }
-                }
-            });
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
-    }
-
-
-    private void connectHtBle(final HTBleDevice htBleDevice) {
-        HTBleSdk.Companion.getInstance().stopHTBleScan();
-        if (HTBleSdk.Companion.getInstance().isAllConnected()) {
-            // ToastUtil.show(getApplicationContext(), getString(R.string.ht_connect_error_other));
-            sendBroadCast(getString(R.string.ht_connect_error_other), "");
-            initBleListener();//Register data listener callback
-        } else {
-
-            String macAddress = htBleDevice.getAddress();
-            String savedMacAddress = SharedPref.GetBleOBDMacAddress(getApplicationContext());
-            if(savedMacAddress.length() == 0 || savedMacAddress.equals(macAddress)) {
-                sendBroadCast(getString(R.string.ht_connected), "");
-                HTBleSdk.Companion.getInstance().connect(htBleDevice);
-                initBleListener();//Register data listener callback
-
-                SharedPref.SaveBleOBDMacAddress(macAddress, getApplicationContext());
-            }else{
-                Globally.ShowLogoutSpeedNotification(getApplicationContext(),
-                        getString(R.string.BleOBDConnErr),
-                        getString(R.string.obd_ble_disconnected), 2081);
-            }
-
-        }
-    }
-
-*/
 
 
 
@@ -2109,7 +1918,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                 constants.saveObdData(constants.getObdSource(getApplicationContext()),
                                         "PowerClearEvent@@: " + savedEvents,
-                                        "", "", currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
+                                        "", "", currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + obdVehicleSpeed,
                                         "", obdEngineHours, Globally.GetCurrentDateTime(), "",
                                         DriverId, dbHelper, driverPermissionMethod, obdUtil);
 
@@ -2119,7 +1928,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                                 constants.saveObdData(constants.getObdSource(getApplicationContext()),
                                         "PowerClearSavedEvent@@: Event Api called",
-                                        "", "", currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
+                                        "", "", currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + obdVehicleSpeed,
                                         "", obdEngineHours, Globally.GetCurrentDateTime(), "",
                                         DriverId, dbHelper, driverPermissionMethod, obdUtil);
 
@@ -2136,7 +1945,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                         constants.saveObdData(constants.getObdSource(getApplicationContext()),
                                 "PowerClearEvent: " + powerEventInputArray,
-                                "", "", currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
+                                "", "", currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + obdVehicleSpeed,
                                 "", obdEngineHours, Globally.GetCurrentDateTime(), "",
                                 DriverId, dbHelper, driverPermissionMethod, obdUtil);
 
@@ -2300,7 +2109,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 constants.saveObdData(constants.getObdSource(getApplicationContext()), "Power Event: "+ eventObj,
                         "", "",
-                        currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, ""+VehicleSpeed,
+                        currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, ""+obdVehicleSpeed,
                         "", obdEngineHours, Globally.GetCurrentDateTime(), Globally.GetCurrentDateTime(),
                         DriverId, dbHelper, driverPermissionMethod, obdUtil);
 
@@ -2674,7 +2483,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 constants.saveObdData(constants.getObdSource(getApplicationContext()), "Clear Event:- " +
                                 dataDiagnostic, "Unposted Event Count: " + malArray.length(), "",
-                        currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + VehicleSpeed,
+                        currentHighPrecisionOdometer, "", ignitionStatus, truckRPM, "" + obdVehicleSpeed,
                         "", obdEngineHours, global.GetCurrentDateTime(), "",
                         DriverId, dbHelper, driverPermissionMethod, obdUtil);
 
@@ -2748,21 +2557,19 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
     }
 
-    void saveLogWithRuleCall(String currentHighPrecisionOdometer, String currentLogDate, int speed, String vin, double intHighPrecisionOdometerInKm,
-                             String timeStamp, String savedDate, String status, double calculatedSpeedFromOdo){
+    void saveLogWithRuleCall(String currentHighPrecisionOdometer, String currentLogDate, int speed, String status){
 
         try {
 
             if(!status.equals("not_saved")) {
                 // save current HighPrecisionOdometer in DB
                 SharedPref.saveHighPrecisionOdometer(currentHighPrecisionOdometer, currentLogDate, getApplicationContext());
-
                 if (speed > 200) {
                     speed = -1;
                 }
             }
 
-            callEldRuleForWired(speed, calculatedSpeedFromOdo);
+            callEldRuleForWired(speed);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -2916,24 +2723,21 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-    void callEldRuleForWired( int speed, double calculatedSpeedFromOdo){
+    void callEldRuleForWired( int speed){   //, double calculatedSpeedFromOdo
         // call cycle rule
         try {
+            get18DaysLogArrayLocally();
+
             int obdType = constants.WIRED_OBD;
             if(SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
                 obdType = constants.BLE_OBD;
             }
 
-            VehicleSpeed = speed;
-            obdVehicleSpeed = (int) calculatedSpeedFromOdo;
-            serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, VehicleSpeed,
-                    hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
-                    odometerhMethod, true, obdType, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
+            serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName, speed,
+                    hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, true, obdType, obdUtil);
         }catch (Exception e){
             e.printStackTrace();
         }
-        //   global.ShowLocalNotification(getApplicationContext(), "Wired OBD data", status + ", Speed " + VehicleSpeed, 2009);
-
 
     }
 
@@ -2942,44 +2746,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-
-
-
-    android.location.LocationListener locationListenerGPS = new android.location.LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-
-            Globally.GPS_LATITUDE = "" + location.getLatitude();
-            Globally.GPS_LONGITUDE = "" + location.getLongitude();
-            Globally.GPS_LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.GPS_LONGITUDE);
-            isGpsUpdate = true;
-
-            //  GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
-            // GpsVehicleSpeed = 21;
-
-            // saving location with time info to calculate location malfunction event
-            if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
-                Globally.LATITUDE = Globally.GPS_LATITUDE;
-                Globally.LONGITUDE = Globally.GPS_LONGITUDE;
-
-                constants.saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE,
-                        SharedPref.getHighPrecisionOdometer(getApplicationContext()), getApplicationContext());
-            }
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-        }
-    };
 
 
 
@@ -3076,6 +2842,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             Globally.ShowLocalNotification(getApplicationContext(),
                                     getString(R.string.ble_disabled),
                                     getString(R.string.ble_enabled_desc), 2097);
+
+                            constants.writeBleOnOffStatus(false, global, bleGpsAppLaunchMethod,
+                                    dbHelper, getApplicationContext());
+
+
                         }
 
                         startBleService();
@@ -3140,9 +2911,28 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         Constants.isDriverSwitchEvent = false;
         SharedPref.SetPingStatus("", getApplicationContext());
 
+        if(Globally.LATITUDE.length() < 4){
+            startLocationService();
+        }
+
 
         //Make it stick to the notification panel so it is less prone to get cancelled by the Operating System.
         return START_STICKY;
+    }
+
+
+
+    void startLocationService(){
+        try {
+            // call location service
+            locServiceIntent = new Intent(getApplicationContext(), LocationListenerService.class);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(locServiceIntent);
+            }
+            startService(locServiceIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -3154,39 +2944,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         startService(serviceIntent);
     }
 
-    @SuppressLint("RestrictedApi")
-    protected void createLocationRequest(long time) {
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(time);
-        locationRequest.setFastestInterval(time);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-    }
-
-
-    private void requestLocationWithoutPlayServices(){
-        try {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    MIN_TIME_LOCATION_UPDATES,
-                    10, locationListenerGPS);
-            Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (loc != null) {
-                Globally.GPS_LATITUDE = "" + loc.getLatitude();
-                Globally.GPS_LONGITUDE = "" + loc.getLongitude();
-                Globally.GPS_LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.GPS_LONGITUDE);
-            } else {
-                Globally.GPS_LATITUDE = "";
-                Globally.GPS_LONGITUDE = "";
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
 
 
     private Timer mTimer;
@@ -3196,21 +2953,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         @Override
         public void run() {
             // Logger.LogError(TAG, "-----Running timerTask");
-            // Logger.LogError(TAG, "-----DriverId: " + DriverId);
-            // Logger.LogError(TAG, "-----CoDriverId: " +CoDriverId);
            // Logger.LogDebug("SpeedCounter", "SpeedCounter: " +SpeedCounter);
 
             try {
                 if (SharedPref.IsDriverLogin(getApplicationContext())) {
-
-                    processStartTime = -1;
-                    if (SpeedCounter == HalfSpeedCounter || SpeedCounter >= MaxSpeedCounter) {
-                        processStartTime = System.currentTimeMillis();
-                    }
-
-                    // get ALS Wifi ssid availability
-                    boolean isAlsNetworkConnected = wifiConfig.IsAlsNetworkConnected(getApplicationContext());
-                    int ObdLastStatus = SharedPref.getObdStatus(getApplicationContext());
 
                     // communicate with wired OBD server if not connected
                     if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
@@ -3233,63 +2979,52 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                 StartStopServer(constants.WiredOBD);
                             }
                         }
-                    } else if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-
-                                // if device not `connected
-                                if (!BleDataService.isBleConnected || !HTBleSdk.Companion.getInstance().isConnected()) {
-                                    if (!SharedPref.GetNewLoginStatus(getApplicationContext())) {
-                                        if(BleDataService.IsScanClick) {
-                                            BleDataService.IsScanClick = false;
-                                            sendBroadCast(getString(R.string.ht_connecting), "");
-                                        }
-
-                                        if (SpeedCounter == 0 || SpeedCounter == HalfSpeedCounter) {
-                                            startBleService();
-                                        }
-                                    }
-
-                                }
-
-                                if (ObdLastStatus != Constants.BLE_CONNECTED) {
-
-                                    truckRPM = SharedPref.getRPM(getApplicationContext());
-                                    ignitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
-                                    obdEngineHours = "0";
-                                    currentHighPrecisionOdometer = "0";
-                                    obdOdometer = "0";
-                                    obdTripDistance = "--";
-
-                                    sendBroadCast("", "");
-                                    obdCallBackObservable(-1, SharedPref.getVehicleVin(getApplicationContext()), global.GetCurrentDateTime());
-                                }
-                           // }
-                        //}
                     }
+                    else if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
 
-                    try {
-                        // request for location if lat long is null
-                        if (Globally.GPS_LATITUDE.equals("0.0") || Globally.GPS_LATITUDE.equals("") || Globally.GPS_LATITUDE.equals("null")) {
+                        // if device not `connected
+                        if (!BleDataService.isBleConnected || !HTBleSdk.Companion.getInstance().isConnected()) {
+                            if (!SharedPref.GetNewLoginStatus(getApplicationContext())) {
+                                if(BleDataService.IsScanClick) {
+                                    BleDataService.IsScanClick = false;
+                                    sendBroadCast(getString(R.string.ht_connecting), "");
+                                }
 
-                            // check availability of play services
-                            if (global.checkPlayServices(getApplicationContext())) {
-                                createLocationRequest(MIN_TIME_LOCATION_UPDATES);
-                            } else {
-                                requestLocationWithoutPlayServices();
+                                if (SpeedCounter == 10 || SpeedCounter == HalfSpeedCounter) {
+                                    startBleService();
+                                }
                             }
 
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+                        if (SharedPref.getObdStatus(getApplicationContext()) != Constants.BLE_CONNECTED) {
+
+                            truckRPM = SharedPref.getRPM(getApplicationContext());
+                            ignitionStatus = SharedPref.GetTruckInfoOnIgnitionChange(Constants.TruckIgnitionStatusMalDia, getApplicationContext());
+                            obdEngineHours = "0";
+                            currentHighPrecisionOdometer = "0";
+                            obdOdometer = "0";
+                            obdTripDistance = "--";
+
+                            sendBroadCast("", "");
+                            obdCallBackObservable(-1, SharedPref.getVehicleVin(getApplicationContext()), global.GetCurrentDateTime());
+                        }
+
+                    }else{
+                        // get ALS Wifi ssid availability
+                        boolean isAlsNetworkConnected = wifiConfig.IsAlsNetworkConnected(getApplicationContext());
+                        // check WIFI connection
+                        PingWithWifiObd(isAlsNetworkConnected);
+
                     }
 
-                    // networkUsage();
 
                     final boolean isGpsEnabled = constants.CheckGpsStatusToCheckMalfunction(getApplicationContext());
                     if (!isGpsEnabled) {
                         Globally.GPS_LATITUDE = "";
                         Globally.GPS_LONGITUDE = "";
 
-                        if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_WIRED) {
+                        if (SharedPref.getObdPreference(getApplicationContext()) != Constants.OBD_PREF_BLE) {
                             Globally.LATITUDE = "";
                             Globally.LONGITUDE = "";
                         }
@@ -3298,10 +3033,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                     if (SpeedCounter == HalfSpeedCounter || SpeedCounter >= MaxSpeedCounter) {
-
-                        if (!global.checkPlayServices(getApplicationContext()) && !isGpsUpdate && SpeedCounter == HalfSpeedCounter) {
-                            requestLocationWithoutPlayServices();
-                        }
 
                         isStopService = false;
                         UpdateDriverInfo();
@@ -3316,23 +3047,15 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                                 MainDriverPref, CoDriverPref);
                                         if (driverLogArray.length() == 0) {   // This check is used to save offline saved data to server first then online status will be changed.
                                             String VIN = SharedPref.getVINNumber(getApplicationContext());
-
                                             UpdateOfflineDriverLog(DriverId, CoDriverId, DeviceId, VIN,
-                                                    String.valueOf(GpsVehicleSpeed),
                                                     String.valueOf(obdVehicleSpeed), isGpsEnabled);
-
                                         } else {
-                                            // VehicleSpeed = GpsVehicleSpeed;
-                                            Globally.VEHICLE_SPEED = -1;
-
-                                            if (Constants.IS_ACTIVE_ELD == false) {
+                                            if (!Constants.IS_ACTIVE_ELD) {
                                                 saveActiveDriverData();
                                             }
-
                                         }
                                     }
                                 } else {
-                                    Globally.VEHICLE_SPEED = -1;
                                     updateOfflineApiRejectionCount++;
                                     if (updateOfflineApiRejectionCount > 2) {
                                         updateOfflineApiRejectionCount = 0;
@@ -3342,12 +3065,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             checkConnectivity.ConnectivityRequest(CheckInternetConnection, ConnectivityInterface);
                                         }
                                     }
-
                                     SharedPref.setOnlineStatus(false, getApplicationContext());
-
                                 }
                             } else {
-
                                 constants.IsAlsServerResponding = true;
                                 SharedPref.setOnlineStatus(false, getApplicationContext());
 
@@ -3358,19 +3078,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     }
 
-
-                    // check WIFI connection
-                    PingWithWifiObd(isAlsNetworkConnected);
-
                     // check positioning malfunction event ..
                     checkPositionMalfunction(currentHighPrecisionOdometer, global.GetCurrentDateTime());
 
-
                     boolean isObdConnectedWithELD = constants.isObdConnectedWithELD(getApplicationContext());
-
                     if (isObdConnectedWithELD) {
-
-                        if (SpeedCounter == 0) {
+                        if (SpeedCounter == 10) {
                             String malEventCode = malfunctionDiagnosticMethod.clearMalAfter24Hours(dbHelper, getApplicationContext());
                             if (malEventCode.length() > 0) {
                                 String eventOccuredDriverId = "";
@@ -3406,104 +3119,94 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                     checkMissingDiaEvent(isObdConnectedWithELD);
 
-                    if (SpeedCounter == 0) {
 
-                        if (SharedPref.getAgricultureExemption(getApplicationContext())) {
-                            String address = SharedPref.getAgricultureRecord("AgricultureAddress",getApplicationContext());
-                            if(!address.equals("")) {
-                                String AgricultureLatitude = SharedPref.getAgricultureRecord("AgricultureLatitude", getApplicationContext());
-                                String AgricultureLongitude = SharedPref.getAgricultureRecord("AgricultureLongitude", getApplicationContext());
+                    if(SpeedCounter == 10 || SpeedCounter == HalfSpeedCounter){
 
-                                if(AgricultureLongitude.length() > 4 && Globally.LATITUDE.length() > 0) {
-                                    double latitudeDouble = Double.parseDouble(AgricultureLatitude);
-                                    double longitudeDouble = Double.parseDouble(AgricultureLongitude);
-                                    double distanceMiles = constants.CalculateDistance(Double.parseDouble(Globally.LATITUDE),
-                                            Double.parseDouble(Globally.LONGITUDE), latitudeDouble, longitudeDouble, "M", 0);
-                                    Logger.LogDebug("", String.valueOf(distanceMiles));
-                                    double distanceMilesFormat = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMiles));
-                                    // double distanceKm = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat * 1.60934));
-                                    // double distance = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat - Constants.AgricultureDistanceInMiles));
+                        if (SpeedCounter == 10) {
 
-                                    if (distanceMilesFormat > Constants.AgricultureDistanceInMiles) {
+                            if (SharedPref.getAgricultureExemption(getApplicationContext())) {
+                                String address = SharedPref.getAgricultureRecord("AgricultureAddress",getApplicationContext());
+                                if(!address.equals("")) {
+                                    String AgricultureLatitude = SharedPref.getAgricultureRecord("AgricultureLatitude", getApplicationContext());
+                                    String AgricultureLongitude = SharedPref.getAgricultureRecord("AgricultureLongitude", getApplicationContext());
 
-                                        // send broadcast to setting screen
-                                        SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(),
-                                                SharedPref.getTruckNumber(getApplicationContext()), DriverId,
-                                                DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
-                                                SharedPref.getAgricultureRecord("AgricultureAddress", getApplicationContext()),
-                                                AgricultureLatitude, AgricultureLongitude,
-                                                SharedPref.getObdEngineHours(getApplicationContext()), SharedPref.getObdOdometer(getApplicationContext()), "0");
+                                    if(AgricultureLongitude.length() > 4 && Globally.LATITUDE.length() > 0) {
+                                        double latitudeDouble = Double.parseDouble(AgricultureLatitude);
+                                        double longitudeDouble = Double.parseDouble(AgricultureLongitude);
+                                        double distanceMiles = constants.CalculateDistance(Double.parseDouble(Globally.LATITUDE),
+                                                Double.parseDouble(Globally.LONGITUDE), latitudeDouble, longitudeDouble, "M", 0);
+                                        Logger.LogDebug("", String.valueOf(distanceMiles));
+                                        double distanceMilesFormat = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMiles));
+                                        // double distanceKm = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat * 1.60934));
+                                        // double distance = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat - Constants.AgricultureDistanceInMiles));
+
+                                        if (distanceMilesFormat > Constants.AgricultureDistanceInMiles) {
+
+                                            // send broadcast to setting screen
+                                            SaveAgricultureRecord(global.getCurrentDateLocal(), Globally.GetCurrentUTCTimeFormat(),
+                                                    SharedPref.getTruckNumber(getApplicationContext()), DriverId,
+                                                    DriverConst.GetDriverDetails(DriverConst.CompanyId, getApplicationContext()),
+                                                    SharedPref.getAgricultureRecord("AgricultureAddress", getApplicationContext()),
+                                                    AgricultureLatitude, AgricultureLongitude,
+                                                    SharedPref.getObdEngineHours(getApplicationContext()), SharedPref.getObdOdometer(getApplicationContext()), "0");
+                                        }
                                     }
                                 }
+
                             }
 
-                        }
+                            if (getApplicationContext() != null) {
+                                // Sync wired OBD saved log to server (SAVE sync data service)
+                                obdUtil.syncObdLogData(getApplicationContext(), DriverId, getDriverName());
 
-                        if (getApplicationContext() != null) {
-                            // Sync wired OBD saved log to server (SAVE sync data service)
-                            obdUtil.syncObdLogData(getApplicationContext(), DriverId, getDriverName());
+                                // Sync app usage log to server (SAVE sync data service)
+                                obdUtil.syncAppUsageLog(getApplicationContext(), DriverId);
 
-                            // Sync app usage log to server (SAVE sync data service)
-                            obdUtil.syncAppUsageLog(getApplicationContext(), DriverId);
+                                // write logs for location status
+                                bleGpsAppLaunchMethod.checkLocationPermissionState(getApplicationContext(), global,
+                                        dbHelper, isGpsEnabled);
 
-                            // wrote logs for location status
-                            bleGpsAppLaunchMethod.checkLocationPermissionState(getApplicationContext(), global,
-                                    dbHelper, isGpsEnabled);
+                                uploadBleGpsLogToServer();
 
-                            if (SharedPref.getObdPreference(getApplicationContext()) == Constants.OBD_PREF_BLE) {
-                                // write logs for bluetooth on/off status
-                                if (global.isBleEnabled(getApplicationContext()) && !SharedPref.WasBleEnabled(getApplicationContext())) {
-                                    bleGpsAppLaunchMethod.SaveBleGpsAppLogInTable(Constants.LogEventTypeBle, Constants.POWERED_ON,
-                                            global.getCurrentDateLocalUtc(), dbHelper);
-                                } else if (!global.isBleEnabled(getApplicationContext()) && SharedPref.WasBleEnabled(getApplicationContext())) {
-                                    bleGpsAppLaunchMethod.SaveBleGpsAppLogInTable(Constants.LogEventTypeBle, Constants.POWERED_OFF,
-                                            global.getCurrentDateLocalUtc(), dbHelper);
+                                // update mal/dia status `
+                                malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
+
+                                uploadVehPowerEvents();
+
+                            }
+
+                        }else{
+                            if(!SharedPref.GetNewLoginStatus(getApplicationContext()) && !TabAct.IsEcmAlertShown){
+                                TabAct.IsEcmAlertShown = true;
+                                if(!constants.isObdConnectedWithELD(getApplicationContext())) {
+                                    sendEcmBroadcast(true);
                                 }
-
-                                SharedPref.SetGpsBlePermission(global.isBleEnabled(getApplicationContext()), SharedPref.WasGpsEnabled(getApplicationContext()),
-                                        SharedPref.GetLocationStatus(getApplicationContext()), getApplicationContext());
                             }
-
-                            uploadBleGpsLogToServer();
-
-                            // update mal/dia status `
-                            malfunctionDiagnosticMethod.updateMalfDiaStatusForEnable(DriverId, global, constants, dbHelper, getApplicationContext());
-
-                            uploadVehPowerEvents();
 
                         }
 
-                    }
 
-                    if(SpeedCounter == 0 || SpeedCounter == HalfSpeedCounter){
                         SaveMalfnDiagnstcLogToServer(null, DriverId);
+
                     }
 
-                    if(SpeedCounter == HalfSpeedCounter){
-                        if(!SharedPref.GetNewLoginStatus(getApplicationContext()) && !TabAct.IsEcmAlertShown) {
-                            TabAct.IsEcmAlertShown = true;
-                            if(!constants.isObdConnectedWithELD(getApplicationContext())) {
-                                sendEcmBroadcast(true);
-                            }
-                        }
+
+                    if (SpeedCounter >= MaxSpeedCounter) {
+                        SpeedCounter = 10;
+
+                        // Update UTC date time after 60 seconds
+                        global.updateCurrentUtcTime(getApplicationContext());
+
+                    } else {
+                        SpeedCounter += LocRefreshTime;
                     }
+
 
                 } else {
                     Logger.LogError("Log", "--stop");
                     StopService();
 
                 }
-
-
-                if (SpeedCounter >= MaxSpeedCounter) {
-                    SpeedCounter = 0;
-                    // Update UTC date time after 60 seconds
-                    global.updateCurrentUtcTime(getApplicationContext());
-
-                } else {
-                    SpeedCounter += LocRefreshTime;
-                }
-
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -3649,22 +3352,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
     }
 
-
-    // -------------- Reset OBD speed as default ----------------
-    private void resetDataAfterCycleCall(boolean isCalled){
-
-        CompareLocVal = "";
-        VehicleSpeed = -1;
-        // GpsVehicleSpeed = VehicleSpeed;
-        obdVehicleSpeed = VehicleSpeed;
-        SharedPref.setVss(VehicleSpeed, getApplicationContext());
-
-        if(isCalled) {
-            IsLogApiACalled = true;
-            //  SetLocIntervalForBatterySaver();
-        }
-
-    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.ECLAIR)
@@ -3820,12 +3507,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             Logger.LogDebug("---onDestroy service ", ConstantsEnum.StatusServiceStopped );
 
-            try {
-                StopLocationUpdates();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
             //  ------------- Wired OBD ----------
             if(isBound){
                 StartStopServer("stop");
@@ -3840,6 +3521,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                 // disconnectBleObd();
                 isReceiverInit = false;
             }
+
+            if(locServiceIntent != null){
+                stopService(locServiceIntent);
+            }
+
 
             super.onDestroy();
 
@@ -3869,22 +3555,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             e.printStackTrace();
         }
     }
-
-
-    protected void StopLocationUpdates() {
-        try {
-            if (mGoogleApiClient.isConnected()) {
-                stopForeground(true);
-                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (LocationListener) this);
-                mGoogleApiClient.disconnect();
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
-
 
 
 
@@ -3927,7 +3597,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     /* ================== Update Offline Driver Log =================== */
     void UpdateOfflineDriverLog(final String DriverId, final String CoDriverId, final String DeviceId, final String VIN,
-                                String GpsSpeed, String obdSpeed, boolean isGpsEnabled ){
+                                String obdSpeed, boolean isGpsEnabled ){
+
+        String isCCMTA = String.valueOf(SharedPref.IsCCMTACertified(getApplicationContext()));
 
         params = new HashMap<String, String>();
         params.put(ConstantsKeys.DriverId, DriverId);
@@ -3935,11 +3607,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         params.put(ConstantsKeys.DeviceId, DeviceId);
         params.put(ConstantsKeys.VIN, VIN );
 
-        params.put(ConstantsKeys.GPSSpeed, GpsSpeed);
+        params.put(ConstantsKeys.GPSSpeed, "-1");
         params.put(ConstantsKeys.obdSpeed, obdSpeed);
         params.put(ConstantsKeys.isGpsEnabled, String.valueOf(isGpsEnabled) );
+        params.put(ConstantsKeys.IsCheckSuggestedEdit, isCCMTA);
 
-        UpdateUserStatusVolley.executeRequest(Request.Method.POST, APIs.UPDATE_OFF_LINE_DRIVER_LOG , params,
+        UpdateUserStatusVolley.executeRequest(Request.Method.POST, APIs.UPDATE_OFF_LINE_DRIVER_LOG_NEW , params,
                 UpdateOffLineStatus, Constants.SocketTimeout10Sec, ResponseCallBack, ErrorCallBack);
 
     }
@@ -4020,16 +3693,9 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     void UploadSavedShipmentData(){
 
         try{
-            shipmentArray = new JSONArray();
             shipmentArray = shipmentHelper.getSavedShipmentArray(Integer.valueOf(global.PROJECT_ID), dbHelper);
             if(shipmentArray.length() > 0 ){
-                /*if (shipmentArray.length() == 1 ) {
-                    if (!shipmentHelper.IsPosted(shipmentArray)){
-                        postRequest.PostListingData(shipmentArray, APIs.SAVE_SHIPPING_DOC_NUMBER, SaveShippingOffline);
-                    }
-                }else{*/
                 postRequest.PostListingData(shipmentArray, APIs.SAVE_SHIPPING_DOC_NUMBER, SaveShippingOffline);
-                //  }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -4078,111 +3744,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-    /*public JSONArray GetDriversSavedArray(){
-        int listSize = 0;
-        JSONArray DriverJsonArray = new JSONArray();
-        List<EldDataModelNew> tempList = new ArrayList<EldDataModelNew>();
-
-        if(SharedPref.getCurrentDriverType(getApplicationContext()).equals(DriverConst.StatusSingleDriver)) {   // Main Driver
-            try {
-                listSize = MainDriverPref.LoadSavedLoc(getApplicationContext()).size();
-                tempList = MainDriverPref.LoadSavedLoc(getApplicationContext());
-            } catch (Exception e) {
-                listSize = 0;
-            }
-        }else{
-            try {   // Co Driver
-                listSize = CoDriverPref.LoadSavedLoc(getApplicationContext()).size();
-                tempList = CoDriverPref.LoadSavedLoc(getApplicationContext());
-            } catch (Exception e) {
-                listSize = 0;
-            }
-        }
-
-        try {
-            if (listSize > 0) {
-                for (int i = 0; i < tempList.size(); i++) {
-                    EldDataModelNew listModel = tempList.get(i);
-                    if(listModel != null) {
-                        constants.SaveEldJsonToList(          *//* Put data as JSON to List *//*
-                                listModel,
-                                DriverJsonArray
-                        );
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return DriverJsonArray;
-        // Logger.LogDebug("Arraay", "Arraay: " + DriverJsonArray.toString());
-    }
-*/
-
-
-    protected synchronized void buildGoogleApiClient() {
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API).build();
-
-        mGoogleApiClient.connect();
-
-    }
-
-
-
-    void getLocation(boolean isSave){
-        if(isSave) {
-            if(Globally.LATITUDE.equals("0.0") || Globally.LATITUDE.equals("00.00")){
-                createLocationRequest(MIN_TIME_LOCATION_UPDATES);
-            }else {
-                SaveLocation(Globally.LATITUDE, Globally.LONGITUDE);
-            }
-        }else{
-            if(Globally.LATITUDE.equals("0.0") || Globally.LATITUDE.equals("00.00")){
-                createLocationRequest(MIN_TIME_LOCATION_UPDATES);
-            }
-        }
-    }
-
-
-
-    private void requestLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, (LocationListener) this);
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        try {
-            requestLocationUpdates();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Logger.LogDebug("onConnectionSuspended", "onConnectionSuspended");
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Logger.LogDebug("onConnectionFailed", "onConnectionFailed");
-    }
 
     @Override
     public void onInit(int status) {
@@ -4213,29 +3774,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        Globally.GPS_LATITUDE = "" + location.getLatitude();
-        Globally.GPS_LONGITUDE = "" + location.getLongitude();
-        Globally.GPS_LONGITUDE = Globally.CheckLongitudeWithCycle(Globally.GPS_LONGITUDE);
-        isGpsUpdate = true;
-
-        //  GpsVehicleSpeed = (int) location.getSpeed() * 18 / 5;
-        // GpsVehicleSpeed = 21;
-
-        // saving location with time info to calculate location malfunction event
-        if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
-            Globally.LATITUDE = Globally.GPS_LATITUDE;
-            Globally.LONGITUDE = Globally.GPS_LONGITUDE;
-
-            constants.saveEcmLocationWithTime(Globally.GPS_LATITUDE, Globally.GPS_LONGITUDE,
-                    SharedPref.getHighPrecisionOdometer(getApplicationContext()), getApplicationContext());
-        }
-
-    }
 
 
     CheckConnectivity.ConnectivityInterface ConnectivityInterface = new CheckConnectivity.ConnectivityInterface() {
@@ -4362,16 +3900,13 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     }
 
                                     Globally.IS_OBD_IGNITION = true;
-                                    continueStatusPromotForPcYm("ON", constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_CONNECTED);
+                                    continueStatusPromtForPcYm("ON", constants.WifiOBD, global.getCurrentDate(), Constants.WIFI_CONNECTED);
                                     SharedPref.SaveObdStatus(Constants.WIFI_CONNECTED, global.getCurrentDate(),
                                             global.GetCurrentUTCTimeFormat(), getApplicationContext());
 
                                     obdVehicleSpeed = (int) WheelBasedVehicleSpeed;
-                                    VehicleSpeed = obdVehicleSpeed;
-                                    Globally.VEHICLE_SPEED = obdVehicleSpeed;
 
-                                    calculateWifiObdData("--", HighResolutionDistance, ignitionStatus, VehicleSpeed,
-                                            obdTripDistance, rawResponse, correctData, true);
+                                    calculateWifiObdData(HighResolutionDistance, rawResponse, true);
 
                                     sendBroadCast(parseObdDatainHtml(vin, (int)WheelBasedVehicleSpeed, -2), message);
 
@@ -4497,8 +4032,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
-    private void calculateWifiObdData(String vin, String HighPrecisionOdometer, String ignition, int speed, String tripDistance,
-                                      String rawResponse, String correctedData,  boolean isSave){
+    private void calculateWifiObdData(String HighPrecisionOdometer, String rawResponse,boolean isSave){
 
         int DrivingSpeedLimit   = DriverConst.getDriverConfiguredTime(DriverConst.DrivingSpeed, getApplicationContext());
         double speedCalculated = -1;
@@ -4506,18 +4040,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         String currentLogDate = global.GetCurrentDateTime();
 
         if(rawResponse.contains("CAN")) {
-            if(SharedPref.isOdoCalculationAllowed(getApplicationContext()) || speed > 200) {
+            if(SharedPref.isOdoCalculationAllowed(getApplicationContext()) || obdVehicleSpeed > 200) {
                 speedCalculated = calculateSpeedFromWifiObdOdometer(
                         savedTime,
                         SharedPref.GetWifiObdOdometer(getApplicationContext()),
                         HighPrecisionOdometer);
             }else{
                 timeInSec = 6;
-                speedCalculated = speed;
+                speedCalculated = obdVehicleSpeed;
             }
         }
 
-        if(speed > 1){
+        if(obdVehicleSpeed > 1){
             SharedPref.setVehilceMovingStatus(true, getApplicationContext());
         }else{
             SharedPref.setVehilceMovingStatus(false, getApplicationContext());
@@ -4553,56 +4087,45 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             if (jobType.equals(global.DRIVING)) {
 
-                if (speed >= DrivingSpeedLimit || speedCalculated >= DrivingSpeedLimit ) {
+                if (obdVehicleSpeed >= DrivingSpeedLimit || speedCalculated >= DrivingSpeedLimit ) {
 
-                    if(speed > 200){
-                        obdVehicleSpeed      = (int)speedCalculated;
-                        VehicleSpeed         = obdVehicleSpeed;
-                        Globally.VEHICLE_SPEED =  obdVehicleSpeed;
+                    if (obdVehicleSpeed > 200) {
+                        obdVehicleSpeed = (int) speedCalculated;
                     }
-
                     ServiceCycle.ContinueSpeedCounter = 0;
-                    if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 1) {  //&& !HighPrecisionOdometer.equals(SharedPref.getHighPrecisionOdometer(getApplicationContext()))
-                        SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
-                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, VehicleSpeed,
-                                hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
-                                odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
-                    }
+                }
 
-                } else {
+                if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0) {
+                    SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                    if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0) {
-                        SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
-                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, VehicleSpeed,
-                                hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
-                                odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
-                    }
+                    get18DaysLogArrayLocally();
+                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName,
+                            obdVehicleSpeed,  hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError,
+                            true, constants.WIFI_OBD,  obdUtil);
                 }
 
             } else if (jobType.equals(global.ON_DUTY)) {
 
-                if (speed >= DrivingSpeedLimit || speedCalculated >= DrivingSpeedLimit ) {
-                    if(speed > 200){
+                if (obdVehicleSpeed >= DrivingSpeedLimit || speedCalculated >= DrivingSpeedLimit ) {
+                    if(obdVehicleSpeed > 200){
                         obdVehicleSpeed      = (int)speedCalculated;
-                        VehicleSpeed         = obdVehicleSpeed;
-                        Globally.VEHICLE_SPEED =  obdVehicleSpeed;
                     }
 
+                    get18DaysLogArrayLocally();
                     SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer,currentLogDate, getApplicationContext());
-                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, VehicleSpeed,
-                            hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
-                            odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
+                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName,
+                            obdVehicleSpeed, hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError,
+                            true, constants.WIFI_OBD, obdUtil);
 
                 } else {
 
                     ServiceCycle.ContinueSpeedCounter = 0;
-                    //boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(getApplicationContext());
-
                     if (constants.minDiff(savedDate, global, false, getApplicationContext()) > 0 ) {    //|| (isYmPcAlertShown && isYardMove())
+                        get18DaysLogArrayLocally();
                         SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
-                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, VehicleSpeed,
-                                hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
-                                odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
+                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName,
+                        obdVehicleSpeed, hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError,
+                                true, constants.WIFI_OBD, obdUtil);
                     }
                 }
 
@@ -4610,27 +4133,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 SharedPref.saveHighPrecisionOdometer(HighPrecisionOdometer, currentLogDate, getApplicationContext());
 
-                if (speedCalculated >= DrivingSpeedLimit && speed > 200 ) {
+                if (speedCalculated >= DrivingSpeedLimit && obdVehicleSpeed > 200 ) {
                     obdVehicleSpeed = (int) speedCalculated;
-                    VehicleSpeed = obdVehicleSpeed;
-                    Globally.VEHICLE_SPEED = obdVehicleSpeed;
-                    speed = obdVehicleSpeed;
                 }
 
 
-                if (speed <= DrivingSpeedLimit || speedCalculated <= DrivingSpeedLimit ) {
-                    // Logger.LogDebug("ELD Rule", "Rule is correct.");
+                if (obdVehicleSpeed <= DrivingSpeedLimit || speedCalculated <= DrivingSpeedLimit ) {
                     ServiceCycle.ContinueSpeedCounter = 0;
-                    /*boolean isYmPcAlertShown = SharedPref.GetTruckStartLoginStatus(getApplicationContext());
-                    if((isYmPcAlertShown && isPersonalUse())){
-                        serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, VehicleSpeed,
-                                hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
-                                odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
-                    }*/
                 } else {
-                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, CoDriverName, IsLogApiACalled, VehicleSpeed,
-                            hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError, notificationMethod, shipmentHelper,
-                            odometerhMethod, true, constants.WIFI_OBD, obdVehicleSpeed, GpsVehicleSpeed, obdUtil);
+                    get18DaysLogArrayLocally();
+                    serviceCycle.CalculateCycleTime(Integer.valueOf(DriverId), CoDriverId, EldFragment.driverLogArray, CoDriverName,
+                            obdVehicleSpeed, hMethods, dbHelper, latLongHelper, LocMethod, serviceCallBack, serviceError,
+                            true, constants.WIFI_OBD, obdUtil);
                 }
 
             }
@@ -4640,169 +4154,11 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }
         }
 
-        SharedPref.setVss(VehicleSpeed, getApplicationContext());
+        SharedPref.setVss(obdVehicleSpeed, getApplicationContext());
         SharedPref.setRPM(truckRPM, getApplicationContext());
 
-        resetDataAfterCycleCall(true);
     }
 
-    private boolean isYardMove(){
-        boolean isYard = false;
-        try {
-            JSONObject lastJsonItem = hMethods.GetLastJsonFromArray(EldFragment.driverLogArray);
-            isYard = lastJsonItem.getBoolean(ConstantsKeys.YardMove);
-        }catch (Exception e){}
-
-        return isYard;
-
-    }
-
-
-    private boolean isPersonalUse(){
-        boolean isPersonal = false;
-        try {
-            JSONObject lastJsonItem = hMethods.GetLastJsonFromArray(EldFragment.driverLogArray);
-            isPersonal = lastJsonItem.getBoolean(ConstantsKeys.Personal);
-        }catch (Exception e){}
-        return isPersonal;
-    }
-
-    private class UploadLocFile extends AsyncTask<String, String, String> {
-
-        String strResponse = "";
-        Response response;
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-
-                com.squareup.okhttp.Request request = null;
-
-                /* ===================  CROSS CHECK ONCE FOR LOAD_ID AND JOB_ID ================== */
-                MultipartBuilder builderNew = new MultipartBuilder().type(MultipartBuilder.FORM);
-                // .addFormDataPart(ConstantsKeys.DriverId, DriverId ) ;
-
-                if (locDataFile != null && locDataFile.exists()) {
-                    Logger.LogInfo("", "---Add File: " + locDataFile.toString());
-                    builderNew.addFormDataPart("myFile", "file",
-                            RequestBody.create(MediaType.parse("application/txt"), new File(locDataFile.toString())));
-                }
-
-                RequestBody requestBody = builderNew.build();
-                request = new com.squareup.okhttp.Request.Builder()
-                        .url(APIs.SAVE_LAT_LONG)
-                        .post(requestBody)
-                        .build();
-
-
-                OkHttpClient client = new OkHttpClient();
-                client.setProtocols(Arrays.asList(Protocol.HTTP_1_1));
-                client.setConnectTimeout(30, TimeUnit.SECONDS); // connect timeout
-                client.setReadTimeout(30, TimeUnit.SECONDS);
-                response = client.newCall(request).execute();
-                strResponse = response.body().string();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return strResponse;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Logger.LogError("String Response", ">>>>Location Response   " + result);
-
-            try {
-
-                if(locDataFile.exists())
-                    locDataFile.delete();
-
-                JSONObject obj = new JSONObject(result);
-                String status = obj.getString("Status");
-
-                if(status.equalsIgnoreCase("true")) {
-                    LocMethod.DriverLocationHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-
-
-    void SaveLocation(String lat, String lon){
-
-        try {
-            if (lat.length() > 3 && lon.length() > 3) { // minimum format required 00.
-
-                try {
-                    String UTCDate = global.GetCurrentUTCTime();
-                    // Saved json in location array
-                    JSONObject newObj = LocMethod.LocationObject(DriverId, lat, lon, VIN_NUMBER, VehicleId , UTCDate, GpsVehicleSpeed );
-                    JSONArray savedLocArray = LocMethod.getSavedLocationArray(Integer.valueOf(DriverId), dbHelper);
-
-                    savedLocArray.put(newObj);
-
-                    if(savedLocArray.length() > 1) {
-
-                        try {
-                            JSONObject originJson = (JSONObject) savedLocArray.get(savedLocArray.length() - 2);
-                            String lastItemLat = originJson.getString("Latitude");
-                            String lastItemLon = originJson.getString("Longitude");
-
-                            if(!lat.equals(lastItemLat) || !lon.equals(lastItemLon)){   // speed > 1   because data accuracy difference is 10-20 meters. So speed value may be increased.
-                                LocMethod.DriverLocationHelper(Integer.valueOf(DriverId), dbHelper, savedLocArray);
-                            }else{
-                                if(sameLocationCount > 1) {
-                                    StopLocationUpdates();
-
-                                    if (global.checkPlayServices(getApplicationContext())) {
-                                        // Building the GoogleApi client
-                                        buildGoogleApiClient();
-                                    }
-                                    createLocationRequest(MIN_TIME_LOCATION_UPDATES);
-                                    sameLocationCount = 0;
-                                }
-                                sameLocationCount++;
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-
-                    }else{
-                        LocMethod.DriverLocationHelper(Integer.valueOf(DriverId), dbHelper, savedLocArray);
-                    }
-
-                    if (global.isConnected(getApplicationContext()) && savedLocArray.length() >= 20) {
-                        locDataFile = global.SaveFileInSDCard("Loc_", savedLocArray.toString(), false, getApplicationContext());
-                        //  Logger.LogDebug("savedLocArray", "--savedLocArray: " + savedLocArray);
-                        new UploadLocFile().execute();
-
-                    }
-
-                    if(savedLocArray.length() > 5){
-                        constants.IS_ELD_ON_CREATE = false;
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                JSONArray latLongArray  = latLongHelper.getSavedLatLonArray(dbHelper);
-                JSONObject obj = latLongHelper.getLatLonJson(latitude, longitude);
-                latLongArray.put(obj);
-                latLongHelper.LatLongHelper(dbHelper, latLongArray);
-
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     private void get18DaysApiData(){
@@ -4810,30 +4166,39 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         try {
             if (SharedPref.GetNewLoginStatus(getApplicationContext())) {
 
-                JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
-                if(driverLogArray.length() == 0 && !Is18DaysLogApiCalled) {
-                    DataRequest18Days(DriverId, GetDriverLog18Days);
-                    if (isTeamDriver) {
-                        DataRequest18Days(CoDriverId, GetCoDriverLog18Days);
-                    }
-                    Is18DaysLogApiCalled = true;
-                }
+                // some times 18 days log were not updated when driver logged in after few days. So need to call updateOfflineStatus api first and then call 18 days log of 500 ms delay.
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                JSONArray ctPatInsp18DaysArray = ctPatInspectionMethod.getCtPat18DaysInspectionArray(Integer.valueOf(DriverId), dbHelper);
-                if (ctPatInsp18DaysArray.length() == 0 && !Is18DaysLogApiCalled) {
-                    String SelectedDate = global.GetCurrentDeviceDate();
-                    if(!IsCtPatApiCalled) {
-                        IsCtPatApiCalled = true;
-                        if (isTeamDriver) {
-                            GetCtPatInspection18Days(DriverId, DeviceId, SelectedDate, GetCtPat18DaysMainDriverLog);
-                            GetCtPatInspection18Days(CoDriverId, DeviceId, SelectedDate, GetCtPat18DaysCoDriverLog);
-                        } else {
-                            GetCtPatInspection18Days(DriverId, DeviceId, SelectedDate, GetCtPat18DaysMainDriverLog);
+                        JSONArray driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
+                        if(driverLogArray.length() == 0 && !Is18DaysLogApiCalled) {
+                            DataRequest18Days(DriverId, GetDriverLog18Days);
+                            if (isTeamDriver) {
+                                DataRequest18Days(CoDriverId, GetCoDriverLog18Days);
+                            }
+                            Is18DaysLogApiCalled = true;
                         }
+
+                        JSONArray ctPatInsp18DaysArray = ctPatInspectionMethod.getCtPat18DaysInspectionArray(Integer.valueOf(DriverId), dbHelper);
+                        if (ctPatInsp18DaysArray.length() == 0 && !Is18DaysLogApiCalled) {
+                            String SelectedDate = global.GetCurrentDeviceDate();
+                            if(!IsCtPatApiCalled) {
+                                IsCtPatApiCalled = true;
+                                if (isTeamDriver) {
+                                    GetCtPatInspection18Days(DriverId, DeviceId, SelectedDate, GetCtPat18DaysMainDriverLog);
+                                    GetCtPatInspection18Days(CoDriverId, DeviceId, SelectedDate, GetCtPat18DaysCoDriverLog);
+                                } else {
+                                    GetCtPatInspection18Days(DriverId, DeviceId, SelectedDate, GetCtPat18DaysMainDriverLog);
+                                }
+                            }
+                        }
+
                     }
-                }
+                }, 500);
 
             }
+
 
             JSONArray recapArray = recapViewMethod.getSavedRecapView18DaysArray(Integer.valueOf(DriverId), dbHelper);
             JSONObject hasCurrentDatObj = recapViewMethod.GetSelectedRecapData(recapArray, Globally.GetCurrentDeviceDate()) ;
@@ -4847,6 +4212,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
                 }
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -4898,7 +4264,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
                 if (global.isConnected(getApplicationContext()) && malArray1.length() > 0 && !isMalfncDataAlreadyPosting) {
                     isMalfncDataAlreadyPosting = true;
-                    saveDriverLogPost.PostDriverLogData(malArray1, api, Constants.SocketTimeout30Sec,
+                    saveDriverLogPost.PostDriverLogData(malArray1, api, Constants.SocketTimeout20Sec,
                             false, false, 1, SaveMalDiagnstcEvent);
                 }
             }
@@ -4963,15 +4329,14 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
 
-    private void continueStatusPromotForPcYm(String obdCurrentIgnition, String type, String time, int obdStatus){
+    private void continueStatusPromtForPcYm(String obdCurrentIgnition, String type, String time, int obdStatus){
 
         try {
 
             if( obdStatus != Constants.NO_CONNECTION && !SharedPref.GetNewLoginStatus(getApplicationContext())) {
                 try {
-                    if (EldFragment.driverLogArray == null || EldFragment.driverLogArray.length() == 0) {
-                        EldFragment.driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
-                    }
+                    get18DaysLogArrayLocally();
+
                     if (EldFragment.driverLogArray.length() > 0) {  //UILApplication.isActivityVisible() &&
                         JSONObject lastJsonItem =  hMethods.GetLastJsonFromArray(EldFragment.driverLogArray);
                         int currentJobStatus = lastJsonItem.getInt(ConstantsKeys.DriverStatusId);
@@ -5110,8 +4475,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
         driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
         yesterdayDate = Globally.getDateTimeObj(global.ConvertDateFormat(Globally.GetCurrentDeviceDate()), false).minusDays(1);
-        twoDaysLogArray = hMethods.twoDaysLogArray(driverLogArray, yesterdayDate);
-        //logArrayBeforeSelectedDate = hMethods.GetArrayBeforeSelectedDate(driverLogArray, getYesterdayDate);
+        twoDaysLogArray = hMethods.twoDaysLogArray( driverLogArray, yesterdayDate);
 
         IsLogIdMissing = hMethods.IsLogIdMissing(twoDaysLogArray);
         if(IsLogIdMissing != -1){
@@ -5347,6 +4711,10 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                             JSONObject lastItemJson = hMethods.GetLastJsonFromArray(resultArray);
                                             String DRIVER_JOB_STATUS = lastItemJson.getString(ConstantsKeys.DriverStatusId);
                                             SharedPref.setDriverStatusId(DRIVER_JOB_STATUS, getApplicationContext());
+
+                                            Intent intent = new Intent(ConstantsKeys.IsIgnitionOn);
+                                            intent.putExtra(ConstantsKeys.Is18DaysLogUpdate, true);
+                                            LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
                                         }
 
                                     }else{
@@ -5505,72 +4873,28 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     String UtcCurrentDate = dataObj.getString(ConstantsKeys.UTCDateTime);
                                     DateTime utcCurrentDateTime = global.getDateTimeObj(UtcCurrentDate, false);
 
-                                    boolean IsAutoDrive = dataObj.getBoolean(ConstantsKeys.IsAutoOnDutyDriveEnabled);
-                                    boolean IsOBDPingAllowed = dataObj.getBoolean(ConstantsKeys.IsOBDPingAllowed);
-                                    boolean IsDrivingShippingAllowed = dataObj.getBoolean(ConstantsKeys.IsDrivingShippingAllowed);
-                                    boolean IsTimestampEnabled = dataObj.getBoolean(ConstantsKeys.IsTimestampEnabled);
-                                    boolean IsAutoSync = dataObj.getBoolean(ConstantsKeys.IsAutoSync);
-                                    boolean IsAgriException = constants.CheckNullBoolean(dataObj, ConstantsKeys.IsAgriException);
-
                                     try {
-                                        // Save Truck information for manual/auto mode
-                                        SharedPref.SetDrivingShippingAllowed(IsDrivingShippingAllowed, getApplicationContext());
-                                        SharedPref.saveTimeStampView(IsTimestampEnabled, getApplicationContext());
                                         SharedPref.setCurrentUTCTime(UtcCurrentDate, getApplicationContext());
-                                        SharedPref.SetOBDPingAllowedStatus(IsOBDPingAllowed, getApplicationContext());
-                                        SharedPref.SetAutoDriveStatus(IsAutoDrive, getApplicationContext());
-                                        SharedPref.setAgricultureExemption(IsAgriException, getApplicationContext());
-                                        SharedPref.setAutoSyncStatus(IsAutoSync, getApplicationContext());
-
-                                        // check PU status exceeding status if 75km exceeded showing popup
-                                        checkPUExceedStatus(dataObj, -1);
-
                                         boolean isSuggestedEdit = dataObj.getBoolean(ConstantsKeys.SuggestedEdit);
                                         boolean isSuggestedRecall;
-                                        boolean IsCycleRequest      =  dataObj.getBoolean(ConstantsKeys.IsCycleRequest);
-                                        boolean IsELDNotification = false;
-                                        String ELDNotification    = dataObj.getString("DriverELDNotificationList");
 
-                                        try{
-                                            JSONArray eldNotArray = new JSONArray(ELDNotification);
-                                            if(eldNotArray.length() > 0){
-                                                IsELDNotification = true;
-                                            }
-                                        }catch (Exception e){
-                                            e.printStackTrace();
-                                        }
-
-                                        SharedPref.SetELDNotification(IsELDNotification, getApplicationContext());
-                                        if(DriverType == Constants.MAIN_DRIVER_TYPE) {
-
+                                        if (DriverType == Constants.MAIN_DRIVER_TYPE) {
                                             isSuggestedRecall = SharedPref.isSuggestedRecall(getApplicationContext());
-
-                                            // SharedPref.SetExemptDriverStatusMain(dataObj.getBoolean(ConstantsKeys.IsExemptDriver), getApplicationContext());
-                                            SharedPref.SetCycleRequestStatusMain(IsCycleRequest, getApplicationContext());
-
-
-                                        }else{
+                                        } else {
                                             isSuggestedRecall = SharedPref.isSuggestedRecallCo(getApplicationContext());
-                                            SharedPref.SetCycleRequestStatusCo(IsCycleRequest, getApplicationContext());
                                         }
 
-                                        if ( (isSuggestedEdit && isSuggestedRecall) || IsCycleRequest || IsELDNotification) {
+                                        if ((isSuggestedEdit && isSuggestedRecall)) {   // || IsCycleRequestIsELDNotification
                                             try {
-                                                //if(UILApplication.isActivityVisible()) {
                                                 Intent intent = new Intent(ConstantsKeys.SuggestedEdit);
                                                 intent.putExtra(ConstantsKeys.SuggestedEdit, isSuggestedEdit);
-                                                intent.putExtra(ConstantsKeys.IsCycleRequest, IsCycleRequest);
-                                                intent.putExtra(ConstantsKeys.IsELDNotification, IsELDNotification);
-                                                intent.putExtra(ConstantsKeys.DriverELDNotificationList, ELDNotification);
                                                 LocalBroadcastManager.getInstance(BackgroundLocationService.this).sendBroadcast(intent);
-                                                // }
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
                                         }
 
-
-                                    }catch (Exception e){
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
 
@@ -5579,22 +4903,22 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                     // Sync app usage log to server (SAVE sync data service)
                                     obdUtil.syncAppUsageLog(getApplicationContext(), DriverId);
 
-                                    if (dataObj.has(ConstantsKeys.IsOdometerFromOBD))
-                                        SharedPref.SetOdometerFromOBD(dataObj.getBoolean(ConstantsKeys.IsOdometerFromOBD), getApplicationContext());
+                                    // need to move in permission api
+                                   // if (dataObj.has(ConstantsKeys.IsOdometerFromOBD))
+                                    //    SharedPref.SetOdometerFromOBD(dataObj.getBoolean(ConstantsKeys.IsOdometerFromOBD), getApplicationContext());
 
-                                    int CycleId = dataObj.getInt(ConstantsKeys.CycleId);
+                                    if (dataObj.has(ConstantsKeys.CycleId) && !dataObj.getString(ConstantsKeys.CycleId).equals("null")){
+                                        int CycleId = dataObj.getInt(ConstantsKeys.CycleId);
 
-                                    if (obdVehicleSpeed != -1) {
-                                        VehicleSpeed = obdVehicleSpeed;
+                                        // Save Driver Cycle With Current Date
+                                        constants.SaveCycleWithCurrentDate(CycleId, utcCurrentDateTime.toString(), "UpdateOfflineDriverLog_api",
+                                                global, getApplicationContext());
                                     }
 
-                                    // Save Driver Cycle With Current Date
-                                    constants.SaveCycleWithCurrentDate(CycleId, utcCurrentDateTime.toString(), "UpdateOfflineDriverLog_api",
-                                            global, getApplicationContext());
                                 } catch (Exception e) {
-                                    Globally.VEHICLE_SPEED = -1;
                                     e.printStackTrace();
                                 }
+
                                 postAllOfflineSavedData();
 
                             }
@@ -5641,8 +4965,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             e.printStackTrace();
                         }
 
-
-                        //  Logger.LogDebug("response", "Service response GetRecapViewData-" + flag + ": " + response);
                         break;
 
 
@@ -5651,7 +4973,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         try {
                             if (!obj.isNull("Data")) {
                                 JSONArray resultArray = new JSONArray(obj.getString("Data"));
-                                odometerhMethod.Odometer18DaysHelper(Integer.valueOf(DriverId), dbHelper, resultArray);
+                                odometerHelper.Odometer18DaysHelper(Integer.valueOf(DriverId), dbHelper, resultArray);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -5776,10 +5098,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     }
 
                     updateOfflineNoResponseCount++;
-                    //  VehicleSpeed = GpsVehicleSpeed;
-                    // apiReturnedSpeed = "--";
-                    Globally.VEHICLE_SPEED = -1;
-
                     break;
 
                 case GetMalDiaEventDuration:
@@ -5862,11 +5180,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                         case SaveShippingOffline:
-                            //  JSONObject obj = shipmentHelper.GetLastJsonObject(shipmentArray, shipmentArray.length()-1);
-                            //   JSONArray shipmentJsonArray = new JSONArray();
-                            //   shipmentJsonArray.put(obj);
                             shipmentHelper.ShipmentHelper(Integer.valueOf(global.PROJECT_ID), dbHelper, new JSONArray());
-
                             break;
 
 
@@ -5947,12 +5261,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
             }else {
                 if(msg.equals(Constants.AobrdWarning)){
                     global.ShowNotificationWithSound(getApplicationContext(), "AOBRD", "Your current status is "+ status +" but your vehicle is running.", mNotificationManager);
-
-                    // Play again
-                    //playSound();
-
-                }else if(msg.equals(Constants.AobrdAutomatic)) {
-                    //  global.ShowNotificationWithSound(getApplicationContext(), "AOBRD", status, mNotificationManager);
                 }else if(msg.contains(getString(R.string.als_alert))){
                     global.ShowNotificationWithSound(getApplicationContext(), "ALS Alert", status, mNotificationManager);
                 }else {
@@ -5961,16 +5269,12 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             if(IsForground){
                                 global.PlaySound(getApplicationContext());
                                 ViolationReason = violatioReason;
-                                // SpeakOutMsg();
                             } else {
-
                                 if(!violatioReason.equalsIgnoreCase("Alert") && violatioReason.equals("")) {
                                     RulesObj.setNotificationType(101);
                                     global.ShowNotificationWithSound(getApplicationContext(), RulesObj, mNotificationManager);
                                 }
-
                             }
-
                         }
                     }
                 }
@@ -5992,7 +5296,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int driver_id, int flag, int inputDataLength) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int driver_id, int flag, JSONArray inputData) {
 
             String status = "", Message = "";
             JSONObject obj = null;
@@ -6064,8 +5368,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                             /* Check Reason: some times data was uploading in background and user entered new status in between.
                                  In api response we are clearing the entries and in between entry was skipped before upload to server.
                                 So to avoid this we are checking input length and current log length.*/
-                                if (driverLogArray.length() == inputDataLength) {
-                                    if (RePostDataCountMain > 1 || !IsDuplicateStatusAllowed) {
+                                if (driverLogArray.length() == inputData.length()) {
+                                    if (RePostDataCountMain > 1 ) { //|| !IsDuplicateStatusAllowed
                                         ClearLogAfterSuccess(driver_id);
                                         RePostDataCountMain = 0;
 
@@ -6077,8 +5381,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
 
                                     } else {
-                                        saveActiveDriverData();
-                                        RePostDataCountMain++;
+                                        // compare logs to avoid duplicate entries
+                                       // driverLogArray = syncingMethod.getUnpostedLogOnly(DriverId, driverLogArray, dbHelper);
+                                        driverLogArray = syncingMethod.getUnPostedLogOnly(inputData, driverLogArray);
+
+                                        if (driverLogArray.length() > 0) {    //SaveRequestCount < 2 || IsDuplicateStatusAllowed
+                                            saveActiveDriverData();
+                                            RePostDataCountMain++;
+                                        } else {
+                                            ClearLogAfterSuccess(driver_id);
+                                        }
+
+
 
                                     }
                                 } else {
@@ -6090,8 +5404,18 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                                         SaveCoDriverData();
 
                                     } else {
-                                        saveActiveDriverData();
-                                        RePostDataCountMain++;
+
+                                        // compare logs to avoid duplicate entries
+                                       // driverLogArray = syncingMethod.getUnpostedLogOnly(DriverId, driverLogArray, dbHelper);
+                                        driverLogArray = syncingMethod.getUnPostedLogOnly(inputData, driverLogArray);
+
+                                        if (driverLogArray.length() > 0) {    //SaveRequestCount < 2 || IsDuplicateStatusAllowed
+                                            saveActiveDriverData();
+                                            RePostDataCountMain++;
+                                        } else {
+                                            ClearLogAfterSuccess(driver_id);
+                                        }
+
                                     }
                                 }
                             }
@@ -6105,19 +5429,21 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                     case SaveCoDriverLogData:
                         EldFragment.IsSaveOperationInProgress = false;
 
-                        boolean IsDuplicateStatusAllow = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
+                      //  boolean IsDuplicateStatusAllow = SharedPref.GetOtherMalDiaStatus(ConstantsKeys.IsDuplicateStatusAllowed, getApplicationContext());
 
-                        if(RePostDataCountCo > 1 || !IsDuplicateStatusAllow){
+                      //  if(RePostDataCountCo > 1 || !IsDuplicateStatusAllow){
+                       // syncingMethod.SyncingLogVersion2Helper(Integer.valueOf(driver_id), dbHelper, new JSONArray());
+
                             ClearLogAfterSuccess(driver_id);
                             RePostDataCountCo = 0;
                             SelectedDriverId = ""+driver_id;
                             DataRequest18Days(SelectedDriverId, GetDriverLog18Days);
 
 
-                        }else {
+                       /* }else {
                             SaveCoDriverData();
                             RePostDataCountCo ++;
-                        }
+                        }*/
 
 
                         break;
@@ -6227,7 +5553,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     DriverLogResponse saveEventRequestResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, JSONArray inputData) {
 
             try {
 
@@ -6259,6 +5585,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
     void ClearLogAfterSuccess(int driverType) {
         driverLogArray = new JSONArray();
+        //syncingMethod.SyncingLogVersion2Helper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
+
         if (driverType == 0) // Single Driver Type and Position is 0
             MainDriverPref.ClearLocFromList(getApplicationContext());
         else
@@ -6398,21 +5726,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
     }
 
 
-    void saveExecutionTime(String type){
-        if(processStartTime != -1){
-            try {
-                long stopTime = System.currentTimeMillis();
-                long elapsedTime = stopTime - processStartTime;
-                String usedMemory = constants.getMemoryUsage(getApplicationContext());
-                obdUtil.writeExectnTimeLogFile(elapsedTime, usedMemory, type);
-
-                obdUtil.executionLogCount();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
 
 
     private void StartStopServer(final String value){
@@ -6428,7 +5741,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         //Setup the message for invocation
                         try {
                             // Logger.LogDebug(TAG_OBD, "Wired Server Call");
-
                             //Set the ReplyTo Messenger for processing the invocation response
                             Message msg1 = new Handler().obtainMessage();
                             Bundle bundle = new Bundle();
@@ -6504,9 +5816,8 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
 
             if(isPU75Crossed && wasPU75Crossed == false){
                 try {
-                    if (EldFragment.driverLogArray == null || EldFragment.driverLogArray.length() == 0) {
-                        EldFragment.driverLogArray = hMethods.getSavedLogArray(Integer.valueOf(DriverId), dbHelper);
-                    }
+                    get18DaysLogArrayLocally();
+
                     boolean isPersonal = true;
                     if (EldFragment.driverLogArray.length() > 0) {
                         JSONObject lastJsonItem = hMethods.GetLastJsonFromArray(EldFragment.driverLogArray);
@@ -6534,8 +5845,7 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
                         }
                         String blank = "";
 
-                        saveLogWithRuleCall(blank, blank, obdVehicleSpeed, blank,
-                                0, blank, blank, "not_saved", obdVehicleSpeed);
+                        saveLogWithRuleCall(blank, blank, obdVehicleSpeed, "not_saved");
 
                     }
                 }catch (Exception e){
@@ -6566,62 +5876,6 @@ public class BackgroundLocationService extends Service implements GoogleApiClien
         }
     }
 
-
-    /**
-     * Register for Bluetooth switch status monitoring
-     */
-   /* private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try {
-
-                //String action = intent.getAction();
-                // if(BluetoothAdapter.ACTION_STATE_CHANGED != null && BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
-                if (intent.hasExtra(BluetoothAdapter.EXTRA_STATE)){
-                    switch (intent.getAction()) {
-                        case BluetoothAdapter.ACTION_STATE_CHANGED:
-                            int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-                            switch (blueState) {
-                                case BluetoothAdapter.STATE_TURNING_ON://bluetooth is on
-
-                                    break;
-                                case BluetoothAdapter.STATE_ON://bluetooth is on
-                                    //It is detected that the bluetooth switch is turned on to reconnect
-                                    if (!TextUtils.isEmpty(HTBleSdk.Companion.getInstance().getAddress())) {
-                                        Logger.LogError("TAG", "Bluetooth switch on");
-                                        initBleListener();
-                                    }
-                                    break;
-                                case BluetoothAdapter.STATE_TURNING_OFF://bluetooth is turning off
-
-                                    break;
-                                case BluetoothAdapter.STATE_OFF://bluetooth is off
-                                    break;
-                            }
-
-                    }
-                }
-                //}
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-
-        }
-    };
-
-
-    private IntentFilter makeFilter() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        return filter;
-    }
-*/
-
-    /**
-     * Prevent continuous invocation of the startup service
-     */
 
 
 }

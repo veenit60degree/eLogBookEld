@@ -5,7 +5,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/white_full_border"
     android:padding="@dimen/margin_10"
-    android:backgroundTint="?attr/layout_color_dot"
+    android:backgroundTint="?attr/trailer_dialog_background"
+
+
     >
 
     <LinearLayout
@@ -14,7 +16,9 @@
         android:layout_height="match_parent"
         android:background="@drawable/white_full_border"
         android:padding="@dimen/margin_short_9"
-        android:backgroundTint="?attr/layout_color_dot"
+        android:backgroundTint="?attr/trailer_dialog_background"
+
+
         >
 
 
@@ -24,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ShippingDocNumber"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/txt_eld_color"
             android:textStyle="bold"
             android:textSize="@dimen/text_size_22"
             android:gravity="center"
@@ -334,7 +338,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"
-                android:textColor="?attr/color_eld_bg"
+                android:textColor="?attr/cancel_gray_text"
                 android:textSize="@dimen/text_size_22"
                 android:padding="@dimen/margin_10"
                 android:gravity="center"
@@ -351,7 +355,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/save"
-                android:textColor="?attr/textColor"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_22"
                 android:gravity="center"
                 android:padding="@dimen/margin_12"

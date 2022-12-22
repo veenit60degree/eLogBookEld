@@ -4,6 +4,6 @@
 
     <corners android:radius="@dimen/margin_short_7" />
 
-    <solid android:color="@color/blue_button" />
+    <solid android:color="?attr/blue_light_dark_hover" />     <!--@color/blue_button-->
 
 </shape>

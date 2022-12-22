@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
-import com.messaging.logistic.R;
-
 import java.util.Vector;
 
 public class AlertDialogEld {

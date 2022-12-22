@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -26,8 +25,8 @@ import com.constants.Constants;
 import com.constants.Logger;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import com.models.VehicleModel;
 
 import org.json.JSONObject;

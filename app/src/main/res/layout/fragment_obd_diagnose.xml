@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="@dimen/margin_15"
-            android:background="?attr/obd_diagnose_color"
+            android:background="?attr/bgColor"
             >
 
             <RelativeLayout
@@ -55,7 +55,7 @@
 
                 <TextView
                     android:id="@+id/bleObdTxtView"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/margin_10"
                     android:text="@string/connect_ble_obd"
@@ -65,6 +65,30 @@
 
 
                     />
+
+
+                <TextView
+                    android:id="@+id/disconnectBleBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:paddingLeft="@dimen/margin_13"
+                    android:paddingRight="@dimen/margin_13"
+                    android:gravity="center"
+                    android:text="@string/disconnect_ble_obd"
+                    android:textColor="@color/bluee_login_one"
+                    android:background="@drawable/disconnect_ble_selector"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_centerVertical="true"
+                    android:textStyle="bold"
+                    android:layout_toRightOf="@+id/bleObdTxtView"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:visibility="gone"
+
+                    />
+
 
 
                 <TextView
@@ -199,7 +223,7 @@
             android:layout_marginLeft="@dimen/margin_14"
             android:layout_marginRight="@dimen/margin_14"
             android:padding="@dimen/margin_short_5"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:background="@color/blue_background_light"
 
             />
@@ -211,7 +235,7 @@
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin_14"
             android:padding="@dimen/margin_short_5"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:background="@color/blue_background_light"
             />
 

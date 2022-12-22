@@ -20,7 +20,7 @@
         android:layout_marginTop="@dimen/margin_15"
         android:paddingRight="@dimen/margin_10"
         app:cardCornerRadius="@dimen/margin_15"
-        android:backgroundTint="?attr/layout_color_dot"
+           android:backgroundTint="?attr/trailer_dialog_background"
         >
 
 
@@ -39,7 +39,7 @@
                 android:paddingBottom="@dimen/margin_short_2"
                 android:text="@string/UpdateAvailable"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_25"
                 android:textStyle="bold" />
 
@@ -132,7 +132,7 @@
                     android:layout_height="@dimen/view_height_55"
                     android:text="@string/update"
                     android:textSize="@dimen/text_size_23"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:background="@drawable/white_cardview_selector"
                     android:textAllCaps="false"
                     android:layout_weight="1"

@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -15,7 +14,7 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 
 import com.adapter.logistic.OtherReviewLogAdapter;
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 import com.models.RecapModel;
 
 import java.util.List;

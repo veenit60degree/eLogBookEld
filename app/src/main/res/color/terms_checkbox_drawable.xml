@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:color="@color/hos_send_log" android:state_enabled="true"/>
+    <item android:color="?attr/hos_send_log" android:state_enabled="true"/>
 
-    <item android:color="@color/colorAccentTextHover" android:state_enabled="false"/>
+    <item android:color="?attr/color_login_view" android:state_enabled="false"/>
 
-    <item android:color="@color/colorAccentTextHover"/>
+    <item android:color="?attr/color_login_view"/>
 </selector>
 
     <!--android:alpha="0.10"-->

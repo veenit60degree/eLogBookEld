@@ -10,7 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 public class MissingLocationDialog extends Dialog {
 

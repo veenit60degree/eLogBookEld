@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 
 public class ContinueStatusDialog extends Dialog {
 

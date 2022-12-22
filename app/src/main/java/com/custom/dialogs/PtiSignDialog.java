@@ -1,11 +1,9 @@
 package com.custom.dialogs;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,24 +14,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
+import com.als.logistic.UILApplication;
 import com.constants.APIs;
 import com.constants.Constants;
-import com.constants.SharedPref;
-import com.constants.VolleyRequest;
-import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 
 import org.json.JSONArray;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PtiSignDialog extends Dialog {
 
@@ -95,8 +86,12 @@ public class PtiSignDialog extends Dialog {
         }
 
         titleDescView.setText(getContext().getString(R.string.continue_sign_desc));
-        titleDescView.setTextColor(getContext().getResources().getColor(R.color.gray_text1));
-        cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.gray_text1));
+
+        if(!UILApplication.getInstance().isNightModeEnabled()){
+            titleDescView.setTextColor(getContext().getResources().getColor(R.color.gray_text1));
+            cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.gray_text1));
+        }
+
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);

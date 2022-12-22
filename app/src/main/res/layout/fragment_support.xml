@@ -20,11 +20,11 @@
         android:id="@+id/supportListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:dividerHeight="@dimen/margin_short_5"
-        android:divider="@null"
         android:layout_below="@+id/actionbarSupport"
-        tools:listitem="@layout/item_support"
+        android:divider="@null"
+        android:dividerHeight="@dimen/margin_short_5"
         android:paddingBottom="@dimen/margin_10"
+        tools:listitem="@layout/item_support"
 
         />
 

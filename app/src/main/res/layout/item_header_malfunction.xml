@@ -36,7 +36,7 @@
             android:layout_toRightOf="@+id/malfncnInfoImgView"
             android:paddingLeft="@dimen/margin_short_5"
             android:text="@string/Malfunction_with_bracket"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textSize="@dimen/text_size_17"
 
             />

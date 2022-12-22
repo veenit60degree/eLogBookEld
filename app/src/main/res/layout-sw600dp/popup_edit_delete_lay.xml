@@ -16,7 +16,7 @@
         android:layout_marginRight="9dp"
         android:layout_marginLeft="5dp"
         android:paddingBottom="@dimen/view_height_30"
-        android:backgroundTint="?attr/layout_color_dot"
+           android:backgroundTint="?attr/trailer_dialog_background"
       
 >
 
@@ -30,7 +30,7 @@
             android:layout_centerHorizontal="true"
             android:textSize="@dimen/view_height_32"
             android:layout_marginTop="@dimen/view_height_35_g"
-			android:textColor="?attr/colorPrimary"
+			android:textColor="?attr/txt_eld_color"
                android:textStyle="bold"
             />
 
@@ -62,7 +62,8 @@
                 android:layout_marginLeft="@dimen/margin_25"
                 android:layout_marginRight="@dimen/margin_25"
                 android:layout_marginTop="@dimen/view_height_30"
-                android:textColor="?attr/app_color_primary"
+                android:textColor="?attr/txt_eld_color"
+
                 />
 
 
@@ -200,11 +201,11 @@
                 android:layout_height="match_parent"
                 android:text="@string/cancel"
                 android:layout_margin="1dp"
-                android:textColor="@color/text_forgot"
                 android:textAllCaps="false"
                 android:textSize="@dimen/text_size_20"
                 android:background="@drawable/transparent"
                 android:layout_marginRight="@dimen/margin_10"
+                android:textColor="?attr/blue_button_hover"
 
                 />
 
@@ -217,7 +218,7 @@
                 android:text="@string/Confirm"
                 android:textStyle="bold"
                 android:layout_margin="1dp"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="?attr/txt_eld_color"
                 android:textAllCaps="false"
                 android:textSize="@dimen/text_size_20"
                 android:background="@drawable/transparent"

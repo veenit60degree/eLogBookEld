@@ -26,7 +26,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 
 public class CircularProgressBar extends View {

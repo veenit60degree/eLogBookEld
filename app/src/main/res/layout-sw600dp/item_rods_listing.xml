@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:text="@string/download_logs_Createddate"
         android:gravity="center"
-        android:textColor="?attr/color_eld_theme"
+        android:textColor="?attr/txt_eld_color"
         android:textSize="@dimen/text_size_17"
         android:paddingLeft="@dimen/margin_15"
         android:layout_centerVertical="true"
@@ -51,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:src="@drawable/share"
+                android:tint="?attr/agriculture_icon_color"
 
                 />
 
@@ -73,9 +74,9 @@
                 android:layout_centerInParent="true"
                 android:padding="@dimen/margin_short_1"
                 android:src="@drawable/download_downward"
-                android:tint="@color/red_eld"
+                android:tint="?attr/download_rods_icon_color"
 
-                />
+      />
 
         </RelativeLayout>
 
@@ -93,11 +94,14 @@
             android:padding="@dimen/margin_12"
             android:layout_marginRight="@dimen/margin_short_5"
             >
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:src="@drawable/view"
-                 android:layout_centerInParent="true"
+                android:tint="?attr/view_icon_color"
+
                 />
 
         </RelativeLayout>

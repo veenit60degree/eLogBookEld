@@ -7,13 +7,12 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 
 public class ZoomScrollView extends ScrollView {

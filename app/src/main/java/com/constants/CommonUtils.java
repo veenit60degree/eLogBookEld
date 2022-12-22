@@ -1,18 +1,10 @@
 package com.constants;
 
 import android.content.Context;
-import android.os.Build;
-import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
-import android.widget.Toast;
 
 import com.driver.details.DriverConst;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-
-import java.util.Objects;
+import com.als.logistic.Globally;
 
 public class CommonUtils {
 

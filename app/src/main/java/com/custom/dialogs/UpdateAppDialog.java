@@ -14,11 +14,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import com.constants.SharedPref;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.LoginActivity;
-import com.messaging.logistic.R;
-import com.messaging.logistic.SplashActivity;
-import com.messaging.logistic.TabAct;
+import com.als.logistic.LoginActivity;
+import com.als.logistic.R;
+import com.als.logistic.TabAct;
 
 
 public class UpdateAppDialog extends Dialog {

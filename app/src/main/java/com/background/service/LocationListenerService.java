@@ -10,8 +10,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.speech.tts.TextToSpeech;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,7 +23,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 public class LocationListenerService extends Service  implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -117,7 +115,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             Globally.GPS_LATITUDE = "" + location.getLatitude();
             Globally.GPS_LONGITUDE = "" + location.getLongitude();
 
-            if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
+            if(!SharedPref.IsLocReceivedFromObd(getApplicationContext())) {
 
                 Globally.LATITUDE = Globally.GPS_LATITUDE;
                 Globally.LONGITUDE = Globally.GPS_LONGITUDE;
@@ -129,11 +127,10 @@ public class LocationListenerService extends Service  implements GoogleApiClient
             }
 
 
-            if (SharedPref.IsDriverLogin(getApplicationContext())) {
+            /*if (SharedPref.IsDriverLogin(getApplicationContext())) {
                 stopForeground(true);
                 stopSelf();
-
-            }
+            }*/
 
 
         }
@@ -184,7 +181,7 @@ public class LocationListenerService extends Service  implements GoogleApiClient
         Globally.GPS_LATITUDE = "" + location.getLatitude();
         Globally.GPS_LONGITUDE = "" + location.getLongitude();
 
-        if(SharedPref.IsLocReceivedFromObd(getApplicationContext()) == false) {
+        if(!SharedPref.IsLocReceivedFromObd(getApplicationContext())) {
 
             Globally.LATITUDE = Globally.GPS_LATITUDE;
             Globally.LONGITUDE = Globally.GPS_LONGITUDE;
@@ -195,12 +192,10 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
         }
 
-
-        if (SharedPref.IsDriverLogin(getApplicationContext())) {
+        /*if (SharedPref.IsDriverLogin(getApplicationContext())) {
             stopForeground(true);
             stopSelf();
-
-        }
+        }*/
 
     }
 

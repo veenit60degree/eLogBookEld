@@ -1,8 +1,5 @@
 package com.models;
 
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.fragment.EldFragment;
-
 import java.util.ArrayList;
 
 public class SavedInspectionModel {

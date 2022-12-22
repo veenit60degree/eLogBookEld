@@ -7,9 +7,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.util.Log;
-
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 import java.io.BufferedInputStream;
 import java.io.File;

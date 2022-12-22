@@ -18,7 +18,7 @@
             android:paddingTop="@dimen/margin_26"
             android:paddingLeft="@dimen/view_height_150"
             android:paddingRight="@dimen/view_height_150"
-            android:backgroundTint="?attr/layout_color_dot"
+               android:backgroundTint="?attr/trailer_dialog_background"
             >
 
                 <TextView
@@ -68,7 +68,7 @@
                     android:text="@string/go_off_duty"
                     android:textSize="@dimen/text_size_22"
                     android:textAllCaps="false"
-                    android:textColor="@color/bluee_login"
+                    android:textColor="?attr/blue_light_dark"
                     android:background="@drawable/login_driver_btn_selector"
 
                     />

@@ -1,7 +1,6 @@
 package com.background.service;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,12 +11,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import androidx.core.app.ActivityCompat;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.constants.Logger;
 import com.constants.SharedPref;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 
 /**

@@ -7,21 +7,15 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.als.logistic.UILApplication;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.androidtrip.plugins.searchablespinner.SearchableSpinner;
@@ -34,8 +28,8 @@ import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import com.models.VehicleModel;
 import com.searchable.spinner.SearchArrayListAdapter;
 
@@ -124,7 +118,11 @@ public class VehicleDialogLogin  extends Dialog {
         logoutTruckPopupTV = (TextView) findViewById(R.id.logoutVehTV);
         searchableSpinner = (SearchableSpinner) findViewById(R.id.searchableSpinner);
 
-        logoutTruckPopupTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            logoutTruckPopupTV.setText(Html.fromHtml("<font color='white'><u>Logout</u></font>"));
+        } else {
+            logoutTruckPopupTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
+        }
 
         progressD = new ProgressDialog(getContext());
         progressD.setMessage("Loading ...");

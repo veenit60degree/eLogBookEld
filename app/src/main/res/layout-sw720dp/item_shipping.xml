@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:text="@string/bl_or_trip_no"
             android:textStyle="bold"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textSize="@dimen/text_size_22"
             android:layout_marginRight="@dimen/margin_15"
             />
@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/ShipperName"
                     android:textStyle="bold"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_22"
                     android:layout_marginRight="@dimen/margin_15"
                     />
@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/Commodity"
                     android:textStyle="bold"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_22"
                     android:layout_marginRight="@dimen/margin_15"
                     />
@@ -164,7 +164,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/From"
                     android:textStyle="bold"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_22"
                     android:layout_marginRight="@dimen/margin_15"
                     />
@@ -195,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/to"
                     android:textStyle="bold"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_22"
                     android:layout_marginRight="@dimen/margin_15"
                     />
@@ -234,7 +234,7 @@
             android:layout_height="wrap_content"
             android:text="@string/Edit"
             android:textStyle="bold"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:layout_alignParentRight="true"
             android:textSize="@dimen/text_size_21"
             android:padding="@dimen/margin_20"

@@ -2,7 +2,6 @@ package com.constants;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -15,7 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 

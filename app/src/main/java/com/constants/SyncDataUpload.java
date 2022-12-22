@@ -2,10 +2,8 @@ package com.constants;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -14,11 +12,8 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
-import org.json.JSONArray;
-
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class SyncDataUpload extends AsyncTask<String, String, String>{

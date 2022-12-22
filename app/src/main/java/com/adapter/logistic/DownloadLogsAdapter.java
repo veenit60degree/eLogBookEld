@@ -2,7 +2,6 @@ package com.adapter.logistic;
 
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,14 +28,12 @@ import com.constants.DownloadPdf;
 import com.constants.Logger;
 import com.constants.VolleyRequest;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.WebViewActvity;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.WebViewActvity;
 import com.models.DownloadLogsModel;
 import com.rajat.pdfviewer.PdfViewerActivity;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.json.JSONException;
 import org.json.JSONObject;
 

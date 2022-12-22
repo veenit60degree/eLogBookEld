@@ -64,7 +64,7 @@
                         android:paddingTop="@dimen/margin_10"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/power_unit"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_16"
                         android:textStyle="bold" />
 
@@ -104,7 +104,7 @@
                         android:paddingTop="@dimen/margin_10"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/trailer_s"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_16"
                         android:textStyle="bold" />
 
@@ -144,12 +144,12 @@
                 android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
                 android:background="?attr/color_eld_theme"
+                android:textColor="@color/white"
                 android:paddingLeft="@dimen/view_height_55"
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingRight="@dimen/view_height_55"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:text="@string/truck_tractor"
-                android:textColor="?attr/text_black"
                 android:textSize="@dimen/text_size_18"
                 android:textStyle="bold"
 
@@ -194,12 +194,12 @@
                 android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
                 android:background="?attr/color_eld_theme"
+                android:textColor="@color/white"
                 android:paddingLeft="@dimen/view_height_55"
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingRight="@dimen/view_height_55"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:text="@string/Trailer"
-                android:textColor="?attr/text_black"
                 android:textSize="@dimen/text_size_18"
                 android:textStyle="bold"
 
@@ -243,12 +243,12 @@
                 android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"
                 android:background="?attr/color_eld_theme"
+                android:textColor="@color/white"
                 android:paddingLeft="@dimen/view_height_55"
                 android:paddingTop="@dimen/margin_short_7"
                 android:paddingRight="@dimen/view_height_55"
                 android:paddingBottom="@dimen/margin_short_7"
                 android:text="@string/Agriculture"
-                android:textColor="?attr/text_black"
                 android:textSize="@dimen/text_size_18"
                 android:textStyle="bold"
 
@@ -299,7 +299,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Agriculture_Reason"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:layout_marginTop="@dimen/margin_short_5"
                     android:textStyle="bold" />
@@ -349,7 +349,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ContainerIden_Reason"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -394,7 +394,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/DateAndTime"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -434,7 +434,7 @@
                     android:layout_marginRight="@dimen/margin_10"
                     android:layout_toLeftOf="@+id/arrivalContNoEditTxt"
                     android:text="@string/sealNoAtArrival"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -481,7 +481,7 @@
                     android:layout_marginRight="@dimen/margin_10"
                     android:layout_toLeftOf="@+id/departureContNoEditTxt"
                     android:text="@string/sealNoAtDeparture"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold"
 
@@ -533,7 +533,7 @@
                     android:layout_marginTop="@dimen/margin_short_3"
                     android:layout_toLeftOf="@+id/DriverSecurityConLay"
                     android:text="@string/who_conducted_security"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -580,7 +580,7 @@
                             android:id="@+id/conductedSecLay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
+                            android:background="?attr/layout_color_dot"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="@dimen/margin_10"
 
@@ -646,7 +646,7 @@
                     android:layout_marginTop="@dimen/margin_short_3"
                     android:layout_toLeftOf="@+id/DriverSecurityConLay"
                     android:text="@string/who_conducted_followup"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -694,7 +694,7 @@
                             android:id="@+id/followSecLay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
+                            android:background="?attr/layout_color_dot"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="@dimen/margin_10"
 
@@ -760,7 +760,7 @@
                     android:layout_marginTop="@dimen/margin_short_3"
                     android:layout_toLeftOf="@+id/DriverSecurityConLay"
                     android:text="@string/who_affixed_seal"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -807,7 +807,7 @@
                             android:id="@+id/affixedSealLay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
+                            android:background="?attr/layout_color_dot"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="@dimen/margin_10"
 
@@ -873,7 +873,7 @@
                     android:layout_marginTop="@dimen/margin_short_3"
                     android:layout_toLeftOf="@+id/DriverSecurityConLay"
                     android:text="@string/who_verify_physical"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16"
                     android:textStyle="bold" />
 
@@ -919,7 +919,7 @@
                             android:id="@+id/DriverSecurityConLay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
+                            android:background="?attr/layout_color_dot"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="@dimen/margin_10"
 
@@ -978,7 +978,7 @@
                 android:layout_height="@dimen/view_height_39"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginRight="@dimen/margin_short_8"
-                android:background="@drawable/green_eld_drawable"
+                android:background="@drawable/green_selector"
                 android:paddingLeft="@dimen/view_height_40"
                 android:paddingRight="@dimen/view_height_40"
                 android:text="@string/save"

@@ -6,19 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.constants.Constants;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 import com.models.JobGetSet;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 public class WIredObdAdapter  extends BaseAdapter {
 

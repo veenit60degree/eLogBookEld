@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/white_default"
         android:paddingBottom="@dimen/margin_25"
-        android:backgroundTint="?attr/layout_color_dot"
+           android:backgroundTint="?attr/trailer_dialog_background"
         >
 
 
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:text="@string/change_cycle"
         android:layout_gravity="center_horizontal"
-        android:textColor="?attr/color_eld_theme"
+        android:textColor="?attr/txt_eld_color"
         android:textSize="@dimen/view_height_30"
         android:textStyle="bold"
         android:layout_marginTop="@dimen/margin_short_8"

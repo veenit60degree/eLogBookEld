@@ -12,7 +12,7 @@
         android:id="@+id/bleImgView"
         android:layout_width="@dimen/margin_28"
         android:layout_height="@dimen/margin_28"
-        android:tint="@color/gray_text2"
+        android:tint="?attr/gray_text2"
         android:src="@drawable/ble"
         />
 
@@ -24,7 +24,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/margin_10"
         android:textSize="@dimen/text_size_18"
-        android:textColor="@color/gray_text2"
+        android:textColor="?attr/gray_text2"
         android:singleLine="true"
         android:text="SMBLE-"
 

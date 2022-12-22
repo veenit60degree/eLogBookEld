@@ -18,10 +18,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.constants.Constants;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.UnidentifiedFragment;
-import com.messaging.logistic.fragment.UnidentifiedRecordDetailFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.fragment.UnidentifiedFragment;
+import com.als.logistic.fragment.UnidentifiedRecordDetailFragment;
 import com.models.UnIdentifiedRecordModel;
 
 import java.util.ArrayList;

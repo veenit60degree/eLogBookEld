@@ -2,7 +2,7 @@ package com.constants;
 
 import android.util.Log;
 
-import com.messaging.logistic.BuildConfig;
+import com.als.logistic.BuildConfig;
 
 //import androidx.multidex.BuildConfig;
 

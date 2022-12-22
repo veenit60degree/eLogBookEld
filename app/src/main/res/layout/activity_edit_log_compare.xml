@@ -34,17 +34,21 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/bgColor"
-                app:tabSelectedTextColor="@color/blue_button"
-                app:tabIndicatorColor="@color/blue_button"
+                android:background="?attr/layout_color_dot"
+                app:tabSelectedTextColor="?attr/pager_blue"
+                app:tabIndicatorColor="?attr/pager_blue"
                 app:tabMaxWidth="0dp"
                 app:tabGravity="fill"
                 app:tabMode="fixed"
-                app:tabIndicatorHeight="4dp"
-                app:tabBackground="@color/whiteee"
+                app:tabIndicatorHeight="@dimen/margin_short_4"
+                app:tabIconTint="?attr/ripple_effect_gray"
+                app:tabTextColor="@color/black"
+                app:tabBackground="?attr/layout_color_odometer"
 
 
                 />
+
+
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -67,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_short_2"
         card_view:cardCornerRadius="@dimen/margin_short_5"
-        app:cardBackgroundColor="@color/black_unidenfied"
+        app:cardBackgroundColor="?attr/black_unidenfied"
         app:cardElevation="@dimen/margin_short_2"
         app:cardUseCompatPadding="true"
         android:layout_alignParentBottom="true"
@@ -119,7 +123,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_short_2"
         card_view:cardCornerRadius="@dimen/margin_short_5"
-        app:cardBackgroundColor="@color/hos_send_log"
+        app:cardBackgroundColor="?attr/hos_send_log"
         app:cardElevation="@dimen/margin_short_2"
         app:cardUseCompatPadding="true"
         android:layout_alignParentRight="true"

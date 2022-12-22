@@ -23,7 +23,7 @@
             android:paddingLeft="@dimen/margin_short_5"
             android:paddingTop="@dimen/margin_short_5"
             android:text="hello"
-            android:textColor="@color/black"
+            android:textColor="?attr/color_eld_theme"
             android:textSize="@dimen/text_size_16"
 
             />
@@ -36,7 +36,7 @@
             android:layout_alignParentRight="true"
             android:padding="@dimen/margin_short_5"
             android:text="@string/Clear"
-            android:textColor="@color/black"
+            android:textColor="?attr/color_eld_theme"
             android:textSize="@dimen/text_size_17"
             android:textStyle="bold"
 

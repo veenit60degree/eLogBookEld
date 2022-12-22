@@ -4,6 +4,6 @@
 
     <corners android:radius="@dimen/margin_short_7" />
 
-    <solid android:color="@color/active_status_bg" />
+    <solid android:color="?attr/blue_light_dark"/> <!--@color/active_status_bg" />-->
 
 </shape>

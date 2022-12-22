@@ -110,7 +110,7 @@
                                 android:paddingLeft="@dimen/margin_10"
                                 android:text="@string/current_cyclee"
                                 android:textStyle="bold"
-                                android:textColor="?attr/color_eld_theme"
+                                android:textColor="?attr/txt_eld_color"
                                 android:textSize="@dimen/text_size_10"
                                 android:visibility="invisible" />
 
@@ -129,6 +129,8 @@
                                     android:src="@drawable/recycle_icon"
                                     android:tint="?attr/setting_cycle_color"
                                     android:layout_gravity="center_vertical"
+
+
                                     />
 
 
@@ -211,7 +213,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:paddingLeft="@dimen/margin_10"
                                 android:text="@string/current_cyclee"
-                                android:textColor="?attr/color_eld_theme"
+                                android:textColor="?attr/txt_eld_color"
                                 android:textSize="@dimen/text_size_10"
                                 android:textStyle="bold"
                                 android:visibility="invisible" />
@@ -456,7 +458,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/USA_Exemption"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_17"
                         android:paddingRight="@dimen/margin_20"
                         android:paddingLeft="@dimen/margin_10"
@@ -516,7 +518,10 @@
                             android:layout_centerInParent="true"
                             android:layout_marginRight="@dimen/margin_10"
                             android:checked="false"
-                            app:theme="?attr/bgColor" />
+                            android:theme="@style/Custom.Widget.SwitchCompatDark"
+
+
+                            />
 
 
 
@@ -543,8 +548,8 @@
                                 android:layout_width="@dimen/margin_15"
                                 android:layout_height="@dimen/margin_15"
                                 android:layout_centerInParent="true"
-                                android:tint="?attr/adverse_icon_color"
-                                android:src="@drawable/adverse_exception" />
+                                android:src="@drawable/adverse_exception"
+                                android:tint="?attr/adverse_icon_color" />
                         </RelativeLayout>
 
 
@@ -571,9 +576,11 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
+                            app:thumbTextPadding="@dimen/margin_short_5"
+                            android:theme="@style/Custom.Widget.SwitchCompatDark"
 
-                            app:thumbTextPadding="@dimen/margin_short_5" />
+
+                            />
 
 
 
@@ -601,8 +608,11 @@
                                 android:layout_width="@dimen/margin_15"
                                 android:layout_height="@dimen/margin_15"
                                 android:layout_centerInParent="true"
+                                android:src="@drawable/adverse_exception"
+
                                 android:tint="?attr/agriculture_icon_color"
-                                android:src="@drawable/adverse_exception" />
+
+                                />
                         </RelativeLayout>
 
 
@@ -629,9 +639,11 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
+                            app:thumbTextPadding="@dimen/margin_short_5"
+                            android:theme="@style/Custom.Widget.SwitchCompatDark"
 
-                            app:thumbTextPadding="@dimen/margin_short_5" />
+
+                            />
 
 
                     </RelativeLayout>
@@ -660,7 +672,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/CANADA_Exemption"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_17"
                         android:paddingRight="@dimen/margin_20"
                         android:paddingLeft="@dimen/margin_10"
@@ -691,8 +703,8 @@
                                 android:layout_width="@dimen/margin_15"
                                 android:layout_height="@dimen/margin_15"
                                 android:layout_centerInParent="true"
-                                android:tint="?attr/adverse_icon_color"
-                                android:src="@drawable/adverse_exception" />
+                                android:src="@drawable/adverse_exception"
+                                android:tint="?attr/adverse_icon_color" />
                         </RelativeLayout>
 
 
@@ -721,9 +733,11 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
+                            app:thumbTextPadding="@dimen/margin_short_5"
+                            android:theme="@style/Custom.Widget.SwitchCompatDark"
 
-                            app:thumbTextPadding="@dimen/margin_short_5" />
+
+                            />
 
 
 
@@ -756,8 +770,8 @@
                                 android:layout_width="@dimen/margin_15"
                                 android:layout_height="@dimen/margin_15"
                                 android:layout_centerInParent="true"
-                                android:tint="?attr/deferal_icon_color"
-                                android:src="@drawable/deferal_icon" />
+                                android:src="@drawable/deferal_icon"
+                                android:tint="?attr/deferal_icon_color" />
                         </RelativeLayout>
 
                         <TextView
@@ -775,12 +789,10 @@
                             android:id="@+id/deferralSwitchButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
                             android:layout_centerInParent="true"
                             android:checked="false"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-
+                            android:theme="@style/Custom.Widget.SwitchCompatDark"
 
                             />
 
@@ -915,19 +927,15 @@
                             android:textSize="@dimen/text_size_15" />
 
 
-
-
                         <ImageView
                             android:layout_width="@dimen/margin_15"
                             android:layout_height="@dimen/margin_15"
-                            android:layout_centerInParent="true"
-                            android:src="@drawable/arrow_next_unidentfied"
-                            android:tint="@color/gray_category_color"
-                            android:layout_marginRight="@dimen/margin_23"
                             android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginRight="@dimen/margin_23"
+                            android:src="@drawable/arrow_next_unidentfied"
 
-                            />
+                            android:tint="@color/gray_category_color" />
 
                     </RelativeLayout>
 
@@ -1268,7 +1276,10 @@
                             android:layout_centerInParent="true"
                             android:layout_marginRight="@dimen/margin_10"
                             android:checked="false"
-                            app:theme="@style/Custom.Widget.SwitchCompat" />
+                            android:theme="@style/Custom.Widget.SwitchCompatDark"
+
+
+                            />
 
 
 
@@ -1350,11 +1361,11 @@
 
                             <ProgressBar
                                 android:id="@+id/storageProgress"
+                                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:progressDrawable="@drawable/progress_style"
                                 android:background="@drawable/gray_eld_drawable"
-                                style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+                                android:progressDrawable="@drawable/progress_style" />
 
                         </RelativeLayout>
                     </RelativeLayout>

@@ -14,7 +14,9 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/margin_11"
         android:layout_marginTop="@dimen/view_height_33"
+        android:backgroundTint="?attr/trailer_dialog_background"
         />
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -24,7 +26,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/polyImg"
         android:layout_marginRight="@dimen/margin_short_4"
-        android:backgroundTint="?attr/layout_color_dot"
+           android:backgroundTint="?attr/trailer_dialog_background"
         android:orientation="vertical"
         >
 

@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 import java.util.ArrayList;
 

@@ -131,7 +131,7 @@
                         android:singleLine="true"
                         android:layout_marginLeft="@dimen/margin_short_1"
                         android:textSize="@dimen/text_size_16"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:text="(U 70/8)"
                         android:textStyle="bold"
                         />
@@ -146,7 +146,7 @@
                         android:layout_toRightOf="@+id/currentCycleTxtView"
                         android:layout_marginTop="@dimen/margin_10"
                         android:visibility="gone"
-                        android:tint="?attr/color_eld_theme"
+                        android:tint="?attr/eld_icon_color"
                         />
 
 
@@ -159,11 +159,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_short_1"
                     android:layout_marginTop="@dimen/margin_short_3"
-                    android:layout_toLeftOf="@+id/shippingDocLay"
                     android:layout_toRightOf="@+id/currentCycleLay"
                     android:singleLine="true"
                     android:text="Cycle Time Left: 45:36"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_16" />
 
 
@@ -194,7 +193,7 @@
                         android:layout_height="@dimen/view_height_30"
                         android:src="@drawable/calender_eld"
                        android:layout_marginTop="@dimen/margin_short_2"
-                        android:tint="?attr/color_eld_theme"
+                        android:tint="?attr/eld_icon_color"
                         />
 
 
@@ -202,7 +201,7 @@
                         android:id="@+id/dateTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_17"
                         android:paddingTop="@dimen/margin_short_4"
                         android:layout_marginLeft="@dimen/view_height_35"
@@ -223,7 +222,7 @@
                     android:id="@+id/summaryBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/eld_blue_new_selector"
+                    android:background="@drawable/blue_light_dark_selector"
                     android:text="@string/summary"
                     android:textSize="@dimen/text_size_14"
                     android:paddingTop="@dimen/margin_short_8"
@@ -235,7 +234,7 @@
                     android:textColor="@color/whiteee"
                     android:layout_marginRight="@dimen/margin_short_5"
                     android:layout_marginTop="@dimen/margin_short_3"
-                    android:backgroundTint="@color/active_status_bg"
+
                     />
 
 
@@ -450,7 +449,7 @@
                                     android:id="@+id/nameTv"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textColor="?attr/color_eld_theme"
+                                    android:textColor="?attr/txt_eld_color"
                                     android:textSize="@dimen/text_size_16"
                                     android:textStyle="bold"
                                     android:singleLine="true"
@@ -503,7 +502,7 @@
                                     android:id="@+id/tractorTv"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textColor="?attr/color_eld_theme"
+                                    android:textColor="?attr/txt_eld_color"
                                     android:textSize="@dimen/text_size_16"
                                     android:textStyle="bold"
                                     android:layout_marginTop="@dimen/margin_short_5"
@@ -546,7 +545,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/ShippingInfo"
-                                android:textColor="?attr/color_eld_theme"
+                                android:textColor="?attr/txt_eld_color"
                                 android:textSize="@dimen/text_size_16"
                                 android:textStyle="bold"
                                 android:layout_marginLeft="@dimen/margin_10"
@@ -605,7 +604,7 @@
                                     android:id="@+id/coDriverTv"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textColor="?attr/color_eld_theme"
+                                    android:textColor="?attr/txt_eld_color"
                                     android:textSize="@dimen/text_size_16"
                                     android:textStyle="bold"
                                     />
@@ -652,7 +651,7 @@
                                 android:id="@+id/trailorTv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="?attr/color_eld_theme"
+                                android:textColor="?attr/txt_eld_color"
                                 android:textSize="@dimen/text_size_16"
                                 android:textStyle="bold"
                                 android:layout_marginTop="@dimen/margin_short_5"
@@ -697,7 +696,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/Odometers"
-                                android:textColor="?attr/color_eld_theme"
+                                android:textColor="?attr/txt_eld_color"
                                 android:textSize="@dimen/text_size_16"
                                 android:textStyle="bold"
                                 android:layout_marginLeft="@dimen/margin_10"
@@ -766,7 +765,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_toLeftOf="@+id/onDutyTxtVw"
                     android:layout_centerVertical="true"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:padding="0dp"
                     android:textSize="@dimen/text_size_22"
                     android:text="@string/time_default"
@@ -782,7 +781,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_above="@+id/onDutyTimeTxtVw"
                     android:layout_centerVertical="true"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_11"
                     android:padding="0dp"
                     android:visibility="gone"
@@ -797,7 +796,7 @@
                     android:layout_marginRight="@dimen/margin_12"
                     android:text="@string/On_Duty"
                     android:textAllCaps="true"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_15" />
 
 
@@ -810,7 +809,7 @@
                     android:layout_marginRight="@dimen/margin_short_3"
                     android:paddingBottom="@dimen/margin_short_7"
                     android:text="@string/per_shift"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_11"
 
                     />
@@ -847,7 +846,7 @@
                     android:layout_centerVertical="true"
                     android:padding="0dp"
                     android:layout_marginTop="0dp"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_22"
                     android:text="@string/time_default"
                     android:textStyle="bold"
@@ -861,7 +860,7 @@
                     android:text="@string/Violation"
                     android:layout_alignParentLeft="true"
                     android:layout_above="@+id/drivingTimeTxtVw"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_11"
 
                     />
@@ -876,7 +875,7 @@
                     android:layout_marginRight="@dimen/margin_12"
                     android:text="@string/Driving"
                     android:textAllCaps="true"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
 
                     android:textSize="@dimen/text_size_15" />
 
@@ -889,7 +888,7 @@
                     android:layout_marginRight="@dimen/margin_short_3"
                     android:paddingBottom="@dimen/margin_short_7"
                     android:text="@string/per_shift"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_11"
 
                     />
@@ -924,7 +923,7 @@
                     android:layout_centerVertical="true"
                     android:maxLength="7"
                     android:text="@string/time_default"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_22"
                     android:textStyle="bold"
 
@@ -955,7 +954,7 @@
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_15"
                     android:textAllCaps="true"
 
@@ -971,7 +970,7 @@
                     android:layout_marginRight="@dimen/margin_short_3"
                     android:paddingBottom="@dimen/margin_short_7"
                     android:text="@string/per_day"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_11"
 
                     />
@@ -1005,7 +1004,7 @@
                     android:layout_centerVertical="true"
                     android:maxLength="7"
                     android:text="@string/time_default"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_22"
                     android:textStyle="bold"
 
@@ -1019,7 +1018,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_above="@+id/offDutyTimeTxtVw"
                     android:layout_centerVertical="true"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_7"
                     android:visibility="gone"
                     />
@@ -1034,7 +1033,7 @@
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_15"
                     android:textAllCaps="true"
                     />
@@ -1049,7 +1048,7 @@
                     android:layout_marginRight="@dimen/margin_short_3"
                     android:paddingBottom="@dimen/margin_short_7"
                     android:text="@string/per_day"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_11"
 
                     />
@@ -1102,7 +1101,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/view_certify_Log"
                     android:textStyle="bold"
-                    android:textColor="?attr/color_eld_theme"
+                    android:textColor="?attr/txt_eld_color"
                     android:textSize="@dimen/text_size_20"
                     android:textAllCaps="false"
                     android:layout_centerInParent="true"
@@ -1129,7 +1128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/view_height_70"
                 android:text="@string/yard_move"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_20"
                 android:background="@drawable/gray_eld_selector"
                 android:layout_marginLeft="@dimen/margin_short_5"
@@ -1145,7 +1144,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/view_height_70"
                 android:text="@string/Send_Log"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_20"
                 android:background="@drawable/gray_eld_selector"
 
@@ -1168,7 +1167,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/view_height_70"
             android:text="@string/pc_start"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textSize="@dimen/text_size_20"
             android:background="@drawable/gray_eld_selector"
             android:layout_marginLeft="@dimen/margin_16"

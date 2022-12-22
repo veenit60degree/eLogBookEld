@@ -14,11 +14,11 @@
             <item android:bottom="@dimen/margin_short_3" >
                 <shape>
                     <gradient android:angle="270"
-                        android:endColor="@color/gray_hover"
-                        android:startColor="@color/gray_hover" />
+                        android:endColor="?attr/gray_hover"
+                        android:startColor="?attr/gray_hover" />
                     <stroke
                         android:width="@dimen/margin_short_1"
-                        android:color="@color/gray_hover" />
+                        android:color="?attr/gray_hover" />
 
                     <corners android:radius="@dimen/margin_short_4" />
                     <padding

@@ -5,7 +5,7 @@
     android:background="@drawable/white_full_border"
     android:layout_marginLeft="@dimen/margin_10"
     android:layout_marginRight="@dimen/margin_10"
-    android:backgroundTint="?attr/layout_color_dot"
+       android:backgroundTint="?attr/trailer_dialog_background"
     >
 
 
@@ -26,7 +26,7 @@
             android:paddingBottom="@dimen/margin_17"
 
             android:text="@string/action_Support"
-            android:textColor="@color/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textSize="@dimen/text_size_20"
             android:textStyle="bold" />
 
@@ -35,10 +35,9 @@
             android:id="@+id/supportListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:dividerHeight="@dimen/margin_short_1"
-            android:divider="@color/gray_text_color"
             android:layout_below="@+id/headertextView"
-            />
+            android:divider="@color/gray_text_color"
+            android:dividerHeight="@dimen/margin_short_1" />
 
 
         <TextView
@@ -47,15 +46,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/supportListView"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/view_height_30"
             android:layout_marginTop="@dimen/margin_26"
+            android:layout_marginRight="@dimen/view_height_30"
             android:background="@drawable/media_white_drawable"
             android:paddingLeft="@dimen/view_height_33"
             android:paddingTop="@dimen/margin_short_8"
             android:paddingRight="@dimen/view_height_33"
             android:paddingBottom="@dimen/margin_short_8"
             android:text="@string/Close"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/txt_eld_color"
             android:textSize="@dimen/text_size_21"
             android:textStyle="bold" />
 

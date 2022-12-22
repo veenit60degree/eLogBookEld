@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 import com.models.DriverLocationModel;
 import com.shared.pref.StatePrefManager;
 
@@ -3627,5 +3627,169 @@ public class SharedPref {
         }
     }
 
+
+
+    // Get api call status, is already called or not -------------------
+    public static boolean isApiAlreadyCalled(int ApiFlag, Context context) {
+        boolean isApiAlreadyCalled = false;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String apiList = preferences.getString(ConstantsKeys.ApiCallStatus, "[]");
+        try{
+            JSONArray array = new JSONArray(apiList);
+            for(int i = 0 ; i < array.length() ; i++){
+                JSONObject obj = (JSONObject) array.get(i);
+                int savedApiFlag = obj.getInt(ConstantsKeys.ApiFlag);
+                if(savedApiFlag == ApiFlag){
+                    String apiCalledDate = obj.getString(ConstantsKeys.ApiCalledDate);
+                    String currentDate = Globally.GetCurrentDateTime();
+
+                    switch (ApiFlag){
+                        case ConstantsEnum.GetOdometer:
+                            int DayDiff = Constants.getDayDiff(apiCalledDate, currentDate);
+                            if(DayDiff == 0){
+                                isApiAlreadyCalled = true;
+                            }else{
+                                updateApiCallStatus(ApiFlag, true, context);
+                            }
+                            break;
+
+                        case ConstantsEnum.GetNotifications:
+                            int minDiff = Constants.getMinDiff(apiCalledDate, currentDate);
+                            if(minDiff > 30){
+                                updateApiCallStatus(ApiFlag, true, context);
+                            }else{
+                                isApiAlreadyCalled = true;
+                            }
+                            break;
+
+                        case ConstantsEnum.GetDriverPermission:
+                            int minDiffP = Constants.getMinDiff(apiCalledDate, currentDate);
+                            if(minDiffP > 240){
+                                updateApiCallStatus(ApiFlag, true, context);
+                            }else{
+                                isApiAlreadyCalled = true;
+                            }
+                            break;
+
+                        default:
+                            isApiAlreadyCalled = obj.getBoolean(ConstantsKeys.IsAlreadyCalled);
+                            break;
+
+                    }
+
+                    break;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isApiAlreadyCalled;
+
+
+    }
+
+// need to add GetOdometerReading api check and 1 more
+
+    public static void updateApiCallStatus(int ApiFlag, boolean isUpdate, Context context){
+
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+
+            if(ApiFlag != 0) {
+                String apiList = prefs.getString(ConstantsKeys.ApiCallStatus, "[]");
+                JSONArray listArray = new JSONArray(apiList);
+
+
+                boolean isAlreadyExist = false;
+                for (int i = 0; i < listArray.length(); i++) {
+                    JSONObject obj = (JSONObject) listArray.get(i);
+                    int savedApi = obj.getInt(ConstantsKeys.ApiFlag);
+                    if (savedApi == ApiFlag) {
+                        if(isUpdate){
+                            obj.put(ConstantsKeys.ApiCalledDate, Globally.GetCurrentDateTime());
+                            listArray.put(i, obj);
+
+                            // update api call time -----------
+                            editor.putString(ConstantsKeys.ApiCallStatus, listArray.toString());
+
+                        }else {
+                            isAlreadyExist = true;
+                        }
+
+                        break;
+                    }
+                }
+
+                if (!isAlreadyExist) {
+                    JSONObject itemObj = new JSONObject();
+                    itemObj.put(ConstantsKeys.ApiFlag, ApiFlag);
+                    itemObj.put(ConstantsKeys.IsAlreadyCalled, true);
+                    itemObj.put(ConstantsKeys.ApiCalledDate, Globally.GetCurrentDateTime());
+
+                    listArray.put(itemObj);
+
+                    // Save api call status and add api name in list with response status -----------
+                    editor.putString(ConstantsKeys.ApiCallStatus, listArray.toString());
+
+                }
+
+                // Save api call status and add api name in list with response status -----------
+                if(!isUpdate) {
+                    editor.putString(ConstantsKeys.ApiCallStatus, listArray.toString());
+                }
+            }else{
+                // clear list is api is empty, only called in login response -----------
+                editor.putString(ConstantsKeys.ApiCallStatus, "[]");
+            }
+            editor.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    // Save onduty remarks -----------
+    public static void saveOnDutyRemarks(String remarks, Context context){
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ConstantsKeys.OnDutyRemarks, remarks);
+        editor.commit();
+
+    }
+
+
+    // Get onDuty api remarks -------------------
+    public static List<String> getOnDutyRemarks(JSONArray remarkArray, Context context) {
+        List<String> onDutyRemarksList = new ArrayList<>();
+
+        try{
+            if(remarkArray.length() == 0){
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                String apiList = preferences.getString(ConstantsKeys.OnDutyRemarks, "[]");
+                remarkArray = new JSONArray(apiList);
+            }
+
+            if(remarkArray.length() > 0) {
+                onDutyRemarksList.add("Select");
+                for (int i = 0; i < remarkArray.length(); i++) {
+                    JSONObject resultJson = (JSONObject) remarkArray.get(i);
+                    String remarks = resultJson.getString("OnDutyRemarks");
+                    onDutyRemarksList.add(remarks);
+                }
+            }
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return onDutyRemarksList;
+
+
+    }
 
 }

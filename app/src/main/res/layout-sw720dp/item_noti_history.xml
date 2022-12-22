@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_23"
             android:textStyle="bold"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
 
             />
 
@@ -56,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_21"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:layout_marginRight="@dimen/view_height_55"
             android:layout_alignParentRight="true"
 

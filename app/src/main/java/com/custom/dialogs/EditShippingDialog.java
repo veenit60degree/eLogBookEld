@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 public class EditShippingDialog extends Dialog {
 

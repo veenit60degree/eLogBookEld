@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
@@ -18,27 +19,25 @@
         android:paddingBottom="@dimen/margin_18"
 
         >
-
-
+       <!-- android:backgroundTint="?attr/transparent"
+-->
         <LinearLayout
             android:id="@+id/driverTitleLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/driverTitleTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/margin_short_5"
                 android:layout_marginTop="@dimen/margin_15"
+                android:layout_marginBottom="@dimen/margin_short_5"
                 android:text="@string/co_driver_"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_20"
-                android:textStyle="bold"
-                android:textColor="?attr/colorPrimary"
-                />
+                android:textStyle="bold" />
 
 
             <TextView
@@ -48,8 +47,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/margin_short_5"
                 android:text="@string/confirm_password_for_this_driver"
-                android:textSize="@dimen/text_size_16"
                 android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16"
                 android:visibility="gone"
 
                 />
@@ -83,6 +82,8 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColorHint="?attr/text_hint_color"
+
                 >
 
             <com.constants.CustomEditText
@@ -150,6 +151,7 @@
                 android:id="@+id/passInputLay"
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="?attr/color_accent"
+                android:textColorHint="?attr/text_hint_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >

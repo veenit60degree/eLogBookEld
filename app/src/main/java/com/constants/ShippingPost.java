@@ -62,6 +62,7 @@ public class ShippingPost {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 try {
+                    Logger.LogDebug("data", ">>geoData: " + geoData);
                     return geoData.toString().getBytes("utf-8");
                 } catch (UnsupportedEncodingException uee) {
                     VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",

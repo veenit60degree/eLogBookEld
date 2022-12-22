@@ -4,6 +4,6 @@
 
     <corners android:radius="@dimen/margin_short_5" />
 
-    <solid android:color="@color/color_eld_hover_theme" />
+    <solid android:color="?attr/color_eld_hover_btn" />
 
 </shape>

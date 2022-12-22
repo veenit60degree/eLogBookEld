@@ -11,8 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.constants.SharedPref;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 
 public class RecapDialog extends Dialog {

@@ -2,8 +2,7 @@ package com.local.db;
 
 import android.database.Cursor;
 
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.Globally;
 
 import org.json.JSONArray;
 import org.json.JSONException;

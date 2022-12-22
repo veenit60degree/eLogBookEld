@@ -25,7 +25,7 @@
             android:gravity="center_horizontal"
             android:paddingLeft="@dimen/margin_short_3"
             android:text="@string/uniden_record"
-            android:textColor="@color/active_status_bg"
+            android:textColor="?attr/active_status_bg"
             android:textSize="@dimen/text_size_14"
             android:textStyle="bold"
             android:visibility="invisible"
@@ -41,7 +41,7 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/Time"
-            android:textColor="@color/active_status_bg"
+            android:textColor="?attr/active_status_bg"
             android:textSize="@dimen/text_size_14"
 
             />
@@ -54,7 +54,7 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/End_time"
-            android:textColor="@color/active_status_bg"
+            android:textColor="?attr/active_status_bg"
             android:textSize="@dimen/text_size_14"
             android:visibility="gone"
 
@@ -68,7 +68,7 @@
             android:layout_weight="0.8"
             android:gravity="center_horizontal"
             android:text="@string/Status"
-            android:textColor="@color/active_status_bg"
+            android:textColor="?attr/active_status_bg"
             android:textSize="@dimen/text_size_14"
             android:visibility="gone" />
 
@@ -80,7 +80,7 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/vehMiles"
-            android:textColor="@color/active_status_bg"
+            android:textColor="?attr/active_status_bg"
             android:textSize="@dimen/text_size_14"
 
             />
@@ -92,7 +92,7 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/EngineHr"
-            android:textColor="@color/active_status_bg"
+            android:textColor="?attr/active_status_bg"
             android:textSize="@dimen/text_size_14"
 
             />
@@ -105,7 +105,7 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/Duration"
-            android:textColor="@color/active_status_bg"
+            android:textColor="?attr/active_status_bg"
             android:textSize="@dimen/text_size_14"
             android:visibility="gone"
 

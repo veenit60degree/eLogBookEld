@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 import com.models.OtherOptionsModel;
 
 import java.util.List;

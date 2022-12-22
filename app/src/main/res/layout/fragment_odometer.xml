@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/vehicle_no"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textStyle="bold"
             android:textSize="@dimen/text_size_18"
 
@@ -118,7 +118,7 @@
                 android:layout_width="@dimen/view_height_150"
                 android:layout_height="wrap_content"
                 android:text="@string/recent_odometer"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:textStyle="bold"
                 android:textSize="@dimen/text_size_18"
 
@@ -206,7 +206,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/StartReading"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textStyle="bold"
             android:textSize="@dimen/text_size_18"
             />
@@ -247,7 +247,7 @@
             android:layout_width="@dimen/view_height_150"
             android:layout_height="wrap_content"
             android:text="@string/odometerReadingTitle"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textStyle="bold"
             android:textSize="@dimen/text_size_18"
             />
@@ -294,7 +294,7 @@
                 android:layout_width="@dimen/view_height_150"
                 android:layout_height="wrap_content"
                 android:text="@string/end_ododmeter"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:textStyle="bold"
                 android:textSize="@dimen/text_size_18"
                 />
@@ -338,7 +338,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/distanceType"
-            android:textColor="?attr/color_eld_theme"
+            android:textColor="?attr/txt_eld_color"
             android:textStyle="bold"
             android:padding="@dimen/margin_short_5"
             android:textSize="@dimen/text_size_18"
@@ -362,7 +362,7 @@
                 android:layout_marginLeft="@dimen/margin_10"
                 android:text="@string/kilometer"
                 android:textSize="@dimen/text_size_16"
-                android:textColor="?attr/color_eld_theme"
+                android:textColor="?attr/txt_eld_color"
                 android:theme="@style/CustomRadioBtn"
                 android:checked="true"
 

@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/view_height_50"
                 android:layout_below="@+id/signRecordTitleTv"
-                android:background="@color/gray_updated_divider_color"
+                android:background="?attr/gray_updated_divider_color"
                 android:paddingTop="@dimen/margin_short_2"
                 android:paddingBottom="@dimen/margin_short_2"
                 android:gravity="center_vertical"

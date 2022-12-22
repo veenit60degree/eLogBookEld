@@ -13,11 +13,11 @@ import android.widget.TextView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.CertifyViewLogFragment;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
+import com.als.logistic.fragment.CertifyViewLogFragment;
+import com.als.logistic.fragment.EldFragment;
 
 import java.util.ArrayList;
 
@@ -44,7 +44,7 @@ public class InitilizeEldView {
 
                // remainingLay.setVisibility(View.GONE);
                 usedHourLay.setVisibility(View.VISIBLE);
-                jobTimeTxtVw.setText("");
+                jobTimeTxtVw.setText("00:00");
                 jobTimeRemngTxtVw.setText("");
                // perDayTxtVw.setText("(AS PER CURRENT STATUS)");
                 break;
@@ -274,6 +274,7 @@ public class InitilizeEldView {
 
     }
 
+/*
     public void AddTempRemark() {
         Globally.onDutyRemarks = new ArrayList<String>();
         Globally.onDutyRemarks.add("Select");
@@ -301,10 +302,8 @@ public class InitilizeEldView {
         Globally.onDutyRemarks.add("Unloading");
         Globally.onDutyRemarks.add("Yard Move");
         Globally.onDutyRemarks.add("Others");
-
-
-
     }
+*/
 
     
 }

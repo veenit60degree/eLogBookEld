@@ -26,7 +26,7 @@
         android:background="@drawable/voilet_border"
         android:padding="@dimen/margin_15"
       android:layout_centerVertical="true"
-        android:backgroundTint="?attr/layout_color_dot"
+           android:backgroundTint="?attr/trailer_dialog_background"
         >
 
 

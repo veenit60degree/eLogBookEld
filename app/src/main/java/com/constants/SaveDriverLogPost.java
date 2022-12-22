@@ -1,7 +1,6 @@
 package com.constants;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -13,7 +12,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.messaging.logistic.Globally;
 
 import org.json.JSONArray;
 
@@ -47,7 +45,7 @@ public class SaveDriverLogPost
                     @Override
                     public void onResponse(String response) {
                         Logger.LogDebug("Response ", ">>>Response: " + response);
-                        postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag, driverLogData.length());
+                        postResponse.onApiResponse(response, isLoad, IsRecap, DriverType, flag, driverLogData);
                     }
                 },
                 new Response.ErrorListener()

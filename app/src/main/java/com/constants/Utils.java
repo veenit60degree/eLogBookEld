@@ -1,11 +1,9 @@
 package com.constants;
 
 import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
 
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 import org.json.JSONObject;
 
@@ -327,12 +325,12 @@ public class Utils
            // Logger.LogDebug("wiredObdLog", "wiredObdLog: " + text);
             fileSize = text.toString().split("\n\n").length;
 
-           // Logger.LogDebug("log size", "log size: " + fileSize);
-
-            if(fileSize > 2 && Globally.isConnected(context)){
-                SyncWiredObdLog syncDataUpload = new SyncWiredObdLog(context, DriverId, DriverName, wiredObdLog );
-                syncDataUpload.execute();
-
+            if(Globally.isConnected(context)){
+                // Logger.LogDebug("DriverLog", "DriverObdEventLog: " + wiredObdLog);
+                if(fileSize > 2 || text.toString().contains("Scan Complete, Device not found")) {
+                    SyncWiredObdLog syncDataUpload = new SyncWiredObdLog(context, DriverId, DriverName, wiredObdLog);
+                    syncDataUpload.execute();
+                }
             }
         }
     }

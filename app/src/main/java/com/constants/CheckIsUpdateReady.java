@@ -26,25 +26,33 @@ public class CheckIsUpdateReady extends AsyncTask<Void, String, String> {
         String newVersion = null;
 
         try {
+           /* if(appURL == null || appURL.isEmpty()){
+                appURL = "https://play.google.com/store/apps/details?id=com.als.logistic&hl=en";
+            }*/
+
             Document document = Jsoup.connect(appURL)
-                    .timeout(20000)
+                    .timeout(10000)
                     .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
                     .referrer("http://www.google.com")
                     .get();
             if (document != null) {
                 Elements element = document.getElementsContainingOwnText("Current Version");
-                for (Element ele : element) {
-                    if (ele.siblingElements() != null) {
-                        Elements sibElemets = ele.siblingElements();
-                        for (Element sibElemet : sibElemets) {
-                            newVersion = sibElemet.text();
+                if(element != null) {
+                    for (Element ele : element) {
+                        if (ele.siblingElements() != null) {
+                            Elements sibElemets = ele.siblingElements();
+                            for (Element sibElemet : sibElemets) {
+                                newVersion = sibElemet.text();
+                            }
                         }
                     }
                 }
             }
-        } catch (IOException e) {
-            Logger.LogDebug("CheckIsUpdateReady", "UnknownHostException");
-            //e.printStackTrace();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Logger.LogDebug("CheckIsUpdateReady", "----UnknownHostException");
         }
         return newVersion;
     }
@@ -56,7 +64,7 @@ public class CheckIsUpdateReady extends AsyncTask<Void, String, String> {
             mUrlResponce.onReceived(onlineVersion);
         }
 
-        Logger.LogDebug("update", " playstore App version " + onlineVersion);
+        Logger.LogDebug("update", "-----playstore App version " + onlineVersion);
 
     }
 }

@@ -97,14 +97,26 @@
 
         </LinearLayout>
 
+
+        <!--   <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/view_height_40"
+            android:text="@string/welcome_als_realtime"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="@dimen/text_size_23"
+            android:textStyle="bold" />-->
+
+
         <ImageView
             android:id="@+id/askLoginIV"
             android:layout_width="@dimen/view_height_280"
             android:layout_height="@dimen/view_height_140"
-            android:src="@drawable/als_logo"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/view_height_60"
+            android:src="@drawable/als_logo"
 
             />
 

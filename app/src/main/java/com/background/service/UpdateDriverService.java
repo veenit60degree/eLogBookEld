@@ -15,7 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
 import androidx.core.app.ActivityCompat;
-import android.util.Log;
+
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -28,7 +28,7 @@ import com.constants.APIs;
 import com.constants.Logger;
 import com.constants.SharedPref;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -146,7 +146,7 @@ public class UpdateDriverService  extends Service implements LocationListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent("com.messaging.logistic");
+        Intent intent = new Intent("com.als.logistic");
         intent.putExtra("location", "torestore");
         sendBroadcast(intent);
     }

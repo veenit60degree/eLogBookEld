@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,13 +27,14 @@ import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.HelperMethods;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.MalfncnDiagnstcViewPager;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
+import com.als.logistic.fragment.MalfncnDiagnstcViewPager;
 import com.models.MalfunctionHeaderModel;
 import com.models.MalfunctionModel;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -185,17 +185,35 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
 
             LinearLayout malfunctionChildLay = (LinearLayout)convertView.findViewById(R.id.malfunctionChildLay);
             if(childPosition == _listDataChild.get(_listDataHeader.get(groupPosition).getEventCode()).size() -1 ) {
+
                 if(DriverId.equals("0")){
-                    malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                    if(UILApplication.getInstance().isNightModeEnabled()) {
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_dark_gray));
+                    }else{
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                    }
                 }else {
-                    malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
+                    if(UILApplication.getInstance().isNightModeEnabled()) {
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.gray_unidenfied));
+                    }else{
+                        malfunctionChildLay.setBackgroundResource(R.drawable.malfunction_child_selector);
+                    }
                 }
             }else{
                 if(DriverId.equals("0")){
-                    malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                    if(UILApplication.getInstance().isNightModeEnabled()) {
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_dark_gray));
+                    }else{
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.ripple_effect_gray));
+                    }
                 }else {
-                    malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
+                    if(UILApplication.getInstance().isNightModeEnabled()) {
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.gray_unidenfied));
+                    }else{
+                        malfunctionChildLay.setBackgroundColor(_context.getResources().getColor(R.color.whiteee));
+                    }
                 }
+
             }
 
             int sizePadding =  constants.intToPixel(_context, 5);
@@ -221,7 +239,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
                     String DriverId = childData.getMasterDetectionDataEventId();
                     if(DriverId.equals("0")){
                         globally.EldScreenToast(view, _context.getResources().getString(R.string.UnIdentifiedEvent),
-                                _context.getResources().getColor(R.color.colorPrimary));
+                                UILApplication.getInstance().getThemeColor());
                     }
                 }
             });
@@ -543,7 +561,7 @@ public class MalfunctionHistoryAdapter extends BaseExpandableListAdapter {
     DriverLogResponse apiResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, JSONArray inputData) {
 
             try {
 

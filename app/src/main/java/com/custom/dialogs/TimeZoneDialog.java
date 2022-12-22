@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
+import com.als.logistic.UILApplication;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.constants.APIs;
@@ -29,8 +29,8 @@ import com.constants.VolleyRequest;
 import com.constants.VolleyRequestWithoutRetry;
 import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 
 import org.joda.time.DateTime;
 import org.json.JSONObject;
@@ -89,10 +89,17 @@ public class TimeZoneDialog extends Dialog {
         btnUpdateApp = (Button) findViewById(R.id.btnUpdateApp);
 
         isCurrentTimeBigger = global.isCurrentTimeBigger(mContext);
-        logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
+
+
 
         try {
-            String fontColor ="<font color='#1A3561'>";
+            String fontColor = "<font color='#1A3561'>";
+            if(UILApplication.getInstance().isNightModeEnabled()) {
+                fontColor = "<font color='#ffffff'>";
+                logoutTV.setText(Html.fromHtml("<font color='white'><u>Logout</u></font>"));
+            }else{
+                logoutTV.setText(Html.fromHtml("<font color='blue'><u>Logout</u></font>"));
+            }
 
             if (isTimeZoneValid) {
                 // if time zone is valid, means time is invalid
@@ -199,7 +206,9 @@ public class TimeZoneDialog extends Dialog {
 
     //*================== Get Server Current Utc Time request ===================*//*
     void GetServerCurrentUtcTime(){
-        progressD.show();
+        if(getContext() != null)
+            progressD.show();
+
         VolleyRequestWithoutRetry GetServerTimeRequest = new VolleyRequestWithoutRetry(mContext);
         Map<String, String> params = new HashMap<String, String>();
         GetServerTimeRequest.executeRequest(Request.Method.GET, APIs.CONNECTION_UTC_DATE, params, CheckConnection,

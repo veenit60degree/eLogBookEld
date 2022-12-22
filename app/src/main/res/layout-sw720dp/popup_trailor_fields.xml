@@ -24,8 +24,11 @@
             android:orientation="vertical"
             android:background="@drawable/voilet_border"
             android:padding="@dimen/margin_15"
-            android:backgroundTint="?attr/layout_color_dot"
+            android:backgroundTint="?attr/trailer_dialog_background"
+
             >
+
+            <!--   android:backgroundTint="?attr/trailer_dialog_background"-->
 
 
             <com.constants.CustomEditText
@@ -679,7 +682,7 @@
                 android:id="@+id/ReasonEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
+                android:textColor="?attr/color_eld_theme"
                 android:textSize="@dimen/text_size_18"
                 android:imeOptions="actionDone"
                 android:theme="@style/AppTheme.EditText"

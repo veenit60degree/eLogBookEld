@@ -13,9 +13,9 @@ import android.widget.Button;
 import com.constants.ConstantHtml;
 import com.constants.Constants;
 import com.local.db.HelperMethods;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.fragment.EldFragment;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

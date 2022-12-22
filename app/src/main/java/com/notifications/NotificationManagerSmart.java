@@ -13,11 +13,8 @@ import android.text.Html;
 
 import androidx.core.app.NotificationCompat;
 
-import com.constants.Constants;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-
-import org.json.JSONArray;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,15 +118,12 @@ public class NotificationManagerSmart {
 
     public void showLocalNotification(String title, String message, int ID, Intent intent) {
         Globally.PlaySound(mCtx);
+        int flag = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            flag = PendingIntent.FLAG_MUTABLE;
+        }
 
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        mCtx,
-                        ID_BIG_NOTIFICATION,
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(mCtx, ID_BIG_NOTIFICATION, intent, flag  );
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mCtx);
         NotificationManager notificationManager = (NotificationManager) mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification;

@@ -2,8 +2,6 @@ package com.background.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,13 +12,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.speech.tts.TextToSpeech;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -45,33 +39,23 @@ import com.constants.Utils;
 import com.constants.VolleyRequest;
 import com.driver.details.DriverConst;
 import com.htstart.htsdk.HTBleSdk;
-import com.htstart.htsdk.bluetooth.HTBleData;
-import com.htstart.htsdk.bluetooth.HTBleDevice;
-import com.htstart.htsdk.minterface.HTBleScanListener;
-import com.htstart.htsdk.minterface.IReceiveListener;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.local.db.VehiclePowerEventMethod;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.LoginActivity;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import com.notifications.NotificationManagerSmart;
 import com.wifi.settings.WiFiConfig;
 
-import org.greenrobot.eventbus.EventBus;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
@@ -102,7 +86,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
     int SpeedCounter            = 60;      // initially it is 60 so that ELD rule is called instantly
     int ThreshHoldSpeed         = 8;
-    int intermediateRecordTime  = 60;    // intermediate record time is 60 min
+    int intermediateRecordTime  = 5;    // intermediate record time is 60 min
     int OnDutyRecordTime        = 5;    // OnDuty record time is 6 min when earlier event was DR and now vehicle has been stopped for 6 min
     int apiCallCount            = 0;
     int offsetFromUTC           = 0;
@@ -197,7 +181,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive (Context context, Intent intent){
-                // Logger.LogDebug("received", "received from service");
+                 Logger.LogDebug("received", "received from service");
                // boolean BleDataService = intent.getBooleanExtra(ConstantsKeys.BleDataService, false);
                 boolean IsConnected = intent.getBooleanExtra(ConstantsKeys.IsConnected, false);
                 String data         = intent.getStringExtra(ConstantsKeys.Data);
@@ -351,6 +335,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+                }else{
+                    Logger.LogDebug("Driver LoggedIn", "Login");
                 }
 
             }
@@ -967,7 +953,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 checkWifiOBDConnection();
             }
 
-            if(Globally.LATITUDE.length() == 0){
+            if(Globally.LATITUDE.length() < 4){
                 startLocationService();
             }
 
@@ -992,12 +978,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
 
     private void startBleService(){
-        Intent serviceIntent = new Intent(getApplicationContext(), BleDataService.class);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
+        if(TruckID.length() > 0 && CompanyId.length() > 0) {
+            Intent serviceIntent = new Intent(getApplicationContext(), BleDataService.class);
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            }
+            startService(serviceIntent);
         }
-        startService(serviceIntent);
-
     }
 
 
@@ -1024,8 +1011,8 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
             // Logger.LogError(TAG, "-----Running Logout timerTask");
 
             try {
-                if (!SharedPref.IsDriverLogin(getApplicationContext())) {
-                    Logger.LogError("Log", "--stop");
+                if (SharedPref.IsDriverLogin(getApplicationContext())) {
+                    Logger.LogError("Log", "--stop, Driver logged in");
                     
                     StopService();
 
@@ -1166,11 +1153,11 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private void postEventsToServer(){
         JSONArray array = malfunctionDiagnosticMethod.getSavedMalDiagstcArray(dbHelper);
 
-        Logger.LogDebug("array","array: " +array);
-
         if (global.isConnected(getApplicationContext()) && array.length() > 0 && isDataAlreadyPosting == false) {
+            Logger.LogDebug("array","array: " +array);
+
             isDataAlreadyPosting = true;
-            saveDriverLogPost.PostDriverLogData(array,APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout30Sec,
+            saveDriverLogPost.PostDriverLogData(array,APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout20Sec,
                     false, false, 1, 101);
 
             //  constants.saveTempUnidentifiedLog(array.toString(), obdUtil);
@@ -1462,7 +1449,6 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 //  ------------- BLE OBD ----------
                 if (TruckID.length() > 0 && CompanyId.length() > 0) {
                     LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-
                 }
             }else {
                 //  ------------- Wired OBD ----------
@@ -1859,18 +1845,19 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     private void SaveAndUpdateUnidentifiedRecordsApi(JSONArray unPostedLogArray) {
         // remove duplicate records if Exist
 
+        if(CompanyId.length() > 0) {
+            if (unPostedLogArray != null) {
+                unPostedLogArray = removeDuplicateRecordIfCreated(unPostedLogArray);
+            } else {
+                //JSONArray SavedUnidentifiedLogArray = hMethods.getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
+                unPostedLogArray = hMethods.getUnpostedLogArray(Integer.parseInt(CompanyId), dbHelper);
+            }
 
-        if(unPostedLogArray != null){
-            unPostedLogArray = removeDuplicateRecordIfCreated(unPostedLogArray);
-        }else{
-            //JSONArray SavedUnidentifiedLogArray = hMethods.getSavedUnidentifiedLogArray(Integer.parseInt(CompanyId), dbHelper);
-            unPostedLogArray             = hMethods.getUnpostedLogArray(Integer.parseInt(CompanyId), dbHelper);
-
-        }
-        if(unPostedLogArray.length() > 0 && !UnidentifiedApiInProgress) {
-            UnidentifiedApiInProgress = true;
-            SaveUpdateUnidentifiedApi.PostDriverLogData(unPostedLogArray, APIs.ADD_UNIDENTIFIED_RECORD, Constants.SocketTimeout20Sec,
-                    SaveUnidentifiedEvent);
+            if (unPostedLogArray.length() > 0 && !UnidentifiedApiInProgress) {
+                UnidentifiedApiInProgress = true;
+                SaveUpdateUnidentifiedApi.PostDriverLogData(unPostedLogArray, APIs.ADD_UNIDENTIFIED_RECORD, Constants.SocketTimeout20Sec,
+                        SaveUnidentifiedEvent);
+            }
         }
     }
 
@@ -2080,7 +2067,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
     DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int driver_id, int flag, int inputDataLength) {
+        public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int driver_id, int flag, JSONArray inputData) {
 
             try {
                 JSONObject obj = new JSONObject(response);
@@ -2470,7 +2457,7 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
                 }
                 if (global.isConnected(getApplicationContext()) && malArray1.length() > 0 && isMalfncDataAlreadyPosting == false) {
                     isMalfncDataAlreadyPosting = true;
-                    saveDriverLogPost.PostDriverLogData(malArray1, APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout30Sec,
+                    saveDriverLogPost.PostDriverLogData(malArray1, APIs.MALFUNCTION_DIAGNOSTIC_EVENT, Constants.SocketTimeout20Sec,
                             false, false, 1, SaveMalDiagnstcEvent);
                 }
             }

@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +23,8 @@ import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.ShipmentHelperMethod;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import com.models.ShipmentModel;
 
 import org.json.JSONArray;

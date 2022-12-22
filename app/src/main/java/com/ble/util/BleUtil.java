@@ -24,9 +24,8 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.htstart.htsdk.bluetooth.HTBleData;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**

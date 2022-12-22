@@ -1,12 +1,33 @@
 package com.constants;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-
-import com.messaging.logistic.TabAct;
-
 public class ConstantsEnum {
+
+    public static final int UpdateObdVeh          =  20;
+    public static final int GetObdAssignedVeh     =  30;
+    public static final int GetOndutyRemarks      =  40;
+    public static final int SendLog               =  70;
+    public static final int GetOdometer           =  80;
+    public static final int SaveTrailer           =  90;
+    public static final int GetDriverLog18Days    = 100;
+    public static final int GetCoDriverLog18Days  = 110;
+    public static final int GetShipment18Days     = 120;
+    public static final int GetShipment18DaysCo   = 130;
+    public static final int GetOdometers18Days    = 140;
+    public static final int GetDriverPermission   = 150;
+    public static final int GetAddFromLatLng      = 160;
+    public static final int GetInspection18Days   = 170;
+    public static final int GetInspection18DaysCo = 180;
+    public static final int GetInspection         = 190;
+    public static final int GetNotifications      = 200;
+    public static final int GetNewsNotifications  = 210;
+    public static final int GetReCertifyRecords   = 220;
+    public static final int GetRecapViewFlagMain  = 230;
+    public static final int GetRecapViewFlagCo    = 240;
+    public static final int NotReady              = 250;
+    public static final int OdometerDetailInPu    = 260;
+    public static final int SaveAgricultureException = 270;
+    public static final int GetStateList          = 271;
+
 
     public static String SAVE_END_READING     = "Please save your End odometer Reading after personal use";
     public static String SAVE_READING         = "Please save your odometer reading after personal use";

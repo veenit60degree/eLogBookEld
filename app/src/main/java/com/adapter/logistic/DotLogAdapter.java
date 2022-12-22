@@ -6,11 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 import com.models.DotDataModel;
 
 import java.util.List;

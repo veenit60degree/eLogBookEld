@@ -51,14 +51,14 @@ public class TcpClient {
             String command = strings[0];
             PrintWriter output = null;
             OutputStream out = null;
-            SocketAddress address = new InetSocketAddress(SERVER_IP, SERVER_PORT);
             Socket socket = new Socket();
             StringBuilder textBuilder = new StringBuilder();
 
             try {
+                SocketAddress address = new InetSocketAddress(SERVER_IP, SERVER_PORT);
                 socket.connect(address, 1700);
                 socket.setSoTimeout(1700);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Logger.LogError("socket","socket Invalid connection");
               //  e.printStackTrace();
             }
@@ -69,7 +69,8 @@ public class TcpClient {
                 output.print(command);
                 output.flush();
 
-            } catch (IOException e) {
+            } catch (Exception e) {
+                e.printStackTrace();
                 response = noObd;
               //  Logger.LogError("PrintWriter", "PrintWriter object(out) is null" );
             }
@@ -88,7 +89,8 @@ public class TcpClient {
                 }
                 response = textBuilder.toString();
             //    Logger.LogDebug("test", "trying to read from server: " );
-            } catch (IOException e) {
+            } catch (Exception e) {
+                e.printStackTrace();
                 if(!response.equals(noObd))
                     response = textBuilder.toString();
             }

@@ -10,9 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.os.Handler;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -20,13 +18,12 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentManager;
 
 import com.adapter.logistic.SlideMenuAdapter;
 import com.android.volley.DefaultRetryPolicy;
@@ -48,23 +45,19 @@ import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
 import com.local.db.MalfunctionDiagnosticMethod;
 import com.local.db.RecapViewMethod;
-import com.messaging.logistic.EldActivity;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.SuggestedFragmentActivity;
-import com.messaging.logistic.TabAct;
-import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.EldFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.SuggestedFragmentActivity;
+import com.als.logistic.TabAct;
+import com.als.logistic.UILApplication;
+import com.als.logistic.fragment.EldFragment;
 import com.models.EldDataModelNew;
 import com.shared.pref.CoDriverEldPref;
 import com.shared.pref.MainDriverEldPref;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -153,6 +146,10 @@ public class Slidingmenufunctions implements OnClickListener {
 		appVersionHome.setVisibility(View.GONE);
 		dialog.setMessage("Loading..");
 
+		ImageView slideLogoIV = (ImageView)menu.findViewById(R.id.slideLogoIV);
+		if (UILApplication.getInstance().isNightModeEnabled()) {
+			slideLogoIV.setColorFilter(context.getResources().getColor(R.color.dark_cream_white));
+		}
 
 
 
@@ -334,9 +331,13 @@ public class Slidingmenufunctions implements OnClickListener {
 
 				closeDialogs();
 
-				String title                      = "<font color='#1A3561'><b>Certify Reminder !!</b></font>";
-				String message                   = "<font color='#2E2E2E'><html>" + context.getResources().getString(R.string.certify_previous_days_log_warning) + " </html></font>";
+				String colorCode                  = "#1A3561";
+				if (UILApplication.getInstance().isNightModeEnabled()) {
+					colorCode = "#ffffff";
+				}
 
+				String title                      = "<font color='" + colorCode + "'><b>Certify Reminder !!</b></font>";
+				String message                   = "<font color='#2E2E2E'><html>" + context.getResources().getString(R.string.certify_previous_days_log_warning) + " </html></font>";
 
 				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context,R.style.AlertDialogStyle);
 				alertDialogBuilder.setTitle(Html.fromHtml(title));
@@ -754,7 +755,7 @@ public class Slidingmenufunctions implements OnClickListener {
 	DriverLogResponse saveLogRequestResponse = new DriverLogResponse() {
 		@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 		@Override
-		public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, int inputDataLength) {
+		public void onApiResponse(String response, boolean isLoad, boolean IsRecap, int DriverType, int flag, JSONArray inputData) {
 
 			try {
 				if (global.isSingleDriver(context)) {
@@ -803,10 +804,10 @@ public class Slidingmenufunctions implements OnClickListener {
 		try {
 			if(context != null) {
 				MainDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.selected_driver_border));
-				MainDriverBtn.setTextColor(context.getResources().getColor(R.color.blue_button_hover));
+				MainDriverBtn.setTextColor(R.attr.blue_button_hover);
 
 				CoDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.unselected_driver_border));
-				CoDriverBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
+				CoDriverBtn.setTextColor(R.attr.gray_text2);
 			}
 		}catch (Exception e){
 			e.printStackTrace();
@@ -819,10 +820,10 @@ public class Slidingmenufunctions implements OnClickListener {
 			if(context != null) {
 				if (SharedPref.getDriverType(context).equals(DriverConst.TeamDriver)) {
 					CoDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.selected_driver_border));
-					CoDriverBtn.setTextColor(context.getResources().getColor(R.color.blue_button_hover));
+					CoDriverBtn.setTextColor(R.attr.blue_button_hover);
 
 					MainDriverBtn.setBackground(context.getResources().getDrawable(R.drawable.unselected_driver_border));
-					MainDriverBtn.setTextColor(context.getResources().getColor(R.color.gray_hover));
+					MainDriverBtn.setTextColor(R.attr.gray_text2);
 				} else {
 					if (isShown)
 						global.EldScreenToast(MainDriverBtn, "Co Driver information not available", eldWarningColor);

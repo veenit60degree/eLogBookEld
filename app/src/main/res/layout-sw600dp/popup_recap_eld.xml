@@ -31,7 +31,7 @@
                 android:textSize="@dimen/text_size_22"
                 android:gravity="center"
                 android:padding="@dimen/margin_short_5"
-                android:background="@color/color_eld_theme"
+                android:background="?attr/txt_eld_color"
                 android:layout_marginTop="@dimen/margin_10"
                 />
 
@@ -39,14 +39,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/Recap"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_22"
+                android:background="@drawable/green_default"
                 android:gravity="center"
                 android:padding="@dimen/margin_10"
-                android:background="@drawable/green_default"
-                />
+                android:text="@string/Recap"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_22"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -85,7 +84,7 @@
                         android:layout_width="@dimen/view_height_210"
                         android:layout_height="wrap_content"
                         android:text="@string/Driver_Name"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_18"
                         android:singleLine="true"
                         />
@@ -96,7 +95,7 @@
                         android:id="@+id/recap_driver_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/bluee_login"
+                        android:textColor="?attr/color_eld_bg"
                         android:textSize="@dimen/text_size_17"
                         android:singleLine="true"
                         />
@@ -122,7 +121,7 @@
                         android:layout_width="@dimen/view_height_210"
                         android:layout_height="wrap_content"
                         android:text="@string/CO_Driver_Name"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_18"
                         android:singleLine="true"
                         />
@@ -134,7 +133,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/co_driver"
-                        android:textColor="@color/bluee_login"
+                        android:textColor="?attr/color_eld_bg"
                         android:textSize="@dimen/text_size_17"
                         android:singleLine="true"
                         />
@@ -159,7 +158,7 @@
                         android:layout_width="@dimen/view_height_210"
                         android:layout_height="wrap_content"
                         android:text="@string/current_cycle"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_18"
                         android:singleLine="true"
                         />
@@ -170,7 +169,7 @@
                         android:id="@+id/recap_current_cycle_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/bluee_login"
+                        android:textColor="?attr/color_eld_bg"
                         android:textSize="@dimen/text_size_17"
                         android:singleLine="true"
                         />
@@ -194,7 +193,7 @@
                         android:layout_width="@dimen/view_height_210"
                         android:layout_height="wrap_content"
                         android:text="@string/Cycle_Remaining_Hrs"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_18"
                         android:singleLine="true"
                         />
@@ -206,7 +205,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/time_tempp"
-                        android:textColor="@color/bluee_login"
+                        android:textColor="?attr/color_eld_bg"
                         android:textSize="@dimen/text_size_17"
                         android:singleLine="true"
                         />
@@ -243,7 +242,7 @@
                         android:layout_width="@dimen/view_height_230"
                         android:layout_height="wrap_content"
                         android:text="@string/Truck_recap"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_18"
                         android:singleLine="true"
                         />
@@ -254,7 +253,7 @@
                         android:id="@+id/recap_truck_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/bluee_login"
+                        android:textColor="?attr/color_eld_bg"
                         android:textSize="@dimen/text_size_17"
                         android:singleLine="true"
                         />
@@ -278,7 +277,7 @@
                         android:layout_width="@dimen/view_height_230"
                         android:layout_height="wrap_content"
                         android:text="@string/trailer_recap"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_18"
                         android:singleLine="true"
                         />
@@ -289,7 +288,7 @@
                         android:id="@+id/recap_trailer_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/bluee_login"
+                        android:textColor="?attr/color_eld_bg"
                         android:textSize="@dimen/text_size_17"
                         android:singleLine="true"
                         />
@@ -313,7 +312,7 @@
                         android:layout_width="@dimen/view_height_230"
                         android:layout_height="wrap_content"
                         android:text="@string/OnDuty_Hrs_Avail_Today"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_18"
                         android:singleLine="true"
                         />
@@ -325,7 +324,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/time_tempp"
-                        android:textColor="@color/bluee_login"
+                        android:textColor="?attr/color_eld_bg"
                         android:textSize="@dimen/text_size_17"
                         android:singleLine="true"
                         />
@@ -348,7 +347,7 @@
                         android:layout_width="@dimen/view_height_230"
                         android:layout_height="wrap_content"
                         android:text="@string/Drive_Hrs_Avail_Today"
-                        android:textColor="@color/color_eld_theme"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_18"
                         android:singleLine="true"
                         />
@@ -360,7 +359,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/time_tempp"
-                        android:textColor="@color/bluee_login"
+                        android:textColor="?attr/color_eld_bg"
                         android:textSize="@dimen/text_size_17"
                         android:singleLine="true"
                         />

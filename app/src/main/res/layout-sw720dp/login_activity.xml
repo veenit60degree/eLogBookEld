@@ -57,17 +57,6 @@
                 />
 
 
-            <TextView
-                android:id="@+id/welcomeToAlsTV"
-                android:layout_centerHorizontal="true"
-                android:textStyle="bold"
-                android:textColor="?attr/colorPrimary"
-                android:layout_marginTop="@dimen/view_height_25"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_20"
-                android:text="@string/welcome_to_als_realtime"
-                />
 
 
 
@@ -111,7 +100,22 @@
 
     />
 
-</RelativeLayout>
+
+            <TextView
+                android:id="@+id/welcomeToAlsTV"
+                android:layout_centerHorizontal="true"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginTop="@dimen/view_height_25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_20"
+                android:text="@string/welcome_to_als_realtime"
+                />
+
+
+
+        </RelativeLayout>
     </ScrollView>
 
 

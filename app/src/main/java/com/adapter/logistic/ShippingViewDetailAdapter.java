@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
 import com.models.ShipmentModel;
 
 import java.util.List;

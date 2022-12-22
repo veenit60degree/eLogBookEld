@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 
 public class TimerDialog extends Dialog {

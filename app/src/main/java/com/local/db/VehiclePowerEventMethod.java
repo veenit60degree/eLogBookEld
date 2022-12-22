@@ -6,7 +6,7 @@ import android.database.Cursor;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.driver.details.DriverConst;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 import org.json.JSONArray;
 import org.json.JSONException;

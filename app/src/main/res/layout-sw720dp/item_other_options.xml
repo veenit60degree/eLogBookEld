@@ -18,7 +18,7 @@
         android:layout_width="@dimen/view_height_35"
         android:layout_height="@dimen/view_height_35"
         android:layout_gravity="center_vertical"
-        android:tint="@color/colorPrimary"
+        android:tint="?attr/txt_eld_color"
         android:visibility="gone"
 
         />
@@ -32,7 +32,7 @@
         android:layout_marginLeft="@dimen/margin_15"
         android:textSize="@dimen/text_size_22"
         android:textStyle="bold"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/txt_eld_color"
         android:singleLine="true"
         android:text="sdg dh fghfg gh"
         />

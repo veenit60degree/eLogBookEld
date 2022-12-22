@@ -1,7 +1,6 @@
 package com.adapter.logistic;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.constants.Constants;
-import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.InspectionFragment;
+import com.als.logistic.R;
+import com.als.logistic.fragment.InspectionFragment;
 import com.models.PrePostModel;
 
 import java.util.ArrayList;

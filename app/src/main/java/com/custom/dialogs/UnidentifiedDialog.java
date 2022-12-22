@@ -5,28 +5,24 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
 import com.constants.APIs;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.constants.VolleyRequest;
 import com.google.android.material.textfield.TextInputLayout;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import java.util.Map;
 
 public class UnidentifiedDialog extends Dialog {

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,12 +14,10 @@ import android.widget.TextView;
 
 import androidx.viewpager.widget.ViewPager;
 
-import com.adapter.logistic.NotificationPagerAdapter;
 import com.adapter.logistic.PermissionPagerAdapter;
-import com.constants.ConstantsEnum;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.TermsConditionsActivity;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.TermsConditionsActivity;
 import com.models.NotificationNewsModel;
 import com.models.PermissionInfoModel;
 
@@ -82,8 +79,8 @@ public class PermissionInfoDialog extends Dialog {
         dataList.add(new PermissionInfoModel("Location", "We use location information for Events Statuses by Driver as per requirements of Electronic Logging Device to provide better Fleet Management Solution.\nLog Book accesses the location in background even when driver is not logged in to accumulate Unidentified Driving information with location coordinates.\nWe don't display any advertisement in the application and location services are not used for any sort of advertisements at all.", R.drawable.permsn_location));
         dataList.add(new PermissionInfoModel("Storage", "We may use storage permission to save driver's log locally when Internet connection is not available and synced automatically to server when comes online. So that driver can use the app freely without network dependency.", R.drawable.permsn_storage));
 
-      //  dataList.add(new PermissionInfoModel("Location", "We use location information for Events Statuses by Driver as per requirements of Electronic Logging Device to provide better Fleet Management Solution. Location information pertaining to Driver Statuses include On-Duty, Driving, Off Duty, Sleeper Berth, Inspection Reports, Send Logs to Government etc.", R.drawable.permsn_storage));
-       // dataList.add(new PermissionInfoModel("Location", "We may use location information to improve and personalize the services and to contact you about service offerings that may be of interest to you.", R.drawable.permsn_location));
+      // dataList.add(new PermissionInfoModel("Location", "We use location information for Events Statuses by Driver as per requirements of Electronic Logging Device to provide better Fleet Management Solution. Location information pertaining to Driver Statuses include On-Duty, Driving, Off Duty, Sleeper Berth, Inspection Reports, Send Logs to Government etc.", R.drawable.permsn_storage));
+      // ataList.add(new PermissionInfoModel("Location", "We may use location information to improve and personalize the services and to contact you about service offerings that may be of interest to you.", R.drawable.permsn_location));
 
         PermissionPagerAdapter pagerAdapter = new PermissionPagerAdapter(getContext(), dataList);
         permissionInfoPager.setAdapter(pagerAdapter);

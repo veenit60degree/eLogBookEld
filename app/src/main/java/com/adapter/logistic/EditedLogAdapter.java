@@ -9,10 +9,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.messaging.logistic.UILApplication;
+import com.als.logistic.UILApplication;
 import com.models.EldDriverLogModel;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 
 import java.util.List;
 

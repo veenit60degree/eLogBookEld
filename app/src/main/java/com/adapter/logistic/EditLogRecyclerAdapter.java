@@ -23,9 +23,9 @@ import com.drag.SwipeAndDragHelper;
 import com.local.db.ConstantsKeys;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.EditLogFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.fragment.EditLogFragment;
 import com.models.DriverLogModel;
 
 import org.joda.time.DateTime;

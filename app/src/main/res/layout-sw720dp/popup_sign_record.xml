@@ -15,17 +15,17 @@
         >
 
 
-
         <CheckBox
             android:id="@+id/signRecordCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_18"
-            android:textColor="@color/color_eld_bg"
+            android:layout_centerVertical="true"
             android:button="@drawable/unidentified_checkbox_drawable"
             android:paddingLeft="@dimen/margin_short_3"
             android:paddingRight="@dimen/margin_13"
-            android:layout_centerVertical="true"
+            android:textSize="@dimen/text_size_18"
+            android:textColor="?attr/color_eld_bg"
+            android:buttonTint="?attr/color_eld_bg"
 
             />
 
@@ -74,24 +74,23 @@
             />
 
 
-
         <TextView
             android:id="@+id/certifyStatusTxtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/certify"
-            android:textStyle="bold"
-            android:paddingTop="@dimen/margin_short_5"
-            android:paddingBottom="@dimen/margin_short_5"
-            android:paddingRight="@dimen/margin_25"
-            android:paddingLeft="@dimen/margin_25"
-            android:layout_marginRight="@dimen/margin_20"
-            android:textSize="@dimen/text_size_16"
-            android:textAllCaps="true"
-            android:background="@drawable/certify_border"
-            android:textColor="@color/colorVoilation"
-            android:layout_toLeftOf="@+id/signRecordRightImg"
             android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_20"
+            android:layout_toLeftOf="@+id/signRecordRightImg"
+            android:background="@drawable/certify_border"
+            android:paddingLeft="@dimen/margin_25"
+            android:paddingTop="@dimen/margin_short_5"
+            android:paddingRight="@dimen/margin_25"
+            android:paddingBottom="@dimen/margin_short_5"
+            android:text="@string/certify"
+            android:textAllCaps="true"
+            android:textColor="?attr/share_icon_color"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold"
 
             />
 

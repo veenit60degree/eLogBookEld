@@ -5,16 +5,15 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.constants.Constants;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
 import com.models.CanadaDutyStatusModel;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public class CanDotCycleOpZoneAdapter extends RecyclerView.Adapter<CanDotCycleOp
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         if(UILApplication.getInstance().isNightModeEnabled()){
-            holder.addHrsDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.layout_color_dot));
+            holder.addHrsDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.trailer_dialog_background));
         }else{
             holder.addHrsDotLay.setBackgroundColor(mContext.getResources().getColor(R.color.whiteee));
         }

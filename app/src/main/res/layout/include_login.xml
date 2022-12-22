@@ -56,6 +56,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColorHint="?attr/text_hint_color"
 
                 >
 
@@ -64,6 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/Username"
+                android:textColorHint="?attr/text_hint_color"
                 android:background="@color/transparent"
                 android:textColor="?attr/colorPrimary"
                 android:paddingRight="6dp"
@@ -118,7 +120,8 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="?attr/textColor"
+                app:passwordToggleTint="?attr/text_hint_color"
+                android:textColorHint="?attr/text_hint_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

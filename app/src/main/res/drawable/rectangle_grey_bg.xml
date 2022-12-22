@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"
     >
-    <solid android:color="@color/deferral_light_blue"></solid>
-    <corners android:radius="5dp"
+    <solid android:color="?attr/deferral_light_blue"></solid>
+    <corners android:radius="@dimen/margin_short_5"
 
         ></corners>
 </shape>

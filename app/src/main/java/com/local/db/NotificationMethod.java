@@ -3,8 +3,6 @@ package com.local.db;
 import android.database.Cursor;
 
 import com.constants.Constants;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
 import com.models.Notification18DaysModel;
 
 import org.joda.time.DateTime;
@@ -12,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationMethod {

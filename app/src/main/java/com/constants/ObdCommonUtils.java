@@ -3,11 +3,9 @@ package com.constants;
 import android.content.Context;
 
 import com.local.db.ConstantsKeys;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 import org.joda.time.DateTime;
-import org.joda.time.Minutes;
-import org.joda.time.Seconds;
 
 public class ObdCommonUtils {
 

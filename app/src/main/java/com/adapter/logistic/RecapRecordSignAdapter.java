@@ -1,12 +1,9 @@
 package com.adapter.logistic;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -14,9 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.custom.dialogs.SignRecordDialog;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.fragment.UnidentifiedFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 import com.models.RecapSignModel;
 import com.models.TripHistoryModel;
 

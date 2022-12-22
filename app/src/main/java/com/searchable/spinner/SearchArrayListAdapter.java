@@ -7,11 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.androidtrip.plugins.searchablespinner.interfaces.ISpinnerSelectedView;
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 import java.util.ArrayList;
 

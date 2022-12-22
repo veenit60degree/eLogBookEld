@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 import com.models.PermissionInfoModel;
 
 import java.util.List;

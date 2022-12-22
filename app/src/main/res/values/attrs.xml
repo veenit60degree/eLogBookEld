@@ -88,6 +88,37 @@
         <attr name="fb_default" format="color"/>
         <attr name="gray_updated_divider_color" format="color"/>
         <attr name="actionbar_color" format="color"/>
-    <attr name="color_sleeper" format="color"/>
+        <attr name="color_sleeper" format="color"/>
+        <attr name="text_hint_color" format="color"/>
+
+        <attr name="trailer_dialog_background" format="color"/>
+        <attr name="white_border" format="color"/>
+    <attr name="camera_transparent_dark" format="color"/>
+    <attr name="transparent" format="color"/>
+    <attr name="transparent_sidemenu" format="color"/>
+    <attr name="txt_eld_color" format="color"/>
+    <attr name="slide_menu_icon" format="color"/>
+    <attr name="blue_button_hover" format="color"/>
+    <attr name="hos_send_log" format="color"/>
+    <attr name="cancel_gray_text" format="color"/>
+    <attr name="eld_blue_lightt" format="color"/>
+    <attr name="color_eld_hover_btn" format="color"/>
+
+    <attr name="blue_light_dark" format="color"/>
+    <attr name="blue_light_dark_hover" format="color"/>
+    <attr name="download_rods_icon_color" format="color"/>
+    <attr name="shadow" format="color"/>
+    <attr name="blue_button_dark" format="color"/>
+   <attr name="pager_blue" format="color"/>
+
+     <attr name="dot_titles_bg2" format="color"/>
+
+
+   <!-- <attr name="" format="color"/>
+      <attr name="" format="color"/>
+    <attr name="" format="color"/>
+    <attr name="" format="color"/>
+-->
+
 
 </resources>

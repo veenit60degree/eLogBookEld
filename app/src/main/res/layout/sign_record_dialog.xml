@@ -39,73 +39,70 @@
                 />
 
 
-        <RelativeLayout
-            android:id="@+id/actionLabelLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_40"
-            android:layout_below="@+id/signRecordTitleTv"
-            android:background="?attr/gray_updated_divider_color"
-            android:paddingTop="@dimen/margin_short_2"
-            android:paddingBottom="@dimen/margin_short_2"
-            android:paddingLeft="@dimen/margin_short_5"
-            android:gravity="center_vertical"
-            >
+            <RelativeLayout
+                android:id="@+id/actionLabelLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_40"
+                android:layout_below="@+id/signRecordTitleTv"
+                android:background="?attr/gray_updated_divider_color"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/margin_short_5"
+                android:paddingTop="@dimen/margin_short_2"
+                android:paddingBottom="@dimen/margin_short_2">
 
-            <CheckBox
-                android:id="@+id/selectAllRecordsCheckBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/select_all"
-                android:layout_marginLeft="@dimen/margin_10"
-                android:textSize="@dimen/text_size_16"
-                android:textColor="?attr/color_eld_bg"
-                android:button="@drawable/unidentified_checkbox_drawable"
-                android:paddingTop="@dimen/margin_short_1"
-                android:paddingLeft="@dimen/margin_short_3"
-                android:layout_centerVertical="true"
-
-
-                />
+                <CheckBox
+                    android:id="@+id/selectAllRecordsCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/margin_10"
+                    android:button="@drawable/unidentified_checkbox_drawable"
+                    android:paddingLeft="@dimen/margin_short_3"
+                    android:paddingTop="@dimen/margin_short_1"
+                    android:text="@string/select_all"
+                    android:textColor="?attr/color_eld_bg"
+                    android:textSize="@dimen/text_size_16"
 
 
-            <TextView
-                android:id="@+id/fromToDateTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/textColor"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_16"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                />
+                    />
 
 
-            <TextView
-                android:id="@+id/certifyRecordTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/blue_button"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_16"
-                android:layout_alignParentRight="true"
-                android:paddingRight="@dimen/margin_18"
-                android:paddingLeft="@dimen/margin_10"
-                android:paddingTop="@dimen/margin_short_5"
-                android:paddingBottom="@dimen/margin_short_5"
-                android:text="@string/certify"
-                android:layout_centerVertical="true"
-                android:visibility="gone"
+                <TextView
+                    android:id="@+id/fromToDateTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="?attr/textColor"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold" />
 
-                />
 
-            <ImageView
-                android:id="@+id/invisbleSignImgView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="gone"
-                />
+                <TextView
+                    android:id="@+id/certifyRecordTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingTop="@dimen/margin_short_5"
+                    android:paddingRight="@dimen/margin_18"
+                    android:paddingBottom="@dimen/margin_short_5"
+                    android:text="@string/certify"
+                    android:textColor="@color/blue_button"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold"
+                    android:visibility="gone"
 
-        </RelativeLayout>
+                    />
+
+                <ImageView
+                    android:id="@+id/invisbleSignImgView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
 
             <TextView

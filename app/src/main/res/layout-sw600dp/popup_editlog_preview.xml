@@ -6,7 +6,7 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:layout_margin="@dimen/margin_15"
-    android:backgroundTint="?attr/layout_color_dot"
+       android:backgroundTint="?attr/trailer_dialog_background"
     >
 
 
@@ -38,22 +38,22 @@
                 android:gravity="center"
                 android:padding="@dimen/margin_short_8"
 
-                android:background="@color/color_eld_theme"
+                android:background="?attr/color_eld_theme"
                 android:layout_marginTop="@dimen/margin_12"
                 />
 
 
             <TextView
+                android:id="@+id/textView7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/edit_log_preview"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_size_20"
+                android:background="@drawable/green_default"
                 android:gravity="center"
                 android:padding="@dimen/margin_short_8"
-                android:background="@drawable/green_default"
-                android:id="@+id/textView7" />
+                android:text="@string/edit_log_preview"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_20"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -101,7 +101,7 @@
                 android:layout_marginLeft="@dimen/view_height_45"
                 android:layout_marginRight="@dimen/view_height_50"
                 android:textColor="@color/whiteee"
-                android:background="@drawable/red_btn_selector"
+                android:background="@drawable/gray_selector"
                 android:textAllCaps="false"
                 android:layout_weight="1"
 

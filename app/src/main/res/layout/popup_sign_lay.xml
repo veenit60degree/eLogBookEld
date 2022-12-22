@@ -7,27 +7,27 @@
     >
 
 
-
     <RelativeLayout
         android:id="@+id/viewContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/white_default"
-        android:layout_marginRight="9dp"
         android:layout_marginLeft="5dp"
+        android:layout_marginRight="9dp"
+        android:background="@drawable/white_default"
+        android:backgroundTint="?attr/trailer_dialog_background"
         android:paddingBottom="15dp"
-        android:backgroundTint="?attr/layout_color_dot"
 
         >
 
         <RelativeLayout
             android:id="@+id/viewSignContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/white_default"
-            android:layout_marginRight="9dp"
             android:layout_marginLeft="5dp"
-            android:backgroundTint="?attr/layout_color_dot"
+            android:layout_marginRight="9dp"
+            android:background="@drawable/white_default"
+            android:backgroundTint="?attr/trailer_dialog_background"
+            android:layout_toLeftOf="@+id/showPreviousSign"
 
             >
 
@@ -39,7 +39,7 @@
                 android:gravity="left"
                 android:paddingLeft="@dimen/margin_15"
                 android:text="Certify log alert !!"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="23sp"
                 android:textStyle="bold" />
 
@@ -47,10 +47,9 @@
                 android:id="@+id/descLay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_below="@+id/changeTitleView"
                 android:gravity="left"
-                >
+                android:orientation="vertical">
 
 
                 <TextView
@@ -73,23 +72,22 @@
 
         <ImageView
             android:id="@+id/showPreviousSign"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_105"
-            android:layout_toEndOf="@+id/viewSignContainer"
+            android:layout_width="@dimen/view_height_160"
+            android:layout_height="@dimen/view_height_80"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/margin_20"
             android:paddingRight="@dimen/margin_25" />
 
         <LinearLayout
             android:id="@+id/btnLinLay"
             android:layout_width="wrap_content"
             android:layout_height="42dp"
-            android:layout_marginTop="@dimen/margin_10"
-            android:layout_below="@+id/viewSignContainer"
-            android:orientation="horizontal"
-            android:layout_marginLeft="18dp"
-            android:layout_marginRight="18dp"
+            android:layout_below="@+id/showPreviousSign"
             android:layout_alignParentRight="true"
-            >
-
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginRight="18dp"
+            android:orientation="horizontal">
 
 
             <!-- android:background="@drawable/edtittext_border"-->
@@ -97,33 +95,30 @@
                 android:id="@+id/cancelPopupButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="@string/no"
                 android:layout_margin="1dp"
-                android:textColor="@color/text_forgot"
-                android:textAllCaps="false"
-                android:textSize="@dimen/text_size_14"
-                android:background="@drawable/transparent"
                 android:layout_marginRight="@dimen/margin_short_7"
+                android:background="@drawable/transparent"
+                android:text="@string/no"
+                android:textAllCaps="false"
+                android:textColor="?attr/blue_button_hover"
+                android:textSize="@dimen/text_size_14"
 
                 />
-
 
 
             <Button
                 android:id="@+id/confirmPopupButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="@string/yes"
-                android:textStyle="bold"
                 android:layout_margin="1dp"
-                android:textColor="?attr/colorPrimary"
-                android:textAllCaps="false"
-                android:textSize="18sp"
                 android:background="@drawable/transparent"
+                android:text="@string/yes"
+                android:textAllCaps="false"
+                android:textColor="?attr/txt_eld_color"
+                android:textSize="18sp"
+                android:textStyle="bold"
 
                 />
-
-
 
 
         </LinearLayout>

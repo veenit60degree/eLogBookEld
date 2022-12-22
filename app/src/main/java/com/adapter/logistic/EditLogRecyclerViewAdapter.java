@@ -3,14 +3,12 @@ package com.adapter.logistic;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -35,10 +33,10 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemView
 import com.local.db.ConstantsKeys;
 import com.local.db.DriverPermissionMethod;
 import com.local.db.HelperMethods;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
-import com.messaging.logistic.fragment.EditLogFragment;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
+import com.als.logistic.fragment.EditLogFragment;
 import com.models.DriverLogModel;
 
 import org.joda.time.DateTime;
@@ -144,11 +142,23 @@ public class EditLogRecyclerViewAdapter extends RecyclerView.Adapter<EditLogRecy
         if (dragState.isUpdated()) {
             int bgResId;
 
-            if (dragState.isActive()) {
-                bgResId = R.drawable.edit_log_bg_default;
-                DrawableUtils.clearState(viewHolder.editLogItemLay.getForeground());
-            }else {
-                bgResId = R.drawable.white_border;
+            if(UILApplication.getInstance().isNightModeEnabled()){
+
+                if (dragState.isActive()) {
+                    bgResId = R.drawable.edited_log_drawable;   //edit_log_bg_default
+                    DrawableUtils.clearState(viewHolder.editLogItemLay.getForeground());
+                }else {
+                    bgResId = R.drawable.white_border;
+                }
+            } else {
+
+                if (dragState.isActive()) {
+                    bgResId = R.drawable.edit_log_bg_default;
+                    DrawableUtils.clearState(viewHolder.editLogItemLay.getForeground());
+                }else {
+                    bgResId = R.drawable.white_border;
+                }
+
             }
 
             viewHolder.editLogItemLay.setBackgroundResource(bgResId);

@@ -101,7 +101,7 @@
                                 android:layout_below="@+id/canCycleLayout"
                                 android:paddingLeft="@dimen/margin_10"
                                 android:text="@string/current_cyclee"
-                                android:textColor="?attr/color_eld_theme"
+                                android:textColor="?attr/txt_eld_color"
                                 android:textSize="@dimen/text_size_12"
                                 android:textStyle="bold"
                                 android:visibility="invisible" />
@@ -195,7 +195,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:paddingLeft="@dimen/margin_10"
                                 android:text="@string/current_cyclee"
-                                android:textColor="?attr/color_eld_theme"
+                                android:textColor="?attr/txt_eld_color"
                                 android:textSize="@dimen/text_size_12"
                                 android:textStyle="bold"
                                 android:visibility="invisible" />
@@ -414,7 +414,7 @@
                         android:paddingRight="@dimen/margin_20"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/USA_Exemption"
-                        android:textColor="?attr/colorPrimary"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_19"
                         android:textStyle="bold"
                         android:visibility="visible"
@@ -521,7 +521,7 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
+                             android:theme="@style/Custom.Widget.SwitchCompatDark"
 
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
@@ -579,7 +579,7 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
+                             android:theme="@style/Custom.Widget.SwitchCompatDark"
 
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
@@ -612,7 +612,7 @@
                         android:paddingRight="@dimen/margin_20"
                         android:paddingBottom="@dimen/margin_10"
                         android:text="@string/CANADA_Exemption"
-                        android:textColor="?attr/colorPrimary"
+                        android:textColor="?attr/txt_eld_color"
                         android:textSize="@dimen/text_size_19"
                         android:textStyle="bold"
                         android:visibility="visible"
@@ -666,7 +666,7 @@
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorWhite"
                             android:textColorHighlight="@color/colorPrimary"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
+                             android:theme="@style/Custom.Widget.SwitchCompatDark"
 
                             app:thumbTextPadding="@dimen/margin_short_5" />
 
@@ -721,7 +721,7 @@
                             android:layout_centerInParent="true"
                             android:layout_centerVertical="true"
                             android:checked="false"
-                            app:theme="@style/Custom.Widget.SwitchCompat"
+                             android:theme="@style/Custom.Widget.SwitchCompatDark"
 
 
                             />
@@ -750,7 +750,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/view_height_55"
                         android:layout_margin="@dimen/margin_short_2"
-                        android:background="@drawable/gray_light_selector"
                         android:paddingLeft="@dimen/margin_10">
 
                         <TextView
@@ -826,9 +825,11 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
-                                android:src="@drawable/malfunction_other"
 
-                                android:tint="?attr/obddiagnose_icon_color"/>
+                                android:src="@drawable/malfunction_other"
+                                android:tint="?attr/obddiagnose_icon_color"
+
+                                />
                         </RelativeLayout>
 
 
@@ -1136,8 +1137,10 @@
                                 android:layout_width="@dimen/margin_18"
                                 android:layout_height="@dimen/margin_18"
                                 android:layout_centerInParent="true"
+                                android:src="@drawable/day_night"
                                 android:tint="?attr/checkInternet_icon_color"
-                                android:src="@drawable/day_night" />
+
+                                />
                         </RelativeLayout>
 
 
@@ -1159,7 +1162,7 @@
                             android:layout_centerInParent="true"
                             android:layout_marginRight="@dimen/margin_10"
                             android:checked="false"
-                            app:theme="@style/Custom.Widget.SwitchCompat" />
+                             android:theme="@style/Custom.Widget.SwitchCompatDark" />
 
 
 
@@ -1210,7 +1213,9 @@
                                 android:layout_width="@dimen/margin_17"
                                 android:layout_height="@dimen/margin_17"
                                 android:layout_centerInParent="true"
+
                                 android:src="@drawable/storage_icon"
+                                android:tint="?attr/sync_icon_color"
 
                                 />
 
@@ -1226,7 +1231,7 @@
                             android:layout_toRightOf="@+id/checkStorageLayout"
                             android:paddingLeft="@dimen/margin_10"
                             android:text="@string/StorageStatus"
-                            android:textColor="@color/gray_category_color"
+                            android:textColor="?attr/gray_category_color"
                             android:textSize="@dimen/text_size_17"
 
                             />

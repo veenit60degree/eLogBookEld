@@ -5,13 +5,12 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
 import com.constants.Constants;
 import com.constants.SharedPref;
-import com.messaging.logistic.Globally;
+import com.als.logistic.Globally;
 
 import org.json.JSONArray;
 import org.json.JSONException;

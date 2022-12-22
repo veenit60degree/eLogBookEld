@@ -4,6 +4,5 @@
 
     <corners android:radius="@dimen/margin_short_7" />
 
-    <solid android:color="@color/color_eld_hover_theme" />
-
+    <solid android:color="?attr/color_eld_hover_theme" />
 </shape>

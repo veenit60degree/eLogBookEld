@@ -11,15 +11,18 @@
         android:id="@+id/splashLay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/bgColor"
-        >
+        android:background="?attr/bgColor">
 
 
         <ImageView
+            android:id="@+id/alsLogoSplashIV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_margin="@dimen/view_height_130"
+            android:layout_marginStart="@dimen/view_height_130"
+            android:layout_marginTop="@dimen/view_height_130"
+            android:layout_marginEnd="@dimen/view_height_130"
+            android:layout_marginBottom="@dimen/view_height_130"
             android:src="@drawable/als_logo" />
 
 

@@ -8,7 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 
 public class LoadingSpinImgView extends ImageView {
 

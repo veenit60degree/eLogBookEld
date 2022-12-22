@@ -18,7 +18,7 @@
         android:gravity="center_horizontal"
         android:paddingTop="@dimen/margin_17"
         android:paddingBottom="@dimen/margin_29"
-        android:backgroundTint="?attr/layout_color_dot"
+           android:backgroundTint="?attr/trailer_dialog_background"
         >
 
 
@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_17"
                 android:paddingRight="@dimen/margin_15"
                 android:paddingLeft="@dimen/margin_15"
@@ -63,7 +63,7 @@
             android:text="@string/ReviewConfirmDef"
             android:textSize="@dimen/text_size_21"
             android:textStyle="bold"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/txt_eld_color"
             android:layout_marginTop="@dimen/margin_short_8"
 
             />
@@ -100,7 +100,8 @@
                 android:layout_height="wrap_content"
                 android:text="Time to defer"
                 android:textSize="@dimen/text_size_17"
-                android:textColor="@color/black"
+                android:textColor="?attr/textColor"
+
                 />
 
 
@@ -111,7 +112,7 @@
                 android:text="2 hrs 0 min"
                 android:textStyle="bold"
                 android:textSize="@dimen/text_size_19"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/txt_eld_color"
                 />
 
         </LinearLayout>

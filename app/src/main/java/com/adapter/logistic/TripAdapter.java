@@ -6,9 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.messaging.logistic.R;
+import com.als.logistic.R;
 import com.models.TripHistoryModel;
 
 import java.util.List;

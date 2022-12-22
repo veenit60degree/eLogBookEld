@@ -12,6 +12,7 @@
         android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_15"
         android:paddingRight="@dimen/margin_15"
+        android:backgroundTint="?attr/transparent_sidemenu"
 
         >
 
@@ -27,10 +28,12 @@
                 android:id="@+id/menuImgView"
                 android:layout_width="@dimen/view_height_32"
                 android:layout_height="@dimen/view_height_32"
-                android:src="@drawable/eld_malfunction"
                 android:layout_centerVertical="true"
-                android:tint="@color/slide_menu_default"
+                android:src="@drawable/eld_malfunction"
+                android:tint="?attr/slide_menu_icon"
+
                 />
+
 
 
             <ImageView

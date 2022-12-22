@@ -15,7 +15,8 @@
     android:gravity="center_horizontal"
     android:background="@drawable/white_default"
     android:padding="@dimen/margin_10"
-    android:backgroundTint="?attr/layout_color_dot"
+    android:backgroundTint="?attr/trailer_dialog_background"
+
     >
 
 

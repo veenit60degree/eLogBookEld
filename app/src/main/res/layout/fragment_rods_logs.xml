@@ -39,7 +39,7 @@
             app:strokeRadius="@dimen/margin_short_5"
             app:strokeWidth="@dimen/margin_short_1"
             app:selectedTab="0"
-            app:selectedColor="@color/colorPrimary"
+            app:selectedColor="?attr/color_eld_theme"
             app:switchTabs="@array/switch_tabs"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"

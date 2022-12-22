@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="@dimen/margin_15"
-            android:background="?attr/obd_diagnose_color"
+            android:background="?attr/bgColor"
             >
 
             <RelativeLayout
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/bleObdTxtView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/connect_ble_obd"
                 android:textColor="?attr/color_eld_bg"
@@ -53,6 +53,28 @@
 
 
                 />
+
+
+
+                <TextView
+                    android:id="@+id/disconnectBleBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/margin_15"
+                    android:paddingRight="@dimen/margin_15"
+                    android:layout_centerVertical="true"
+                    android:text="@string/disconnect_ble_obd"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bluee_login_one"
+                    android:background="@drawable/disconnect_ble_selector"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold"
+                    android:layout_toRightOf="@+id/bleObdTxtView"
+                    android:layout_marginLeft="@dimen/margin_15"
+                    android:visibility="gone"
+
+                    />
+
 
 
                 <TextView

@@ -28,8 +28,8 @@ import com.driver.details.DriverConst;
 import com.local.db.ConstantsKeys;
 import com.local.db.DBHelper;
 import com.local.db.RecapViewMethod;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -100,6 +100,7 @@ public class CertifyConfirmationDialog extends Dialog {
         changeTitleView.setText(getContext().getResources().getString(R.string.Confirmation_suggested));
 
         if(isSwapConfirmation){
+            titleDescView.setTextColor(getContext().getResources().getColor(R.color.gray_text1));
             titleDescView.setText(message );
             confirmPopupButton.setText(getContext().getResources().getString(R.string.yes));
             cancelPopupButton.setText(getContext().getResources().getString(R.string.no));
@@ -116,7 +117,7 @@ public class CertifyConfirmationDialog extends Dialog {
 
         }
 
-        titleDescView.setTextColor(getContext().getResources().getColor(R.color.gray_text1));
+
         cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.black_unidenfied));
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);

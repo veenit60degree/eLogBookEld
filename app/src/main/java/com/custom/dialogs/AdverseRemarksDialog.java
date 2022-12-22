@@ -2,12 +2,10 @@ package com.custom.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -23,9 +21,9 @@ import android.widget.TextView;
 import com.constants.Constants;
 import com.constants.ConstantsEnum;
 import com.google.android.material.textfield.TextInputLayout;
-import com.messaging.logistic.Globally;
-import com.messaging.logistic.R;
-import com.messaging.logistic.UILApplication;
+import com.als.logistic.Globally;
+import com.als.logistic.R;
+import com.als.logistic.UILApplication;
 import com.models.DriverLocationModel;
 
 import java.util.ArrayList;
