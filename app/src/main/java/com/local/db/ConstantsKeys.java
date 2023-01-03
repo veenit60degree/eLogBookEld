@@ -90,6 +90,9 @@ public class ConstantsKeys {
     public static String EldInspectionLogId = "EldInspectionLogId";
     public static String ShareId            = "ShareId";
 
+    public static String APIName            = "APIName";
+    public static String APIData            = "APIData";
+    public static String IssueDateTime      = "IssueDateTime";
 
     public static String Inspection            = "Inspection";
     public static String InspectionIssueTypeId = "InspectionIssueTypeId";
@@ -414,6 +417,10 @@ public class ConstantsKeys {
     public static String IsAlreadyCalled                = "IsAlreadyCalled";
     public static String ApiCalledDate                  = "ApiCalledDate";
     public static String OnDutyRemarks                  = "OnDutyRemarks";
+
+    public static String FailedApiName                  = "FailedApiName";
+    public static String FailedApiCount                 = "FailedApiCount";
+    public static String FailedApiTime                  = "FailedApiTime";
 
     public static String ArrivalSealNumber              = "ArrivalSealNumber";
     public static String DepartureSealNumber            = "DepartureSealNumber";

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
+import com.als.logistic.R;
 import com.constants.Constants;
 import com.constants.Logger;
 import com.constants.SharedPref;
@@ -114,6 +115,10 @@ public class LocationListenerService extends Service  implements GoogleApiClient
 
             Globally.GPS_LATITUDE = "" + location.getLatitude();
             Globally.GPS_LONGITUDE = "" + location.getLongitude();
+
+            global.ShowLocalNotification(getApplicationContext(), "LocationListener",
+                    "Latitude: " + location.getLatitude() + ",Longitude: " + location.getLongitude(), 5001);
+
 
             if(!SharedPref.IsLocReceivedFromObd(getApplicationContext())) {
 

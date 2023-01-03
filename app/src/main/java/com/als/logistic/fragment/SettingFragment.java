@@ -787,18 +787,26 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
         agricultureSwitchButton.setChecked(isAgricultureExcptn);
         dayNightSwitchButton.setChecked(isDayNightMode);
 
+        int ColorGrayBackground = getResources().getColor(R.color.gray_background_one);
+        int ColorGrayCategory = getResources().getColor(R.color.gray_category_color);
+
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            ColorGrayCategory =  getResources().getColor(R.color.white);
+            ColorGrayBackground = getResources().getColor(R.color.gray_category_color);
+        }
+
         if(CurrentCycleId.equals(global.USA_WORKING_6_DAYS) || CurrentCycleId.equals(global.USA_WORKING_7_DAYS) ){
-            adverseCanadaExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
-            deferralTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
-            haulExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
-            adverseExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
-            agricultureExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
+            adverseCanadaExpTxtView.setTextColor(ColorGrayBackground);
+            deferralTxtView.setTextColor(ColorGrayBackground);
+            haulExpTxtView.setTextColor(ColorGrayCategory);
+            adverseExpTxtView.setTextColor(ColorGrayCategory);
+            agricultureExpTxtView.setTextColor(ColorGrayCategory);
         }else {
-            haulExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
-            adverseExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
-            adverseCanadaExpTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
-            deferralTxtView.setTextColor(getResources().getColor(R.color.gray_category_color));
-            agricultureExpTxtView.setTextColor(getResources().getColor(R.color.gray_background_one));
+            haulExpTxtView.setTextColor(ColorGrayBackground);
+            adverseExpTxtView.setTextColor(ColorGrayBackground);
+            adverseCanadaExpTxtView.setTextColor(ColorGrayCategory);
+            deferralTxtView.setTextColor(ColorGrayCategory);
+            agricultureExpTxtView.setTextColor(ColorGrayBackground);
         }
 
 
@@ -1426,7 +1434,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     }
 
                     if (ExistingApkVersionCode.equals(VersionCode) && ExistingApkVersionName.equals(VersionName)) {
-                        global.EldScreenToast(SyncDataBtn, "Your application is up to date", getResources().getColor(R.color.colorPrimary));
+                        global.EldScreenToast(SyncDataBtn, "Your application is up to date", UILApplication.getInstance().getThemeColor());
                     } else {
                         String updateTvText = checkAppUpdateTV.getText().toString();
                         if (updateTvText.equals(getResources().getString(R.string.install_updates))) {
@@ -1485,7 +1493,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         if(isSleepOffDuty()) {
                             changeCycleZoneDialog("can_cycle", SavedCanCycle, "");
                         }else{
-                            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
+                            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), UILApplication.getInstance().getThemeColor());
                         }
                     }else{
                         Globally.EldScreenToast(caCycleTV, getString(R.string.stop_vehicle_alert),
@@ -1508,7 +1516,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             if(isSleepOffDuty()) {
                                 changeCycleZoneDialog("us_cycle", SavedUsaCycle, "");
                             }else{
-                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), getResources().getColor(R.color.colorPrimary));
+                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.cycle_change_check), UILApplication.getInstance().getThemeColor());
                             }
                         }else{
                             Globally.EldScreenToast(caCycleTV, getString(R.string.stop_vehicle_alert),
@@ -1546,7 +1554,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             if(isOnDuty()) {
                                 changeCycleZoneDialog("operating_zone", CurrentCycleId, operatingZoneTV.getText().toString());
                             }else{
-                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.op_zone_change_check), getResources().getColor(R.color.colorPrimary));
+                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.op_zone_change_check), UILApplication.getInstance().getThemeColor());
                             }
                         }else{
                             Globally.EldScreenToast(caCycleTV, getString(R.string.stop_vehicle_alert),
@@ -1753,7 +1761,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                 SharedPref.setDeferralForCo(true, Globally.GetCurrentDateTime(), "1", getActivity());
             }
 
-            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.Deferralenabled), getResources().getColor(R.color.colorPrimary));
+            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.Deferralenabled), UILApplication.getInstance().getThemeColor());
 
             JSONArray savedDeferralArray = deferralMethod.getSavedDeferralArray(Integer.valueOf(DriverId), dbHelper);
             JSONObject deferralObj = deferralMethod.GetDeferralJson(DriverId, DeviceId, TruckNumber, CompanyId,
@@ -1809,7 +1817,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
             getExceptionStatus();
 
-            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.advrs_excptn_enabled), getResources().getColor(R.color.colorPrimary));
+            global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.advrs_excptn_enabled), UILApplication.getInstance().getThemeColor());
 
             try {
                 if (adverseRemarksDialog != null && adverseRemarksDialog.isShowing())
@@ -1875,7 +1883,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                     if(progressDialog != null)
                         progressDialog.dismiss();
                     Constants.IsAlsServerResponding = true;
-                    global.EldScreenToast(SyncDataBtn, "Internet Connected.", getResources().getColor(R.color.colorPrimary));
+                    global.EldScreenToast(SyncDataBtn, "Internet Connected.", UILApplication.getInstance().getThemeColor());
                 }else if(flag == CheckUpdate){
 
                     if(IsManualAppDownload){
@@ -1986,7 +1994,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         ExistingApkVersionName = "";
                         checkAppUpdateTV.setText(getResources().getString(R.string.Update_Status));
                     } else {
-                        global.EldScreenToast(SyncDataBtn, "Downloading completed", getResources().getColor(R.color.colorPrimary));
+                        global.EldScreenToast(SyncDataBtn, "Downloading completed", UILApplication.getInstance().getThemeColor());
                         checkAppUpdateTV.setText(getResources().getString(R.string.install_updates));
 
                         if (ApkFilePath.length() > 0) {
@@ -2306,7 +2314,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
     void CheckAppStatus(){
         if (ExistingVersionCodeInt >= VersionCodeInt) {
 
-            global.EldScreenToast(SyncDataBtn, "Your application is up to date.", getResources().getColor(R.color.colorPrimary));
+            global.EldScreenToast(SyncDataBtn, "Your application is up to date.", UILApplication.getInstance().getThemeColor());
 
         }else{
             // Check app is already saved in sd card
@@ -2320,7 +2328,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                     if (ExistingApkVersionCode.equals(VersionCode) && ExistingApkVersionName.equals(VersionName)) {
                         checkAppUpdateTV.setText("Install Updates");
-                        global.EldScreenToast(SyncDataBtn, "This application is already in (AlsApp) folder.", getResources().getColor(R.color.colorPrimary));
+                        global.EldScreenToast(SyncDataBtn, "This application is already in (AlsApp) folder.", UILApplication.getInstance().getThemeColor());
                         ApkFilePath = global.getAlsApkPath() + "/" + existingApkFilePath;
                        // InstallApp(ApkFilePath);
                         openFileLocation(ApkFilePath);
@@ -2395,7 +2403,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             }
 
                             if(IsManualAppDownload == false && ExistingApkVersionCode.equals(VersionCode) && ExistingApkVersionName.equals(VersionName)){
-                                global.EldScreenToast(SyncDataBtn, "Your application is up to date.", getResources().getColor(R.color.colorPrimary));
+                                global.EldScreenToast(SyncDataBtn, "Your application is up to date.", UILApplication.getInstance().getThemeColor());
                             }else {
                                 CheckAppStatus();
 
@@ -2426,7 +2434,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             global.InternetErrorDialog(getActivity(), true, true);
                             Toast.makeText(getActivity(), Message, Toast.LENGTH_LONG).show();
                         }else{
-                            global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorPrimary));
+                            global.EldScreenToast(SyncDataBtn, Message, UILApplication.getInstance().getThemeColor());
                         }
 
                         saveUpdatedCycleData();
@@ -2437,7 +2445,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         break;
 
                     case OperatingZone:
-                        global.EldScreenToast(SyncDataBtn, Message, getResources().getColor(R.color.colorPrimary));
+                        global.EldScreenToast(SyncDataBtn, Message, UILApplication.getInstance().getThemeColor());
 
                         if(IsSouthCanada.equals("true")) {
                             SharedPref.SetNorthCanadaStatus(false, getActivity());
@@ -2459,12 +2467,23 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                             SourceLongitude = dataObj.getString("SourceLongitude");
                             double latitude = Double.parseDouble(SourceLatitude);
                             double longitude = Double.parseDouble(SourceLongitude);
+
+                            if(Globally.LATITUDE.length() == 0){
+                                Globally.LATITUDE = "0.0";
+                                Globally.LONGITUDE = "0.0";
+                            }
+
                             double distanceMiles = constants.CalculateDistance(Double.parseDouble(Globally.LATITUDE),Double.parseDouble(Globally.LONGITUDE),latitude,longitude,"M", 0);
                             double distanceMilesFormat = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMiles));
                             double distanceKm =  Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat * 1.60934));
                           //  double distance = Double.parseDouble(Constants.Convert2DecimalPlacesDouble(distanceMilesFormat - Constants.AgricultureDistanceInMiles));
                             if(distanceMilesFormat > Constants.AgricultureDistanceInMiles){
-                                OpenAgricultureAlertDialog("<br/><font color='#354365'>Your Current distance from Source of Load is "+ distanceMilesFormat +
+                               String color = "#354365";
+                                if(UILApplication.getInstance().isNightModeEnabled()){
+                                    color = "#FFFFFF";
+                                }
+
+                                OpenAgricultureAlertDialog("<br/><font color='"+color+"'>Your Current distance from Source of Load is "+ distanceMilesFormat +
                                         " ("+distanceKm+" KM). " +" <br/><b>Please Note:</b> You are eligible for this exemption within 150 air-mile " +
                                         "(172.6 Miles or 277.80 KM) radius from the source of the commodities.</font>");
                             }else{
@@ -2478,7 +2497,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
 
                             }
 
-                        } catch (JSONException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                         break;
@@ -2496,7 +2515,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     MainDriverPref, CoDriverPref, eldSharedPref, coEldSharedPref,
                                     syncingMethod, global, hMethods, dbHelper, getActivity(), false,
                                     CoDriverId, CoDriverName, false, Constants.Auto);
-                            global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Enabled", getResources().getColor(R.color.colorPrimary));
+                            global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Enabled", UILApplication.getInstance().getThemeColor());
 
 
                         }else{
@@ -2509,7 +2528,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     syncingMethod, global, hMethods, dbHelper, getActivity(), false,
                                     CoDriverId, CoDriverName, false, Constants.Auto );
 
-                            global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Disabled", getResources().getColor(R.color.colorPrimary));
+                            global.EldScreenToast(SyncDataBtn, "Agriculture Exemption Disabled", UILApplication.getInstance().getThemeColor());
 
 
                         }
@@ -2619,7 +2638,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                         ClearDriverUnSavedlog();
 
                         syncingMethod.SyncingLogHelper(Integer.valueOf(DriverId), dbHelper, new JSONArray());
-                        global.EldScreenToast(SettingSaveBtn, msgTxt, getResources().getColor(R.color.colorPrimary));
+                        global.EldScreenToast(SettingSaveBtn, msgTxt, UILApplication.getInstance().getThemeColor());
                     }else{
                         if(SharedPref.getCurrentDriverType(getActivity()).equals(DriverConst.StatusSingleDriver) ) { // Single Driver Type and Position is 0
                             // when main driver is selected, clear co driver data
@@ -2832,7 +2851,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, A
                                     SharedPref.set16hrHaulExcptnCo(true, getActivity());
                                 }
 
-                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.haul_excptn_enabled), getResources().getColor(R.color.colorPrimary));
+                                global.EldScreenToast(SyncDataBtn, getResources().getString(R.string.haul_excptn_enabled), UILApplication.getInstance().getThemeColor());
 
                                 hMethods.SaveDriversJob(DriverId, DeviceId, "", getString(R.string.enable_ShortHaul_exception),
                                         LocationType, "", true, isNorthCanada, DriverType, constants,

@@ -1002,12 +1002,12 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                         dismissDialog();
                         if(isCurrentDate){
 
-                            globally.EldScreenToast(EldFragment.refreshLogBtn, Message, getResources().getColor(R.color.color_eld_theme));
+                            globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
                             finishActivityWithViewUpdate();
                             EldFragment.refreshLogBtn.performClick();
 
                         }else {
-                            globally.EldScreenToast(EldFragment.refreshLogBtn, Message, getResources().getColor(R.color.color_eld_theme));
+                            globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
                             Constants.isClaim = true;
                             removeSelectedDateFromList();
 
@@ -1024,7 +1024,7 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                             if (Message.equals("Record updated successfully")) {
                                 Message = "Record rejected successfully";
                             }
-                            globally.EldScreenToast(confirmCertifyBtn, Message, getResources().getColor(R.color.color_eld_theme));
+                            globally.EldScreenToast(confirmCertifyBtn, Message, UILApplication.getInstance().getThemeColor());
                         }
 
                         removeSelectedDateFromList();
@@ -1056,12 +1056,12 @@ public class SuggestedLogFragment extends Fragment implements View.OnClickListen
                     if(isCurrentDate){
 
                         dismissDialog();
-                        globally.EldScreenToast(EldFragment.refreshLogBtn, Message, getResources().getColor(R.color.color_eld_theme));
+                        globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
                         finishActivityWithViewUpdate();
                         EldFragment.refreshLogBtn.performClick();
 
                     }else {
-                        globally.EldScreenToast(EldFragment.refreshLogBtn, Message, getResources().getColor(R.color.color_eld_theme));
+                        globally.EldScreenToast(EldFragment.refreshLogBtn, Message, UILApplication.getInstance().getThemeColor());
                         removeSelectedDateFromList();
                     }
                 }else {

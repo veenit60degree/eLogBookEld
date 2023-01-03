@@ -53,7 +53,7 @@ public class UnidentifiedRecordDetailFragment extends Fragment implements View.O
     ImageView eldMenuBtn;
     Button rejectRecordBtn, claimRecordBtn;
     RadioGroup unIdentifyRadGroup;
-    RadioButton drivingRadBtn, onDutyRadBtn, personalRadBtn;
+    RadioButton drivingRadBtn, onDutyRadBtn, personalRadBtn  ;
     AdverseRemarksDialog remarksDialog;
 
     SaveDriverLogPost claimRejectRecordPost;

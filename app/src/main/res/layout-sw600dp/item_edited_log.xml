@@ -108,6 +108,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/margin_20"
             android:layout_marginTop="@dimen/margin_short_5"
+            android:tint="?attr/setting_cycle_color"
             android:visibility="gone"
 
             />

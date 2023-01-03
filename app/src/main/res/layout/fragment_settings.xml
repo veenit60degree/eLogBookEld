@@ -708,18 +708,16 @@
                         </RelativeLayout>
 
 
-
                         <TextView
                             android:id="@+id/adverseCanadaExpTxtView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/canada_adverse_excp"
-                            android:textColor="?attr/gray_category_color"
-                            android:textSize="@dimen/text_size_15"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/adverseCanadaExpImgView"
                             android:paddingLeft="@dimen/margin_10"
-                            android:layout_centerVertical="true"
-                            />
+                            android:text="@string/canada_adverse_excp"
+                            android:textColor="?attr/gray_category_color"
+                            android:textSize="@dimen/text_size_15" />
 
 
                         <androidx.appcompat.widget.SwitchCompat

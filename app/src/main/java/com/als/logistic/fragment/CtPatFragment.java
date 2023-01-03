@@ -1004,7 +1004,7 @@ public class CtPatFragment extends Fragment implements View.OnClickListener {
                         ClearFields();
 
                         if(flag != 102) {
-                            Globally.EldToastWithDuration(TabAct.sliderLay, getResources().getString(R.string.ct_pat_inspection_saved_successfully), getResources().getColor(R.color.colorPrimary));
+                            Globally.EldToastWithDuration(TabAct.sliderLay, getResources().getString(R.string.ct_pat_inspection_saved_successfully), UILApplication.getInstance().getThemeColor());
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override

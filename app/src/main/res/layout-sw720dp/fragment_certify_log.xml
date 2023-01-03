@@ -96,15 +96,15 @@
                 android:id="@+id/certifyDateTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_22"
-                android:text="@string/temp_DATE"
                 android:layout_alignParentRight="true"
-                android:paddingLeft="@dimen/margin_25"
-                android:paddingRight="@dimen/margin_25"
-                android:textColor="@color/white"
-                android:paddingTop="@dimen/margin_10"
-                android:paddingBottom="@dimen/margin_10"
                 android:background="@drawable/green_eld_drawable"
+                android:paddingLeft="@dimen/margin_25"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingRight="@dimen/margin_25"
+                android:paddingBottom="@dimen/margin_10"
+                android:text="@string/temp_DATE"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_22"
 
 
                 />
@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/margin_short_6"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/media_white_drawable"
+                android:background="@drawable/certify_record_drawable"
                 android:visibility="gone"
 
                 >
@@ -1535,7 +1535,7 @@
                 android:padding="@dimen/margin_short_6"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:background="@color/color_eld_theme"
+                android:background="@color/color_eld_hover_theme"
 
                 />
 
@@ -1552,7 +1552,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="?attr/layout_color_dot"
+                android:background="@color/transparent"
+
                 >
 
                 <TextView
@@ -1753,7 +1754,7 @@
                 android:padding="@dimen/margin_short_6"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:background="?attr/certify_list_color"
+                android:background="?attr/color_eld_hover_theme"
 
                 />
 

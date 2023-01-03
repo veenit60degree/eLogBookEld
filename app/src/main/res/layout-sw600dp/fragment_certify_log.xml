@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                   android:padding="@dimen/margin_short_5"
                 android:layout_alignParentRight="true"
-                  android:background="@drawable/media_white_drawable"
+                  android:background="@drawable/certify_record_drawable"
                 android:visibility="gone"
 
 
@@ -1520,7 +1520,7 @@
                 android:padding="@dimen/margin_12"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:background="?attr/certify_list_color"
+                android:background="?attr/color_eld_hover_theme"
 
                 />
 
@@ -1537,7 +1537,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="?attr/layout_color_dot"
+                android:background="@color/transparent"
                 >
 
                 <TextView
@@ -1739,7 +1739,7 @@
                 android:padding="@dimen/margin_12"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:background="?attr/certify_list_color"
+                android:background="?attr/color_eld_hover_theme"
 
                 />
 

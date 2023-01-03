@@ -5715,7 +5715,7 @@ public class Constants {
 
     public String CalculateCycleTimeData(Context context, String DriverId, boolean OperatingZoneChange,
                                          boolean isNorth, String changedCycleId,
-                                         Globally Global, HelperMethods hMethods,DBHelper dbHelper ){
+                                         Globally Global, HelperMethods hMethods, DBHelper dbHelper ){
 
         int offsetFromUTC = (int) Global.GetTimeZoneOffSet();
         List<DriverLog> oDriverLogDetail ;
@@ -5784,13 +5784,19 @@ public class Constants {
             String DriveRemaining          = addZeroForSingle(Global, DriveRemainingMin) + ":" + addZeroForMinSingle(Global, DriveRemainingMin) ;
             String ShiftRemaining          = addZeroForSingle(Global, ShiftRemainingMin) + ":" + addZeroForMinSingle(Global, ShiftRemainingMin) ;
 
-            finalCycleData = "<font color='#3F88C5'>" +
-                    "<b>Cycle &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> :&nbsp;&nbsp; " + CycleRemaining + "<br/>" +
-                    "<b>Driving  &nbsp;&nbsp;</b>&nbsp;:&nbsp;&nbsp; " + DriveRemaining + "<br/>" +
-                    "<b>OnDuty  &nbsp;</b>&nbsp:&nbsp &nbsp;        " + OnDutyRemaining   + "<br/>" +
-                    "<b>Shift    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>&nbsp;:&nbsp &nbsp;  " + ShiftRemaining+ " </font>" ;
-
-            // txtView.setText(Html.fromHtml(finalCycleData) );
+            if(UILApplication.getInstance().isNightModeEnabled()){
+                finalCycleData = "<font color='#E3E3E1'>" +
+                        "<b>Cycle &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> :&nbsp;&nbsp; " + CycleRemaining + "<br/>" +
+                        "<b>Driving  &nbsp;&nbsp;</b>&nbsp;:&nbsp;&nbsp; " + DriveRemaining + "<br/>" +
+                        "<b>OnDuty  &nbsp;</b>&nbsp:&nbsp &nbsp;        " + OnDutyRemaining + "<br/>" +
+                        "<b>Shift    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>&nbsp;:&nbsp &nbsp;  " + ShiftRemaining + " </font>";
+            }else {
+                finalCycleData = "<font color='#3F88C5'>" +
+                        "<b>Cycle &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> :&nbsp;&nbsp; " + CycleRemaining + "<br/>" +
+                        "<b>Driving  &nbsp;&nbsp;</b>&nbsp;:&nbsp;&nbsp; " + DriveRemaining + "<br/>" +
+                        "<b>OnDuty  &nbsp;</b>&nbsp:&nbsp &nbsp;        " + OnDutyRemaining + "<br/>" +
+                        "<b>Shift    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>&nbsp;:&nbsp &nbsp;  " + ShiftRemaining + " </font>";
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

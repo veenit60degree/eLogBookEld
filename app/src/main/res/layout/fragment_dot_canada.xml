@@ -1822,30 +1822,31 @@
 
 
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/view_height_60"
-            android:background="?attr/bgColor"
-            android:layout_marginTop="@dimen/margin_25"
 
-            >
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/unidentifiedTitleTv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/view_height_60"
+                android:layout_marginTop="@dimen/view_height_40"
                 android:layout_centerVertical="true"
-                android:background="?attr/bgColor"
+                android:paddingLeft="@dimen/margin_15"
+                android:paddingTop="@dimen/margin_10"
+
                 android:text="@string/UnidentifiedViewLog"
                 android:textColor="?attr/txt_eld_color"
                 android:textSize="@dimen/text_size_22"
-                android:paddingLeft="@dimen/margin_15"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:background="?attr/bgColor"
 
 
-        </RelativeLayout>
+                />
+
+
+
 
         <include
-            android:id="@+id/canadaDotActionBar"
+            android:id="@+id/unidentifiedLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/unidentified_dot"

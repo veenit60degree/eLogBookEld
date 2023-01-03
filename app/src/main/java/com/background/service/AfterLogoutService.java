@@ -2053,13 +2053,13 @@ public class AfterLogoutService extends Service implements TextToSpeech.OnInitLi
 
             if(error != null) {
                 Logger.LogDebug("error", "error-" + flag + " : " + error);
-
+            }
                 if (flag == SaveUnidentifiedEvent) {
                     UnidentifiedApiInProgress = false;
                 }else if (flag == GetMalDiaEventDuration){
                     isMalEventApiInProgress = false;
                 }
-            }
+
 
         }
     };

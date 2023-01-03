@@ -79,9 +79,12 @@ public class EditedLogAdapter extends BaseAdapter {
         String EndTime      = Globally.ConvertToTimeFormat(LogItem.getEndDateTime(), Globally.DateFormatWithMillSec);
         String Duration     = LogItem.getDuration();
 
-        if(EndTime.equals("23:59")){
+        if(EndTime.equals("23:59") ){
             EndTime = "24:00";
-           // Duration    = String.valueOf(Integer.valueOf(Duration) + 1);
+        }
+
+        if(Duration.equals("24:01")){
+            Duration = "24:00";
         }
 
         setStatusWiseView(LogItem.getDriverStatusId(), holder.statusEditedTxtView, LogItem.isPersonal(), LogItem.isShortHaulException());   // isShortHaulException is used for isYardMove
@@ -89,12 +92,19 @@ public class EditedLogAdapter extends BaseAdapter {
         holder.endTimeEditedTxtView.setText(EndTime);
         holder.durationEditedTxtView.setText(Duration);
 
+
         boolean isEdited = LogItem.isAdverseException();    // isAdverseException is used here as isEdited value
         if(isEdited){
-            holder.startTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.blue_button));
-            holder.endTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.blue_button));
-            holder.durationEditedTxtView.setTextColor(context.getResources().getColor(R.color.blue_button));
             holder.editedIcoImgVw.setVisibility(View.VISIBLE);
+            if(UILApplication.getInstance().isNightModeEnabled()) {
+                holder.startTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.white));
+                holder.endTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.white));
+                holder.durationEditedTxtView.setTextColor(context.getResources().getColor(R.color.white));
+            }else{
+                holder.startTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.blue_button));
+                holder.endTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.blue_button));
+                holder.durationEditedTxtView.setTextColor(context.getResources().getColor(R.color.blue_button));
+            }
         }else{
             if(UILApplication.getInstance().isNightModeEnabled()){
                 holder.startTimeEditedTxtView.setTextColor(context.getResources().getColor(R.color.white));

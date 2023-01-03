@@ -103,7 +103,7 @@ import models.RulesResponseObject;
 public class Globally {
 
 	public static String registrationId = "";
-	public static String LATITUDE = "", LONGITUDE = "";
+	public static String LATITUDE = "0.0", LONGITUDE = "0.0";
 	public static String GPS_LATITUDE = "", GPS_LONGITUDE = "";
 	public static String BLE_NAME = "";
 	public static int VEHICLE_SPEED = -1;
@@ -1367,7 +1367,6 @@ public class Globally {
     }
 
     public static String ConvertToTimeFormat(String date, String dateFormat){
-        String convertedDate = "";
         Date newDate = new Date();
         boolean IsMilliSecDateFormat = true;
         SimpleDateFormat dateFormatGmt = new SimpleDateFormat(dateFormat);
@@ -1387,9 +1386,8 @@ public class Globally {
         }
         dateFormatGmt = new SimpleDateFormat("HH:mm");   // hh:mm a  -- 12 hours format (am/pm)
         date = dateFormatGmt.format(newDate);
-        convertedDate = date.toString();
 
-        return convertedDate;
+        return date;
     }
 
 	public static String ConvertTo12HTimeFormat(String date, String dateFormat){

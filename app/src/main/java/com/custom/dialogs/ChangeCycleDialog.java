@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.als.logistic.UILApplication;
 import com.constants.Constants;
 import com.constants.SharedPref;
 import com.local.db.DBHelper;
@@ -86,10 +87,14 @@ public class ChangeCycleDialog extends Dialog {
         cycleRuleLay.setVisibility(View.VISIBLE);
 
         btnChangeCycle.setText(getContext().getString(R.string.change));
-       // cancelPopupButton.setText(getContext().getString(R.string.no));
 
-        changeCycleDescTV.setTextColor(getContext().getResources().getColor(R.color.splash_gray));
-        cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.black_hover));
+        if(UILApplication.getInstance().isNightModeEnabled()){
+            changeCycleDescTV.setTextColor(getContext().getResources().getColor(R.color.ripple_effect_gray));
+            cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.ripple_effect_gray));
+        }else {
+            changeCycleDescTV.setTextColor(getContext().getResources().getColor(R.color.splash_gray));
+            cancelPopupButton.setTextColor(getContext().getResources().getColor(R.color.black_hover));
+        }
 
         boolean OperatingZoneChange = false;
         boolean OperatingZoneChangeOld = true;

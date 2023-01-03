@@ -25,6 +25,9 @@ public class APIs {
     static String ELD_SETTING_DOMAIN_PRODUCTION = "https://eld.alsrealtime.com/api/DriverSettingsApi/";
     static String ELD_SETTING_DOMAIN_DEV        = "http://develd.alsrealtime.com/api/DriverSettingsApi/";
 
+    static String ELD_FAILED_TRACK_DOMAIN_PRODUCTION = "https://eld.alsrealtime.com/api/FailedAPITrack/";
+    static String ELD_FAILED_TRACK_DOMAIN_DEV        = "http://develd.alsrealtime.com/api/FailedAPITrack/";
+
 
     /*========================= API URLs =========================*/
     public static String DOMAIN_URL_ALS 					= ALS_DOMAIN_PRODUCTION ;     	// ALS DOMAIN
@@ -138,6 +141,8 @@ public class APIs {
 
     public static String ADD_DEVICE_GPS_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceGpsSettings";
     public static String ADD_DEVICE_BLE_SETTINGS            = ELD_SETTING_DOMAIN_PRODUCTION + "AddDeviceBluetoothSettings";
+    public static String FAILED_API_TRACK                   = ELD_FAILED_TRACK_DOMAIN_PRODUCTION + "AddFailedAPIRecords";
+
 
 }
 

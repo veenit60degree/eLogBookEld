@@ -369,7 +369,7 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                             case ClaimRecords:
                                 global.EldScreenToast(rightMenuBtn,
                                         getResources().getString(R.string.claim_successfully),
-                                        getResources().getColor(R.color.color_eld_theme));
+                                        UILApplication.getInstance().getThemeColor());
                                 UnidentifiedActivity.isUnIdentifiedRecordClaimed = true;
 
                                 if(Constants.IsUnidentifiedLocMissing){
@@ -396,14 +396,14 @@ public class UnidentifiedFragment extends Fragment implements View.OnClickListen
                                 Constants.IsUnidentifiedLocMissing = false;
                                 global.EldScreenToast(rightMenuBtn,
                                         getResources().getString(R.string.reject_successfully),
-                                        getResources().getColor(R.color.color_eld_theme));
+                                        UILApplication.getInstance().getThemeColor());
                                 break;
 
                             case RejectCompanyRecords:
                                 Constants.IsUnidentifiedLocMissing = false;
                                 global.EldScreenToast(rightMenuBtn,
                                         getResources().getString(R.string.reject_successfully),
-                                        getResources().getColor(R.color.color_eld_theme));
+                                        UILApplication.getInstance().getThemeColor());
                                 break;
 
                         }

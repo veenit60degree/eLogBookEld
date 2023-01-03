@@ -428,6 +428,8 @@ public class CertifyViewLogFragment extends Fragment implements View.OnClickList
         odometerLayHeight   = itemOdometerLay.getMeasuredHeight();
         shippingLayHeight   = itemShippingLay.getMeasuredHeight();
 
+        itemShippingLay.setBackgroundColor(getResources().getColor(R.color.transparent));
+
         GetLogRequest           = new VolleyRequest(getActivity());
         GetOdometerRequest      = new VolleyRequest(getActivity());
         GetShipmentRequest      = new VolleyRequest(getActivity());

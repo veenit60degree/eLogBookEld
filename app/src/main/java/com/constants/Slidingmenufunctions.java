@@ -462,9 +462,6 @@ public class Slidingmenufunctions implements OnClickListener {
 
 	void setMenuAdapter(){
 		try {
-			//View c = menuListView.getChildAt(0);
-			//int scrolly = -c.getTop() + menuListView.getFirstVisiblePosition() * c.getHeight();
-			//int index = menuListView.getFirstVisiblePosition();
 
 			// save index and top position
 			int index = menuListView.getFirstVisiblePosition();

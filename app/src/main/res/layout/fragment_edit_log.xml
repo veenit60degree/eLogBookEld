@@ -89,7 +89,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:textStyle="bold"
-                android:text="@string/end_date"
+                android:text="@string/End_time"
                 android:textColor="?attr/color_eld_bg"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/text_size_17"

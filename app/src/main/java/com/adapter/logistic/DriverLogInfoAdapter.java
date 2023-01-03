@@ -336,7 +336,7 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         holder.certifyRemarksTV.setTextColor(context.getResources().getColor(R.color.black));
         holder.certifyExcptnTV.setTextColor(context.getResources().getColor(R.color.black));
 
-      //  holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
+        holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
     }
 
 
@@ -349,40 +349,21 @@ public class DriverLogInfoAdapter extends BaseAdapter {
         holder.certifyDurationTV.setText(LogItem.getDuration());
 
 
-       /* if(currentCycle.equals(Globally.USA_WORKING_6_DAYS) || currentCycle.equals(Globally.USA_WORKING_7_DAYS)) {
-            String location = LogItem.getLocation().trim();
-            if (location.contains("null") || location.equals(",") || location.equals("")) {
-                if(LogItem.getStartLatitude().length() > 4){
-                    holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
-                    holder.certifyLocationTV.setText(LogItem.getStartLatitude() + "," + LogItem.getStartLongitude());
-                   holder.certifyLocationIV.setVisibility(View.GONE);
-                }else {
-                    holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
-                    holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
-                    holder.certifyLocationIV.setVisibility(View.VISIBLE);
-                }
-            } else {
-                holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
-                holder.certifyLocationTV.setText(location);
-                holder.certifyLocationIV.setVisibility(View.GONE);
-            }
-        }else{*/
-
             String locationKm = LogItem.getLocationKm().trim();
             String location = LogItem.getLocation().trim();
             if (locationKm.equals("null") || locationKm.equals(",") || locationKm.equals("") || locationKm.equals(context.getString(R.string.no_location_found))) {
                 if(location.equals("null") || location.equals(",") || location.equals("") || locationKm.equals(context.getString(R.string.no_location_found)) ){
                      if(LogItem.getStartLatitude().length() > 4 && SharedPref.IsAOBRD(context) == false && IsEditView == false ){
-                        holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
+                      //  holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                         holder.certifyLocationTV.setText(LogItem.getStartLatitude() + "," + LogItem.getStartLongitude());
                         holder.certifyLocationIV.setVisibility(View.GONE);
                     }else {
-                         holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
+                        // holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.blue_background_light));
                          holder.certifyLocationTV.setText(context.getResources().getString(R.string.no_location));
                          holder.certifyLocationIV.setVisibility(View.VISIBLE);
                      }
                 }else{
-                    holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
+                   // holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                     holder.certifyLocationTV.setText(location);
                     if(SharedPref.IsAOBRD(context) == false && IsEditView == false ) {
                         holder.certifyLocationIV.setVisibility(View.GONE);
@@ -390,13 +371,12 @@ public class DriverLogInfoAdapter extends BaseAdapter {
                 }
 
             } else {
-                holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
+               // holder.LogInfoLay.setBackgroundColor(context.getResources().getColor(R.color.white_theme));
                 holder.certifyLocationTV.setText(LogItem.getLocationKm());
                 if(SharedPref.IsAOBRD(context) == false && IsEditView == false ) {
                     holder.certifyLocationIV.setVisibility(View.GONE);
                 }
             }
-       // }
 
         if(!LogItem.getRemarks().trim().equalsIgnoreCase("null") && !LogItem.getRemarks().trim().equalsIgnoreCase(""))
             holder.certifyRemarksTV.setText(LogItem.getRemarks());

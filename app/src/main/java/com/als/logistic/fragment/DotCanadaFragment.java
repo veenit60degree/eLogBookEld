@@ -105,9 +105,10 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
     TextView unIdnfdtrailerIdCTV, unIdnfdcarrierNameCTV, unIdnfdcarrierHomeTerCTV, unIdnfdcarrierPrinPlaceCTV, unIdnfdcurrOperZoneCTV, unIdnfdcurreCycleCTV;
     TextView unIdnfdtotalHrsCTV, unIdnfdtotalhrsCycleCTV, unIdnfdremainingHourCTV, unIdnfdoffDutyDeffCTV, unIdnfddatDiagCTV, UnunIdenDriRecCTV;
     TextView unIdnfdmalfStatusCTV, unIdnfdeldIdCTV, unIdnfdeldProviderCTV, unIdnfdeldCerCTV, unIdnfdeldAuthCTV;
+    TextView unidentifiedTitleTv;
 
     RelativeLayout eldMenuLay, rightMenuBtn, scrollUpBtn, scrollDownBtn, otherOptionBtn;
-    LinearLayout canDotViewMorelay , unIdnfdcanDotViewMorelay;
+    LinearLayout canDotViewMorelay , unIdnfdcanDotViewMorelay, unidentifiedLayout;
     ImageView eldMenuBtn, nextDateBtn, previousDateBtn; // canDotModeImgVw;
 
     WebView canDotGraphWebView,unIdnfdcanDotGraphWebView;
@@ -289,6 +290,8 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
         EldTitleTV          = (TextView)view.findViewById(R.id.EldTitleTV);
         eventDotETV         = (TextView)view.findViewById(R.id.eventDotETV);
 
+        unidentifiedTitleTv = (TextView)view.findViewById(R.id.unidentifiedTitleTv);
+
         dutyChangeDotListView= (RecyclerView) view.findViewById(R.id.dutyChangeDotListView);
         remAnotnDotListView  = (RecyclerView) view.findViewById(R.id.remAnotnDotListView);
         cycleOpZoneDotListView    = (RecyclerView)view.findViewById(R.id.addHrsDotListView);
@@ -345,6 +348,7 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
         unIdnfdviewMoreTV              = (TextView)view.findViewById(R.id.unIdnfdviewMoreTV);
         unIdnfdcanDotViewMorelay       = (LinearLayout)view.findViewById(R.id.unIdnfdcanDotViewMorelay);
+        unidentifiedLayout             = (LinearLayout)view.findViewById(R.id.unidentifiedLayout);
 
         eldMenuLay          = (RelativeLayout)view.findViewById(R.id.eldMenuLay);
         rightMenuBtn        = (RelativeLayout)view.findViewById(R.id.rightMenuBtn);
@@ -993,36 +997,45 @@ public class DotCanadaFragment extends Fragment implements View.OnClickListener{
 
     void setdataOnUnIdnfdAdapter(){
 
-        try {
-            unidentifiedDutyStatusAdapter = new UnidentifiedDutyStatusAdapter(getActivity(), UnIdnfdDutyStatusList);
-            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-            unIdnfddutyChangeDotListView.setLayoutManager(manager);
-            unIdnfddutyChangeDotListView.setAdapter(unidentifiedDutyStatusAdapter);
-        }catch (Exception e){
-            e.printStackTrace();
+        if(UnIdnfdDutyStatusList.size() == 0 && UnIdnfdLoginLogoutList.size() == 0 &&
+                UnIdnfdCommentsRemarksList.size() == 0 && UnIdnfdEnginePowerList.size() == 0 ){
+            unidentifiedTitleTv.setVisibility(View.GONE);
+            unidentifiedLayout.setVisibility(View.GONE);
+        }else{
+            unidentifiedTitleTv.setVisibility(View.VISIBLE);
+            unidentifiedLayout.setVisibility(View.VISIBLE);
+
+            try {
+                unidentifiedDutyStatusAdapter = new UnidentifiedDutyStatusAdapter(getActivity(), UnIdnfdDutyStatusList);
+                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                unIdnfddutyChangeDotListView.setLayoutManager(manager);
+                unIdnfddutyChangeDotListView.setAdapter(unidentifiedDutyStatusAdapter);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            try{
+                unidentifiedLogInOutAdapter = new UnidentifiedLogInOutAdapter(getActivity(), UnIdnfdLoginLogoutList);
+                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                unIdnfdloginLogDotListView.setLayoutManager(manager);
+                unIdnfdloginLogDotListView.setAdapter(unidentifiedLogInOutAdapter);
+            }catch (Exception e){}
+
+            try {
+                unidentifiedRemarksAdapter = new UnidentifiedRemarksAdapter(getActivity(), UnIdnfdCommentsRemarksList);
+                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                unIdnfdremAnotnDotListView.setLayoutManager(manager);
+                unIdnfdremAnotnDotListView.setAdapter(unidentifiedRemarksAdapter);
+            }catch (Exception e){}
+
+            try {
+                unidentifiedEnginePowerAdapter = new UnidentifiedEnginePowerAdapter(getActivity(), UnIdnfdEnginePowerList);
+                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                unIdnfdenginePwrDotListView.setLayoutManager(manager);
+                unIdnfdenginePwrDotListView.setAdapter(unidentifiedEnginePowerAdapter);
+            }catch (Exception e){}
+
         }
-
-        try{
-            unidentifiedLogInOutAdapter = new UnidentifiedLogInOutAdapter(getActivity(), UnIdnfdLoginLogoutList);
-            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-            unIdnfdloginLogDotListView.setLayoutManager(manager);
-            unIdnfdloginLogDotListView.setAdapter(unidentifiedLogInOutAdapter);
-        }catch (Exception e){}
-
-        try {
-            unidentifiedRemarksAdapter = new UnidentifiedRemarksAdapter(getActivity(), UnIdnfdCommentsRemarksList);
-            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-            unIdnfdremAnotnDotListView.setLayoutManager(manager);
-            unIdnfdremAnotnDotListView.setAdapter(unidentifiedRemarksAdapter);
-        }catch (Exception e){}
-
-        try {
-            unidentifiedEnginePowerAdapter = new UnidentifiedEnginePowerAdapter(getActivity(), UnIdnfdEnginePowerList);
-            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-            unIdnfdenginePwrDotListView.setLayoutManager(manager);
-            unIdnfdenginePwrDotListView.setAdapter(unidentifiedEnginePowerAdapter);
-        }catch (Exception e){}
-
 
 
     }
